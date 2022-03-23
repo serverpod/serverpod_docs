@@ -8,13 +8,14 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Serverpod',
   tagline: 'The missing server for Flutter',
-  url: 'https://docs.serverpod.com',
+  url: 'https://serverpod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',
   organizationName: 'serverpod', // Usually your GitHub org/user name.
-  projectName: 'serverpod', // Usually your repo name.
+  projectName: 'serverpod.github.io', // Usually your repo name.
+  trailingSlash: false,
 
   presets: [
     [
@@ -80,7 +81,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ['dart'],
+        additionalLanguages: ['dart', 'bash'],
       },
     }),
 };
