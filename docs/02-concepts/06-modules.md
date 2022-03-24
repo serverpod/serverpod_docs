@@ -10,7 +10,7 @@ For example, to add the `serverpod_auth` module to your project you need to add 
 
 ```yaml
 dependencies:
-  serverpod_auth_server: ^0.9.5
+  serverpod_auth_server: ^0.9.x
 ```
 
 In your `config/generator.yaml` add the `serverpod_auth` module and give it a `nickname`. The nickname will determine how you reference the module from the client.
@@ -21,9 +21,9 @@ modules:
     nickname: auth
 ```
 
-Finally, you need to run `pub get` and `serverpod generate` from your server's directory (e.g. mypod_server) to add the module to your protocol.
+Finally, you need to run `pub get` and `serverpod generate` from your server's directory (e.g. `mypod_server`) to add the module to your protocol.
 
-```sh
+```bash
 dart pub get
 serverpod generate
 ```
@@ -32,21 +32,21 @@ In your app, add the corresponding dart or Flutter package(s) to your `pubspec.y
 
 ```yaml
 dependencies:
-  serverpod_auth_shared_flutter: ^0.9.5
-  serverpod_auth_google_flutter: ^0.9.5
-  serverpod_auth_apple_flutter: ^0.9.5
+  serverpod_auth_shared_flutter: ^0.9.x
+  serverpod_auth_google_flutter: ^0.9.x
+  serverpod_auth_apple_flutter: ^0.9.x
 ```
 
 ## Creating custom modules
 With the `serverpod create` command it is possible to create new modules for code that is shared between projects or that you want to publish to pub.dev. To create a module instead of a server project, pass `module` to the `--template` flag.
 
-```sh
+```bash
 serverpod create --template module my_module
 ```
 
 The create command will create a server and a client Dart package. If you also want to add custom Flutter code, use `flutter create` to create a package.
 
-```sh
+```bash
 flutter create --template package my_module_flutter
 ```
 

@@ -18,4 +18,8 @@ session.log(
 
 Log entries are stored in the following tables of the database: `serverpod_log` for text messages, `serverpod_query_log` for queries, and `serverpod_session_log` for completed sessions. Optionally, it's possible to pass a log level with the message to filter out messages depending on the server's runtime settings.
 
+:::info
+
 The Serverpod GUI is coming soon, which makes it possible to easily read, search, and configure the logs.
+
+:::

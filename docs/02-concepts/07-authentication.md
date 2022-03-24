@@ -112,3 +112,9 @@ To edit a user profile image, use the `UserImageButton` widget. It will automati
 
 ## Full example code
 Check out the Serverpod [example](https://github.com/serverpod/serverpod/tree/main/packages/serverpod/example) for a complete example of how to wire everything up.
+
+:::info
+
+Currently, sign in with Google, Apple, and email is supported, if you write another authentication module please consider [contributing](/contribute) your code.
+
+:::

@@ -1,3 +1,0 @@
-# Deploying to AWS
-
-Forthcoming.
