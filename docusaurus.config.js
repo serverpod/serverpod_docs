@@ -54,6 +54,10 @@ const config = {
         },
         items: [
           {
+            type: 'docsVersionDropdown',
+            position: 'left',
+          },
+          {
             href: 'https://thehub.io/startups/serverpod',
             label: 'Career',
             position: 'right',
