@@ -22,5 +22,25 @@ Tests may not yet work if running on a Windows machine.
 
 :::
 
+### Command line tools
+To run the `serverpod` command from your cloned repository, you will need to:
+
+```bash
+cd tools/serverpod_cli
+dart pub get
+dart pub global activate --source path .
+```
+
+Depending on your Dart version you may need to run the `dart pub global` command above every time you've made changes in the Serverpod tooling.
+
+### Editing the pubspec.yaml files
+First off, we are restrictive about which new packages we include in the Serverpod project. So before starting to add new dependencies you should probably get in touch with the maintainers of Serverpod to clear it.
+
+Secondly, you shouldn't edit the `pubspec.yaml` files directly. Instead make changes to the files in the `templates/` directory. When you've made changes, run the command to generate new correct `pubspec.yaml` files:
+
+```bash
+util/update_pubspecs
+```
+
 ## Getting support
 Feel free to post on [Serverpod's discussion board](https://github.com/serverpod/serverpod/discussions) if you have any questions. We check the board daily.

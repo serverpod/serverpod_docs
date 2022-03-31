@@ -4,6 +4,7 @@ Serverpod is in an early but stable version and used in production for multiple 
 
 - Improved documentation and tutorials.
 - Improved error messages.
+- Windows support
 - Graphical interface to view and configure logs.
 - Graphical interface for viewing server health and metrics.
 - File uploads for Google cloud (AWS currently supported).

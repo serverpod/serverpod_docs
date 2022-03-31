@@ -58,6 +58,11 @@ const config = {
             position: 'left',
           },
           {
+            href: 'https://pub.dev/documentation/serverpod/latest/',
+            label: 'API reference',
+            position: 'right',
+          },
+          {
             href: 'https://thehub.io/startups/serverpod',
             label: 'Career',
             position: 'right',
