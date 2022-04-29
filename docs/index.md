@@ -12,7 +12,7 @@ This is an early release of Serverpod. The API is stable and used in production 
 :::
 
 ## Installing Serverpod
-Serverpod is tested on Mac and Linux (Mac recommended), support for Windows is in the works. Before you can install Serverpod, you need to the following tools installed:
+Serverpod is tested on Mac and Linux (Mac recommended), support for Windows is experimental. Before you can install Serverpod, you need to the following tools installed:
 - __Flutter__ and __Dart__. You will need Flutter version 2.10 or later. https://flutter.dev/docs/get-started/install
 - __Docker__. Docker is used to manage Postgres and Redis. https://docs.docker.com/desktop/mac/install/
 
@@ -46,6 +46,12 @@ This command will create a new directory called `mypod`, with three dart package
 :::info
 
 It can take up to a few minutes the first time you run `serverpod create`. This is because Docker will need to download and build the containers used by Serverpod.
+
+:::
+
+:::caution
+
+If you are running on Windows, a few extra steps are required when setting up a new project. The `serverpod create` command will guide you through the process.
 
 :::
 
