@@ -56,10 +56,11 @@ If you are running on Windows, a few extra steps are required when setting up a 
 :::
 
 ## Starting the server
-The `serverpod run` command will start and run your server along with Postgres and Redis.
+Start your Docker container with `docker-compose up -d build`, then `serverpod run` command will start your server.
 
 ```bash
 cd mypod/mypod_server
+docker-compose up -d --build
 serverpod run
 ```
 
@@ -67,8 +68,8 @@ If everything is working you should see something like this on your terminal:
 
 ```
 Starting Serverpod.
+
  • Automatic generate and reload are enabled.
- • Running Postgres and Redis in Docker container.
 
 Spinning up serverpod generate (this can take a few seconds).
 Starting Docker (for Postgres and Redis).
