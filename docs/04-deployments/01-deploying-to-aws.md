@@ -127,3 +127,15 @@ _Manually deploy your server with Github actions._
 Your Serverpod should now be up and running! To check if everything is working, open up your web browser and go to `https://api.examplepod.com`. (You should replace your `examplepod.com` with your own domain name.) If everything is correctly configured, you will get a message similar to this:
 
     OK 2022-05-19 14:29:16.974160Z
+
+## Troubleshooting and tips and tricks
+Chances are that if you followed the instructions, you have a Serverpod deployment that you won't have to touch very often. However, this section gives you some pointers on where to start looking if things go wrong.
+
+### Signing in to your instances
+You can find a list of your currently running EC2 instances by navigating to _EC2 > Instances_. Click on one of the instances to go to its summary page. From there, click _Connect_. On the _Connect to instance_ page, click _Connect_, and AWS will open up a console window with access to your EC2 instance.
+
+### External dependencies and submodules
+The deployment scripts support using submodules and external dependencies. Place any such dependencies in a directory called `vendor` at the root of your Github project.
+
+### Troubleshooting deployments
+The deployment process involves a couple of steps. When you trigger a deployment from Github, the action will create a deployment and upload it to an S3 bucket. Then, CodeDeploy on AWS is triggered. You can find the logs from the Github action under the _Actions_ tab of your project. If the deployment process fails later, those logs are available on AWS by navigating to _CodeDeploy > Deploy > Deployments_.
