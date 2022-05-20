@@ -32,4 +32,4 @@ Serverpod's future calls replace complicated cron jobs. Call a method anytime in
 Monitor the database and external services that you are using. Write custom health checks and get notified when something goes wrong. _This feature is coming soon in the visual interface._
 
 ## Easy deployment
-We are working hard on creating deployment scripts for AWS and Google cloud. Please get in touch with us if you want to [contribute](/contribute).
+Serverpod comes with Terraform scripts for AWS which makes it very quick to deploy your server. We are still working on scripts for Google Cloud and other platforms. Please get in touch with us if you want to [contribute](/contribute).
