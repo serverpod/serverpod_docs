@@ -1,5 +1,4 @@
 # General notes
-
 Serverpod comes with a set of Terraform scripts that makes it very easy to deploy your server. We currently support deployments to AWS, but hope to support more platforms (like Google Cloud) in the future.
 
 ## Configuration files
