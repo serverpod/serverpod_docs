@@ -30,6 +30,7 @@ The deployment scripts will set up everything you need to run your Serverpod, in
 You deploy your configuration with a domain name; the scripts will set up subdomains that provide access to different functions of your deployment:
 
 - _api.examplepod.com:_ This is the entry point for your main Serverpod server.
+- _app.examplepod.com:_ The Serverpod web server. If you prefer to host it on your top domain, and use _www_ as a redirect, you can change this in the main Terraform configuration file.
 - _insights.examplepod.com:_ Provides access to the Serverpod UI and gets insights from your server while it is running.
 - _database.examplepod.com:_ This is how you access your database from outside the server.
 - _storage.examplepod.com:_ Access to public storage used by Serverpod. (This is optional.)
@@ -61,10 +62,10 @@ Next, you need to create two SSL certificates for your domain. Navigate to _AWS 
 
 _Create a wildcard certificate for your domain._
 
-Finally, you must create a second wildcard certificate in the _US East N. Virginia (us-east-1)_ region. AWS Cloudfront can only access certificates created in the _us-east-1_ region. Change the region, and repeat the steps from when you created your first certificate. Save the ARN to your second certificate.
+Finally, you must create a second wildcard certificate in the _US East N. Virginia (us-east-1)_ region. AWS Cloudfront can only access certificates created in the _us-east-1_ region. Change the region, and repeat the steps from when you created your first certificate. Save the ARN of your second certificate.
 
 ## Configure Github
-To allow Github to manage deployments to your AWS server cluster, you need to provide it with access keys and our `passwords.yaml` file from the serverpod project. You can use the same AWS access keys as you used to configure AWS CLI or generate a new pair.
+To allow Github to manage deployments to your AWS server cluster, you need to provide it with access keys and our `passwords.yaml` file from the Serverpod project. You can use the same AWS access keys as you used to configure AWS CLI or generate a new pair.
 
 Sign in to Github and find your project’s settings. Navigate to _Secrets > Actions_. Here you need to add three secrets for deployment to work correctly. `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are your AWS credentials. Github also needs access to your `config/passwords.yaml` file. Copy the contents of the passwords file and add it to `SERVERPOD_PASSWORDS`.
 
@@ -73,7 +74,7 @@ Sign in to Github and find your project’s settings. Navigate to _Secrets > Act
 _Your Github Action secrets after they have been configured._
 
 ## Configure Serverpod
-You acquired a hosted zone id and two certificate ARNs from AWS in the previous steps. You will need these to configure your Serverpod deployment scripts. You find the Terraform scripts in your server’s `aws/terraform` folder. Open up the `config.auto.fvars` file. Most of the file is already configured, including your project’s name. You will need to fill in the variables: `hosted_zone_id`, `top_domain`, `certificate_arn`, and `public_storage_certificate_arn`.
+You acquired a hosted zone id and two certificate ARNs from AWS in the previous steps. You will need these to configure your Serverpod deployment scripts. You find the Terraform scripts in your server’s `aws/terraform` folder. Open up the `config.auto.fvars` file. Most of the file is already configured, including your project’s name. You will need to fill in the variables: `hosted_zone_id`, `top_domain`, `certificate_arn`, and `cloudfront_certificate_arn`.
 
 :::info
 

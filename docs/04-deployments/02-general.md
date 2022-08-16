@@ -1,9 +1,9 @@
 # General notes
 
-We are working hard to bring a set of ready made deployment scripts and deployment guides to Serverpod as part of the 1.0 release. Initially, we will support AWS, but Google cloud will come soon after.
+Serverpod comes with a set of Terraform scripts that makes it very easy to deploy your server. We currently support deployments to AWS, but hope to support more platforms (like Google Cloud) in the future.
 
 ## Configuration files
-Serverpod has three main configuration files, depending on which mode the server is running; `development`, `staging`, or `production`. The files are located in the `config/` directory. By default, the server will start in development mode. To use another configuration file, use the `--mode` option when starting the server. If you are running multiple servers in a cluster, use the `--server-id` option to specify the id of each server. By default, the server will run as id 0. For instance, to start the server in production mode with id 2, run the following command:
+Serverpod has three main configuration files, depending on which mode the server is running; `development`, `staging`, or `production`. The files are located in the `config/` directory. By default, the server will start in development mode. To use another configuration file, use the `--mode` option when starting the server. If you are running multiple servers in a cluster, use the `--server-id` option to specify the id of each server. By default, the server will run as id `default`. For instance, to start the server in production mode with id `2`, run the following command:
 
 ```bash
 dart bin/main.dart --mode production --server-id 2
