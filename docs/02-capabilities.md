@@ -17,7 +17,7 @@ Cut down on your database costs. Don't save all your data permanently when you d
 Save time. Talking with your database can be a hassle. With Serverpod's ORM, your queries use native Dart types and null-safety. There is a straight path from your statically checked code to the database. Serverpod automatically generates the Postgres queries you need to set up your database. _Database migrations are coming soon._
 
 ## File uploads
-Upload files straight to S3 or store them in your database. _Google cloud storage support is coming soon._
+Upload files straight to S3 or store them in your database.
 
 ## Authentication
 Sign in through social logins or wing your own. Currently supported are Google, Apple, and email. _More options are coming soon._
@@ -33,3 +33,6 @@ Monitor the database and external services that you are using. Write custom heal
 
 ## Easy deployment
 Serverpod comes with Terraform scripts for AWS which makes it very quick to deploy your server. We are still working on scripts for Google Cloud and other platforms. Please get in touch with us if you want to [contribute](/contribute).
+
+## Built in web server
+Serverpod comes with a built-in web server. This makes it very easy to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or generate custom REST APIs to communicate with 3rd party services. _The web server is still experimental and we are actively working on it_.
