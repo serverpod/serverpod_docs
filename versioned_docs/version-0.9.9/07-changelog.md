@@ -1,4 +1,4 @@
-# Changelogs
+# Changelogs 🚀
 
 ## 0.9.9
 - Improved Terraform scripts for AWS will use less resources. Most notably, only uses one load balancer which will fit within AWS free tier.
