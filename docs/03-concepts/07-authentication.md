@@ -46,6 +46,19 @@ To configure Sign in with Apple, you will need an Apple developer account. Follo
 
 _Note that Sign in with Apple may not work on some versions of the Simulator (iOS 13.5 works). This issue doesn't affect real devices._
 
+## Setting up Sign in with Firebase
+Serverpod uses FlutterFire UI to handle authentication through Firebase. It allows you to add social sign-in types that Serverpod doesn't directly support.
+
+To add authentication with Firebase, you must first install and initialize the Firebase CLI tools and Flutter fire. Follow the instructions [here](https://firebase.google.com/docs/flutter/setup?platform=web) for your Flutter project. In the Firebase console, configure the different social sign-ins you plan to use. Then pass your provider configurations to either the signInWithFirebase method or the SignInWithFirebaseButton of the [serverpod_auth_firebase_flutter](https://pub.dev/packages/serverpod_auth_firebase_flutter) package.
+
+Server-side, you need to create a set of authentication keys in the [Firebase console](https://console.firebase.google.com/), download the JSON file, rename it to firebase_service_account_key.json and place it in the config folder.
+
+:::warning
+
+Serverpod automatically merges accounts that are using the same email addresses, so make sure only to allow sign-ins where the email has been verified.
+
+:::
+
 ## Add sign-in buttons in your code
 First, you need to add dependencies to your app's `pubspec.yaml` file for the methods of signing in that you want to support. Make sure to use the same version numbers as for serverpod itself.
 
