@@ -21,10 +21,16 @@ In some cases, you want to save a field to the database, but it should never be 
 class: UserData
 fields:
   name: String
-  password: String, database
+  password: String?, database
 ```
 
 Likewise, if you only want a field to be accessible in the protocol but not stored in the server, you can add the `api` flag. By default, a field is accessible to both the API and the database.
+
+:::info
+
+If you use the `database` or `api` options the field must be nullable.
+
+:::
 
 ### Database indexes
 For performance reasons, you may want to add indexes to your database tables. You add these in the yaml-files defining the serializable objects.
