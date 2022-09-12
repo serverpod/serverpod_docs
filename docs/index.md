@@ -12,9 +12,9 @@ This is an early release of Serverpod. The API is stable and used in production 
 :::
 
 ## Installing Serverpod
-Serverpod is tested on Mac and Linux (Mac recommended), support for Windows is experimental. Before you can install Serverpod, you need to the following tools installed:
+Serverpod is tested on Mac, support for Windows and Linux is still experimental. Before you can install Serverpod, you need to the following tools installed:
 - __Flutter__ and __Dart__. You will need Flutter version 2.10 or later. https://flutter.dev/docs/get-started/install
-- __Docker__. Docker is used to manage Postgres and Redis. https://docs.docker.com/desktop/mac/install/
+- __Docker__. Docker is used to manage Postgres and Redis. https://docs.docker.com/get-docker/
 
 Once you have Flutter and Docker installed and configured, open up a terminal and install Serverpod by running:
 
@@ -49,52 +49,26 @@ It can take up to a few minutes the first time you run `serverpod create`. This 
 
 :::
 
-:::caution
-
-If you are running on Windows, a few extra steps are required when setting up a new project. The `serverpod create` command will guide you through the process.
-
-:::
-
 ## Starting the server
-Start your Docker container with `docker-compose up -d build`, then `serverpod run` command will start your server.
+Start your Docker containers with `docker-compose up --build --detach`, it will start Postgres and Redis. Then, run `dart bin/main.dart` to start your server.
 
 ```bash
 cd mypod/mypod_server
-docker-compose up -d --build
-serverpod run
+docker-compose up --build --detach
+dart bin/main.dart
 ```
 
 If everything is working you should see something like this on your terminal:
 
 ```
-Starting Serverpod.
-
- • Automatic generate and reload are enabled.
-
-Spinning up serverpod generate (this can take a few seconds).
-Starting Docker (for Postgres and Redis).
-Waiting for Postgres on localhost:8090.
-Waiting for Redis on localhost:8091.
-Setup complete. Starting the server.
-
-SERVERPOD version: 0.9.x mode: development
+SERVERPOD version: 0.9.11 mode: development time: 2022-09-12 17:22:02.825468Z
 Insights listening on port 8081
-Server id 0 listening on port 8080
+Server default listening on port 8080
+Webserver listening on port 8082
 ```
 
 :::info
 
-You can also start Postgres, Redis and the server manually without using the `serverpod run` command. To do this, first `cd` into `mypod_server`, then run:
-```bash
-docker-compose up -d --build
-```
-
-This will build and start a set of Docker containers and give access to Postgres and Redis. If you need to stop the containers at some point, just run `docker-compose stop`.
-
-Now you should be all set to run your server. Start it by typing:
-
-```bash
-dart bin/main.dart
-```
+If you need to stop the Docker containers at some point, just run `docker-compose stop` or use the Docker Desktop application.
 
 :::

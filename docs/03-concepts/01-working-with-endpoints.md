@@ -19,10 +19,16 @@ On the client side, you can now call the method by calling:
 var result = await client.example.hello('World');
 ```
 
-## Passing parameters
-There are some limitations to how endpoint methods can be implemented. Currently named parameters are not yet supported (however, optional parameters are). Parameters and return types can be of type `bool`, `int`, `double`, `String`, `DateTime`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
+:::info
 
-Note: `List` and `Map` can currently not be passed as arguments, instead use a serializable object that contains the data you want to send. Support is on the roadmap and is a planned future feature.
+You can pass the `--watch` flag to `serverpod generate` to continuously watch for changed files and generate code when needed. This is useful during development of your server.
+
+:::
+
+## Passing parameters
+There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
+
+You can also pass `List` and `Map` as parameters, but they need to be stricly typed with one of the types mentioned above. For `Map`, the keys must be non-nullable strings. E.g. `Map<String, int?>` is valid, but `Map<int, String>` is not.
 
 ## Return types
 The return type must be a typed Future, supported return types is the same as for parameters.
