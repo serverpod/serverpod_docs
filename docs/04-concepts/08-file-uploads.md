@@ -1,9 +1,9 @@
 # Uploading files
 Serverpod has built-in support for handling file uploads. Out of the box, your server will be configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use S3 or Google Cloud Storage in production scenarios.
 
-:::caution
+:::info
 
-Caution: Currently, only S3 is supported, but Google Cloud Storage support is coming soon. If you want to use Google Cloud, please consider contributing an implementation.
+Currently, only S3 is supported, but Google Cloud Storage support is coming planned. If you want to use Google Cloud, please consider contributing an implementation.
 
 :::
 
@@ -34,7 +34,7 @@ Future<bool> verifyUpload(Session session, String path) async {
 ```
 
 ### Client-side code
-To upload a file from the app side, first request the upload description. Next, upload the file, you can upload from either `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the file needs to be held in RAM memory. Finally, you should verify the upload with the server.
+To upload a file from the app side, first request the upload description. Next, upload the file, you can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the file needs to be held in RAM memory. Finally, you should verify the upload with the server.
 
 ```dart
 var uploadDescription = await client.myEndpoint.getUploadDescription('myfile');

@@ -57,7 +57,7 @@ Future<void> handleStreamMessage(
 
 :::tip
 
-For a complete real-world example, check out the server for the [chat module](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_chat/serverpod_chat_server/lib/src/endpoints/chat_endpoint.dart).
+For a complete real-world example, check out [Pixorama](https://pixorama.live). It's a multi-user drawing experience showcasing Serverpod's real-time capabilities and it comes with full source code.
 
 :::
 
@@ -74,12 +74,6 @@ You can monitor the state of the connection by adding a listener to the client.
 ```dart
 controller.addConnectionStatusListener(_chatConnectionStatusChanged);
 ```
-
-:::tip
-
-The [Serverpod example](https://github.com/serverpod/serverpod/blob/main/packages/serverpod/example/example_flutter/lib/main.dart) shows how you can manage your socket connection.
-
-:::
 
 Once you have connected to your server's web socket, you can start passing and receiving serialized objects.
 

@@ -63,7 +63,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://thehub.io/startups/serverpod',
+            href: 'https://careers.serverpod.dev/',
             label: 'Career',
             position: 'right',
           },
