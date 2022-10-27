@@ -159,11 +159,16 @@ Future versions of Serverpod will add support for automatic joins and database v
 :::
 
 ### Transactions
+The essential point of a database transaction is that it bundles multiple steps into a single, all-or-nothing operation. The intermediate states between the steps are not visible to other concurrent transactions, and if some failure occurs that prevents the transaction from completing, then none of the steps affect the database at all.
+
 Serverpod handles database transactions through the `session.db.transaction` method. The transaction takes a method that performs any database queries or other operations and optionally returns a value.
 
 ```dart
 var result = await session.db.transaction((transaction) async {
-  
+  // Do some database queries here.
+
+  // Optionally return a value.
+  return true;
 });
 ```
 
