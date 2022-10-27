@@ -127,8 +127,45 @@ t.foundedDate >= DateTime.utc(2020)
 t.foundedDate.notEquals(null)
 ```
 
+### Joining tables and nesting objects
+Serverpod does not yet support joins automatically. However, you can easily create nested objects by performing two or more queries.
+
+For instance, if you have a `Company` object with a list of `Employee` it can be declared like this:
+
+```yaml
+class: Company
+fields:
+  name: String
+  employees: List<Employee>?, api
+```
+
+This prevents the list of `Employee` to be automatically fetched or stored in the database. After you fetch a `Company` object from the database, format it by fetching the list of `Employees`.
+
+```dart
+var company = await Example.findById(session, id);
+
+var employees = await Example.find(
+  session,
+  where: (t) => t.companyId.equals(company.id),
+);
+
+company.employees = employees;
+```
+
+:::info
+
+Future versions of Serverpod will add support for automatic joins and database views.
+
+:::
+
 ### Transactions
-Docs coming.
+Serverpod handles database transactions through the `session.db.transaction` method. The transaction takes a method that performs any database queries or other operations and optionally returns a value.
+
+```dart
+var result = await session.db.transaction((transaction) async {
+  
+});
+```
 
 ### Executing raw queries
 Sometimes more advanced tasks need to be performed on the database. For those occasions, it's possible to run raw SQL queries on the database. Use the `query` method. A `List<List<dynamic>>` will be returned with rows and columns.
