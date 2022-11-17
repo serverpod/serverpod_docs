@@ -9,7 +9,7 @@ Future<UserData> getUserData(Session session, int userId) async {
   var cacheKey = 'UserData-$userId';
 
   // Try to retrieve the object from the cache
-  var userData = await session.caches.local.get(cacheKey) as UserData?;
+  var userData = await session.caches.local.get<UserData>(cacheKey);
 
   // If the object wasn't found in the cache, load it from the database and
   // save it in the cache. Make it valid for 5 minutes.

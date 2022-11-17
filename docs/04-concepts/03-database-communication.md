@@ -10,12 +10,18 @@ table: company
 fields:
   name: String
   foundedDate: DateTime?
-  employees: List<Employee>
 ```
 
 When running `serverpod generate`, the database schema will be saved in the `generated/tables.pgsql` file. You can use this to create the corresponding database tables.
 
-In some cases, you want to save a field to the database, but it should never be sent to the server. You can exclude it from the protocol by adding the `database` flag to the type.
+:::info
+
+When you add a `table` to a serializable class, Serverpod will automatically add an `id` field of type `int?` to the class. You should not define this field yourself. The `id` is set when you insert or select a row from the database. The `id` field allows you to do updates and reference the rows from other objects and tables.
+
+:::
+
+### Field scopes
+In some cases, you want to save a field to the database, but it should never be sent to the server. You can exclude it from the protocol by adding the `database` scope to the type.
 
 ```yaml
 class: UserData
@@ -41,13 +47,40 @@ table: company
 fields:
   name: String
   foundedDate: DateTime?
-  employees: List<Employee>
+  employees: List<Employee>?, api
 indexes:
   company_name_idx:
     fields: name
 ```
 
 The `fields` key holds a comma-separated list of column names. In addition, it's possible to add a type key (default is `btree`), and a `unique` key (default is `false`).
+
+### Parent/child relationships
+With a field's parent property, you can define a relationship with a table's parent table. This relationship ensures that the parent id is always valid and that if you delete the referenced parent, the referencing row will automatically be deleted.
+
+The employee's `parent` is set to the `company` table in the example below. If you remove the company, all employees of the company will automatically be removed. When you insert the employee into the database, you must specify a valid `companyId` that corresponds to the id field in the `company` table.
+
+```yaml
+class: Employee
+table: employee
+fields:
+  companyId: int, parent=company
+  name: String
+  birthday: DateTime
+```
+
+### Storing objects or references
+If you reference another serializable object in your yaml file, it will be stored as a JSON entry in the database. This creates a copy of that object. In many cases, this is not desirable. Instead, you may want to reference that object by an id from another table. See the section on [joining tables and nesting objects](#joining-tables-and-nesting-objects) below for more information.
+
+In the example below, a list of employees is stored as a JSON structure for each company in the database. A better solution would be to create a database row for each employee and reference the company. However, there are cases where it is convenient to store whole JSON structures in each row.
+
+```yaml
+class: Company
+table: company
+fields:
+  name: String
+  employees: List<Employee> # Stored as JSON structure
+```
 
 ## Making queries
 For the communication to work, you need to have generated serializable classes with the `table` key set, and the corresponding table must have been created in the database.
@@ -133,18 +166,28 @@ Serverpod does not yet support joins automatically. However, you can easily crea
 For instance, if you have a `Company` object with a list of `Employee` it can be declared like this:
 
 ```yaml
+# company.yaml
 class: Company
+table: company
 fields:
   name: String
   employees: List<Employee>?, api
+
+# employee.yaml
+class: Employee
+table: employee
+fields:
+  companyId: int
+  name: String
+  birthday: DateTime
 ```
 
 This prevents the list of `Employee` to be automatically fetched or stored in the database. After you fetch a `Company` object from the database, format it by fetching the list of `Employees`.
 
 ```dart
-var company = await Example.findById(session, id);
+var company = await Company.findById(session, id);
 
-var employees = await Example.find(
+var employees = await Employee.find(
   session,
   where: (t) => t.companyId.equals(company.id),
 );
