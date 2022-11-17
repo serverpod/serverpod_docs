@@ -42,7 +42,7 @@ Serverpod Insights is a companion app bundled with Serverpod. It allows you to a
 ___COMING SOON.___ Download the latest version here: __[Serverpod Insights](https://serverpod.dev)__. It is compatible with Serverpod version 1.x.
 
 ## Creating your first project
-To get your local server up and running, you need to create a new Serverpod project. Make sure that Docker Desktop is running, then create a new project by running `serverpod create`.
+To get your local server up and running, you need to create a new Serverpod project. Make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/)  is running, then create a new project by running `serverpod create`.
 
 ```bash
 serverpod create mypod
