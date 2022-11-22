@@ -3,7 +3,7 @@ Serverpod makes it easy to deploy your server to AWS using Github and Terraform.
 
 :::caution
 
-Using Serverpod’s AWS deployment may incur costs to your AWS account. Serverpod’s scripts are provided as-is, and we take no responsibility for any unexpected charges from using them.
+Using Serverpod’s AWS deployment may incur costs to your AWS account. Serverpod’s scripts are provided as-is, and we take no responsibility for any unexpected charges for using them.
 
 :::
 
@@ -24,7 +24,7 @@ The top directory created by Serverpod must be the root directory of your Git re
 :::
 
 ## What will be deployed?
-The deployment scripts will set up everything you need to run your Serverpod, including an autoscaling cluster of servers, load balancers, a Postgres database, Redis, S3 buckets for file uploads, CloudFront, CodeDeploy, DNS records, and SSL certificates. Some of the components are optional, and you will need to opt in. You can also choose to create a second server cluster for a staging environment. The staging servers use the production database and Redis and allow you to test code before you deploy it to the production servers.
+The deployment scripts will set up everything you need to run your Serverpod, including an autoscaling cluster of servers, load balancers, a Postgres database, Redis, S3 buckets for file uploads, CloudFront, CodeDeploy, DNS records, and SSL certificates. Some of the components are optional, and you will need to opt in. You can also create a second server cluster for a staging environment. The staging servers allow you to test code before you deploy it to the production servers.
 
 You deploy your configuration with a domain name; the scripts will set up subdomains that provide access to different functions of your deployment:
 
@@ -35,7 +35,7 @@ You deploy your configuration with a domain name; the scripts will set up subdom
 - _storage.examplepod.com:_ Access to public storage used by Serverpod. (This is optional.)
 
 ## Set up your domain name and certificates
-Before deploying your server, you will need to configure your server’s top domain in AWS. You can register your domain through any registrar, but you need to set up a public hosted zone in Route 53 in AWS.
+Before deploying your server, you must configure your server’s top domain in AWS. You can register your domain through any registrar, but you need to set up a public hosted zone in Route 53 in AWS.
 
 1. Sign in to the AWS console and navigate to _Route 53 > Hosted zones_.
 2. Click _Create hosted zone_.
@@ -86,7 +86,7 @@ By default, the Terraform scripts are configured to use a minimal setup to reduc
 Finally, to complete your Serverpod configuration, you will need to edit the `config/staging.yaml` and `config/production.yaml` files. In these files, you replace the `examplepod.com` domain with the domain you are using for your server.
 
 ## Deploy your infrastructure
-Your Serverpod should now be configured and ready to be deployed. Exciting times! Open up a terminal and `cd` into your servers `aws/terraform` directory. First, you need to add an environment variable so that Terraform can correctly set the password for the Postgres database. You find the production password for the database in your `config/passwords.yaml` file.
+Your Serverpod should now be configured and ready to be deployed. Exciting times! Open up a terminal and `cd` into your server `aws/terraform` directory. First, you need to add an environment variable so that Terraform can correctly set the password for the Postgres database. You will find the production password for the database in your `config/passwords.yaml` file.
 
 ```bash
 export TF_VAR_DATABASE_PASSWORD_PRODUCTION="<MY PRODUCTION PASSWORD>"

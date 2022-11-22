@@ -1,8 +1,8 @@
 # Capabilities
 
-Serverpod is a complete, competent backend for Flutter. For the glossy sales pitch, head over to our main page at [Serverpod.dev](https://serverpod.dev).
+Serverpod is a complete, competent backend for Flutter. For the glossy sales pitch, head to our main page at [Serverpod.dev](https://serverpod.dev).
 
-Every design decision made in Serverpod aims to minimize the amount of code you need to write and make it as readable as possible. Apart from being just a server, Serverpod incorporates many common tasks that are otherwise cumbersome to implement or require external services.
+Every design decision in Serverpod aims to minimize the amount of code you need to write and make it as readable as possible. Apart from being just a server, Serverpod incorporates many common tasks that are otherwise cumbersome to implement or require external services.
 
 ## Code generation
 Serverpod automatically generates your protocol and client-side code by analyzing your server. Calling a remote endpoint is as easy as making a local method call.
@@ -32,7 +32,7 @@ Serverpod's future calls replace complicated cron jobs. Call a method anytime in
 Monitor the database and external services that you are using. Write custom health checks and get notified when something goes wrong. _This feature is coming soon in the visual interface._
 
 ## Easy deployment
-Serverpod comes with Terraform scripts for AWS which makes it very quick to deploy your server. We are still working on scripts for Google Cloud and other platforms. Please get in touch with us if you want to [contribute](/contribute).
+Serverpod comes with Terraform scripts for AWS, which makes it very quick to deploy your server. We are still working on scripts for Google Cloud and other platforms. Please get in touch with us if you want to [contribute](/contribute).
 
-## Built in web server
-Serverpod comes with a built-in web server. This makes it very easy to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or generate custom REST APIs to communicate with 3rd party services. _The web server is still experimental and we are actively working on it_.
+## Built-in web server
+Serverpod comes with a built-in web server. This makes it very easy to share data for applications that need both an app and traditional web pages. You can also use the webserver to create webhooks or generate custom REST APIs to communicate with 3rd party services. _The web server is still experimental, and we are actively working on it_.

@@ -122,7 +122,7 @@ var companies = await Company.find(
 );
 ```
 ### Updating a row
-To update a row, use the `update` method. The object that you update must have its `id` set to a non `null` value.
+To update a row, use the `update` method. The object that you update must have its `id` set to a non-`null` value.
 
 ```dart
 var myCompany = await session.db.findById(tCompany, companyId) as Company?;

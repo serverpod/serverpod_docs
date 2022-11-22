@@ -22,9 +22,9 @@ Future<void> streamOpened(StreamingSession session) async {
 You can access the user object at any time by calling the `getUserObject` method. The user object is automatically discarded when a session ends.
 
 ### Internal server messaging
-A typical scenario when working with streams is to pass on messages from one user to another. For instance, if one client sends a chat message to the server, the server should send it to the correct user. Serverpod comes with a built-in messaging system that makes this easy. You can choose to pass messages locally on a single server, but messages are passed through Redis by default. Passing the messages through Redis makes it possible to send the messages between multiple servers in a cluster.
+A typical scenario when working with streams is to pass on messages from one user to another. For instance, if one client sends a chat message to the server, the server should send it to the correct user. Serverpod comes with a built-in messaging system that makes this easy. You can pass messages locally on a single server, but messages are passed through Redis by default. Passing the messages through Redis makes it possible to send the messages between multiple servers in a cluster.
 
-In most cases, it's easiest to subscribe to a message channel in the streamOpened method. The subscription will automatically be disposed of when the stream is closed. The following example will forward any message sent to a user identified by its user id.
+In most cases, it's easiest to subscribe to a message channel in the `streamOpened` method. The subscription will automatically be disposed of when the stream is closed. The following example will forward any message sent to a user identified by its user id.
 
 ```dart
 @override
@@ -57,7 +57,7 @@ Future<void> handleStreamMessage(
 
 :::tip
 
-For a complete real-world example, check out [Pixorama](https://pixorama.live). It's a multi-user drawing experience showcasing Serverpod's real-time capabilities and it comes with full source code.
+For a real-world example, check out [Pixorama](https://pixorama.live). It's a multi-user drawing experience showcasing Serverpod's real-time capabilities and comes with complete source code.
 
 :::
 
@@ -70,14 +70,9 @@ await client.connectWebSocket();
 ```
 
 You can monitor the state of the connection by adding a listener to the client.
+Once connected to your server's web socket, you can pass and receive serialized objects.
 
-```dart
-controller.addConnectionStatusListener(_chatConnectionStatusChanged);
-```
-
-Once you have connected to your server's web socket, you can start passing and receiving serialized objects.
-
-To receive updates from an endpoint on the server, just listen to its web socket stream.
+Listen to its web socket stream to receive updates from an endpoint on the server.
 
 ```dart
 await for (var message in client.myEndpoint.stream) {

@@ -1,5 +1,5 @@
 # Uploading files
-Serverpod has built-in support for handling file uploads. Out of the box, your server will be configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use S3 or Google Cloud Storage in production scenarios.
+Serverpod has built-in support for handling file uploads. Out of the box, your server is configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use S3 or Google Cloud Storage in production scenarios.
 
 :::info
 
@@ -8,10 +8,10 @@ Currently, only S3 is supported, but Google Cloud Storage support is coming plan
 :::
 
 ## How to upload a file
-By default, a `public` and a `private` file storage are set up to use the database. If needed, you can replace these or add more configurations for other file storages.
+A `public` and `private` file storage are set up by default to use the database. You can replace these or add more configurations for other file storages.
 
 ### Server-side code
-There are a few steps required to upload a file. First, you need to create an upload description on the server and pass it to your app. The upload description grants access to the app to upload the file. If you want to grant access to any file, you can add the following code to one of your endpoints. However, in most cases, you may want to restrict which files can be uploaded.
+There are a few steps required to upload a file. First, you must create an upload description on the server and pass it to your app. The upload description grants access to the app to upload the file. If you want to grant access to any file, you can add the following code to one of your endpoints. However, in most cases, you may want to restrict which files can be uploaded.
 
 ```dart
 Future<String?> getUploadDescription(Session session, String path) async {
@@ -34,7 +34,7 @@ Future<bool> verifyUpload(Session session, String path) async {
 ```
 
 ### Client-side code
-To upload a file from the app side, first request the upload description. Next, upload the file, you can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the file needs to be held in RAM memory. Finally, you should verify the upload with the server.
+To upload a file from the app side, first request the upload description. Next, upload the file. You can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the data must be held in RAM memory. Finally, you should verify the upload with the server.
 
 ```dart
 var uploadDescription = await client.myEndpoint.getUploadDescription('myfile');
@@ -47,7 +47,7 @@ if (uploadDescription != null) {
 
 :::info
 
-In a real-world app, you most likely want to create the file paths on your server. For your file paths to be compatible with S3, do not use a leading slash and only use standard characters and numbers. E.g.:
+In a real-world app, you most likely want to create the file paths on your server. For your file paths to be compatible with S3, do not use a leading slash; only use standard characters and numbers. E.g.:
 
 ```dart
 'profile/$userId/images/avatar.png'
@@ -86,7 +86,7 @@ var myByteData = await session.storage.retrieveFile(
 ```
 
 ## Add a configuration for S3
-This section shows how to set up a storage using S3. Before you write your Dart code, you need to setup a S3 bucket. Most likely, you will also want to setup a CloudFront for the bucket, where you will be able to use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file.
+This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file.
 
 When you are all set with the AWS setup, include the S3  package in your yaml file and your `server.dart` file.
 
@@ -115,3 +115,9 @@ shared:
   AWSAccessKeyId: 'XXXXXXXXXXXXXX'
   AWSSecretKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
 ```
+
+:::info
+
+If you are using the AWS Terraform scripts that are created with your Serverpod project, the required S3 buckets will be created automatically. The scripts will also configure Cloudfront and the certificates needed to access the buckets securely.
+
+:::

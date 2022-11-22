@@ -6,43 +6,54 @@ The authentication module also handles basic user information, such as user name
 ![Sign-in with Serverpod](https://github.com/serverpod/serverpod/raw/main/misc/images/sign-in.png)
 
 ## Installing the module
-To install the auth module in your Serverpod server, you need to include it in your server's `pubspec.yaml`. The `serverpod_auth` module is released with the same version numbers as `serverpod` itself, so make sure to use a matching version number in your pubspec file.
+Please refer to the previous section, [Modules](./modules), for instructions on how to add a module to your project.
 
-```yaml
-dependencies:
-  serverpod_auth_server: ^0.9.5
+## Setting up Sign in with Email
+To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer)](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Sendgrid or Mandrill, support SMTP.
+
+In your main `server.dart` file, you can configure the auth module. First, make sure to include the module:
+
+```dart
+import 'package:serverpod_auth_server/module.dart' as auth;
 ```
 
-In addition, you will need to add the module to the config/generator.yaml file.
+Then, add the configuration before you start your Serverpod:
 
-```yaml
-modules:
-  serverpod_auth:
-    nickname: auth
+```dart
+auth.AuthConfig.set(auth.AuthConfig(
+  sendValidationEmail: (session, email, validationCode) async {
+    // Send your validation email here.
+  },
+  sendPasswordResetEmail: (session, userInfo, validationCode) async {
+    // Send a password reset email here.
+  },
+));
+
+// Start the server.
+await pod.start();
 ```
+:::info
 
-This will tell Serverpod to include the module when it generates the client and server code. The nickname defines which name the client is using to reference the module.
+For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/chat/chat_server/lib/server.dart).
 
-To finalize the installation you will need to run `pub get` and `serverpod generate` from your server's directory.
+:::
 
-```sh
-flutter pub get
-serverpod generate
-```
+
+
 
 ## Setting up Sign in with Google
-To set up Sign in with Google, you will need a Google account for your organization and setup a new project. For the project you need to setup _Credentials_ and _Oauth consent screen_. You will need a OAuth 2.0 Client id of type _Web application_.
+To set up Sign in with Google, you will need a Google account for your organization and set up a new project. For the project, you need to set up _Credentials_ and _Oauth consent screen_. You will need an OAuth 2.0 Client id of type _Web application_.
 
 1. Follow the instructions in the [google_sign_in](https://pub.dev/packages/google_sign_in) plug-in for iOS and Android.
    - For iOS, make sure that you obtain the `GoogleService-Info.plist` and add it to your Xcode project.
    - For Android, there are other setup steps you need to take.
 2. In Google cloud, you need to do some additional setup.
    - Activate the _People API_ on your project.
-   - Set up the OAuth consent screen. You will need to add the `../auth/userinfo.email` and `../auth/userinfo.profile` scopes. You can also setup additional scopes and access them through Google's APIs on the client or server side.
-3. Finally, you need to set up the Google client secret so your server can authenticate the user with Google. In GCP's _APIs & Services_, select the _Credentials tab_. Download the json from your _OAuth 2.0 Client IDs_. Rename it to `google_client_secret.json` and place it in the `config` directory of your server.
+   - Set up the OAuth consent screen. You must add the `../auth/userinfo.email` and `../auth/userinfo.profile` scopes. You can also set up additional scopes and access them through Google's APIs on the client or server side.
+3. Finally, you need to set up the Google client secret so your server can authenticate the user with Google. In GCP's _APIs & Services_, select the _Credentials tab_. Download the JSON from your _OAuth 2.0 Client IDs_. Rename it to `google_client_secret.json` and place it in the `config` directory of your server.
 
 ## Setting up Sign in with Apple
-To configure Sign in with Apple, you will need an Apple developer account. Follow the instructions in [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple).
+You will need an Apple developer account to configure Sign in with Apple. Follow the instructions in [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple).
 
 _Note that Sign in with Apple may not work on some versions of the Simulator (iOS 13.5 works). This issue doesn't affect real devices._
 
@@ -123,11 +134,6 @@ To display a user's profile picture, use the `CircularUserImage` widget and pass
 
 To edit a user profile image, use the `UserImageButton` widget. It will automatically fetch the signed-in user's profile picture and communicate with the server.
 
-## Full example code
-Check out the Serverpod [example](https://github.com/serverpod/serverpod/tree/main/packages/serverpod/example) for a complete example of how to wire everything up.
+## Supported authentication methods
 
-:::info
-
-Currently, sign in with Google, Apple, and email is supported, if you write another authentication module please consider [contributing](/contribute) your code.
-
-:::
+Currently, sign-in with Google, Apple, Firebase, and email is natively supported. If you write another authentication module, please consider [contributing](/contribute) your code.
