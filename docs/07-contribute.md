@@ -73,7 +73,9 @@ util/update_pubspecs
 ```
 
 ## Submitting your pull request
-To keep commits clean, Serverpod squashes them when merging pull requests. Therefore, it is essential that each pull request only contains a single feature or bug fix.
+To keep commits clean, Serverpod squashes them when merging pull requests. Therefore, it is essential that each pull request only contains a single feature or bug fix. Keeping the pull requests smaller also makes it faster and easier to review the code.
+
+If you are contributing new code, you will also need to provide tests for your code. The tests should be placed in the `tests/serverpod_test_server` package.
 
 ## Getting support
 Feel free to post on [Serverpod's discussion board](https://github.com/serverpod/serverpod/discussions) if you have any questions. We check the board daily.
