@@ -44,11 +44,13 @@ class MyEndpoint extends Endpoint {
 }
 ```
 
-:::tip
+The `serverpod_auth_server` package provides convenient methods for handling basic user information and scopes.
 
-The `serverpod_auth` module provides convenient methods for modifying a user's scopes.
+To update a user's scopes, use the `Users` class's `updateUserScopes` method.
 
-:::
+```dart
+await Users.updateUserScopes(session, userId, {Scope.admin});
+```
 
 ## Installing the auth module
 Serverpod's auth module makes it easy to authenticate users through email or 3rd parties. Currently supported is Signing in with email, Google, Apple, and Firebase. Future versions of the authentication module will include more options. Using this module requires some setup with Google and Apple to work.
@@ -239,6 +241,27 @@ Server-side, you need to create a set of authentication keys in the [Firebase co
 :::warning
 
 Serverpod automatically merges accounts that are using the same email addresses, so make sure only to allow sign-ins where the email has been verified.
+
+:::
+
+## Working with users
+It's a common task to read or update user information on your server. You can always retrieve the id of a signed-in user through the session object.
+
+```dart
+var userId = await session.auth.authorizedUserId;
+```
+
+If you sign in users through the auth module, you will be able to retrieve more information through the static methods of the `Users` class.
+
+```dart
+var userInfo = await Users.findUserByUserId(session, userId!);
+```
+
+The `UserInfo` is automatically populated when the user signs in. Different data may be available depending on which method was used for authentication.
+
+:::tip
+
+The `Users` class contains many other convenient methods for working with users. You can find the full documentation [here](https://pub.dev/documentation/serverpod_auth_server/latest/protocol/Users-class.html).
 
 :::
 
