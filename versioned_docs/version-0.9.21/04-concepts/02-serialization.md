@@ -26,7 +26,7 @@ Serverpod's serializable objects can easily be saved to or read from the databas
 :::
 
 ## Custom serializable objects
-For most purposes, you will want to use Serverpod's native serialization as described above. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to two simple rules:
+For most purposes, you will want to use Serverpod's native serialization as described above. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to three simple rules:
 
 1. Your objects must have a method called toJson() which returns a JSON serialization of the object.
 2. There must be a constructor or factory called fromJson(), which takes a JSON serialization and a Serialization manager as parameters.
