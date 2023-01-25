@@ -19,6 +19,23 @@ Supported types are `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, a
 ### Extending the generated classes
 Sometimes you will want to add custom methods to the generated classes. The easiest way to do this is with Dart's extension feature.
 
+### Adding documentation
+Serverpod allows you to add documentation to your serializable objects in a similar way that you would add documentation to your Dart code. Use three hashes (`###`) to indicate that a comment should be considered documentation.
+
+```yaml
+### Information about a company.
+class: Company
+fields:
+  ### The name of the company.
+  name: String
+
+  ### The date the company was founded, if known.
+  foundedDate: DateTime?
+
+  ### A list of people currently employed at the company.
+  employees: List<Employee>
+```
+
 :::info
 
 Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the next section, [Database communication](./database-communication).

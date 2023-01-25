@@ -77,7 +77,7 @@ You acquired a hosted zone id and two certificate ARNs from AWS in the previous 
 
 :::info
 
-If you deploy your servers in a region other than Oregon (us-west-2), you will need to update the `instance_ami` variable. Instructions are in the configuration file.
+If you deploy your servers in a region other than Oregon (us-west-2), you will need to update the `instance_ami` variable. Instructions are in the configuration file. In addition, you will also need to update the region in your Github deployment file located in `.github/workflows/deployment-aws.yml`.
 
 :::
 

@@ -5,19 +5,18 @@ sidebar_position: 0
 # Get started
 Serverpod is an open-source, scalable app server written in Dart for the Flutter community. Serverpod automatically generates your protocol and client-side code by analyzing your server. Calling a remote endpoint is as easy as making a local method call.
 
-<!--
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/QN6juNWW3js" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
--->
 
-:::caution
 
-This is a pre-release of Serverpod. The API is stable and used in production by multiple projects, but there may be minor changes leading up to version 1.0.
+:::info
+
+This is a pre-release of Serverpod. The stable release is scheduled for Monday January 30th, at 9 AM PST. Watch the release keynote [here](https://www.youtube-nocookie.com/embed/QN6juNWW3js).
 
 :::
 
 ## Installing Serverpod
 Serverpod is tested on Mac and Linux. It works on Windows, but it's still experimental. Before you can install Serverpod, you need to have the following tools installed:
-- __Flutter__ and __Dart__. You will need Flutter version 2.10 or later. https://flutter.dev/docs/get-started/install
+- __Flutter__ and __Dart__. You will need Flutter version 3.0 or later. https://flutter.dev/docs/get-started/install
 - __Docker__. Docker is used to manage Postgres and Redis. https://docs.docker.com/get-docker/
 
 Once you have Flutter and Docker installed and configured, open up a terminal and install Serverpod by running:
