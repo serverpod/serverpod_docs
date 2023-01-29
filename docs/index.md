@@ -8,12 +8,6 @@ Serverpod is an open-source, scalable app server written in Dart for the Flutter
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/QN6juNWW3js" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 
-:::info
-
-This is a pre-release of Serverpod. The stable release is scheduled for Monday January 30th, at 9 AM PST. Watch the release keynote [here](https://www.youtube-nocookie.com/embed/QN6juNWW3js).
-
-:::
-
 ## Installing Serverpod
 Serverpod is tested on Mac and Linux. It works on Windows, but it's still experimental. Before you can install Serverpod, you need to have the following tools installed:
 - __Flutter__ and __Dart__. You will need Flutter version 3.0 or later. https://flutter.dev/docs/get-started/install
@@ -38,7 +32,11 @@ Serverpod Insights is a companion app bundled with Serverpod. It allows you to a
 
 ![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
 
-___COMING SOON.___ Download the latest version here: __[Serverpod Insights](https://serverpod.dev)__. It is compatible with Serverpod version 1.x.
+:::info
+
+Download the latest version here: __[Serverpod Insights 1.0.0](https://serverpod.dev/insights/Serverpod-1.0.0-zip)__. It is compatible with Serverpod version 1.0.x. Always use the same version of Serverpod Insights as for the framework itself.
+
+:::
 
 ## Creating your first project
 To get your local server up and running, you need to create a new Serverpod project. Make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then create a new project by running `serverpod create`.
