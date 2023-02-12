@@ -32,3 +32,16 @@ You can also pass `List` and `Map` as parameters, but they need to be stricly ty
 
 ## Return types
 The return type must be a typed Future. Supported return types are the same as for parameters.
+
+## Use cURL
+You can call your endpoints using cURL or other API platforms (such as _Postman_) using this command:
+
+```console
+curl --request GET \
+  --url http://localhost:8080/example \
+  --header 'Content-Type: application/json' \
+  --data '{
+        "method": "hello",
+        "name": "World"
+  }'
+```
