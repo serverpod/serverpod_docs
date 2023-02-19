@@ -80,6 +80,9 @@ dependencies:
 Next, you need to set up a `SessionManager`, which keeps track of the user's state. It will also handle the authentication keys passed to the client from the server, upload user profile images, etc.
 
 ```dart
+late SessionManager sessionManager;
+late Client client;
+
 void main() async {
   // Need to call this as we are using Flutter bindings before runApp is called.
   WidgetsFlutterBinding.ensureInitialized();
