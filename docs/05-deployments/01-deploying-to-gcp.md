@@ -173,7 +173,7 @@ You now have everything you need to start creating your infrastructure. Start by
 ### Configure Terraform
 You can find the configuration file for your Terraform project in your server's `gcp/terraform/config.auto.tfvars` file. It is pretty self-explanatory; you only need to enter your _Project ID_ and the _Service account email_, the name of your _DNS zone_, and the _domain name_ you are deploying to. You got the details when completing the steps above, or you can find them in the Google Cloud Console.
 
-If you want to do more detailed configurations, you can do so in the `main.tf` file. The `main.tf` file refers to the `google_cloud_serverpod_gce` module, which handles most of the infrastructure. It contains some comments that explain how to use it, but you can also find the complete documentation [here](TODO).
+If you want to do more detailed configurations, you can do so in the `main.tf` file. The `main.tf` file refers to the `google_cloud_serverpod_gce` module, which handles most of the infrastructure. It contains some comments that explain how to use it, but you can also find the complete documentation [here](https://github.com/serverpod/google_cloud_serverpod_gce).
 
 
 ### Configure Serverpod
