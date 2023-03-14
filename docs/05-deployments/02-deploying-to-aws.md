@@ -29,10 +29,10 @@ The deployment scripts will set up everything you need to run your Serverpod, in
 You deploy your configuration with a domain name; the scripts will set up subdomains that provide access to different functions of your deployment:
 
 - _api.examplepod.com:_ This is the entry point for your main Serverpod server.
-- _app.examplepod.com:_ The Serverpod web server. If you prefer to host it on your top domain, and use _www_ as a redirect, you can change this in the main Terraform configuration file.
+- _app.examplepod.com:_ The Serverpod web server. If you prefer to host it on your top domain and use _www_ as a redirect, you can change this in the main Terraform configuration file.
 - _insights.examplepod.com:_ Provides access to the Serverpod UI and gets insights from your server while it is running.
 - _database.examplepod.com:_ This is how you access your database from outside the server.
-- _storage.examplepod.com:_ Access to public storage used by Serverpod. (This is optional.)
+- _storage.examplepod.com:_ Access to public storage used by Serverpod.
 
 ## Set up your domain name and certificates
 Before deploying your server, you must configure your server’s top domain in AWS. You can register your domain through any registrar, but you need to set up a public hosted zone in Route 53 in AWS.
