@@ -1,5 +1,5 @@
-# Deploying to Google Cloud Platform (GCP)
-Serverpod makes deploying your server to GCP easy using Github, Terraform, and Docker containers. Terraform will set up and manage your infrastructure while you use Github to build your Docker container and manage versions and deployments. Creating your project using `serverpod create` will automatically generate your deployment scripts. The default setup creates a minimal configuration, but you can easily modify the configuration to suit your needs.
+# Google Cloud Engine with Terraform
+Serverpod makes deploying your server to Cloud Engine easy using Github, Terraform, and Docker containers. Terraform will set up and manage your infrastructure while you use Github to build your Docker container and manage versions and deployments. Creating your project using `serverpod create` will automatically generate your deployment scripts. The default setup creates a minimal configuration, but you can easily modify the configuration to suit your needs.
 
 :::caution
 
@@ -13,13 +13,19 @@ To use the deployment scripts, you will need the following:
 1. A paid Google Cloud Platform account.
 2. Terraform [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli)
 3. Your Serverpod project version controlled on Github.
-4. A registered custom domain name (e.g., examplepod.com).
+4. A registered custom domain name (e.g., examplepod.com), or register one through _Cloud Domains_ in the GCP console.
 
 If you haven't used Terraform before, it's a great idea to go through their tutorial for GCP, as it will give you a basic understanding of how everything fits together. [Get started with Terraform and GCP](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started)
 
 :::info
 
 The top directory created by Serverpod must be the root directory of your Git repository. Otherwise, the deployment scripts won't work correctly.
+
+:::
+
+:::tip
+
+Registering your domain through Cloud Domains in the GCP console allows you to create a hosted zone simultaneously. It also makes it easier to verify your domain, and you can skip a few of the steps below. If you use Cloud Domains, register the domain after the step where you create your service account.
 
 :::
 
@@ -57,21 +63,27 @@ To be able to use your service account with Terraform, you will need to create a
 
 ![Create private keys](/img/gcp/2-private-key.jpg)
 
-The key is now downloaded to your computer. Rename the key to `credentials.json` and place it in your Serverpod's server directory under `gcp/terraform/`. E.g., the whole path would be something like `myproject_server/gcp/terraform/credentials.json`.
-
-### Enabling APIs
-To deploy your serverpod, you must enable a set of APIs on Google Cloud. You can find which APIs are enabled or enable new ones by going to _APIs & Services_ > _Enabled APIs & Services_. These are the APIs that you should enable:
-
-- Artifact Registry API
-- Certificate Manager API
-- Cloud DNS API
-- Cloud Resource Manager API
-- Compute Engine API
-- Service Networking API
-- sqladmin API (prod)
+The key is now downloaded to your computer. Rename the key to `credentials.json` and place it in your Serverpod's server directory under `deploy/gcp/terraform_gce`. E.g., the whole path would be something like `myproject_server/deploy/gcp/terraform_gce/credentials.json`.
 
 ## Set up your domain name
 The Terraform script automatically handles your subdomains, but you must manually set up your domain zone in Google Cloud Console. This setup is also helpful if you want to add other things to your domain, such as email, or associate your domain with a website not hosted by Serverpod.
+
+### Register your domain
+__If you already have a domain that you want to use, you should skip this step and continue at: [Create a DNS zone](#create-a-dns-zone)__
+
+Start by activating the required APIs for managing your domain. First, navigate to _Network services_ > _Cloud DNS_ and activate the service. Then navigate to _Network services_ > _Cloud Domains_ and activate it.
+
+Once _Cloud Domains_ is active, click the _Register Domain_ button. Search for the domain name you want to use and add it to your cart.
+
+In the DNS configuration, let Google's DNS servers manage the domain and connect it to a new DNS zone. Follow the steps to verify your email with Google Domains if needed.
+
+Your domain will automatically be verified with Google, but you must add your service account email as verified by Google's Webmaster Central. This step is required to be able to create SSL certificates for your domain.
+
+Go to the Google Webmaster Central: [https://www.google.com/webmasters/verification](https://www.google.com/webmasters/verification)
+
+Select your newly registered domain. Then, click _Add an owner_. Enter the email from the service account that you created earlier.
+
+Now, skip ahead to [Deploy your Serverpod code](#deploy-your-serverpod-code)
 
 ### Create a DNS zone
 Go to _Network Services_ > _Cloud DNS_, then click _Create Zone_. Create a public zone for your domain name. Take note of the name you assign to the domain name zone, you will need it when you configure the Terraform scripts.
@@ -126,7 +138,7 @@ Finally, click on _Add additional owners_ and add the email from the service acc
 Before creating our infrastructure, we must compile a Docker container with our Serverpod and deploy it to Google Cloud's Artifact Registry. The Docker container is compiled on Github and then pushed to the Artifact Registry using a Github action.
 
 ### Create Artifact Registry repositories
-Open up the Google Cloud Console and navigate to _Artifact Registry_ > _Repositories_. Click _Create Repository_. Set the _Name_ to `serverpod-production-container`, _Format_ to _Docker_, and _Mode_ to _Standard_. Select a _Region_ for your container.
+Open up the Google Cloud Console and navigate to _Artifact Registry_ > _Repositories_. Enable the API if needed. Click _Create Repository_. Set the _Name_ to `serverpod-production-container`, _Format_ to _Docker_, and _Mode_ to _Standard_. Select a _Region_ for your container.
 
 ![Create repository in Artifact Registry](/img/gcp/7-artifact-repository.jpg)
 
@@ -139,7 +151,7 @@ The region you pick for your Artifact Registry repository must match the region 
 Repeat the process and create a second container named `serverpod-staging-container`.
 
 ### Configure Github
-Now that we have our Artifact Registry repositories, we can push code to it. Head to your Github repository for your project. Navigate to _Settings_ > _Secrets and variables_ > Actions.
+Now that we have our Artifact Registry repositories, we can push code to it. Head to your Github repository for your project. Navigate to _Settings_ > _Secrets and variables_ > _Actions_.
 
 Click _New repository secret_. For the _Name_ enter `GOOGLE_CREDENTIALS`. For the _Secret_, copy the contents of the `gcp/terraform/credentials.json` file and paste its contents into the text field.
 
@@ -171,7 +183,7 @@ You now have everything you need to start creating your infrastructure. Start by
 
 
 ### Configure Terraform
-You can find the configuration file for your Terraform project in your server's `gcp/terraform/config.auto.tfvars` file. It is pretty self-explanatory; you only need to enter your _Project ID_ and the _Service account email_, the name of your _DNS zone_, and the _domain name_ you are deploying to. You got the details when completing the steps above, or you can find them in the Google Cloud Console.
+You can find the configuration file for your Terraform project in your server's `deploy/gcp/terraform_gce/config.auto.tfvars` file. It is pretty self-explanatory; you only need to enter your _Project ID_ and the _Service account email_, the name of your _DNS zone_, and the _domain name_ you are deploying to. You got the details when completing the steps above, or you can find them in the Google Cloud Console.
 
 If you want to do more detailed configurations, you can do so in the `main.tf` file. The `main.tf` file refers to the `google_cloud_serverpod_gce` module, which handles most of the infrastructure. It contains some comments that explain how to use it, but you can also find the complete documentation [here](https://github.com/serverpod/google_cloud_serverpod_gce).
 
@@ -186,7 +198,7 @@ If you are deploying a staging server in addition to your production server, you
 :::
 
 ### Deploy your infrastructure
-Once you have configured Terraform and your Serverpod, you are ready to deploy your infrastructure. Make sure that you have `cd`d into your `gcp/terraform` directory. Now run:
+Once you have configured Terraform and your Serverpod, you are ready to deploy your infrastructure. Make sure that you have `cd` into your `deploy/gcp/terraform_gce` directory. Now run:
 
 ```bash
 terraform init
