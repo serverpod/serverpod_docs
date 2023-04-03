@@ -160,6 +160,16 @@ t.foundedDate >= DateTime.utc(2020)
 t.foundedDate.notEquals(null)
 ```
 
+### Ordering rows
+It is often desirable to order the results of a database query. The `find` method contains an `orderBy` parameter, to which you can pass a column to order by. The static `t` field on your serializable objects includes a reference to a representation of your table. It has a field for each column.
+
+```dart
+var companies = await Company.find(
+  session,
+  orderBy: Company.t.name,
+);
+```
+
 ### Joining tables and nesting objects
 Serverpod does not yet support joins automatically. However, you can easily create nested objects by performing two or more queries.
 
