@@ -65,6 +65,17 @@ To be able to use your service account with Terraform, you will need to create a
 
 The key is now downloaded to your computer. Rename the key to `credentials.json` and place it in your Serverpod's server directory under `deploy/gcp/terraform_gce`. E.g., the whole path would be something like `myproject_server/deploy/gcp/terraform_gce/credentials.json`.
 
+### Enabling APIs
+To deploy your serverpod, you must enable a set of APIs on Google Cloud. You can find which APIs are enabled or enable new ones by going to _APIs & Services_ > _Enabled APIs & Services_. These are the APIs that you should enable:
+
+- Artifact Registry API  (artifactregistry.googleapis.com)
+- Certificate Manager API (certificatemanager.googleapis.com)
+- Cloud DNS API (dns.googleapis.com)
+- Cloud Resource Manager API (cloudresourcemanager.googleapis.com)
+- Cloud SQL Admin API (sqladmin.googleapis.com)
+- Compute Engine API (compute.googleapis.com)
+- Service Networking API (servicenetworking.googleapis.com)
+
 ## Set up your domain name
 The Terraform script automatically handles your subdomains, but you must manually set up your domain zone in Google Cloud Console. This setup is also helpful if you want to add other things to your domain, such as email, or associate your domain with a website not hosted by Serverpod.
 
