@@ -3,6 +3,12 @@ Serverpod is built by the community for the community. Pull requests are very mu
 
 If you want to contribute, please view our [roadmap](https://github.com/serverpod/serverpod/projects/1) and pick issues from there. This will make it much more likely that we can include the new features you are building.
 
+:::important
+
+For us to be able to accept your code, you must follow the guidelines below. __We cannot accept contributions unless there are tests written for it.__ We also cannot accept features that are not complete for all use cases. In very rare circumstances, we may still be able to use code that doesn't comply with the guidelines, but it may take a long time for us to free up a resource that can clean up the code or write missing tests.
+
+:::
+
 ## Working on Serverpod
 The main [Serverpod repository](https://github.com/serverpod/serverpod) contains all Serverpod code and code for tests and official modules and integrations. Send any pull requests to the `main` branch.
 
@@ -18,7 +24,7 @@ util/run_tests
 
 :::caution
 
-Tests may not yet work if running on a Windows machine. Mac is recommended for Serverpod development.
+Tests may not yet work if running on a Windows machine. Mac or Linux is recommended for Serverpod development.
 
 :::
 
@@ -59,12 +65,12 @@ Depending on your Dart version you may need to run the `dart pub global` command
 
 :::info
 
-If you run the local version of the `serverpod` command line interface you will need to set the `SERVERPOD_HOME` environment variable. It should point to your cloned `serverpod` repository.
+If you run the local version of the `serverpod` command line interface, you will need to set the `SERVERPOD_HOME` environment variable. It should point to your cloned `serverpod` repository.
 
 :::
 
 ### Editing the pubspec.yaml files
-First off, we are restrictive about which new packages we include in the Serverpod project. So before starting to add new dependencies you should probably get in touch with the maintainers of Serverpod to clear it.
+First off, we are restrictive about which new packages we include in the Serverpod project. So before starting to add new dependencies, you should probably get in touch with the maintainers of Serverpod to clear it.
 
 Secondly, you shouldn't edit the `pubspec.yaml` files directly. Instead, make changes to the files in the `templates/` directory. When you've made changes, run the `update_pubspecs` command to generate the `pubspec.yaml` files.
 
