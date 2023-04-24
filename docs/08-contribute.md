@@ -65,7 +65,9 @@ Depending on your Dart version you may need to run the `dart pub global` command
 
 :::info
 
-If you run the local version of the `serverpod` command line interface, you will need to set the `SERVERPOD_HOME` environment variable. It should point to your cloned `serverpod` repository.
+If you run the local version of the `serverpod` command line interface, you will need to set the `SERVERPOD_HOME` environment variable. It should point to the root your cloned `serverpod` monorepo. (E.g. `/Users/myuser/MyRepos/serverpod`)
+
+If you use `serverpod create` to set up a new project with a local version of the tooling, you may need to edit the pubspec files in the created packages to point to your local serverpod packages.
 
 :::
 
