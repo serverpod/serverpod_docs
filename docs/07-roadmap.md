@@ -1,8 +1,8 @@
 # Roadmap
 
-The complete Serverpod roadmap to version 1.0 is now up on Github. We are releasing features as soon as they become available and hope to have the final release ready in early fall 2022.
+The Roadmap is up on Github.
 
-[View the roadmap here.](https://github.com/serverpod/serverpod/projects/1)
+[View the roadmap here.](https://github.com/orgs/serverpod/projects/4/views/1)
 
 :::info
 
