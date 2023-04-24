@@ -19,6 +19,18 @@ Supported types are `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, a
 ### Extending the generated classes
 Sometimes you will want to add custom methods to the generated classes. The easiest way to do this is with Dart's extension feature.
 
+### Limiting visibility of a generated class
+By default, generated code for your serializable objects is available both on the server and the client. You may want to have the code on the server side only. E.g., if the serializable object is connected to a database table containing private information.
+
+To make a serializable class generated only on the server side, set the `serverOnly` property to `true`.
+
+```yaml
+class: MyPrivateClass
+serverOnly: true
+fields:
+  hiddenSecretKey: String
+```
+
 ### Adding documentation
 Serverpod allows you to add documentation to your serializable objects in a similar way that you would add documentation to your Dart code. Use three hashes (`###`) to indicate that a comment should be considered documentation.
 
