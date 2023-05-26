@@ -62,7 +62,7 @@ Create the client credentials. Navigate to _Credentials_ under _APIs & Services_
 
 Fill in all the required information, and create the credentials. Then download the `plist` file rename it to `GoogleService-Info.plist` and put it inside your ios project folder. Then drag and drop it into your XCode project to include the file in your build.
 
-Open the `GoogleService-Info.plist` in your editor and add the SERVER_CLIENT_ID if it does not exists:
+Open the `GoogleService-Info.plist` in your editor and add the SERVER_CLIENT_ID if it does not exist:
 
 ```xml
 <dict>
@@ -125,30 +125,31 @@ keytool -list -v -keystore /path/to/keystore
 ### Web
 
 There is no need to create any client credentials for the web we will simply pass the `serverClientId` to the sign-in button.
-However, we have to modify the server credentials inside the google cloud console. 
+However, we have to modify the server credentials inside the google cloud console.
 
-Navigate to _Credentials_ under _APIs & Services_ and select the server credentials. Under `Authorized JavaScript origins` and `Authorized redirect URIs` add the domain for your flutter app, for development this is `http://localhost:port` where the port is the port you are using.
-
-We also need to set up the actual redirect URI where the user will navigate too after the sign-in. You can choose any path you want but it has to be the same in the credentials, your server configuration, and Flutter configuration.
-
-We pick the path `/googlesignin`
-For development inside `Authorized redirect URIs` add `http://localhost:8082/googlesignin`, in production use `https://example.com/googlesignin`.
-Click Save!
-
-![Google credentials](/img/authentication/providers/google/2-credentials.png)
+Navigate to _Credentials_ under _APIs & Services_ and select the server credentials. Under `Authorized JavaScript origins` and `Authorized redirect URIs` add the domain for your Flutter app, for development, this is `http://localhost:port` where the port is the port you are using.
 
 :::info
+
 Force flutter to run on a specific port by running
+
 ```bash
 flutter run -d chrome --web-port=49660
 ```
 
 :::
 
+Set up the actual redirect URI where the user will navigate after the sign-in. You can choose any path you want but it has to be the same in the credentials, your server, and Flutter configurations.
+
+For example, using the path `/googlesignin`
+
+For development inside `Authorized redirect URIs` add `http://localhost:8082/googlesignin`, in production use `https://example.com/googlesignin`.
+
+![Google credentials](/img/authentication/providers/google/2-credentials.png)
 
 #### Serve the redirect page
 
-Open `server.dart` in your server project, and register the Google Sign In route.
+Register the Google Sign In route inside `server.dart`
 
 ```dart
 import 'package:serverpod_auth_server/module.dart' as auth
@@ -188,8 +189,8 @@ import 'package:serverpod_auth_google_flutter/serverpod_auth_google_flutter.dart
 
 SignInWithGoogleButton(
   caller: client.modules.auth,
-  clientId: _googleClientId, //Client ID of the client (null on web)
-  serverClientId: _googleServerClientId, //Client ID from the server (required on web)
+  clientId: _googleClientId, // Client ID of the client (null on web)
+  serverClientId: _googleServerClientId, // Client ID from the server (required on web)
   redirectUri: Uri.parse('http://localhost:8082/googlesignin'),
 )
 ```
@@ -202,6 +203,12 @@ The default setup allows access to basic user information, such as email, profil
 - Request access to the scopes when signing in. Do this by setting the `additionalScopes` parameter of the `signInWithGoogle` method or the `SignInWithGoogleButton` widget.
 
 A full list of available scopes can be found [here](https://developers.google.com/identity/protocols/oauth2/scopes).
+
+:::info
+
+Adding additional scopes may require approval by Google. On the OAuth consent screen, you can see which of your scopes are considered sensitive.
+
+:::
 
 On the server side, you can now access these Google APIs. If a user has signed in with Google, use the `GoogleAuth.authClientForUser` method from the `serverpod_auth_server` package to request an `AutoRefreshingAuthClient`. The `AutoRefreshingAuthClient` can be used to access Google's APIs on the user's behalf.
 
@@ -235,9 +242,3 @@ if (googleClient != null) {
   // The user hasn't signed in with Google.
 }
 ```
-
-:::info
-
-Adding additional scopes may require approval by Google. On the OAuth consent screen, you can see which of your scopes are considered sensitive.
-
-:::

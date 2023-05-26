@@ -1,3 +1,7 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
 # Setup
 
 Serverpod comes with built-in user management and authentication. The recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins. It is also possible to build a custom authentication integration but that is an advanced use case and won't be necessary for most implementations. Currently supported is Signing in with email, Google, Apple, and Firebase. Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
@@ -7,8 +11,6 @@ Serverpod comes with built-in user management and authentication. The recommende
 ## Installing the auth module
 
 Serverpod's auth module makes it easy to authenticate users through email or 3rd parties. The authentication module also handles basic user information, such as user names and profile pictures.
-
-Please refer to the previous section, [Modules](./modules), for in-depth instructions on how to add a module to your project.
 
 ## Server setup
 
@@ -28,9 +30,29 @@ modules:
     nickname: auth
 ```
 
-Initialize the database tables for the auth module, [get the table definitions](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_server/generated/tables.pgsql)
+### Initialize the auth database
 
-Run the SQL code on your database.
+Start your database container from the server project
+
+```bash
+docker-compose up --build --detach
+```
+
+[Copy / Download](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_server/generated/tables.pgsql) the table definitions for the auth module. Save them as `tables-auth.pgsql` in the `generated` folder of your server project.
+
+Run the SQL code on your database in your database viewer or run the docker command:
+
+```bash
+docker cp tables-auth.pgsql <container_name>:/docker-entrypoint-initdb.d/tables-auth.pgsql
+
+docker exec -u postgres <container_name> psql <db_name> postgres -f docker-entrypoint-initdb.d/tables-auth.pgsql
+```
+
+**<container_name>** is normally `project_name_server-postgres-1` but you can find the exact name by running `docker ps`.
+
+**<db_name>** is normally the same as `project_name` the exact configuration can be found inside `project_name/project_name_server/config/development.yaml`
+
+
 
 ## Client setup
 
@@ -67,13 +89,19 @@ void main() async {
   // Need to call this as we are using Flutter bindings before runApp is called.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Sets up a singleton client object that can be used to talk to the server
-  // from anywhere in our app. The client is generated from your server code.
+  // The android emulator does not have access to the localhost of the machine.
+  // const ipAddress = '10.0.2.2'; // Android emulator ip for the host
+
+  // On a real device replace the ipAddress with the IP address of your computer.
+  const ipAddress = 'localhost';
+
+  // Sets up a singleton client object that can be used to talk to the server from
+  // anywhere in our app. The client is generated from your server code.
   // The client is set up to connect to a Serverpod running on a local server on
   // the default port. You will need to modify this to connect to staging or
   // production servers.
   client = Client(
-    'http://localhost:8080/',
+    'http://$ipAddress:8080/',
     authenticationKeyManager: FlutterAuthenticationKeyManager(),
   )..connectivityMonitor = FlutterConnectivityMonitor();
 
