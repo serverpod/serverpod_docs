@@ -2,7 +2,7 @@
 
 To set up Sign in with Google, you will need a Google account for your organization and set up a new project. For the project, you need to set up _Credentials_ and _Oauth consent screen_. You will also need to add the `serverpod_auth_google_flutter` package to your app and do some additional setup depending on each platform.
 
-A comprehensive tutorial covering everything about google sign in is available [here](todo).
+A comprehensive tutorial covering everything about google sign in is available [here](https://medium.com/serverpod/integrating-google-sign-in-with-serverpod-authentication-part-2-6fade3099baf).
 
 :::note
 Right now, we only have official support for iOS, Android, and Web for Google Sign In.
