@@ -2,14 +2,14 @@
 
 Sign-in with Apple, requires that you have a subscription to the [Apple developer program](https://developer.apple.com/programs/), even if you only want to test the feature in development mode.
 
-A comprehensive tutorial covering Sign in with Apple is available [here](#todo).
+A comprehensive tutorial covering Sign in with Apple is available [here](https://medium.com/serverpod/integrating-apple-sign-in-with-serverpod-authentication-part-3-f5a49d006800).
 
 :::note
-Right now, we only have official support for iOS and MacOS for Sign in with Apple.
+Right now, we have official support for iOS and MacOS for Sign in with Apple.
 :::
 
 :::caution
-You need to install the auth module before you continue, see [Setup](../setup)
+You need to install the auth module before you continue, see [Setup](../setup).
 :::
 
 ## Server-side Configuration

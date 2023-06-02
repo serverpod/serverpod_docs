@@ -10,11 +10,12 @@ Serverpod comes with built-in user management and authentication. The recommende
 
 ## Installing the auth module
 
-Serverpod's auth module makes it easy to authenticate users through email or 3rd parties. The authentication module also handles basic user information, such as user names and profile pictures.
+Serverpod's auth module makes it easy to authenticate users through email or 3rd parties. The authentication module also handles basic user information, such as user names and profile pictures. Make sure to use the same version numbers as for Serverpod itself for all dependencies.
+
 
 ## Server setup
 
-Add the module as a dependency to the server projects `pubspec.yaml`
+Add the module as a dependency to the server projects `pubspec.yaml`.
 
 ```yaml
 dependencies:
@@ -32,7 +33,7 @@ modules:
 
 ### Initialize the auth database
 
-Start your database container from the server project
+Start your database container from the server project.
 
 ```bash
 docker-compose up --build --detach
@@ -42,21 +43,30 @@ docker-compose up --build --detach
 
 Run the SQL code on your database in your database viewer or run the docker command:
 
-```bash
-docker cp tables-auth.pgsql <container_name>:/docker-entrypoint-initdb.d/tables-auth.pgsql
+<Tabs>
+  <TabItem value="unix" label="MacOS & Linux" default>
 
-docker exec -u postgres <container_name> psql <db_name> postgres -f docker-entrypoint-initdb.d/tables-auth.pgsql
+```bash
+docker compose run -T --rm postgres env PGPASSWORD="<db_password>" psql -h postgres -U postgres -d <db_name> < generated/tables-auth.pgsql
 ```
 
-**<container_name>** is normally `project_name_server-postgres-1` but you can find the exact name by running `docker ps`.
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+```cmd
+type .\generated\tables-auth.pgsql | docker compose run -T postgres env PGPASSWORD="<db_password>" psql -h postgres -U postgres -d <db_name>
+```
+
+  </TabItem>
+</Tabs>
+
+**<db_password>** needs to be replaced with the password for the database, you can find it inside the `config/passwords.yaml` file inside the server project.
 
 **<db_name>** is normally the same as `project_name` the exact configuration can be found inside `project_name/project_name_server/config/development.yaml`
 
-
-
 ## Client setup
 
-Add the auth client in your client projects `pubspec.yaml`
+Add the auth client in your client projects `pubspec.yaml`.
 
 ```yaml
 dependencies:
@@ -66,7 +76,7 @@ dependencies:
 
 ## App setup
 
-First, add dependencies to your app's `pubspec.yaml` file for the methods of signing in that you want to support. Make sure to use the same version numbers as for Serverpod itself.
+First, add dependencies to your app's `pubspec.yaml` file for the methods of signing in that you want to support.
 
 ```yaml
 dependencies:

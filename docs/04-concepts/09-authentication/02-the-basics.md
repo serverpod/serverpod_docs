@@ -71,8 +71,8 @@ You may need more granular access control for specific endpoints. To create cust
 class CustomScope extends Scope {
   const CustomScope(String name) : super(name);
 
-  static const readUsers = CustomScope('read:users');
-  static const writeUsers = CustomScope('write:users');
+  static const userRead = CustomScope('user.read');
+  static const userWrite = CustomScope('user.write');
 }
 ```
 
@@ -84,7 +84,7 @@ class MyEndpoint extends Endpoint {
   bool get requireLogin => true;
 
   @override
-  Set<Scope> get requiredScopes => {CustomScope.readUsers, CustomScope.writeUsers};
+  Set<Scope> get requiredScopes => {CustomScope.userRead, CustomScope.userWrite};
 
   Future<void> myMethod(Session session) async {
     ...

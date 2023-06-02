@@ -5,11 +5,11 @@ To set up Sign in with Google, you will need a Google account for your organizat
 A comprehensive tutorial covering everything about google sign in is available [here](https://medium.com/serverpod/integrating-google-sign-in-with-serverpod-authentication-part-2-6fade3099baf).
 
 :::note
-Right now, we only have official support for iOS, Android, and Web for Google Sign In.
+Right now, we have official support for iOS, Android, and Web for Google Sign In.
 :::
 
 :::caution
-You need to install the auth module before you continue, see [Setup](../setup)
+You need to install the auth module before you continue, see [Setup](../setup).
 :::
 
 ## Create your credentials
@@ -24,9 +24,9 @@ To be allowed to access user data and use the authentication method in Serverpod
 
 ### Setup OAuth consent screen
 
-Can be found [here](https://console.cloud.google.com/apis/credentials/consent) or under _APIs & Services_ > _OAuth consent screen_.
+The setup for the OAuth consent screen can be found [here](https://console.cloud.google.com/apis/credentials/consent) or under _APIs & Services_ > _OAuth consent screen_.
 
-1. Fill in all the required information, for production use you need a domain that adds under `Authorized` domains`.
+1. Fill in all the required information, for production use you need a domain that adds under `Authorized` domains.
 
 2. Add the scopes `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
 
@@ -101,7 +101,7 @@ Replace `your_reversed_client_id` with your reversed client ID.
 
 :::info
 
-If you have any social logins in your app you also need to integrate "Sign in with Apple" to publish your app to the app store. ([Read more](https://developer.apple.com/sign-in-with-apple/get-started/))
+If you have any social logins in your app you also need to integrate "Sign in with Apple" to publish your app to the app store. ([Read more](https://developer.apple.com/sign-in-with-apple/get-started/)).
 
 :::
 
@@ -114,7 +114,7 @@ Fill in all required information, you can get the debug SHA-1 hash by running `.
 Put the file inside the `android/app/` directory and rename it to `google-services.json`.
 
 :::info
-For a production app you need to get the SHA-1 key from your production keystore! This can be done by running this command: ([Read more](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid))
+For a production app you need to get the SHA-1 key from your production keystore! This can be done by running this command: ([Read more](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid)).
 
 ```bash
 keytool -list -v -keystore /path/to/keystore
@@ -131,7 +131,7 @@ Navigate to _Credentials_ under _APIs & Services_ and select the server credenti
 
 :::info
 
-Force flutter to run on a specific port by running
+Force flutter to run on a specific port by running.
 
 ```bash
 flutter run -d chrome --web-port=49660
@@ -141,7 +141,7 @@ flutter run -d chrome --web-port=49660
 
 Set up the actual redirect URI where the user will navigate after the sign-in. You can choose any path you want but it has to be the same in the credentials, your server, and Flutter configurations.
 
-For example, using the path `/googlesignin`
+For example, using the path `/googlesignin`.
 
 For development inside `Authorized redirect URIs` add `http://localhost:8082/googlesignin`, in production use `https://example.com/googlesignin`.
 
@@ -149,7 +149,7 @@ For development inside `Authorized redirect URIs` add `http://localhost:8082/goo
 
 #### Serve the redirect page
 
-Register the Google Sign In route inside `server.dart`
+Register the Google Sign In route inside `server.dart`.
 
 ```dart
 import 'package:serverpod_auth_server/module.dart' as auth

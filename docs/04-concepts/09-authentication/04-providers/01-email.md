@@ -2,10 +2,10 @@
 
 To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Sendgrid or Mandrill, support SMTP.
 
-A comprehensive tutorial covering email/password sign-in complete with sending the validation code via email is available [here](https://medium.com/serverpod/getting-started-with-serverpod-authentication-part-1-72c25280e6e9)
+A comprehensive tutorial covering email/password sign-in complete with sending the validation code via email is available [here](https://medium.com/serverpod/getting-started-with-serverpod-authentication-part-1-72c25280e6e9).
 
 :::caution
-You need to install the auth module before you continue, see [Setup](../setup)
+You need to install the auth module before you continue, see [Setup](../setup).
 :::
 
 
