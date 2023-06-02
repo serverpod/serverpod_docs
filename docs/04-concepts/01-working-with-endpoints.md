@@ -19,6 +19,20 @@ On the client side, you can now call the method by calling:
 var result = await client.example.hello('World');
 ```
 
+The client is initialized like this:
+
+```dart
+// Sets up a singleton client object that can be used to talk to the server from
+// anywhere in our app. The client is generated from your server code.
+// The client is set up to connect to a Serverpod running on a local server on
+// the default port. You will need to modify this to connect to staging or
+// production servers.
+var client = Client('http://localhost:8080/')
+  ..connectivityMonitor = FlutterConnectivityMonitor();
+```
+
+If you run the app in an Android emulator, change the address to `10.0.2.2` as this is the IP address of the host machine.
+
 :::info
 
 You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code when needed continuously. This is useful during the development of your server.
