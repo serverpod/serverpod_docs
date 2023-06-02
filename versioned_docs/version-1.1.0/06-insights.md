@@ -8,5 +8,5 @@ Serverpod Insights is Serverpod's companion app. It's currently available as a b
 
 | App version                         | MacOS                                                                 | Windows       |
 | :---------------------------------- | :-------------------------------------------------------------------- | :------------ |
-| Serverpod Insights 1.1.0 (latest)   | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.1.0.zip) | _Coming soon_ |
-| Serverpod Insights 1.0.0            | [Download](https://serverpod.dev/insights/Serverpod-1.0.0.zip)        |               |
+| Serverpod Insights 1.1.0 (latest)   | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.1.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-1.1.0.zip) |
+| Serverpod Insights 1.0.0            | [Download](https://serverpod.dev/insights/Serverpod-1.0.0.zip)        |     n/a       |
