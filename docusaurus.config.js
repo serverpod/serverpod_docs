@@ -42,7 +42,7 @@ const config = {
     ({
       colorMode: {
         respectPrefersColorScheme: true,
-        disableSwitch: true,
+        disableSwitch: false,
       },
       navbar: {
         // title: 'My Site',
