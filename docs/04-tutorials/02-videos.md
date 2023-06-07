@@ -22,6 +22,6 @@ Learn installation, CRUD operations, and real-time communication.
 
 ## Ajay k
 
-Learn how to integrating Sign in with Google, and uploading files to S3. [Full playlist](https://www.youtube.com/watch?v=8dDucblphek&list=PL0CMCjqejDDQFDNDCNJHGDnmwSbFpUWxq)
+Learn how to integrating Sign in with Google, and uploading files to S3. [Full playlist](https://www.youtube.com/watch?v=8dDucblphek&list=PL0CMCjqejDDQFDNDCNJHGDnmwSbFpUWxq).
 
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/y7oLNlbWbUY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
