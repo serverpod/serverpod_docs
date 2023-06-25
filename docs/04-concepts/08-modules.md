@@ -1,13 +1,17 @@
 # Modules
+
 Serverpod is built around the concept of modules. A Serverpod module is similar to a Dart package but contains both server and client code and Flutter widgets. A module contains its own namespace for endpoints and methods to minimize module conflicts.
 
 Examples of modules are the `serverpod_auth` module and the `serverpod_chat` module, which both are maintained by the Serverpod team.
 
 ## Adding a module to your project
+
 ### Database setup
+
 Each module comes with a set of database tables. You must add these to your database for the module to work. The code for creating the tables lives in the `generated/tables.pgsql` file of the `server` part of the module. For instance, you can find the database tables for the auth module [here](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_server/generated/tables.pgsql).
 
 ### Server setup
+
 To add a module to your project, you must include the server and client/Flutter packages in your project's `pubspec.yaml` files and to add an entry to your `config/generator.yaml` file.
 
 For example, to add the `serverpod_auth` module to your project, you need to add `serverpod_auth_server` to your server's `pubspec.yaml`:
@@ -39,6 +43,7 @@ serverpod generate
 ```
 
 ### Client setup
+
 In your client's `pubspec.yaml`, you will need to add the generated client code from the module.
 
 ```yaml
@@ -47,6 +52,7 @@ dependencies:
 ```
 
 ### Flutter app setup
+
 In your Flutter app, add the corresponding dart or Flutter package(s) to your `pubspec.yaml`.
 
 ```yaml
@@ -57,6 +63,7 @@ dependencies:
 ```
 
 ## Referencing a module
+
 It can be useful to reference serializable objects in other modules from the yaml-files in your protocol directory. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the auth package.
 
 ```yaml
@@ -66,6 +73,7 @@ fields:
 ```
 
 ## Creating custom modules
+
 With the `serverpod create` command, it is possible to create new modules for code that is shared between projects or that you want to publish to pub.dev. To create a module instead of a server project, pass `module` to the `--template` flag.
 
 ```bash
