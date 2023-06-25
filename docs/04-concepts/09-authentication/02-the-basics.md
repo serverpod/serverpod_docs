@@ -1,6 +1,6 @@
 # The basics
 
-Serverpod automatically checks if the user is logged in and if the user has the right privileges to access the endpoint. When using the `serverpod_auth` module you will not have to worry about keeping track of tokens, refreshing them or, even including them in requests as this all happens under the hood!
+Serverpod automatically checks if the user is logged in and if the user has the right privileges to access the endpoint. When using the `serverpod_auth` module you will not have to worry about keeping track of tokens, refreshing them or, even including them in requests as this all happens automatically under the hood.
 
 The `Session` object provides information about the current user. A unique `userId` identifies a user. You should use this id whenever you a referring to a user. Access the id of a signed-in user through the `auth` field of the `Session` object.
 
@@ -71,8 +71,8 @@ You may need more granular access control for specific endpoints. To create cust
 class CustomScope extends Scope {
   const CustomScope(String name) : super(name);
 
-  static const userRead = CustomScope('user.read');
-  static const userWrite = CustomScope('user.write');
+  static const userRead = CustomScope('userRead');
+  static const userWrite = CustomScope('userWrite');
 }
 ```
 
