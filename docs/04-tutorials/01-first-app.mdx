@@ -1,0 +1,777 @@
+import ReactPlayer from 'react-player'
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+# Build your first app
+
+You will build a simple note-taking app in this tutorial. You will learn the fundamental building blocks of Serverpod that enable you to create powerful and scalable server-side applications with ease. 
+
+We are assuming you have all the tools setup and ready to go. If not, please follow the [Getting Started](/) guide to get up and running.
+
+We will cover the following topics:
+
+- Creating serializable objects
+- Creating a database table
+- Creating API endpoints for CRUD operations
+- Using the serverpod code generator
+- Using the generated client library
+- Connecting a Flutter app to the server
+
+
+
+Demo of what we will build: ([Full code example](https://github.com/serverpod/notes)).
+
+<ReactPlayer playing={true} loop controls width="960px" height="720px" url='/img/tutorial/note-app/01-note-app-demo.mp4' />
+
+## Create a new project
+
+Create a new project using the Serverpod CLI. Run the following command in your terminal:
+
+```bash
+$ serverpod create notes
+```
+
+To start the server:
+
+```bash
+cd notes/notes_server
+docker-compose up --build --detach
+dart bin/main.dart
+```
+
+
+## Creating Serializable Object
+
+Serverpod comes with a convenient way to create serializable objects with the help of code generation. These objects can easily be sent back and forth between the server and the client. This is all managed by defining our objects in a YAML file and that the code generator then parses and generates the necessary code for us.
+
+To define the structure of the our Note object, we will create a YAML file called `note.yaml`. Navigate to the `lib/src/protocol` folder in your Serverpod project (notes_server). Create the file and add the following content:
+
+```yaml
+### Holds a note with a text written by the user.
+class: Note
+fields:
+  ### The contents of the note.
+  text: String
+```
+
+Let's take a closer look at the content of the notes.yaml file:
+* **class: Note** Specifies the name of the class to be generated, which in this case is Note.
+* **fields:** This keyword indicates the beginning of the field definitions for the Note class.
+* **text: String** Defines the text field of type String in the Note class, in this minimal example we only have one field but you can add however many fields you need.
+
+
+Use the code generator and generate the necessary code for the Note class. Run the following command from the root of your server project:
+
+```bash
+$ serverpod generate
+```
+
+The code generator will process the notes.yaml file and generate the required code for the Note class.
+
+After the code generation process is complete, you can access the generated code for the Note class. The generated code will be available in the `lib/src/generated/note.dart` inside your Serverpod project.
+
+![Serverpod Insights](/img/tutorial/note-app/02-note-class.png)
+
+By extending the SerializableEntity class, the Note object becomes capable of automatic serialization and deserialization by Serverpod. This means that the Note object can be converted into a serialized format and easily transmitted between the server and the client.
+
+In simpler terms, we have created a class, Note, that can hold information and be passed around within the server. Additionally, we can send this object all the way to the client side of our application. Serverpod takes care of handling the conversion between the object and its serialized representation, making it convenient to work with and transfer data seamlessly.
+
+## Creating a database table
+
+We will make use of Serverpod's built-in support for database integration. We can very easily create the bindings for the database for our new note class by specifying the database table in the YAML file. 
+
+The updated content of the `note.yaml` file should look like this:
+
+```yaml
+### Holds a note with a text written by the user.
+class: Note
+table: note
+fields:
+  ### The contents of the note.
+  text: String
+```
+
+Run the code generator again to generate the necessary code for the database table:
+
+```bash
+$ serverpod generate
+```
+
+Take a look at the updated `lib/src/generated/note.dart` file. You will notice that the code generator has added a new methods for interacting with the database. 
+
+### Accessing the Generated SQL Code
+
+The code generator also generate the necessary SQL code for creating the database table. The SQL code can be found in the `notes_server/generated/tables.pgsql` file.
+
+Here is the SQL code generated for the Note table:
+
+```sql
+--
+-- Class Note as table note
+--
+
+CREATE TABLE "note" (
+  "id" serial,
+  "text" text NOT NULL
+);
+
+ALTER TABLE ONLY "note"
+  ADD CONSTRAINT note_pkey PRIMARY KEY (id);
+```
+
+### Applying the Database Changes
+
+To apply the changes to the database, you need to execute the SQL code generated in the `notes_server/generated/tables.pgsql` file. You can use a database administration tool or the command line to run the SQL code.
+
+
+<Tabs>
+  <TabItem value="unix" label="MacOS & Linux" default>
+
+```bash
+docker compose run -T --rm postgres env PGPASSWORD="\$POSTGRES_PASSWORD" psql -h postgres -U postgres -d notes < generated/tables.pgsql
+```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+```cmd
+type .\generated\tables.pgsql | docker compose run -T postgres env PGPASSWORD="DB_PASSWORD" psql -h postgres -U postgres -d notes
+```
+
+  </TabItem>
+</Tabs>
+
+You need to replace `DB_PASSWORD` with the password for the database, you can find it inside the `notes_server/config/passwords.yaml` file.
+If you didn't name your project `notes` you need to replace `-d notes` with the name of your project. 
+
+Once the SQL code is executed successfully, the database table for storing the note data will be created.
+
+:::info
+
+Any time you update the table definitions you have to run the sql code on your database to update the database schema.
+
+:::
+
+
+## Creating API endpoints for CRUD operations
+
+In Serverpod, endpoints are defined in the endpoints folder within your server project. The code generator analyzes the code within these endpoints and generates a client library based on the defined functions. This client library makes it incredibly easy to access the backend functionality from your Flutter app.
+
+Create a new file `notes_endpoint.dart` inside `lib/src/endpoints` folder. 
+
+```dart
+import 'package:serverpod/server.dart';
+
+import '../generated/protocol.dart';
+
+class NotesEndpoint extends Endpoint {
+  // Endpoint implementation goes here
+}
+
+```
+
+In the above code, we import the necessary dependencies and import the generated Note class from the protocol.dart file. We also define the NotesEndpoint class, which extends the Endpoint class provided by Serverpod. This is required for the endpoint to be recognized by the Serverpod code generator.
+
+### Defining endpoints
+
+To define an endpoint that can be called from the client, we need to create a method inside the `NotesEndpoint` class. This methods _must_ return a **Future** and a **serializable object**, **primitive datatype**, or **void**. 
+
+The first method param has to be a **Session** object. This is a special object in Serverpod that contains information about the current session, as well as other convenience methods.
+
+```dart
+Future<void> example(Session session) async {
+  // Endpoint implementation goes here
+}
+```
+
+The method is also allowed to have `1..n` many extra parameters. These parameters will be passed from the client when the endpoint is called. The parameters follow the same type restrictions as the return type.
+
+### Implementing the `createNote` method
+
+The createNote method creates a new note in the database. It takes a Session parameter and a Note parameter representing the new note to be created.
+
+```dart
+Future<void> createNote(Session session, Note note) async {
+  await Note.insert(session, note);
+}
+```
+
+In the above code, we use the Note.insert method to insert the specified Note object into the database.
+
+### Implementing the `deleteNote` method
+The deleteNote method deletes an existing note from the database. It takes a Session parameter and a Note parameter representing the note to be deleted.
+
+```dart
+Future<void> deleteNote(Session session, Note note) async {
+  await Note.deleteRow(session, note);
+}
+```
+
+In the above code, we use the Note.deleteRow method to delete the specified Note object from the database.
+
+
+### Implementing the `getAllNotes` method
+
+The getAllNotes method retrieves all the notes from the database and returns them as a list of Note objects. It takes a Session parameter, which represents the current session with the server.
+
+```dart
+Future<List<Note>> getAllNotes(Session session) async {
+  // By ordering by the id column, we always get the notes in the same order
+  // and not in the order they were updated.
+  return await Note.find(
+    session,
+    orderBy: Note.t.id,
+  );
+}
+```
+
+In the above code, we use the Note.find method to retrieve all the notes from the database. By specifying orderBy: Note.t.id, we ensure that the notes are always returned in the same order based on the id column.
+
+Putting it all together you end up with a file that looks like this:
+
+```dart
+import 'package:serverpod/server.dart';
+
+import '../generated/protocol.dart';
+
+class NotesEndpoint extends Endpoint {
+  Future<List<Note>> getAllNotes(Session session) async {
+    // By ordering by the id column, we always get the notes in the same order
+    // and not in the order they were updated.
+    return await Note.find(
+      session,
+      orderBy: Note.t.id,
+    );
+  }
+
+  Future<void> createNote(Session session, Note note) async {
+    await Note.insert(session, note);
+  }
+
+  Future<void> deleteNote(Session session, Note note) async {
+    await Note.deleteRow(session, note);
+  }
+}
+```
+
+### Generate the client library
+
+Congratualtions you have now created all the endpoints needed for the note app. Complete with a database integration that presistently stores the notes.
+
+Lets run the code generator again, to generate the client library for our endpoints (run from the server project).
+
+```bash
+$ serverpod generate
+```
+
+You can find all the newly generated code in the project folder `notes_client`. You normally don't need to touch this folder/project, but it's good to know where it is located.
+
+
+## Creating the Flutter App and Connecting It to the Server
+
+Open the `main.dart` file in your Flutter project.
+
+Locate the MyHomePageState class.
+
+Update the `MyHomePageState` class by removing all unncessary code, so that it looks like this:
+
+```dart
+class MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+    );
+  }
+}
+
+```
+
+You can also remove the entire `_ResultDisplay` class from the file.
+
+### Load the notes from the server
+
+To fetch all the notes from the server and handle potential connection failures, we first need to declare variables to hold the state inside the `MyHomePageState` class.
+
+```dart
+import 'package:notes_client/notes_client.dart';
+...
+
+class MyHomePageState extends State<MyHomePage> {
+
+  List<Note>? _notes;
+  Exception? _connectionException;
+
+  ...
+}
+```
+
+Lets create a method to handle the connection failures. Call it `_connectionFailed`, it updates the state to set _notes to null and stores the thrown exception in _connectionException.
+
+```dart
+void _connectionFailed(dynamic exception) {
+  setState(() {
+    _notes = null;
+    _connectionException = exception;
+  });
+}
+```
+
+Next let's implement fetching all the notes from the server endpoint we implemented earlier. We set the notes state if successful otherwise we call the `_connectionFailed` method, to deal with the exception.
+
+```dart
+Future<void> _loadNotes() async {
+  try {
+    final notes = await client.notes.getAllNotes();
+    setState(() {
+      _notes = notes;
+    });
+  } catch (e) {
+    _connectionFailed(e);
+  }
+}
+```
+
+Finally, we need to call the `_loadNotes` method when the app is initialized. We do this by overriding the `initState` method and call `_loadNotes` from there. 
+
+```dart
+@override
+void initState() {
+  super.initState();
+  _loadNotes();
+}
+```
+
+### Render the notes
+
+To render the fetched notes in the app's main screen, we will update the build method inside the MyHomePageState class. Here is the modified code:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(widget.title),
+    ),
+    body: _notes == null
+      ? Container()
+      : ListView.builder(
+          itemCount: _notes!.length,
+          itemBuilder: ((context, index) {
+            return ListTile(
+              title: Text(_notes![index].text),
+            );
+          }),
+        ),
+  );
+}
+```
+
+The _notes variable is checked to determine if notes have been fetched from the server or not. If _notes is null, an empty Container widget is displayed as a placeholder.
+
+If _notes is not null, a ListView.builder widget is used to render the notes. The itemCount property is set to the length of the _notes list, and the itemBuilder callback is responsible for building the individual ListTile widgets.
+
+Inside the itemBuilder callback, each note's text is displayed in a ListTile using the Text widget.
+
+### Creating new notes
+
+First let's create a helper function to call our backend endpoint to create a new note. We call it `_createNote` and it takes a Note object as a parameter. 
+
+```dart
+Future<void> _createNote(Note note) async {
+  try {
+    await client.notes.createNote(note);
+    await _loadNotes();
+  } catch (e) {
+    _connectionFailed(e);
+  }
+}
+```
+
+The `_createNote` method calls the `createNote` endpoint and then calls `_loadNotes` to refresh the notes list.
+
+The user needs somewhere to input the notes, let's create a dialog for this. To create the note dialog for entering the note's text, create a new file called `note_dialog.dart` and add the code.
+
+<details><summary>Code: note_dialog.dart</summary>
+<p>
+
+```dart
+import 'package:flutter/material.dart';
+
+void showNoteDialog({
+  required BuildContext context,
+  String text = '',
+  required ValueChanged<String> onSaved,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) => NoteDialog(
+      text: text,
+      onSaved: onSaved,
+    ),
+  );
+}
+
+class NoteDialog extends StatefulWidget {
+  const NoteDialog({
+    required this.text,
+    required this.onSaved,
+    super.key,
+  });
+
+  final String text;
+  final ValueChanged<String> onSaved;
+
+  @override
+  NoteDialogState createState() => NoteDialogState();
+}
+
+class NoteDialogState extends State<NoteDialog> {
+  final TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.text = widget.text;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                expands: true,
+                maxLines: null,
+                minLines: null,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Write your note here...',
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                widget.onSaved(controller.text);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+</p>
+</details>
+
+The dialog is needed but we will skip going into details on how it works as this is just normal Flutter code. The gist is that we have a function that triggers an input dialog and a callback for when the user saves the input.
+
+We need a button to trigger this dialog, the FAB is prefect for this. Add the following code to the build method inside the MyHomePageState class:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    ...
+    floatingActionButton: _notes == null
+      ? null
+      : FloatingActionButton(
+          onPressed: () {
+            showNoteDialog(
+              context: context,
+              onSaved: (text) {
+                var note = Note(
+                  text: text,
+                );
+                _notes!.add(note);
+
+                _createNote(note);
+              },
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
+  );
+}
+```
+
+We trigger the note dialog when the FAB is pressed and then save the note in the onSaved callback. To make the UI feel more responsive we add the changes to the notes list before calling `_createNote`. This way the note will be added to the list immediately and then updated when the server responds.
+
+Finally add the loading screen to the project, create a new file called `loading_screen.dart` and add the code.
+
+<details><summary>Code: loading_screen.dart</summary>
+<p>
+
+```dart
+import 'package:flutter/material.dart';
+
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({
+    this.exception,
+    required this.onTryAgain,
+    super.key,
+  });
+
+  final Exception? exception;
+  final VoidCallback onTryAgain;
+
+  @override
+  Widget build(BuildContext context) {
+    if (exception != null) {
+      return Center(
+        child: ElevatedButton(
+          onPressed: onTryAgain,
+          child: const Text('Try again'),
+        ),
+      );
+    } else {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+  }
+}
+
+```
+
+</p>
+</details>
+
+Replace the emtpy container with the loading screen in the build method.
+
+<details><summary>Code: main.dart</summary>
+<p>
+
+```dart
+import 'package:notes_client/notes_client.dart';
+import 'package:flutter/material.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
+
+import 'note_dialog.dart';
+
+// Sets up a singleton client object that can be used to talk to the server from
+// anywhere in our app. The client is generated from your server code.
+// The client is set up to connect to a Serverpod running on a local server on
+// the default port. You will need to modify this to connect to staging or
+// production servers.
+var client = Client('http://localhost:8080/')
+  ..connectivityMonitor = FlutterConnectivityMonitor();
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Notes',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'Notes'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
+class MyHomePageState extends State<MyHomePage> {
+  // This field holds the list of notes that we've received from the server or
+  // null if no notes have been received yet.
+  List<Note>? _notes;
+
+  // If the connection to the server fails, this field will hold the exception
+  // that was thrown.
+  Exception? _connectionException;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotes();
+  }
+
+  Future<void> _loadNotes() async {
+    try {
+      final notes = await client.notes.getAllNotes();
+      setState(() {
+        _notes = notes;
+      });
+    } catch (e) {
+      _connectionFailed(e);
+    }
+  }
+
+  Future<void> _createNote(Note note) async {
+    try {
+      await client.notes.createNote(note);
+      await _loadNotes();
+    } catch (e) {
+      _connectionFailed(e);
+    }
+  }
+
+  void _connectionFailed(dynamic exception) {
+    // If the connection to the server fails, we clear the list of notes and
+    // store the exception that was thrown. This will make the loading screen
+    // appear and show a button to try again.
+
+    // In a real app you would probably want to do more complete error handling.
+    setState(() {
+      _notes = null;
+      _connectionException = exception;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: _notes == null
+          ? LoadingScreen(
+              exception: _connectionException,
+              onTryAgain: _loadNotes,
+            )
+          : ListView.builder(
+              itemCount: _notes!.length,
+              itemBuilder: ((context, index) {
+                return ListTile(
+                  title: Text(_notes![index].text),
+                );
+              }),
+            ),
+      floatingActionButton: _notes == null
+          ? null
+          : FloatingActionButton(
+              onPressed: () {
+                // When we tap the floating action button we want to show a
+                // dialog where we can create a new note.
+                showNoteDialog(
+                  context: context,
+                  onSaved: (text) {
+                    var note = Note(
+                      text: text,
+                    );
+
+                    // Add the note to the list of notes before we've received
+                    // a response from the server which makes the UI feel more
+                    // responsive.
+                    _notes!.add(note);
+
+                    // Actually create the note on the server.
+                    _createNote(note);
+                  },
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
+    );
+  }
+}
+```
+
+</p>
+</details>
+
+
+### Run the app
+
+
+Start the database and server:
+Make sure you reboot the server if you started it earlier.
+
+```bash
+cd notes_server
+docker-compose up --build --detach
+dart bin/main.dart
+```
+
+Start the Flutter app (in any platform you like):
+
+```bash
+cd notes_flutter
+flutter run
+```
+
+<ReactPlayer playing={true} loop controls width="960px" height="720px" url='/img/tutorial/note-app/03-note-create.mp4' />
+
+### Deleting notes
+
+Implementing the delete functionality is very similar to the create functionality. We will add a delete button to each note and then call the delete endpoint when the button is pressed. First let's add the helper method to call the endpoint:
+
+```dart
+Future<void> _deleteNote(Note note) async {
+  try {
+    await client.notes.deleteNote(note);
+    await _loadNotes();
+  } catch (e) {
+    _connectionFailed(e);
+  }
+}
+```
+
+Next in our `ListTile` we add a delete button, and call the `_deleteNote` method when the button is pressed, but just as before we update the local state first to make the UI feel more responsive.
+
+```dart
+ListTile(
+  ...
+  trailing: IconButton(
+    icon: const Icon(Icons.delete),
+    onPressed: () {
+      var note = _notes![index];
+
+      setState(() {
+        _notes!.remove(note);
+      });
+
+      _deleteNote(note);
+    },
+  ),
+),
+```
+
+Look at that we can now delete all the notes we have created.
+
+<ReactPlayer playing={true} controls width="960px" height="720px" url='/img/tutorial/note-app/04-note-delete.mp4' />
+
+
+### Editing notes
+
+We leave this part as a excersice to the reader, try to see if you can implement the edit functionality. You can use the `showNoteDialog` method we created earlier to show the dialog for editing the note. If you followed along so far you have all the tools you need to implement this feature!
+
+Give it a go, in case you need some help you can look at the ([full code example](https://github.com/serverpod/notes)).
+
+## Summary
+
+In this tutorial, you learned how to build a simple note-taking app using the Serverpod backend framework. You started by setting up the necessary tools and environment to work with Serverpod. Then, you covered various aspects of building the app, including creating serializable objects, creating a database table, and creating API endpoints for performing CRUD operations on notes.
+
+You also learned how to use the serverpod code generator to generate the required code and how to use the generated client library to connect the Flutter app to the server. By establishing this connection, you were able to fetch notes from the server and display them in the app.
+
+Throughout the tutorial, you gained an understanding of how Serverpod simplifies the development process by automatically handling serialization and deserialization of objects, managing database tables, and providing a seamless integration with Flutter. You have acquired the foundational knowledge to build powerful and scalable server-side applications using Serverpod. Want to learn more? 
+
+Congratulations on completing this tutorial! You are now equipped with the skills to build your own server-side applications using Serverpod. Happy coding!
+
+Want to learn more? Checkout our great [tutorial series on authentication](./tutorials/authentication)!

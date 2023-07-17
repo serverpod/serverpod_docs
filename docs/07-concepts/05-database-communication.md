@@ -93,10 +93,10 @@ var myRow = Company(name: 'Serverpod corp.', employees: []);
 await Company.insert(session, myRow);
 ```
 
-After the object has been inserted, it's `id` field is set from its row in the database.
+After the object has been inserted, its `id` field is set from its row in the database.
 
 ### Finding a single row
-You can find a single row, either by its `id` or using an expression. You need to pass a reference to the a session in the call. Tables are accessible through generated serializable classes.
+You can find a single row, either by its `id` or using an expression. You need to pass a reference to the session in the call. Tables are accessible through generated serializable classes.
 
 ```dart
 var myCompany = await Company.findById(session, companyId);
@@ -116,7 +116,7 @@ To find multiple rows, use the same principle as for finding a single row. Retur
 
 ```dart
 var companies = await Company.find(
-  tCompany,
+  session,
   where: (t) => t.id < 100,
   limit 50,
 );
@@ -125,7 +125,7 @@ var companies = await Company.find(
 To update a row, use the `update` method. The object that you update must have its `id` set to a non-`null` value.
 
 ```dart
-var myCompany = await session.db.findById(tCompany, companyId) as Company?;
+var myCompany = await Company.findById(session, companyId);
 myCompany.name = 'New name';
 await session.db.update(myCompany);
 ```

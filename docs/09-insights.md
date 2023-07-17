@@ -1,6 +1,6 @@
 # Serverpod Insights
 
-Serverpod Insights is Serverpod's companion app. It's currently available as a beta version for Mac. We are bringing Insights to more platforms soon. Insights currently has support for viewing your server's logs and health metrics, but we are adding more features soon. You must use a version of Insights that matches the version of Serverpod you use in your project, or not all features may work correctly.
+Serverpod Insights is Serverpod's companion app. It's currently available as a beta version for Mac. We are bringing Insights to more platforms soon. Insights currently have support for viewing your server's logs and health metrics, but we are adding more features soon. You must use a version of Insights that matches the version of Serverpod you use in your project, or not all features may work correctly.
 
 ![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
 
