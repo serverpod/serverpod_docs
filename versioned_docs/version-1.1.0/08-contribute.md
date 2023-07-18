@@ -10,13 +10,20 @@ For us to be able to accept your code, you must follow the guidelines below. __W
 :::
 
 ## Working on Serverpod
-The main [Serverpod repository](https://github.com/serverpod/serverpod) contains all Serverpod code and code for tests and official modules and integrations. Send any pull requests to the `main` branch.
+The main [Serverpod repository](https://github.com/serverpod/serverpod) contains all Serverpod code and tests for official modules and integrations. Send any pull requests to the `main` branch.
 
 ### Writing code
 We are very conscious about keeping the Serverpod code base clean. When you write your code, make sure to use `dart format` and that you don't get any errors or lints from `dart analyze`.
 
-### Running all tests
-Continuous integration tests are automatically run when sending a pull request to the `main` branch. You can run the tests locally by changing your working directory into the root serverpod directory and running:
+### Running the tests on GitHub
+It's very much recommended that you run the tests on your own fork on GitHub before sending a pull request. It's essential to ensure that all tests pass, as we cannot merge pull requests with broken tests.
+
+You will need to enable actions to run on your forked repository. Enable _Allow all actions and reusable workflows_ in _Settings_ > _Actions_ > _General_.
+
+By pushing your code to the `dev` or `main` branch on your fork, GitHub will automatically run the tests.
+
+### Running all tests locally
+You can run most of the tests locally by changing your working directory into the root `serverpod` directory and running:
 
 ```bash
 util/run_tests
@@ -28,7 +35,7 @@ Tests may not yet work if running on a Windows machine. Mac or Linux is recommen
 
 :::
 
-### Running individual tests
+### Running individual tests locally
 Running single individual tests is useful when you are working on a specific feature. To do it, you will need to manually start the test server, then run the integration tests from the `serverpod` package.
 
 1. Add an entry for the test server at the end of your `/etc/hosts file`.
