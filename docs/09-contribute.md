@@ -15,6 +15,110 @@ The main [Serverpod repository](https://github.com/serverpod/serverpod) contains
 ### Writing code
 We are very conscious about keeping the Serverpod code base clean. When you write your code, make sure to use `dart format` and that you don't get any errors or lints from `dart analyze`.
 
+### Writing tests
+Automated tests help us keep serverpod stable and simplifies safe contributions. To ensure that your code works as expected we require you to add automated test along with any contribution. By adhering to these guidelines, we can create an effective and helpful test suite.
+
+#### Minimize scope
+A failed test should help a developer quickly pinpoint what has gone wrong, therefore we aim to minimize the scope of each test. An ideal test should only have one reason to fail.
+
+```dart title="Bad"
+  test('Ice cream truck when buying strawberry ice cream returns strawberry ice cream and was discounted', () {
+    final IceCreamTruck truck = IceCreamTruck();
+
+    final iceCream = truck.buyStrawberryIceCream();
+
+    expect(iceCream.type, equals('strawberry'));
+    expect(iceCream.discount, isTrue);
+  });
+```
+
+```dart title="Good"
+  test('Ice cream truck when buying strawberry ice cream should return strawberry ice cream', () {
+    final IceCreamTruck truck = IceCreamTruck();
+
+    final iceCream = truck.buyStrawberryIceCream();
+
+    expect(iceCream.type, equals('strawberry'));
+  });
+
+  test('Ice cream truck when buying strawberry ice cream should be discounted', () {
+    final IceCreamTruck truck = IceCreamTruck();
+
+    final iceCream = truck.buyStrawberryIceCream();
+
+    expect(iceCream.discount, isTrue);
+  });
+```
+
+#### Naming
+All test descriptions should be humanly readable. Make sure description informs developers of what could have gone wrong if a test fails. Test descriptions should aim to reflect the __Given__, __When__, __Then__ or __Arrange__, __Act__, __Assert__ pattern. 
+
+```dart title="Good"
+  test('Cat when belly is scratched then scratches back', () {
+    // ..test goes here..
+  });
+```
+
+This also applies when `groups` are used.
+
+```dart title="Good"
+  // Given
+  group('Dog', () {
+    // When
+    group('when belly is scratched', () {
+      // Then
+      test('then wags its tail', () {
+        // ..test goes here..
+      });
+    });
+  });
+```
+
+#### Structure
+By using the __Given__, __When__, __Then__ or __Arrange__, __Act__, __Assert__ pattern we make our tests easily understandable at a glance. Aim to split tests into three distinct parts.
+
+```dart title="Good"
+  test('Two numbers when added together should return sum', () {
+    // Given
+    final int number1 = 5;
+    final int number2 = 10;
+
+    // When
+    final result = add(number1, number2);
+
+    // Then
+    expect(result, equals(15));
+  });
+```
+
+Sometimes test share their __Given__ or __Arrange__ part, then we can utilize groups to still maintain the pattern.
+
+```dart title="Good"
+  group('Two positive numbers', () {
+    // Given
+    const int number1 = 5;
+    const int number2 = 10;
+    test('when added together should return sum', () {
+      // When
+      final result = add(number1, number2);
+
+      // Then
+      expect(result, equals(15));
+    });
+
+    test('when added multiplied should return product', () {
+      // When
+      final result = multiply(number1, number2);
+
+      // Then
+      expect(result, equals(50));
+    });
+  });
+```
+
+#### Test interfaces not implementation
+Software development involves frequent implementation detail changes. Refactors that maintain behavior should not cause test failures. Emphasize testing interfaces, leaving implementation details to developers.
+
 ### Running all tests
 Continuous integration tests are automatically run when sending a pull request to the `main` branch. You can run the tests locally by changing your working directory into the root serverpod directory and running:
 
