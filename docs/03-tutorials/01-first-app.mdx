@@ -58,28 +58,26 @@ fields:
 Let's take a closer look at the content of the `notes.yaml` file:
 * **class: Note** Specifies the name of the class to be generated, which in this case is Note.
 * **fields:** This keyword indicates the beginning of the field definitions for the Note class.
-* **text: String** Defines the text field of type String in the Note class, in this minimal example we only have one field but you can add however many fields you need.
+* **text: String** Defines a text field of type String in the Note class, in this minimal example we only have one field but you can add however many fields you need.
 
 
-Use the code generator to generate the code for the `Note` class. Run the following command from the root of your server project:
+Use the code generator to generate the code for the `Note` class from the definition in `notes.yaml`. Run the following command from the root of your server project:
 
 ```bash
 $ serverpod generate
 ```
 
-The code generator will process the `notes.yaml` file and generate the required code for the Note class.
-
-After the code generation process is complete, you can access the generated code for the `Note` class. The generated code will be available in the `lib/src/generated/note.dart` inside your Serverpod project.
+After the code generation process is complete, you can access the generated code for the `Note` class in `lib/src/generated/note.dart` inside your Serverpod project.
 
 ![Serverpod Insights](/img/tutorial/note-app/02-note-class.png)
 
-By extending the `SerializableEntity` class, the `Note` object becomes capable of automatic serialization and deserialization by Serverpod. This means that the Note object can be converted into a serialized format and easily transmitted between the server and the client.
+By extending the `SerializableEntity` class, the `Note` object becomes capable of automatic serialization and deserialization. This makes the `Note` object transmittable between the server and the client.
 
 In simpler terms, we have created a class, `Note`, that can hold information and be passed around within the server. Additionally, we can send this object all the way to the client side of our application. Serverpod takes care of handling the conversion between the object and its serialized representation, making it convenient to work with and transfer data seamlessly.
 
 ## Create database tables
 
-We will make use of Serverpod's built-in support for database integration. We can very easily create the bindings for the database for our new `Note` class by specifying the database table in the YAML file. 
+Serverpod provides built-in support for database integrations. By defining a database table named `note` in the YAML file using the `table` keyword, we create database bindings for our `Note` class. 
 
 The updated content of the `note.yaml` file should look like this:
 
@@ -98,7 +96,7 @@ Run the code generator again to generate the necessary code for the database tab
 $ serverpod generate
 ```
 
-Take a look at the updated `lib/src/generated/note.dart` file. You will notice that the code generator has added a new methods for interacting with the database. 
+Take a look at the updated `lib/src/generated/note.dart` file. You will notice that the code generator has added new methods for interacting with the database. 
 
 ### Access the generated SQL code
 
@@ -129,21 +127,21 @@ To apply the changes to the database, you need to execute the SQL code generated
   <TabItem value="unix" label="MacOS & Linux" default>
 
 ```bash
-docker compose run -T --rm postgres env PGPASSWORD="\$POSTGRES_PASSWORD" psql -h postgres -U postgres -d notes < generated/tables.pgsql
+docker compose run -T --rm postgres env PGPASSWORD="<DATABASE_PASSWORD>" psql -h postgres -U postgres -d notes < generated/tables.pgsql
 ```
 
   </TabItem>
   <TabItem value="windows" label="Windows">
 
 ```cmd
-type .\generated\tables.pgsql | docker compose run -T postgres env PGPASSWORD="DB_PASSWORD" psql -h postgres -U postgres -d notes
+type .\generated\tables.pgsql | docker compose run -T postgres env PGPASSWORD="<DATABASE_PASSWORD>" psql -h postgres -U postgres -d notes
 ```
 
   </TabItem>
 </Tabs>
 
-You need to replace `DB_PASSWORD` with the password for the database, you can find it inside the `notes_server/config/passwords.yaml` file.
-If you didn't name your project `notes` you need to replace `-d notes` with the name of your project. 
+You need to replace `<DATABASE_PASSWORD>` with the password for the database, you can find it inside the `notes_server/config/passwords.yaml` file.
+If you didn't name your project `notes` you need to replace `-d notes` with the name of your project.
 
 Once the SQL code is executed successfully, the database table for storing the note data will be created.
 
@@ -156,7 +154,7 @@ Any time you update the table definitions you have to run the sql code on your d
 
 ## Create API endpoints
 
-In Serverpod, endpoints are defined in the `endpoints` folder within your server project. The code generator analyzes the code within these endpoints and generates a client library based on the defined functions. This client library makes it incredibly easy to access the backend functionality from your Flutter app.
+In Serverpod, endpoints are defined in the `endpoints` folder within your server project. The code generator analyzes the code within these endpoints and generates a client library based on the defined functions. This client library is then used by your Flutter app to interact with your backend server.
 
 Create a new file called `notes_endpoint.dart` inside `lib/src/endpoints` folder. 
 
@@ -175,9 +173,9 @@ In the above code, we import the necessary dependencies and import the generated
 
 ### Define endpoints
 
-To define an endpoint that can be called from the client, we need to create a method inside the `NotesEndpoint` class. This methods _must_ return a `Future` of a **serializable object**, **primitive datatype**, or **void**. 
+To define a method that can be called from the client, we need to create a method inside the `NotesEndpoint` class. This method must return a `Future` of a **serializable object**, **primitive datatype**, or **void**. 
 
-The first method param has to be a `Session` object. This is a special object in Serverpod that contains information about the current session, as well as other convenience methods.
+The first method parameter must be a `Session` object. This is a special object in Serverpod that contains information about the current session, as well as other helpful methods.
 
 ```dart
 Future<void> example(Session session) async {
@@ -189,7 +187,7 @@ The method is also allowed to have any number of extra parameters. These paramet
 
 ### Store notes in the database
 
-The `createNote` method creates a new note in the database. It takes a `Session` parameter and a `Note` parameter representing the new note to be created.
+To store notes in the database we define a `createNote` method in the `NotesEndpoint` class. The method takes a `Note` object and stores it in the database. To make the method accessible from the app, make sure that its first parameter is a `Session` object.
 
 ```dart
 Future<void> createNote(Session session, Note note) async {
@@ -197,10 +195,10 @@ Future<void> createNote(Session session, Note note) async {
 }
 ```
 
-In the above code, we use the `Note.insert` method to insert the specified Note object into the database.
+In the above code, we use the `Note.insert` method, created by `serverpod generate`, to insert the specified `Note` object into the database.
 
 ### Delete notes from the database
-The `deleteNote` method deletes an existing note from the database. It takes a `Session` parameter and a `Note` parameter representing the note to be deleted.
+To delete notes in the database we define a `deleteNote` method in the `NotesEndpoint` class. The method takes a `Note` object representing the note that should be deleted.
 
 ```dart
 Future<void> deleteNote(Session session, Note note) async {
@@ -208,12 +206,12 @@ Future<void> deleteNote(Session session, Note note) async {
 }
 ```
 
-In the above code, we use the `Note.deleteRow` method to delete the specified Note object from the database.
+In the above code, we use the `Note.deleteRow` method to delete the specified `Note` object from the database.
 
 
 ### Fetch notes from the database
 
-The `getAllNotes` method retrieves all the notes from the database and returns them as a list of `Note` objects. It takes a `Session` parameter, which represents the current session with the server.
+To retrieve all notes from the database we define the `getAllNotes` method. The method retrieves all the notes from the database and returns them as a list of `Note` objects.
 
 ```dart
 Future<List<Note>> getAllNotes(Session session) async {
@@ -226,7 +224,7 @@ Future<List<Note>> getAllNotes(Session session) async {
 }
 ```
 
-In the above code, we use the `Note.find` method to retrieve all the notes from the database. By specifying `orderBy: Note.t.id`, we ensure that the notes are always returned in the same order based on the id column.
+In the code above, we use the `Note.find` method to retrieve all the notes from the database. By specifying `orderBy: Note.t.id`, we ensure that the notes are always returned in the same order based on the id column.
 
 Putting it all together you end up with a file that looks like this:
 
@@ -259,13 +257,13 @@ class NotesEndpoint extends Endpoint {
 
 Congratulations! You have now created all the endpoints needed for the note app. Complete with a database integration that persistently stores the notes.
 
-Let's run the code generator again to generate the client library for our endpoints (run from the server project).
+Now run the code generator again to generate the client library for our endpoints. This needs to be run from the server directory `notes_server`.
 
 ```bash
 $ serverpod generate
 ```
 
-You can find all the newly generated code in the project folder `notes_client`. You normally don't need to touch this package, but it's good to know where it is located.
+You can find all the newly generated code in the client directory `notes_client`. You normally don't need to touch this package, but it's good to know where it is located.
 
 
 ## Build the Flutter app
@@ -320,7 +318,7 @@ void _connectionFailed(dynamic exception) {
 }
 ```
 
-Next, let's implement the fetching of notes from the server endpoint we implemented earlier. We set the notes state if successful otherwise we call the `_connectionFailed` method, to deal with the exception.
+Next, let's add a method for fetching notes from the server endpoint we created earlier. The method updates the state with the notes we received. If the call fails, we catch an exception and call the `_connectionFailed` method.
 
 ```dart
 Future<void> _loadNotes() async {
@@ -335,7 +333,7 @@ Future<void> _loadNotes() async {
 }
 ```
 
-Finally, we need to call the `_loadNotes` method when the app is initialized. We do this by overriding the `initState` method and calling `_loadNotes` from there. 
+Finally, we want to call the `_loadNotes` method when the app is started. We do this by overriding the `initState` method and calling `_loadNotes` from there. 
 
 ```dart
 @override
@@ -378,7 +376,7 @@ Inside the `itemBuilder` callback, each note's text is displayed in a `ListTile`
 
 ### Create new notes
 
-First, let's create a helper function to call our backend endpoint to create a new note. We call it `_createNote` and it takes a `Note` object as a parameter. 
+To create new notes we need to access the `createNote` method of our `notes` endpoint. To do this we create a helper method called `_createNote` that takes a `Note` object as a parameter.
 
 ```dart
 Future<void> _createNote(Note note) async {
@@ -391,9 +389,9 @@ Future<void> _createNote(Note note) async {
 }
 ```
 
-The `_createNote` method calls the `createNote` endpoint and then calls `_loadNotes` to refresh the notes list.
+The `_createNote` method calls the `createNote` method to store the note in the database on the server. Then `_loadNotes` is called to refresh our list of notes.
 
-The user needs somewhere to input the notes, so let's create a dialog for this. To create the note dialog for entering the note's text, create a new file called `note_dialog.dart` and add the following code.
+The user needs graphical interface to create notes, so let's create a dialog for this. Create a new file called `note_dialog.dart` in the `src/lib` directory of your Flutter app. Add the following code:
 
 <details><summary>Code: note_dialog.dart</summary>
 <p>
@@ -478,7 +476,7 @@ class NoteDialogState extends State<NoteDialog> {
 
 The dialog is needed but we will skip going into details on how it works as this is just normal Flutter code. The gist is that we have a function that triggers an input dialog and a callback for when the user saves the input.
 
-We need a button to trigger this dialog and the floating action button is prefect for this. Add the following code to the build method inside the `MyHomePageState` class:
+We need a button to trigger this dialog and the floating action button is great for this. Add the following code to the build method inside the `MyHomePageState` class:
 
 ```dart
 @override
@@ -711,15 +709,15 @@ dart bin/main.dart
 Start the Flutter app in Chrome (or the platform of your choice):
 
 ```bash
-cd notes_flutter -d chrome
-flutter run
+cd notes_flutter
+flutter run -d chrome
 ```
 
 <ReactPlayer playing={true} loop controls width="960px" height="720px" url='/img/tutorial/note-app/03-note-create.mp4' />
 
 ### Delete notes
 
-Implementing the delete functionality is very similar to the create functionality. We will add a delete button to each note and then call the delete endpoint when the button is pressed. First, let's add the helper method to call the endpoint:
+Implementing the delete functionality is very similar to the create functionality. We will add a delete button to each note and then call the delete endpoint when the button is pressed. First, let's add a helper method to call the endpoint:
 
 ```dart
 Future<void> _deleteNote(Note note) async {
@@ -731,6 +729,7 @@ Future<void> _deleteNote(Note note) async {
   }
 }
 ```
+The `_deleteNote` method calls the `deleteNote` endpoint to delete the note from the database on the server. Then `_loadNotes` is called to refresh the notes list.
 
 Next in our `ListTile` we add a delete button and call the `_deleteNote` method when the button is pressed. Just as before we update the local state first to make the UI feel more responsive.
 
@@ -765,9 +764,9 @@ Give it a go, in case you need some help you can look at the ([full code example
 
 ## Summary
 
-In this tutorial, you learned how to build a simple note-taking app using the Serverpod backend framework. You started by setting up the necessary tools and the environment to work with Serverpod. Then, you covered various aspects of building the app, including creating serializable objects, creating a database table, and creating API endpoints for performing CRUD operations on notes.
+In this tutorial, you learned how to build a simple note-taking app using the Serverpod backend framework. You started by setting up the necessary tools and environment to work with Serverpod. Then, you covered various aspects of building an app, including creating serializable objects, creating database tables, and creating API endpoints for performing CRUD operations.
 
-You also learned how to use Serverpod's code generator and how to use the generated client library to connect the Flutter app to the server. By establishing this connection, you were able to fetch notes from the server and display them in the app.
+You also learned how to use Serverpod's code generator and how to use the generated client library to connect the Flutter app to the server. By establishing this connection, you were able to fetch data from the server and display it in the app.
 
 Throughout the tutorial, you gained an understanding of how Serverpod simplifies the development process by automatically handling the serialization and deserialization of objects, managing database tables, and seamlessly integrating with Flutter. You have acquired the foundational knowledge to build powerful and scalable server-side applications using Serverpod.
 
