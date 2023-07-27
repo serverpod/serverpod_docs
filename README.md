@@ -1,8 +1,9 @@
 # Serverpod documentation website
+This is the code for Serverpod's official documentation. If you are contributing, please only edit files in the `docs` directory. The Serverpod team will handle any updates to existing versions if necessary. You can view the updated documentation by choosing the _Next_ option in the top menu bar.
 
-Make sure that you have Node.js installed on your computer.
 
 ### Install
+Make sure that you have Node.js installed on your computer.
 
 ```
 $ cd serverpod_docs
