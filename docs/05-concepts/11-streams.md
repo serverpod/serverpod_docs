@@ -65,7 +65,7 @@ For a real-world example, check out [Pixorama](https://pixorama.live). It's a mu
 Before you can access streams in your client, you need to connect to the server's web socket. You do this by calling connectWebSocket on your client.
 
 ```dart
-await client.connectWebSocket();
+await client.openStreamingConnection();
 
 ```
 
