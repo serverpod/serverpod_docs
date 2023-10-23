@@ -55,13 +55,13 @@ fields:
   text: String
 ```
 
-Let's take a closer look at the content of the `notes.yaml` file:
+Let's take a closer look at the content of the `note.yaml` file:
 * **class: Note** Specifies the name of the class to be generated, which in this case is Note.
 * **fields:** This keyword indicates the beginning of the field definitions for the Note class.
 * **text: String** Defines a text field of type String in the Note class, in this minimal example we only have one field but you can add however many fields you need.
 
 
-Use the code generator to generate the code for the `Note` class from the definition in `notes.yaml`. Run the following command from the root of your server project:
+Use the code generator to generate the code for the `Note` class from the definition in `note.yaml`. Run the following command from the root of your server project:
 
 ```bash
 $ serverpod generate
