@@ -1,0 +1,113 @@
+# Pagination
+
+Serverpod provides built-in support for pagination to help manage large datasets, allowing you to retrieve data in smaller chunks or "pages". Pagination is achieved using the `limit` and `offset` parameters.
+
+## Limit
+
+The `limit` parameter specifies the maximum number of records to return from the query. This is equivalent to the number of rows on a page.
+
+**Example**:
+Retrieve the first 10 companies:
+
+```dart
+var companies = await Company.db.find(
+  session,
+  limit: 10,
+);
+```
+
+## Offset
+
+The `offset` parameter determines the starting point from which to retrieve records. It essentially skips the first `n` records.
+
+**Example**:
+Skip the first 30 companies and then retrieve the next 10:
+
+```dart
+var companies = await Company.db.find(
+  session,
+  limit: 10,
+  offset: 30,
+);
+```
+
+## Using Limit and Offset for Pagination
+
+Together, `limit` and `offset` can be used to implement pagination.
+
+**Example**:
+To retrieve the third page of companies, with 10 companies per page:
+
+```dart
+int page = 3;
+int companiesPerPage = 10;
+
+var companies = await Company.db.find(
+  session,
+  orderBy: Company.t.id,
+  limit: companiesPerPage,
+  offset: (page - 1) * companiesPerPage,
+);
+```
+
+### Tips
+
+1. **Performance**: Be aware that while `offset` can help in pagination, it may not be the most efficient way for very large datasets. Using an indexed column to filter results can sometimes be more performant.
+2. **Consistency**: Due to possible data changes between paginated requests (like additions or deletions), the order of results might vary. It's recommended to use an `orderBy` parameter to ensure consistency across paginated results.
+3. **Page Numbering**: Page numbers usually start from 1. Adjust the offset calculation accordingly.
+
+## Cursor-based Pagination
+
+A limit-offset pagination may not be the best solution when the table is changed frequently where rows are added or removed between requests.
+
+Cursor-based pagination, is an alternative method to the traditional limit-offset pagination. Instead of using an arbitrary offset to skip records, cursor-based pagination uses a unique record identifier (a "cursor") to mark the starting or ending point of a dataset. This approach is particularly beneficial for large datasets as it offers consistent and efficient paginated results, even in the face of data that's being updated frequently.
+
+### How It Works
+
+In cursor-based pagination, the client provides a cursor as a reference point, and the server returns data relative to that cursor. This cursor is usually an `id`.
+
+### Implementing Cursor-based Pagination
+
+1. **Initial Request**:
+For the initial request, where no cursor is provided, retrieve the first `n` records:
+
+```dart
+int recordsPerPage = 10;
+
+var companies = await Company.db.find(
+  session,
+  orderBy: Company.t.id,
+  limit: recordsPerPage,
+);
+```
+
+2. **Subsequent Requests**:
+For the subsequent requests, use the cursor (for example, the last `id` from the previous result) to fetch the next set of records:
+
+```dart
+int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the client
+
+var companies = await Company.db.find(
+  session,
+  where: Company.t.id > cursor,
+  orderBy: Company.t.id,
+  limit: recordsPerPage,
+);
+```
+
+3. **Returning the Cursor**:
+When returning data to the client, also return the cursor for the next page.
+
+```dart
+return {
+  'data': companies,
+  'nextCursor': companies.last.id,
+};
+```
+
+### Tips
+
+1. **Choosing a Cursor**: While IDs are commonly used as cursors, timestamps or other unique, sequentially ordered fields can also serve as effective cursors.
+2. **Backward Pagination**: To implement backward pagination, use the first item from the current page as the cursor and adjust the query accordingly.
+3. **Combining with Sorting**: Ensure the field used as a cursor aligns with the sorting order. For instance, if you're sorting data by a timestamp in descending order, the cursor should also be based on the timestamp.
+4. **End of Data**: If the returned data contains fewer items than the requested limit, it indicates that you've reached the end of the dataset.
