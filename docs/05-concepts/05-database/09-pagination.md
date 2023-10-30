@@ -6,9 +6,6 @@ Serverpod provides built-in support for pagination to help manage large datasets
 
 The `limit` parameter specifies the maximum number of records to return from the query. This is equivalent to the number of rows on a page.
 
-**Example**:
-Retrieve the first 10 companies:
-
 ```dart
 var companies = await Company.db.find(
   session,
@@ -16,12 +13,11 @@ var companies = await Company.db.find(
 );
 ```
 
+In the example we fetch the first 10 companies.
+
 ## Offset
 
 The `offset` parameter determines the starting point from which to retrieve records. It essentially skips the first `n` records.
-
-**Example**:
-Skip the first 30 companies and then retrieve the next 10:
 
 ```dart
 var companies = await Company.db.find(
@@ -31,12 +27,12 @@ var companies = await Company.db.find(
 );
 ```
 
+In the example we skip the first 30 rows and fetch the 31st to 40th company.
+
 ## Using Limit and Offset for Pagination
 
 Together, `limit` and `offset` can be used to implement pagination.
 
-**Example**:
-To retrieve the third page of companies, with 10 companies per page:
 
 ```dart
 int page = 3;
@@ -49,6 +45,7 @@ var companies = await Company.db.find(
   offset: (page - 1) * companiesPerPage,
 );
 ```
+In the example we fetch the third page of companies, with 10 companies per page.
 
 ### Tips
 
@@ -58,9 +55,9 @@ var companies = await Company.db.find(
 
 ## Cursor-based Pagination
 
-A limit-offset pagination may not be the best solution when the table is changed frequently where rows are added or removed between requests.
+A limit-offset pagination may not be the best solution if the table is changed frequently and rows are added or removed between requests.
 
-Cursor-based pagination, is an alternative method to the traditional limit-offset pagination. Instead of using an arbitrary offset to skip records, cursor-based pagination uses a unique record identifier (a "cursor") to mark the starting or ending point of a dataset. This approach is particularly beneficial for large datasets as it offers consistent and efficient paginated results, even in the face of data that's being updated frequently.
+Cursor-based pagination is an alternative method to the traditional limit-offset pagination. Instead of using an arbitrary offset to skip records, cursor-based pagination uses a unique record identifier (a "cursor") to mark the starting or ending point of a dataset. This approach is particularly beneficial for large datasets as it offers consistent and efficient paginated results, even if the data is being updated frequently.
 
 ### How It Works
 

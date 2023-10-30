@@ -16,3 +16,5 @@ var result = await session.dbNext.transaction((transaction) async {
   return true;
 });
 ```
+
+In the example we insert a company and an employee in the same transaction. If any of the operations fail, the entire transaction will be rolled back and no changes will be made to the database. If the transaction is successful, the return value will be `true`.

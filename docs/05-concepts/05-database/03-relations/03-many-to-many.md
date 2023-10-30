@@ -1,16 +1,20 @@
 # Many-to-Many
 
-Many-to-many (n:m) relationships depict a scenario where multiple records from one table can relate to multiple records in another table. The Serverpod framework supports these complex relationships by explicitly creating a third model to store the relation in.
+Many-to-many (n:m) relationships describes a scenario where multiple records from a table can relate to multiple records in another table. An example of this would be the relationship between students and courses, where a single student can enroll in multiple courses, and a single course can have multiple students.
+
+The Serverpod framework supports these complex relationships by explicitly creating a separate entity, often called a junction or bridge table, that records the relation.
 
 ## Overview
 
-In the context of many-to-many relationships, neither table contains a direct reference to the other. Instead, a separate table, often called a junction or bridge table, holds the foreign keys of both tables. This setup allows for a flexible and normalized approach to represent relationships where multiple records from one table can be associated with multiple records from another table.
+In the context of many-to-many relationships, neither table contains a direct reference to the other. Instead, a separate table holds the foreign keys of both tables. This setup allows for a flexible and normalized approach to represent n:m relationships.
 
-For instance, consider the relationship between `Student` and `Course`. A single student can enroll in multiple courses, and a single course can have multiple students. This is a classic many-to-many relationship, which is managed using the `Enrollment` table in Serverpod.
+Modeling the relationship between `Student` and `Course`, we would create an `Enrollment` entity as a junction table to store the relationship explicitly.
 
 ## Defining the Relationship
 
-### Course & Student Tables
+In the following examples we show how to configure a n:m relationship between `Student` and `Course`.
+
+### Many tables
 
 Both the `Course` and `Student` tables have a direct relationship with the `Enrollment` table but no direct relationship with each other.
 
@@ -32,9 +36,11 @@ fields:
   enrollments: List<Enrollment>?, relation(name=student_enrollments)
 ```
 
-### Enrollment Table
+Note that the `name` argument is different, `course_enrollments` and `student_enrollments`, for the many tables. This is because each row in the junction table holds a relation to both many tables, `Course` and `Student`.
 
-The `Enrollment` table acts as the bridge between `Course` and `Student`. It contains foreign keys from both tables, representing the many-to-many relationship. The unique index on the combination of `studentId` and `courseId` ensures that a student can only be enrolled in a particular course once.
+### Junction Table
+
+The `Enrollment` table acts as the bridge between `Course` and `Student`. It contains foreign keys from both tables, representing the many-to-many relationship. 
 
 ```yaml
 # enrollment.yaml
@@ -48,3 +54,5 @@ indexes:
     fields: studentId, courseId
     unique: true
 ```
+
+The unique index on the combination of `studentId` and `courseId` ensures that a student can only be enrolled in a particular course once. If omitted a student would be allowed to be enrolled in the same course multiple times.

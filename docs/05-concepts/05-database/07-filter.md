@@ -1,6 +1,6 @@
 # Filter
 
-Serverpod makes it easy to build expressions that are statically type-checked. Columns and relational fields are referenced using the global table descriptor objects. The table descriptors, t are passed to the expression builder function `where`.
+Serverpod makes it easy to build expressions that are statically type-checked. Columns and relational fields are referenced using the global table descriptor objects. The table descriptors, `t`, are accessible from each model and are passed as an argument to a model specific expression builder function. The function callback is then used as argument to the `where` parameter when fetching data from the database.
 
 ## Column operations
 
@@ -15,108 +15,105 @@ When using the operators, it's a good practice to place them within a set of par
 Compare a column to an exact value, meaning only rows that match exactly will remain in the result.
 
 ```dart
-// Find all users with the name Alice
 await User.db.find(
-  where((t) => t.name.equals('Alice'))
+  where: (t) => t.name.equals('Alice')
 );
 ```
+
+In the example we fetch all users with the name Alice.
 
 Not equals is the negated version of equals.
 
 ```dart
-// Find all users with a name that is not Bob
 await User.db.find(
-  where((t) => t.name.notEquals('Bob'))
+  where: (t) => t.name.notEquals('Bob')
 );
 ```
+In the example we fetch all users with a name that is not Bob. If a non-`null` value is used as an argument for the notEquals comparison, rows with a `null` value in the column will be included in the result.
 
 ### Comparison operators
 
 Compare a column to a value, these operators are support for `int`, `double`, `Duration`, `DateTime` and `Enum`.
 
 ```dart
-// Find all users that are older than 25 years old.
 await User.db.find(
-  where((t) => t.age > 25)
+  where: (t) => t.age > 25
 );
 ```
 
+In the example we fetch all users that are older than 25 years old.
+
 ```dart
-// Find all users that are 25 years old or older.
 await User.db.find(
-  where((t) => t.age >= 25)
+  where: (t) => t.age >= 25
 );
 ```
 
+In the example we fetch users that are 25 years old or older.
+
 ```dart
-// Find all users that are younger than 25 years old.
 await User.db.find(
-  where((t) => t.age < 25)
+  where: (t) => t.age < 25
 );
 ```
 
+In the example we fetch all users that are younger than 25 years old.
+
 ```dart
-// Find all users that are 25 years old or younger.
 await User.db.find(
-  where((t) => t.age <= 25)
+  where: (t) => t.age <= 25
 );
 ```
+
+In the example we fetch all users that are 25 years old or younger.
 
 ### Between
 
-The between method takes two values and checks if the columns value is between the two input variables *inclusive*.
+The between method takes two values and checks if the columns value is between the two input variables *inclusively*.
 
 ```dart
-// Find all users between 18 and 65 years old. (>= 18 && 65 <=)
 await User.db.find(
-  where((t) => t.age.between(18, 65))
+  where: (t) => t.age.between(18, 65)
+);
+```
+In the example we fetch all users between 18 and 65 years old. This can also be expressed as `(>= 18 && 65 <=)`.
+
+The 'not between' operation functions similarly to 'between' but it negates the condition. It also works inclusively with the boundaries.
+
+```dart
+await User.db.find(
+  where: (t) => t.age.notBetween(18, 65)
 );
 ```
 
-Not between works the same but negated and is also inclusive.
-
-```dart
-// Find all users that are not between 18 and 65 years old. (< 18 && 65 >)
-await User.db.find(
-  where((t) => t.age.notBetween(18, 65))
-);
-```
+In the example we fetch all users that are not between 18 and 65 years old. This can also be expressed as `(< 18 && 65 >)`.
 
 ### In set
 
-In set can be used to match with several values at once. This method function the same as equals but for multiple values, in set will make an exact comparison.
+In set can be used to match with several values at once. This method function the same as equals but for multiple values, 'in set' will make an exact comparison.
 
 ```dart
-// Find all users with a name matching either Alice or Bob
 await User.db.find(
-  where((t) => t.name.inSet({'Alice', 'Bob'}))
+  where: (t) => t.name.inSet({'Alice', 'Bob'})
 );
 ```
 
+In the example we fetch all users with a name matching either Alice or Bob.
+
+The 'not in set' operation functions similarly to 'in set' . but it negates the condition.
+
 ```dart
-// Find all users with a name not matching Alice or Bob
 await User.db.find(
-  where((t) => t.name.notInSet({'Alice', 'Bob'}))
+  where: (t) => t.name.notInSet({'Alice', 'Bob'})
 );
 ```
+In the example we fetch all users with a name not matching Alice or Bob. Rows with a `null` value in the column will be included in the result.
 
 ### Like
 
-Like can be used to perform match searches against String entries in the database, this matcher is case-sensitive. This is useful when matching against partial entries. Two special characters can be used to match against different values!
+Like can be used to perform match searches against `String` entries in the database, this matcher is case-sensitive. This is useful when matching against partial entries.
 
-```dart
-// Find all users with a name that starts with A
-await User.db.find(
-  where((t) => t.name.like('A%'))
-);
-```
-
-```dart
-// Find all users with a name that does not start with B
-await User.db.find(
-  where((t) => t.name.notLike('B%'))
-);
-```
+Two special characters enables matching against partial entries.
 
 - **`%`** Matching any sequence of character.
 - **`_`** Matching any single character.
@@ -128,101 +125,164 @@ await User.db.find(
 | abc | a_c | true |
 | abc | b_ | false |
 
+We use like to match against a partial string.
+
+```dart
+await User.db.find(
+  where: (t) => t.name.like('A%')
+);
+```
+
+In the example we fetch all users with a name that starts with A.
+
+There is a negated version of like that can be used to exclude rows from the result.
+
+```dart
+await User.db.find(
+  where: (t) => t.name.notLike('B%')
+);
+```
+In the example we fetch all users with a name that does not start with B.
+
+
 ### iLike
 
 iLike works the same as `like` but is case-insensitive.
 
 ```dart
-// Find all users with a name that starts with a or A
 await User.db.find(
-  where((t) => t.name.iLike('a%'))
+  where: (t) => t.name.iLike('a%')
 );
 ```
 
+In the example we fetch all users with a name that starts with a or A.
+
+There is a negated version of iLike that can be used to exclude rows from the result.
+
 ```dart
-// Find all users with a name that does not start with b or B
 await User.db.find(
-  where((t) => t.name.notIlike('b%'))
+  where: (t) => t.name.notIlike('b%')
 );
 ```
+In the example we fetch all users with a name that does not start with b or B.
 
 ### Logical operators
 
-The `&` and `|` operators can be used to chain two statements to perform an `and` / `or` boolean operation.
+Logical operators are also supported when filtering, allowing you to chain multiple statements together to create more complex queries.
+
+The `&` operator is used to chain two statements together with an `and` operation.
 
 ```dart
-// Find all users with the name "Alice" _and_ are older than 25.
 await User.db.find(
-  where((t) => (t.name.equals('Alice') & (t.age > 25)))
+  where: (t) => (t.name.equals('Alice') & (t.age > 25))
+);
+```
+In the example we fetch all users with the name "Alice" _and_ are older than 25.
+
+The `|` operator is used to chain two statements together with an `or` operation.
+
+```dart
+await User.db.find(
+  where: (t) => (t.name.like('A%') | t.name.like('B%'))
 );
 ```
 
-```dart
-// Find all users that has a name that starts with A _or_ B
-await User.db.find(
-  where((t) => (t.name.like('A%') | t.name.like('B%')))
-);
-```
+In the example we fetch all users that has a name that starts with A _or_ B.
 
 ## Relation operations
 
-The following relational operations are supported in Serverpod.
+If a relation between two models is defined a [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relation, then relation operations are supported in Serverpod.
 
-### 1:1
+### One-to-one 
 
-On 1:1 relation all the normal operations can be accessed by simply accessing the relation field. Imagine the user has a relation to an address that has a street. Then the user can be filtered on the street like so:
+For 1:1 relations the columns of the relation can be accessed directly on the relation field. This enables filtering on related objects properties. 
 
 ```dart
-// Find all users where the address has a street that contains the word "road".
 await User.db.find(
-  where:((t) => t.address.street.like('%road%'))
+  where: (t) => t.address.street.like('%road%')
 );
 ```
+In the example each user has a relation to an address that has a street field. Using relation operations we then fetch all users where the related address has a street that contains the word "road". 
 
-### 1:n
+### One-to-many 
 
-On 1:n relations, there are special filter methods where you can create sub-filters on all the related data. With them, you can answer questions on the aggregated result on many relations.
+For 1:n relations, there are special filter methods where you can create sub-filters on all the related data. With them, you can answer questions on the aggregated result on many relations.
 
 #### Count
 
-Count the number of entries that match the sub-filter, the `count` always needs to be compared with a static value.
+Count can be used to count the number of related entries in a 1:n relation. The `count` always needs to be compared with a static value.
 
 ```dart
-// Find all users with more than 3 book orders.
 await User.db.find(
-  where:((t) => t.orders.count((o) => o.itemType.equals('book')) > 3)
+  where: (t) => t.orders.count() > 3
 );
 ```
 
-#### None
+In the example we fetch all users with more than three orders.
 
-None is useful if you want to ensure that a many relation does not contain any related row matching your sub-filter. Meaning if there is a match in the sub-filter the parent row will be omitted from the result.
+We can apply a sub-filter to the `count` operator filter the related entries before they are counted.
 
 ```dart
-// Find all users that have no book orders.
+await User.db.find(
+  where: (t) => t.orders.count((o) => o.itemType.equals('book')) > 3
+);
+```
+
+In the example we fetch all users with more than three "book" orders.
+
+
+#### None
+
+None can be used to retrieve rows that have no related entries in a 1:n relation. Meaning if there exists a related entry then the row is omitted from the result. The operation is useful if you want to ensure that a many relation does not contain any related rows. 
+
+```dart
+await User.db.find(
+  where: (t) => t.orders.none()
+);
+```
+
+In the example we fetch all users that have no orders.
+
+We can apply a sub-filter to the `none` operator to filter the related entries. Meaning if there is a match in the sub-filter the row will be omitted from the result.
+
+```dart
 await User.db.find(
   where:((t) => t.orders.none((o) => o.itemType.equals('book')))
 );
 ```
 
+In the example we fetch all users that have no "book" orders.
+
 #### Any
 
-Any works similarly to the `any` method on arrays in Dart. If any related row matches the sub-filter then include the parent row.
+Any works similarly to the `any` method on lists in Dart. If there exists any related entry then include the row in the result.
 
 ```dart
-// Find all users that have any number of book orders.
+await User.db.find(
+  where: (t) => t.orders.any()
+);
+```
+
+In the example we fetch all users that have any order.
+
+We can apply a sub-filter to the `any` operator to filter the related entries. Meaning if there is a match in the sub-filter the row will be included in the result.
+
+```dart
 await User.db.find(
   where:((t) => t.orders.any((o) => o.itemType.equals('book')))
 );
 ```
 
+In the example we fetch all users that have any "book" order.
+
 #### Every
 
-Every works similarly to the `every` method on arrays in Dart. If every related row matches the sub-filter then include the parent row.
+Every works similarly to the `every` method on lists in Dart. If every related entry matches the sub-filter then include the row in the result. For the `every` operator the sub-filter is mandatory.
 
 ```dart
-// Find all users that have only book orders.
 await User.db.find(
-  where:((t) => t.orders.every((o) => o.itemType.equals('book')))
+  where: (t) => t.orders.every((o) => o.itemType.equals('book'))
 );
 ```
+
+In the example we fetch all users that have only "book" orders.
