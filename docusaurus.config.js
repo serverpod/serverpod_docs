@@ -52,8 +52,7 @@ const config = {
           srcDark: 'img/logo-horizontal-dark.svg',
           href: 'https://serverpod.dev',
         },
-        items: [
-          {
+        items: [{
             type: 'docsVersionDropdown',
             position: 'left',
           },
@@ -93,6 +92,14 @@ const config = {
         additionalLanguages: ['dart', 'bash'],
       },
     }),
+  scripts: [{
+    src: "https://widget.kapa.ai/kapa-widget.bundle.js",
+    "data-website-id": "9ae02024-c2cf-4f58-b2d9-7ca3961dc1ef",
+    "data-project-name": "Serverpod",
+    "data-project-color": "#020F24",
+    "data-project-logo": "https://avatars.githubusercontent.com/u/48181558?s=200&v=4",
+    async: true,
+  }],
 };
 
 module.exports = config;
