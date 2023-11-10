@@ -63,9 +63,18 @@ values:
  - bird
 ```
 
-:::note
-The serialization will convert the enum to an int representing the index of the value. Changing the order may therefore have unforeseen consequences when reusing old data (such as from a database).
-:::
+By default the serialization will convert the enum to an int representing the index of the value. Changing the order may therefore have unforeseen consequences when reusing old data (such as from a database). Changing the serialization to be based on the name instead of index is easy.
+
+```yaml
+enum: Animal
+serialized: byName
+values:
+ - dog
+ - cat
+ - bird
+```
+
+`serialized` has two valid values `byName` and `byIndex`. When using `byName` the string literal of the enum is used, when using `byIndex` the index value (0, 1, 2, etc) is used.
 
 ## Adding documentation
 
@@ -121,6 +130,7 @@ extension MyExtension on MyClass {
 |**Keyword**|Note|[class](#class)|[exception](#exception)|[enum](#enum)|
 |---|---|:---:|:---:|:---:|
 |[**values**](#enum)|A special key for enums with a list of all enum values.                                                                |||✅|
+|[**serialized**](#enum)|Sets the mode enums are serialized in                                                                              |||✅|
 |[**serverOnly**](#limiting-visibility-of-a-generated-class)|Boolean flag if code generator only should create the code for the server.     |✅|✅|✅|
 |[**table**](/concepts/database/models)|A name for the database table, enables generation of database code.                                 |✅|||
 |[**fields**](#class)|All fields in the generated class should be listed here.                                                              |✅|✅||
