@@ -1,10 +1,6 @@
 # One-to-one
 
-One-to-one (1:1) relationships represent a unique association between two entities. In Serverpod, you can define these relationships in various ways, ensuring both clarity and flexibility in database design. This documentation outlines different configurations for 1:1 relationships.
-
-## Overview
-
-In a 1:1 relation there is at most one entity that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
+One-to-one (1:1) relationships represent a unique association between two entities, there is at most one entity that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
 
 ## Defining the Relationship 
 In the following examples we show how to configure a 1:1 relationship between  `User` and `Address`.

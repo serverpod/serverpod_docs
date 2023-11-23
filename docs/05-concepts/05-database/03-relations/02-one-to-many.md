@@ -1,4 +1,4 @@
-# One to many
+# One-to-many
 
 One-to-many (1:n) relationships describes a scenario where multiple records from one table can relate to a single record in another table. An example of this would the relationship between a company and its employees, where multiple employees can be employed at a single company.
 
