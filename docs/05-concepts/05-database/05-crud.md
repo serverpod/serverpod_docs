@@ -63,7 +63,7 @@ var company = await Company.db.findRow(
 );
 ```
 
-This operation returns the first model matching the filtering criteria or `null`. See [filter and sort](/concepts/database/filter-and-sort) for all filter operations.
+This operation returns the first model matching the filtering criteria or `null`. See [filter](filter) and [sort](sort) for all filter operations.
 
 :::info
 Note that ordering of the entries is important here as it will return the fist row returned by the database query.
@@ -83,7 +83,7 @@ var companies = await Company.db.find(
 
 This operation returns a `List` of your models matching the filtering criteria.
 
-See [filter](/concepts/database/filter) and [sort](/concepts/database/sort) for all filter and sorting operations and [pagination](/concepts/database/pagination) for how to paginate the result.
+See [filter](filter) and [sort](sort) for all filter and sorting operations and [pagination](pagination) for how to paginate the result.
 
 ## Update
 There are two update operations available.
@@ -133,7 +133,7 @@ var ids = await Company.db.delete(session, companies);
 This is an atomic operation, meaning no entries will be deleted if any entry fails to be deleted. The `delete` method returns a `List` of the `id`s of the deleted row(s).
 
 ### Delete by filter
-You can also do a [filtered](/concepts/database/filter) delete and delete all entries matching a `where` query, by using the `deleteWhere` method.
+You can also do a [filtered](filter) delete and delete all entries matching a `where` query, by using the `deleteWhere` method.
 
 ```dart
 var ids = await Company.db.deleteWhere(
@@ -146,7 +146,7 @@ The above example will delete any row that ends in *Ltd*. The `deleteWhere` meth
 
 ## Count
 
-Count is a special type of query that helps counting the number of rows in the database that matches a specific [filter](/concepts/database/filter).
+Count is a special type of query that helps counting the number of rows in the database that matches a specific [filter](filter).
 
 ```dart
 var count = await Company.db.count(

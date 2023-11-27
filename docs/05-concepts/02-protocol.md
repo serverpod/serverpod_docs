@@ -37,12 +37,12 @@ fields:
 ```
 
 :::info
-Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the [Database](/concepts/database/models) section.
+Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the [Database](database/models) section.
 :::
 
 ## Exception
 
-The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](/concepts/exceptions).
+The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
 
 ```yaml
 exception: MyException
@@ -111,7 +111,7 @@ The `copyWith` method generates a deep copy of an object, preserving all origina
 
 ### toJson / fromJson
 
-The `toJson` and `fromJson` methods are generated on all models to help with serialization. Serverpod manages all serialization for you out of the box and you will rarely have to use these methods by your self. See the [Serialization](/concepts/serialization) section for more info.
+The `toJson` and `fromJson` methods are generated on all models to help with serialization. Serverpod manages all serialization for you out of the box and you will rarely have to use these methods by your self. See the [Serialization](serialization) section for more info.
 
 ### Custom methods
 
@@ -132,19 +132,19 @@ extension MyExtension on MyClass {
 |[**values**](#enum)|A special key for enums with a list of all enum values.                                                                |||✅|
 |[**serialized**](#enum)|Sets the mode enums are serialized in                                                                              |||✅|
 |[**serverOnly**](#limiting-visibility-of-a-generated-class)|Boolean flag if code generator only should create the code for the server.     |✅|✅|✅|
-|[**table**](/concepts/database/models)|A name for the database table, enables generation of database code.                                 |✅|||
+|[**table**](database/models)|A name for the database table, enables generation of database code.                                 |✅|||
 |[**fields**](#class)|All fields in the generated class should be listed here.                                                              |✅|✅||
 |[**type (fields)**](#class)|Denotes the data type for a field.                                                                             |✅|✅||
 |[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
-|[**persist**](/concepts/database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
-|[**relation**](/concepts/database/relations/one-to-one)|Sets a relation between protocol files, requires a table name to be set.           |✅|||
-|[**name**](/concepts/database/relations/one-to-one#bidirectional-representation)|Give a name to a relation to pair them.                   |✅|||
-|[**parent**](/concepts/database/relations/one-to-one#one-side-defined)|Sets the parent table on a relation.                                |✅|||
-|[**field**](/concepts/database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
-|[**onUpdate**](/concepts/database/relations/referential-actions)|Set the referential actions when updating data in the database.           |✅|||
-|[**onDelete**](/concepts/database/relations/referential-actions)|Set the referential actions when deleting data in the database.           |✅|||
-|[**optional**](/concepts/database/relations/one-to-one#optional-relation)|A boolean flag to make a relation optional.                      |✅|||
-|[**indexes**](/concepts/database/indexing)|Create indexes on your fields / columns.                                                        |✅|||
-|[**fields (index)**](/concepts/database/indexing)|List the fields to create the indexes on.                                                |✅|||
-|[**type (index)**](/concepts/database/indexing)|The type of index to create.                                                               |✅|||
-|[**unique**](/concepts/database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
+|[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
+|[**relation**](database/relations/one-to-one)|Sets a relation between protocol files, requires a table name to be set.           |✅|||
+|[**name**](database/relations/one-to-one#bidirectional-representation)|Give a name to a relation to pair them.                   |✅|||
+|[**parent**](database/relations/one-to-one#one-side-defined)|Sets the parent table on a relation.                                |✅|||
+|[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
+|[**onUpdate**](database/relations/referential-actions)|Set the referential actions when updating data in the database.           |✅|||
+|[**onDelete**](database/relations/referential-actions)|Set the referential actions when deleting data in the database.           |✅|||
+|[**optional**](database/relations/one-to-one#optional-relation)|A boolean flag to make a relation optional.                      |✅|||
+|[**indexes**](database/indexing)|Create indexes on your fields / columns.                                                        |✅|||
+|[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
+|[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
+|[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||

@@ -9,7 +9,7 @@ fields:
   name: String
 ```
 
-When the `table` keyword is added to the entity, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod migrate` command that will generate the necessary [migrations](/concepts/database/migrations) needed to update the database.
+When the `table` keyword is added to the entity, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod migrate` command that will generate the necessary [migrations](migrations) needed to update the database.
 
 :::info
 
@@ -49,4 +49,4 @@ fields:
   company: Company, relation
 ```
 
-For a complete guide on how to work with relations see the [relation section](/concepts/database/relations/one-to-one).
+For a complete guide on how to work with relations see the [relation section](relations/one-to-one).

@@ -18,13 +18,13 @@ serverpod <command> [arguments]
 
 ## Available Commands
 
-- **[create](/get-started)**: Establishes a new Serverpod project. When employing this command, designate the project name, ensuring it's in lowercase and devoid of special characters.
+- **[create](get-started)**: Establishes a new Serverpod project. When employing this command, designate the project name, ensuring it's in lowercase and devoid of special characters.
 
-- **[generate](/concetps/protocol)**: Converts yaml files into appropriate code for the server and associated clients.
+- **[generate](concepts/protocol)**: Converts yaml files into appropriate code for the server and associated clients.
 
-- **[language-server](/lsp)**: Activates the Serverpod LSP server, which interfaces via JSON-RPC-2. This is tailored for compatibility with a client integrated within an IDE.
+- **[language-server](lsp)**: Activates the Serverpod LSP server, which interfaces via JSON-RPC-2. This is tailored for compatibility with a client integrated within an IDE.
 
-- **[migrate](/concetps/database/migrations)**: Produces a migration script derived from the variances between the last migration and the prevailing database condition.
+- **[migrate](concepts/database/migrations)**: Produces a migration script derived from the variances between the last migration and the prevailing database condition.
 
 - **version**: Reveals the active Serverpod CLI version.
 

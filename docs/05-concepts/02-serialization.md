@@ -50,7 +50,7 @@ fields:
 
 :::info
 
-Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the next section, [Database communication](./database-communication).
+Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the database [CRUD](database/crud) section.
 
 :::
 

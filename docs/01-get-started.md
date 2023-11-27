@@ -198,7 +198,7 @@ If no matching row is found, `null` is returned.
 
 :::tip
 
-Working with a database is an extensive subject. Learn more in the [Database communication](concepts/database-communication) section.
+Working with a database is an extensive subject. Learn more in the [Database](concepts/database/connection) section.
 
 :::
 
