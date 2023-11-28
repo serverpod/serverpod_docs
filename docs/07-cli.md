@@ -7,7 +7,7 @@ The Serverpod Command Line Interface (CLI) provides a suite of tools to facilita
 ## Usage
 
 ```bash
-serverpod <command> [arguments]
+$ serverpod <command> [arguments]
 ```
 
 ## Global Options

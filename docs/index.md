@@ -16,13 +16,13 @@ Serverpod is tested on Mac and Linux. It works on Windows, but it's still experi
 Once you have Flutter and Docker installed and configured, open up a terminal and install Serverpod by running:
 
 ```bash
-dart pub global activate serverpod_cli
+$ dart pub global activate serverpod_cli
 ```
 
 Now test the installation by running:
 
 ```bash
-serverpod
+$ serverpod
 ```
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.

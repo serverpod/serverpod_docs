@@ -5,7 +5,7 @@ The [Language Server Protocol (LSP)](https://microsoft.github.io/language-server
 To start the Serverpod LSP server, use the following command:
 
 ```bash
-serverpod language-server
+$ serverpod language-server
 ```
 
 :::info

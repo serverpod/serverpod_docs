@@ -35,9 +35,9 @@ $ serverpod create notes
 To start the server:
 
 ```bash
-cd notes/notes_server
-docker compose up --build --detach
-dart bin/main.dart
+$ cd notes/notes_server
+$ docker compose up --build --detach
+$ dart bin/main.dart
 ```
 
 
@@ -676,16 +676,16 @@ Start the database and server:
 Make sure you reboot the server if you started it earlier.
 
 ```bash
-cd notes_server
-docker compose up --build --detach
-dart bin/main.dart
+$ cd notes_server
+$ docker compose up --build --detach
+$ dart bin/main.dart
 ```
 
 Start the Flutter app in Chrome (or the platform of your choice):
 
 ```bash
-cd notes_flutter
-flutter run -d chrome
+$ cd notes_flutter
+$ flutter run -d chrome
 ```
 
 <ReactPlayer playing={true} loop controls width="960px" height="720px" url='/img/tutorial/note-app/03-note-create.mp4' />

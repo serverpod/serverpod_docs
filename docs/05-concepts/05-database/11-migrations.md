@@ -9,7 +9,7 @@ If you ever get out of sync with the migration system, repair migrations can be 
 
 To create a migration navigate to your project's `server` package directory and run the `create-migration` command.
 
-``` bash
+```bash
 $ serverpod create-migration
 ```
 
@@ -26,7 +26,7 @@ The migration command aborts and displays an error under two conditions:
 
 To override these safeguards and force the creation of a migration, use the `--force` flag.
 
-``` bash
+```bash
 $ serverpod create-migration --force
 ```
 
@@ -34,7 +34,7 @@ $ serverpod create-migration --force
 
 Tags can be useful to identify migrations that introduced specific changes to the project. Tags are appended to the migration name and can be added with the `--tag` option.
 
-``` bash
+```bash
 $ serverpod create-migration --tag "v1-0-0"
 ```
 
@@ -74,14 +74,14 @@ For each migration, four files are created:
 ## Apply migrations
 Migrations are applied using the server runtime. To apply migrations, navigate to your project's `server` package directory, then start the server with the `--apply-migrations` flag. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
 
-``` bash
+```bash
 $ dart run bin/main.dart --apply-migrations
 ```
 
 Migrations can also be applied using the maintenance role. In maintenance, after migrations are applied, the server exits with an exit code indicating if migrations were successfully applied, zero for success or non-zero for failure.
 
 
-``` bash
+```bash
 $ dart run bin/main.dart --role maintenance --apply-migrations
 ```
 
@@ -97,7 +97,7 @@ By default, the command connects to and pulls a live database schema from a runn
 
 To create a repair migration, navigate to your project's `server` package directory and run the `create-repair-migration` command.
 
-``` bash
+```bash
 $ serverpod create-repair-migration
 ```
 
@@ -110,7 +110,7 @@ Since each repair migration is created for a specific live database schema, Serv
 ### Migration database source
 By default, the repair migration system connects to your `development` database using the information specified in your Serverpod config. To use a different database source, the `--mode` option is used.
 
-``` bash
+```bash
 $ serverpod create-migration --mode production
 ```
 
@@ -119,7 +119,7 @@ The command connects and pulls the live database schema from a running server.
 ### Targeting a specific migration
 Repair migrations can also target a specific migration version by specifying the migration name with the `--version` option.
 
-``` bash
+```bash
 $ serverpod create-repair-migration --version 20230821135718-v1-0-0
 ```
 
@@ -132,14 +132,14 @@ The repair migration command aborts and displays an error under two conditions:
 
 To override these safeguards and force the creation of a repair migration, use the `--force` flag.
 
-``` bash
+```bash
 $ serverpod create-repair-migration --force
 ```
 
 ### Tag repair migration
 Repair migrations can be tagged just as regular migrations. Tags are appended to the migration name and can be added with the `--tag` option.
 
-``` bash
+```bash
 $ serverpod create-repair-migration --tag "reset-migrations"
 ```
 
@@ -162,14 +162,14 @@ The `repair` directory only exists if a repair migration has been created and co
 ## Applying a repair migration
 The repair migration is applied using the server runtime. To apply a repair migration, start the server with the `--apply-repair-migration` flag. The repair migration is applied as part of the startup sequence and the framework asserts that each repair migration is only applied once to the database.
 
-``` bash
+```bash
 $ dart run bin/main.dart --apply-repair-migration
 ```
 
 The repair migration can also be applied using the maintenance role. In maintenance, after migrations are applied, the server exits with an exit code indicating if migrations were successfully applied, zero for success or non-zero for failure.
 
 
-``` bash
+```bash
 $ dart run bin/main.dart --role maintenance --apply-repair-migration
 ```
 
@@ -192,7 +192,7 @@ If it is not important to preserve the data that is in your database, you can si
 
 This ensures that the project is up to date with the latest version of Serverpod. Navigate to your project's `server` package directory and run the `generate` command.
 
-``` bash
+```bash
 $ serverpod generate
 ```
 
@@ -200,7 +200,7 @@ $ serverpod generate
 
 The migration system will create a migration as if the database needs to be initialized from scratch. Navigate to your project's `server` package directory and run the `create-migration` command.
 
-``` bash
+```bash
 $ serverpod create-migration
 ```
 
@@ -208,7 +208,7 @@ $ serverpod create-migration
  
 In a Serverpod development project, the database is hosted in a docker container. To remove the existing database and start a new one run the following commands:
 
-``` bash
+```bash
 $ docker-compose down -v
 $ docker-compose up --build --detach 
 ```
@@ -219,7 +219,7 @@ The command first removes the running container along with its volume and the se
 
 Apply the migration to your database using the `--apply-migrations` flag when starting the server.
 
-``` bash
+```bash
 $ dart run bin/main.dart --apply-migrations
 ```
 
@@ -230,7 +230,7 @@ If your project already has data in the database that should be preserved, we ca
 
 This ensures that the project is up to date with the latest version of Serverpod. Navigate to your project's `server` package directory and run the `generate` command.
 
-``` bash
+```bash
 $ serverpod generate
 ```
 
@@ -238,7 +238,7 @@ $ serverpod generate
 
 The migration system will create a migration as if the database needs to be initialized from scratch. Navigate to your project's `server` package directory and run the `create-migration` command.
 
-``` bash
+```bash
 $ serverpod create-migration
 ```
 
@@ -246,7 +246,7 @@ $ serverpod create-migration
 
 The repair migration system will create a repair migration that makes your live database schema match the newly created migration. Navigate to your project's `server` package directory and run the `create-repair-migration` command.
 
-``` bash
+```bash
 $ serverpod create-repair-migration
 ```
 
@@ -256,7 +256,7 @@ Use the `--mode` option to specify the database source to use. By default, the r
 
 Apply the repair migration to your database using the `--apply-repair-migration` flag when starting the server.
 
-``` bash
+```bash
 $ dart run bin/main.dart --apply-repair-migration
 ```
 

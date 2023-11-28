@@ -36,7 +36,7 @@ modules:
 Start your database container from the server project.
 
 ```bash
-docker-compose up --build --detach
+$ docker-compose up --build --detach
 ```
 
 [Copy / Download](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_server/generated/tables.pgsql) the table definitions for the auth module. Save them as `tables-auth.pgsql` in the `generated` folder of your server project.
@@ -47,7 +47,7 @@ Run the SQL code on your database in your database viewer or run the docker comm
   <TabItem value="unix" label="MacOS & Linux" default>
 
 ```bash
-docker compose run -T --rm postgres env PGPASSWORD="<db_password>" psql -h postgres -U postgres -d <db_name> < generated/tables-auth.pgsql
+$ docker compose run -T --rm postgres env PGPASSWORD="<db_password>" psql -h postgres -U postgres -d <db_name> < generated/tables-auth.pgsql
 ```
 
   </TabItem>
