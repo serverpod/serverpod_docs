@@ -42,7 +42,7 @@ This would create a migration named `<timestamp>-v1-0-0`:
 
 ```
 ├── migrations
-│    └── 20230821135718-v1-0-0
+│    └── 20231205080937028-v1-0-0
 ```
 
 ### Add data in a migration
@@ -56,20 +56,21 @@ The `migrations` directory contains a folder for each migration that is created,
 
 ```
 ├── migrations
-│    ├── 20230821135718
-│    ├── 20230821135842
-│    └── migration_registry.json 
+│    ├── 20231205080937028
+│    ├── 20231205081959122
+│    └── migration_registry.txt 
 ```
 
-Every migration is denoted by a directory labeled with a timestamp indicating when the migration was generated. Within the directory, there is a `migration_registry.json` file. This file is automatically created whenever migrations are generated and serves the purpose of cataloging the migrations. Its primary function is to identify migration conflicts.
+Every migration is denoted by a directory labeled with a timestamp indicating when the migration was generated. Within the directory, there is a `migration_registry.txt` file. This file is automatically created whenever migrations are generated and serves the purpose of cataloging the migrations. Its primary function is to identify migration conflicts.
 
 
-For each migration, four files are created:
+For each migration, five files are created:
 
-- **definition.json** - Contains the complete definition of the current database schema in JSON.
-- **definition.sql** - Contains SQL statements to create the current database schema.
-- **migration.json** - Contains the migration definition in JSON.
-- **migration.sql** - Contains SQL statements to update the database schema from the last migration to the current version.
+- **definition.json** - Contains the complete definition of the database schema, including any database schema changes from Serverpod module dependencies. This file is parsed by the Serverpod CLI to determine the target database schema for the migration.
+- **definition.sql** - Contains SQL statements to create the complete database schema. This file is applied when initializing a new database.
+- **definition_project.json** - Contains the definition of the database schema for only your project. This file is parsed by the Serverpod CLI to determine what tables are different by Serverpod modules.
+- **migration.json** - Contains the actions that are part of the migration. This file is parsed by the Serverpod CLI.
+- **migration.sql** - Contains SQL statements to update the database schema from the last migration to the current version. This file is applied when rolling the database forward.
 
 ## Apply migrations
 Migrations are applied using the server runtime. To apply migrations, navigate to your project's `server` package directory, then start the server with the `--apply-migrations` flag. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
