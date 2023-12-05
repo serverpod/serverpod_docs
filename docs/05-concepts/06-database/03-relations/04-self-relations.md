@@ -20,9 +20,11 @@ indexes:
     unique: true
 ```
 
-In this example, there is a named relation holding the data on both sides of the relation. The field `nextId` is a nullable field that stores the id of the next post. It is nullable as it would be impossible to create the first entry if we already needed to have a post created. The next post is the 
+In this example, there is a named relation holding the data on both sides of the relation. The field `nextId` is a nullable field that stores the id of the next post. It is nullable as it would be impossible to create the first entry if we already needed to have a post created. The next post represents the object on "this" side while the previous post is the corresponding object on the "other" side. Meaning that the previous post is connected to the `nextId` of the post that came before it.
 
 ## One-to-many
+
+In a one-to-many self-referenced relation there is one object field connected to a list field. In this example we have modeled the relationship between a cat and her potential kittens. Each cat has at most `one` mother but can have `n` kittens, for brevity, we have only modeled the mother.
 
 ```yaml
 class: Cat
@@ -33,8 +35,13 @@ fields:
   kittens: List<Cat>?, relation(name=cat_kittens)
 ```
 
+The field `motherId: int?` is injected into the dart class, the field is nullable since we marked the field `mother` as an `optional` relation. We can now find all the kittens by looking at the `motherId` of other cats which should match the `id` field of the current cat. The other cat can instead be found by looking at the `motherId` of the current cat and matching it against one other cat `id` field.
+
 ## Many-to-many
 
+Let's imagine we have a system where we have members that can block other members. We would like to be able to query who I'm blocking and who is blocking me. This can be achieved by modeling the data as a many-to-many relation ship.
+
+Each member has a list of all other members they are blocking and another list of all members that are blocking them. But since the list side needs to point to a foreign key and cannot point to another list directly, we have to define a junction table that holds the connection between the rows.
 
 ```yaml
 class: Member
@@ -56,3 +63,7 @@ indexes:
     fields: blockedId, blockedById
     unique: true
 ```
+
+The junction table has an entry for who is blocking and another for who is getting blocked. Notice that the `blockedBy` field in the junction table is linked to the `blocking` field in the member table. We have also added a combined unique constraint on both the `blockedId` and `blockedById`, this makes sure we only ever have one entry per relation, meaning I can only block one other member one time.
+
+The cascade delete means that if a member is deleted all the blocking entries are also removed for that member.
