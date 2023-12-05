@@ -117,7 +117,7 @@ Put the file inside the `android/app/` directory and rename it to `google-servic
 For a production app you need to get the SHA-1 key from your production keystore! This can be done by running this command: ([Read more](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid)).
 
 ```bash
-keytool -list -v -keystore /path/to/keystore
+$ keytool -list -v -keystore /path/to/keystore
 ```
 
 :::
@@ -134,7 +134,7 @@ Navigate to _Credentials_ under _APIs & Services_ and select the server credenti
 Force flutter to run on a specific port by running.
 
 ```bash
-flutter run -d chrome --web-port=49660
+$ flutter run -d chrome --web-port=49660
 ```
 
 :::

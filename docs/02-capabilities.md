@@ -16,6 +16,9 @@ Cut down on your database costs. Don't save all your data permanently when you d
 ## Easy to use ORM
 Save time. Talking with your database can be a hassle. With Serverpod's ORM, your queries use native Dart types and null-safety. There is a straight path from your statically checked code to the database. Serverpod automatically generates the Postgres queries you need to set up your database. _Database migrations are coming soon._
 
+## Database migrations
+Easily keep your database in sync as the requirements of your project evolve. Serverpod comes with a complete database migration system that helps you apply and version changes to the database. 
+
 ## File uploads
 Upload files straight to Google Cloud Storage, S3, or store them in your database.
 

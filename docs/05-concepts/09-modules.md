@@ -38,8 +38,8 @@ modules:
 Finally, you need to run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your protocol.
 
 ```bash
-dart pub get
-serverpod generate
+$ dart pub get
+$ serverpod generate
 ```
 
 ### Client setup
@@ -77,13 +77,13 @@ fields:
 With the `serverpod create` command, it is possible to create new modules for code that is shared between projects or that you want to publish to pub.dev. To create a module instead of a server project, pass `module` to the `--template` flag.
 
 ```bash
-serverpod create --template module my_module
+$ serverpod create --template module my_module
 ```
 
 The create command will create a server and a client Dart package. If you also want to add custom Flutter code, use `flutter create` to create a package.
 
 ```bash
-flutter create --template package my_module_flutter
+$ flutter create --template package my_module_flutter
 ```
 
 In your Flutter package, you most likely want to import the client libraries created by `serverpod create`.

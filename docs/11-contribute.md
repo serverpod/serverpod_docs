@@ -19,7 +19,7 @@ We are very conscious about keeping the Serverpod code base clean. When you writ
 Continuous integration tests are automatically run when sending a pull request to the `main` branch. You can run the tests locally by changing your working directory into the root serverpod directory and running:
 
 ```bash
-util/run_tests
+$ util/run_tests
 ```
 
 :::caution
@@ -37,28 +37,28 @@ Running single individual tests is useful when you are working on a specific fea
 ```
 2. Start the Docker container for the test server.
 ```bash
-cd tests/serverpod_test_server/docker-local
-docker-compose up --build --detach
-./setup-tables
+$ cd tests/serverpod_test_server/docker-local
+$ docker-compose up --build --detach
+$ ./setup-tables
 ```
 3. Start the test server.
 ```bash
-cd tests/serverpod_test_server
-dart bin/main.dart
+$ cd tests/serverpod_test_server
+$ dart bin/main.dart
 ```
 4. Run an individual test
 ```bash
-cd tests/serverpod_test_server
-dart test test/connection_test.dart
+$ cd tests/serverpod_test_server
+$ dart test test/connection_test.dart
 ```
 
 ### Command line tools
 To run the `serverpod` command from your cloned repository, you will need to:
 
 ```bash
-cd tools/serverpod_cli
-dart pub get
-dart pub global activate --source path .
+$ cd tools/serverpod_cli
+$ dart pub get
+$ dart pub global activate --source path .
 ```
 
 Depending on your Dart version you may need to run the `dart pub global` command above every time you've made changes in the Serverpod tooling.
@@ -77,7 +77,7 @@ First off, we are restrictive about which new packages we include in the Serverp
 Secondly, you shouldn't edit the `pubspec.yaml` files directly. Instead, make changes to the files in the `templates/` directory. When you've made changes, run the `update_pubspecs` command to generate the `pubspec.yaml` files.
 
 ```bash
-util/update_pubspecs
+$ util/update_pubspecs
 ```
 
 ## Submitting your pull request

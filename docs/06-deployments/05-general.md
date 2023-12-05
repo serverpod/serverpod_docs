@@ -8,7 +8,7 @@ Serverpod will not run without a link to a Postgres database with the correct ta
 Serverpod has three main configuration files, depending on which mode the server is running; `development`, `staging`, or `production`. The files are located in the `config/` directory. By default, the server will start in development mode. To use another configuration file, use the `--mode` option when starting the server. If you are running multiple servers in a cluster, use the `--server-id` option to specify the id of each server. By default, the server will run as id `default`. For instance, to start the server in production mode with id `2`, run the following command:
 
 ```bash
-dart bin/main.dart --mode production --server-id 2
+$ dart bin/main.dart --mode production --server-id 2
 ```
 
 :::info
@@ -31,7 +31,7 @@ Serverpod can assume different roles depending on your configuration. If you run
 You can specify the role of your server when you launch it by setting the `--role` argument.
 
 ```bash
-dart bin/main.dart --role serverless
+$ dart bin/main.dart --role serverless
 ```
 
 ## Docker container
