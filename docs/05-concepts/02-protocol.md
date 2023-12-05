@@ -1,6 +1,8 @@
 # Working with protocols
 
-Protocols are special yaml files in Serverpod to define classes, fill...
+Protocols are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server.
+
+The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
 
 Run `serverpod generate` to generate dart classes from the protocol files.
 
