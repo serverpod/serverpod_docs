@@ -41,7 +41,7 @@ If it is not important to preserve the data that is in your database, you can si
 This ensures that the project is up to date with the latest version of Serverpod. Navigate to your project's `server` package directory and run the `generate` command.
 
 ```bash
-serverpod generate
+$ serverpod generate
 ```
 
 2. Create a migration for your project.
@@ -49,7 +49,7 @@ serverpod generate
 The migration system will create a migration as if the database needs to be initialized from scratch. Navigate to your project's `server` package directory and run the `create-migration` command.
 
 ```bash
-serverpod create-migration
+$ serverpod create-migration
 ```
 
 3. Recreate database.
@@ -57,8 +57,8 @@ serverpod create-migration
 In a Serverpod development project, the database is hosted in a docker container. To remove the existing database and start a new one run the following commands:
 
 ```bash
-docker-compose down -v
-docker-compose up --build --detach 
+$ docker-compose down -v
+$ docker-compose up --build --detach 
 ```
 
 The command first removes the running container along with its volume and the second command starts a new database from scratch.
@@ -68,7 +68,7 @@ The command first removes the running container along with its volume and the se
 Initialize the database by applying the migration to it using the `--apply-migrations` flag when starting the server.
 
 ```bash
-dart run bin/main.dart --apply-migrations
+$ dart run bin/main.dart --apply-migrations
 ```
 
 ### Data to preserve
@@ -80,7 +80,7 @@ If your project already has data in the database that should be preserved, we ca
 This ensures that the project is up to date with the latest version of Serverpod. Navigate to your project's `server` package directory and run the `generate` command.
 
 ```bash
-serverpod generate
+$ serverpod generate
 ```
 
 2. Create a migration for your project.
@@ -88,7 +88,7 @@ serverpod generate
 The migration system will create a migration as if the database needs to be initialized from scratch. Navigate to your project's `server` package directory and run the `create-migration` command.
 
 ```bash
-serverpod create-migration
+$ serverpod create-migration
 ```
 
 3. Create a repair migration.
@@ -96,7 +96,7 @@ serverpod create-migration
 The repair migration system will create a repair migration that makes your live database schema match the newly created migration. Navigate to your project's `server` package directory and run the `create-repair-migration` command.
 
 ```bash
-serverpod create-repair-migration
+$ serverpod create-repair-migration
 ```
 
 Use the `--mode` option to specify the database source to use. By default, the repair migration system connects to your `development` database using the information specified in your Serverpod config.
@@ -106,7 +106,7 @@ Use the `--mode` option to specify the database source to use. By default, the r
 Apply the repair migration to your database using the `--apply-repair-migration` flag when starting the server.
 
 ```bash
-dart run bin/main.dart --apply-repair-migration
+$ dart run bin/main.dart --apply-repair-migration
 ```
 
 ## Closing remarks
