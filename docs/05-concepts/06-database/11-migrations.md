@@ -17,7 +17,7 @@ The command reads the database schema from the last migration, then compares it 
 
 If no previous migration exists it will create a migration assuming there is no initial state.
 
-See the [Pre-migration project upgrade path](#pre-migration-project-upgrade-path) section for more information on how to get started with migrations for any project created before migrations were introduced in Serverpod.
+See the [Pre-migration project upgrade path](../../upgrading/upgrade-to-one-point-two) section for more information on how to get started with migrations for any project created before migrations were introduced in Serverpod.
 
 ### Force create migration
 The migration command aborts and displays an error under two conditions:
