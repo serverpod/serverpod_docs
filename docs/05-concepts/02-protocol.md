@@ -1,6 +1,6 @@
 # Working with protocols
 
-Protocols are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server.
+Protocols are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `protocol` directory in your server project.
 
 The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
 
@@ -15,6 +15,8 @@ fields:
   foundedDate: DateTime?
   employees: List<Employee>
 ```
+
+Supported types are `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, and other serializable classes. You can also use `List`s and `Map`s of the supported types, just make sure to specify the types. Null safety is supported. The keys of `Map` must be non-nullable `String`s. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Limiting visibility of a generated class
 
