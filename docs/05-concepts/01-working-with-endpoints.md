@@ -34,7 +34,7 @@ var client = Client('http://localhost:8080/')
 
 If you run the app in an Android emulator, change the address to `10.0.2.2` as this is the IP address of the host machine. To access the server from a different device on the same network (such as a physical phone) replace `localhost` with the local ip address. You can find the local ip by running `ifconfig` (Linux/MacOS) or `ipconfig` (Windows).
 
-Make sure to also update the `publicHost` in the development config to make sure the server always servers the client with the correct path to assets etc.
+Make sure to also update the `publicHost` in the development config to make sure the server always serves the client with the correct path to assets etc.
 
 ```yaml
 # your_project_server/config/development.yaml
