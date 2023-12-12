@@ -33,36 +33,26 @@ modules:
 
 ### Initialize the auth database
 
+After adding the module to the server project, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
+
+```bash
+$ serverpod create-migration
+```
+
+
 Start your database container from the server project.
 
 ```bash
 $ docker-compose up --build --detach
 ```
 
-[Copy / Download](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_server/generated/tables.pgsql) the table definitions for the auth module. Save them as `tables-auth.pgsql` in the `generated` folder of your server project.
-
-Run the SQL code on your database in your database viewer or run the docker command:
-
-<Tabs>
-  <TabItem value="unix" label="MacOS & Linux" default>
+Then apply the migration by starting the server with the `apply-migration` flag.
 
 ```bash
-$ docker compose run -T --rm postgres env PGPASSWORD="<db_password>" psql -h postgres -U postgres -d <db_name> < generated/tables-auth.pgsql
+$ dart run bin/main.dart --role maintenance --apply-migrations
 ```
 
-  </TabItem>
-  <TabItem value="windows" label="Windows">
-
-```cmd
-type .\generated\tables-auth.pgsql | docker compose run -T postgres env PGPASSWORD="<db_password>" psql -h postgres -U postgres -d <db_name>
-```
-
-  </TabItem>
-</Tabs>
-
-**\<db_password\>** needs to be replaced with the password for the database, you can find it inside the `config/passwords.yaml` file inside the server project.
-
-**\<db_name\>** is normally the same as `project_name` the exact configuration can be found inside `project_name/project_name_server/config/development.yaml`
+The full migration instructions can be found in the [migration guide](../database/migrations).
 
 ## Client setup
 
