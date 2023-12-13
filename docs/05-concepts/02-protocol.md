@@ -1,6 +1,6 @@
 # Working with protocols
 
-Protocols are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `protocol` directory in your server project.
+Protocols are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `lib/src/protocol` directory in your server project.
 
 The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
 
