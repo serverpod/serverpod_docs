@@ -21,7 +21,7 @@ class ExampleFutureCall extends FutureCall<MyProtocolEntity> {
 }
 ```
 
-To let your Server get access to the future call you have to register it in the main run method in your `server.dart` file. You register the future call by calling `registerFutureCall` on the Serverpod object and giving it an instance of the future call together with a string that gives the future call a name. The name has to be globally unique, and is used to later invoke the future call.
+To let your Server get access to the future call you have to register it in the main run method in your `server.dart` file. You register the future call by calling `registerFutureCall` on the Serverpod object and giving it an instance of the future call together with a string that gives the future call a name. The name has to be globally unique and is used to later invoke the future call.
 
 ```dart
 void run(List<String> args) async {
