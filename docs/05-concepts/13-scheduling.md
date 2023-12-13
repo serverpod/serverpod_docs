@@ -2,6 +2,8 @@
 
 With Serverpod you can schedule future work with the `future call` feature. Future calls are calls that will be invoked at a later time. An example is if you want to send a drip-email campaign after a user signs up. You can schedule a future call for a day, a week, or a month. The calls are stored in the database, so they will persist even if the server is restarted.
 
+A future call is guaranteed to only execute once across all your instances that are running, but execution failures are not handled automatically. It is your responsibility to schedule a new future call if the work was not able to complete.
+
 Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](sessions) object and the second being an optional SerializableEntity ([See protocol](protocol)).
 
 :::info
@@ -60,7 +62,7 @@ await session.serverpod.futureCallAtTime(
 ```
 
 :::note
-`data` is an object created from a class defined in one of your yaml files in the `protocol` folder. `data` may also be null.
+`data` is an object created from a class defined in one of your yaml files in the `protocol` folder, `data` may also be null if you don't need it.
 :::
 
 When registering a future call it is also possible to give it an `identifier` so that it can be referenced later. The same identifier can be applied to multiple future calls.
@@ -74,7 +76,7 @@ await session.serverpod.futureCallWithDelay(
 );
 ```
 
-This identifier can then be used to cancel all future calls if you no longer want the registered future calls to execute.
+This identifier can then be used to cancel all future calls registered with said identifier.
 
 ```dart
 await session.serverpod.cancelFutureCall('an-identifying-string');
