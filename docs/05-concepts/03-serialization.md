@@ -1,67 +1,114 @@
-# Serialization
-Serverpod makes it easy to generate serializable classes that can be passed between server and client or used to communicate with the database.
+# Custom serialization
 
-## Serverpod's native serialization
-The structure for your serialized classes is defined in yaml-files in the `protocol` directory. Run `serverpod generate` to build the Dart code for the classes and make them accessible to both the server and client.
+For most purposes, you will want to use Serverpod's native serialization. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to three simple rules:
 
-Here is a simple example of a yaml-file defining a serializable class:
+1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
 
-```yaml
-class: Company
-fields:
-  name: String
-  foundedDate: DateTime?
-  employees: List<Employee>
+```dart
+Map<String, dynamic> toJson() {
+  return {
+    name: 'John Doe',
+  };
+}
 ```
 
-Supported types are `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, and other serializable classes. You can also use `List`s and `Map`s of the supported types, just make sure to specify the types. Null safety is supported. The keys of `Map` must be non-nullable `String`s. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization and a Serialization manager as parameters.
 
-### Extending the generated classes
-Sometimes you will want to add custom methods to the generated classes. The easiest way to do this is with Dart's extension feature.
-
-### Limiting visibility of a generated class
-By default, generated code for your serializable objects is available both on the server and the client. You may want to have the code on the server side only. E.g., if the serializable object is connected to a database table containing private information.
-
-To make a serializable class generated only on the server side, set the `serverOnly` property to `true`.
-
-```yaml
-class: MyPrivateClass
-serverOnly: true
-fields:
-  hiddenSecretKey: String
+```dart
+factory ClassName.fromJson(
+  Map<String, dynamic> json,
+  SerializationManager serializationManager,
+) {
+  return ClassName(
+    name: json['name'] as String,
+  );
+}
 ```
 
-### Adding documentation
-Serverpod allows you to add documentation to your serializable objects in a similar way that you would add documentation to your Dart code. Use three hashes (`###`) to indicate that a comment should be considered documentation.
+3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
 ```yaml
-### Information about a company.
-class: Company
-fields:
-  ### The name of the company.
-  name: String
-
-  ### The date the company was founded, if known.
-  foundedDate: DateTime?
-
-  ### A list of people currently employed at the company.
-  employees: List<Employee>
+...
+extraClasses:
+  - package:my_project_shared/my_project_shared.dart:ClassName
 ```
 
-:::info
+## Setup example
 
-Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the database [CRUD](database/crud) section.
+We recommend creating a new dart package specifically for sharing these types of classes and importing it into the server and client `pubspec.yaml`. This can easily be done by running `$ dart create -t package <my_project>_shared` in the root folder of your project.
 
-:::
+Your folder structure should then look like this:
 
-## Custom serializable objects
-For most purposes, you will want to use Serverpod's native serialization as described above. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to two simple rules:
+```
+├── my_project_client
+├── my_project_flutter
+├── my_project_server
+├── my_project_shared
+```
 
-1. Your objects must have a method called toJson() which returns a JSON serialization of the object.
-2. There must be a constructor or factory called fromJson(), which takes a JSON serialization and a Serialization manager as parameters.
-3. You must declare your custom serializable objects in the config/generator.yaml file.
+Then you need to add the package `serverpod_serialization` to get access to the `SerializationManager` class.
 
-Typically, you will want to place your serializable objects in a shared package between the client and your server. For instance, if you use Freezed to do your serialization, the class would look something like this:
+```bash
+$ cd my_project_shared
+$ dart pub add serverpod_serialization
+```
+
+Then you need to update both your `my_project_server/pubspec.yaml` and `my_project_client/pubspec.yaml` and add the new package as a dependency.
+
+```yaml
+dependencies:
+  ...
+  my_project_client:
+    path: ../my_project_shared
+  ...
+```
+
+Now you can create your custom class in your new shared package:
+
+```dart
+import 'package:serverpod_serialization/serverpod_serialization.dart';
+
+class ClassName {
+  String name;
+  ClassName(this.name);
+
+  toJson() {
+    return {
+      'name': name,
+    };
+  }
+
+  factory ClassName.fromJson(
+    Map<String, dynamic> jsonSerialization,
+    SerializationManager serializationManager,
+  ) {
+    return ClassName(
+      jsonSerialization['name'],
+    );
+  }
+}
+```
+
+After adding a new serializable class, you must run `serverpod generate`. You are now able to use this class in your endpoints and leverage the full serialization/deserialization management that comes with Serverpod.
+
+In your server project, you can create an endpoint returning your custom object.
+
+```dart
+import 'package:relation_test_shared/relation_test_shared.dart';
+import 'package:serverpod/serverpod.dart';
+
+class ExampleEndpoint extends Endpoint {
+  Future<ClassName> getMyCustomClass(Session session) async {
+    return ClassName(
+      'John Doe',
+    );
+  }
+}
+```
+
+## Custom object with Freezed
+
+Serverpod also has support for using custom classes created with the [Freezed](https://pub.dev/packages/freezed) package.
 
 ```dart
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -92,5 +139,3 @@ In the config/generator.yaml, you declare the package and the class:
 extraClasses:
   - package:my_shared_package/my_shared_package.dart:FreezedCustomClass
 ```
-
-After adding a new serializable class, you must run `serverpod generate`.
