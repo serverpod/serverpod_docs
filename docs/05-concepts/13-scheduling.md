@@ -62,7 +62,7 @@ await session.serverpod.futureCallAtTime(
 ```
 
 :::note
-`data` is an object created from a class defined in one of your yaml files in the `protocol` folder, `data` may also be null if you don't need it.
+`data` is an object created from a class defined in one of your yaml files and has to be the same as the one you expect to receive in the future call. in the `protocol` folder, `data` may also be null if you don't need it.
 :::
 
 When registering a future call it is also possible to give it an `identifier` so that it can be referenced later. The same identifier can be applied to multiple future calls.
