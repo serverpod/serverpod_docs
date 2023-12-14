@@ -22,6 +22,121 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 ```
 
+The `Dockerfile` in your project also has to be updated with the new dart version you want to run.
+
+```docker
+FROM dart:3.0 AS build
+
+...
+```
+
+## Deprecated methods
+
+All database methods generated on your serializable classes have been deprecated and replaced with corresponding methods on a static `db` field on the same class.
+Most methods have just moved location, but some have slightly different implementations.
+
+```dart
+// The new find method is a drop-in replacement.
+Example.find(...); // old
+Example.db.find(...); // new
+
+// The old findSingleRow method has changed name to findFirstRow but is otherwise a drop-in replacement.
+Example.findSingleRow(...);
+Example.db.findFirstRow(...);
+
+// The new findById method is a drop-in replacement.
+Example.findById(...); // old
+Example.db.findById(...); // new
+
+// The old delete method has been renamed to deleteWhere and now returns a list of ids of rows that was deleted.
+Example.delete(...);
+Example.db.deleteWhere(...);
+
+// The new findById method is a drop-in replacement but returns the id of the row deleted.
+Example.deleteRow(...); // old
+Example.db.deleteRow(...); // new
+
+// The old update method has been renamed too updateRow and now returns the entire updated object as a new copy.
+Example.update(...);
+Example.db.updateRow(...);
+
+// The old insert method has been renamed too insertRow. The object you pass in is no longer modified, instead a new copy with the added row is returned which contains the inserted id. This means no mutations of the input object.
+Example.insert(...);
+Example.db.insertRow(...);
+
+// The new count method is a drop-in replacement.
+Example.count(...);
+Example.db.count(...);
+```
+
+## Protocol changes
+
+The keyword `api` has been deprecated and replaced with the new keyword `!persist` as a drop-in replacement.
+
+Old syntax:
+
+```yaml
+class: Example
+table: example
+fields:
+  name: String
+  apiField: String, api
+```
+
+New syntax:
+
+```yaml
+class: Example
+table: example
+fields:
+  name: String
+  apiField: String, !persist
+```
+
+The keyword `database` has been deprecated and replaced with the new keyword `scope` with the value `serverOnly` as a drop-in replacement.
+
+Old syntax:
+
+```yaml
+class: Example
+table: example
+fields:
+  name: String
+  serverField: String, database
+```
+
+New syntax:
+
+```yaml
+class: Example
+table: example
+fields:
+  name: String
+  serverField: String, scope=serverOnly
+```
+
+The keyword `parent` has been moved and should be placed inside the new `relation` keyword, see the section on [relations](../concepts/database/relations/one-to-one) for the full new feature set.
+
+Old syntax:
+
+```yaml
+class: Example
+table: example
+fields:
+  name: String
+  parentId: int, parent=example
+```
+
+New Syntax:
+
+```yaml
+class: Example
+table: example
+fields:
+  name: String
+  parentId: int, relation(parent=example)
+```
+
 ## Moved and renamed SQL file
 
 Serverpod has moved and renamed the generated SQL file for the complete database schema. Instead of the file `generated/tables.pgsql`, Serverpod now includes it as a part of each migration located in `generated/migration/migrations`, under the name `definition.sql`.
