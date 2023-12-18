@@ -10,7 +10,7 @@ Use the Serverpod Insights app to view your logs. It will show any failed or slo
 :::
 
 ## Serializable exceptions
-Serverpod allows adding data to an exception you throw on the server and extracting that data in the client. This is useful for passing error messages back to the client when a call fails. You use the same yaml-files to define the serializable exceptions as you would with any serializable entity (see [serialization](serialization) for details). The only difference is that you use the keyword `exception` instead of `class`.
+Serverpod allows adding data to an exception you throw on the server and extracting that data in the client. This is useful for passing error messages back to the client when a call fails. You use the same yaml-files to define the serializable exceptions as you would with any serializable model (see [serialization](serialization) for details). The only difference is that you use the keyword `exception` instead of `class`.
 
 ```yaml
 exception: MyException

@@ -39,7 +39,7 @@ In the example we fetch all companies and sort them by their name in descending 
 
 ## Sort on relations
 
-To sort based on a field from a related entity, use the chained field reference.
+To sort based on a field from a related model, use the chained field reference.
 
 ```dart
 var companies = await Company.db.find(

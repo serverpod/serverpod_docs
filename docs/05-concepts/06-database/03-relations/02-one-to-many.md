@@ -2,7 +2,7 @@
 
 One-to-many (1:n) relationships describes a scenario where multiple records from one table can relate to a single record in another table. An example of this would the relationship between a company and its employees, where multiple employees can be employed at a single company.
 
-The Serverpod framework provides versatility in establishing these relations. Depending on the specific use case and clarity desired, you can define the entity relationship either from the 'many' side (like `Employee`) or the 'one' side (like `Company`).
+The Serverpod framework provides versatility in establishing these relations. Depending on the specific use case and clarity desired, you can define the model relationship either from the 'many' side (like `Employee`) or the 'one' side (like `Company`).
 
 ## Defining the Relationship
 

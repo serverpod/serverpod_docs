@@ -1,6 +1,6 @@
 # One-to-one
 
-One-to-one (1:1) relationships represent a unique association between two entities, there is at most one entity that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
+One-to-one (1:1) relationships represent a unique association between two entities, there is at most one model that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
 
 ## Defining the Relationship 
 In the following examples we show how to configure a 1:1 relationship between  `User` and `Address`.
@@ -54,7 +54,7 @@ indexes:
     unique: true
 ```
 
-In this example, we define an object relation field by annotating the `address` field with the `relation` keyword where the type is another entity, `Address?`. 
+In this example, we define an object relation field by annotating the `address` field with the `relation` keyword where the type is another model, `Address?`. 
 
 Serverpod then automatically generates a foreign key field (as seen in the last example) named `addressId` in the `User` class. This auto-generated field is non-nullable by default and is by default always named from the object relation field with the suffix `Id`.
 
