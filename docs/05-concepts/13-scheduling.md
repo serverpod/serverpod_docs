@@ -4,7 +4,7 @@ With Serverpod you can schedule future work with the `future call` feature. Futu
 
 A future call is guaranteed to only execute once across all your instances that are running, but execution failures are not handled automatically. It is your responsibility to schedule a new future call if the work was not able to complete.
 
-Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](sessions) object and the second being an optional SerializableEntity ([See protocol](protocol)).
+Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](sessions) object and the second being an optional SerializableEntity ([See model](model)).
 
 :::info
 The future call feature is not enabled when running Serverpod in serverless mode.
@@ -13,9 +13,9 @@ The future call feature is not enabled when running Serverpod in serverless mode
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-class ExampleFutureCall extends FutureCall<MyProtocolEntity> {
+class ExampleFutureCall extends FutureCall<MyModelEntity> {
   @override
-  Future<void> invoke(Session session, MyProtocolEntity? object) async {
+  Future<void> invoke(Session session, MyModelEntity? object) async {
     // Do something interesting in the future here.
   }
 }
@@ -62,7 +62,7 @@ await session.serverpod.futureCallAtTime(
 ```
 
 :::note
-`data` is an object created from a class defined in one of your yaml files and has to be the same as the one you expect to receive in the future call. in the `protocol` folder, `data` may also be null if you don't need it.
+`data` is an object created from a class defined in one of your yaml files and has to be the same as the one you expect to receive in the future call. in the `model` folder, `data` may also be null if you don't need it.
 :::
 
 When registering a future call it is also possible to give it an `identifier` so that it can be referenced later. The same identifier can be applied to multiple future calls.

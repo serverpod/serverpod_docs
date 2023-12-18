@@ -35,7 +35,7 @@ modules:
     nickname: auth
 ```
 
-Finally, you need to run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your protocol.
+Finally, you need to run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your projects deserializer.
 
 ```bash
 $ dart pub get
@@ -64,7 +64,7 @@ dependencies:
 
 ## Referencing a module
 
-It can be useful to reference serializable objects in other modules from the yaml-files in your protocol directory. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the auth package.
+It can be useful to reference serializable objects in other modules from the yaml-files in your model directory. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the auth package.
 
 ```yaml
 class: MyClass

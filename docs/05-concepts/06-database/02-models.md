@@ -9,7 +9,7 @@ fields:
   name: String
 ```
 
-When the `table` keyword is added to the entity, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod migrate` command that will generate the necessary [migrations](migrations) needed to update the database.
+When the `table` keyword is added to the model, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod migrate` command that will generate the necessary [migrations](migrations) needed to update the database.
 
 :::info
 

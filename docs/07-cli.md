@@ -18,7 +18,7 @@ $ serverpod <command> [arguments]
 
 - **[create](get-started)**: Establishes a new Serverpod project. When employing this command, designate the project name, ensuring it's in lowercase and devoid of special characters.
 
-- **[generate](concepts/protocol)**: Converts YAML files into appropriate code for the server and associated clients.
+- **[generate](concepts/model)**: Converts YAML files into appropriate code for the server and associated clients.
 
 - **[language-server](lsp)**: Activates the Serverpod LSP server, which interfaces via JSON-RPC-2. This is tailored for compatibility with a client integrated within an IDE.
 

@@ -1,10 +1,10 @@
-# Working with protocols
+# Working with models
 
-Protocols are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `lib/src/protocol` directory in your server project.
+Models are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `lib/src/model` directory in your server project.
 
 The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
 
-Run `serverpod generate` to generate dart classes from the protocol files.
+Run `serverpod generate` to generate dart classes from the model files.
 
 ## Class
 
@@ -141,7 +141,7 @@ extension MyExtension on MyClass {
 |[**type (fields)**](#class)|Denotes the data type for a field.                                                                             |✅|✅||
 |[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
 |[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
-|[**relation**](database/relations/one-to-one)|Sets a relation between protocol files, requires a table name to be set.           |✅|||
+|[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.           |✅|||
 |[**name**](database/relations/one-to-one#bidirectional-representation)|Give a name to a relation to pair them.                   |✅|||
 |[**parent**](database/relations/one-to-one#one-side-defined)|Sets the parent table on a relation.                                |✅|||
 |[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||

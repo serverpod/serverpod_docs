@@ -2,13 +2,13 @@
 
 Many-to-many (n:m) relationships describes a scenario where multiple records from a table can relate to multiple records in another table. An example of this would be the relationship between students and courses, where a single student can enroll in multiple courses, and a single course can have multiple students.
 
-The Serverpod framework supports these complex relationships by explicitly creating a separate entity, often called a junction or bridge table, that records the relation.
+The Serverpod framework supports these complex relationships by explicitly creating a separate model, often called a junction or bridge table, that records the relation.
 
 ## Overview
 
 In the context of many-to-many relationships, neither table contains a direct reference to the other. Instead, a separate table holds the foreign keys of both tables. This setup allows for a flexible and normalized approach to represent n:m relationships.
 
-Modeling the relationship between `Student` and `Course`, we would create an `Enrollment` entity as a junction table to store the relationship explicitly.
+Modeling the relationship between `Student` and `Course`, we would create an `Enrollment` model as a junction table to store the relationship explicitly.
 
 ## Defining the Relationship
 

@@ -69,7 +69,7 @@ Example.count(...);
 Example.db.count(...);
 ```
 
-## Protocol changes
+## Model changes
 
 The keyword `api` has been deprecated and replaced with the new keyword `!persist` as a drop-in replacement.
 
