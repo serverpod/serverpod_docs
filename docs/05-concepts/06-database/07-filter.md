@@ -76,7 +76,7 @@ await User.db.find(
   where: (t) => t.age.between(18, 65)
 );
 ```
-In the example we fetch all users between 18 and 65 years old. This can also be expressed as `(>= 18 && 65 <=)`.
+In the example we fetch all users between 18 and 65 years old. This can also be expressed as `(t.age >= 18) & (t.age <= 65)`.
 
 The 'not between' operation functions similarly to 'between' but it negates the condition. It also works inclusively with the boundaries.
 
@@ -86,7 +86,7 @@ await User.db.find(
 );
 ```
 
-In the example we fetch all users that are not between 18 and 65 years old. This can also be expressed as `(< 18 && 65 >)`.
+In the example we fetch all users that are not between 18 and 65 years old. This can also be expressed as `(t.age < 18) | (t.age > 65)`.
 
 ### In set
 
