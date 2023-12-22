@@ -5,6 +5,18 @@ A migration is a set of database operations (e.g. creating a table, adding a col
 
 If you ever get out of sync with the migration system, repair migrations can be used to bring the database schema up to date with the migration system. Repair migrations identify the differences between the two and create a unique migration that brings the live database schema in sync with a migration database schema.
 
+## Opt out of migrations
+
+It is possible to selectively opt out of the migration system per table basis, by setting the `managedMigration` key to false in your model. When this flag is set to false the generated migrations will not define any SQL code for this table. You will instead have to manually define and manage the life cycle of this table.
+
+```yaml
+class: Example
+table: example
+managedMigration: false
+fields:
+  name: String
+```
+
 ## Creating a migration
 
 To create a migration navigate to your project's `server` package directory and run the `create-migration` command.

@@ -136,12 +136,13 @@ extension MyExtension on MyClass {
 |[**values**](#enum)|A special key for enums with a list of all enum values.                                                                |||✅|
 |[**serialized**](#enum)|Sets the mode enums are serialized in                                                                              |||✅|
 |[**serverOnly**](#limiting-visibility-of-a-generated-class)|Boolean flag if code generator only should create the code for the server.     |✅|✅|✅|
-|[**table**](database/models)|A name for the database table, enables generation of database code.                                 |✅|||
+|[**table**](database/models)|A name for the database table, enables generation of database code.                                           |✅|||
+|[**managedMigration**](database/migrations#opt-out-of-migrations)|A boolean flag to opt out of the database migration system.                                        |✅|||
 |[**fields**](#class)|All fields in the generated class should be listed here.                                                              |✅|✅||
 |[**type (fields)**](#class)|Denotes the data type for a field.                                                                             |✅|✅||
 |[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
 |[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
-|[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.           |✅|||
+|[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.              |✅|||
 |[**name**](database/relations/one-to-one#bidirectional-representation)|Give a name to a relation to pair them.                   |✅|||
 |[**parent**](database/relations/one-to-one#one-side-defined)|Sets the parent table on a relation.                                |✅|||
 |[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
