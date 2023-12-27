@@ -104,7 +104,7 @@ To batch update several rows use the `update` method.
 
 ```dart
 var companies = await Company.db.find(session);
-companies = companies.map((c) => c.copyWith(name: 'New name'));
+companies = companies.map((c) => c.copyWith(name: 'New name')).toList();
 var updatedCompanies = await Company.db.update(session, companies);
 ```
 
