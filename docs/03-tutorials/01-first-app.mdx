@@ -45,7 +45,7 @@ $ dart bin/main.dart
 
 Serverpod comes with a convenient way to create serializable objects with the help of code generation. These objects can easily be sent back and forth between the server and the client. This is managed by defining our objects in a YAML file which the code generator then parses and generates the necessary code for.
 
-To define the structure of our Note object, we will create a YAML file called `note.yaml`. Navigate to the `lib/src/model` folder in your Serverpod project (`notes_server`). Create the file and add the following content:
+To define the structure of our Note object, we will create a YAML file called `note.yaml` inside `lib/src/model` folder in your Serverpod project (`notes_server`). Add the following content in `note.yaml`:
 
 ```yaml
 ### Holds a note with a text written by the user.
@@ -56,12 +56,12 @@ fields:
 ```
 
 Let's take a closer look at the content of the `note.yaml` file:
-* **class: Note** Specifies the name of the class to be generated, which in this case is Note.
-* **fields:** This keyword indicates the beginning of the field definitions for the Note class.
-* **text: String** Defines a text field of type String in the Note class, in this minimal example we only have one field but you can add however many fields you need.
+* **class:** Specifies the name of the class to be generated, which in this case is **Note**.
+* **fields:** This keyword indicates the beginning of the field definitions for the **Note** class.
+* **text:** Defines a text field of type String in the Note class, in this minimal example we only have one field but you can add as many fields as you need.
 
 
-Use the code generator to generate the code for the `Note` class from the definition in `note.yaml`. Run the following command from the root of your server project:
+Use the code generator to generate the code for the `Note` class from the definition in `note.yaml`. Run the following command from the root of your server project (`notes_server`):
 
 ```bash
 $ serverpod generate
@@ -73,11 +73,11 @@ After the code generation process is complete, you can access the generated code
 
 By extending the `SerializableEntity` class, the `Note` object becomes capable of automatic serialization and deserialization. This makes the `Note` object transmittable between the server and the client.
 
-In simpler terms, we have created a class, `Note`, that can hold information and be passed around within the server. Additionally, we can send this object all the way to the client side of our application. Serverpod takes care of handling the conversion between the object and its serialized representation, making it convenient to work with and transfer data seamlessly.
+In simple terms, we have created a class, `Note`, that can hold information and can be passed within the server. Additionally, we can send this object to the client side of our application. Serverpod takes care of handling the conversion between the object and its serialized representation, making it convenient to work with and transfer data seamlessly.
 
 ## Create database tables
 
-Serverpod provides built-in support for database integrations. By defining a database table named `note` in the YAML file using the `table` keyword, we create database bindings for our `Note` class. 
+Serverpod provides built-in support for database integrations. By defining a database table named `note` in the YAML file using the `table` keyword, we can create database bindings for our `Note` class. 
 
 The updated content of the `note.yaml` file should look like this:
 
