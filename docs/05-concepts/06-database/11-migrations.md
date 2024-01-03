@@ -106,6 +106,10 @@ This creates a repair migration in the `generated/migration/repair` directory ta
 
 A repair migration is represented by a single SQL file that contains the SQL statements necessary to bring the database schema up to date with the migration system.
 
+:::warning
+To restore the integrity of the database schema, repair migrations will attempt to remove any tables that are not part of the migration system. To preserve manually created or managed tables the [repair migration](#repair-migrations-directory-structure) needs to be modified accordingly before application.
+:::
+
 Since each repair migration is created for a specific live database schema, Serverpod will overwrite the latest repair migration each time a new repair migration is created.
 
 ### Migration database source
