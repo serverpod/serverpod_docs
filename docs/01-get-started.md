@@ -21,12 +21,12 @@ This command will create a new directory called `mypod`, with three dart package
 - `mypod_flutter`: This is the Flutter app, pre-configured to connect to your local server.
 
 ### Starting the server
-Start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart` to start your server.
+Start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
 $ cd mypod/mypod_server
 $ docker compose up --build --detach
-$ dart bin/main.dart
+$ dart bin/main.dart --apply-migrations
 ```
 
 If everything is working, you should see something like this on your terminal:

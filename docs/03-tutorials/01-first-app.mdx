@@ -37,7 +37,7 @@ To start the server:
 ```bash
 $ cd notes/notes_server
 $ docker compose up --build --detach
-$ dart bin/main.dart
+$ dart bin/main.dart --apply-migrations
 ```
 
 :::info
@@ -754,7 +754,7 @@ Make sure you reboot the server if you started it earlier.
 ```bash
 $ cd notes_server
 $ docker compose up --build --detach
-$ dart bin/main.dart
+$ dart bin/main.dart --apply-migrations
 ```
 
 Start the Flutter app in Chrome (or the platform of your choice):
