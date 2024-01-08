@@ -5,6 +5,23 @@ A migration is a set of database operations (e.g. creating a table, adding a col
 
 If you ever get out of sync with the migration system, repair migrations can be used to bring the database schema up to date with the migration system. Repair migrations identify the differences between the two and create a unique migration that brings the live database schema in sync with a migration database schema.
 
+## Opt out of migrations
+
+It is possible to selectively opt out of the migration system per table basis, by setting the `managedMigration` key to false in your model. When this flag is set to false the generated migrations will not define any SQL code for this table. You will instead have to manually define and manage the life cycle of this table.
+
+```yaml
+class: Example
+table: example
+managedMigration: false
+fields:
+  name: String
+```
+
+If you want to transition a manually managed table to then be managed by Serverpod you first need to set this flag to `true`. Then you have two options:
+
+- Delete the old table you had created by yourself, and this will let Serverpod manage the schema from a clean state. However, this means that you would lose any data that was stored in the table.
+- Make sure that the table schema matches the expected schema you have configured. This can be done by either manually making sure the schema aligns, or by creating a [repair migration](#creating-a-repair-migration) to get back into the correct state.
+
 ## Creating a migration
 
 To create a migration navigate to your project's `server` package directory and run the `create-migration` command.
