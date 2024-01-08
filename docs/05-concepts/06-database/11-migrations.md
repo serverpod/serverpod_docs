@@ -17,7 +17,10 @@ fields:
   name: String
 ```
 
-If you want to transition a manually managed table to then be managed by Serverpod you first need to set this flag to `true`. Then you have two options, either delete the old table you had created by yourself, and this will let Serverpod manage the schema from a clean state. However, this means that you would lose any data that was stored in the table. The second option is to make sure that the table schema matches the expected schema you have configured. This can be done by either manually making sure the schema aligns, or by creating a [repair migration](#creating-a-repair-migration) to get back into the correct state.
+If you want to transition a manually managed table to then be managed by Serverpod you first need to set this flag to `true`. Then you have two options:
+
+- Delete the old table you had created by yourself, and this will let Serverpod manage the schema from a clean state. However, this means that you would lose any data that was stored in the table.
+- Make sure that the table schema matches the expected schema you have configured. This can be done by either manually making sure the schema aligns, or by creating a [repair migration](#creating-a-repair-migration) to get back into the correct state.
 
 ## Creating a migration
 
