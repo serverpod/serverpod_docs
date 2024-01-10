@@ -2,7 +2,7 @@
 This page should give you an understanding of how a Serverpod project is structured, how you make calls to endpoints, and how you communicate with the database. Before going through it, make sure that you have the latest version of Serverpod installed. In the previous section, you can learn how to set up the Serverpod command line tools and install Serverpod Insights.
 
 ## Creating a new project
-To get your local Serverpod project up and running, make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running. Then, create a new project by running `serverpod create`.
+Create a new project by running `serverpod create`.
 
 ```bash
 $ serverpod create mypod
@@ -10,7 +10,7 @@ $ serverpod create mypod
 
 :::info
 
-It can take up to a few minutes the first time you run `serverpod create`. This is because Docker will need to download and build the containers used by Serverpod.
+Serverpod executes the `flutter create` command inside the flutter package during project creation. On Windows, `flutter` commands require that developer mode is enabled in the system settings.
 
 :::
 
@@ -21,7 +21,7 @@ This command will create a new directory called `mypod`, with three dart package
 - `mypod_flutter`: This is the Flutter app, pre-configured to connect to your local server.
 
 ### Starting the server
-Start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
+Make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
 $ cd mypod/mypod_server
