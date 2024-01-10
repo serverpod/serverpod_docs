@@ -28,11 +28,11 @@ The client is initialized like this:
 // The client is set up to connect to a Serverpod running on a local server on
 // the default port. You will need to modify this to connect to staging or
 // production servers.
-var client = Client('http://localhost:8080/')
+var client = Client('http://$localhost:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
-If you run the app in an Android emulator, change the address to `10.0.2.2` as this is the IP address of the host machine. To access the server from a different device on the same network (such as a physical phone) replace `localhost` with the local ip address. You can find the local ip by running `ifconfig` (Linux/MacOS) or `ipconfig` (Windows).
+If you run the app in an Android emulator, the `localhost` parameter points to `10.0.2.2`, rather than `127.0.0.1` as this is the IP address of the host machine. To access the server from a different device on the same network (such as a physical phone) replace `localhost` with the local ip address. You can find the local ip by running `ifconfig` (Linux/MacOS) or `ipconfig` (Windows).
 
 Make sure to also update the `publicHost` in the development config to make sure the server always serves the client with the correct path to assets etc.
 
@@ -49,7 +49,7 @@ apiServer:
 
 :::info
 
-You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code when needed continuously. This is useful during the development of your server.
+You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code whenever your source files are updated. This is useful during the development of your server.
 
 :::
 
