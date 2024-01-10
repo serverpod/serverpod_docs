@@ -9,5 +9,5 @@ $ serverpod language-server
 ```
 
 :::info
-If you use [VS Code](https://code.visualstudio.com/) you can instead use the [Serverpod extension](#).
+If you use [VS Code](https://code.visualstudio.com/) you can instead use the [Serverpod extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod).
 :::
