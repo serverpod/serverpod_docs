@@ -1,11 +1,5 @@
 # Uploading files
-Serverpod has built-in support for handling file uploads. Out of the box, your server is configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use S3 or Google Cloud Storage in production scenarios.
-
-:::info
-
-Currently, only S3 is supported, but Google Cloud Storage support is coming planned. If you want to use Google Cloud, please consider contributing an implementation.
-
-:::
+Serverpod has built-in support for handling file uploads. Out of the box, your server is configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use Google Cloud Storage or S3 in production scenarios.
 
 ## How to upload a file
 A `public` and `private` file storage are set up by default to use the database. You can replace these or add more configurations for other file storages.
