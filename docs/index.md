@@ -9,7 +9,7 @@ Serverpod is an open-source, scalable app server written in Dart for the Flutter
 
 
 ## Command line tools
-Serverpod is tested on Mac and Linux. It works on Windows, but it's still experimental. Before you can install Serverpod, you need to have the following tools installed:
+Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have the following tools installed:
 - __Flutter__ and __Dart__. You will need Flutter version 3.7 or later. https://flutter.dev/docs/get-started/install
 - __Docker__. Docker is used to manage Postgres and (optionally) Redis. https://docs.docker.com/get-docker/
 
@@ -28,12 +28,12 @@ $ serverpod
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
 
 ## Serverpod Insights
-Serverpod Insights is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is currently in beta and available for Mac and Windows, but we will be adding support for Linux in the future.
+Serverpod Insights is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 
 ![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
 
 :::info
 
-Download the latest version here: __[Serverpod Insights](insights)__. It is compatible with Serverpod version 1.0.x. Always use the same version of Serverpod Insights as for the framework itself.
+Download the latest version here: __[Serverpod Insights](insights)__. It is compatible with Serverpod version 1.2.x. Always use the same version of Serverpod Insights as for the framework itself.
 
 :::
