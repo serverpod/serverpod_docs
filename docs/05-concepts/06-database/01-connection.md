@@ -1,6 +1,6 @@
 # Connection
 
-In Serverpod the connection details and password for the database are stored inside the `config` directory in your `server` package.
+In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package.
 
 Serverpod automatically establishes a connection to the Postgresql instance by using these configuration details when you start the server.
 
@@ -9,7 +9,7 @@ Each environment configuration contains a `database` keyword that specifies the 
 
 For your development build you can find the connection details in the `development.yaml` file.
 
-An example of this could look like this:
+This is an example:
 
 ```yaml
 ...
@@ -25,7 +25,7 @@ The variable `name` refers to the database name.
 
 ### Database password
 
-The database password is stored in a separate file called `passwords.yaml` in the same directory. The password for each environment is stored under the `database` keyword in the file.
+The database password is stored in a separate file called `passwords.yaml` in the same `config` directory. The password for each environment is stored under the `database` keyword in the file.
 
 An example of this could look like this:
 

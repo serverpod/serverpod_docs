@@ -159,7 +159,7 @@ $ serverpod create-repair-migration --force
 ```
 
 ### Tag repair migration
-Repair migrations can be tagged just as regular migrations. Tags are appended to the migration name and can be added with the `--tag` option.
+Repair migrations can be tagged just like regular migrations. Tags are appended to the migration name and can be added with the `--tag` option.
 
 ```bash
 $ serverpod create-repair-migration --tag "reset-migrations"

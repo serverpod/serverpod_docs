@@ -1,6 +1,6 @@
 # Models
 
-It's possible to map serializable classes straight to tables in your database. To do this, add the `table` key to your yaml file:
+It's possible to map serializable models to tables in your database. To do this, add the `table` key to your yaml file:
 
 ```yaml
 class: Company
@@ -29,13 +29,13 @@ fields:
 All fields are persisted by default and have an implicit `persist` set on each field.
 
 ### Data representation
-Storing a field with a primitive / core dart type will be handled as the their respective type. But if you use a complex type, such as another model, a `list` or a `map` these will be stored as a `json` object in the database.
+Storing a field with a primitive / core dart type will be handled as the their respective type. But if you use a complex type, such as another model, a `List` or a `Map` these will be stored as a `json` object in the database.
 
 ```yaml
 class: Company
 table: company
 fields:
-  company: Company # Stored as a json column
+  address: Address # Stored as a json column
 ```
 
 This means that each row has its own copy of the nested object that needs to be updated individually. If you instead want to reference the same object from multiple different tables, you can use the `relation` keyword.
@@ -46,7 +46,7 @@ This creates a database relation between two tables and always keeps the data in
 class: Company
 table: company
 fields:
-  company: Company, relation
+  address: Address, relation
 ```
 
 For a complete guide on how to work with relations see the [relation section](relations/one-to-one).

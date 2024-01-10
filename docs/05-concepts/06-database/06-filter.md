@@ -1,6 +1,6 @@
 # Filter
 
-Serverpod makes it easy to build expressions that are statically type-checked. Columns and relational fields are referenced using the global table descriptor objects. The table descriptors, `t`, are accessible from each model and are passed as an argument to a model specific expression builder function. The function callback is then used as argument to the `where` parameter when fetching data from the database.
+Serverpod makes it easy to build expressions that are statically type-checked. Columns and relational fields are referenced using table descriptor objects. The table descriptors, `t`, are accessible from each model and are passed as an argument to a model specific expression builder function. A callback is then used as argument to the `where` parameter when fetching data from the database.
 
 ## Column operations
 
@@ -33,7 +33,7 @@ In the example we fetch all users with a name that is not Bob. If a non-`null` v
 
 ### Comparison operators
 
-Compare a column to a value, these operators are support for `int`, `double`, `Duration`, `DateTime` and `Enum`.
+Compare a column to a value, these operators are support for `int`, `double`, `Duration`, and `DateTime`. It's also available for `Enum`, if it is stored as an `integer`.
 
 ```dart
 await User.db.find(
@@ -90,7 +90,7 @@ In the example we fetch all users that are not between 18 and 65 years old. This
 
 ### In set
 
-In set can be used to match with several values at once. This method function the same as equals but for multiple values, 'in set' will make an exact comparison.
+In set can be used to match with several values at once. This method functions the same as equals but for multiple values, `inSet` will make an exact comparison.
 
 ```dart
 await User.db.find(
@@ -100,7 +100,7 @@ await User.db.find(
 
 In the example we fetch all users with a name matching either Alice or Bob.
 
-The 'not in set' operation functions similarly to 'in set' . but it negates the condition.
+The 'not in set' operation functions similarly to `inSet`, but it negates the condition.
 
 ```dart
 await User.db.find(
