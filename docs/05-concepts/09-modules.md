@@ -1,6 +1,6 @@
 # Modules
 
-Serverpod is built around the concept of modules. A Serverpod module is similar to a Dart package but contains both server and client code and Flutter widgets. A module contains its own namespace for endpoints and methods to minimize module conflicts.
+Serverpod is built around the concept of modules. A Serverpod module is similar to a Dart package but contains both server, client, and Flutter code. A module contains its own namespace for endpoints and methods to minimize the risk of conflicts.
 
 Examples of modules are the `serverpod_auth` module and the `serverpod_chat` module, which both are maintained by the Serverpod team.
 
@@ -12,7 +12,7 @@ Each module comes with a set of database tables. You must add these to your data
 
 ### Server setup
 
-To add a module to your project, you must include the server and client/Flutter packages in your project's `pubspec.yaml` files and to add an entry to your `config/generator.yaml` file.
+To add a module to your project, you must include the server and client/Flutter packages in your project's `pubspec.yaml` files.
 
 For example, to add the `serverpod_auth` module to your project, you need to add `serverpod_auth_server` to your server's `pubspec.yaml`:
 
@@ -27,7 +27,7 @@ Make sure to replace `1.x.x` with the Serverpod version you are using. Serverpod
 
 :::
 
-In your `config/generator.yaml` add the `serverpod_auth` module and give it a `nickname`. The nickname will determine how you reference the module from the client.
+In your `config/generator.yaml` you can optionally add the `serverpod_auth` module and give it a `nickname`. The nickname will determine how you reference the module from the client. If the module isn't added in the `generator.yaml`, the default nickname for the module will be used.
 
 ```yaml
 modules:
