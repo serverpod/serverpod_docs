@@ -33,7 +33,7 @@ In the example we fetch all users with a name that is not Bob. If a non-`null` v
 
 ### Comparison operators
 
-Compare a column to a value, these operators are support for `int`, `double`, `Duration`, and `DateTime`. It's also available for `Enum`, if it is stored as an `integer`.
+Compare a column to a value, these operators are support for `int`, `double`, `Duration`, and `DateTime`.
 
 ```dart
 await User.db.find(
