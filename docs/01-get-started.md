@@ -139,9 +139,9 @@ You can also create custom serialized classes with tools such as Freezed. Learn 
 A core feature of Serverpod is to query the database easily. Serverpod provides an ORM that supports type and null safety.
 
 ### Connecting to the database
-When working with the database, it is common that you want to connect to it with a database viewer such as [Postico2](https://eggerapps.at/postico2/), [PgAdmin](https://www.pgadmin.org/download/), or [DBeaver](https://dbeaver.io/download/). To connect to the database you need to specify the host and port as well as the database name, user name, and password. In your project you can find these inside the `config` directory.
+When working with the database, it is common that you want to connect to it with a database viewer such as [Postico2](https://eggerapps.at/postico2/), [PgAdmin](https://www.pgadmin.org/download/), or [DBeaver](https://dbeaver.io/download/). To connect to the database, you need to specify the host and port along with the database name, user name, and password. In your project, you can find these inside the `config` directory.
 
-The connection details can be found in the file `config/development.yaml`. The variable `name` refers to the database name.
+The connection details can be found in the file `config/development.yaml`. The variable `name` refers to the database name (which is your project name only).
 
 ```yaml
 database:
