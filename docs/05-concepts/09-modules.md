@@ -35,11 +35,19 @@ modules:
     nickname: auth
 ```
 
-Finally, you need to run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your projects deserializer.
+
+Then run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your project's deserializer.
 
 ```bash
 $ dart pub get
 $ serverpod generate
+```
+
+Finally, since modules might include modifications to the database schema, you should create a new database migration and apply it by running `serverpod create-migration`  then `dart bin/main.dart --apply-migrations` from your server's directory.
+
+```bash
+$ serverpod create-migration
+$ dart bin/main.dart --apply-migrations
 ```
 
 ### Client setup
