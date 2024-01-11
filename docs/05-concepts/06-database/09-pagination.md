@@ -1,6 +1,6 @@
 # Pagination
 
-Serverpod provides built-in support for pagination to help manage large datasets, allowing you to retrieve data in smaller chunks or "pages". Pagination is achieved using the `limit` and `offset` parameters.
+Serverpod provides built-in support for pagination to help manage large datasets, allowing you to retrieve data in smaller chunks. Pagination is achieved using the `limit` and `offset` parameters.
 
 ## Limit
 
@@ -57,7 +57,7 @@ In the example we fetch the third page of companies, with 10 companies per page.
 
 A limit-offset pagination may not be the best solution if the table is changed frequently and rows are added or removed between requests.
 
-Cursor-based pagination is an alternative method to the traditional limit-offset pagination. Instead of using an arbitrary offset to skip records, cursor-based pagination uses a unique record identifier (a "cursor") to mark the starting or ending point of a dataset. This approach is particularly beneficial for large datasets as it offers consistent and efficient paginated results, even if the data is being updated frequently.
+Cursor-based pagination is an alternative method to the traditional limit-offset pagination. Instead of using an arbitrary offset to skip records, cursor-based pagination uses a unique record identifier (a _cursor_) to mark the starting or ending point of a dataset. This approach is particularly beneficial for large datasets as it offers consistent and efficient paginated results, even if the data is being updated frequently.
 
 ### How It Works
 

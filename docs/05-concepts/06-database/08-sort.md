@@ -1,6 +1,6 @@
 # Sort
 
-It is often desirable to order the results of a database query. The 'find' method features an 'orderBy' parameter where you can specify a column for sorting. In your model, the static `t` field provides a reference to a representation of the database table associated with the model, and this representation includes a field corresponding to each column.
+It is often desirable to order the results of a database query. The 'find' method has an `orderBy` parameter where you can specify a column for sorting. In your model, the static `t` field provides a reference to a representation of the database table associated with the model, and this representation includes a field corresponding to each column.
 
 ```dart
 var companies = await Company.db.find(

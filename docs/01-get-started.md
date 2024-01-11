@@ -44,6 +44,12 @@ If you need to stop the Docker containers at some point, just run `docker compos
 
 :::
 
+:::warning
+
+In your development environment it can be helpful to always start Serverpod with the `--apply-migrations` flag, as this will ensure that the database is always up-to-date with your latest migration. However, in production you should typically start the server without the flag, unless you want to actually apply a new migration.
+
+:::
+
 ### Running the demo app
 Start the default demo app by changing the directory into the Flutter package that was created and running `flutter run`.
 

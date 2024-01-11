@@ -1,8 +1,6 @@
 # CRUD
 
-To interact with the database you need a [session](../sessions) object as this object holds the connection to the database. All CRUD operations are accessible via the session object and the generated models. The methods can be found under the static field `db` in models or via the session object under the field `dbNext`.
-
-The recommended way to interact with the database is via the generated models.
+To interact with the database you need a [`Session`](../sessions) object as this object holds the connection to the database. All CRUD operations are accessible via the session object and the generated models. The methods can be found under the static `db` field in your generated models.
 
 For the following examples we will use this model:
 
@@ -12,6 +10,12 @@ table: company
 fields:
   name: String
 ```
+
+:::note
+
+You can also access the database methods through the session object under the field `dbNext`. However, this is typically only recommended if you want to want to do custom queries where you explicitly type out your SQL queries. The `db` field on `Session` contains legacy methods that are included for compatibility. In version 2 of Serverpod, the old legacy methods will be removed and `db` will be replaced by `dbNext`.
+
+:::
 
 ## Create
 
@@ -34,7 +38,7 @@ var rows = [Company(name: 'Serverpod'), Company(name: 'Google')];
 var companies = await Company.db.insert(session, rows);
 ```
 
-:::note
+:::info
 In previous versions of Serverpod the `insert` method mutated the input object by setting the `id` field. In the example above the input variable remains unmodified after the `insert`/`insertRow` call.
 :::
 
@@ -112,7 +116,7 @@ This is an atomic operation, meaning no entries will be updated if any entry fai
 
 ## Delete
 
-Deleting rows from the database is done in a similar way as updating rows. However, there are three delete operations available.
+Deleting rows from the database is done in a similar way to updating rows. However, there are three delete operations available.
 
 ### Delete a single row
 To delete a single row, use the `deleteRow` method. 
@@ -157,13 +161,3 @@ var count = await Company.db.count(
 
 The return value is an `int` for the number of rows matching the filter.
 
-## Via session
-
-Similarly, all operations that exist on the generated models can also be accessed via the session object.
-
-```dart
-await session.dbNext.insertRow<Company>(company);
-await session.dbNext.find<Company>(where: Company.t.name.equals('Serverpod'));
-await session.dbNext.updateRow<Company>(company);
-...
-```

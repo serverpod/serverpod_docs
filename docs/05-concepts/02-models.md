@@ -1,6 +1,6 @@
 # Working with models
 
-Models are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `lib/src/model` directory in your server project.
+Models are the YAML files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. The yaml-files are located in the `lib/src/models` directory in your server project.
 
 The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
 
@@ -41,7 +41,7 @@ fields:
 ```
 
 :::info
-Serverpod's serializable objects can easily be saved to or read from the database. You can read more about this in the [Database](database/models) section.
+Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](database/models) section.
 :::
 
 ## Exception
@@ -79,6 +79,12 @@ values:
 ```
 
 `serialized` has two valid values `byName` and `byIndex`. When using `byName` the string literal of the enum is used, when using `byIndex` the index value (0, 1, 2, etc) is used.
+
+:::info
+
+It's recommended to always set `serialized` to `byName` in any new Enum models, as this is less fragile and will be changed to the default setting in version 2 of Serverpod.
+
+:::
 
 ## Adding documentation
 
