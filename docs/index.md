@@ -37,3 +37,16 @@ Serverpod Insights is a companion app bundled with Serverpod. It allows you to a
 Download the latest version here: __[Serverpod Insights](insights)__. It is compatible with Serverpod version 1.2.x. Always use the same version of Serverpod Insights as for the framework itself.
 
 :::
+
+## VS Code Extension
+The Serverpod VS Code extension makes it easy to work with your Serverpod projects. It provides real-time diagnostics and syntax highlighting for model files in your project.
+
+![Serverpod extension](/img/syntax-highlighting.png)
+
+Install the extension from the VS Code Marketplace: __[Serverpod extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod)__
+
+:::info
+
+The extension requires Serverpod 1.2 or later.
+
+:::
