@@ -6,10 +6,6 @@ Examples of modules are the `serverpod_auth` module and the `serverpod_chat` mod
 
 ## Adding a module to your project
 
-### Database setup
-
-Each module comes with a set of database tables. You must add these to your database for the module to work. The code for creating the tables lives in the `generated/tables.pgsql` file of the `server` part of the module. For instance, you can find the database tables for the auth module [here](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_server/generated/tables.pgsql).
-
 ### Server setup
 
 To add a module to your project, you must include the server and client/Flutter packages in your project's `pubspec.yaml` files.
