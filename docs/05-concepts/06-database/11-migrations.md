@@ -30,7 +30,7 @@ To create a migration navigate to your project's `server` package directory and 
 $ serverpod create-migration
 ```
 
-The command reads the database schema from the last migration, then compares it to the database schema necessary to accommodate the projects, and any module dependencies, current database requirements. If differences are identified, a new migration is created in the `generated/migration/migrations` directory to roll the database forward.
+The command reads the database schema from the last migration, then compares it to the database schema necessary to accommodate the projects, and any module dependencies, current database requirements. If differences are identified, a new migration is created in the `migrations` directory to roll the database forward.
 
 If no previous migration exists it will create a migration assuming there is no initial state.
 
@@ -119,7 +119,7 @@ To create a repair migration, navigate to your project's `server` package direct
 $ serverpod create-repair-migration
 ```
 
-This creates a repair migration in the `generated/migration/repair` directory targeting the project's latest migration.
+This creates a repair migration in the `repair-migration` directory targeting the project's latest migration.
 
 A repair migration is represented by a single SQL file that contains the SQL statements necessary to bring the database schema up to date with the migration system.
 
