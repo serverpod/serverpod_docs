@@ -1,12 +1,28 @@
 # Upgrade to 1.2
+Serverpod 1.2. is backward compatible with Serverpod 1.0 and Serverpod 1.1. There are a few changes to the database layer, meaning you probably want to use the new methods. The old methods still works, but have been deprecated and will be permanently removed with the upcoming version 2.
 
-Serverpod 1.2 introduces database migrations, a new way to handle database schema changes. This greatly simplifies the process of upgrading your database schema.
+Database migrations are new in Serverpod 1.2. You can still opt to manage your database manually, but it is recommended that you move to the new migration system. Using the new migration will make keeping your database up-to-date much easier.
 
-## Dart version
+## Updating your CLI
+To update you Serverpod command line interface to the latest version, run:
 
-This update has bumped the minimum required dart version to `3.0.0`. You will have to change the Dart SDK version in all your `pubspec.yaml` files, the server, flutter and client projects.
+```bash
+dart pub global activate serverpod_cli
+```
 
-Old pubspec.yaml configuration.
+You can verify that you have the latest version installed by running:
+
+```bash
+serverpod version
+```
+
+## Updating your pubspecs
+To move to Serverpod 1.2, you will need to update the `pubspec.yaml` files of your `server`, `client`, and `flutter` directories. Anywhere `serverpod` is mentioned, change the version to `1.2.0` (or any later version of Serverpod 1.2). It is recommended to use explicit versions of the Serverpod packages, to make sure that they are all compatible.
+
+### Update to Dart 3
+This update has bumped the minimum required dart version to `3.0.0`. You will have to change the Dart SDK version in all your `pubspec.yaml` files.
+
+Old pubspec.yaml configuration:
 
 ```yaml
 ...
@@ -14,7 +30,7 @@ environment:
   sdk: '>=2.19.0 <4.0.0'
 ```
 
-Updated pubspec.yaml configuration.
+Updated pubspec.yaml configuration:
 
 ```yaml
 ...
@@ -22,7 +38,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 ```
 
-The `Dockerfile` in your project also has to be updated with the new dart version you want to run.
+The `Dockerfile` in your project should be updated with the new Dart version:
 
 ```docker
 FROM dart:3.0 AS build
@@ -30,10 +46,16 @@ FROM dart:3.0 AS build
 ...
 ```
 
-## Deprecated methods
+After updating your `pubspec.yaml` files, make sure to run `dart pub update` on all your packages. You must also run `serverpod generate` in your `server` directory.
 
-All database methods generated on your serializable classes have been deprecated and replaced with corresponding methods on a static `db` field on the same class.
-Most methods have just moved location, but some have slightly different implementations.
+## Deprecated methods
+In this version, we have completely reworked the database layer of Serverpod. The new methods have been placed under a static `db` field on the generated models. The old methods are still available, but the deprecation warnings will guide you toward moving to the updated API.
+
+:::important
+
+A few of the methods work slightly differently in their new versions. Most notably, the `insertRow` method will not modify the model you pass to it. Instead, it will return a modified copy with the inserted row `id`.
+
+:::
 
 ```dart
 // The new find method is a drop-in replacement.
@@ -70,6 +92,9 @@ Example.db.count(...);
 ```
 
 ## Model changes
+We have made some improvements to the Serverpod model files (previously referred to as protocol files or serializable entities). By default, the model files are now located in the `lib/src/models/` directory, although using `lib/src/protocol` still works.
+
+When making the improvements to the model files, we made additions and changes to the syntax. All old keywords still work, but `serverpod generate` will give deprecation warnings, guiding you toward updating your models. The changes are listed below.
 
 The keyword `api` has been deprecated and replaced with the new keyword `!persist` as a drop-in replacement.
 
@@ -138,12 +163,10 @@ fields:
 ```
 
 ## Moved and renamed SQL file
+Serverpod has moved and renamed the generated SQL file for the complete database schema. Instead of the file `generated/tables.pgsql`, Serverpod now includes it as a part of each migration located in the `migrations` directory, under the name `definition.sql`.
 
-Serverpod has moved and renamed the generated SQL file for the complete database schema. Instead of the file `generated/tables.pgsql`, Serverpod now includes it as a part of each migration located in `generated/migration/migrations`, under the name `definition.sql`.
-
-## Initialize migration system
-
-If your project was created before migrations were introduced in Serverpod, you need to run a one-time setup to make it compatible with the migrations system. There are two guides to help you upgrade: one for projects that don't need to preserve any data and another for those that do.
+## Initialize the migration system
+If your project was created before migrations were introduced in Serverpod, you need to run a one-time setup to make it compatible with the new migration system. There are two guides to help you upgrade: one for projects that don't need to preserve any data and another for those that do.
 
 The guides assume that you have already installed Serverpod 1.2 and that you have a project created with an earlier version of Serverpod.
 
