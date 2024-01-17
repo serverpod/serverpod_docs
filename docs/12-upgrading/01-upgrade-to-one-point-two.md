@@ -231,17 +231,22 @@ $ serverpod create-migration
 
 3. Create a repair migration.
 
-The repair migration system will create a repair migration that makes your live database schema match the newly created migration. Navigate to your project's `server` package directory and run the `create-repair-migration` command.
+The repair migration system will create a repair migration that makes your live database schema match the newly created migration. To enable the command to fetch your live database schema it requires a running server. Navigate to your project's `server` package directory and start the server, then run the `create-repair-migration` command.
 
 ```bash
+$ dart run bin/main.dart
 $ serverpod create-repair-migration
 ```
+
+:::info
+When starting the server, warnings will be displayed about the database schema not matching the target database schema. These warnings are expected and can safely be ignored.
+:::
 
 Use the `--mode` option to specify the database source to use. By default, the repair migration system connects to your `development` database using the information specified in your Serverpod config.
 
 4. Apply the repair migration to your database.
 
-Apply the repair migration to your database using the `--apply-repair-migration` flag when starting the server.
+To apply the repair migration to your database, restart the server using the `--apply-repair-migration` flag.
 
 ```bash
 $ dart run bin/main.dart --apply-repair-migration
