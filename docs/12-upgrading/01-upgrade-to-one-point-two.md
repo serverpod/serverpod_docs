@@ -239,7 +239,7 @@ $ serverpod create-repair-migration
 ```
 
 :::info
-When starting the server, warnings will be displayed about the database schema not matching the target database schema. These warnings are expected and can safely be ignored.
+When starting the server, warnings will be displayed about the database schema not matching the target database schema. These warnings are expected and can safely be ignored when creating the repair migration.
 :::
 
 Use the `--mode` option to specify the database source to use. By default, the repair migration system connects to your `development` database using the information specified in your Serverpod config.
