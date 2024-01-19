@@ -1,0 +1,30 @@
+name: Deploy
+on:
+    push:
+        branches:
+        - main
+
+permissions:
+    contents: write
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        environment: deploy
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+                  cache: npm
+            - uses: webfactory/ssh-agent@v0.5.0
+              with:
+                  ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
+            - name: Deploy to docs.serverpod.dev
+              env:
+                  USE_SSH: true
+              run: |
+                  git config --global user.email "serverpod_docs@severpod.dev"
+                  git config --global user.name "serverpod_docs"
+                  npm ci
+                  npm run deploy
