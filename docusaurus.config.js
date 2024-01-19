@@ -16,6 +16,7 @@ const config = {
   favicon: 'img/favicon.png',
   organizationName: 'serverpod', // Usually your GitHub org/user name.
   projectName: 'serverpod.github.io', // Usually your repo name.
+  deploymentBranch: 'main',
   trailingSlash: false,
 
   presets: [
