@@ -1,6 +1,6 @@
 name: Deploy
 on:
-    push:
+    pull_request:
         branches:
         - main
 
@@ -27,4 +27,4 @@ jobs:
                   git config --global user.email "serverpod_docs@severpod.dev"
                   git config --global user.name "serverpod_docs"
                   npm ci
-                  npm run deploy
+                  npm run deploy --out-dir=docs 
