@@ -196,12 +196,12 @@ Future<List<Note>> getAllNotes(Session session) async {
   // and not in the order they were updated.
   return await Note.db.find(
     session,
-    orderBy: Note.t.id,
+    orderBy: (t) => t.id,
   );
 }
 ```
 
-In the code above, we use the `Note.db.find` method to retrieve all the notes from the database. By specifying `orderBy: Note.t.id`, we ensure that the notes are always returned in the same order based on the id column.
+In the code above, we use the `Note.db.find` method to retrieve all the notes from the database. By specifying `orderBy: (t) => t.id`, we ensure that the notes are always returned in the same order based on the id column.
 
 Putting it all together you end up with a `notes_endpoint.dart` file that looks like this:
 
@@ -216,7 +216,7 @@ class NotesEndpoint extends Endpoint {
     // and not in the order they were updated.
     return await Note.db.find(
       session,
-      orderBy: Note.t.id,
+      orderBy: (t) => t.id,
     );
   }
 
