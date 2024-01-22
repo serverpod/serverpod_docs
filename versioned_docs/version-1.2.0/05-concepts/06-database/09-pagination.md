@@ -40,7 +40,7 @@ int companiesPerPage = 10;
 
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.id,
+  orderBy: (t) => t.id,
   limit: companiesPerPage,
   offset: (page - 1) * companiesPerPage,
 );
@@ -73,7 +73,7 @@ int recordsPerPage = 10;
 
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.id,
+  orderBy: (t) => t.id,
   limit: recordsPerPage,
 );
 ```
@@ -87,7 +87,7 @@ int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the cli
 var companies = await Company.db.find(
   session,
   where: Company.t.id > cursor,
-  orderBy: Company.t.id,
+  orderBy: (t) => t.id,
   limit: recordsPerPage,
 );
 ```

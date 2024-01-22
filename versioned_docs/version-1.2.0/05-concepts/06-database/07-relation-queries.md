@@ -138,7 +138,7 @@ var user = await Company.db.findById(
   employeeId,
   include: Company.include(
     employees: Employee.includeList(
-      orderBy: Employee.t.name,
+      orderBy: (t) => t.name,
     ),
   ),
 );
