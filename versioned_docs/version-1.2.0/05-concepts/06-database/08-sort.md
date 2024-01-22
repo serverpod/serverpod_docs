@@ -1,11 +1,11 @@
 # Sort
 
-It is often desirable to order the results of a database query. The 'find' method has an `orderBy` parameter where you can specify a column for sorting. In your model, the static `t` field provides a reference to a representation of the database table associated with the model, and this representation includes a field corresponding to each column.
+It is often desirable to order the results of a database query. The 'find' method has an `orderBy` parameter where you can specify a column for sorting. The parameter takes a callback as an argument that passes a model-specific table descriptor, also accessible through the `t` field on the model. The table descriptor represents the database table associated with the model and includes fields for each corresponding column. The callback is then used to specify the column to sort by.
 
 ```dart
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.name,
+  orderBy: (t) => t.name,
 );
 ```
 
@@ -16,7 +16,7 @@ By default the order is set to ascending, this can be changed to descending by s
 ```dart
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.name,
+  orderBy: (t) => t.name,
   orderDescending: true,
 );
 ```
@@ -28,9 +28,9 @@ To order by several different columns use `orderByList`, note that this cannot b
 ```dart
 var companies = await Company.db.find(
   session,
-  orderByList: [
-    Order(column: Company.t.name, orderDescending: true), 
-    Order(column: Company.t.id),
+  orderByList: (t) => [
+    Order(column: t.name, orderDescending: true), 
+    Order(column: t.id),
   ],
 );
 ```
@@ -44,7 +44,7 @@ To sort based on a field from a related model, use the chained field reference.
 ```dart
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.ceo.name,
+  orderBy: (t) => t.ceo.name,
 );
 ```
 
@@ -55,7 +55,7 @@ You can order results based on the count of a list relation (1:n).
 ```dart
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.employees.count(),
+  orderBy: (t) => t.employees.count(),
 );
 ```
 
@@ -66,7 +66,7 @@ The count used for sorting can also be filtered using a sub-filter.
 ```dart
 var companies = await Company.db.find(
   session,
-  orderBy: Company.t.employees.count(
+  orderBy: (t) => t.employees.count(
     (employee) => employee.role.equals('developer'),
   ),
 );

@@ -26,6 +26,14 @@ Make sure that the documentation is all up-to-date then run:
 npm run docusaurus docs:version X.X.X
 ```
 
+### Amend the latest version
+
+If you need to make changes to the latest version, you can do so by removing the latest version from `versions.json` and adding it again running the create version command with the same version number.
+
+```
+npm run docusaurus docs:version X.X.X
+```
+
 ### Build and deploy
 
 To do this you need access to the Serverpod Github `serverpod.github.io` repository. Clone it next to the `serverpod_web` repo.
