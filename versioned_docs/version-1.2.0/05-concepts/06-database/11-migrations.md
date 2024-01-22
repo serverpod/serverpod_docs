@@ -133,7 +133,7 @@ Since each repair migration is created for a specific live database schema, Serv
 By default, the repair migration system connects to your `development` database using the information specified in your Serverpod config. To use a different database source, the `--mode` option is used.
 
 ```bash
-$ serverpod create-migration --mode production
+$ serverpod create-repair-migration --mode production
 ```
 
 The command connects and pulls the live database schema from a running server. 
