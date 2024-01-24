@@ -212,7 +212,7 @@ myCompany = await Company.db.insertRow(session, myCompany);
 The method returns the inserted object with its `id` field set from the database.
 
 ### Reading from database
-Retrieving a single row from the database can done by calling the static `db.findById` method and providing the `id` of the row.
+Retrieving a single row from the database can be done by calling the static `db.findById` method and providing the `id` of the row.
 
 ```dart
 var myCompany = await Company.db.findById(session, companyId);
