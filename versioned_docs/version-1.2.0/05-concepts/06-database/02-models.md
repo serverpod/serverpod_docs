@@ -29,7 +29,7 @@ fields:
 All fields are persisted by default and have an implicit `persist` set on each field.
 
 ### Data representation
-Storing a field with a primitive / core dart type will be handled as the their respective type. But if you use a complex type, such as another model, a `List` or a `Map` these will be stored as a `json` object in the database.
+Storing a field with a primitive / core dart type will be handled as its respective type. However, if you use a complex type, such as another model, a `List`, or a `Map`, these will be stored as a `json` object in the database.
 
 ```yaml
 class: Company
