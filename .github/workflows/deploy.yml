@@ -1,0 +1,44 @@
+name: Docusaurus deploy
+on:
+    push:
+        branches:
+        - main
+
+permissions:
+    contents: write
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        environment: deploy
+        steps:
+        - uses: actions/checkout@v4
+          with:
+            path: src
+        - uses: actions/setup-node@v4
+          with:
+              node-version: 20
+              cache: npm
+              cache-dependency-path: src/package-lock.json
+        - name: Build docs
+          run: |
+              cd src
+              npm ci
+              npm run build
+        - uses: actions/checkout@v4
+          with:
+              path: target
+              ref: main
+              repository: serverpod/serverpod.github.io
+              ssh-key: ${{ secrets.GH_PAGES_DEPLOY }}
+        - name: Deploy to target
+          run: |
+              git config --global user.email "serverpod_docs@serverpod.dev"
+              git config --global user.name "serverpod_docs"
+              cp -r src/build/* target/docs
+              cd target
+              git add .
+              git commit -m "Deployed by Serverpod docs deploy action"
+              git push
+
+            

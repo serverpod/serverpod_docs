@@ -34,7 +34,11 @@ If you need to make changes to the latest version, you can do so by removing the
 npm run docusaurus docs:version X.X.X
 ```
 
-### Build and deploy
+### Deploy
+
+Once a PR is merged into the `main` branch of this repository, a GitHub action is triggered that builds the documentation and pushes the build to the `docs` directory within the `serverpod.github.io` repository. The built documentation is committed as a new commit to the `main` branch and is then deployed to Github pages by the `serverpod.github.io` repository.
+
+### Manual build and deploy
 
 To do this you need access to the Serverpod Github `serverpod.github.io` repository. Clone it next to the `serverpod_web` repo.
 
