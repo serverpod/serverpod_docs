@@ -73,12 +73,12 @@ These are the most important directories:
 
 - `config`: These are the configuration files for your Serverpod. These include a `password.yaml` file with your passwords and configurations for running your server in development, staging, and production. By default, everything is correctly configured to run your server locally.
 - `lib/src/endpoints`: This is where you place your server's endpoints. When you add methods to an endpoint, Serverpod will generate the corresponding methods in your client.
-- `lib/src/model`: The model definition files are placed here. The files define the classes you can pass through your API and how they relate to your database. Serverpod generates serializable objects from the model definitions.
+- `lib/src/models`: The model definition files are placed here. The files define the classes you can pass through your API and how they relate to your database. Serverpod generates serializable objects from the model definitions.
 
-Both the `endpoints` and `model` directories contain sample files that give a quick idea of how they work. So this a great place to start learning.
+Both the `endpoints` and `models` directories contain sample files that give a quick idea of how they work. So this a great place to start learning.
 
 ### Generating code
-Whenever you change your code in either the `endpoints` or `model` directory, you will need to regenerate the classes managed by Serverpod. Do this by running `serverpod generate`.
+Whenever you change your code in either the `endpoints` or `models` directory, you will need to regenerate the classes managed by Serverpod. Do this by running `serverpod generate`.
 
 ```bash
 $ cd mypod/mypod_server
@@ -115,7 +115,7 @@ To learn more about endpoints, see the [Working with endpoints](concepts/working
 ### Serializing data
 Serverpod makes it easy to generate serializable classes that can be passed between server and client or used to communicate with the database.
 
-The structure for your serialized classes is defined in yaml-files in the `lib/src/model` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
+The structure for your serialized classes is defined in yaml-files in the `lib/src/models` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
 
 Here is a simple example of a yaml-file defining a serializable class:
 
@@ -212,7 +212,7 @@ myCompany = await Company.db.insertRow(session, myCompany);
 The method returns the inserted object with its `id` field set from the database.
 
 ### Reading from database
-Retrieving a single row from the database can be done by calling the static `db.findById` method and providing the `id` of the row.
+Retrieving a single row from the database can done by calling the static `db.findById` method and providing the `id` of the row.
 
 ```dart
 var myCompany = await Company.db.findById(session, companyId);
@@ -237,6 +237,6 @@ Working with a database is an extensive subject. Learn more in the [Database](co
 :::
 
 ## Where to go next
-You should now have a basic understanding of how Serverpod works. The different topics are described in more details in the _Concepts_ section of the documentation. If you are unfamiliar with server-side development, a good starting place for learning is to do the [Build your first app](tutorials/first-app) tutorial. There are also many good video tutorials linked in the _Tutorials_ section.
+You should now have a basic understanding of how Serverpod works. The different topics are described in more detail in the _Concepts_ section of the documentation. If you are unfamiliar with server-side development, a good staring place for learning is to do the [Build your first app](tutorials/first-app) tutorial. There are also many good video tutorials linked in the _Tutorials_ section.
 
 If you get stuck, never be afraid to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). The Serverpod team is very active there, and many questions are also answered by other developers in the community.
