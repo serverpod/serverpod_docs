@@ -18,7 +18,7 @@ class: Company
 table: company
 fields:
   name: String
-  employees: List<Employee>, relation
+  employees: List<Employee>?, relation
 
 # employee.yaml
 class: Employee
@@ -85,7 +85,7 @@ class: Company
 table: company
 fields:
   name: String
-  employees: List<Employee>, relation(name=company_employees)
+  employees: List<Employee>?, relation(name=company_employees)
 
 # employee.yaml
 class: Employee
@@ -103,7 +103,7 @@ class: Company
 table: company
 fields:
   name: String
-  employees: List<Employee>, relation(name=company_employees)
+  employees: List<Employee>?, relation(name=company_employees)
 
 # employee.yaml
 class: Employee
