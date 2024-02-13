@@ -5,7 +5,7 @@ Sometimes more advanced tasks need to be performed on the database. For those oc
 Use the `unsafeQuery` method when querying for simple data. The method returns a `List<List<dynamic>>` with rows and columns and is useful if you want a simple result without joining any data.
 
 ```dart
-PostgreSQLResult result = await session.dbNext.unsafeQuery(
+PostgreSQLResult result = await session.db.unsafeQuery(
   'SELECT * FROM mytable WHERE id = 1',
 );
 ```
@@ -25,7 +25,7 @@ Use the `unsafeQueryMappedResults` method when making complex queries with joins
 Above is a visual aid of the data structure.
 
 ```dart
-List<Map<String, Map<String, dynamic>>> result = await session.dbNext.unsafeQueryMappedResults(
+List<Map<String, Map<String, dynamic>>> result = await session.db.unsafeQueryMappedResults(
   'SELECT * FROM mytable LEFT JOIN othertable ON mytable.id = othertable.mytableid',
 );
 ```
@@ -33,7 +33,7 @@ List<Map<String, Map<String, dynamic>>> result = await session.dbNext.unsafeQuer
 Use the `unsafeExecute` method when no result is needed. The return value represents the number of rows that changed.
 
 ```dart
-int result = await session.dbNext.unsafeExecute(
+int result = await session.db.unsafeExecute(
   'DELETE FROM mytable WHERE id = 1',
 );
 ```
