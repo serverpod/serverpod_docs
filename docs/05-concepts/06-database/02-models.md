@@ -46,7 +46,7 @@ This creates a database relation between two tables and always keeps the data in
 class: Company
 table: company
 fields:
-  address: Address, relation
+  address: Address?, relation
 ```
 
 For a complete guide on how to work with relations see the [relation section](relations/one-to-one).

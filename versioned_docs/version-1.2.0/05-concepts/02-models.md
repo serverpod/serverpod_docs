@@ -16,7 +16,7 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, and other serializable classes, exceptions and enums. You can also use `List`s and `Map`s of the supported types, just make sure to specify the types. Null safety is supported. The keys of `Map` must be non-nullable `String`s. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s and [Map](https://api.dart.dev/dart-core/Map-class.html)s of the supported types, just make sure to specify the types. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Limiting visibility of a generated class
 
