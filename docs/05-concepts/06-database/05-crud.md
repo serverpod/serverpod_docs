@@ -13,7 +13,7 @@ fields:
 
 :::note
 
-You can also access the database methods through the session object under the field `dbNext`. However, this is typically only recommended if you want to do custom queries where you explicitly type out your SQL queries. The `db` field on `Session` contains legacy methods that are included for compatibility. In version 2 of Serverpod, the old legacy methods will be removed and `db` will be replaced by `dbNext`.
+You can also access the database methods through the session object under the field `db`. However, this is typically only recommended if you want to do custom queries where you explicitly type out your SQL queries.
 
 :::
 
