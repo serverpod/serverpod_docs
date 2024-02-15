@@ -34,19 +34,6 @@ var client = Client('http://$localhost:8080/')
 
 If you run the app in an Android emulator, the `localhost` parameter points to `10.0.2.2`, rather than `127.0.0.1` as this is the IP address of the host machine. To access the server from a different device on the same network (such as a physical phone) replace `localhost` with the local ip address. You can find the local ip by running `ifconfig` (Linux/MacOS) or `ipconfig` (Windows).
 
-Make sure to also update the `publicHost` in the development config to make sure the server always serves the client with the correct path to assets etc.
-
-```yaml
-# your_project_server/config/development.yaml
-
-apiServer:
-  port: 8080
-  publicHost: localhost # Change this line
-  publicPort: 8080
-  publicScheme: http
-...
-```
-
 :::info
 
 You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code whenever your source files are updated. This is useful during the development of your server.
