@@ -16,8 +16,8 @@ session.db.find(...);
 
 ## Changes to database queries
 
-### Modified return type for unsafeQueryMappedResults(...)
-The return type for `unsafeQueryMappedResults(...)` has been modified to better comply with the return type from the underlying database. The return type is now a list of maps, where each map contains the query alias for the column as key and the row-column value as value.
+### Removed unsafeQueryMappedResults(...)
+The `unsafeQueryMappedResults(...)` method has been removed. A similar result can now instead be formatted from the `unsafeQuery(...)` result by calling the `toColumnMap()` method for each row of the result. `toColumnMap` returns a map containing the query alias for the column as key and the row-column value as value.
 
 Given a query that performs a join like this:
 ```sql
@@ -36,7 +36,7 @@ ORDER BY
  "company"."name"
 ```
 
-The return type in 1.2 was:
+The return type from `unsafeQueryMappedResults(...)` in 1.2 was:
 ```json
 [
   {
@@ -66,7 +66,7 @@ The return type in 1.2 was:
 ]
 ```
 
-And now becomes:
+And if `result.map((row) => row.toColumnMap())` is used to format the result from `unsafeQuery(...)` in 2.0, the following result is obtained: 
 
 ```json
 [
@@ -101,7 +101,7 @@ ORDER BY
  "name"
 ```
 
- the result in 1.2 was:
+the return type from `unsafeQueryMappedResults(...)` in 1.2 was:
 
 ```json
 [
@@ -122,7 +122,7 @@ ORDER BY
 ]
 ```
 
- and now becomes:
+and if `result.map((row) => row.toColumnMap())` is used to format the result from `unsafeQuery(...)` in 2.0, the following result is obtained: 
 
 ```json
  [
