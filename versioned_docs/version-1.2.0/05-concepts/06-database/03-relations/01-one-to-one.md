@@ -1,6 +1,6 @@
 # One-to-one
 
-One-to-one (1:1) relationships represent a unique association between two entities, there is at most one model that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
+One-to-one (1:1) relationships represent a unique association between two entities, there is at most one model that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index, the relation would be considered a one-to-many (1:n) relation.
 
 ## Defining the Relationship 
 In the following examples we show how to configure a 1:1 relationship between  `User` and `Address`.
@@ -26,7 +26,7 @@ indexes:
     unique: true
 ```
 
-In the example, the `relation` keyword annotates the `addressId` field to hold the foreign key. The field needs to be of type `int` and the relation keyword needs to specify the `parent` parameter. The `parent` parameter defines which table the relation is towards, in this case the `Address` table.
+In the example, the `relation` keyword annotates the `addressId` field to hold the foreign key. The field needs to be of type `int`, and the relation keyword needs to specify the `parent` parameter. The `parent` parameter defines which table the relation is towards, in this case, the `Address` table.
 
 The addressId is **required** in this example because the field is not nullable. That means that each `User` must have a related `Address`. If you want to make the relation optional, change the datatype from `int` to `int?`.
 
@@ -158,7 +158,7 @@ Both relations operate independently of each other, resulting in two distinct re
 
 ## Bidirectional relations
 
-If access to the same relation is desired from both sided, a bidirectional relation can be defined.
+If access to the same relation is desired from both sides, a bidirectional relation can be defined.
 
 ```yaml
 # user.yaml
