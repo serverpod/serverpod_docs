@@ -139,3 +139,16 @@ and if `result.map((row) => row.toColumnMap())` is used to format the result fro
 ]
 ```
 
+## Changes in the authentication module
+
+### Unsecure random disabled by default
+The authentication module's default value for allowing unsecure random number generation is now `false`. An exception will be thrown when trying to hash a password if no secure random number generator is available. To preserve the old behavior and enable unsecure random number generation, set the `allowUnsecureRandom` property in the `AuthConfig` to `true`.
+
+```dart
+auth.AuthConfig.set(auth.AuthConfig(
+  allowUnsecureRandom: true,
+));
+```
+
+
+
