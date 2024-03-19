@@ -142,7 +142,11 @@ development:
 
  It is essential to keep the pepper secret and never expose it to the client.
 
- If the pepper is changed, all passwords in the database will need to be re-hashed with the new pepper.
+:::warning
+
+If the pepper is changed, all passwords in the database will need to be re-hashed with the new pepper.
+
+:::
 
 ### Secure random
 
@@ -155,5 +159,3 @@ auth.AuthConfig.set(auth.AuthConfig(
   allowUnsecureRandom: false,
 ));
 ```
-
-The default value will change to `false` in Serverpod 2.0.
