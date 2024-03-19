@@ -27,7 +27,7 @@ $ serverpod <command> [arguments]
 - **[create-repair-migration](concepts/database/migrations)**: Produces a repair migration derived from the variances between the live database schema and the targeted migration. If no version is specified, the latest migration is used.
 
 
-- **upgrade**: Upgrade to the latest active version of Serverpod CLI.
+- **upgrade**: Upgrade to the latest Serverpod CLI version.
 
 - **version**: Reveals the active Serverpod CLI version.
 
