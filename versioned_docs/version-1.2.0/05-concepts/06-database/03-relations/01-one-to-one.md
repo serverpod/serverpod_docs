@@ -62,7 +62,7 @@ The object field, in this case `address`, must always be nullable (as indicated 
 
 An object relation field gives a big advantage when fetching data. Utilizing [relational queries](../relation-queries) enables filtering based on relation attributes or optionally including the related data in the result.
 
-No `parent` keyword is needed here because the relational table is inferred from the type on the field.
+No `parent` keyword is not needed here because the relational table is inferred from the type on the field.
 
 ### Optional relation
 
