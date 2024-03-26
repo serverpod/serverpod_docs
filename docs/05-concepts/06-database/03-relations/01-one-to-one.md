@@ -50,7 +50,7 @@ fields:
   address: Address?, relation // Object relation field
 indexes:
   user_address_unique_idx:
-    fields: addressId
+    fields: address
     unique: true
 ```
 
