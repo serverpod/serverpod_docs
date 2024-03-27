@@ -1,7 +1,3 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
-
 # Setup
 
 Serverpod comes with built-in user management and authentication. The recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins. It is also possible to build a custom authentication integration but that is an advanced use case and won't be necessary for most implementations. Currently supported is Signing in with email, Google, Apple, and Firebase. Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
