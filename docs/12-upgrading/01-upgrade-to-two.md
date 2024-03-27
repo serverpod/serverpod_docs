@@ -139,3 +139,48 @@ and if `result.map((row) => row.toColumnMap())` is used to format the result fro
 ]
 ```
 
+## Changes to database tables
+
+### Integer representation changed to bigint
+Integer representation in the database has changed from `int` to `bigint`. From now on, models with `int` fields will generate database migrations where that field is defined as a `bigint` type in the database.
+
+This change also applies to the `id` field of models where `bigserial` is now used to generate the id.
+
+The change is compatible with existing databases. Existing migrations therefore, won't be changed by the Serverpod migration system. No manual modification to the database is required if this data representation is not essential for the application. However, all new migrations will be created with the new representation.
+
+#### Why is this change made?
+The change was made to ensure that [Dart](https://dart.dev/guides/language/numbers) and the database representation of integers is consistent. Dart uses 64-bit integers, and the `int` type in Dart is a 64-bit integer. The `int` type in PostgreSQL is a 32-bit integer. This means that the `int` type in Dart can represent larger numbers than the `int` type in PostgreSQL. By using `bigint` in PostgreSQL, the integer representation is consistent between Dart and the database.
+
+In terms of performance, there are usually no significant drawbacks with using `bigint` instead of `int`. In most cases a good index strategy will be more important than the integer representation. Here is a guide that benchmarks the performance of `int` and `bigint` in PostgreSQL: (Use BIGINT in Postgres)[https://blog.rustprooflabs.com/2021/06/postgres-bigint-by-default]
+
+#### Ensuring new databases are created with the new representation
+Since existing migrations won't be changed, databases that are created with these will still use `int` to represent integers. 
+
+To ensure new databases are created with the new representation, the latest migration should be generated using Serverpod 2.0. It is enough to have an empty migration to ensure new databases use the new representation.
+
+A new empty migration can be created by running the following command in the terminal:
+
+```bash
+$ serverpod create-migration --force
+```
+
+#### Migration of existing tables
+The migration of existing tables to use the new representation will vary depending on the database content. Utilizing the wrong migration strategy might cause downtime for your application. That is the reason Serverpod does not automatically migrate existing tables.
+
+##### Small tables
+A simple way to migrate for small tables is to execute the following sql query to the database:
+
+```sql
+ALTER SEQUENCE "my_table_id_seq" AS bigint;
+ALTER TABLE "my_table" ALTER "id" TYPE bigint;
+ALTER TABLE "my_table" ALTER "myNumber" TYPE bigint;
+```
+
+The first two lines modify the id sequence for a table named `"my_table"` to use `bigint` instead of `int`. The last line modifies a column of the same table to use `bigint`. The drawback of this approach is that it locks the table during the migration. Therefore, this strategy is not recommended for large tables.
+
+##### Large tables
+Migrating large tables without application downtime is a more complex operation, and the approach will vary depending on the data structure. Below are some gathered resources on the subject.
+
+- (Zemata - Column migration from INT to BIGINT)[http://zemanta.github.io/2021/08/25/column-migration-from-int-to-bigint-in-postgresql/]
+- (AM^2 - Changing a column from int to bigint, without downtime)[https://am2.co/2019/12/changing-a-column-from-int-to-bigint-without-downtime/]
+- (Crunch data - The integer at the End of the Universe)[https://www.crunchydata.com/blog/the-integer-at-the-end-of-the-universe-integer-overflow-in-postgres]
