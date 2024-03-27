@@ -98,7 +98,7 @@ await User.db.find(
 );
 ```
 
-In the example we fetch all users with a name matching either Alice or Bob.
+In the example we fetch all users with a name matching either Alice or Bob. If an empty set is used as an argument for the inSet comparison, no rows will be included in the result.
 
 The 'not in set' operation functions similarly to `inSet`, but it negates the condition.
 
@@ -107,7 +107,8 @@ await User.db.find(
   where: (t) => t.name.notInSet({'Alice', 'Bob'})
 );
 ```
-In the example we fetch all users with a name not matching Alice or Bob. Rows with a `null` value in the column will be included in the result.
+In the example we fetch all users with a name not matching Alice or Bob. Rows with a `null` value in the column will be included in the result. If an empty set is used as an argument for the notInSet comparison, all rows will be included in the result.
+
 
 ### Like
 
