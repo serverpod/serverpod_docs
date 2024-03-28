@@ -121,3 +121,41 @@ await authController.resetPassword(email, verificationCode, password);
 ```
 
 After the password has been reset you have to call the `signIn` method to log in. This can be achieved by either letting the user type in the details again or simply chaining the `resetPassword` method and the `singIn` method for a seamless UX.
+
+
+## Password storage security
+
+Serverpod provides some additional configurable options to provide extra layers of security for stored password hashes.
+
+### Peppering
+
+For an additional layer of security, it is possible to configure a password hash pepper. A pepper is a server-side secret that is added, along with a unique salt, to a password before it is hashed and stored. The pepper makes it harder for an attacker to crack password hashes if they have only gained access to the database.
+
+The (recommended pepper length)[https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2] is 32 bytes.
+
+To configure a pepper, set the `emailPasswordPepper` property in the `config/passwords.yaml` file.
+
+```yaml
+development:
+  emailPasswordPepper: 'your-pepper'
+```
+
+ It is essential to keep the pepper secret and never expose it to the client.
+
+:::warning
+
+If the pepper is changed, all passwords in the database will need to be re-hashed with the new pepper.
+
+:::
+
+### Secure random
+
+Serverpod uses the `dart:math` library to generate random salts for password hashing. By default, if no secure random number generator is available, a cryptographically unsecure random number is used. 
+
+It is possible to prevent this fallback by setting the `allowUnsecureRandom` property in the `AuthConfig` to `false`. If the `allowUnsecureRandom` property is false, the server will throw an exception if a secure random number generator is unavailable.
+
+```dart
+auth.AuthConfig.set(auth.AuthConfig(
+  allowUnsecureRandom: false,
+));
+```

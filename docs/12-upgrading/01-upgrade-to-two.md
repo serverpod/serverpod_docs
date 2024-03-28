@@ -184,3 +184,14 @@ Migrating large tables without application downtime is a more complex operation,
 - (Zemata - Column migration from INT to BIGINT)[http://zemanta.github.io/2021/08/25/column-migration-from-int-to-bigint-in-postgresql/]
 - (AM^2 - Changing a column from int to bigint, without downtime)[https://am2.co/2019/12/changing-a-column-from-int-to-bigint-without-downtime/]
 - (Crunch data - The integer at the End of the Universe)[https://www.crunchydata.com/blog/the-integer-at-the-end-of-the-universe-integer-overflow-in-postgres]
+
+## Changes in the authentication module
+
+### Unsecure random disabled by default
+The authentication module's default value for allowing unsecure random number generation is now `false`. An exception will be thrown when trying to hash a password if no secure random number generator is available. To preserve the old behavior and enable unsecure random number generation, set the `allowUnsecureRandom` property in the `AuthConfig` to `true`.
+
+```dart
+auth.AuthConfig.set(auth.AuthConfig(
+  allowUnsecureRandom: true,
+));
+```
