@@ -1,6 +1,6 @@
-# Custom integration
+# Custom overrides
 
-Serverpod is designed to make it as simple as possible to implement custom authentication integrations. The framework comes with an integrated auth token creation, validation, and communication system. With a simple setup, it is easy to generate tokens and include them in authenticated communication with the server.
+Serverpod is designed to make it as simple as possible to implement custom authentication overrides. The framework comes with an integrated auth token creation, validation, and communication system. With a simple setup, it is easy to generate custom tokens and include them in authenticated communication with the server.
 
 ## Server setup
 

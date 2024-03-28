@@ -1,6 +1,6 @@
-# Custom provider
+# Custom providers
 
-Serverpods authentication module makes it easy to implement custom authentication providers. This allows you to leverage all the existing providers supplied by the module along with specific providers your project requires.
+Serverpod's authentication module makes it easy to implement custom authentication providers. This allows you to leverage all the existing providers supplied by the module along with the specific providers your project requires.
 
 ## Server setup
 
@@ -31,9 +31,15 @@ if (userInfo == null) {
 }
 ```
 
-The example above tries to find a user by email and user identifier. If no user is found, a new user is created with the provided information.
+The example above tries to find a user by email and user identifier. If no user is found, a new user is created with the provided information. The methods that you must implement yourself is `authenticateUser` and `findOrCreateUser`, keep in mind that they possibly take different parameters than in this simplified example.
 
-#### Custom identification methods
+:::note
+
+For many authentication platforms the `userIdentifier` is the user's email, but it can also be another unique identifier such as a phone number or a social security number.
+
+:::
+
+### Custom identification methods
 
 If other identification methods are required you can easly implement them by accessing the database directly. The `UserInfo` model can be interacted with in the same way as any other model with a database in Serverpod.
 
