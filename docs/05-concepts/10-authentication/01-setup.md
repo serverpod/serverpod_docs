@@ -1,6 +1,8 @@
 # Setup
 
-Serverpod comes with built-in user management and authentication. The recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins. It is also possible to build a custom authentication integration but that is an advanced use case and won't be necessary for most implementations. Currently supported is Signing in with email, Google, Apple, and Firebase. Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
+Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication integration](custom-integration), but the recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins and currently supports signing in with email, Google, Apple, and Firebase.
+
+Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
 
 ![Sign-in with Serverpod](https://github.com/serverpod/serverpod/raw/main/misc/images/sign-in.png)
 
