@@ -44,17 +44,6 @@ fields:
 Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](database/models) section.
 :::
 
-## Exception
-
-The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
-
-```yaml
-exception: MyException
-fields:
-  message: String
-  errorType: MyEnum
-```
-
 ## Enum
 
 It is easy to add custom enums with serialization support by using the `enum` keyword.
@@ -85,6 +74,17 @@ values:
 It's recommended to always set `serialized` to `byName` in any new Enum models, as this is less fragile and will be changed to the default setting in version 2 of Serverpod.
 
 :::
+
+## Exception
+
+The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
+
+```yaml
+exception: MyException
+fields:
+  message: String
+  errorType: MyEnum
+```
 
 ## Adding documentation
 
@@ -117,7 +117,32 @@ var john = User(name: 'John Doe', age: 25);
 var jane = john.copyWith(name: 'Jane Doe');
 ```
 
-The `copyWith` method generates a deep copy of an object, preserving all original fields unless explicitly modified. It can distinguish between a field set to `null` and a field left unspecified (undefined). When using `copyWith`, any field you don't update remains unchanged in the new object.
+In this example, we're using `copyWith` to create 'jane', a new user instance with the name changed to 'Jane Doe' while retaining the original age.
+
+The `copyWith` method generates a deep copy of an object, preserving all original fields unless explicitly modified. It can distinguish between a field set to `null` and a field left unspecified (undefined).
+
+```dart
+var alice = User(name: 'Alice');
+var aliceWithAge = alice.copyWith(age: 30);
+```
+
+In the above example, we created a user 'alice' with a name but no age specified. Then we used `copyWith` to create a new user based on 'alice' but with an updated age. Here, 'aliceWithAge' is a new user instance with the specified age of 30. Notice that we didn't explicitly provide a name when calling 'copyWith'. In this case, 'copyWith' preserves the original name since it wasn't explicitly modified in the method call.
+
+To understand how `copyWith` handle fields set to null, let's consider another scenario where we have a 'User' instance named 'bob' with both name and age set to null:
+
+```dart
+var bob = User(name: null, age: null);
+```
+
+If we want to create a new user instance based on 'bob' but with an updated age, 'copyWith' handles it gracefully:
+
+```dart
+var bobWithAge = bob.copyWith(age: 40);
+```
+
+In this example, 'bobWithAge' is a new user instance with the specified age of 40, while the name remains null, as it wasn't explicitly modified.
+
+When using `copyWith`, any field you don't update remains unchanged in the new object.
 
 ### toJson / fromJson
 
