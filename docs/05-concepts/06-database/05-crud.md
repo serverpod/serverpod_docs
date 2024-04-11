@@ -123,30 +123,30 @@ To delete a single row, use the `deleteRow` method.
 
 ```dart
 var company = await Company.db.findById(session, companyId); // Fetched company has its id set 
-var id = await Company.db.deleteRow(session, company);
+var companyDeleted = await Company.db.deleteRow(session, company);
 ```
-The input object needs to have the `id` field set. The `deleteRow` method returns the `id` of the deleted row.
+The input object needs to have the `id` field set. The `deleteRow` method returns the deleted model.
 
 ### Delete several rows
 To batch delete several rows, use the `delete` method. 
 
 ```dart
-var ids = await Company.db.delete(session, companies);
+var companiesDeleted = await Company.db.delete(session, companies);
 ```
 
-This is an atomic operation, meaning no entries will be deleted if any entry fails to be deleted. The `delete` method returns a `List` of the `id`s of the deleted row(s).
+This is an atomic operation, meaning no entries will be deleted if any entry fails to be deleted. The `delete` method returns a `List` of the models deleted.
 
 ### Delete by filter
 You can also do a [filtered](filter) delete and delete all entries matching a `where` query, by using the `deleteWhere` method.
 
 ```dart
-var ids = await Company.db.deleteWhere(
+var companiesDeleted = await Company.db.deleteWhere(
   session,
   where: (t) => t.name.like('%Ltd'),
 );
 ```
 
-The above example will delete any row that ends in *Ltd*. The `deleteWhere` method returns a `List` of the `id`s of the deleted row(s).
+The above example will delete any row that ends in *Ltd*. The `deleteWhere` method returns a `List` of the models deleted.
 
 ## Count
 

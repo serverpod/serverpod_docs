@@ -139,6 +139,24 @@ and if `result.map((row) => row.toColumnMap())` is used to format the result fro
 ]
 ```
 
+### Update return type for delete operations
+
+The return type for all delete operations has been changed from the `id` of the deleted rows to the actual deleted rows. This makes the return type for the delete operations consistent with the return type of the other database operations. It also dramatically simplifies retrieving and removing rows in concurrent environments.
+
+Return type before the change:
+```dart
+int companyId = await Company.db.deleteRow(session, company);
+List<int> companyIds = await Company.db.delete(session, [company]);
+List<int> companyIds = await Company.db.deleteWhere(session, where: (t) => t.name.like('%Ltd'));
+```
+
+Return types after the change:
+```dart
+Company company = await Company.db.deleteRow(session, company);
+List<Company> companies = await Company.db.delete(session, [company]);
+List<Company> companies = await Company.db.deleteWhere(session, where: (t) => t.name.like('%Ltd'));
+```
+
 ## Changes to database tables
 
 ### Integer representation changed to bigint
