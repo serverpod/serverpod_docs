@@ -34,7 +34,7 @@ When the Postgres instance creation has finished, you must add a database and an
 
 Now you can connect to your database with your favorite Postgres tool. Postico is a good option if you are on a Mac. Click on the _Overview_ tab of the database and take note of the _Public IP address_. Use it, together with the user `postgres`, the database `serverpod`, and the password from your `passwords.yaml` file to connect to the database.
 
-Run the queries in `generated/tables-serverpod.pgsql` and `generated/tables.pgsql`.
+Run the database definition query from the latest migration directory `migrations/<LATEST_MIGRATION>/definition.sql`.
 
 ## Create a service account
 For Cloud Run to access your database, you will need to create a service account with the _Cloud SQL Client_ role.
