@@ -120,7 +120,7 @@ var serverResponse = await caller.myAuthentication.login(username, password);
 
 if (serverResponse.success) {
     // Store the user info in the session manager.
-    AuthenticationResponse sessionManager = await SessionManager.instance;
+    SessionManager sessionManager = await SessionManager.instance;
     await sessionManager.registerSignedInUser(
         serverResponse.userInfo!,
         serverResponse.keyId!,
