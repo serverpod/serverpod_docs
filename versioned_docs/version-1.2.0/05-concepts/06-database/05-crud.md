@@ -98,7 +98,7 @@ To update a single row, use the `updateRow` method.
 ```dart
 var company = await Company.db.findById(session, companyId); // Fetched company has its id set 
 company.name = 'New name';
-var updatedCompany = await Company.db.updateRow(company);
+var updatedCompany = await Company.db.updateRow(session, company);
 ```
 
 The object that you update must have its `id` set to a non-`null` value and the id needs to exist on a row in the database. The `updateRow` method returns the updated object.
