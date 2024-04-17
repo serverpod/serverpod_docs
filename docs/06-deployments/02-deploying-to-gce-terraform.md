@@ -242,7 +242,7 @@ Now, you can connect to your database. Use your favorite database managing tool 
 
 ![Connect to database](/img/gcp/11-connect-database.jpg)
 
-Once connected, run the database queries found in `generated/tables-serverpod.pgsql` and in `generated/tables.pgsql`. When you have added the tables for the database, Serverpod should be able to start. However, it could take an hour before the correct SSL certificates are created and validated.
+Once connected, run the database definition query in the latest migration directory `migrations/<LATEST_MIGRATION>/definition.sql`. When you have added the tables for the database, Serverpod should be able to start. However, it could take an hour before the correct SSL certificates are created and validated.
 
 ## Deploying new versions
 Once your infrastructure is set up, deploying new versions of your server code is easy. Push your updated code to Github and run the deployment action. Doing this will compile your code and upload it to the repository in Artifact Registry.
