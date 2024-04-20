@@ -41,7 +41,7 @@ In your app, catch the exception as you would catch any exception.
 try {
   client.example.doThingy();
 }
-on (MyException) catch(e) {
+on MyException catch(e) {
   print(e.message);
 }
 catch(e) {
