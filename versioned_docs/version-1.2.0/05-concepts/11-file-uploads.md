@@ -79,17 +79,47 @@ var myByteData = await session.storage.retrieveFile(
 );
 ```
 
-## Add a configuration for S3
+## Add a configuration for GCP
+Serverpod uses Google Cloud Storage's HMAC interoperability to handle file uploads to Google Cloud. To make file uploads work, you must make a few custom configurations in your Google Cloud console:
+
+1. Create a service account with the _Storage Admin_ role.
+2. Under _Cloud Storage_ > _Settings_ > _Interoperability_, create a new HMAC key for your newly created service account.
+3. Add the two keys you received in the previous step to your `config/password.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively.
+4. When creating a new bucket, set the _Access control_ to _Fine-grained_ and disable the _Prevent public access_ option.
+
+You may also want to add the bucket as a backend for your load balancer to give it a custom domain name.
+
+When you have set up your GCP bucket, you need to configure it in Serverpod. Add the GCP package to your `pubspec.yaml` file and import it in your `server.dart` file.
+
+```dart
+import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
+    as gcp;
+```
+
+After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your GCP bucket to be accessible on a custom domain through a load balancer. You should add the cloud storage before starting your pod.
+
+```dart
+  pod.addCloudStorage(gcp.GoogleCloudStorage(
+    serverpod: pod,
+    storageId: 'public',
+    public: true,
+    region: 'auto',
+    bucket: 'my-bucket-name',
+    publicHost: 'storage.myapp.com',
+  ));
+```
+
+## Add a configuration for AWS S3
 This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file.
 
-When you are all set with the AWS setup, include the S3  package in your yaml file and your `server.dart` file.
+When you are all set with the AWS setup, include the S3  package in your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```dart
 import 'package:serverpod_cloud_storage_s3/serverpod_cloud_storage_s3.dart'
     as s3;
 ```
 
-After creating your Serverpod, you add a storage configuration. If you want to replace the default public or private storages, set the storageId to `public` or `private`. Set the public host if you have configured your S3 bucket to be accessible on a custom domain through CloudFront. You should add the cloud storage before starting your pod.
+After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your S3 bucket to be accessible on a custom domain through CloudFront. You should add the cloud storage before starting your pod.
 
 ```dart
 pod.addCloudStorage(s3.S3CloudStorage(
@@ -112,6 +142,6 @@ shared:
 
 :::info
 
-If you are using the AWS Terraform scripts that are created with your Serverpod project, the required S3 buckets will be created automatically. The scripts will also configure Cloudfront and the certificates needed to access the buckets securely.
+If you are using the GCP or AWS Terraform scripts that are created with your Serverpod project, the required GCP or S3 buckets will be created automatically. The scripts will also configure your load balancer or Cloudfront and the certificates needed to access the buckets securely.
 
 :::
