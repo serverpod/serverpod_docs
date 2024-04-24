@@ -251,7 +251,7 @@ Serverpod automatically merges accounts that are using the same email addresses,
 It's a common task to read or update user information on your server. You can always retrieve the id of a signed-in user through the session object.
 
 ```dart
-var userId = await session.auth.authorizedUserId;
+var userId = await session.auth.authenticatedUserId;
 ```
 
 If you sign in users through the auth module, you will be able to retrieve more information through the static methods of the `Users` class.
