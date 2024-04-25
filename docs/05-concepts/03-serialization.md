@@ -17,7 +17,6 @@ Map<String, dynamic> toJson() {
 ```dart
 factory ClassName.fromJson(
   Map<String, dynamic> json,
-  SerializationManager serializationManager,
 ) {
   return ClassName(
     name: json['name'] as String,
@@ -46,13 +45,6 @@ Your folder structure should then look like this:
 ├── my_project_shared
 ```
 
-Then you need to add the package `serverpod_serialization` to get access to the `SerializationManager` class.
-
-```bash
-$ cd my_project_shared
-$ dart pub add serverpod_serialization
-```
-
 Then you need to update both your `my_project_server/pubspec.yaml` and `my_project_client/pubspec.yaml` and add the new package as a dependency.
 
 ```yaml
@@ -66,8 +58,6 @@ dependencies:
 Now you can create your custom class in your new shared package:
 
 ```dart
-import 'package:serverpod_serialization/serverpod_serialization.dart';
-
 class ClassName {
   String name;
   ClassName(this.name);
@@ -80,7 +70,6 @@ class ClassName {
 
   factory ClassName.fromJson(
     Map<String, dynamic> jsonSerialization,
-    SerializationManager serializationManager,
   ) {
     return ClassName(
       jsonSerialization['name'],
@@ -112,7 +101,6 @@ Serverpod also has support for using custom classes created with the [Freezed](h
 
 ```dart
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:serverpod_serialization/serverpod_serialization.dart';
 
 part 'freezed_custom_class.freezed.dart';
 part 'freezed_custom_class.g.dart';
@@ -127,7 +115,6 @@ class FreezedCustomClass with _$FreezedCustomClass {
 
   factory FreezedCustomClass.fromJson(
     Map<String, Object?> json,
-    SerializationManager serializationManager,
   ) =>
       _$FreezedCustomClassFromJson(json);
 }

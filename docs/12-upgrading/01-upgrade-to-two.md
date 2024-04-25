@@ -213,3 +213,35 @@ auth.AuthConfig.set(auth.AuthConfig(
   allowUnsecureRandom: true,
 ));
 ```
+
+## Updates to Custom Serialization in Serverpod 2.0
+
+### Removal of `serializationManager` from the `fromJson` Factory Constructor
+In Serverpod 2.0, we have streamlined the process of deserialization by removing the `serializationManager` parameter from the `fromJson` factory constructor. This change simplifies the integration of custom classes, as you no longer need to pass this parameter.
+
+#### Previous Implementation
+In earlier versions, the `fromJson` constructor required the `serializationManager` parameter as shown below:
+```dart
+factory ClassName.fromJson(
+    Map<String, dynamic> json,
+    SerializationManager serializationManager,
+  ) {
+    return ClassName(
+      json['name'],
+    );
+  }
+```
+
+#### Updated Implementation
+With the release of Serverpod 2.0, the constructor has been simplified to eliminate the unnecessary parameter:
+```dart
+factory ClassName.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return ClassName(
+      json['name'],
+    );
+  }
+```
+
+These changes make the code cleaner and reduce the complexity of using custom serialization with Serverpod.
