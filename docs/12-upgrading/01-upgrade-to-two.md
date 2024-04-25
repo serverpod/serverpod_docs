@@ -214,13 +214,13 @@ auth.AuthConfig.set(auth.AuthConfig(
 ));
 ```
 
-## Updates to Custom Serialization in Serverpod 2.0
+## Updates to Serialization in Serverpod 2.0
 
-### Removal of `serializationManager` from the `fromJson` Factory Constructor
-In Serverpod 2.0, we have streamlined the process of deserialization by removing the `serializationManager` parameter from the `fromJson` factory constructor. This change simplifies the integration of custom classes, as you no longer need to pass this parameter.
+### General Changes to Model Serialization
+Serverpod 2.0 introduces a significant simplification in the serialization process of all models. Previously, the `fromJson` factory constructors required a `serializationManager` parameter to deserialize objects. This parameter is no longer needed, streamlining the deserialization process for all models, not just custom ones.
 
 #### Previous Implementation
-In earlier versions, the `fromJson` constructor required the `serializationManager` parameter as shown below:
+In the previous versions, models required the `serializationManager` to be passed explicitly, as shown in the following code snippet:
 ```dart
 factory ClassName.fromJson(
     Map<String, dynamic> json,
@@ -233,7 +233,7 @@ factory ClassName.fromJson(
 ```
 
 #### Updated Implementation
-With the release of Serverpod 2.0, the constructor has been simplified to eliminate the unnecessary parameter:
+With the release of Serverpod 2.0, the `fromJson` constructor has been simplified across all models:
 ```dart
 factory ClassName.fromJson(
     Map<String, dynamic> json,
@@ -243,5 +243,9 @@ factory ClassName.fromJson(
     );
   }
 ```
+This change reduces the complexity and makes the code cleaner for all developers using Serverpod, enhancing both readability and maintainability.
 
-These changes make the code cleaner and reduce the complexity of using custom serialization with Serverpod.
+### Enhancements for Custom Serialization
+The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows. This change allows custom classes to be integrated more smoothly, as developers no longer need to manage this additional parameter. It focuses attention on the unique aspects of custom serialization logic, reducing the need for boilerplate code.
+
+For custom classes that previously utilized unique serialization logic with the `serializationManager`, adjustments may be necessary. Specifically, if the serialization behavior was dynamically manipulated using this parameter, developers will need to rethink their strategies. Despite these adjustments, the overall impact leads to a more straightforward and less error-prone approach to custom serialization, benefiting most use cases.
