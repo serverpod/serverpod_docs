@@ -12,7 +12,7 @@ Map<String, dynamic> toJson() {
 }
 ```
 
-2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization and a Serialization manager as parameters.
+2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization as parameters.
 
 ```dart
 factory ClassName.fromJson(
