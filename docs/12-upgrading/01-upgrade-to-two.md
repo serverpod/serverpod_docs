@@ -219,6 +219,24 @@ auth.AuthConfig.set(auth.AuthConfig(
 ### General Changes to Model Serialization
 Serverpod 2.0 introduces a significant simplification in the serialization process of all models. Previously, the `fromJson` factory constructors required a `serializationManager` parameter to deserialize objects. This parameter is no longer needed, streamlining the deserialization process for all models, not just custom ones.
 
+#### Before change
+```dart
+final Map<String, dynamic> json = classInstance.toJson();
+final SerializationManager serializationManager = Protocol();
+final ClassName test = ClassName.fromJson(json, serializationManager);
+```
+
+#### After change
+```dart
+final Map<String, dynamic> json = classInstance.toJson();
+final ClassName test = ClassName.fromJson(json);
+```
+
+### Enhancements for Custom Serialization
+The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows. 
+For custom classes that previously utilized unique serialization logic with the `serializationManager`, adjustments may be necessary.
+
+
 #### Previous Implementation
 In the previous versions, models required the `serializationManager` to be passed explicitly, as shown in the following code snippet:
 ```dart
@@ -233,7 +251,7 @@ factory ClassName.fromJson(
 ```
 
 #### Updated Implementation
-With the release of Serverpod 2.0, the `fromJson` constructor has been simplified across all models:
+With the release of Serverpod 2.0, the `fromJson` constructor has been simplified and the `serializationManager` has been removed:
 ```dart
 factory ClassName.fromJson(
     Map<String, dynamic> json,
@@ -243,9 +261,3 @@ factory ClassName.fromJson(
     );
   }
 ```
-This change reduces the complexity and makes the code cleaner for all developers using Serverpod, enhancing both readability and maintainability.
-
-### Enhancements for Custom Serialization
-The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows. This change allows custom classes to be integrated more smoothly, as developers no longer need to manage this additional parameter. It focuses attention on the unique aspects of custom serialization logic, reducing the need for boilerplate code.
-
-For custom classes that previously utilized unique serialization logic with the `serializationManager`, adjustments may be necessary. Specifically, if the serialization behavior was dynamically manipulated using this parameter, developers will need to rethink their strategies. Despite these adjustments, the overall impact leads to a more straightforward and less error-prone approach to custom serialization, benefiting most use cases.
