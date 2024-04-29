@@ -217,7 +217,7 @@ auth.AuthConfig.set(auth.AuthConfig(
 ## Updates to Serialization in Serverpod 2.0
 
 ### General Changes to Model Serialization
-Serverpod 2.0 introduces a significant simplification in the serialization process of all models. Previously, the `fromJson` factory constructors required a `serializationManager` parameter to deserialize objects. This parameter is no longer needed, streamlining the deserialization process for all models, not just custom ones.
+Serverpod 2.0 significantly streamlines the model serialization process. In earlier versions, the `fromJson` factory constructors needed a `serializationManager` parameter to handle object deserialization. This parameter has now been removed, enhancing simplicity and usability.
 
 #### Before change
 ```dart
@@ -235,7 +235,6 @@ final ClassName test = ClassName.fromJson(json);
 ### Enhancements for Custom Serialization
 The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows. 
 For custom classes that previously utilized unique serialization logic with the `serializationManager`, adjustments may be necessary.
-
 
 #### Previous Implementation
 In the previous versions, models required the `serializationManager` to be passed explicitly, as shown in the following code snippet:
