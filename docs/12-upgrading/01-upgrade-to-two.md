@@ -213,3 +213,50 @@ auth.AuthConfig.set(auth.AuthConfig(
   allowUnsecureRandom: true,
 ));
 ```
+
+## Updates to Serialization in Serverpod 2.0
+
+### General Changes to Model Serialization
+Serverpod 2.0 significantly streamlines the model serialization process. In earlier versions, the `fromJson` factory constructors needed a `serializationManager` parameter to handle object deserialization. This parameter has now been removed, enhancing simplicity and usability.
+
+#### Before change
+```dart
+final Map<String, dynamic> json = classInstance.toJson();
+final SerializationManager serializationManager = Protocol();
+final ClassName test = ClassName.fromJson(json, serializationManager);
+```
+
+#### After change
+```dart
+final Map<String, dynamic> json = classInstance.toJson();
+final ClassName test = ClassName.fromJson(json);
+```
+
+### Enhancements for Custom Serialization
+The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows. 
+For custom classes that previously utilized unique serialization logic with the `serializationManager`, adjustments may be necessary.
+
+#### Previous Implementation
+In the previous versions, models required the `serializationManager` to be passed explicitly, as shown in the following code snippet:
+```dart
+factory ClassName.fromJson(
+    Map<String, dynamic> json,
+    SerializationManager serializationManager,
+  ) {
+    return ClassName(
+      json['name'],
+    );
+  }
+```
+
+#### Updated Implementation
+With the release of Serverpod 2.0, the `fromJson` constructor has been simplified and the `serializationManager` has been removed:
+```dart
+factory ClassName.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return ClassName(
+      json['name'],
+    );
+  }
+```
