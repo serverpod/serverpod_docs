@@ -81,7 +81,7 @@ To find multiple rows, use the same principle as for finding a single row.
 var companies = await Company.db.find(
   session,
   where: (t) => t.id < 100,
-  limit 50,
+  limit: 50,
 );
 ```
 
