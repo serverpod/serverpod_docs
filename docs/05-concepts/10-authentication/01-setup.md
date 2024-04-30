@@ -13,7 +13,7 @@ Serverpod's auth module makes it easy to authenticate users through email or 3rd
 
 ## Server setup
 
-Add the module as a dependency to the server projects `pubspec.yaml`.
+Add the module as a dependency to the server project's `pubspec.yaml`.
 
 ```yaml
 dependencies:
@@ -21,17 +21,15 @@ dependencies:
   serverpod_auth_server: ^1.x.x
 ```
 
-Add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.
+While still in the server project, generate the client code and endpoint methods for the auth module by running the `serverpod generate` command line tool.
 
-```yaml
-modules:
-  serverpod_auth:
-    nickname: auth
+```bash
+$ serverpod generate
 ```
 
 ### Initialize the auth database
 
-After adding the module to the server project, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
+After adding the module to the server project and generating client code and endpoint methods, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
 
 ```bash
 $ serverpod create-migration
@@ -44,7 +42,7 @@ Start your database container from the server project.
 $ docker-compose up --build --detach
 ```
 
-Then apply the migration by starting the server with the `apply-migration` flag.
+Then apply the migration by starting the server with the `apply-migrations` flag.
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-migrations
@@ -54,7 +52,7 @@ The full migration instructions can be found in the [migration guide](../databas
 
 ## Client setup
 
-Add the auth client in your client projects `pubspec.yaml`.
+Add the auth client in your client project's `pubspec.yaml`.
 
 ```yaml
 dependencies:
