@@ -47,18 +47,18 @@ A newly created Serverpod project comes with a preconfigured docker instance wit
 :::
 
 ```bash
-$ docker compose up --build --detach
+docker compose up --build --detach
 ```
 
 To remove the database run (this commands preserve all data).
 
 ```bash
-$ docker compose down
+docker compose down
 ```
 
 To remove the database and __delete__ all data add the `-v` flag.
 
 ```bash
-$ docker compose down -v
+docker compose down -v
 ```
 

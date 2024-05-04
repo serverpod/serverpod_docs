@@ -89,14 +89,17 @@ Finally, to complete your Serverpod configuration, you will need to edit the `co
 Your Serverpod should now be configured and ready to be deployed. Exciting times! Open up a terminal and `cd` into your server `aws/terraform` directory. First, you need to add an environment variable so that Terraform can correctly set the password for the Postgres database. You will find the production password for the database in your `config/passwords.yaml` file.
 
 ```bash
-$ export TF_VAR_DATABASE_PASSWORD_PRODUCTION="<MY PRODUCTION PASSWORD>"
+export TF_VAR_DATABASE_PASSWORD_PRODUCTION="<MY PRODUCTION PASSWORD>"
 ```
 
 Next, we are ready to initialize Terraform and deploy our server. You will only need to run the `terraform init` command the first time you deploy the configuration.
 
 ```bash
-$ terraform init
-$ terraform apply
+terraform init
+```
+
+```bash
+terraform apply
 ```
 
 Terraform will now run some checks and make a plan for the deployment. If everything looks good, it will ask you if you are ready to go ahead with the changes. Type `yes` and hit the return key. Applying the changes can take up to five minutes as AWS creates the different resources needed for your Serverpod.

@@ -35,15 +35,21 @@ modules:
 Then run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your project's deserializer.
 
 ```bash
-$ dart pub get
-$ serverpod generate
+dart pub get
+```
+
+```bash
+serverpod generate
 ```
 
 Finally, since modules might include modifications to the database schema, you should create a new database migration and apply it by running `serverpod create-migration`  then `dart bin/main.dart --apply-migrations` from your server's directory.
 
 ```bash
-$ serverpod create-migration
-$ dart bin/main.dart --apply-migrations
+serverpod create-migration
+```
+
+```bash
+dart bin/main.dart --apply-migrations
 ```
 
 ### Client setup
@@ -81,13 +87,13 @@ fields:
 With the `serverpod create` command, it is possible to create new modules for code that is shared between projects or that you want to publish to pub.dev. To create a module instead of a server project, pass `module` to the `--template` flag.
 
 ```bash
-$ serverpod create --template module my_module
+serverpod create --template module my_module
 ```
 
 The create command will create a server and a client Dart package. If you also want to add custom Flutter code, use `flutter create` to create a package.
 
 ```bash
-$ flutter create --template package my_module_flutter
+flutter create --template package my_module_flutter
 ```
 
 In your Flutter package, you most likely want to import the client libraries created by `serverpod create`.

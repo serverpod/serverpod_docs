@@ -8,11 +8,11 @@ Before you begin, you will need to install and configure the Google Cloud CLI to
 - [Install](https://cloud.google.com/sdk/docs/install) the Google Cloud CLI.
 - To [initialize](https://cloud.google.com/sdk/docs/initializing) the gcloud CLI, run the following command:
 ```bash
-$ gcloud init
+gcloud init
 ```
 - To set the default project for your Cloud Run service:
 ```bash
-$ gcloud config set project <PROJECT_ID>
+gcloud config set project <PROJECT_ID>
 ```
 
 ## Setup the database
@@ -64,8 +64,11 @@ database:
 Your server is now ready to be deployed. When you created your project, Serverpod also created a script for deploying your server. Copy it to the root of your server directory and make it executable. Make sure you are in your server directory (e.g., `myproject_server`). Then run the following command:
 
 ```bash
-$ cp deploy/gcp/console_gcr/cloud-run-deploy.sh .
-$ chmod u+x cloud-run-deploy.sh
+cp deploy/gcp/console_gcr/cloud-run-deploy.sh .
+```
+
+```bash
+chmod u+x cloud-run-deploy.sh
 ```
 
 Open up the script in your favorite editor. You will need to fill in your _database instance's connection name_ and the _email of your service account_.
@@ -73,7 +76,7 @@ Open up the script in your favorite editor. You will need to fill in your _datab
 Now, deploy your server by running the following:
 
 ```bash
-$ ./cloud-run-deploy.sh
+./cloud-run-deploy.sh
 ```
 
 The script runs two deployment commands, one for your API and one for the Insights API used by the Serverpod app. While running, it may ask you to enable the Cloud Run and SQL Admin services. Answer yes to all these questions.

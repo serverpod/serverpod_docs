@@ -34,20 +34,20 @@ modules:
 After adding the module to the server project, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
 
 ```bash
-$ serverpod create-migration
+serverpod create-migration
 ```
 
 
 Start your database container from the server project.
 
 ```bash
-$ docker-compose up --build --detach
+docker-compose up --build --detach
 ```
 
 Then apply the migration by starting the server with the `apply-migration` flag.
 
 ```bash
-$ dart run bin/main.dart --role maintenance --apply-migrations
+dart run bin/main.dart --role maintenance --apply-migrations
 ```
 
 The full migration instructions can be found in the [migration guide](../database/migrations).

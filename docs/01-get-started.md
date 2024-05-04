@@ -5,7 +5,7 @@ This page should give you an understanding of how a Serverpod project is structu
 Create a new project by running `serverpod create`.
 
 ```bash
-$ serverpod create mypod
+serverpod create mypod
 ```
 
 :::info
@@ -24,9 +24,15 @@ This command will create a new directory called `mypod`, with three dart package
 Make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
-$ cd mypod/mypod_server
-$ docker compose up --build --detach
-$ dart bin/main.dart --apply-migrations
+cd mypod/mypod_server
+```
+
+```bash
+docker compose up --build --detach
+```
+
+```bash
+dart bin/main.dart --apply-migrations
 ```
 
 If everything is working, you should see something like this on your terminal:
@@ -54,8 +60,11 @@ In your development environment it can be helpful to always start Serverpod with
 Start the default demo app by changing the directory into the Flutter package that was created and running `flutter run`.
 
 ```bash
-$ cd mypod/mypod_flutter
-$ flutter run -d chrome
+cd mypod/mypod_flutter
+```
+
+```bash
+flutter run -d chrome
 ```
 
  The flag `-d chrome` runs the app in Chrome, for other run options please see the Flutter documentation.
@@ -81,8 +90,11 @@ Both the `endpoints` and `models` directories contain sample files that give a q
 Whenever you change your code in either the `endpoints` or `models` directory, you will need to regenerate the classes managed by Serverpod. Do this by running `serverpod generate`.
 
 ```bash
-$ cd mypod/mypod_server
-$ serverpod generate
+cd mypod/mypod_server
+```
+
+```bash
+serverpod generate
 ```
 
 ### Working with endpoints
@@ -165,16 +177,19 @@ development:
 With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server. 
 
 ```bash
-$ cd mypod/mypod_server
-$ serverpod create-migration
+cd mypod/mypod_server
+```
+
+```bash
+serverpod create-migration
 ```
 
 Migrations are then applied to the database as part of the server startup by adding the `--apply-migrations` flag.
 
-```bash 
-$ cd mypod/mypod_server
-$ dart bin/main.dart --apply-migrations
+```bash
+dart bin/main.dart --apply-migrations
 ```
+
 
 :::tip
 

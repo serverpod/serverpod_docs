@@ -29,8 +29,11 @@ To add authentication with Firebase, you must first install and initialize the F
 The short version:
 
 ```bash
-$ flutter pub add firebase_core firebase_auth firebase_ui_auth
-$ flutterfire configure
+flutter pub add firebase_core firebase_auth firebase_ui_auth
+```
+
+```bash
+flutterfire configure
 ```
 
 In the Firebase console, configure the different social sign-ins you plan to use, under `Authentication > Sign-in method`.
@@ -65,7 +68,7 @@ void main() async {
 Add the [serverpod_auth_firebase_flutter](https://pub.dev/packages/serverpod_auth_firebase_flutter) package.
 
 ```bash
-$ flutter pub add serverpod_auth_firebase_flutter
+flutter pub add serverpod_auth_firebase_flutter
 ```
 
 The `SignInWithFirebaseButton` is a convenient button that triggers the sign-in flow and can be used like this:

@@ -29,15 +29,21 @@ Demo of what we will build: ([Full code example](https://github.com/serverpod/no
 Create a new project using the Serverpod CLI. Run the following command in your terminal:
 
 ```bash
-$ serverpod create notes
+serverpod create notes
 ```
 
 To start the server:
 
 ```bash
-$ cd notes/notes_server
-$ docker compose up --build --detach
-$ dart bin/main.dart --apply-migrations
+cd notes/notes_server
+```
+
+```bash
+docker compose up --build --detach
+```
+
+```bash
+dart bin/main.dart --apply-migrations
 ```
 
 :::info
@@ -69,7 +75,7 @@ Let's take a closer look at the content of the `note.yaml` file:
 Use the code generator to generate the code for the `Note` class from the definition in `note.yaml`. Run the following command from the root of your server project (`notes_server`):
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 After the code generation process is complete, you can access the generated code for the `Note` class in `lib/src/generated/note.dart` inside your Serverpod project.
@@ -98,7 +104,7 @@ fields:
 Run the code generator again to generate the necessary code used to access the database table:
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 Take a look at the updated `lib/src/generated/note.dart` file. You will notice that the code generator has added new methods for interacting with the database. 
@@ -107,7 +113,7 @@ Take a look at the updated `lib/src/generated/note.dart` file. You will notice t
 To create the new `note` table in the database we will use the Serverpod migration system. Run the following command to generate a new database migration:
 
 ```bash
-$ serverpod create-migration
+serverpod create-migration
 ```
 
 This creates a new migration that contains a description of the database schema and SQL code to add the table. These files can be found in the `migrations` directory in your server project (`notes_server`).
@@ -117,7 +123,7 @@ This creates a new migration that contains a description of the database schema 
 To apply the database migration, start the server with the `--apply-migrations` command. We can also run the server in maintenance mode which will shut down the server as soon as its tasks are done.
 
 ```bash
-$ dart run bin/main.dart --role maintenance --apply-migrations
+dart run bin/main.dart --role maintenance --apply-migrations
 ```
 
 Once command has executed successfully, the database table for storing the note data will have been created.
@@ -237,7 +243,7 @@ Congratulations! You have now created all the endpoints needed for the notes app
 Now run the code generator again to generate the client library for our endpoints. This needs to be run from the server directory `notes_server`.
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 You can find the newly generated code in the client directory `notes_client`. You normally don't need to touch this package, but it's good to know where it is located.
@@ -752,16 +758,25 @@ Start the database and server:
 Make sure you reboot the server if you started it earlier.
 
 ```bash
-$ cd notes_server
-$ docker compose up --build --detach
-$ dart bin/main.dart --apply-migrations
+cd notes_server
+```
+
+```bash
+docker compose up --build --detach
+```
+
+```bash
+dart bin/main.dart --apply-migrations
 ```
 
 Start the Flutter app in Chrome (or the platform of your choice):
 
 ```bash
-$ cd notes_flutter
-$ flutter run -d chrome
+cd notes_flutter
+```
+
+```bash
+flutter run -d chrome
 ```
 
 <ReactPlayer playing={true} loop controls width="960px" height="720px" url='/img/tutorial/note-app/03-note-create.mp4' />
