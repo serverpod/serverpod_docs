@@ -127,6 +127,10 @@ After the password has been reset you have to call the `signIn` method to log in
 
 Serverpod provides some additional configurable options to provide extra layers of security for stored password hashes.
 
+:::info
+By default, the minimum password length is set to 8 characters. If you wish to modify this requirement, you can utilize the properties within AuthConfig.
+:::
+
 ### Peppering
 
 For an additional layer of security, it is possible to configure a password hash pepper. A pepper is a server-side secret that is added, along with a unique salt, to a password before it is hashed and stored. The pepper makes it harder for an attacker to crack password hashes if they have only gained access to the database.
