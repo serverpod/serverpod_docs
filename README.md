@@ -34,6 +34,9 @@ If you need to make changes to the latest version, you can do so by removing the
 npm run docusaurus docs:version X.X.X
 ```
 
+### Add redirects
+To maintain link integrity when relocating or renaming documentation pages, it's recommended to implement redirects. This is facilitated by the `@docusaurus/plugin-client-redirects` plugin. Redirects can be configured in the `docusaurus.config.js` file, within the `redirects` section of the plugin configuration.
+
 ### Deploy
 
 Once a PR is merged into the `main` branch of this repository, a GitHub action is triggered that builds the documentation and pushes the build to the `docs` directory within the `serverpod.github.io` repository. The built documentation is committed as a new commit to the `main` branch and is then deployed to Github pages by the `serverpod.github.io` repository.
