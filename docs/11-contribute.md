@@ -38,7 +38,7 @@ Running single individual tests is useful when you are working on a specific fea
 
 1. Add an entry for the test server at the end of your `/etc/hosts file`.
 
-```
+```text
 127.0.0.1 serverpod_test_server
 ```
 

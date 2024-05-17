@@ -38,7 +38,7 @@ We recommend creating a new dart package specifically for sharing these types of
 
 Your folder structure should then look like this:
 
-```
+```text
 ├── my_project_client
 ├── my_project_flutter
 ├── my_project_server

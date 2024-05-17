@@ -131,7 +131,7 @@ $ dig +short NS examplepod.com
 
 Should yield an output similar to this:
 
-```
+```text
 ns-cloud-b4.googledomains.com.
 ns-cloud-b1.googledomains.com.
 ns-cloud-b2.googledomains.com.

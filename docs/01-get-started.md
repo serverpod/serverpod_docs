@@ -34,7 +34,7 @@ $ dart bin/main.dart --apply-migrations
 
 If everything is working, you should see something like this on your terminal:
 
-```
+```text
 SERVERPOD version: 1.x.x, mode: development, time: 2022-09-12 17:22:02.825468Z
 Insights listening on port 8081
 Server default listening on port 8080

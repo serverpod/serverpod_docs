@@ -60,7 +60,7 @@ $ serverpod create-migration --tag "v1-0-0"
 
 This would create a migration named `<timestamp>-v1-0-0`:
 
-```
+```text
 ├── migrations
 │    └── 20231205080937028-v1-0-0
 ```
@@ -75,7 +75,7 @@ The developer is responsible for ensuring that any added SQL statements are comp
 
 The `migrations` directory contains a folder for each migration that is created, looking like this for a project with two migrations:
 
-```
+```text
 ├── migrations
 │    ├── 20231205080937028
 │    ├── 20231205081959122
@@ -175,7 +175,7 @@ $ serverpod create-repair-migration --tag "reset-migrations"
 
 This would create a repair migration named `<timestamp>-reset-migrations` in the `repair` directory:
 
-```
+```text
 ├── repair
 │    └── 20230821135718-v1-0-0.sql
 ```
@@ -184,7 +184,7 @@ This would create a repair migration named `<timestamp>-reset-migrations` in the
 
 The `repair` directory only exists if a repair migration has been created and contains a single SQL file containing statements to repair the database schema.
 
-```
+```text
 ├── repair
 │    └── 20230821135718-v1-0-0.sql
 ```
