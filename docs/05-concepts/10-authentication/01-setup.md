@@ -20,6 +20,13 @@ dependencies:
   ...
   serverpod_auth_server: ^1.x.x
 ```
+Optionally, add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.
+
+```yaml
+modules:
+  serverpod_auth:
+    nickname: auth
+```
 
 While still in the server project, generate the client code and endpoint methods for the auth module by running the `serverpod generate` command line tool.
 
@@ -29,7 +36,7 @@ $ serverpod generate
 
 ### Initialize the auth database
 
-After adding the module to the server project and generating client code and endpoint methods, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
+After adding the module to the server project, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
 
 ```bash
 $ serverpod create-migration

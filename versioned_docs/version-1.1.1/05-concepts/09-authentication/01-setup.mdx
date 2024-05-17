@@ -23,6 +23,14 @@ dependencies:
   serverpod_auth: ^1.x.x
 ```
 
+Optionally, add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.
+
+```yaml
+modules:
+  serverpod_auth:
+    nickname: auth
+```
+
 While still in the server project, generate the client code and endpoint methods for the auth module by running the `serverpod generate` command line tool.
 
 ```bash
