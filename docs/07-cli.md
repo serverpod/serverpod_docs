@@ -23,11 +23,9 @@ $ serverpod <command> [arguments]
 - **[language-server](lsp)**: Activates the Serverpod LSP server, which interfaces via JSON-RPC-2. This is tailored for compatibility with a client integrated within an IDE.
 
 - **[create-migration](concepts/database/migrations)**: Produces a migration derived from the variances between the last migration and the current project state.
- 
-- **[create-repair-migration](concepts/database/migrations)**: Produces a repair migration derived from the variances between the live database schema and the targeted migration. If no version is specified, the latest migration is used.
 
+- **[create-repair-migration](concepts/database/migrations)**: Produces a repair migration derived from the variances between the live database schema and the targeted migration. If no version is specified, the latest migration is used.
 
 - **upgrade**: Upgrade to the latest Serverpod CLI version.
 
 - **version**: Reveals the active Serverpod CLI version.
-

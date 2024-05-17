@@ -7,6 +7,19 @@ on:
         branches: 
             - main
 jobs:
+    markdown-lint:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Run markdownlint
+              uses: articulate/actions-markdownlint@v1
+              with:
+                  config: .markdownlint.yaml
+                  files: './docs/**/*.md'
+
     test-build:
         name: Test build
         runs-on: ubuntu-latest

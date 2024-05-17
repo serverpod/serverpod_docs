@@ -10,7 +10,6 @@ Future versions of the authentication module will include more options. If you w
 
 Serverpod's auth module makes it easy to authenticate users through email or 3rd parties. The authentication module also handles basic user information, such as user names and profile pictures. Make sure to use the same version numbers as for Serverpod itself for all dependencies.
 
-
 ## Server setup
 
 Add the module as a dependency to the server projects `pubspec.yaml`.
@@ -36,7 +35,6 @@ After adding the module to the server project, you need to initialize the databa
 ```bash
 $ serverpod create-migration
 ```
-
 
 Start your database container from the server project.
 

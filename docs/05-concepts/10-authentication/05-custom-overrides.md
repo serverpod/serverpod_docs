@@ -8,7 +8,7 @@ After successfully authenticating a user, for example, through a username and pa
 
 ### Create auth token
 
-To create an auth token, call the `signInUser` method in the `UserAuthentication` class, accessible through the `session.auth` field on the `session` object. 
+To create an auth token, call the `signInUser` method in the `UserAuthentication` class, accessible through the `session.auth` field on the `session` object.
 
 The `signInUser` method takes three arguments: the first is a unique `integer` identifier for the user, the second is information about the method used to authenticate the user, and the third is a set of scopes granted to the auth token.
 
@@ -21,14 +21,13 @@ var authToken = await session.auth.signInUser(myUserObject.id, 'myAuthMethod', s
 
 The example above creates an auth token for a user with the unique identifier taken from `myUserObject`. The auth token preserves that it was created using the method `myAuthMethod` and has the scopes `delete` and `create`.
 
-
 :::info
 The unique identifier for the user should uniquely identify the user regardless of authentication method. The information allows authentication tokens associated with the same user to be grouped.
 :::
 
 #### Custom auth tokens
 
-The `UserAuthentication` class simplifies the token management but makes assumptions about what information should be stored in the auth token. If your project has different requirements, managing auth tokens manually with your defined model is possible. Custom auth tokens require that the token validation is overridden and adjusted to the new auth token format, explained in [override token validation](#override-token-validation). 
+The `UserAuthentication` class simplifies the token management but makes assumptions about what information should be stored in the auth token. If your project has different requirements, managing auth tokens manually with your defined model is possible. Custom auth tokens require that the token validation is overridden and adjusted to the new auth token format, explained in [override token validation](#override-token-validation).
 
 ### Token validation format
 
@@ -90,6 +89,7 @@ class UserEndpoint extends Endpoint {
 In the above example, the `login` method authenticates the user and creates an auth token. The token is then returned to the client in the format expected by the default token validation.
 
 ### Remove auth token
+
 When the default token validation is used, signing out a user on all devices is made simple with the `signOutUser` method in the `UserAuthentication` class. The method removes all auth tokens associated with the user.
 
 ```dart
@@ -105,6 +105,7 @@ class AuthenticatedEndpoint extends Endpoint {
 In the above example, the `logout` endpoint removes all auth tokens associated with the user. The user is then signed out and loses access to any protected endpoints.
 
 #### Remove specific tokens
+
 The `AuthKey` table stores all auth tokens and can be interacted with in the same way as any other model with a database in Serverpod. To remove specific tokens, the `AuthKey` table can be interacted with directly.
 
 ```dart
@@ -116,14 +117,16 @@ await AuthKey.db.deleteWhere(
 
 In the above example, all auth tokens associated with the user `userId` and created with the method `username` are removed from the `AuthKey` table.
 
-
 #### Custom token solution
-If a [custom auth token](#custom-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
+
+If a [custom auth token](#custom-auth-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
 
 ## Client setup
+
 Enabling authentication in the client is as simple as configuring a key manager and placing any token in it. If a key manager is configured, the client will automatically query the manager for a token and include it in communication with the server.
 
 ### Configure key manager
+
 Key managers need to implement the `AuthenticationKeyManager` interface. The key manager is configured when creating the client by passing it as the named parameter `authenticationKeyManager`. If no key manager is configured, the client will not include tokens in requests to the server.
 
 ```dart
@@ -152,7 +155,7 @@ var client = Client('http://$localhost:8080/',
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
-In the above example, the `SimpleAuthKeyManager` is configured as the client's authentication key manager. The `SimpleAuthKeyManager` stores the token in memory. 
+In the above example, the `SimpleAuthKeyManager` is configured as the client's authentication key manager. The `SimpleAuthKeyManager` stores the token in memory.
 
 :::info
 
@@ -166,7 +169,8 @@ The key manager is then available through the client's `authenticationKeyManager
 var keyManager = client.authenticationKeyManager;
 ```
 
-### Store token 
+### Store token
+
 When the client receives a token from the server, it is responsible for storing it in the key manager using the `put` method. The key manager will then include the token in all requests to the server.
 
 ```dart
@@ -176,6 +180,7 @@ await client.authenticationKeyManager?.put(token);
 In the above example, the `token` is placed in the key manager. It will now be included in communication with the server.
 
 ### Remove token
+
 To remove the token from the key manager, call the `remove` method.
 
 ```dart
@@ -185,6 +190,7 @@ await client.authenticationKeyManager?.remove();
 The above example removes any token from the key manager.
 
 ### Retrieve token
+
 To retrieve the token from the key manager, call the `get` method.
 
 ```dart

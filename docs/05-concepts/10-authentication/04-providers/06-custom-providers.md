@@ -53,6 +53,7 @@ var userInfo = await UserInfo.db.findFirstRow(
 The example above shows how to find a user by name using the `UserInfo` model.
 
 ### Create auth token
+
 When a user has been found or created, an auth token that is connected to the user should be created.
 
 To create an auth token, call the `signInUser` method in the `UserAuthentication` class, accessible through the `session.auth` field on the `session` object.

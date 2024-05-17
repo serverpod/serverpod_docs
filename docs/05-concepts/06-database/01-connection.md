@@ -5,6 +5,7 @@ In Serverpod the connection details and password for the database are stored ins
 Serverpod automatically establishes a connection to the Postgresql instance by using these configuration details when you start the server.
 
 ### Connection details
+
 Each environment configuration contains a `database` keyword that specifies the connection details.
 
 For your development build you can find the connection details in the `development.yaml` file.
@@ -61,4 +62,3 @@ To remove the database and __delete__ all data add the `-v` flag.
 ```bash
 $ docker compose down -v
 ```
-

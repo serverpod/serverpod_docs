@@ -1,4 +1,5 @@
 # Backward compatibility
+
 As your app evolves, features will be added or changed. However, your users may still use older versions of the app as not everyone will update to the latest version and automatic updates through the app stores take time. Therefore it may be essential to make updates to your server compatible with older app versions.
 
 Following a simple set of rules, your server will stay compatible with older app versions:

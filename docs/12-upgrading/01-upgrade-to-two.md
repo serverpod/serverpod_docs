@@ -18,14 +18,16 @@ session.db.find(...);
 
 ### Authenticated user information retrieval
 
-In Serverpod 2.0, we have removed the getters `scopes` and `authenticatedUser` from session. This information is now retrievable through the `authenticationInfo` getter as fields of the returned object. 
+In Serverpod 2.0, we have removed the getters `scopes` and `authenticatedUser` from session. This information is now retrievable through the `authenticationInfo` getter as fields of the returned object.
 
 ## Changes to database queries
 
 ### Removed unsafeQueryMappedResults(...)
+
 The `unsafeQueryMappedResults(...)` method has been removed. A similar result can now instead be formatted from the `unsafeQuery(...)` result by calling the `toColumnMap()` method for each row of the result. `toColumnMap` returns a map containing the query alias for the column as key and the row-column value as value.
 
 Given a query that performs a join like this:
+
 ```sql
 SELECT
  "company"."id" AS "company.id",
@@ -43,6 +45,7 @@ ORDER BY
 ```
 
 The return type from `unsafeQueryMappedResults(...)` in 1.2 was:
+
 ```json
 [
   {
@@ -72,7 +75,7 @@ The return type from `unsafeQueryMappedResults(...)` in 1.2 was:
 ]
 ```
 
-And if `result.map((row) => row.toColumnMap())` is used to format the result from `unsafeQuery(...)` in 2.0, the following result is obtained: 
+And if `result.map((row) => row.toColumnMap())` is used to format the result from `unsafeQuery(...)` in 2.0, the following result is obtained:
 
 ```json
 [
@@ -96,6 +99,7 @@ And if `result.map((row) => row.toColumnMap())` is used to format the result fro
 ```
 
 or for a simple query without aliases:
+
 ```sql
 SELECT
  "id",
@@ -128,7 +132,7 @@ the return type from `unsafeQueryMappedResults(...)` in 1.2 was:
 ]
 ```
 
-and if `result.map((row) => row.toColumnMap())` is used to format the result from `unsafeQuery(...)` in 2.0, the following result is obtained: 
+and if `result.map((row) => row.toColumnMap())` is used to format the result from `unsafeQuery(...)` in 2.0, the following result is obtained:
 
 ```json
  [
@@ -150,6 +154,7 @@ and if `result.map((row) => row.toColumnMap())` is used to format the result fro
 The return type for all delete operations has been changed from the `id` of the deleted rows to the actual deleted rows. This makes the return type for the delete operations consistent with the return type of the other database operations. It also dramatically simplifies retrieving and removing rows in concurrent environments.
 
 Return type before the change:
+
 ```dart
 int companyId = await Company.db.deleteRow(session, company);
 List<int> companyIds = await Company.db.delete(session, [company]);
@@ -157,6 +162,7 @@ List<int> companyIds = await Company.db.deleteWhere(session, where: (t) => t.nam
 ```
 
 Return types after the change:
+
 ```dart
 Company company = await Company.db.deleteRow(session, company);
 List<Company> companies = await Company.db.delete(session, [company]);
@@ -166,6 +172,7 @@ List<Company> companies = await Company.db.deleteWhere(session, where: (t) => t.
 ## Changes to database tables
 
 ### Integer representation changed to bigint
+
 Integer representation in the database has changed from `int` to `bigint`. From now on, models with `int` fields will generate database migrations where that field is defined as a `bigint` type in the database.
 
 This change also applies to the `id` field of models where `bigserial` is now used to generate the id.
@@ -173,12 +180,14 @@ This change also applies to the `id` field of models where `bigserial` is now us
 The change is compatible with existing databases. Existing migrations therefore, won't be changed by the Serverpod migration system. No manual modification to the database is required if this data representation is not essential for the application. However, all new migrations will be created with the new representation.
 
 #### Why is this change made?
+
 The change was made to ensure that [Dart](https://dart.dev/guides/language/numbers) and the database representation of integers is consistent. Dart uses 64-bit integers, and the `int` type in Dart is a 64-bit integer. The `int` type in PostgreSQL is a 32-bit integer. This means that the `int` type in Dart can represent larger numbers than the `int` type in PostgreSQL. By using `bigint` in PostgreSQL, the integer representation is consistent between Dart and the database.
 
-In terms of performance, there are usually no significant drawbacks with using `bigint` instead of `int`. In most cases a good index strategy will be more important than the integer representation. Here is a guide that benchmarks the performance of `int` and `bigint` in PostgreSQL: (Use BIGINT in Postgres)[https://blog.rustprooflabs.com/2021/06/postgres-bigint-by-default]
+In terms of performance, there are usually no significant drawbacks with using `bigint` instead of `int`. In most cases a good index strategy will be more important than the integer representation. Here is a guide that benchmarks the performance of `int` and `bigint` in PostgreSQL: [Use BIGINT in Postgres](https://blog.rustprooflabs.com/2021/06/postgres-bigint-by-default)
 
 #### Ensuring new databases are created with the new representation
-Since existing migrations won't be changed, databases that are created with these will still use `int` to represent integers. 
+
+Since existing migrations won't be changed, databases that are created with these will still use `int` to represent integers.
 
 To ensure new databases are created with the new representation, the latest migration should be generated using Serverpod 2.0. It is enough to have an empty migration to ensure new databases use the new representation.
 
@@ -189,9 +198,11 @@ $ serverpod create-migration --force
 ```
 
 #### Migration of existing tables
+
 The migration of existing tables to use the new representation will vary depending on the database content. Utilizing the wrong migration strategy might cause downtime for your application. That is the reason Serverpod does not automatically migrate existing tables.
 
 ##### Small tables
+
 A simple way to migrate for small tables is to execute the following sql query to the database:
 
 ```sql
@@ -203,15 +214,17 @@ ALTER TABLE "my_table" ALTER "myNumber" TYPE bigint;
 The first two lines modify the id sequence for a table named `"my_table"` to use `bigint` instead of `int`. The last line modifies a column of the same table to use `bigint`. The drawback of this approach is that it locks the table during the migration. Therefore, this strategy is not recommended for large tables.
 
 ##### Large tables
+
 Migrating large tables without application downtime is a more complex operation, and the approach will vary depending on the data structure. Below are some gathered resources on the subject.
 
-- (Zemata - Column migration from INT to BIGINT)[http://zemanta.github.io/2021/08/25/column-migration-from-int-to-bigint-in-postgresql/]
-- (AM^2 - Changing a column from int to bigint, without downtime)[https://am2.co/2019/12/changing-a-column-from-int-to-bigint-without-downtime/]
-- (Crunch data - The integer at the End of the Universe)[https://www.crunchydata.com/blog/the-integer-at-the-end-of-the-universe-integer-overflow-in-postgres]
+- [Zemata - Column migration from INT to BIGINT](http://zemanta.github.io/2021/08/25/column-migration-from-int-to-bigint-in-postgresql/)
+- [AM^2 - Changing a column from int to bigint, without downtime](https://am2.co/2019/12/changing-a-column-from-int-to-bigint-without-downtime/)
+- [Crunch data - The integer at the End of the Universe](https://www.crunchydata.com/blog/the-integer-at-the-end-of-the-universe-integer-overflow-in-postgres)
 
 ## Changes in the authentication module
 
 ### Unsecure random disabled by default
+
 The authentication module's default value for allowing unsecure random number generation is now `false`. An exception will be thrown when trying to hash a password if no secure random number generator is available. To preserve the old behavior and enable unsecure random number generation, set the `allowUnsecureRandom` property in the `AuthConfig` to `true`.
 
 ```dart
@@ -223,9 +236,11 @@ auth.AuthConfig.set(auth.AuthConfig(
 ## Updates to Serialization in Serverpod 2.0
 
 ### General Changes to Model Serialization
+
 Serverpod 2.0 significantly streamlines the model serialization process. In earlier versions, the `fromJson` factory constructors needed a `serializationManager` parameter to handle object deserialization. This parameter has now been removed, enhancing simplicity and usability.
 
 #### Before change
+
 ```dart
 final Map<String, dynamic> json = classInstance.toJson();
 final SerializationManager serializationManager = Protocol();
@@ -233,17 +248,21 @@ final ClassName test = ClassName.fromJson(json, serializationManager);
 ```
 
 #### After change
+
 ```dart
 final Map<String, dynamic> json = classInstance.toJson();
 final ClassName test = ClassName.fromJson(json);
 ```
 
 ### Enhancements for Custom Serialization
-The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows. 
+
+The removal of the `serializationManager` parameter in Serverpod 2.0 simplifies the serialization process not only for general models but also significantly enhances custom serialization workflows.
 For custom classes that previously utilized unique serialization logic with the `serializationManager`, adjustments may be necessary.
 
 #### Previous Implementation
+
 In the previous versions, models required the `serializationManager` to be passed explicitly, as shown in the following code snippet:
+
 ```dart
 factory ClassName.fromJson(
     Map<String, dynamic> json,
@@ -256,7 +275,9 @@ factory ClassName.fromJson(
 ```
 
 #### Updated Implementation
+
 With the release of Serverpod 2.0, the `fromJson` constructor has been simplified and the `serializationManager` has been removed:
+
 ```dart
 factory ClassName.fromJson(
     Map<String, dynamic> json,
