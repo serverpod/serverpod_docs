@@ -119,7 +119,7 @@ In the above example, all auth tokens associated with the user `userId` and crea
 
 #### Custom token solution
 
-If a [custom auth token](#custom-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
+If a [custom auth token](#custom-auth-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
 
 ## Client setup
 
