@@ -4,7 +4,7 @@ With Serverpod you can schedule future work with the `future call` feature. Futu
 
 A future call is guaranteed to only execute once across all your instances that are running, but execution failures are not handled automatically. It is your responsibility to schedule a new future call if the work was not able to complete.
 
-Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](sessions) object and the second being an optional SerializableEntity ([See models](models)).
+Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](sessions) object and the second being an optional SerializableModel ([See models](models)).
 
 :::info
 The future call feature is not enabled when running Serverpod in serverless mode.
