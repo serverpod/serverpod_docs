@@ -4,33 +4,33 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
 
 1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
 
-```dart
-Map<String, dynamic> toJson() {
-  return {
-    name: 'John Doe',
-  };
-}
-```
+    ```dart
+    Map<String, dynamic> toJson() {
+    return {
+        name: 'John Doe',
+    };
+    }
+    ```
 
 2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization as parameters.
 
-```dart
-factory ClassName.fromJson(
-  Map<String, dynamic> json,
-) {
-  return ClassName(
-    name: json['name'] as String,
-  );
-}
-```
+    ```dart
+    factory ClassName.fromJson(
+    Map<String, dynamic> json,
+    ) {
+    return ClassName(
+        name: json['name'] as String,
+    );
+    }
+    ```
 
 3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
-```yaml
-...
-extraClasses:
-  - package:my_project_shared/my_project_shared.dart:ClassName
-```
+    ```yaml
+    ...
+    extraClasses:
+    - package:my_project_shared/my_project_shared.dart:ClassName
+    ```
 
 ## Setup example
 

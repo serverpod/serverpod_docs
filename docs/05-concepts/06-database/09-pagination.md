@@ -66,41 +66,41 @@ In cursor-based pagination, the client provides a cursor as a reference point, a
 ### Implementing Cursor-based Pagination
 
 1. **Initial Request**:
-For the initial request, where no cursor is provided, retrieve the first `n` records:
+    For the initial request, where no cursor is provided, retrieve the first `n` records:
 
-```dart
-int recordsPerPage = 10;
+    ```dart
+    int recordsPerPage = 10;
 
-var companies = await Company.db.find(
-  session,
-  orderBy: (t) => t.id,
-  limit: recordsPerPage,
-);
-```
+    var companies = await Company.db.find(
+    session,
+    orderBy: (t) => t.id,
+    limit: recordsPerPage,
+    );
+    ```
 
 2. **Subsequent Requests**:
-For the subsequent requests, use the cursor (for example, the last `id` from the previous result) to fetch the next set of records:
+    For the subsequent requests, use the cursor (for example, the last `id` from the previous result) to fetch the next set of records:
 
-```dart
-int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the client
+    ```dart
+    int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the client
 
-var companies = await Company.db.find(
-  session,
-  where: Company.t.id > cursor,
-  orderBy: (t) => t.id,
-  limit: recordsPerPage,
-);
-```
+    var companies = await Company.db.find(
+    session,
+    where: Company.t.id > cursor,
+    orderBy: (t) => t.id,
+    limit: recordsPerPage,
+    );
+    ```
 
 3. **Returning the Cursor**:
-When returning data to the client, also return the cursor for the next page.
+    When returning data to the client, also return the cursor for the next page.
 
-```dart
-return {
-  'data': companies,
-  'nextCursor': companies.last.id,
-};
-```
+    ```dart
+    return {
+    'data': companies,
+    'nextCursor': companies.last.id,
+    };
+    ```
 
 ### Tips
 

@@ -38,31 +38,31 @@ Running single individual tests is useful when you are working on a specific fea
 
 1. Add an entry for the test server at the end of your `/etc/hosts file`.
 
-```text
-127.0.0.1 serverpod_test_server
-```
+    ```text
+    127.0.0.1 serverpod_test_server
+    ```
 
 2. Start the Docker container for the test server.
 
-```bash
-$ cd tests/serverpod_test_server/docker-local
-$ docker-compose up --build --detach
-$ ./setup-tables
-```
+    ```bash
+    $ cd tests/serverpod_test_server/docker-local
+    $ docker-compose up --build --detach
+    $ ./setup-tables
+    ```
 
 3. Start the test server.
 
-```bash
-$ cd tests/serverpod_test_server
-$ dart bin/main.dart
-```
+    ```bash
+    $ cd tests/serverpod_test_server
+    $ dart bin/main.dart
+    ```
 
 4. Run an individual test
 
-```bash
-$ cd tests/serverpod_test_server
-$ dart test test/connection_test.dart
-```
+    ```bash
+    $ cd tests/serverpod_test_server
+    $ dart test test/connection_test.dart
+    ```
 
 ### Command line tools
 
