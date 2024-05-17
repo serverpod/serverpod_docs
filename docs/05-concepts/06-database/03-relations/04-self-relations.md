@@ -4,7 +4,7 @@ A self-referential or self-relation occurs when a table has a foreign key that r
 
 ## One-to-one
 
-Imagine we have a blog and want to create links between our posts, where you can traverse forward and backward in the post history. Then we can create a self-referencing relation pointing to the next post in the chain. 
+Imagine we have a blog and want to create links between our posts, where you can traverse forward and backward in the post history. Then we can create a self-referencing relation pointing to the next post in the chain.
 
 ```yaml
 class: Post

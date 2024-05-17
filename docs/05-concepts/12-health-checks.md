@@ -1,7 +1,9 @@
 # Health checks
+
 Serverpod automatically performs health checks while running. It measures CPU and memory usage and the response time to the database. The metrics are stored in the database every minute in the serverpod_health_metric and serverpod_health_connection_info tables. However, the best way to visualize the data is through Serverpod Insights, which gives you a graphical view.
 
 ## Adding custom metrics
+
 Sometimes it is helpful to add custom health metrics. This can be for monitoring external services or internal processes within your Serverpod. To set up your custom metrics, you must create a `HealthCheckHandler` and register it with your Serverpod.
 
 ```dart

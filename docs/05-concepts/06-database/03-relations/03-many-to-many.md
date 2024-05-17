@@ -40,7 +40,7 @@ Note that the `name` argument is different, `course_enrollments` and `student_en
 
 ### Junction Table
 
-The `Enrollment` table acts as the bridge between `Course` and `Student`. It contains foreign keys from both tables, representing the many-to-many relationship. 
+The `Enrollment` table acts as the bridge between `Course` and `Student`. It contains foreign keys from both tables, representing the many-to-many relationship.
 
 ```yaml
 # enrollment.yaml

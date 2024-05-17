@@ -2,7 +2,6 @@
 
 The Serverpod query framework supports filtering on, sorting on, and including relational data structures. In SQL this is often achieved using a join operation. The functionality is available if there exists any [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relations between two models.
 
-
 ## Include relational data
 
 To include relational data in a query, use the `include` method. The `include` method has a typed interface and contains all the declared relations in your yaml file.
@@ -16,10 +15,12 @@ var employee = await Employee.db.findById(
   ),
 );
 ```
+
 The example above return a employee including the related address object.
 
 ### Nested includes
-It is also possible to include deeply nested objects. 
+
+It is also possible to include deeply nested objects.
 
 ```dart
 var employee = await Employee.db.findById(
@@ -32,9 +33,10 @@ var employee = await Employee.db.findById(
   ),
 );
 ```
+
 The example above returns an employee including the related company object that has the related address object included.
 
-Any relational object can be included or not when making a query but only the includes that are explicitly defined will be included in the result. 
+Any relational object can be included or not when making a query but only the includes that are explicitly defined will be included in the result.
 
 ```dart
 var user = await Employee.db.findById(
@@ -48,6 +50,7 @@ var user = await Employee.db.findById(
   ),
 );
 ```
+
 The example above includes several different objects configured by specifying the named parameters.
 
 ## Include relational lists
@@ -113,7 +116,8 @@ For each call to includeList (nested or not) the Serverpod Framework will perfor
 When working with large datasets, it's often necessary to [filter](filter) and [sort](sort) the records to retrieve the most relevant data. Serverpod offers methods to refine the included list of related objects:
 
 #### Filter
-Use the `where` clause to filter the results based on certain conditions. 
+
+Use the `where` clause to filter the results based on certain conditions.
 
 ```dart
 var user = await Company.db.findById(
@@ -130,6 +134,7 @@ var user = await Company.db.findById(
 The example above retrieves only employees whose names start with the letter 'a':
 
 #### Sort
+
 The orderBy clause lets you sort the results based on a specific field.
 
 ```dart
@@ -143,11 +148,12 @@ var user = await Company.db.findById(
   ),
 );
 ```
+
 The example above sorts the employees by their names in ascending order.
 
 ### Pagination
 
-[Paginate](pagination) results by specifying a limit on the number of records and an offset. 
+[Paginate](pagination) results by specifying a limit on the number of records and an offset.
 
 ```dart
 var user = await Company.db.findById(
@@ -161,6 +167,7 @@ var user = await Company.db.findById(
   ),
 );
 ```
+
 The example above retrieves the next 100 employees starting from the 11th record:
 
 Using these methods in conjunction provides a powerful way to query, filter, and sort relational data efficiently.

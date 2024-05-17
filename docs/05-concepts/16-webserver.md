@@ -1,4 +1,5 @@
 # Web server
+
 In addition to the application server, Serverpod comes with a built-in web server. The web server allows you to access your database and business layer the same way you would from a method call from an app. This makes it very easy to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or generate custom REST APIs to communicate with 3rd party services.
 
 :::caution
@@ -10,6 +11,7 @@ Serverpod's web server is still experimental, and the APIs may change in the fut
 When you create a new Serverpod project, it sets up a web server by default. When working with the web server, there are two main classes to understand; `WidgetRoute` and `Widget`. The `WidgetRoute` provides an entry point for a call to the server and returns a `Widget`. The `Widget` renders a web page or response using templates, JSON, or other custom means.
 
 ## Creating new routes and widgets
+
 To add new pages to your web server, you add new routes. Typically, you do this in your server.dart file before you start the Serverpod. By default, Serverpod comes with a `RootRoute` and a static directory.
 
 When receiving a web request, Serverpod will search and match the routes in the order they were added. You can end a route's path with an asterisk (`*`) to match all paths with the same beginning.
@@ -68,4 +70,5 @@ Static files are configured to be cached hard by the web browser and through Clo
 :::
 
 ## Database access and logging
+
 The web server passes a `Session` object to the `WidgetRoute` class' `build` method. This gives you access to all the features you typically get from a standard method call to an endpoint. Use the database, logging, or caching the same way you would in a method call.

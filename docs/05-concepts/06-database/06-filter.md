@@ -29,6 +29,7 @@ await User.db.find(
   where: (t) => t.name.notEquals('Bob')
 );
 ```
+
 In the example we fetch all users with a name that is not Bob. If a non-`null` value is used as an argument for the notEquals comparison, rows with a `null` value in the column will be included in the result.
 
 ### Comparison operators
@@ -76,6 +77,7 @@ await User.db.find(
   where: (t) => t.age.between(18, 65)
 );
 ```
+
 In the example we fetch all users between 18 and 65 years old. This can also be expressed as `(t.age >= 18) & (t.age <= 65)`.
 
 The 'not between' operation functions similarly to 'between' but it negates the condition. It also works inclusively with the boundaries.
@@ -107,8 +109,8 @@ await User.db.find(
   where: (t) => t.name.notInSet({'Alice', 'Bob'})
 );
 ```
-In the example we fetch all users with a name not matching Alice or Bob. Rows with a `null` value in the column will be included in the result. If an empty set is used as an argument for the notInSet comparison, all rows will be included in the result.
 
+In the example we fetch all users with a name not matching Alice or Bob. Rows with a `null` value in the column will be included in the result. If an empty set is used as an argument for the notInSet comparison, all rows will be included in the result.
 
 ### Like
 
@@ -143,8 +145,8 @@ await User.db.find(
   where: (t) => t.name.notLike('B%')
 );
 ```
-In the example we fetch all users with a name that does not start with B.
 
+In the example we fetch all users with a name that does not start with B.
 
 ### iLike
 
@@ -165,6 +167,7 @@ await User.db.find(
   where: (t) => t.name.notIlike('b%')
 );
 ```
+
 In the example we fetch all users with a name that does not start with b or B.
 
 ### Logical operators
@@ -178,7 +181,8 @@ await User.db.find(
   where: (t) => (t.name.equals('Alice') & (t.age > 25))
 );
 ```
-In the example we fetch all users with the name "Alice" _and_ are older than 25.
+
+In the example we fetch all users with the name "Alice" *and* are older than 25.
 
 The `|` operator is used to chain two statements together with an `or` operation.
 
@@ -188,24 +192,25 @@ await User.db.find(
 );
 ```
 
-In the example we fetch all users that has a name that starts with A _or_ B.
+In the example we fetch all users that has a name that starts with A *or* B.
 
 ## Relation operations
 
 If a relation between two models is defined a [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relation, then relation operations are supported in Serverpod.
 
-### One-to-one 
+### One-to-one
 
-For 1:1 relations the columns of the relation can be accessed directly on the relation field. This enables filtering on related objects properties. 
+For 1:1 relations the columns of the relation can be accessed directly on the relation field. This enables filtering on related objects properties.
 
 ```dart
 await User.db.find(
   where: (t) => t.address.street.like('%road%')
 );
 ```
-In the example each user has a relation to an address that has a street field. Using relation operations we then fetch all users where the related address has a street that contains the word "road". 
 
-### One-to-many 
+In the example each user has a relation to an address that has a street field. Using relation operations we then fetch all users where the related address has a street that contains the word "road".
+
+### One-to-many
 
 For 1:n relations, there are special filter methods where you can create sub-filters on all the related data. With them, you can answer questions on the aggregated result on many relations.
 
@@ -231,10 +236,9 @@ await User.db.find(
 
 In the example we fetch all users with more than three "book" orders.
 
-
 #### None
 
-None can be used to retrieve rows that have no related entries in a 1:n relation. Meaning if there exists a related entry then the row is omitted from the result. The operation is useful if you want to ensure that a many relation does not contain any related rows. 
+None can be used to retrieve rows that have no related entries in a 1:n relation. Meaning if there exists a related entry then the row is omitted from the result. The operation is useful if you want to ensure that a many relation does not contain any related rows.
 
 ```dart
 await User.db.find(
