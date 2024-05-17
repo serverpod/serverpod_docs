@@ -1,4 +1,5 @@
 # Migrations
+
 Serverpod comes bundled with a simple-to-use but powerful migration system that helps you keep your database schema up to date as your project evolves. Database migrations provide a structured way of upgrading your database while maintaining existing data.
 
 A migration is a set of database operations (e.g. creating a table, adding a column, etc.) required to update the database schema to match the requirements of the project. Each migration handles both initializing a new database and rolling an existing one forward from a previous state.
@@ -37,7 +38,9 @@ If no previous migration exists it will create a migration assuming there is no 
 See the [Pre-migration project upgrade path](../../upgrading/upgrade-to-one-point-two) section for more information on how to get started with migrations for any project created before migrations were introduced in Serverpod.
 
 ### Force create migration
+
 The migration command aborts and displays an error under two conditions:
+
 1. When no changes are identified between the database schema in the latest migration and the schema required by the project.
 2. When there is a risk of data loss.
 
@@ -63,6 +66,7 @@ This would create a migration named `<timestamp>-v1-0-0`:
 ```
 
 ### Add data in a migration
+
 Since the migrations are written in SQL, it is possible to add data to the database in a migration. This can be useful if you want to add initial data to the database.
 
 The developer is responsible for ensuring that any added SQL statements are compatible with the database schema and rolling forward from the previous migrations.
@@ -80,7 +84,6 @@ The `migrations` directory contains a folder for each migration that is created,
 
 Every migration is denoted by a directory labeled with a timestamp indicating when the migration was generated. Within the directory, there is a `migration_registry.txt` file. This file is automatically created whenever migrations are generated and serves the purpose of cataloging the migrations. Its primary function is to identify migration conflicts.
 
-
 For each migration, five files are created:
 
 - **definition.json** - Contains the complete definition of the database schema, including any database schema changes from Serverpod module dependencies. This file is parsed by the Serverpod CLI to determine the target database schema for the migration.
@@ -90,6 +93,7 @@ For each migration, five files are created:
 - **migration.sql** - Contains SQL statements to update the database schema from the last migration to the current version. This file is applied when rolling the database forward.
 
 ## Apply migrations
+
 Migrations are applied using the server runtime. To apply migrations, navigate to your project's `server` package directory, then start the server with the `--apply-migrations` flag. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
 
 ```bash
@@ -97,7 +101,6 @@ $ dart run bin/main.dart --apply-migrations
 ```
 
 Migrations can also be applied using the maintenance role. In maintenance, after migrations are applied, the server exits with an exit code indicating if migrations were successfully applied, zero for success or non-zero for failure.
-
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-migrations
@@ -130,25 +133,29 @@ To restore the integrity of the database schema, repair migrations will attempt 
 Since each repair migration is created for a specific live database schema, Serverpod will overwrite the latest repair migration each time a new repair migration is created.
 
 ### Migration database source
+
 By default, the repair migration system connects to your `development` database using the information specified in your Serverpod config. To use a different database source, the `--mode` option is used.
 
 ```bash
 $ serverpod create-repair-migration --mode production
 ```
 
-The command connects and pulls the live database schema from a running server. 
+The command connects and pulls the live database schema from a running server.
 
 ### Targeting a specific migration
+
 Repair migrations can also target a specific migration version by specifying the migration name with the `--version` option.
 
 ```bash
 $ serverpod create-repair-migration --version 20230821135718-v1-0-0
 ```
 
-This makes it possible to revert your database schema back to any older migration version. 
+This makes it possible to revert your database schema back to any older migration version.
 
 ### Force create repair migration
+
 The repair migration command aborts and displays an error under two conditions:
+
 1. When no changes are identified between the database schema in the latest migration and the schema required by the project.
 2. When there is a risk of data loss.
 
@@ -159,6 +166,7 @@ $ serverpod create-repair-migration --force
 ```
 
 ### Tag repair migration
+
 Repair migrations can be tagged just like regular migrations. Tags are appended to the migration name and can be added with the `--tag` option.
 
 ```bash
@@ -182,6 +190,7 @@ The `repair` directory only exists if a repair migration has been created and co
 ```
 
 ## Applying a repair migration
+
 The repair migration is applied using the server runtime. To apply a repair migration, start the server with the `--apply-repair-migration` flag. The repair migration is applied as part of the startup sequence and the framework asserts that each repair migration is only applied once to the database.
 
 ```bash
@@ -190,7 +199,6 @@ $ dart run bin/main.dart --apply-repair-migration
 
 The repair migration can also be applied using the maintenance role. In maintenance, after migrations are applied, the server exits with an exit code indicating if migrations were successfully applied, zero for success or non-zero for failure.
 
-
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-repair-migration
 ```
@@ -198,7 +206,7 @@ $ dart run bin/main.dart --role maintenance --apply-repair-migration
 If a repair migration is applied at the same time as migrations, the repair migration is applied first.
 
 ## Rolling back migrations
+
 Utilizing repair migrations it is easy to roll back the project to any migration. This is useful if you want to revert the database schema to a previous state. To roll back to a previous migration, create a repair migration targeting the migration you want to roll back to, then apply the repair migration.
 
 Note that data is not rolled back, only the database schema.
-

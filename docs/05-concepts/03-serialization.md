@@ -127,12 +127,11 @@ extraClasses:
   - package:my_shared_package/my_shared_package.dart:FreezedCustomClass
 ```
 
-
 ## Custom Object with ProtocolSerialization
 
 If you need certain fields to be omitted when transmitting to the client-side, your server-side custom class should implement the `ProtocolSerialization` interface. This requires adding a method named `toJsonForProtocol()`. Serverpod will then use this method to serialize your object for protocol communication. If the class does not implement `ProtocolSerialization`, Serverpod defaults to using the `toJson()` method.
 
-### Implementation Example:
+### Implementation Example
 
 Here’s how you can implement it:
 
@@ -159,7 +158,7 @@ class CustomClass implements ProtocolSerialization {
   }
 }
 ```
+
 This structure ensures that sensitive or server-only data is not exposed to the client, enhancing security and data integrity.
 
 Importantly, this implementation is not required for client-side custom models.
- 

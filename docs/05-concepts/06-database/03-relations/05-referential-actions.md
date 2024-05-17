@@ -25,6 +25,7 @@ For instance, the default behavior in Serverpod can be expressed as.
 ```yaml
 relation(onUpdate=NoAction, onDelete=Cascade)
 ```
+
 :::info
 
 The sequence of onUpdate and onDelete is interchangeable.
@@ -41,4 +42,3 @@ fields:
 ```
 
 In the given example, if the `example` parent is updated, the `parentId` will be set to null. If the parent is deleted, no action will be taken for parentId.
-

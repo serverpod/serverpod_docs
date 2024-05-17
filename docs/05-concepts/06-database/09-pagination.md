@@ -33,7 +33,6 @@ In the example we skip the first 30 rows and fetch the 31st to 40th company.
 
 Together, `limit` and `offset` can be used to implement pagination.
 
-
 ```dart
 int page = 3;
 int companiesPerPage = 10;
@@ -45,6 +44,7 @@ var companies = await Company.db.find(
   offset: (page - 1) * companiesPerPage,
 );
 ```
+
 In the example we fetch the third page of companies, with 10 companies per page.
 
 ### Tips

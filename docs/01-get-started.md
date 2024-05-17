@@ -1,7 +1,9 @@
 # Get started
+
 This page should give you an understanding of how a Serverpod project is structured, how you make calls to endpoints, and how you communicate with the database. Before going through it, make sure that you have the latest version of Serverpod installed. In the previous section, you can learn how to set up the Serverpod command line tools and install Serverpod Insights.
 
 ## Creating a new project
+
 Create a new project by running `serverpod create`.
 
 ```bash
@@ -21,6 +23,7 @@ This command will create a new directory called `mypod`, with three dart package
 - `mypod_flutter`: This is the Flutter app, pre-configured to connect to your local server.
 
 ### Starting the server
+
 Make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
@@ -51,6 +54,7 @@ In your development environment it can be helpful to always start Serverpod with
 :::
 
 ### Running the demo app
+
 Start the default demo app by changing the directory into the Flutter package that was created and running `flutter run`.
 
 ```bash
@@ -67,6 +71,7 @@ If you run the app on MacOS you will need to add permissions for outgoing connec
 :::
 
 ## Server overview
+
 At first glance, the complexity of the server may seem daunting, but there are only a few directories and files you need to pay attention to. The rest of the files will be there when you need them in the future, e.g., when you want to deploy your server or if you want to set up continuous integration.
 
 These are the most important directories:
@@ -78,6 +83,7 @@ These are the most important directories:
 Both the `endpoints` and `models` directories contain sample files that give a quick idea of how they work. So this a great place to start learning.
 
 ### Generating code
+
 Whenever you change your code in either the `endpoints` or `models` directory, you will need to regenerate the classes managed by Serverpod. Do this by running `serverpod generate`.
 
 ```bash
@@ -86,6 +92,7 @@ $ serverpod generate
 ```
 
 ### Working with endpoints
+
 Endpoints are the connection points to the server from the client. With Serverpod, you add methods to your endpoint, and your client code will be generated. For the code to be generated, you need to place your endpoint in the `lib/src/endpoints` directory of your server. Your endpoint should extend the `Endpoint` class. For methods to be generated, they need to return a typed `Future`, and its first parameter should be a `Session` object. The `Session` object holds information about the call being made and provides access to the database.
 
 ```dart
@@ -113,6 +120,7 @@ To learn more about endpoints, see the [Working with endpoints](concepts/working
 :::
 
 ### Serializing data
+
 Serverpod makes it easy to generate serializable classes that can be passed between server and client or used to communicate with the database.
 
 The structure for your serialized classes is defined in yaml-files in the `lib/src/models` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
@@ -136,9 +144,11 @@ You can also create custom serialized classes with tools such as Freezed. Learn 
 :::
 
 ## Working with the database
+
 A core feature of Serverpod is to query the database easily. Serverpod provides an ORM that supports type and null safety.
 
 ### Connecting to the database
+
 When working with the database, it is common that you want to connect to it with a database viewer such as [Postico2](https://eggerapps.at/postico2/), [PgAdmin](https://www.pgadmin.org/download/), or [DBeaver](https://dbeaver.io/download/). To connect to the database, you need to specify the host and port along with the database name, user name, and password. In your project, you can find these inside the `config` directory.
 
 The connection details can be found in the file `config/development.yaml`. The variable `name` refers to the database name (which is your project name only).
@@ -154,6 +164,7 @@ database:
 ```
 
 The password can be found in the file `config/passwords.yaml`.
+
 ```yaml
 development:
   database: '<MY DATABASE PASSWORD>'
@@ -162,7 +173,8 @@ development:
 ```
 
 ### Migrations
-With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server. 
+
+With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server.
 
 ```bash
 $ cd mypod/mypod_server
@@ -171,7 +183,7 @@ $ serverpod create-migration
 
 Migrations are then applied to the database as part of the server startup by adding the `--apply-migrations` flag.
 
-```bash 
+```bash
 $ cd mypod/mypod_server
 $ dart bin/main.dart --apply-migrations
 ```
@@ -183,6 +195,7 @@ To learn more about database migrations, see the [Migrations](concepts/database/
 :::
 
 ### Object database mapping
+
 Add a `table` key to your model file to add a mapping to the database. The value specified after the key sets the database table name. Here is the `Company` class from earlier with a database table mapping to a table called `company`:
 
 ```yaml
@@ -202,6 +215,7 @@ To learn more about database CRUD operations, see the [CRUD](concepts/database/C
 :::
 
 ### Writing to database
+
 Inserting a new row into the database is as simple as calling the static `db.insertRow` method.
 
 ```dart
@@ -212,6 +226,7 @@ myCompany = await Company.db.insertRow(session, myCompany);
 The method returns the inserted object with its `id` field set from the database.
 
 ### Reading from database
+
 Retrieving a single row from the database can done by calling the static `db.findById` method and providing the `id` of the row.
 
 ```dart
@@ -226,9 +241,10 @@ var myCompany = await Company.db.findSingleRow(
   where: (t) => t.name.equals('My Company'),
 );
 ```
+
 The example above will return a single row from the database where the `name` column is equal to `My Company`.
 
-If no matching row is found, `null` is returned. 
+If no matching row is found, `null` is returned.
 
 :::tip
 
@@ -237,6 +253,7 @@ Working with a database is an extensive subject. Learn more in the [Database](co
 :::
 
 ## Where to go next
+
 You should now have a basic understanding of how Serverpod works. The different topics are described in more detail in the _Concepts_ section of the documentation. If you are unfamiliar with server-side development, a good starting place for learning is to do the [Build your first app](tutorials/first-app) tutorial. There are also many good video tutorials linked in the _Tutorials_ section.
 
 If you get stuck, never be afraid to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). The Serverpod team is very active there, and many questions are also answered by other developers in the community.
