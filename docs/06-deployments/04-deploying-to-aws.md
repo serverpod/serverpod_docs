@@ -136,7 +136,7 @@ _Manually deploy your server with Github actions._
 
 Your Serverpod should now be up and running! To check if everything is working, open up your web browser and go to `https://api.examplepod.com`. (You should replace your `examplepod.com` with your own domain name.) If everything is correctly configured, you will get a message similar to this:
 
-    OK 2022-05-19 14:29:16.974160Z
+OK 2022-05-19 14:29:16.974160Z
 
 ## Troubleshooting and tips and tricks
 
