@@ -14,10 +14,25 @@ Serverpod's auth module makes it easy to authenticate users through email or 3rd
 
 Add the module as a dependency to the server projects `pubspec.yaml`.
 
-```yaml
-dependencies:
+```sh
+$ dart pub add serverpod_auth_server
+```
+
+Add the authentication handler to the Serverpod instance.
+
+```dart
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
+
+void run(List<String> args) async {
+  var pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+    authenticationHandler: auth.authenticationHandler, // Add this line
+  );
+
   ...
-  serverpod_auth_server: ^1.x.x
+}
 ```
 
 Add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.

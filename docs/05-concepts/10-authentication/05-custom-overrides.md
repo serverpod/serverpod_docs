@@ -1,48 +1,14 @@
 # Custom overrides
 
-Serverpod is designed to make it as simple as possible to implement custom authentication overrides. The framework comes with an integrated auth token creation, validation, and communication system. With a simple setup, it is easy to generate custom tokens and include them in authenticated communication with the server.
+It is recommended to use the `serverpod_auth` package but if you have special requirements not fulfilled by it, you can implement your authentication module. Serverpod is designed to make it easy to add custom authentication overrides.
 
 ## Server setup
 
-After successfully authenticating a user, for example, through a username and password, an auth token can be created to preserve the authenticated user's permissions. This token is used to identify the user and facilitate endpoint authorization validation. When the user signs out, the token can be removed to prevent further access.
+When running a custom auth integration it is up to you to build the authentication model and issuing auth tokens.
 
-### Create auth token
+### Token validation
 
-To create an auth token, call the `signInUser` method in the `UserAuthentication` class, accessible through the `session.auth` field on the `session` object.
-
-The `signInUser` method takes three arguments: the first is a unique `integer` identifier for the user, the second is information about the method used to authenticate the user, and the third is a set of scopes granted to the auth token.
-
-```dart
-var authToken = await session.auth.signInUser(myUserObject.id, 'myAuthMethod', scopes: {
-    Scope('delete'),
-    Scope('create'),
-});
-```
-
-The example above creates an auth token for a user with the unique identifier taken from `myUserObject`. The auth token preserves that it was created using the method `myAuthMethod` and has the scopes `delete` and `create`.
-
-:::info
-The unique identifier for the user should uniquely identify the user regardless of authentication method. The information allows authentication tokens associated with the same user to be grouped.
-:::
-
-#### Custom auth tokens
-
-The `UserAuthentication` class simplifies the token management but makes assumptions about what information should be stored in the auth token. If your project has different requirements, managing auth tokens manually with your defined model is possible. Custom auth tokens require that the token validation is overridden and adjusted to the new auth token format, explained in [override token validation](#override-token-validation).
-
-### Token validation format
-
-The framework requires tokens to be of `String` type, and the default token validation expects the token to be in the format `userId:key`. The `userId` is the unique identifier for the user, and the `key` is a generated auth token key. The `userId` and `key` are then retrieved from the token and validated towards the auth token stored as a result of the call to `session.auth.signInUser(...)`.
-
-```dart
-var authToken = await session.auth.signInUser(....);
-var verifiableToken = '${authToken.userId}:${authToken.key}';
-```
-
-In the above example, the `verifiableToken` is created by concatenating the `userId` and `key` from the `authToken`. This token is then verifiable by the default token validation.
-
-#### Override token validation
-
-The token validation method can be overridden by providing a custom `authenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
+The token validation is performed by providing a custom `authenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
 
 ```dart
 // Initialize Serverpod and connect it with your generated code.
@@ -61,13 +27,28 @@ final pod = Serverpod(
 
 In the above example, the `authenticationHandler` callback is overridden with a custom validation method. The method returns an `AuthenticationInfo` object with user id `1` and no scopes if the token is valid, otherwise `null`.
 
+:::note
+In the authenticationHandler callback the `authenticated` field on the session will always be `null` as it is the authenticationHandler that figures out who the user is.
+:::
+
+#### Scopes
+
+The scopes returned from the `authenticationHandler` is used to grant access to scope restricted endpoints. The `Scope` class is a simple wrapper around a nullable `String` in dart. This means that you can format your scopes however you want as long as they are in a String format.
+
+Normally if you implement a JWT you would store the scopes inside the token. When extracting them all you have to do is convert the String stored in the token into a Scope object by calling the constructor.
+
+```dart
+List<String> scopes = extractScopes(token);
+Set<Scope> userScopes = scopes.map((scope) => Scope(scope)).toSet();
+```
+
 ### Send token to client
 
-After creating the token, it should be sent to the client. The client is then responsible for storing the token and including it in communication with the server. The token is usually sent in response to a successful sign-in request.
+You are responsible for implementing the endpoints to authenticate/authorize the user. But as an example such an endpoint could look like the following.
 
 ```dart
 class UserEndpoint extends Endpoint {
-  Future<String?> login(
+  Future<LoginResponse> login(
     Session session,
     String username,
     String password,
@@ -75,51 +56,12 @@ class UserEndpoint extends Endpoint {
     var identifier = authenticateUser(session, username, password);
     if (identifier == null) return null;
 
-    var authToken = await session.auth.signInUser(
-      identifier,
-      'username',
-      scopes: {},
-    );
-
-    return '${authToken.id}:${authToken.key}';
+    return issueMyToken(identifier, scopes: {});
   }
 }
 ```
 
-In the above example, the `login` method authenticates the user and creates an auth token. The token is then returned to the client in the format expected by the default token validation.
-
-### Remove auth token
-
-When the default token validation is used, signing out a user on all devices is made simple with the `signOutUser` method in the `UserAuthentication` class. The method removes all auth tokens associated with the user.
-
-```dart
-class AuthenticatedEndpoint extends Endpoint {
-  @override
-  bool get requireLogin => true;
-  Future<void> logout(Session session) async {
-    await session.auth.signOutUser();
-  }
-}
-```
-
-In the above example, the `logout` endpoint removes all auth tokens associated with the user. The user is then signed out and loses access to any protected endpoints.
-
-#### Remove specific tokens
-
-The `AuthKey` table stores all auth tokens and can be interacted with in the same way as any other model with a database in Serverpod. To remove specific tokens, the `AuthKey` table can be interacted with directly.
-
-```dart
-await AuthKey.db.deleteWhere(
-  session,
-  where: (t) => t.userId.equals(userId) & t.method.equals('username'),
-);
-```
-
-In the above example, all auth tokens associated with the user `userId` and created with the method `username` are removed from the `AuthKey` table.
-
-#### Custom token solution
-
-If a [custom auth token](#custom-auth-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
+In the above example, the `login` method authenticates the user and creates an auth token. The token is then returned to the client.
 
 ## Client setup
 

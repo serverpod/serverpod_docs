@@ -1,5 +1,38 @@
 # Upgrade to 2.0
 
+## Changes to authentication
+
+The base auth implementation has been removed from Serverpod core and moved into the `serverpod_auth` package. If you are using the auth module already the transition is simple.
+
+The default authentication handler will now throw an `UnimplementedError`. It is now required to supply the authentication handler to the Serverpod object, in your server.dart file make the following change:
+
+```dart
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
+
+void run(List<String> args) async {
+  var pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+    authenticationHandler: auth.authenticationHandler, // Add this line
+  );
+
+  ...
+}
+```
+
+### Advanced integrations
+
+The methods `signInUser` and `signOutUser` now takes the session object as a param and is no longer available on the session object. Instead import the class `UserAuthentication` from the auth module to access these static methods.
+
+```dart
+UserAuthentication.signInUser(session, userId, 'provider');
+
+UserAuthentication.signOutUser(session);
+```
+
+The table `auth_key` has been removed from Serverpod core but is available in the serverpod_auth module instead. This means that if you wrote a custom integration before without using the serverpod_auth module you have to take care of managing your token implementation.
+
 ## Changes to the Session Object
 
 ### Removed deprecated fields
@@ -18,7 +51,23 @@ session.db.find(...);
 
 ### Authenticated user information retrieval
 
-In Serverpod 2.0, we have removed the getters `scopes` and `authenticatedUser` from session. This information is now retrievable through the `authenticationInfo` getter as fields of the returned object.
+In Serverpod 2.0, we have removed the getters `scopes` and `authenticatedUser` from session. This information is now retrievable through the `authenticated` getter as fields of the returned object.
+
+```dart
+final auth = await session.authenticated;
+
+//Read authenticated userId
+final userId = auth?.userId;
+
+//Read scopes
+final scopes = auth?.scopes;
+```
+
+If the `authenticated` property is set on the session it effectively means there is an authenticated user making the request.
+
+### Authentication helpers
+
+The field `auth` has been removed and the methods `signInUser` and `signOutUser` have been moved to the `serverpod_auth` module.
 
 ## Changes to database queries
 
@@ -194,7 +243,7 @@ To ensure new databases are created with the new representation, the latest migr
 A new empty migration can be created by running the following command in the terminal:
 
 ```bash
-$ serverpod create-migration --force
+serverpod create-migration --force
 ```
 
 #### Migration of existing tables

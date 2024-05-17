@@ -41,7 +41,7 @@ For many authentication platforms the `userIdentifier` is the user's email, but 
 
 ### Custom identification methods
 
-If other identification methods are required you can easly implement them by accessing the database directly. The `UserInfo` model can be interacted with in the same way as any other model with a database in Serverpod.
+If other identification methods are required you can easily implement them by accessing the database directly. The `UserInfo` model can be interacted with in the same way as any other model with a database in Serverpod.
 
 ```dart
 var userInfo = await UserInfo.db.findFirstRow(
@@ -56,18 +56,22 @@ The example above shows how to find a user by name using the `UserInfo` model.
 
 When a user has been found or created, an auth token that is connected to the user should be created.
 
-To create an auth token, call the `signInUser` method in the `UserAuthentication` class, accessible through the `session.auth` field on the `session` object.
+To create an auth token, call the `signInUser` method in the `UserAuthentication` class, accessible as a static method, e.g. `UserAuthentication.signInUser`.
 
-The `signInUser` method takes three arguments: the first is the user ID, the second is information about the method of authentication, and the third is a set of scopes granted to the auth token.
+The `signInUser` method takes four arguments: the first is the session object, the second is the user ID, the third is information about the method of authentication, and the fourth is a set of scopes granted to the auth token.
 
 ```dart
-var authToken = await session.auth.signInUser(userInfo.id, 'myAuthMethod', scopes: {
+var authToken = await session.auth.signInUser(myUserObject.id, 'myAuthMethod', scopes: {
     Scope('delete'),
     Scope('create'),
 });
 ```
 
 The example above creates an auth token for a user with the unique identifier taken from the `userInfo`. The auth token preserves that it was created using the method `myAuthMethod` and has the scopes `delete` and `create`.
+
+:::info
+The unique identifier for the user should uniquely identify the user regardless of authentication method. The information allows authentication tokens associated with the same user to be grouped.
+:::
 
 ### Send auth token to client
 
@@ -89,7 +93,8 @@ class MyAuthenticationEndpoint extends Endpoint {
     var userInfo = findOrCreateUser(session, username);
 
     // Creates an authentication key for the user.
-    var authToken = await session.auth.signInUser(
+    var authToken = await UserAuthentication.signInUser(
+      session,
       userInfo.id!,
       'myAuth',
       scopes: {},
@@ -107,6 +112,35 @@ class MyAuthenticationEndpoint extends Endpoint {
 ```
 
 The example above shows how to create an `AuthenticationResponse` with the auth token and user information.
+
+### Remove auth token
+
+When the default token validation is used, signing out a user on all devices is made simple with the `signOutUser` method in the `UserAuthentication` class. The method removes all auth tokens associated with the user.
+
+```dart
+class AuthenticatedEndpoint extends Endpoint {
+  @override
+  bool get requireLogin => true;
+  Future<void> logout(Session session) async {
+    await UserAuthentication.signOutUser(session);
+  }
+}
+```
+
+In the above example, the `logout` endpoint removes all auth tokens associated with the user. The user is then signed out and loses access to any protected endpoints.
+
+#### Remove specific tokens
+
+The `AuthKey` table stores all auth tokens and can be interacted with in the same way as any other model with a database in Serverpod. To remove specific tokens, the `AuthKey` table can be interacted with directly.
+
+```dart
+await AuthKey.db.deleteWhere(
+  session,
+  where: (t) => t.userId.equals(userId) & t.method.equals('username'),
+);
+```
+
+In the above example, all auth tokens associated with the user `userId` and created with the method `username` are removed from the `AuthKey` table.
 
 ## Client setup
 
