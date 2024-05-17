@@ -8,8 +8,8 @@ Here are some pros and cons for the different options:
 
 |      | Server cluster | Serverless |
 | :--- | :--------| :--------- |
-| Pros | All features are supported.<br />Great for real time communication.<br />Cost efficient at scale. | Minimal starting cost.<br />Easier configuration.<br />Minimal maintenance. |
-| Cons | Slightly higher starting cost.<br />More complex to set up. | Limited feature set.<br />The server cannot have a state. |
+| Pros | All features are supported.  Great for real time communication.  Cost efficient at scale. | Minimal starting cost.  Easier configuration.  Minimal maintenance. |
+| Cons | Slightly higher starting cost.  More complex to set up. | Limited feature set.  The server cannot have a state. |
 
 The features that currently are not supported by the serverless option are:
 
