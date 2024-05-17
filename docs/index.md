@@ -12,8 +12,8 @@ Serverpod is an open-source, scalable app server written in Dart for the Flutter
 
 Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have the following tools installed:
 
-- __Flutter__ and __Dart__. You will need Flutter version 3.7 or later. <https://flutter.dev/docs/get-started/install>
-- __Docker__. Docker is used to manage Postgres and (optionally) Redis. <https://docs.docker.com/get-docker/>
+- __Flutter__ and __Dart__. You will need Flutter version 3.7 or later. [https://flutter.dev/docs/get-started/install](https://flutter.dev/docs/get-started/install)
+- __Docker__. Docker is used to manage Postgres and (optionally) Redis. [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
 
 Once you have Flutter and Docker installed and configured, open up a terminal and install Serverpod by running:
 

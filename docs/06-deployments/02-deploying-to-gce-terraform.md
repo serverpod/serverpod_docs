@@ -143,7 +143,7 @@ ns-cloud-b3.googledomains.com.
 Once your domain name zone is set up and has bubbled through the system, you must verify the domain with Google's Webmaster Central. This step is required to be able to create SSL certificates for your domain.
 
 Go to the Google Webmaster Central:
-<https://www.google.com/webmasters/verification>
+[https://www.google.com/webmasters/verification](https://www.google.com/webmasters/verification)
 
 Click on _Add a Property_, enter your domain name and press _Continue_. Now click the _Alternate methods_ tab and select _Domain name provider_. In the list that pops up, select _Google Domains_. A dialog showing the steps required to verify your domain will pop up. From the dialog, copy the highlighted TXT record.
 
