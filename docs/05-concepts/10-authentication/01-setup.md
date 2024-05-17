@@ -59,21 +59,18 @@ Serverpod's auth module comes with a default Authentication Configuration. To cu
 ```dart
 import 'package:serverpod_auth_server/module.dart' as auth;  
   
-auth.AuthConfig.set(auth.AuthConfig(  
-  minPasswordLength: 12,
-));  
-  
-// Start the Serverpod server.  
-await pod.start();
+void run(List<String> args) async {
+
+  auth.AuthConfig.set(auth.AuthConfig(  
+    minPasswordLength: 12,
+  ));  
+    
+  // Start the Serverpod server.  
+  await pod.start();
+}
 
 ```
 
-After making changes to the `AuthConfig` run:
-
-
-```bash
-$ serverpod generate
-```
 
 
 |**Property**|Description|Default|
