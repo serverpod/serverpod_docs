@@ -146,7 +146,6 @@ fields:
   serverField: String, scope=serverOnly
 ```
 
-
 The keyword `parent` has been moved and should be placed inside the new `relation` keyword, see the section on [relations](../concepts/database/relations/one-to-one) for the full new feature set.
 
 Old syntax:
