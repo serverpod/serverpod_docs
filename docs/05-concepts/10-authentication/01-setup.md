@@ -53,7 +53,7 @@ $ dart run bin/main.dart --role maintenance --apply-migrations
 The full migration instructions can be found in the [migration guide](../database/migrations).
 
 ### Configure Authentication
-Serverpod's auth module comes with a default Authentication Configuration. To customize it, go to your main `server.dart` file, import the `serverpod_auth_server` module, set up the authentication configuration:
+Serverpod's auth module comes with a default Authentication Configuration. To customize it, go to your main `server.dart` file, import the `serverpod_auth_server` module and set up the authentication configuration:
 
 
 ```dart
