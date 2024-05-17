@@ -36,6 +36,7 @@ jobs:
               git config --global user.email "serverpod_docs@serverpod.dev"
               git config --global user.name "serverpod_docs"
               rm -rf target/docs/*
+              cp target/CNAME target/docs
               cp -r src/build/* target/docs
               cd target
               git add .
