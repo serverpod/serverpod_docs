@@ -116,7 +116,7 @@ For your Serverpod to function correctly, you will need to create its required d
 
 _Connect to the database with Postico._
 
-# Deploy your code
+## Deploy your code
 
 We now have our servers, load balancers, database, and other required infrastructure. The only missing part is that our code is not yet up and running. There are two ways to deploy the code from our Github project. We can either push the code to a branch called `deployment-aws-production` or manually trigger the deployment action from the Github webpage.
 
