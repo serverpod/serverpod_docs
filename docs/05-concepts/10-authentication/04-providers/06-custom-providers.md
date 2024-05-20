@@ -31,7 +31,7 @@ if (userInfo == null) {
 }
 ```
 
-The example above tries to find a user by email and user identifier. If no user is found, a new user is created with the provided information. The methods that you must implement yourself is `authenticateUser` and `findOrCreateUser`, keep in mind that they possibly take different parameters than in this simplified example.
+The example above tries to find a user by email and user identifier. If no user is found, a new user is created with the provided information.
 
 :::note
 
@@ -61,7 +61,7 @@ To create an auth token, call the `signInUser` method in the `UserAuthentication
 The `signInUser` method takes four arguments: the first is the session object, the second is the user ID, the third is information about the method of authentication, and the fourth is a set of scopes granted to the auth token.
 
 ```dart
-var authToken = await session.auth.signInUser(myUserObject.id, 'myAuthMethod', scopes: {
+var authToken = await UserAuthentication.signInUser(userInfo.id, 'myAuthMethod', scopes: {
     Scope('delete'),
     Scope('create'),
 });
@@ -115,7 +115,7 @@ The example above shows how to create an `AuthenticationResponse` with the auth 
 
 ### Remove auth token
 
-When the default token validation is used, signing out a user on all devices is made simple with the `signOutUser` method in the `UserAuthentication` class. The method removes all auth tokens associated with the user.
+Signing out a user on all devices is made simple with the `signOutUser` method in the `UserAuthentication` class. The method removes all auth tokens associated with the user.
 
 ```dart
 class AuthenticatedEndpoint extends Endpoint {

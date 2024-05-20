@@ -2,7 +2,7 @@
 
 ## Changes to authentication
 
-The base auth implementation has been removed from Serverpod core and moved into the `serverpod_auth` package. If you are using the auth module already the transition is simple.
+The base auth implementation has been removed from Serverpod core and moved into the `serverpod_auth` package. If you are not using authentication at all this change does not impact you. If you are using the auth module already the transition is simple.
 
 The default authentication handler will now throw an `UnimplementedError`. It is now required to supply the authentication handler to the Serverpod object, in your server.dart file make the following change:
 
@@ -31,7 +31,38 @@ UserAuthentication.signInUser(session, userId, 'provider');
 UserAuthentication.signOutUser(session);
 ```
 
-The table `auth_key` has been removed from Serverpod core but is available in the serverpod_auth module instead. This means that if you wrote a custom integration before without using the serverpod_auth module you have to take care of managing your token implementation.
+The table `serverpod_auth_key` has been removed from Serverpod core but is available in the serverpod_auth module instead. This means that if you wrote a custom integration before without using the serverpod_auth module you have to take care of managing your token implementation.
+
+Adding the definition of the `serverpod_auth_key` table to your project is the simplest way to do a seamless migration.
+
+The table was defined in the following way:
+
+```yaml
+### Provides a method of access for a user to authenticate with the server.
+class: AuthKey
+table: serverpod_auth_key
+fields:
+  ### The id of the user to provide access to.
+  userId: int
+
+  ### The hashed version of the key.
+  hash: String
+
+  ### The key sent to the server to authenticate.
+  key: String?, !persist
+
+  ### The scopes this key provides access to.
+  scopeNames: List<String>
+
+  ### The method of signing in this key was generated through. This can be email
+  ### or different social logins.
+  method: String
+indexes:
+  serverpod_auth_key_userId_idx:
+    fields: userId
+```
+
+Your are then responsible for creating/removing entries in this table, the old `signInUser` and `signOutUser` that used to provide this functionality can be found [here](https://github.com/serverpod/serverpod/blob/13795a7bd4c0cc5a03101b6f378cb914673046dd/packages/serverpod/lib/src/server/session.dart#L359-L394).
 
 ## Changes to the Session Object
 
