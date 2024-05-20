@@ -1,10 +1,13 @@
 # Uploading files
+
 Serverpod has built-in support for handling file uploads. Out of the box, your server is configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use Google Cloud Storage or S3 in production scenarios.
 
 ## How to upload a file
+
 A `public` and `private` file storage are set up by default to use the database. You can replace these or add more configurations for other file storages.
 
 ### Server-side code
+
 There are a few steps required to upload a file. First, you must create an upload description on the server and pass it to your app. The upload description grants access to the app to upload the file. If you want to grant access to any file, you can add the following code to one of your endpoints. However, in most cases, you may want to restrict which files can be uploaded.
 
 ```dart
@@ -28,6 +31,7 @@ Future<bool> verifyUpload(Session session, String path) async {
 ```
 
 ### Client-side code
+
 To upload a file from the app side, first request the upload description. Next, upload the file. You can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the data must be held in RAM memory. Finally, you should verify the upload with the server.
 
 ```dart
@@ -50,6 +54,7 @@ In a real-world app, you most likely want to create the file paths on your serve
 :::
 
 ## Accessing stored files
+
 It's possible to quickly check if an uploaded file exists or access the file itself. If a file is in a public storage, it is also accessible to the world through an URL. If it is private, it can only be accessed from the server.
 
 To check if a file exists, use the `fileExists` method.
@@ -80,6 +85,7 @@ var myByteData = await session.storage.retrieveFile(
 ```
 
 ## Add a configuration for GCP
+
 Serverpod uses Google Cloud Storage's HMAC interoperability to handle file uploads to Google Cloud. To make file uploads work, you must make a few custom configurations in your Google Cloud console:
 
 1. Create a service account with the _Storage Admin_ role.
@@ -110,6 +116,7 @@ After creating your Serverpod, you add a storage configuration. If you want to r
 ```
 
 ## Add a configuration for AWS S3
+
 This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file.
 
 When you are all set with the AWS setup, include the S3  package in your `pubspec.yaml` file and import it in your `server.dart` file.

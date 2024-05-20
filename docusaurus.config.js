@@ -101,6 +101,30 @@ const config = {
     "data-project-logo": "https://avatars.githubusercontent.com/u/48181558?s=200&v=4",
     async: true,
   }],
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+       redirects: [
+        {
+          // Moved in version 1.1.1
+          from: ['/concepts/authentication'],
+          to: '/concepts/authentication/setup',
+        },
+        {
+          // Moved in version 1.1.1
+          from: ['/tutorials'],
+          to: '/tutorials/first-app',
+        },
+        {
+          // Moved in version 1.2.0
+          from: ['/concepts/database-communication'],
+          to: '/concepts/database/connection',
+        }
+       ] 
+      }
+    ]
+  ]
 };
 
 module.exports = config;

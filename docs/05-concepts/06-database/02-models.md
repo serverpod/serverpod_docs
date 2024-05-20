@@ -18,7 +18,8 @@ When you add a `table` to a serializable class, Serverpod will automatically add
 :::
 
 ### Non persistent fields
-You can opt out of creating a column in the database for a specific field by using the `!persist` keyword. 
+
+You can opt out of creating a column in the database for a specific field by using the `!persist` keyword.
 
 ```yaml
 class: Company
@@ -26,9 +27,11 @@ table: company
 fields:
   name: String, !persist 
 ```
+
 All fields are persisted by default and have an implicit `persist` set on each field.
 
 ### Data representation
+
 Storing a field with a primitive / core dart type will be handled as its respective type. However, if you use a complex type, such as another model, a `List`, or a `Map`, these will be stored as a `json` object in the database.
 
 ```yaml

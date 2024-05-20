@@ -1,4 +1,5 @@
 # Caching
+
 Accessing the database can be expensive for complex queries or if you need to run many different queries for a specific task. Serverpod makes it easy to cache frequently requested objects in the memory of your server. Any serializable object can be cached. Objects can be stored in the Redis cache if your Serverpod is hosted across multiple servers in a cluster.
 
 Caches can be accessed through the `Session` object. This is an example of an endpoint method for requesting data about a user:
@@ -28,6 +29,7 @@ In total, there are three caches where you can store your objects. Two caches ar
 Depending on the type and number of objects that are cached in the global cache, you may want to specify custom caching rules in Redis. This is currently not handled automatically by Serverpod.
 
 ### Cache miss handler
+
 If you want to handle cache misses in a specific way, you can pass in a `CacheMissHandler` to the `get` method. The `CacheMissHandler` makes it possible to store an object in the cache when a cache miss occurs.
 
 The above example rewritten using the `CacheMissHandler`:
