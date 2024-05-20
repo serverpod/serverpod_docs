@@ -84,14 +84,24 @@ session.db.find(...);
 
 In Serverpod 2.0, we have removed the getters `scopes` and `authenticatedUser` from session. This information is now retrievable through the `authenticated` getter as fields of the returned object.
 
+Replace this:
+
 ```dart
-final auth = await session.authenticated;
+int? userId = await session.auth.authenticatedUser;
+
+Set<Scopes>? scopes = await session.scopes;
+```
+
+With this:
+
+```dart
+final authenticated = await session.authenticated;
 
 //Read authenticated userId
-final userId = auth?.userId;
+int? userId = authenticated?.userId;
 
 //Read scopes
-final scopes = auth?.scopes;
+Set<Scopes>? scopes = authenticated?.scopes;
 ```
 
 If the `authenticated` property is set on the session it effectively means there is an authenticated user making the request.
