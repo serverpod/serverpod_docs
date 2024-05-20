@@ -284,7 +284,7 @@ To ensure new databases are created with the new representation, the latest migr
 A new empty migration can be created by running the following command in the terminal:
 
 ```bash
-serverpod create-migration --force
+$ serverpod create-migration --force
 ```
 
 #### Migration of existing tables
