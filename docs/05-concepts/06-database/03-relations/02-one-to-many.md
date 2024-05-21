@@ -75,7 +75,7 @@ The examples are 1:n relations because there is **no** unique index constraint o
 
 ## Bidirectional relations
 
-For a more comprehensive representation, you can define the relationship from both sides. 
+For a more comprehensive representation, you can define the relationship from both sides.
 
 Either through an [object relation](one-to-one#with-an-object) on the many side:
 

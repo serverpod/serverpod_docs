@@ -4,33 +4,33 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
 
 1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
 
-```dart
-Map<String, dynamic> toJson() {
-  return {
-    name: 'John Doe',
-  };
-}
-```
+    ```dart
+    Map<String, dynamic> toJson() {
+    return {
+        name: 'John Doe',
+    };
+    }
+    ```
 
 2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization as parameters.
 
-```dart
-factory ClassName.fromJson(
-  Map<String, dynamic> json,
-) {
-  return ClassName(
-    name: json['name'] as String,
-  );
-}
-```
+    ```dart
+    factory ClassName.fromJson(
+    Map<String, dynamic> json,
+    ) {
+    return ClassName(
+        name: json['name'] as String,
+    );
+    }
+    ```
 
 3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
-```yaml
-...
-extraClasses:
-  - package:my_project_shared/my_project_shared.dart:ClassName
-```
+    ```yaml
+    ...
+    extraClasses:
+    - package:my_project_shared/my_project_shared.dart:ClassName
+    ```
 
 ## Setup example
 
@@ -38,7 +38,7 @@ We recommend creating a new dart package specifically for sharing these types of
 
 Your folder structure should then look like this:
 
-```
+```text
 ├── my_project_client
 ├── my_project_flutter
 ├── my_project_server
@@ -127,12 +127,11 @@ extraClasses:
   - package:my_shared_package/my_shared_package.dart:FreezedCustomClass
 ```
 
-
 ## Custom Object with ProtocolSerialization
 
 If you need certain fields to be omitted when transmitting to the client-side, your server-side custom class should implement the `ProtocolSerialization` interface. This requires adding a method named `toJsonForProtocol()`. Serverpod will then use this method to serialize your object for protocol communication. If the class does not implement `ProtocolSerialization`, Serverpod defaults to using the `toJson()` method.
 
-### Implementation Example:
+### Implementation Example
 
 Here’s how you can implement it:
 
@@ -159,7 +158,7 @@ class CustomClass implements ProtocolSerialization {
   }
 }
 ```
+
 This structure ensures that sensitive or server-only data is not exposed to the client, enhancing security and data integrity.
 
 Importantly, this implementation is not required for client-side custom models.
- 

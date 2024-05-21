@@ -31,7 +31,6 @@ modules:
     nickname: auth
 ```
 
-
 Then run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your project's deserializer.
 
 ```bash

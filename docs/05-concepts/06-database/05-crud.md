@@ -31,6 +31,7 @@ var company = await Company.db.insertRow(session, row);
 ```
 
 ### Inserting several rows
+
 Inserting several rows in a batch operation is done by calling the `insert` method. This is an atomic operation, meaning no entries will be created if any entry fails to be created.
 
 ```dart
@@ -75,7 +76,7 @@ Note that ordering of the entries is important here as it will return the fist r
 
 ### Finding multiple rows
 
-To find multiple rows, use the same principle as for finding a single row. 
+To find multiple rows, use the same principle as for finding a single row.
 
 ```dart
 var companies = await Company.db.find(
@@ -90,10 +91,12 @@ This operation returns a `List` of your models matching the filtering criteria.
 See [filter](filter) and [sort](sort) for all filter and sorting operations and [pagination](pagination) for how to paginate the result.
 
 ## Update
+
 There are two update operations available.
 
 ### Update a single row
-To update a single row, use the `updateRow` method. 
+
+To update a single row, use the `updateRow` method.
 
 ```dart
 var company = await Company.db.findById(session, companyId); // Fetched company has its id set 
@@ -104,6 +107,7 @@ var updatedCompany = await Company.db.updateRow(session, company);
 The object that you update must have its `id` set to a non-`null` value and the id needs to exist on a row in the database. The `updateRow` method returns the updated object.
 
 ### Update several rows
+
 To batch update several rows use the `update` method.
 
 ```dart
@@ -119,16 +123,19 @@ This is an atomic operation, meaning no entries will be updated if any entry fai
 Deleting rows from the database is done in a similar way to updating rows. However, there are three delete operations available.
 
 ### Delete a single row
-To delete a single row, use the `deleteRow` method. 
+
+To delete a single row, use the `deleteRow` method.
 
 ```dart
 var company = await Company.db.findById(session, companyId); // Fetched company has its id set 
 var companyDeleted = await Company.db.deleteRow(session, company);
 ```
+
 The input object needs to have the `id` field set. The `deleteRow` method returns the deleted model.
 
 ### Delete several rows
-To batch delete several rows, use the `delete` method. 
+
+To batch delete several rows, use the `delete` method.
 
 ```dart
 var companiesDeleted = await Company.db.delete(session, companies);
@@ -137,6 +144,7 @@ var companiesDeleted = await Company.db.delete(session, companies);
 This is an atomic operation, meaning no entries will be deleted if any entry fails to be deleted. The `delete` method returns a `List` of the models deleted.
 
 ### Delete by filter
+
 You can also do a [filtered](filter) delete and delete all entries matching a `where` query, by using the `deleteWhere` method.
 
 ```dart
@@ -160,4 +168,3 @@ var count = await Company.db.count(
 ```
 
 The return value is an `int` for the number of rows matching the filter.
-

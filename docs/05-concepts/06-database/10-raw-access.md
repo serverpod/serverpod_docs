@@ -37,6 +37,7 @@ int result = await session.db.unsafeExecute(
   'DELETE FROM mytable WHERE id = 1',
 );
 ```
+
 in the above example, the `result` variable will contain the number of rows that were deleted.
 
 :::danger

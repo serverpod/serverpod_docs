@@ -1,24 +1,31 @@
 # Google Cloud Run with CGP Console
+
 If your server does not maintain a state and you aren't using future calls, running your Serverpod on Google Cloud Run can be a great option. Cloud Run is the easiest way to deploy your server but may be less flexible as your application grows. Check the [Choosing deployment strategy](deployment-strategy) page for more information on choosing the best solution for your needs.
 
 ## Before you begin
+
 Before you begin, you will need to install and configure the Google Cloud CLI tools.
 
 - Create a new project with billing enabled. Learn how to check if billing is enabled [here](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled)
 - [Install](https://cloud.google.com/sdk/docs/install) the Google Cloud CLI.
 - To [initialize](https://cloud.google.com/sdk/docs/initializing) the gcloud CLI, run the following command:
+
 ```bash
 $ gcloud init
 ```
+
 - To set the default project for your Cloud Run service:
+
 ```bash
 $ gcloud config set project <PROJECT_ID>
 ```
 
 ## Setup the database
+
 Before deploying your server, you must give it access to a Postgres database. Navigate to SQL, activate the API, then click _Create Instance_. Choose _PostgreSQL_. Pick a name for the database.
 
 There are many configurations you can make, pick the ones that are best for your project, but make sure to:
+
 - Use the production database password from your `config/passwords.yaml` file for the admin password.
 - Use database version: PostgreSQL 14.
 - Remember the region that you pick (you will use the same region for Cloud Run).
@@ -27,6 +34,7 @@ There are many configurations you can make, pick the ones that are best for your
 When you are happy with your choices, click _Create Instance_. Creating your database can take up to 20 minutes, so this is a good time for a quick coffee break.
 
 ### Create database user and database tables
+
 When the Postgres instance creation has finished, you must add a database and an approved IP number you can connect from to access the database. Click on your database instance to open up its settings.
 
 - Click _Databases_ > _Create Database_. For _Database name_, enter `serverpod`.
@@ -37,6 +45,7 @@ Now you can connect to your database with your favorite Postgres tool. Postico i
 Run the database definition query from the latest migration directory `migrations/<LATEST_MIGRATION>/definition.sql`.
 
 ## Create a service account
+
 For Cloud Run to access your database, you will need to create a service account with the _Cloud SQL Client_ role.
 
 - Navigate to _IAM & Admin_ > _Service Accounts_.
@@ -47,6 +56,7 @@ For Cloud Run to access your database, you will need to create a service account
 Take note of the email of the newly created service account. You will need it when you deploy your server.
 
 ## Configure Serverpod
+
 You will connect to Postgres from Cloud Run with the Cloud SQL Proxy. In your Postgres instance's _Overview_ page, copy the _Connection name_.
 
 Open the `config/production.yaml` file. Under `database`, replace the host with the following string, but replace the connection name that you copied in the previous step: `/cloudsql/<CONNECTION_NAME>/.s.PGSQL.5432`. Also, add the `isUnixSocket` option and set it to `true`. Your configuration should look something like this:
@@ -61,6 +71,7 @@ database:
 ```
 
 ## Deploy your server
+
 Your server is now ready to be deployed. When you created your project, Serverpod also created a script for deploying your server. Copy it to the root of your server directory and make it executable. Make sure you are in your server directory (e.g., `myproject_server`). Then run the following command:
 
 ```bash
@@ -87,4 +98,5 @@ You can deploy a new version of your server at any time by running `./cloud-run-
 :::
 
 ## Next steps
+
 You may want to assign a custom domain name to your Cloud Run instances. You can manage domain name mappings in the Cloud Run Console. There you can also add a Redis instance (you can find it under _Integrations_). Redis allows you to cache data and communicate between servers.
