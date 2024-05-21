@@ -48,7 +48,7 @@ In your `handleStreamMessage` method, you can pass on messages to the correct ch
 @override
 Future<void> handleStreamMessage(
   StreamingSession session,
-  SerializableEntity message,
+  SerializableModel message,
 ) async {
   if (message is MyChatMessage) {
     session.messages.postMessage(

@@ -74,9 +74,9 @@ $ serverpod generate
 
 After the code generation process is complete, you can access the generated code for the `Note` class in `lib/src/generated/note.dart` inside your Serverpod project.
 
-![Serverpod Insights](/img/tutorial/note-app/02-note-class.png)
+![Serverpod Insights](/img/tutorial/note-app/02-note-class-v2.png)
 
-By extending the `SerializableEntity` class, the `Note` object becomes capable of automatic serialization and deserialization. This makes the `Note` object transmittable between the server and the client.
+By implementing the `SerializableModel` class, the `Note` object becomes capable of automatic serialization and deserialization. This makes the `Note` object transmittable between the server and the client.
 
 In simple terms, we have created a class, `Note`, that can hold information and can be passed within the server. Additionally, we can send this object to the client side of our application. Serverpod takes care of handling the conversion between the object and its serialized representation, making it convenient to work with and transfer data seamlessly.
 

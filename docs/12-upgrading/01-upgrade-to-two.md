@@ -377,3 +377,29 @@ factory ClassName.fromJson(
     );
   }
 ```
+
+## Deprecation Notice for `SerializableEntity`
+
+The `SerializableEntity` class is deprecated and will be removed in version 2.1. Please implement the `SerializableModel` interface instead for creating serializable models.
+
+### Migration Guide
+
+To migrate your code from `SerializableEntity` to `SerializableModel`, replace `extends SerializableEntity` with `implements SerializableModel` in your model classes.
+
+#### Example
+
+**Before:**
+
+```dart
+class CustomClass extends SerializableEntity {
+  // Your code here
+}
+```
+
+**After:**
+
+```dart
+class CustomClass implements SerializableModel {
+  // Your code here
+}
+```
