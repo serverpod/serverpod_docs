@@ -389,6 +389,7 @@ To migrate your code from `SerializableEntity` to `SerializableModel`, replace `
 #### Example
 
 **Before:**
+
 ```dart
 class CustomClass extends SerializableEntity {
   // Your code here
@@ -396,6 +397,7 @@ class CustomClass extends SerializableEntity {
 ```
 
 **After:**
+
 ```dart
 class CustomClass implements SerializableModel {
   // Your code here
