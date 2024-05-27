@@ -62,7 +62,7 @@ This operation either returns the model or `null`.
 You can find a single row using an expression.
 
 ```dart
-var company = await Company.db.findRow(
+var company = await Company.db.findFirstRow(
   session,
   where: (t) => t.name.equals('Serverpod'),
 );

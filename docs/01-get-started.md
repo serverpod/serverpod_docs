@@ -233,10 +233,10 @@ Retrieving a single row from the database can done by calling the static `db.fin
 var myCompany = await Company.db.findById(session, companyId);
 ```
 
-You can also use an expression to do a more refined search through the `db.findSingleRow(...)`. method. The `where` parameter is a typed expression builder. The builder's parameter, `t`, contains a description of the table and gives access to the table's columns.
+You can also use an expression to do a more refined search through the `db.findFirstRow(...)`. method. The `where` parameter is a typed expression builder. The builder's parameter, `t`, contains a description of the table and gives access to the table's columns.
 
 ```dart
-var myCompany = await Company.db.findSingleRow(
+var myCompany = await Company.db.findFirstRow(
   session,
   where: (t) => t.name.equals('My Company'),
 );
