@@ -2,7 +2,15 @@
 
 This page should give you an understanding of how a Serverpod project is structured, how you make calls to endpoints, and how you communicate with the database. Before going through it, make sure that you have the latest version of Serverpod installed. In the previous section, you can learn how to set up the Serverpod command line tools and install Serverpod Insights.
 
-## Creating a new project
+## Creating a new Serverpod Mini project
+
+Serverpod Mini is a lightweight version of Serverpod that is perfect for small projects or when you want to try out Serverpod without setting up a full server. To get started with Serverpod Mini, read the [Getting started with Serverpod mini](https://medium.com/serverpod/getting-started-with-serverpod-mini-58c71ffefa54) guide.
+
+```bash
+$ serverpod create mypod --mini
+```
+
+## Creating a new Serverpod project
 
 Create a new project by running `serverpod create`.
 
