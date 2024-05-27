@@ -8,6 +8,7 @@ Serverpod has a companion app. It is currently available for Mac and Windows, bu
 
 | App version                | MacOS                                                                 | Windows       |
 | :------------------------- | :-------------------------------------------------------------------- | :------------ |
-| Serverpod 1.2.0 (latest)   | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.2.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-1.2.0.zip) |
+| Serverpod 2.0.0 (latest)   | [Download](https://downloads.serverpod.dev/macos/Serverpod-2.0.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-2.0.0.zip) |
+| Serverpod 1.2.0            | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.2.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-1.2.0.zip) |
 | Serverpod 1.1.0            | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.1.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-1.1.0.zip) |
 | Serverpod 1.0.0            | [Download](https://serverpod.dev/insights/Serverpod-1.0.0.zip)        |     n/a       |
