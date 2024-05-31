@@ -33,8 +33,10 @@ In most cases, it's easiest to subscribe to a message channel in the `streamOpen
 ```dart
 @override
 Future<void> streamOpened(StreamingSession session) async {
+  final authenticationInfo = await session.authenticated;
+  final userId = userAuthenticatedInfo?.userId;
   session.messages.addListener(
-    'user_${await session.auth.authenticatedUserId}',
+    'user_$userId',
     (message) {
       sendStreamMessage(session, message);
     },
