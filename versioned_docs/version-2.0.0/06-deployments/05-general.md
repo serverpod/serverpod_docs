@@ -4,7 +4,7 @@ You can host Serverpod anywhere, running Dart directly or through a Docker conta
 
 ## Required services
 
-Serverpod will not run without a link to a Postgres database with the correct tables added. Serverpod can also optionally use Redis. You enable Redis in your configuration files.
+Serverpod will not run without a link to a Postgres database with the correct tables added (unless you're running Serverpod mini). Serverpod can also optionally use Redis. You enable Redis in your configuration files.
 
 ## Configuration files
 
