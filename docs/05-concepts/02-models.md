@@ -158,7 +158,7 @@ extension MyExtension on MyClass {
 |[**indexes**](database/indexing)|Create indexes on your fields / columns.                                                        |✅|||
 |[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
 |[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
-|[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.           
+|[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
 
 
 ## Default Values
