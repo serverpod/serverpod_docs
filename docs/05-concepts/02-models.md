@@ -160,7 +160,6 @@ extension MyExtension on MyClass {
 |[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
 |[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
 
-
 ## Default Values
 
 Serverpod supports defining default values for fields in your models. These defaults can be specified using the following keywords:
@@ -206,4 +205,3 @@ fields:
 
 - **relation** keyword cannot be used with defaults.
 - **!persist** keyword cannot be used when **defaultDatabase** is specified.
-
