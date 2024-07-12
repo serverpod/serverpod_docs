@@ -159,3 +159,51 @@ extension MyExtension on MyClass {
 |[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
 |[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
 |[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
+
+## Default Values
+
+Serverpod supports defining default values for fields in your models. These defaults can be specified using the following keywords:
+
+#### Keywords
+
+- **default**: Sets the default value for both the model and the database.
+- **defaultModel**: Sets the default value for the model side.
+- **defaultDatabase**: Sets the default value for the database side.
+
+#### Supported Default Values
+
+- **DateTime**: Supports "now" (current date and time) and DateTime formatted strings (only in UTC).
+
+  The UTC format should be: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'".
+
+#### Example
+
+```yaml
+class: DefaultValue
+table: default_value
+fields:
+  ### Sets the current date and time as the default value.
+  dateTimeNow: DateTime, default=now
+
+  ### Sets a specific DateTime formatted string in UTC as the default value.
+  dateTimeStr: DateTime, default=2024-05-34T22:00:00.000Z
+
+  ### Sets a specific DateTime formatted string in UTC as the default value for the model side.
+  ### This value will also be persisted in the database.
+  dateTimeModel: DateTime, defaultModel=2024-05-34T22:00:00.000Z
+
+  ### Sets a specific DateTime formatted string in UTC as the default value for the database side.
+  ### If no value is set, this default will be used when the field is persisted in the database.
+  ### Fields with 'defaultDatabase' must be nullable.
+  dateTimeDatabase: DateTime?, defaultDatabase=2024-05-34T22:00:00.000Z
+
+  ### Sets different default values for the model and the database sides.
+  dateTimeModelAndDatabase: DateTime, defaultModel=2024-05-01T22:00:00.000Z, defaultDatabase=2024-05-10T22:00:00.000Z
+```
+
+- **Other Types**: Currently, default values are only supported for the DateTime field type.
+
+### Restrictions
+
+- **relation** keyword cannot be used with defaults.
+- **!persist** keyword cannot be used when **defaultDatabase** is specified.
