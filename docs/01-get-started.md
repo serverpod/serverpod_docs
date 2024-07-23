@@ -15,7 +15,7 @@ __[Get started with Mini](get-started-with-mini)__
 <p>
 
 | Feature               | Serverpod | Serverpod Mini |
-|-----------------------|-----------|:--------------:|
+|-----------------------|:---------:|:--------------:|
 | Remote method calls   |     ✅     |        ✅       |
 | Generated data models |     ✅     |        ✅       |
 | Streaming data        |     ✅     |        ✅       |
