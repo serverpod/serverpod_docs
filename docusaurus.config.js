@@ -120,6 +120,11 @@ const config = {
           // Moved in version 1.2.0
           from: ['/concepts/database-communication'],
           to: '/concepts/database/connection',
+        },
+        {
+          // Moved in version 2.0.0
+          from: ['/insights'],
+          to: '/tools/insights',
         }
        ] 
       }
