@@ -10,12 +10,10 @@ Serverpod is an open-source, scalable app server written in Dart for the Flutter
 
 ## Command line tools
 
-Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have the following tools installed:
+Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have __[Flutter](https://flutter.dev/docs/get-started/install)__ installed.
 
-- __Flutter__ and __Dart__. You will need Flutter version 3.7 or later. [https://flutter.dev/docs/get-started/install](https://flutter.dev/docs/get-started/install)
-- __Docker__. Docker is used to manage Postgres and (optionally) Redis. [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
 
-Once you have Flutter and Docker installed and configured, open up a terminal and install Serverpod by running:
+Install Serverpod by running:
 
 ```bash
 $ dart pub global activate serverpod_cli
@@ -29,18 +27,6 @@ $ serverpod
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
 
-## Serverpod Insights
-
-Serverpod Insights is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
-
-![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
-
-:::info
-
-Download the latest version here: __[Serverpod Insights](insights)__. It is compatible with Serverpod version 1.2.x. Always use the same version of Serverpod Insights as for the framework itself.
-
-:::
-
 ## VS Code Extension
 
 The Serverpod VS Code extension makes it easy to work with your Serverpod projects. It provides real-time diagnostics and syntax highlighting for model files in your project.
@@ -49,8 +35,9 @@ The Serverpod VS Code extension makes it easy to work with your Serverpod projec
 
 Install the extension from the VS Code Marketplace: __[Serverpod extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod)__
 
-:::info
+## Serverpod Insights
 
-The extension requires Serverpod 1.2 or later.
+__[Serverpod Insights](tools/insights)__ is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 
-:::
+![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
+

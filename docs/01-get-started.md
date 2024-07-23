@@ -1,16 +1,40 @@
 # Get started
 
-This page should give you an understanding of how a Serverpod project is structured, how you make calls to endpoints, and how you communicate with the database. Before going through it, make sure that you have the latest version of Serverpod installed. In the previous section, you can learn how to set up the Serverpod command line tools and install Serverpod Insights.
+This page will help you understand how a Serverpod project is structured, how to make calls to endpoints, and how to communicate with the database.
 
-## Creating a new Serverpod Mini project
+<div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/FwttjcKyWFk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
-Serverpod Mini is a lightweight version of Serverpod that is perfect for small projects or when you want to try out Serverpod without setting up a full server. To get started with Serverpod Mini, read the [Getting started with Serverpod mini](https://medium.com/serverpod/getting-started-with-serverpod-mini-58c71ffefa54) guide.
+## Serverpod or Serverpod Mini?
 
-```bash
-$ serverpod create mypod --mini
-```
+Serverpod Mini is a lightweight version of Serverpod that is perfect for small projects or when you want to try out Serverpod without setting up a Postgres database. If you start with Mini, you can upgrade to the full version of Serverpod anytime.
+
+__[Get started with Mini](get-started-with-mini)__
+
+<details>
+<summary>__Serverpod vs Serverpod Mini comparison__</summary>
+<p>
+
+| Feature               | Serverpod | Serverpod Mini |
+|-----------------------|-----------|:--------------:|
+| Remote method calls   |     ✅     |        ✅       |
+| Generated data models |     ✅     |        ✅       |
+| Streaming data        |     ✅     |        ✅       |
+| Social authentication |     ✅     |                |
+| Postgres database     |     ✅     |                |
+| Task scheduling       |     ✅     |                |
+| Basic logging         |     ✅     |        ✅       |
+| Serverpod Insights    |     ✅     |                |
+| Caching               |     ✅     |        ✅       |
+| File uploads          |     ✅     |                |
+| Health checks         |     ✅     |                |
+| Relic web server      |     ✅     |                |
+| Easy deployment       |     ✅     |        ✅       |
+
+</p>
+</details>
 
 ## Creating a new Serverpod project
+The full version of Serverpod needs access to a Postgres database. The easiest way to set that up is to use our pre-configured Docker container. Install __[Flutter](https://flutter.dev/docs/get-started/install)__, __[Serverpod](/)__ and __[Docker Desktop](https://docs.docker.com/get-docker/)__ before you begin.
 
 Create a new project by running `serverpod create`.
 
@@ -32,7 +56,7 @@ This command will create a new directory called `mypod`, with three dart package
 
 ### Starting the server
 
-Make sure that [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
+Make sure that __[Docker Desktop](https://www.docker.com/products/docker-desktop/)__ is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
 $ cd mypod/mypod_server
@@ -43,7 +67,7 @@ $ dart bin/main.dart --apply-migrations
 If everything is working, you should see something like this on your terminal:
 
 ```text
-SERVERPOD version: 1.x.x, mode: development, time: 2022-09-12 17:22:02.825468Z
+SERVERPOD version: 2.x.x, mode: development, time: 2022-09-12 17:22:02.825468Z
 Insights listening on port 8081
 Server default listening on port 8080
 Webserver listening on port 8082
@@ -55,7 +79,7 @@ If you need to stop the Docker containers at some point, just run `docker compos
 
 :::
 
-:::warning
+:::important
 
 In your development environment it can be helpful to always start Serverpod with the `--apply-migrations` flag, as this will ensure that the database is always up-to-date with your latest migration. However, in production you should typically start the server without the flag, unless you want to actually apply a new migration.
 
