@@ -112,8 +112,8 @@ const config = {
           to: '/concepts/authentication/setup',
         },
         {
-          // Moved in version 1.1.1
-          from: ['/tutorials'],
+          // Moved in version 1.1.1 and 2.1.0
+          from: ['/tutorials', '/tutorials/videos'],
           to: '/tutorials/first-app',
         },
         {
@@ -122,9 +122,14 @@ const config = {
           to: '/concepts/database/connection',
         },
         {
-          // Moved in version 2.0.0
+          // Moved in version 2.1.0
           from: ['/insights'],
           to: '/tools/insights',
+        },
+        {
+          // Moved in version 2.1.0
+          from: ['/roadmap'],
+          to: '/contribue',
         }
        ] 
       }
