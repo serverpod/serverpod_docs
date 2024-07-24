@@ -59,6 +59,16 @@ There are some limitations to how endpoint methods can be implemented. Parameter
 
 You can also pass `List` and `Map` as parameters, but they need to be strictly typed with one of the types mentioned above. For `Map`, the keys must be non-nullable strings. E.g., `Map<String, int?>` is valid, but `Map<int, String>` is not.
 
+:::warning
+
+While it's possible to pass binary data through a method call and `ByteData`, it is not the most efficient way to transfer large files. See our [file upload](file-uploads) interface. The size of a call is by default limited to 512 kB. It's possible to change by adding the `maxRequestSize` to your config files. E.g., this will double the request size to 1 MB:
+
+```yaml
+maxRequestSize: 1048576
+```
+
+:::
+
 ## Return types
 
 The return type must be a typed Future. Supported return types are the same as for parameters.
