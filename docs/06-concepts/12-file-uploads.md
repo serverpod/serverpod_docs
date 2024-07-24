@@ -102,7 +102,7 @@ import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
     as gcp;
 ```
 
-After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your GCP bucket to be accessible on a custom domain through a load balancer. You should add the cloud storage before starting your pod.
+After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your GCP bucket to be accessible on a custom domain through a load balancer. You should add the cloud storage before starting your pod. The `bucket` parameter refers to the GCP bucket name (you can find it in the console) and the `publicHost` is the domain name used to access the bucket via https.
 
 ```dart
   pod.addCloudStorage(gcp.GoogleCloudStorage(
