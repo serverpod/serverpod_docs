@@ -1,4 +1,4 @@
-# Serverpod LSP
+# LSP server
 
 The [Language Server Protocol (LSP)](https://microsoft.github.io/language-server-protocol/) is a standardized protocol designed to provide development environments with language-specific functionalities. In the context of Serverpod, the LSP server specifically offers diagnostics for YAML protocol files, aiding developers in identifying and resolving potential issues within these files.
 

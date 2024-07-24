@@ -1,8 +1,11 @@
-# Contribute
+# Roadmap & contributions
 
 Serverpod is built by the community for the community. Pull requests are very much welcome. If you are making something more significant than just a tiny bug fix, please get in touch with Serverpod's lead developer [Viktor Lidholt](https://www.linkedin.com/in/viktorlidholt/) before you get started. This makes sure that your contribution aligns with Serverpod's overall vision and roadmap and that multiple persons don't do the same work.
 
-If you want to contribute, please view our [roadmap](https://github.com/serverpod/serverpod/projects/1) and pick issues from there. This will make it much more likely that we can include the new features you are building.
+<div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/V3CqPx4jykE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+## Roadmap
+If you want to contribute, please view our [roadmap](https://github.com/orgs/serverpod/projects/4) to make sure your contribution is in-line with our plans for future development. This will make it much more likely that we can include the new features you are building. You can also check our list of [good first issues](https://github.com/serverpod/serverpod/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 :::important
 
