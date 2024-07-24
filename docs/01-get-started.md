@@ -19,8 +19,9 @@ __[Get started with Mini](get-started-with-mini)__
 | Remote method calls   |     ✅     |        ✅       |
 | Generated data models |     ✅     |        ✅       |
 | Streaming data        |     ✅     |        ✅       |
-| Social authentication |     ✅     |                |
-| Postgres database     |     ✅     |                |
+| Custom auth           |     ✅     |        ✅       |
+| Pre-built auth        |     ✅     |                |
+| Postgres database ORM |     ✅     |                |
 | Task scheduling       |     ✅     |                |
 | Basic logging         |     ✅     |        ✅       |
 | Serverpod Insights    |     ✅     |                |
