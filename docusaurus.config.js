@@ -129,7 +129,7 @@ const config = {
         {
           // Moved in version 2.1.0
           from: ['/roadmap'],
-          to: '/contribue',
+          to: '/contribute',
         }
        ] 
       }
