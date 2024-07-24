@@ -1,19 +1,14 @@
 # Connection
 
-In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package.
+In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the Postgres instance by using these configuration details when you start the server.
 
-Serverpod automatically establishes a connection to the Postgresql instance by using these configuration details when you start the server.
-
-
-## Connecting to a Postgresql Docker Image
-
-Using a Docker Postgresql Image is the easiest way to get started.
+The easiest way to get started is to use a Docker container to run your local Postgres server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run Postgres locally yourself.
 
 
 ### Connection details
 
 Each environment configuration contains a `database` keyword that specifies the connection details.
-For your development build you can find the connection details in the `development.yaml` file.
+For your development build you can find the connection details in the `config/development.yaml` file.
 
 This is an example:
 
@@ -27,10 +22,13 @@ database:
 ...
 ```
 
-The variable `name` refers to the database name. \
-The variable `host` is the IP address pointing to your Postgresql instance. \
-The variable `port` is the port that is opened to listen for incoming connections (default 5432). \
-The variable `user` is the username that is approved to access the database (default postgres).
+The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, and `user` is the username that is used to connect to the database.
+
+:::caution
+
+By default, Postgres is listening for connections on port 5432. However, the Docker container shipped with Serverpod uses port 8090 to avoid conflicts. If you host your own instance, double-check that the correct port is specified in your configuration files.
+
+:::
 
 ### Database password
 
@@ -47,82 +45,64 @@ development:
 
 ## Development database
 
-A newly created Serverpod project comes with a preconfigured docker instance with Postgresql. All you have to do is run the following command from the root of the `server` package to start the database.
-
-:::info
-
-[Docker](https://www.docker.com/) is required for this to work.
-
-:::
+A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. Run the following command from the root of the `server` package to start the database:
 
 ```bash
 $ docker compose up --build --detach
 ```
 
-To remove the database run (this commands preserve all data).
+To stop the database run:
 
 ```bash
-$ docker compose down
+$ docker compose stop
 ```
 
-To remove the database and __delete__ all data add the `-v` flag.
+To remove the database and __delete__ all associated data, run:
 
 ```bash
 $ docker compose down -v
 ```
 
-## Connecting to a Postgresql Server Instance
+## Connecting to a custom Postgres instance
 
-Connecting to a Postgresql Server Instance is similar to connecting to a Docker Image, but there are some prerequisites to take into account:
+Just like you can connect to the Postgres database inside the Docker container, you can connect to any other Postgres instance. There are a few things you need to take into consideration:
 
-- Making sure that the machine/server allows incoming traffic
-- Creating a Postgresql user and database
+- Make sure that your Postgres instance allows incoming traffic.
+- You will need to create a user with a password, and a database.
 
-You can connect to Postgresql server that you have installed on your local machine, a self-hosted one, Google Cloud SQL, AWS RDS or SQL Server, or any other 3rd party service.
+### Connecting to a local Postgres server
 
-### Connecting to a Local Postgresql
+If you want to connect to a local Postgres Server (with the default setup) then the `development.yaml` will work fine if you set the correct port, user, database, and update the password in the `passwords.yaml` file.
 
-If you want to connect to a local Postgresql Server (with the default setup) then the `development.yaml` will work just fine. The only thing you need to do is change the password in the `passwords.yaml`.
+### Connecting to a remote Postgres server
 
-### Connecting to a Remote Postgresql
+To connect to a remote Postgres server (that you have installed on a VPS or VDS), you need to follow a couple of steps:
 
-To connect to a remote Postgresql Server (that you have installed on a VPS or VDS) you need to follow a couple of steps:
-- Make sure that the Postgresql Server has a reachable IP address (that it accepts incoming traffic)
-- Make sure to open any necessary ports on that machine
-- Configure Postgresql Server to listen to all other connections (not only local once) in `postgresql.conf`:
-```bash
-listen_addresses = '*'
-```
-
-- Edit your Postgresql Server `pg_hba.conf` to accept incoming traffic (this config accepts all incoming traffic which is not recommended):
-
-```bash
-host    all             all              0.0.0.0/0                       md5
-host    all             all              ::/0                            md5
-```
-
-- Update your Serverpod `database` config to use the public IP, database name, and user. Also the database password in `passwords.yaml`.
+- Make sure that the Postgres server has a reachable network address and that it accepts incoming traffic.
+- You may need to open the database port on the machine. This may include configuring its firewall.
+- Configure Postgres to listen to connections from your Serverpod server.
+- Update your Serverpod `database` config to use the public network address, database name, port, user, and password.
 
 
 ### Connecting to Google Cloud SQL
 
-You can connect to a Google Cloud SQL Postgresql Instance in 2 ways:
+You can connect to a Google Cloud SQL Postgres instance in two ways:
 
-- Setting up the Public IP Authorized networks (with your Serverpod server IP) and changing the database host string to the `Cloud SQL public IP`
-- Using the Connection String if you are hosting your Serverpod server on Google Cloud Run and changing the database host string to the Cloud SQL: `/cloudsql/my-project:server-location:database-name/.s.PGSQL.5432`
+1. Setting up the _Public IP Authorized networks_ (with your Serverpod server IP) and changing the database host string to the _Cloud SQL public IP_.
+2. Using the _Connection String_ if you are hosting your Serverpod server on Google Cloud Run and changing the database host string to the Cloud SQL: `/cloudsql/my-project:server-location:database-name/.s.PGSQL.5432`.
 
 The next step is to update the database password in `passwords.yaml` and the connection details for the desired environment in the `config` folder.
 
 :::info
 
-If you are using the `isUnixSocket` don't forget to add **"/.s.PGSQL.5432"** to the end of the `host` IP address *otherwise your Google Cloud Run instance will not be able to connect to the database*.
+If you are using the `isUnixSocket` don't forget to add **"/.s.PGSQL.5432"** to the end of the `host` IP address. Otherwise, your Google Cloud Run instance will not be able to connect to the database.
 
 :::
 
 ### Connecting to AWS RDS
 
-You can connect to AWS RDS Instance in 2 ways:
-- Enable public access to the database and configure VPC/Subnets to accept **Serverpods IP**
-- Use the Endpoint `database-name.some-unique-id.server-location.rds.amazonaws.com` to connect to it from **AWS ECS**
+You can connect to an AWS RDS Instance in two ways:
+1. Enable public access to the database and configure VPC/Subnets to accept your Serverpod's IP address.
+2. Use the Endpoint `database-name.some-unique-id.server-location.rds.amazonaws.com` to connect to it from AWS ECS.
 
 The next step is to update the database password in `passwords.yaml` and the connection details for the desired environment in the `config` folder.
