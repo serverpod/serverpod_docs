@@ -159,51 +159,89 @@ extension MyExtension on MyClass {
 |[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
 |[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
 |[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
+|[**default**](#default-values)|Sets the default value for both the model and the database. This keyword cannot be used with **relation**.                                                     |✅|||
+|[**defaultModel**](#default-values)|Sets the default value for the model side. This keyword cannot be used with **relation**.                                                   |✅|||
+|[**defaultDatabase**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
 
 ## Default Values
 
-Serverpod supports defining default values for fields in your models. These defaults can be specified using the following keywords:
+Serverpod supports defining default values for fields in your models. Following are the supported default values:
 
-#### Keywords
+### DateTime
+Supports two types of default values:
 
-- **default**: Sets the default value for both the model and the database.
-- **defaultModel**: Sets the default value for the model side.
-- **defaultDatabase**: Sets the default value for the database side.
+1. **Current Date and Time**:
+   - `now`
 
-#### Supported Default Values
+   Example:
+   ```yaml
+   dateTimeDefault: DateTime, default=now, defaultModel=now, defaultDatabase=now
+   ```
 
-- **DateTime**: Supports "now" (current date and time) and DateTime formatted strings (only in UTC).
+2. **UTC DateTime String**:
+   - The format should be: `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'`
 
-  The UTC format should be: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'".
+   Example:
+   ```yaml
+   dateTimeDefault: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultDatabase=2024-05-01T22:00:00.000Z
+   ```
 
-#### Example
+### Boolean
+Supports `true` or `false` values.
+
+Example:
+```yaml
+boolDefault: bool, default=true, defaultModel=false, defaultDatabase=true
+```
+
+### Integer
+Supports any integer value, e.g., `10`.
+
+Example:
+```yaml
+intDefault: int, default=10, defaultModel=20, defaultDatabase=20
+```
+
+### Double
+Supports any double value, e.g., `10.5`.
+
+Example:
+```yaml
+doubleDefault: double, default=10.5, defaultModel=20.5, defaultDatabase=20.5
+```
+
+### String
+Supports any string value, e.g., `"This is a string"` or `'This is a string'`.
+
+Example:
+```yaml
+stringDefault: String, default='This is a string', defaultModel="This is a string", defaultDatabase="This is a string"
+```
+
+### Usage Note
+You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
+
+### Example
 
 ```yaml
 class: DefaultValue
 table: default_value
 fields:
   ### Sets the current date and time as the default value.
-  dateTimeNow: DateTime, default=now
+  dateTimeDefault: DateTime, default=now
 
-  ### Sets a specific DateTime formatted string in UTC as the default value.
-  dateTimeStr: DateTime, default=2024-05-34T22:00:00.000Z
+  ### Sets the default value for a boolean field.
+  boolDefault: bool, defaultModel=false, defaultDatabase=true
 
-  ### Sets a specific DateTime formatted string in UTC as the default value for the model side.
-  ### This value will also be persisted in the database.
-  dateTimeModel: DateTime, defaultModel=2024-05-34T22:00:00.000Z
+  ### Sets the default value for an integer field.
+  intDefault: int, defaultDatabase=20
 
-  ### Sets a specific DateTime formatted string in UTC as the default value for the database side.
-  ### If no value is set, this default will be used when the field is persisted in the database.
-  ### Fields with 'defaultDatabase' must be nullable.
-  dateTimeDatabase: DateTime?, defaultDatabase=2024-05-34T22:00:00.000Z
+  ### Sets the default value for a double field.
+  doubleDefault: double, default=10.5, defaultDatabase=20.5
 
-  ### Sets different default values for the model and the database sides.
-  dateTimeModelAndDatabase: DateTime, defaultModel=2024-05-01T22:00:00.000Z, defaultDatabase=2024-05-10T22:00:00.000Z
+  ### Sets the default value for a string field.
+  stringDefault: String, default="This is a string", defaultModel="This is a string"
 ```
 
-- **Other Types**: Currently, default values are only supported for the DateTime field type.
-
-### Restrictions
-
-- **relation** keyword cannot be used with defaults.
-- **!persist** keyword cannot be used when **defaultDatabase** is specified.
+### Coming Soon
+- **UuidValue**: Support for default values for `UuidValue` field type is coming soon.
