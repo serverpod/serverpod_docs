@@ -37,7 +37,7 @@ Serverpod Insights is a companion app bundled with Serverpod. It allows you to a
 
 :::info
 
-Download the latest version here: __[Serverpod Insights](insights)__. It is compatible with Serverpod version 1.2.x. Always use the same version of Serverpod Insights as for the framework itself.
+Download the latest version here: __[Serverpod Insights](tools/insights)__. It is compatible with Serverpod version 1.2.x. Always use the same version of Serverpod Insights as for the framework itself.
 
 :::
 
