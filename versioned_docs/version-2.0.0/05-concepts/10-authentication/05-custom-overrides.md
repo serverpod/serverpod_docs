@@ -140,26 +140,3 @@ var token = await client.authenticationKeyManager?.get();
 ```
 
 The above example retrieves the token from the key manager and stores it in the `token` variable.
-
-### Custom hash generation
-
-In the case of custom hash generation for Local authentication, `AuthConfig` allows it:
-
-```dart
-AuthConfig(
-  passwordHashValidator: (
-    password,
-    email,
-    hash, {
-    onError,
-    onValidationFailure,
-  }) {
-  // Your hash validator (for example bcrypt).
-},
-  passwordHashGenerator: (password) {
-  // Here hash the password
-},
-)
-```
-
-It could be useful when your database needs to be migrated from another hashing protocol (default is Argon2id).
