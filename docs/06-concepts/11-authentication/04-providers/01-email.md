@@ -160,3 +160,34 @@ auth.AuthConfig.set(auth.AuthConfig(
   allowUnsecureRandom: false,
 ));
 ```
+
+## Custom password hash generator
+
+It is possible to override the default password hash generator. The `AuthConfig` class allows you to provide a custom hash generator using the field `passwordHashGenerator` and a custom hash validator through the field `passwordHashValidator`.
+
+```dart
+AuthConfig(
+  passwordHashValidator: (
+    password,
+    email,
+    hash, {
+      onError,
+      onValidationFailure,
+    },
+  ) {
+  // Custom hash validator.
+  },
+  passwordHashGenerator: (password) {
+  // Custom hash generator.
+  },
+)
+
+```
+
+It could be useful if you already have stored passwords that should be preserved or migrated.
+
+:::warning
+
+Using a custom hash generator will permanently disrupt compatibility with the default hash generator.
+
+:::
