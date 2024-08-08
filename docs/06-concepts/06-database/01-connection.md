@@ -67,7 +67,7 @@ $ docker compose down -v
 
 Just like you can connect to the Postgres database inside the Docker container, you can connect to any other Postgres instance. There are a few things you need to take into consideration:
 
-- Make sure that your Postgres instance allows incoming traffic.
+- Make sure that your Postgres instance is up and running and is reachable from your Serverpod server.
 - You will need to create a user with a password, and a database.
 
 ### Connecting to a local Postgres server
@@ -80,7 +80,6 @@ To connect to a remote Postgres server (that you have installed on a VPS or VDS)
 
 - Make sure that the Postgres server has a reachable network address and that it accepts incoming traffic.
 - You may need to open the database port on the machine. This may include configuring its firewall.
-- Configure Postgres to listen to connections from your Serverpod server.
 - Update your Serverpod `database` config to use the public network address, database name, port, user, and password.
 
 
