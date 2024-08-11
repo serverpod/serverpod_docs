@@ -99,6 +99,16 @@ $ flutter run -d chrome
 
 :::info
 
+iOS simulator
+Because an iOS simulator has it's own localhost it won't find the server running on your machine. You can pass the ip adres of your machine in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this
+```dart
+// var client = Client('http://$localhost:8080/')
+//   ..connectivityMonitor = FlutterConnectivityMonitor();
+var client = Client('http://192.168.1.117:8080/')
+  ..connectivityMonitor = FlutterConnectivityMonitor();
+```
+
+Mac OS
 If you run the app on MacOS you will need to add permissions for outgoing connections in your Xcode project. To do this, open the `Runner.xcworkspace` in Xcode. Then check the _Outgoing Connections (Client)_ under _Runner_ > _Signing & Capabilities_ > _App Sandbox_. Make sure to add the capability for all run configurations.
 
 :::
