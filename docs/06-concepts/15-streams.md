@@ -2,7 +2,17 @@
 
 For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
 
+Serverpod supports two ways to stream data. The first method, [streaming endpoint](#streaming-endpoints), leaves managing the web socket connection up to the developer. In contrast, the second method, [streaming methods](#streaming-methods), uses a more automated approach, similar to how endpoints work. The second method is a newer addition that makes streams more flexible and easier to use.
+
+## Streaming Methods
+
 ## Handling streams server-side
+
+## Streaming Endpoints
+
+Streaming endpoints were Serverpod's first attempt at streaming data. This approach is more manual, requiring developers to manage the WebSocket connection to the server.
+
+### Handling streams server-side
 
 The Endpoint class has three methods you override to work with streams.
 
@@ -12,7 +22,7 @@ The Endpoint class has three methods you override to work with streams.
 
 To send a message to a client, call the `sendStreamMessage` method. You will need to include the session associated with the user.
 
-### The user object
+#### The user object
 
 It's often handy to associate a state together with a streaming session. Typically, you do this when a stream is opened.
 
@@ -24,7 +34,7 @@ Future<void> streamOpened(StreamingSession session) async {
 
 You can access the user object at any time by calling the `getUserObject` method. The user object is automatically discarded when a session ends.
 
-### Internal server messaging
+#### Internal server messaging
 
 A typical scenario when working with streams is to pass on messages from one user to another. For instance, if one client sends a chat message to the server, the server should send it to the correct user. Serverpod comes with a built-in messaging system that makes this easy. You can pass messages locally on a single server, but messages are passed through Redis by default. Passing the messages through Redis makes it possible to send the messages between multiple servers in a cluster.
 
@@ -67,7 +77,7 @@ For a real-world example, check out [Pixorama](https://pixorama.live). It's a mu
 
 :::
 
-## Handling streams in your app
+### Handling streams in your app
 
 Before you can access streams in your client, you need to connect to the server's web socket. You do this by calling connectWebSocket on your client.
 
