@@ -6,7 +6,109 @@ Serverpod supports two ways to stream data. The first method, [streaming endpoin
 
 ## Streaming Methods
 
-## Handling streams server-side
+Streaming methods are defined just like regular endpoint methods but are recognized by having a `Stream` as a return value or a method parameter. Streaming methods transmit data over a shared, self-managed web socket connection that automatically connects and disconnects from the server.
+
+:::warning
+
+Streaming methods are still experimental and may change in the future.
+
+:::
+
+### Defining a streaming method
+
+Streaming methods are defined by using the `Stream` type as either the return value or a parameter.
+
+Following is an example of a streaming method that echoes back any message:
+
+```dart
+class MyEndpoint extends Endpoint {
+  Stream echoStream(Session session, Stream stream) async* {
+    await for (var message in stream) {
+      yield message;
+    }
+  }
+}
+```
+
+The generic for the `Stream` can also be defined, e.g., `Stream<String>`. This definition is then generated in the client, enabling static type validation.
+
+The streaming method above can then be called from the client like this:
+
+```dart
+var inStream = StreamController();
+var outStream = client.myEndpoint.echoStream(inStream.stream);
+outStream.listen((message) {
+  print('Received message: $message');
+});
+
+inStream.add('Hello');
+inStream.add(42);
+
+// This will print
+// Received message: Hello
+// Received message: 42
+```
+
+In the example above, the `echoStream` method passes back any message sent through the `outStream`.
+
+:::tip
+
+Note that we can mix different types in the stream. This stream is defined as dynamic and can contain any type that can be serialized by Serverpod.
+
+:::
+
+### Lifecycle of a streaming method
+
+Each time the client calls a streaming method, a new `Session` is created, and a call with that `Session` is made to the method endpoint on the server. The `Session` is automatically closed when the streaming method call is over.
+
+If the web socket connection is lost, all streaming methods are closed on the server and the client.
+
+When the streaming method is defined with a returning `Stream`, the method is kept alive until the stream subscription is canceled on the client or the method returns.
+
+When the streaming method returns a `Future`, the method is kept alive until the method returns.
+
+Streams in parameters are closed when the stream is closed. This can be done by either closing the stream on the client or canceling the subscription on the server.
+
+All streams in parameters are closed when the method call is over.
+
+### Error handling
+
+Error handling works just like regular endpoint methods in Serverpod. If an exception is thrown on a stream, the stream is closed with an exception. If the exception thrown is a serializable exception, the exception is first serialized and passed over the stream before it is closed.
+
+This is supported in both directions; stream parameters can pass exceptions to the server, and return streams can pass exceptions to the client.
+
+```dart
+class MyEndpoint extends Endpoint {
+  Stream echoStream(Session session, Stream stream) async* {
+    stream.listen((message) {
+      // Do nothing
+    }, onError: (error) {
+      print('Server received error: $error');
+      throw SerializableException('Error from server');
+    });
+  }
+}
+```
+
+```dart
+var inStream = StreamController();
+var outStream = client.myEndpoint.echoStream(inStream.stream);
+outStream.listen((message) {
+  // Do nothing
+}, onError: (error) {
+  print('Client received error: $error');
+});
+
+inStream.addError(SerializableException('Error from client'));
+
+// This will print
+// Server received error: Error from client 
+// Client received error: Error from server 
+```
+
+In the example above, the client sends an error to the server, which then throws an exception back to the client. And since the exception is serializable, it is passed over the stream before the stream is closed.
+
+Read more about serializable exceptions here: [Serializable exceptions](exceptions).
 
 ## Streaming Endpoints
 
