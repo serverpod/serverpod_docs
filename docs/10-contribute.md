@@ -125,7 +125,7 @@ Here, you find the core serverpod Dart packages.
 
 ### `templates`
 
-The template directory contains templates for all pubspec files. To generate the real pubspec files from the templates, use the util/update_pubspecs script. The template directory also contains templates for the `serverpod create` command.
+The template directory contains templates for all pubspec files. To generate the real pubspec files from the templates, use the `util/update_pubspecs` script. The template directory also contains templates for the `serverpod create` command.
 
 ### `tools`
 
