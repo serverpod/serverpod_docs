@@ -58,7 +58,7 @@ Then you need to update both your `my_project_server/pubspec.yaml` and `my_proje
 ```yaml
 dependencies:
   ...
-  my_project_client:
+  my_project_shared:
     path: ../my_project_shared
   ...
 ```
