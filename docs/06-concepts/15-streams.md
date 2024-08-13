@@ -2,11 +2,11 @@
 
 For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
 
-Serverpod supports two ways to stream data. The first method, [streaming endpoint](#streaming-endpoints), leaves managing the web socket connection up to the developer. In contrast, the second method, [streaming methods](#streaming-methods), uses a more automated approach, similar to how endpoints work. The second method is a newer addition that makes streams more flexible and easier to use.
+Serverpod supports two ways to stream data. The first approach, [streaming methods](#streaming-methods), imitates how `Streams` work in Dart and offers a simple interface that automatically handles the connection with the server. In contrast, the second approach, [streaming endpoint](#streaming-endpoints), requires developers to manage the web socket connection. The second approach was Serverpod's initial solution for streaming data but will be removed in future updates.
 
 ## Streaming Methods
 
-Streaming methods are defined just like regular endpoint methods but are recognized by having a `Stream` as a return value or a method parameter. Streaming methods transmit data over a shared, self-managed web socket connection that automatically connects and disconnects from the server.
+When an endpoint method is defined with `Stream` instead of `Future` as the return type or includes `Stream` as a method parameter, it is recognized as a streaming method. Streaming methods transmit data over a shared, self-managed web socket connection that automatically connects and disconnects from the server.
 
 :::warning
 
@@ -21,7 +21,7 @@ Streaming methods are defined by using the `Stream` type as either the return va
 Following is an example of a streaming method that echoes back any message:
 
 ```dart
-class MyEndpoint extends Endpoint {
+class ExampleEndpoint extends Endpoint {
   Stream echoStream(Session session, Stream stream) async* {
     await for (var message in stream) {
       yield message;
@@ -30,13 +30,13 @@ class MyEndpoint extends Endpoint {
 }
 ```
 
-The generic for the `Stream` can also be defined, e.g., `Stream<String>`. This definition is then generated in the client, enabling static type validation.
+The generic for the `Stream` can also be defined, e.g., `Stream<String>`. This definition is then included in the client, enabling static type validation.
 
 The streaming method above can then be called from the client like this:
 
 ```dart
 var inStream = StreamController();
-var outStream = client.myEndpoint.echoStream(inStream.stream);
+var outStream = client.example.echoStream(inStream.stream);
 outStream.listen((message) {
   print('Received message: $message');
 });
@@ -73,12 +73,12 @@ All streams in parameters are closed when the method call is over.
 
 ### Error handling
 
-Error handling works just like regular endpoint methods in Serverpod. If an exception is thrown on a stream, the stream is closed with an exception. If the exception thrown is a serializable exception, the exception is first serialized and passed over the stream before it is closed.
+Error handling works just like in regular endpoint methods in Serverpod. If an exception is thrown on a stream, the stream is closed with an exception. If the exception thrown is a serializable exception, the exception is first serialized and passed over the stream before it is closed.
 
 This is supported in both directions; stream parameters can pass exceptions to the server, and return streams can pass exceptions to the client.
 
 ```dart
-class MyEndpoint extends Endpoint {
+class ExampleEndpoint extends Endpoint {
   Stream echoStream(Session session, Stream stream) async* {
     stream.listen((message) {
       // Do nothing
@@ -92,7 +92,7 @@ class MyEndpoint extends Endpoint {
 
 ```dart
 var inStream = StreamController();
-var outStream = client.myEndpoint.echoStream(inStream.stream);
+var outStream = client.example.echoStream(inStream.stream);
 outStream.listen((message) {
   // Do nothing
 }, onError: (error) {
