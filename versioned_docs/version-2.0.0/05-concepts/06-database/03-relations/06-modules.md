@@ -1,6 +1,6 @@
 # Relations with modules
 
-Serverpod [modules](concepts/modules) usually come with predefined tables and data structures. Sometimes it can be useful to extend them with your data structures by creating a relation to the module tables. Relations to modules come with some restrictions since you do not own the definition of the table, you cannot change the table structure of a module table.
+Serverpod [modules](../../modules) usually come with predefined tables and data structures. Sometimes it can be useful to extend them with your data structures by creating a relation to the module tables. Relations to modules come with some restrictions since you do not own the definition of the table, you cannot change the table structure of a module table.
 
 Since you do not directly control the models inside the modules it is recommended to create a so-called "bridge" table/model linking the module's model to your own. This can be done in the same way we normally would setup a one-to-one relation.
 

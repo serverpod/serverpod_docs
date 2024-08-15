@@ -31,7 +31,7 @@ In the example, we define a 1:n relation between `Company` and `Employee` by usi
 
 The corresponding foreign key field is automatically integrated into the 'many' side (e.g., `Employee`) as a concealed column.
 
-When fetching companies it now becomes possible to include any or all employees in the query. 1:n relations also enables additional [filtering](../filter#1n) and [sorting](../sort#sort-on-relations) operations for [relational queries](../relation-queries).  
+When fetching companies it now becomes possible to include any or all employees in the query. 1:n relations also enables additional [filtering](../filter#one-to-many) and [sorting](../sort#sort-on-relations) operations for [relational queries](../relation-queries).  
 
 ### Explicit Definition
 

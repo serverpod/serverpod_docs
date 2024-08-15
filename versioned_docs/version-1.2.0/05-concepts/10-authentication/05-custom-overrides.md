@@ -118,7 +118,7 @@ In the above example, all auth tokens associated with the user `userId` and crea
 
 
 #### Custom token solution
-If a [custom auth token](#custom-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
+If a [custom auth token](#custom-auth-tokens) solution has been implemented, auth token removal must be handled manually. The `signOutUser` method does not provide an interface to interact with other database tables.
 
 ## Client setup
 Enabling authentication in the client is as simple as configuring a key manager and placing any token in it. If a key manager is configured, the client will automatically query the manager for a token and include it in communication with the server.
