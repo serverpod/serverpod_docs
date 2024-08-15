@@ -9,7 +9,7 @@ updates:
     groups:
       docusaurus:
         patterns:
-          - "docusaurus/*"
+          - "*docusaurus*"
       react:
         patterns:
           - "*react*"
