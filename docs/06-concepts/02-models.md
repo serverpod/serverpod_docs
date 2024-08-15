@@ -169,7 +169,7 @@ Serverpod supports defining default values for fields in your models. The follow
 
 ### DateTime
 
-#### Supported Default Values:
+#### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -185,7 +185,7 @@ dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=202
 
 ### Boolean
 
-#### Supported Default Values:
+#### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -199,7 +199,7 @@ boolDefault: bool, default=true, defaultModel=false, defaultPersist=true
 
 ### Integer
 
-#### Supported Default Values:
+#### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -213,7 +213,7 @@ intDefault: int, default=10, defaultModel=20, defaultPersist=20
 
 ### Double
 
-#### Supported Default Values:
+#### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -227,7 +227,7 @@ doubleDefault: double, default=10.5, defaultModel=20.5, defaultPersist=20.5
 
 ### String
 
-#### Supported Default Values:
+#### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -241,7 +241,7 @@ stringDefault: String, default='This is a string', defaultModel="This is a strin
 
 ### UuidValue
 
-#### Supported Default Values:
+#### Supported Default Values
 
 | Type               | Keyword  | Description |
 |--------------------|----------|-------------|
