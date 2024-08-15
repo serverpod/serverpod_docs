@@ -6,3 +6,10 @@ updates:
       interval: "daily"
     versioning-strategy: "auto"
     open-pull-requests-limit: 5
+    groups:
+      docusaurus:
+        patterns:
+          - "docusaurus/*"
+      react:
+        patterns:
+          - "*react*"
