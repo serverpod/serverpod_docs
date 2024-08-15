@@ -161,11 +161,11 @@ extension MyExtension on MyClass {
 |[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
 |[**default**](#default-values)|Sets the default value for both the model and the database. This keyword cannot be used with **relation**.                                                     |✅|||
 |[**defaultModel**](#default-values)|Sets the default value for the model side. This keyword cannot be used with **relation**.                                                   |✅|||
-|[**defaultDatabase**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
+|[**defaultPersist**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
 
 ## Default Values
 
-Serverpod supports defining default values for fields in your models. Following are the supported default values:
+Serverpod supports defining default values for fields in your models. The following are the supported default values:
 
 ### DateTime
 
@@ -177,7 +177,7 @@ Supports two types of default values:
    Example:
 
    ```yaml
-   dateTimeDefault: DateTime, default=now, defaultModel=now, defaultDatabase=now
+   dateTimeDefault: DateTime, default=now, defaultModel=now, defaultPersist=now
    ```
 
 2. **UTC DateTime String**:
@@ -186,7 +186,7 @@ Supports two types of default values:
    Example:
 
    ```yaml
-   dateTimeDefault: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultDatabase=2024-05-01T22:00:00.000Z
+   dateTimeDefault: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultPersist=2024-05-01T22:00:00.000Z
    ```
 
 ### Boolean
@@ -196,7 +196,7 @@ Supports `true` or `false` values.
 Example:
 
 ```yaml
-boolDefault: bool, default=true, defaultModel=false, defaultDatabase=true
+boolDefault: bool, default=true, defaultModel=false, defaultPersist=true
 ```
 
 ### Integer
@@ -206,7 +206,7 @@ Supports any integer value, e.g., `10`.
 Example:
 
 ```yaml
-intDefault: int, default=10, defaultModel=20, defaultDatabase=20
+intDefault: int, default=10, defaultModel=20, defaultPersist=20
 ```
 
 ### Double
@@ -216,7 +216,7 @@ Supports any double value, e.g., `10.5`.
 Example:
 
 ```yaml
-doubleDefault: double, default=10.5, defaultModel=20.5, defaultDatabase=20.5
+doubleDefault: double, default=10.5, defaultModel=20.5, defaultPersist=20.5
 ```
 
 ### String
@@ -226,8 +226,30 @@ Supports any string value, e.g., `"This is a string"` or `'This is a string'`.
 Example:
 
 ```yaml
-stringDefault: String, default='This is a string', defaultModel="This is a string", defaultDatabase="This is a string"
+stringDefault: String, default='This is a string', defaultModel="This is a string", defaultPersist="This is a string"
 ```
+
+### UuidValue
+
+Supports two types of default values:
+
+1. **UUID String Values**:
+   - A valid UUID string can be specified, e.g., `'550e8400-e29b-41d4-a716-446655440000'`.
+
+   Example:
+
+   ```yaml
+   uuidDefault: UuidValue, default='550e8400-e29b-41d4-a716-446655440000', defaultModel='550e8400-e29b-41d4-a716-446655440000', defaultPersist='550e8400-e29b-41d4-a716-446655440000'
+   ```
+
+2. **Random UUID**:
+   - You can use `"random"` to specify a random UUID. On the Dart side, this will be internally handled by `Uuid().v4obj()` to generate a UUID at runtime. On the database side, the `gen_random_uuid()` function is used to generate the UUID.
+
+   Example:
+
+   ```yaml
+   uuidDefaultRandom: UuidValue, default=random, defaultModel=random, defaultPersist=random
+   ```
 
 ### Usage Note
 
@@ -243,18 +265,21 @@ fields:
   dateTimeDefault: DateTime, default=now
 
   ### Sets the default value for a boolean field.
-  boolDefault: bool, defaultModel=false, defaultDatabase=true
+  boolDefault: bool, defaultModel=false, defaultPersist=true
 
   ### Sets the default value for an integer field.
-  intDefault: int, defaultDatabase=20
+  intDefault: int, defaultPersist=20
 
   ### Sets the default value for a double field.
-  doubleDefault: double, default=10.5, defaultDatabase=20.5
+  doubleDefault: double, default=10.5, defaultPersist=20.5
 
   ### Sets the default value for a string field.
   stringDefault: String, default="This is a string", defaultModel="This is a string"
+
+  ### Sets the default value for a UUID field.
+  uuidDefault: UuidValue, default=random, defaultModel=random, defaultPersist=random
 ```
 
 ### Coming Soon
 
-- **UuidValue**: Support for default values for `UuidValue` field type is coming soon.
+- **Duration**: Support for default values for the `Duration` field type is coming soon.
