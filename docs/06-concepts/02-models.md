@@ -234,7 +234,7 @@ stringDefault: String, default='This is a string', defaultModel="This is a strin
 Supports two types of default values:
 
 1. **UUID String Values**:
-   - A valid UUID string can be specified, e.g., `'550e8400-e29b-41d4-a716-446655440000'`.
+   - A valid UUID version 4 string can be specified, e.g., `'550e8400-e29b-41d4-a716-446655440000'`.
 
    Example:
 
@@ -243,7 +243,9 @@ Supports two types of default values:
    ```
 
 2. **Random UUID**:
-   - You can use `"random"` to specify a random UUID. On the Dart side, this will be internally handled by `Uuid().v4obj()` to generate a UUID at runtime. On the database side, the `gen_random_uuid()` function is used to generate the UUID.
+   - You can use `"random"` to specify a random UUID.
+     - `Uuid().v4obj()` will be used on the Dart side to generate the UUID.
+     - `gen_random_uuid()` will be used on the database side to generate the UUID.
 
    Example:
 
@@ -275,9 +277,6 @@ fields:
 
   ### Sets the default value for a string field.
   stringDefault: String, default="This is a string", defaultModel="This is a string"
-
-  ### Sets the default value for a UUID field.
-  uuidDefault: UuidValue, default=random, defaultModel=random, defaultPersist=random
 ```
 
 ### Coming Soon
