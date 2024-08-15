@@ -169,31 +169,29 @@ Serverpod supports defining default values for fields in your models. The follow
 
 ### DateTime
 
-Supports two types of default values:
+#### Supported Default Values:
 
-1. **Current Date and Time**:
-   - `now`
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Current Date and Time**   | `now`   | Sets the field to the current date and time. |
+| **Specific UTC DateTime**   | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time. |
 
-   Example:
+**Example:**
 
-   ```yaml
-   dateTimeDefault: DateTime, default=now, defaultModel=now, defaultPersist=now
-   ```
-
-2. **UTC DateTime String**:
-   - The format should be: `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'`
-
-   Example:
-
-   ```yaml
-   dateTimeDefault: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultPersist=2024-05-01T22:00:00.000Z
-   ```
+```yaml
+dateTimeDefaultNow: DateTime, default=now, defaultModel=now, defaultPersist=now
+dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultPersist=2024-05-01T22:00:00.000Z
+```
 
 ### Boolean
 
-Supports `true` or `false` values.
+#### Supported Default Values:
 
-Example:
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+
+**Example:**
 
 ```yaml
 boolDefault: bool, default=true, defaultModel=false, defaultPersist=true
@@ -201,9 +199,13 @@ boolDefault: bool, default=true, defaultModel=false, defaultPersist=true
 
 ### Integer
 
-Supports any integer value, e.g., `10`.
+#### Supported Default Values:
 
-Example:
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Integer Values**   | Any integer value | Sets the field to a specific integer value. |
+
+**Example:**
 
 ```yaml
 intDefault: int, default=10, defaultModel=20, defaultPersist=20
@@ -211,9 +213,13 @@ intDefault: int, default=10, defaultModel=20, defaultPersist=20
 
 ### Double
 
-Supports any double value, e.g., `10.5`.
+#### Supported Default Values:
 
-Example:
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Double Values**   | Any double value | Sets the field to a specific double value. |
+
+**Example:**
 
 ```yaml
 doubleDefault: double, default=10.5, defaultModel=20.5, defaultPersist=20.5
@@ -221,9 +227,13 @@ doubleDefault: double, default=10.5, defaultModel=20.5, defaultPersist=20.5
 
 ### String
 
-Supports any string value, e.g., `"This is a string"` or `'This is a string'`.
+#### Supported Default Values:
 
-Example:
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **String Values**   | Any string value | Sets the field to a specific string value. |
+
+**Example:**
 
 ```yaml
 stringDefault: String, default='This is a string', defaultModel="This is a string", defaultPersist="This is a string"
@@ -231,27 +241,19 @@ stringDefault: String, default='This is a string', defaultModel="This is a strin
 
 ### UuidValue
 
-Supports two types of default values:
+#### Supported Default Values:
 
-1. **UUID String Values**:
-   - A valid UUID version 4 string can be specified, e.g., `'550e8400-e29b-41d4-a716-446655440000'`.
+| Type               | Keyword  | Description |
+|--------------------|----------|-------------|
+| **Random UUID**    | `random` | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used. |
+| **UUID String**    | A valid UUID version 4 string | Assigns a specific UUID to the field. |
 
-   Example:
+**Example:**
 
-   ```yaml
-   uuidDefault: UuidValue, default='550e8400-e29b-41d4-a716-446655440000', defaultModel='550e8400-e29b-41d4-a716-446655440000', defaultPersist='550e8400-e29b-41d4-a716-446655440000'
-   ```
-
-2. **Random UUID**:
-   - You can use `"random"` to specify a random UUID.
-     - `Uuid().v4obj()` will be used on the Dart side to generate the UUID.
-     - `gen_random_uuid()` will be used on the database side to generate the UUID.
-
-   Example:
-
-   ```yaml
-   uuidDefaultRandom: UuidValue, default=random, defaultModel=random, defaultPersist=random
-   ```
+```yaml
+uuidDefaultRandom: UuidValue, default=random, defaultModel=random, defaultPersist=random
+uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000', defaultModel='550e8400-e29b-41d4-a716-446655440000', defaultPersist='550e8400-e29b-41d4-a716-446655440000'
+```
 
 ### Usage Note
 
