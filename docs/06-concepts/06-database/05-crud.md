@@ -118,6 +118,27 @@ var updatedCompanies = await Company.db.update(session, companies);
 
 This is an atomic operation, meaning no entries will be updated if any entry fails to be updated. The `update` method returns a `List` of the updated objects.
 
+### Update a specific column
+
+It is possible to target one or several columns that you want to mutate, meaning any other column will be left unmodified even if the dart object has introduced a change.
+
+Update a single row, the following code will update the company name, but will not change the address column.
+
+```dart
+var company = await Company.db.findById(session, companyId); 
+company.name = 'New name';
+company.address = 'Baker street'
+var updatedCompany = await Company.db.updateRow(session, company, columns: [Company.t.name]);
+```
+
+The same syntax is available for multiple rows.
+
+```dart
+var companies = await Company.db.find(session);
+companies = companies.map((c) => c.copyWith(name: 'New name', address: 'Baker Street')).toList();
+var updatedCompanies = await Company.db.update(session, companies, columns: [Company.t.name]);
+```
+
 ## Delete
 
 Deleting rows from the database is done in a similar way to updating rows. However, there are three delete operations available.
