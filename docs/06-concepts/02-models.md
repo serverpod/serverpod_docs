@@ -135,37 +135,32 @@ extension MyExtension on MyClass {
 }
 ```
 
-## Keywords
-
-|**Keyword**|Note|[class](#class)|[exception](#exception)|[enum](#enum)|
-|---|---|:---:|:---:|:---:|
-|[**values**](#enum)|A special key for enums with a list of all enum values.                                                                |||✅|
-|[**serialized**](#enum)|Sets the mode enums are serialized in                                                                              |||✅|
-|[**serverOnly**](#limiting-visibility-of-a-generated-class)|Boolean flag if code generator only should create the code for the server.     |✅|✅|✅|
-|[**table**](database/models)|A name for the database table, enables generation of database code.                                           |✅|||
-|[**managedMigration**](database/migrations#opt-out-of-migrations)|A boolean flag to opt out of the database migration system.                                        |✅|||
-|[**fields**](#class)|All fields in the generated class should be listed here.                                                              |✅|✅||
-|[**type (fields)**](#class)|Denotes the data type for a field.                                                                             |✅|✅||
-|[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
-|[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
-|[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.              |✅|||
-|[**name**](database/relations/one-to-one#bidirectional-relations)|Give a name to a relation to pair them.                        |✅|||
-|[**parent**](database/relations/one-to-one#with-an-id-field)|Sets the parent table on a relation.                                |✅|||
-|[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
-|[**onUpdate**](database/relations/referential-actions)|Set the referential actions when updating data in the database.           |✅|||
-|[**onDelete**](database/relations/referential-actions)|Set the referential actions when deleting data in the database.           |✅|||
-|[**optional**](database/relations/one-to-one#optional-relation)|A boolean flag to make a relation optional.                      |✅|||
-|[**indexes**](database/indexing)|Create indexes on your fields / columns.                                                        |✅|||
-|[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
-|[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
-|[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
-|[**default**](#default-values)|Sets the default value for both the model and the database. This keyword cannot be used with **relation**.                                                     |✅|||
-|[**defaultModel**](#default-values)|Sets the default value for the model side. This keyword cannot be used with **relation**.                                                   |✅|||
-|[**defaultPersist**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
-
 ## Default Values
 
-Serverpod supports defining default values for fields in your models. The following are the supported default values:
+Serverpod supports defining default values for fields in your models. These default values can be specified using three different keywords that determine how and where the defaults are applied:
+
+### Keywords
+
+- **default**: This keyword sets a default value for both the model (code) and the database (persisted data). It acts as a general fallback if more specific defaults aren't provided.
+- **defaultModel**: This keyword sets a default value specifically for the model (the code side). If `defaultModel` is not provided, the model will use the value specified by `default` if it's available.
+- **defaultPersist**: This keyword sets a default value specifically for the database. If `defaultPersist` is not provided, the database will use the value specified by `default` if it's available.
+
+### How Priorities Work
+
+- **For the model (code side):** If both `defaultModel` and `default` are provided, the model will use the `defaultModel` value. If `defaultModel` is not provided, it will fall back to using the `default` value.
+- **For the database (persisted data):** If both `defaultPersist` and `default` are provided, the database will use the `defaultPersist` value. If `defaultPersist` is not provided, it will fall back to using the `default` value.
+
+:::info
+
+When using `default` or `defaultModel` in combination with `defaultPersist`, it's important to understand how the interaction between these keywords affects the final value in the database.
+
+If you set a `default` or `defaultModel` value, the model's field or variable will have a value when it's passed to the database—it will not be `null`. Because of this, the SQL query will not use the `defaultPersist` value since the field already has a value assigned by the model. In essence, assigning a `default` or `defaultModel` is like directly providing a value to the field, and the database will use this provided value instead of its own default.
+
+This means that `defaultPersist` only comes into play when the model does not provide a value, allowing the database to apply its own default setting.
+
+:::
+
+### The following are the supported default values
 
 ### DateTime
 
@@ -179,8 +174,8 @@ Serverpod supports defining default values for fields in your models. The follow
 **Example:**
 
 ```yaml
-dateTimeDefaultNow: DateTime, default=now, defaultModel=now, defaultPersist=now
-dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultPersist=2024-05-01T22:00:00.000Z
+dateTimeDefaultNow: DateTime, default=now
+dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 ```
 
 ### Boolean
@@ -194,7 +189,7 @@ dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=202
 **Example:**
 
 ```yaml
-boolDefault: bool, default=true, defaultModel=false, defaultPersist=true
+boolDefault: bool, default=true
 ```
 
 ### Integer
@@ -208,7 +203,7 @@ boolDefault: bool, default=true, defaultModel=false, defaultPersist=true
 **Example:**
 
 ```yaml
-intDefault: int, default=10, defaultModel=20, defaultPersist=20
+intDefault: int, default=10
 ```
 
 ### Double
@@ -222,7 +217,7 @@ intDefault: int, default=10, defaultModel=20, defaultPersist=20
 **Example:**
 
 ```yaml
-doubleDefault: double, default=10.5, defaultModel=20.5, defaultPersist=20.5
+doubleDefault: double, default=10.5
 ```
 
 ### String
@@ -236,7 +231,7 @@ doubleDefault: double, default=10.5, defaultModel=20.5, defaultPersist=20.5
 **Example:**
 
 ```yaml
-stringDefault: String, default='This is a string', defaultModel="This is a string", defaultPersist="This is a string"
+stringDefault: String, default='This is a string'
 ```
 
 ### UuidValue
@@ -251,8 +246,8 @@ stringDefault: String, default='This is a string', defaultModel="This is a strin
 **Example:**
 
 ```yaml
-uuidDefaultRandom: UuidValue, default=random, defaultModel=random, defaultPersist=random
-uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000', defaultModel='550e8400-e29b-41d4-a716-446655440000', defaultPersist='550e8400-e29b-41d4-a716-446655440000'
+uuidDefaultRandom: UuidValue, default=random
+uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
 ```
 
 ### Usage Note
@@ -281,6 +276,30 @@ fields:
   stringDefault: String, default="This is a string", defaultModel="This is a string"
 ```
 
-### Coming Soon
+## Keywords
 
-- **Duration**: Support for default values for the `Duration` field type is coming soon.
+|**Keyword**|Note|[class](#class)|[exception](#exception)|[enum](#enum)|
+|---|---|:---:|:---:|:---:|
+|[**values**](#enum)|A special key for enums with a list of all enum values.                                                                |||✅|
+|[**serialized**](#enum)|Sets the mode enums are serialized in                                                                              |||✅|
+|[**serverOnly**](#limiting-visibility-of-a-generated-class)|Boolean flag if code generator only should create the code for the server.     |✅|✅|✅|
+|[**table**](database/models)|A name for the database table, enables generation of database code.                                           |✅|||
+|[**managedMigration**](database/migrations#opt-out-of-migrations)|A boolean flag to opt out of the database migration system.                                        |✅|||
+|[**fields**](#class)|All fields in the generated class should be listed here.                                                              |✅|✅||
+|[**type (fields)**](#class)|Denotes the data type for a field.                                                                             |✅|✅||
+|[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
+|[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
+|[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.              |✅|||
+|[**name**](database/relations/one-to-one#bidirectional-relations)|Give a name to a relation to pair them.                        |✅|||
+|[**parent**](database/relations/one-to-one#with-an-id-field)|Sets the parent table on a relation.                                |✅|||
+|[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
+|[**onUpdate**](database/relations/referential-actions)|Set the referential actions when updating data in the database.           |✅|||
+|[**onDelete**](database/relations/referential-actions)|Set the referential actions when deleting data in the database.           |✅|||
+|[**optional**](database/relations/one-to-one#optional-relation)|A boolean flag to make a relation optional.                      |✅|||
+|[**indexes**](database/indexing)|Create indexes on your fields / columns.                                                        |✅|||
+|[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
+|[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
+|[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
+|[**default**](#default-values)|Sets the default value for both the model and the database. This keyword cannot be used with **relation**.                                                     |✅|||
+|[**defaultModel**](#default-values)|Sets the default value for the model side. This keyword cannot be used with **relation**.                                                   |✅|||
+|[**defaultPersist**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
