@@ -243,7 +243,7 @@ CRUD operations are available through the static `db` method on all classes with
 
 :::tip
 
-To learn more about database CRUD operations, see the [CRUD](concepts/database/CRUD) section.
+To learn more about database CRUD operations, see the [CRUD](concepts/database/crud) section.
 
 :::
 

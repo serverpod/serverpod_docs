@@ -149,8 +149,8 @@ extension MyExtension on MyClass {
 |[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
 |[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
 |[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.              |✅|||
-|[**name**](database/relations/one-to-one#bidirectional-representation)|Give a name to a relation to pair them.                   |✅|||
-|[**parent**](database/relations/one-to-one#one-side-defined)|Sets the parent table on a relation.                                |✅|||
+|[**name**](database/relations/one-to-one#bidirectional-relations)|Give a name to a relation to pair them.                        |✅|||
+|[**parent**](database/relations/one-to-one#with-an-id-field)|Sets the parent table on a relation.                                |✅|||
 |[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
 |[**onUpdate**](database/relations/referential-actions)|Set the referential actions when updating data in the database.           |✅|||
 |[**onDelete**](database/relations/referential-actions)|Set the referential actions when deleting data in the database.           |✅|||
