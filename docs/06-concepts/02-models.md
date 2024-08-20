@@ -135,6 +135,147 @@ extension MyExtension on MyClass {
 }
 ```
 
+## Default Values
+
+Serverpod supports defining default values for fields in your models. These default values can be specified using three different keywords that determine how and where the defaults are applied:
+
+### Keywords
+
+- **default**: This keyword sets a default value for both the model (code) and the database (persisted data). It acts as a general fallback if more specific defaults aren't provided.
+- **defaultModel**: This keyword sets a default value specifically for the model (the code side). If `defaultModel` is not provided, the model will use the value specified by `default` if it's available.
+- **defaultPersist**: This keyword sets a default value specifically for the database. If `defaultPersist` is not provided, the database will use the value specified by `default` if it's available.
+
+### How Priorities Work
+
+- **For the model (code side):** If both `defaultModel` and `default` are provided, the model will use the `defaultModel` value. If `defaultModel` is not provided, it will fall back to using the `default` value.
+- **For the database (persisted data):** If both `defaultPersist` and `default` are provided, the database will use the `defaultPersist` value. If `defaultPersist` is not provided, it will fall back to using the `default` value.
+
+:::info
+
+When using `default` or `defaultModel` in combination with `defaultPersist`, it's important to understand how the interaction between these keywords affects the final value in the database.
+
+If you set a `default` or `defaultModel` value, the model's field or variable will have a value when it's passed to the database—it will not be `null`. Because of this, the SQL query will not use the `defaultPersist` value since the field already has a value assigned by the model. In essence, assigning a `default` or `defaultModel` is like directly providing a value to the field, and the database will use this provided value instead of its own default.
+
+This means that `defaultPersist` only comes into play when the model does not provide a value, allowing the database to apply its own default setting.
+
+:::
+
+### The following are the supported default values
+
+### DateTime
+
+#### Supported Default Values
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Current Date and Time**   | `now`   | Sets the field to the current date and time. |
+| **Specific UTC DateTime**   | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time. |
+
+**Example:**
+
+```yaml
+dateTimeDefaultNow: DateTime, default=now
+dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
+```
+
+### Boolean
+
+#### Supported Default Values
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+
+**Example:**
+
+```yaml
+boolDefault: bool, default=true
+```
+
+### Integer
+
+#### Supported Default Values
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Integer Values**   | Any integer value | Sets the field to a specific integer value. |
+
+**Example:**
+
+```yaml
+intDefault: int, default=10
+```
+
+### Double
+
+#### Supported Default Values
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Double Values**   | Any double value | Sets the field to a specific double value. |
+
+**Example:**
+
+```yaml
+doubleDefault: double, default=10.5
+```
+
+### String
+
+#### Supported Default Values
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **String Values**   | Any string value | Sets the field to a specific string value. |
+
+**Example:**
+
+```yaml
+stringDefault: String, default='This is a string'
+```
+
+### UuidValue
+
+#### Supported Default Values
+
+| Type               | Keyword  | Description |
+|--------------------|----------|-------------|
+| **Random UUID**    | `random` | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used. |
+| **UUID String**    | A valid UUID version 4 string | Assigns a specific UUID to the field. |
+
+**Example:**
+
+```yaml
+uuidDefaultRandom: UuidValue, default=random
+uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
+```
+
+### Usage Note
+
+You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
+
+### Example
+
+```yaml
+class: DefaultValue
+table: default_value
+fields:
+  ### Sets the current date and time as the default value.
+  dateTimeDefault: DateTime, default=now
+
+  ### Sets the default value for a boolean field.
+  boolDefault: bool, defaultModel=false, defaultPersist=true
+
+  ### Sets the default value for an integer field.
+  intDefault: int, defaultPersist=20
+
+  ### Sets the default value for a double field.
+  doubleDefault: double, default=10.5, defaultPersist=20.5
+
+  ### Sets the default value for a string field.
+  stringDefault: String, default="This is a string", defaultModel="This is a string"
+```
+
 ## Keywords
 
 |**Keyword**|Note|[class](#class)|[exception](#exception)|[enum](#enum)|
@@ -161,100 +302,4 @@ extension MyExtension on MyClass {
 |[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
 |[**default**](#default-values)|Sets the default value for both the model and the database. This keyword cannot be used with **relation**.                                                     |✅|||
 |[**defaultModel**](#default-values)|Sets the default value for the model side. This keyword cannot be used with **relation**.                                                   |✅|||
-|[**defaultDatabase**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
-
-## Default Values
-
-Serverpod supports defining default values for fields in your models. Following are the supported default values:
-
-### DateTime
-
-Supports two types of default values:
-
-1. **Current Date and Time**:
-   - `now`
-
-   Example:
-
-   ```yaml
-   dateTimeDefault: DateTime, default=now, defaultModel=now, defaultDatabase=now
-   ```
-
-2. **UTC DateTime String**:
-   - The format should be: `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'`
-
-   Example:
-
-   ```yaml
-   dateTimeDefault: DateTime, default=2024-05-01T22:00:00.000Z, defaultModel=2024-05-01T22:00:00.000Z, defaultDatabase=2024-05-01T22:00:00.000Z
-   ```
-
-### Boolean
-
-Supports `true` or `false` values.
-
-Example:
-
-```yaml
-boolDefault: bool, default=true, defaultModel=false, defaultDatabase=true
-```
-
-### Integer
-
-Supports any integer value, e.g., `10`.
-
-Example:
-
-```yaml
-intDefault: int, default=10, defaultModel=20, defaultDatabase=20
-```
-
-### Double
-
-Supports any double value, e.g., `10.5`.
-
-Example:
-
-```yaml
-doubleDefault: double, default=10.5, defaultModel=20.5, defaultDatabase=20.5
-```
-
-### String
-
-Supports any string value, e.g., `"This is a string"` or `'This is a string'`.
-
-Example:
-
-```yaml
-stringDefault: String, default='This is a string', defaultModel="This is a string", defaultDatabase="This is a string"
-```
-
-### Usage Note
-
-You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
-
-### Example
-
-```yaml
-class: DefaultValue
-table: default_value
-fields:
-  ### Sets the current date and time as the default value.
-  dateTimeDefault: DateTime, default=now
-
-  ### Sets the default value for a boolean field.
-  boolDefault: bool, defaultModel=false, defaultDatabase=true
-
-  ### Sets the default value for an integer field.
-  intDefault: int, defaultDatabase=20
-
-  ### Sets the default value for a double field.
-  doubleDefault: double, default=10.5, defaultDatabase=20.5
-
-  ### Sets the default value for a string field.
-  stringDefault: String, default="This is a string", defaultModel="This is a string"
-```
-
-### Coming Soon
-
-- **UuidValue**: Support for default values for `UuidValue` field type is coming soon.
+|[**defaultPersist**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
