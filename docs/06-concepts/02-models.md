@@ -250,6 +250,20 @@ uuidDefaultRandom: UuidValue, default=random
 uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
 ```
 
+### Duration
+
+#### Supported Default Values
+
+| Type                          | Keyword  | Description |
+|-------------------------------|----------|-------------|
+| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value, e.g., `1d 2h 10min 30s 100ms`. |
+
+**Example:**
+
+```yaml
+durationDefault: Duration, default=1d 2h 10min 30s 100ms
+```
+
 ### Usage Note
 
 You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
@@ -274,6 +288,9 @@ fields:
 
   ### Sets the default value for a string field.
   stringDefault: String, default="This is a string", defaultModel="This is a string"
+
+  ### Sets the default value for a duration field.
+  durationDefault: Duration, default=1d 2h 10min 30s 100ms
 ```
 
 ## Keywords
