@@ -256,7 +256,7 @@ uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
 
 | Type                          | Keyword  | Description |
 |-------------------------------|----------|-------------|
-| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value, e.g., `1d 2h 10min 30s 100ms`. |
+| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. Each part of the format represents a different unit of time: `d` for days, `h` for hours, `min` for minutes, `s` for seconds, and `ms` for milliseconds. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
 
 **Example:**
 
@@ -288,9 +288,6 @@ fields:
 
   ### Sets the default value for a string field.
   stringDefault: String, default="This is a string", defaultModel="This is a string"
-
-  ### Sets the default value for a duration field.
-  durationDefault: Duration, default=1d 2h 10min 30s 100ms
 ```
 
 ## Keywords
