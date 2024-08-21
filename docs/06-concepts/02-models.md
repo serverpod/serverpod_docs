@@ -162,6 +162,20 @@ This means that `defaultPersist` only comes into play when the model does not pr
 
 ### The following are the supported default values
 
+### Boolean
+
+#### Supported Default Values
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+
+**Example:**
+
+```yaml
+boolDefault: bool, default=true
+```
+
 ### DateTime
 
 #### Supported Default Values
@@ -178,18 +192,32 @@ dateTimeDefaultNow: DateTime, default=now
 dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 ```
 
-### Boolean
+### Double
 
 #### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
-| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+| **Double Values**   | Any double value | Sets the field to a specific double value. |
 
 **Example:**
 
 ```yaml
-boolDefault: bool, default=true
+doubleDefault: double, default=10.5
+```
+
+### Duration
+
+#### Supported Default Values
+
+| Type                          | Keyword  | Description |
+|-------------------------------|----------|-------------|
+| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. Each part of the format represents a different unit of time: `d` for days, `h` for hours, `min` for minutes, `s` for seconds, and `ms` for milliseconds. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
+
+**Example:**
+
+```yaml
+durationDefault: Duration, default=1d 2h 10min 30s 100ms
 ```
 
 ### Integer
@@ -204,20 +232,6 @@ boolDefault: bool, default=true
 
 ```yaml
 intDefault: int, default=10
-```
-
-### Double
-
-#### Supported Default Values
-
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Double Values**   | Any double value | Sets the field to a specific double value. |
-
-**Example:**
-
-```yaml
-doubleDefault: double, default=10.5
 ```
 
 ### String
@@ -248,20 +262,6 @@ stringDefault: String, default='This is a string'
 ```yaml
 uuidDefaultRandom: UuidValue, default=random
 uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
-```
-
-### Duration
-
-#### Supported Default Values
-
-| Type                          | Keyword  | Description |
-|-------------------------------|----------|-------------|
-| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. Each part of the format represents a different unit of time: `d` for days, `h` for hours, `min` for minutes, `s` for seconds, and `ms` for milliseconds. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
-
-**Example:**
-
-```yaml
-durationDefault: Duration, default=1d 2h 10min 30s 100ms
 ```
 
 ### Usage Note
