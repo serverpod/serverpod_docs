@@ -150,6 +150,8 @@ Serverpod supports defining default values for fields in your models. These defa
 - **For the model (code side):** If both `defaultModel` and `default` are provided, the model will use the `defaultModel` value. If `defaultModel` is not provided, it will fall back to using the `default` value.
 - **For the database (persisted data):** If both `defaultPersist` and `default` are provided, the database will use the `defaultPersist` value. If `defaultPersist` is not provided, it will fall back to using the `default` value.
 
+You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
+
 :::info
 
 When using `default` or `defaultModel` in combination with `defaultPersist`, it's important to understand how the interaction between these keywords affects the final value in the database.
@@ -160,11 +162,9 @@ This means that `defaultPersist` only comes into play when the model does not pr
 
 :::
 
-### The following are the supported default values
+### Supported default values
 
 #### Boolean
-
-##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -177,8 +177,6 @@ boolDefault: bool, default=true
 ```
 
 #### DateTime
-
-##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -194,8 +192,6 @@ dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 
 #### Double
 
-##### Supported Default Values
-
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
 | **Double Values**   | Any double value | Sets the field to a specific double value. |
@@ -207,8 +203,6 @@ doubleDefault: double, default=10.5
 ```
 
 #### Duration
-
-##### Supported Default Values
 
 | Type                          | Keyword  | Description |
 |-------------------------------|----------|-------------|
@@ -222,8 +216,6 @@ durationDefault: Duration, default=1d 2h 10min 30s 100ms
 
 #### Integer
 
-##### Supported Default Values
-
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
 | **Integer Values**   | Any integer value | Sets the field to a specific integer value. |
@@ -235,8 +227,6 @@ intDefault: int, default=10
 ```
 
 #### String
-
-##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -250,8 +240,6 @@ stringDefault: String, default='This is a string'
 
 #### UuidValue
 
-##### Supported Default Values
-
 | Type               | Keyword  | Description |
 |--------------------|----------|-------------|
 | **Random UUID**    | `random` | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used. |
@@ -263,10 +251,6 @@ stringDefault: String, default='This is a string'
 uuidDefaultRandom: UuidValue, default=random
 uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
 ```
-
-### Usage Note
-
-You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
 
 ### Example
 
