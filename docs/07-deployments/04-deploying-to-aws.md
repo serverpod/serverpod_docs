@@ -158,7 +158,7 @@ You can fix this by the following example. In the example, we are using the dart
           sdk: 3.5
 ```
 
-1. In `server/deploy/aws/terraform/init-script.sh` change the version of installed dart like example
+1. In `server/deploy/aws/terraform/init-script.sh` change the version of dart installed on the machine.
 
 ```bash
 wget -q https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.1/sdk/dartsdk-linux-x64-release.zip
