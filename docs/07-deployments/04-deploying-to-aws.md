@@ -89,7 +89,33 @@ If you deploy your servers in a region other than Oregon (us-west-2), you will n
 
 By default, the Terraform scripts are configured to use a minimal setup to reduce costs for running your Serverpod. You can quickly turn on additional features, such as enabling Redis or adding a staging server by changing values in the script. You can also change these values later and redo the deployment step.
 
-Finally, to complete your Serverpod configuration, you will need to edit the `config/staging.yaml` and `config/production.yaml` files. In these files, you replace the `examplepod.com` domain with the domain you are using for your server.
+Finally, to complete your Serverpod configuration, you will need to edit the `config/staging.yaml` and `config/production.yaml` files. In these files you should:
+
+1. Replace the `examplepod.com` domain with the domain you are using for your server.
+
+2. Replace the database with the database url from the RDS. Replace the url with the corresponding environment yaml file in `mypod_server/config` under the `database.host` section. The following command should help you retrieve the URL for your database.
+
+```bash
+aws rds describe-db-instances --db-instance-identifier ${YOUR_DB_INSTANCE_ID} | jq ".DBInstances.[0].Endpoint.Address" -r
+```
+
+:::info
+
+Ensure that you have ssl enabled for the corresponding environment as RDS enable ssl by default.
+You can do so by adding `requireSsl: true` in your config file in `server/config/production.yaml` and/or `server/config/staging.yaml`
+
+Example:
+
+```yaml
+database:
+  host: redis.private-production.examplepod.com
+  port: 5432
+  name: serverpod
+  user: postgres
+  requireSsl: true
+```
+
+:::
 
 ## Deploy your infrastructure
 
@@ -118,6 +144,28 @@ _Connect to the database with Postico._
 
 ## Deploy your code
 
+:::caution
+
+Using an old version of Serverpod cli will generate the Github action file containing old dart version that might not be the one you are using.
+You can fix this by the following example. In the example, we are using the dart version v3.5.1. You can adjust to the dart version that you are using.
+
+1. In `./github/workflows/deployment-aws.yml` use
+
+```yaml
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.6.5
+        with:
+          sdk: 3.5
+```
+
+1. In `server/deploy/aws/terraform/init-script.sh` change the version of dart installed on the machine.
+
+```bash
+wget -q https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.1/sdk/dartsdk-linux-x64-release.zip
+```
+
+:::
+
 We now have our servers, load balancers, database, and other required infrastructure. The only missing part is that our code is not yet up and running. There are two ways to deploy the code from our Github project. We can either push the code to a branch called `deployment-aws-production` or manually trigger the deployment action from the Github webpage.
 
 :::info
@@ -145,6 +193,12 @@ Chances are that if you followed the instructions, you have a Serverpod deployme
 ### Signing in to your instances
 
 You can find a list of your currently running EC2 instances by navigating to _EC2 > Instances_. Click on one of the instances to go to its summary page. From there, click _Connect_. On the _Connect to instance_ page, click _Connect_, and AWS will open up a console window with access to your EC2 instance.
+
+After Signing in to your instance, you should check if the service is running with `systemctl status serverpod.service`
+
+If the service is running, you can look into the serverpod error log in `serverpod.err` and server log in `serverpod.log` in the home directory.
+
+If all checks out, try to use `curl localhost:8080` to see if the service can be reached from local. If we get the expected response, we know that the service is running properly.
 
 ### External dependencies and submodules
 
