@@ -162,9 +162,9 @@ This means that `defaultPersist` only comes into play when the model does not pr
 
 ### The following are the supported default values
 
-### Boolean
+#### Boolean
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -176,9 +176,9 @@ This means that `defaultPersist` only comes into play when the model does not pr
 boolDefault: bool, default=true
 ```
 
-### DateTime
+#### DateTime
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -192,9 +192,9 @@ dateTimeDefaultNow: DateTime, default=now
 dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 ```
 
-### Double
+#### Double
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -206,9 +206,9 @@ dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 doubleDefault: double, default=10.5
 ```
 
-### Duration
+#### Duration
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type                          | Keyword  | Description |
 |-------------------------------|----------|-------------|
@@ -220,9 +220,9 @@ doubleDefault: double, default=10.5
 durationDefault: Duration, default=1d 2h 10min 30s 100ms
 ```
 
-### Integer
+#### Integer
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -234,9 +234,9 @@ durationDefault: Duration, default=1d 2h 10min 30s 100ms
 intDefault: int, default=10
 ```
 
-### String
+#### String
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -248,9 +248,9 @@ intDefault: int, default=10
 stringDefault: String, default='This is a string'
 ```
 
-### UuidValue
+#### UuidValue
 
-#### Supported Default Values
+##### Supported Default Values
 
 | Type               | Keyword  | Description |
 |--------------------|----------|-------------|
