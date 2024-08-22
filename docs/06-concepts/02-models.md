@@ -145,10 +145,12 @@ Serverpod supports defining default values for fields in your models. These defa
 - **defaultModel**: This keyword sets a default value specifically for the model (the code side). If `defaultModel` is not provided, the model will use the value specified by `default` if it's available.
 - **defaultPersist**: This keyword sets a default value specifically for the database. If `defaultPersist` is not provided, the database will use the value specified by `default` if it's available.
 
-### How Priorities Work
+### How priorities work
 
 - **For the model (code side):** If both `defaultModel` and `default` are provided, the model will use the `defaultModel` value. If `defaultModel` is not provided, it will fall back to using the `default` value.
 - **For the database (persisted data):** If both `defaultPersist` and `default` are provided, the database will use the `defaultPersist` value. If `defaultPersist` is not provided, it will fall back to using the `default` value.
+
+You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
 
 :::info
 
@@ -160,11 +162,21 @@ This means that `defaultPersist` only comes into play when the model does not pr
 
 :::
 
-### The following are the supported default values
+### Supported default values
 
-### DateTime
+#### Boolean
 
-#### Supported Default Values
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+
+**Example:**
+
+```yaml
+boolDefault: bool, default=true
+```
+
+#### DateTime
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -178,37 +190,7 @@ dateTimeDefaultNow: DateTime, default=now
 dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 ```
 
-### Boolean
-
-#### Supported Default Values
-
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
-
-**Example:**
-
-```yaml
-boolDefault: bool, default=true
-```
-
-### Integer
-
-#### Supported Default Values
-
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Integer Values**   | Any integer value | Sets the field to a specific integer value. |
-
-**Example:**
-
-```yaml
-intDefault: int, default=10
-```
-
-### Double
-
-#### Supported Default Values
+#### Double
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -220,9 +202,31 @@ intDefault: int, default=10
 doubleDefault: double, default=10.5
 ```
 
-### String
+#### Duration
 
-#### Supported Default Values
+| Type                          | Keyword  | Description |
+|-------------------------------|----------|-------------|
+| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. Each part of the format represents a different unit of time: `d` for days, `h` for hours, `min` for minutes, `s` for seconds, and `ms` for milliseconds. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
+
+**Example:**
+
+```yaml
+durationDefault: Duration, default=1d 2h 10min 30s 100ms
+```
+
+#### Integer
+
+| Type                       | Keyword | Description |
+|----------------------------|---------|-------------|
+| **Integer Values**   | Any integer value | Sets the field to a specific integer value. |
+
+**Example:**
+
+```yaml
+intDefault: int, default=10
+```
+
+#### String
 
 | Type                       | Keyword | Description |
 |----------------------------|---------|-------------|
@@ -234,9 +238,7 @@ doubleDefault: double, default=10.5
 stringDefault: String, default='This is a string'
 ```
 
-### UuidValue
-
-#### Supported Default Values
+#### UuidValue
 
 | Type               | Keyword  | Description |
 |--------------------|----------|-------------|
@@ -249,10 +251,6 @@ stringDefault: String, default='This is a string'
 uuidDefaultRandom: UuidValue, default=random
 uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
 ```
-
-### Usage Note
-
-You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
 
 ### Example
 
