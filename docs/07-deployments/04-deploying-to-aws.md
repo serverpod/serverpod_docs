@@ -102,7 +102,7 @@ For example if you are using Dart 3.5.1, you can specify like the following:
 
 :::caution
 
-For users who generated the project with Serverpod CLI version `<=2.0.2`. You can upgrade dart by adding a few lines the code under `mypod_server/deploy/aws/scripts/install_dependencies`.
+For users who generated the project with the Serverpod CLI version `<=2.0.2`. You can upgrade dart by adding a few lines the code under `mypod_server/deploy/aws/scripts/install_dependencies`.
 You can copy the lines of code needed as indicated in the following code block.
 
 ```bash
