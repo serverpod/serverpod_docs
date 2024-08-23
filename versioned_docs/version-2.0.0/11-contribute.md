@@ -36,10 +36,12 @@ Tests may not yet work if running on a Windows machine. Mac or Linux is recommen
 
 Running single individual tests is useful when you are working on a specific feature. To do it, you will need to manually start the test server, then run the integration tests from the `serverpod` package.
 
-1. Add an entry for the test server at the end of your `/etc/hosts file`.
+1. Add entries for the test server, postgres and redis at the end of your `/etc/hosts file`.
 
     ```text
     127.0.0.1 serverpod_test_server
+    127.0.0.1 postgres
+    127.0.0.1 redis
     ```
 
 2. Start the Docker container for the test server.
