@@ -77,6 +77,86 @@ Sign in to Github and find your project’s settings. Navigate to _Secrets > Act
 
 _Your Github Action secrets after they have been configured._
 
+## Configure Dart Version
+
+You should run your deployment using the same dart version as your set-up locally. There are 2 different places that you need to specify for your AWS deployment:
+
+1. In file `.github/workflows/deployment-aws.yml`, under the steps **Setup Dart SDK**, you can set your Dart SDK version.
+It is sufficient to specify to minor version. For example, if you are using Dart `3.5.1`, you can write `3.5`.
+
+    ```yaml
+          - name: Setup Dart SDK
+            uses: dart-lang/setup-dart@v1.6.5
+            with:
+              sdk: ${MINOR_DART_SDK_VERSION}
+    ```
+
+1. In file `mypod_server/deploy/aws/scripts/install_dependencies`, you can specify on top of the page the version of Dart SDK that you are using after `DART_VERSION=`.
+For example if you are using Dart 3.5.1, you can specify like the following:
+
+    ```bash
+    #!/bin/bash
+    DART_VERSION=3.5.1
+    
+    ```
+
+:::caution
+
+For users who generated the project with Serverpod CLI version `<=2.0.2`. You can upgrade dart by adding a few lines the code under `mypod_server/deploy/aws/scripts/install_dependencies`.
+You can copy the lines of code needed as indicated in the following code block.
+
+```bash
+#!/bin/bash
+
+#### COPY THE CODE FROM HERE
+DART_VERSION=3.5.1
+
+# Uncomment the following code if you have already generated the project with the older version of serverpod cli
+# What this code do is to remove our previous way of setting dart version in the launch template
+if [ -f "/etc/profile.d/script.sh" ]; then
+    sudo rm /etc/profile.d/script.sh
+fi
+
+## install specified dart version if it is not present on the machine
+
+if [ ! -d "/usr/lib/dart$DART_VERSION" ]; then
+  wget -q https://storage.googleapis.com/dart-archive/channels/stable/release/$DART_VERSION/sdk/dartsdk-linux-x64-release.zip -P /tmp
+  cd /tmp || exit
+  unzip -q dartsdk-linux-x64-release.zip
+  sudo mv dart-sdk/ /usr/lib/dart$DART_VERSION/
+  sudo chmod -R 755 /usr/lib/dart$DART_VERSION/
+  rm -rf dartsdk-linux-x64-release.zip
+fi
+
+## make symlink to use this dart as default
+sudo ln -sf "/usr/lib/dart$DART_VERSION/bin/dart" /usr/local/bin/dart
+
+#### STOP COPYING THE CODE FROM HERE
+
+#### THE FOLLOWING SHOULD BE THE SAME AS THE PREVIOUS CODE
+cat > /lib/systemd/system/serverpod.service << EOF
+[Unit]
+Description=Serverpod server
+After=multi-user.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user
+ExecStart=/home/ec2-user/serverpod/active/mypod_server/deploy/aws/scripts/run_serverpod
+Restart=always
+
+[Install]
+WantedBy=muti-user.target
+WantedBy=network-online.target
+EOF
+
+systemctl daemon-reload
+```
+
+This install the Dart SDK on the machine and change the default Dart SDK version on the machine
+
+:::
+
 ## Configure Serverpod
 
 You acquired a hosted zone id and two certificate ARNs from AWS in the previous steps. You will need these to configure your Serverpod deployment scripts. You find the Terraform scripts in your server’s `aws/terraform` folder. Open up the `config.auto.fvars` file. Most of the file is already configured, including your project’s name. You will need to fill in the variables: `hosted_zone_id`, `top_domain`, `certificate_arn`, and `cloudfront_certificate_arn`.
