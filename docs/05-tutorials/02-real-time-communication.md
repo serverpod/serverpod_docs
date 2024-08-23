@@ -70,7 +70,6 @@ serverpod generate
 
 Next, we'll build the server. We need to create a new endpoint. An endpoint is a connection point for the client to interact with the server. In Serverpod, you create endpoints by extending the `Endpoint` class and placing it in the `lib/src/endpoints` directory. The endpoint will manage our pixel data and handle client updates.
 
-
 We will start by creating a `PixoramaEndpoint` class, which we place in a file called `pixorama_endpoint.dart` in the `lib/src/endpoints` directory.
 
 ```dart
@@ -393,6 +392,7 @@ flutter run -d chrome
 You can also start a second instance of the app to see real-time updates reflected across both instances.
 
 ## Conclusion
+
 This project was a brief introduction to building real-time apps with Flutter and Serverpod. With less than a page of code on the server side, we created a collaborative drawing app that's both fun and functional. You can find the full Pixorama code on GitHub here:
 [https://github.com/serverpod/pixorama](https://github.com/serverpod/pixorama)
 
