@@ -50,3 +50,35 @@ catch(e) {
   print('Something else went wrong.');
 }
 ```
+
+### Default Values in Exceptions
+
+Serverpod supports the use of default values for fields in exceptions, just like it does for models. This feature allows you to define default values for any supported field type directly within your exception definitions.
+
+#### How to Define Default Values
+
+To define a default value for a field in an exception, simply specify the `default` or `defaultModel` keywords, just as you would in a model.
+
+**Example:**
+
+```yaml
+exception: MyException
+fields:
+  message: String, default="An error occurred"
+  errorCode: int, default=1001
+```
+
+In the example above:
+
+- The `message` field will default to `"An error occurred"` if not provided.
+- The `errorCode` field will default to `1001`.
+
+#### Important Note
+
+Since exceptions are never persisted to the database, we do not support `defaultPersist` for exception fields. This means that only `default` and `defaultModel` are relevant in this context.
+
+However, it’s important to note that `defaultModel` will override `default` if both are specified. Since exceptions only exist in the model (Dart code) and are not persisted, using `defaultModel` in combination with `default` is redundant. The `defaultModel` value will always take precedence over `default`, making it unnecessary to use both in conjunction.
+
+#### Learn More
+
+For a complete explanation of how default values work, including the supported types and the behavior of the `default` and `defaultModel` keywords, please refer to the [Default Values](models#default-values) section in the [Working with Models](models) documentation.
