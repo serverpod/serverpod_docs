@@ -166,9 +166,9 @@ This means that `defaultPersist` only comes into play when the model does not pr
 
 #### Boolean
 
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Boolean Values**   | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+| Type            | Keyword            | Description                                           |
+|-----------------|--------------------|-------------------------------------------------------|
+| **Boolean**     | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
 
 **Example:**
 
@@ -178,10 +178,10 @@ boolDefault: bool, default=true
 
 #### DateTime
 
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Current Date and Time**   | `now`   | Sets the field to the current date and time. |
-| **Specific UTC DateTime**   | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time. |
+| Type                    | Keyword       | Description                                                  |
+|-------------------------|---------------|--------------------------------------------------------------|
+| **Current Date and Time** | `now`        | Sets the field to the current date and time.                  |
+| **Specific UTC DateTime** | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time. |
 
 **Example:**
 
@@ -192,9 +192,9 @@ dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 
 #### Double
 
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Double Values**   | Any double value | Sets the field to a specific double value. |
+| Type            | Keyword            | Description                                           |
+|-----------------|--------------------|-------------------------------------------------------|
+| **Double**      | Any double value    | Sets the field to a specific double value.            |
 
 **Example:**
 
@@ -204,9 +204,9 @@ doubleDefault: double, default=10.5
 
 #### Duration
 
-| Type                          | Keyword  | Description |
-|-------------------------------|----------|-------------|
-| **Specific Duration**         | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. Each part of the format represents a different unit of time: `d` for days, `h` for hours, `min` for minutes, `s` for seconds, and `ms` for milliseconds. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
+| Type                | Keyword             | Description                                                                 |
+|---------------------|---------------------|-----------------------------------------------------------------------------|
+| **Specific Duration** | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
 
 **Example:**
 
@@ -214,11 +214,48 @@ doubleDefault: double, default=10.5
 durationDefault: Duration, default=1d 2h 10min 30s 100ms
 ```
 
+#### Enum
+
+| Type            | Keyword            | Description                                           |
+|-----------------|--------------------|-------------------------------------------------------|
+| **Enum**        | Any valid enum value | Sets the field to a specific enum value.               |
+
+**Example:**
+
+```yaml
+enum: ByNameEnum
+serialized: byName
+values:
+  - byName1
+  - byName2
+```
+
+```yaml
+enum: ByIndexEnum
+serialized: byIndex
+values:
+  - byIndex1
+  - byIndex2
+```
+
+```yaml
+class: EnumDefault
+table: enum_default
+fields:
+  byNameEnumDefault: ByNameEnum, default=byName1
+  byIndexEnumDefault: ByIndexEnum, default=byIndex1
+```
+
+In this example:
+
+- The `byNameEnumDefault` field will default to `'byName1'` in the database.
+- The `byIndexEnumDefault` field will default to `0` (the index of `byIndex1`).
+
 #### Integer
 
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **Integer Values**   | Any integer value | Sets the field to a specific integer value. |
+| Type            | Keyword            | Description                                           |
+|-----------------|--------------------|-------------------------------------------------------|
+| **Integer**     | Any integer value   | Sets the field to a specific integer value.           |
 
 **Example:**
 
@@ -228,9 +265,9 @@ intDefault: int, default=10
 
 #### String
 
-| Type                       | Keyword | Description |
-|----------------------------|---------|-------------|
-| **String Values**   | Any string value | Sets the field to a specific string value. |
+| Type            | Keyword            | Description                                           |
+|-----------------|--------------------|-------------------------------------------------------|
+| **String**      | Any string value    | Sets the field to a specific string value.            |
 
 **Example:**
 
@@ -240,9 +277,9 @@ stringDefault: String, default='This is a string'
 
 #### UuidValue
 
-| Type               | Keyword  | Description |
-|--------------------|----------|-------------|
-| **Random UUID**    | `random` | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used. |
+| Type               | Keyword            | Description                                           |
+|--------------------|--------------------|-------------------------------------------------------|
+| **Random UUID**    | `random`           | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used. |
 | **UUID String**    | A valid UUID version 4 string | Assigns a specific UUID to the field. |
 
 **Example:**
