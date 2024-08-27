@@ -95,21 +95,45 @@ $ cd mypod/mypod_flutter
 $ flutter run -d chrome
 ```
 
- The flag `-d chrome` runs the app in Chrome, for other run options please see the Flutter documentation.
+The flag `-d chrome` runs the app in Chrome, for other run options please see the Flutter documentation.
 
 :::info
 
-iOS simulator
-Because an iOS simulator has it's own localhost it won't find the server running on your machine. You can pass the ip adres of your machine in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this
+### iOS Simulator
+
+Because an iOS simulator has its own localhost, it won't find the server running on your machine. You'll need to pass the IP address of your machine in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this:
+
 ```dart
-// var client = Client('http://$localhost:8080/')
-//   ..connectivityMonitor = FlutterConnectivityMonitor();
 var client = Client('http://192.168.1.117:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
-Mac OS
-If you run the app on MacOS you will need to add permissions for outgoing connections in your Xcode project. To do this, open the `Runner.xcworkspace` in Xcode. Then check the _Outgoing Connections (Client)_ under _Runner_ > _Signing & Capabilities_ > _App Sandbox_. Make sure to add the capability for all run configurations.
+#### How to Find Your Local IP Address
+
+To find the IP address of your machine:
+
+**MacOS:**
+1. Open **System Preferences**.
+2. Go to **Network**.
+3. Select your active network connection (e.g., Wi-Fi or Ethernet).
+4. Your IP address will be displayed under the connection status (e.g., "Wi-Fi is connected to `Network Name` and has the IP address 192.168.1.117").
+
+**Windows:**
+  1. Open **Command Prompt**.
+  2. Type `ipconfig` and press Enter.
+  3. Look for the "IPv4 Address" under your active network connection (e.g., "Ethernet adapter" or "Wi-Fi").
+
+**Linux:**
+  1. Open a terminal.
+  2. Type `hostname -I` and press Enter.
+  3. Your IP address will be displayed.
+
+:::
+
+:::info
+### MacOS
+
+If you run the app on MacOS, you will need to add permissions for outgoing connections in your Xcode project. To do this, open the `Runner.xcworkspace` in Xcode. Then check the _Outgoing Connections (Client)_ under _Runner_ > _Signing & Capabilities_ > _App Sandbox_. Make sure to add the capability for all run configurations.
 
 :::
 
