@@ -99,12 +99,9 @@ The flag `-d chrome` runs the app in Chrome, for other run options please see th
 
 :::info
 
-### iOS Simulator
-
-Because an iOS simulator has its own localhost, it won't find the server running on your machine. You'll need to pass the IP address of your machine in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this:
+**iOS Simulator**: Because an iOS simulator has its own localhost, it won't find the server running on your machine. Therefore, you will need to pass the IP address of your machine when creating the client in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this:
 
 ```dart
-
 var client = Client('http://192.168.1.117:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
@@ -112,8 +109,7 @@ var client = Client('http://192.168.1.117:8080/')
 :::
 
 :::info
-### MacOS
-
+**MacOS**:
 If you run the app on MacOS, you will need to add permissions for outgoing connections in your Xcode project. To do this, open the `Runner.xcworkspace` in Xcode. Then check the _Outgoing Connections (Client)_ under _Runner_ > _Signing & Capabilities_ > _App Sandbox_. Make sure to add the capability for all run configurations.
 
 :::
