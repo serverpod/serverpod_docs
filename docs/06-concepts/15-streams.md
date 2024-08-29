@@ -65,6 +65,14 @@ Streams in parameters are closed when the stream is closed. This can be done by 
 
 All streams in parameters are closed when the method call is over.
 
+### Authentication
+
+Authentication is seamlessly integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
+
+Authentication is validated when the stream is first established, utilizing the authentication data stored in the `Session` object. If a user's authentication is subsequently revoked—requiring denial of access to the stream—the stream will be promptly closed, and an exception will be thrown.
+
+For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#Handling-revoked-authentication).
+
 ### Error handling
 
 Error handling works just like in regular endpoint methods in Serverpod. If an exception is thrown on a stream, the stream is closed with an exception. If the exception thrown is a serializable exception, the exception is first serialized and passed over the stream before it is closed.
