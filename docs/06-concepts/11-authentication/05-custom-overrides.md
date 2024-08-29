@@ -42,6 +42,36 @@ List<String> scopes = extractScopes(token);
 Set<Scope> userScopes = scopes.map((scope) => Scope(scope)).toSet();
 ```
 
+### Handling revoked authentication 
+
+When a user's authentication is revoked, the server must be promptly notified to maintain secure access control. The `authenticationRevoked` event plays a crucial role in closing method streams that the user is no longer authorized to access. To trigger this event, invoke the `session.messages.authenticationRevoked` method.
+
+```dart
+await session.messages.authenticationRevoked(
+  userId,
+  RevokedAuthenticationScope(
+    scopes: removedScopes,
+  ),
+);
+```
+
+##### Parameters
+
+- `userId` - The user id for the concerned user. This value should match the `userId` field in the `AuthenticationInfo` object.
+- `RevokedAuthentication` - The extent of the authentication revocation. 
+
+
+#### Revoked authentication types
+There are three types of `RevokedAuthentication` objects that are used to specify the extent of the authentication revocation:
+
+| Type | Description |
+|-----------|-------------|
+| `RevokedAuthenticationUser` | Informs that all authentication is revoked for a user. |
+| `RevokedAuthenticationAuthId` | Informs that a single authentication id is revoked for the user. This should match the `authId` field in the `AuthenticationInfo` object. |
+| `RevokedAuthenticationScope` | Informs that a list of scopes have been revoked for the user. |
+
+Each type provides a tailored approach to revoke authentication based on different needs, ensuring that access is precisely controlled and managed.
+
 ### Send token to client
 
 You are responsible for implementing the endpoints to authenticate/authorize the user. But as an example such an endpoint could look like the following.
