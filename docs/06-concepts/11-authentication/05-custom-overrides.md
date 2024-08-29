@@ -31,6 +31,10 @@ In the above example, the `authenticationHandler` callback is overridden with a 
 In the authenticationHandler callback the `authenticated` field on the session will always be `null` as it is the authenticationHandler that figures out who the user is.
 :::
 
+:::info
+By specifying the optional `authId` field in the `AuthenticationInfo` object you can link the user to a specific authentication id. This is useful when revoking authentication for a specific device.
+:::
+
 #### Scopes
 
 The scopes returned from the `authenticationHandler` is used to grant access to scope restricted endpoints. The `Scope` class is a simple wrapper around a nullable `String` in dart. This means that you can format your scopes however you want as long as they are in a String format.
