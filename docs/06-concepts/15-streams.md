@@ -8,12 +8,6 @@ Serverpod supports two ways to stream data. The first approach, [streaming metho
 
 When an endpoint method is defined with `Stream` instead of `Future` as the return type or includes `Stream` as a method parameter, it is recognized as a streaming method. Streaming methods transmit data over a shared, self-managed web socket connection that automatically connects and disconnects from the server.
 
-:::warning
-
-Streaming methods are still experimental and may change in the future.
-
-:::
-
 ### Defining a streaming method
 
 Streaming methods are defined by using the `Stream` type as either the return value or a parameter.
@@ -70,6 +64,14 @@ When the streaming method returns a `Future`, the method is kept alive until the
 Streams in parameters are closed when the stream is closed. This can be done by either closing the stream on the client or canceling the subscription on the server.
 
 All streams in parameters are closed when the method call is over.
+
+### Authentication
+
+Authentication is seamlessly integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
+
+Authentication is validated when the stream is first established, utilizing the authentication data stored in the `Session` object. If a user's authentication is subsequently revoked—requiring denial of access to the stream—the stream will be promptly closed, and an exception will be thrown.
+
+For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#Handling-revoked-authentication).
 
 ### Error handling
 
