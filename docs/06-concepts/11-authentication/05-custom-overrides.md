@@ -52,9 +52,9 @@ When a user's authentication is revoked, the server must be notified to respect 
 
 ```dart
 var userId = 1;
-var removedScopes = ['write'];
+var revokedScopes = ['write'];
 var message = RevokedAuthenticationScope(
-  scopes: removedScopes,
+  scopes: revokedScopes,
 );
 
 await session.messages.authenticationRevoked(
