@@ -8,7 +8,7 @@ When running a custom auth integration it is up to you to build the authenticati
 
 ### Token validation
 
-The token validation is performed by providing a custom `authenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
+The token validation is performed by providing a custom `AuthenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
 
 ```dart
 // Initialize Serverpod and connect it with your generated code.
@@ -177,3 +177,78 @@ var token = await client.authenticationKeyManager?.get();
 ```
 
 The above example retrieves the token from the key manager and stores it in the `token` variable.
+
+## Authentication schemes
+
+By default Serverpod will pass the authentication token from client to server in accordance with the HTTP `authorization` header standard with the `basic` scheme name and encoding. This is securely transferred as the connection is TLS encrypted.
+
+The default implementation encodes and wraps the user-provided token in a `basic` scheme which is automatically unwrapped on the server side before being handed to the user-provided authentication handler described above.
+
+In other words the default transport implementation is "invisible" to user code.
+
+### Implementing your own authentication scheme
+
+If you are implementing your own authentication and are using the `basic` scheme, note that this is supported but will be automatically unwrapped i.e. decoded on the server side before being handed to your `AuthenticationHandler` implementation. It will in this case receive the decoded auth key value after the `basic` scheme name.
+
+If you are implementing a different authentication scheme, for example OAuth 2 using bearer tokens, you should override the default method `toHeaderValue` of `AuthenticationKeyManager`. This client-side method converts the authentication key to the format that shall be sent as a transport header to the server.
+
+You will also need to implement the `AuthenticationHandler` accordingly, in order to process that header value server-side.
+
+The header value must be compliant with the HTTP header format defined in RFC 9110 HTTP Semantics, 11.6.2. Authorization.
+See:
+- [HTTP Authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
+- [RFC 9110, 11.6.2. Authorization](https://httpwg.org/specs/rfc9110.html#field.authorization)
+
+An approach to adding OAuth handling might make changes to the above code akin to the following.
+
+Client side:
+
+```dart
+class MyOAuthKeyManager extends AuthenticationKeyManager {
+  String? _key;
+
+  @override
+  Future<String?> get() async {
+    return _key;
+  }
+
+  @override
+  Future<void> put(String key) async {
+    _key = key;
+  }
+
+  @override
+  Future<void> remove() async {
+    _key = null;
+  }
+
+  @override
+  Future<String?> toHeaderValue(String? key) async {
+    if (key == null) return null;
+    return 'Bearer ${myBearerTokenObtainer(key)}';
+  }
+}
+
+
+var client = Client('http://$localhost:8080/',
+    authenticationKeyManager: SimpleAuthKeyManager())
+  ..connectivityMonitor = FlutterConnectivityMonitor();
+```
+
+Server side:
+
+```dart
+// Initialize Serverpod and connect it with your generated code.
+final pod = Serverpod(
+  args,
+  Protocol(),
+  Endpoints(),
+  authenticationHandler: (Session session, String token) async {
+    /// Bearer token validation handler
+    var (uid, scopes) = myBearerTokenValidator(token)
+    if (uid == null) return null;
+
+    return AuthenticationInfo(uid, scopes);
+  },
+);
+```
