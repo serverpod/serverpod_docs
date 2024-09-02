@@ -188,7 +188,7 @@ In other words the default transport implementation is "invisible" to user code.
 
 ### Implementing your own authentication scheme
 
-If you are implementing your own authentication and are using the `basic` scheme, note that this is supported but will be automatically unwrapped i.e. decoded on the server side before behing handed to your `AuthenticationHandler` implementation. It will in this case receive the decoded auth key value after the `basic` scheme name.
+If you are implementing your own authentication and are using the `basic` scheme, note that this is supported but will be automatically unwrapped i.e. decoded on the server side before being handed to your `AuthenticationHandler` implementation. It will in this case receive the decoded auth key value after the `basic` scheme name.
 
 If you are implementing a different authentication scheme, for example OAuth 2 using bearer tokens, you should override the default method `toHeaderValue` of `AuthenticationKeyManager`. This client-side method converts the authentication key to the format that shall be sent as a transport header to the server.
 
