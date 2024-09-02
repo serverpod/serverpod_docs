@@ -8,7 +8,7 @@ When running a custom auth integration it is up to you to build the authenticati
 
 ### Token validation
 
-The token validation is performed by providing a custom `authenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
+The token validation is performed by providing a custom `AuthenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
 
 ```dart
 // Initialize Serverpod and connect it with your generated code.
@@ -177,3 +177,18 @@ var token = await client.authenticationKeyManager?.get();
 ```
 
 The above example retrieves the token from the key manager and stores it in the `token` variable.
+
+### Advanced authentication schemes
+
+By default Serverpod will pass the authentication token from client to server in accordance with the HTTP "authorization" header standard with the "basic" scheme name and encoding. This is securely transferred as the connection is TLS encrypted.
+
+The default implementation encodes and wraps the user-provided token in a "basic" scheme which is automatically unwrapped on the server side before being handed to the user-provided authentication handler described above. *In other words the default transport implementation is "invisible" to user code.*
+
+If you are implementing another authentication scheme, for example OAuth 2 using bearer tokens, you should override the default method `toHeaderValue` of `AuthenticationKeyManager`. This client-side method converts the authentication key to the format that shall be sent as a transport header to the server.
+
+You will also need to implement the `AuthenticationHandler` accordingly, in order to process that header value server-side.
+
+The header value must be compliant with the HTTP header format defined in RFC 9110 HTTP Semantics, 11.6.2. Authorization.
+See:
+- [HTTP Authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
+- [RFC 9110, 11.6.2. Authorization](https://httpwg.org/specs/rfc9110.html#field.authorization)
