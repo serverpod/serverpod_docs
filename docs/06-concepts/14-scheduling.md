@@ -81,3 +81,50 @@ This identifier can then be used to cancel all future calls registered with said
 ```dart
 await session.serverpod.cancelFutureCall('an-identifying-string');
 ```
+
+## Periodic tasks
+
+While there currently is no direct support for recurring calls, the same behavior can be achieved by scheduling future calls recursively:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class PeriodicFutureCall extends FutureCall<MyModelEntity> {
+  @override
+  Future<void> invoke(Session session, MyModelEntity? object) async {
+    try {
+      // Do something interesting in the future here.
+    } finally {
+      // Schedule another future call once the task is done.
+      await session.serverpod.futureCallWithDelay(
+        'periodicFutureCall',
+        data,
+        const Duration(minutes: 15),
+      );
+    }
+  }
+}
+```
+
+The initial task can be scheduled immediately after the server starts, in `server.dart`:
+
+```dart
+void run(List<String> args) async {
+  ...
+
+  pod.registerFutureCall(PeriodicFutureCall(), 'periodicFutureCall');
+
+  ...
+
+  // Start the server.
+  // Note: the start method does not block indefinitely.
+  await pod.start();
+
+  // Schedule the initial periodic task.
+  await pod.futureCallWithDelay(
+    'periodicFutureCall',
+    null,
+    const Duration(minutes: 15),
+  );
+}
+```
