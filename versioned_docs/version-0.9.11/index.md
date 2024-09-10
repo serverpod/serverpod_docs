@@ -7,7 +7,7 @@ Serverpod is an open-source, scalable app server, written in Dart for the Flutte
 
 :::caution
 
-This is an early release of Serverpod. The API is stable and used in production by multiple projects, but there may be minor changes in future updates. A few features are still missing that will be part of the 1.0 release. See the [roadmap](/roadmap) for more information on what's in the works.
+This is an early release of Serverpod. The API is stable and used in production by multiple projects, but there may be minor changes in future updates. A few features are still missing that will be part of the 1.0 release. See the [roadmap](contribute) for more information on what's in the works.
 
 :::
 
