@@ -4,6 +4,8 @@ Have you ever found real-time communication in apps challenging? It doesn't have
 
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/iCDeAvuMj8I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
+_This tutorial is also available as a video._
+
 :::info
 
 Before you begin, make sure that you have [installed Serverpod](/). It's also recommended that you read the [Get started with Mini](../get-started-with-mini) guide.

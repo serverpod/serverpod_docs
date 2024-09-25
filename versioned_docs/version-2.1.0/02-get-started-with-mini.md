@@ -4,6 +4,7 @@ Serverpod Mini is a slimmer version of Serverpod that does not need to be connec
 
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/dSBK4JOZRyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
+## Create a new project
 Create a mini project by running:
 
 ```bash
