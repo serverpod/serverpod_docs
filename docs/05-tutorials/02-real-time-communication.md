@@ -2,6 +2,8 @@
 
 Have you ever found real-time communication in apps challenging? It doesn't have to be. Today, we're diving into how to build a collaborative drawing experience using Flutter and Serverpod. We'll call our app Pixorama - a fun and interactive project inspired by Reddit's r/place. Pixorama lets users draw together on a shared grid, with every pixel placed updating in real-time across all connected devices.
 
+<div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/iCDeAvuMj8I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><br/>
+
 :::info
 
 Before you begin, make sure that you have [installed Serverpod](/). It's also recommended that you read the [Get started with Mini](../get-started-with-mini) guide.
