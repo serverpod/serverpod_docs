@@ -8,7 +8,7 @@ Serverpod automatically merges accounts that are using the same email addresses,
 
 :::
 
-## Server-side Configuration
+## Server-side configuration
 
 The server needs the service account credentials for access to your Firebase project. To create a new key go to the [Firebase console](https://console.firebase.google.com/) then navigate to `project settings > service accounts` click on `Generate new private key` and then `Generate key`.
 
@@ -20,7 +20,7 @@ This will download the JSON file, rename it to `firebase_service_account_key.jso
 The firebase_service_account_key.json file gives admin access to your Firebase project, never store it in version control.
 :::
 
-## Client-side Configuration
+## Client-side configuration
 
 To add authentication with Firebase, you must first install and initialize the Firebase CLI tools and Flutter fire. Follow the instructions [here](https://firebase.google.com/docs/flutter/setup?platform=web) for your Flutter project.
 

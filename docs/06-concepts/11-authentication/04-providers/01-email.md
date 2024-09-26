@@ -8,7 +8,7 @@ A comprehensive tutorial covering email/password sign-in complete with sending t
 You need to install the auth module before you continue, see [Setup](../setup).
 :::
 
-## Server-side Configuration
+## Server-side configuration
 
 In your main `server.dart` file,  import the `serverpod_auth_server` module, and set up the authentication configuration:
 
@@ -38,7 +38,7 @@ For debugging purposes, you can print the validation code to the console. The ch
 
 :::
 
-## Client-side Configuration
+## Client-side configuration
 
 Add the dependencies to your `pubspec.yaml` in your **client** project.
 
@@ -57,7 +57,7 @@ dependencies:
   serverpod_auth_shared_flutter: ^1.x.x
 ```
 
-### Prebuilt SignIn Button
+### Prebuilt sign in button
 
 The package includes both methods for creating a custom email sign-in form and a pre-made `SignInWithEmailButton` widget. The widget is easy to use, all you have to do is supply the auth client. It handles everything from user signups, login, and password resets for you.
 

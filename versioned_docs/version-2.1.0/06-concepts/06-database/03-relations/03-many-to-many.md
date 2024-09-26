@@ -1,4 +1,4 @@
-# Many-to-Many
+# Many-to-many
 
 Many-to-many (n:m) relationships describes a scenario where multiple records from a table can relate to multiple records in another table. An example of this would be the relationship between students and courses, where a single student can enroll in multiple courses, and a single course can have multiple students.
 
@@ -10,7 +10,7 @@ In the context of many-to-many relationships, neither table contains a direct re
 
 Modeling the relationship between `Student` and `Course`, we would create an `Enrollment` model as a junction table to store the relationship explicitly.
 
-## Defining the Relationship
+## Defining the relationship
 
 In the following examples we show how to configure a n:m relationship between `Student` and `Course`.
 
@@ -38,7 +38,7 @@ fields:
 
 Note that the `name` argument is different, `course_enrollments` and `student_enrollments`, for the many tables. This is because each row in the junction table holds a relation to both many tables, `Course` and `Student`.
 
-### Junction Table
+### Junction table
 
 The `Enrollment` table acts as the bridge between `Course` and `Student`. It contains foreign keys from both tables, representing the many-to-many relationship.
 
