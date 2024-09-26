@@ -4,11 +4,11 @@ One-to-many (1:n) relationships describes a scenario where multiple records from
 
 The Serverpod framework provides versatility in establishing these relations. Depending on the specific use case and clarity desired, you can define the model relationship either from the 'many' side (like `Employee`) or the 'one' side (like `Company`).
 
-## Defining the Relationship
+## Defining the relationship
 
 In the following examples we show how to configure a 1:n relationship between `Company` and `Employee`.
 
-### Implicit Definition
+### Implicit definition
 
 With an implicit setup, Serverpod determines and establishes the relationship based on the table and class structures.
 
@@ -33,7 +33,7 @@ The corresponding foreign key field is automatically integrated into the 'many' 
 
 When fetching companies it now becomes possible to include any or all employees in the query. 1:n relations also enables additional [filtering](../filter#one-to-many) and [sorting](../sort#sort-on-relations) operations for [relational queries](../relation-queries).  
 
-### Explicit Definition
+### Explicit definition
 
 In an explicit definition, you directly specify the relationship in a one-to-many relation.
 

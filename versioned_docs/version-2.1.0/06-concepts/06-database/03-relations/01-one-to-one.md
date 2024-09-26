@@ -6,7 +6,7 @@ One-to-one (1:1) relationships represent a unique association between two entiti
 
 In the following examples we show how to configure a 1:1 relationship between  `User` and `Address`.
 
-### With an Id field
+### With an id field
 
 In the most simple case, all we have to do is add an `id` field on one of the models.
 

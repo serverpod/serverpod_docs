@@ -1,4 +1,4 @@
-# Raw Access
+# Raw access
 
 The library provides methods to execute raw SQL queries directly on the database for advanced scenarios.
 
@@ -52,12 +52,12 @@ Simple query mode is suitable for the same scenarios as `unsafeSimpleQuery`.
   );
 ```
 
-## Query Parameters
+## Query parameters
 
 To protect against SQL injection attacks, always use query parameters when passing values into raw SQL queries. The library provides two types of query parameters:
 
-* **Named Parameters:** Use `@` to denote named parameters in your query and pass a `Map` of parameter names and values.
-* **Positional Parameters:** Use `$1`, `$2`, etc., to denote positional parameters and pass a `List` of parameter values in the correct order.
+* **Named parameters:** Use `@` to denote named parameters in your query and pass a `Map` of parameter names and values.
+* **Positional parameters:** Use `$1`, `$2`, etc., to denote positional parameters and pass a `List` of parameter values in the correct order.
 
 ```dart
 // Named parameters

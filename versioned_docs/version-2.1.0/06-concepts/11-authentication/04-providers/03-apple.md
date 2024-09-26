@@ -12,11 +12,11 @@ Right now, we have official support for iOS and MacOS for Sign in with Apple.
 You need to install the auth module before you continue, see [Setup](../setup).
 :::
 
-## Server-side Configuration
+## Server-side configuration
 
 No extra steps outside installing the auth module are required.
 
-## Client-side Configuration
+## Client-side configuration
 
 Add the dependency to your `pubspec.yaml` in your flutter project.
 
@@ -34,7 +34,7 @@ Enable the sign-in with Apple capability in your Xcode project, this is the same
 
 ![Sign in with Apple](/img/authentication/providers/apple/2-xcode-sign-in-with-apple.png)
 
-### Sign in Button
+### Sign in button
 
 `serverpod_auth_apple_flutter` package comes with the widget `SignInWithAppleButton` that renders a nice Sign in with Apple button and triggers the native sign-in UI.
 

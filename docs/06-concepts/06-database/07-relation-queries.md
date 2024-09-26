@@ -176,7 +176,7 @@ Using these methods in conjunction provides a powerful way to query, filter, and
 
 Managing relationships between tables is a common task. Serverpod provides methods to link (attach) and unlink (detach) related records:
 
-### Attach Single Row
+### Attach single row
 
 Link an individual employee to a company. This operation associates an employee with a specific company:
 
@@ -187,7 +187,7 @@ var employee = await Employee.db.findById(session, employeeId);
 await Company.db.attachRow.employees(session, company!, employee!);
 ```
 
-### Bulk Attach Rows
+### Bulk attach rows
 
 For scenarios where you need to associate multiple employees with a company at once, use the bulk attach method. This operation is atomic, ensuring all or none of the records are linked:
 
@@ -198,7 +198,7 @@ var employee = await Employee.db.findById(session, employeeId);
 await Company.db.attach.employees(session, company!, [employee!]);
 ```
 
-### Detach Single Row
+### Detach single row
 
 To remove the association between an employee and a company, use the detach row method:
 
@@ -208,7 +208,7 @@ var employee = await Employee.db.findById(session, employeeId);
 await Company.db.detachRow.employees(session, employee!);
 ```
 
-### Bulk Detach Rows
+### Bulk detach rows
 
 In cases where you need to remove associations for multiple employees simultaneously, use the bulk detach method. This operation is atomic:
 

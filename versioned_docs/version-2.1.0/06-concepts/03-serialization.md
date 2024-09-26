@@ -95,7 +95,7 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-## Custom object with Freezed
+## Custom class with Freezed
 
 Serverpod also has support for using custom classes created with the [Freezed](https://pub.dev/packages/freezed) package.
 
@@ -127,7 +127,7 @@ extraClasses:
   - package:my_shared_package/my_shared_package.dart:FreezedCustomClass
 ```
 
-## Custom Object with ProtocolSerialization
+## Custom class with ProtocolSerialization
 
 If you need certain fields to be omitted when transmitting to the client-side, your server-side custom class should implement the `ProtocolSerialization` interface. This requires adding a method named `toJsonForProtocol()`. Serverpod will then use this method to serialize your object for protocol communication. If the class does not implement `ProtocolSerialization`, Serverpod defaults to using the `toJson()` method.
 

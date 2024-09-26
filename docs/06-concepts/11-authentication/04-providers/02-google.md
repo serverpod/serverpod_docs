@@ -34,7 +34,7 @@ The setup for the OAuth consent screen can be found [here](https://console.cloud
 
 ![Scopes](/img/authentication/providers/google/1-scopes.png)
 
-## Server-side Configuration
+## Server-side configuration
 
 Create the server credentials in the google cloud console. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as a _**Web application**_. If you have a domain add it to the `Authorized JavaScript origins` and `Authorized redirect URIs`. For development purposes we can add `http://localhost:8082` to both fields, this is the address to the web server.
 
@@ -48,7 +48,7 @@ The `google_client_secret.json` contains a private key and should not be version
 
 ![Google credentials](/img/6-google-credentials.jpg)
 
-## Client-side Configuration
+## Client-side configuration
 
 For our client-side configurations, we have to first create client-side credentials and include the credentials files in our projects. The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, any documentation there should also apply to this setup.
 
@@ -74,7 +74,7 @@ Open the `GoogleService-Info.plist` in your editor and add the SERVER_CLIENT_ID 
 
 Replace `your_server_client_id` with the client id from the JSON file you put inside the config folder in the server.
 
-#### Add the URL Scheme
+#### Add the URL scheme
 
 To allow us to navigate back to the app after the user has signed in we have to add the URL Scheme, the scheme is the reversed client ID of your iOS app. You can find it inside the `GoogleService-Info.plist` file.
 
