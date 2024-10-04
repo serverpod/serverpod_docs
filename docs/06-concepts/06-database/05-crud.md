@@ -127,8 +127,8 @@ Update a single row, the following code will update the company name, but will n
 ```dart
 var company = await Company.db.findById(session, companyId); 
 company.name = 'New name';
-company.address = 'Baker street'
-var updatedCompany = await Company.db.updateRow(session, company, columns: [Company.t.name]);
+company.address = 'Baker street';
+var updatedCompany = await Company.db.updateRow(session, company, columns: (t) => [t.name]);
 ```
 
 The same syntax is available for multiple rows.
@@ -136,7 +136,7 @@ The same syntax is available for multiple rows.
 ```dart
 var companies = await Company.db.find(session);
 companies = companies.map((c) => c.copyWith(name: 'New name', address: 'Baker Street')).toList();
-var updatedCompanies = await Company.db.update(session, companies, columns: [Company.t.name]);
+var updatedCompanies = await Company.db.update(session, companies, columns: (t) => [t.name]);
 ```
 
 ## Delete
