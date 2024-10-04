@@ -97,7 +97,7 @@ void run(List<String> args) async {
 | **emailSignInFailureResetTime** | The reset period for email sign in attempts. Defaults to 5 minutes.| 5min |
 | **userCanEditUserImage** | True if users can update their profile images.| true |
 | **userCanEditUserName** | True if users can edit their user names. | true |
-| **userCanEditFullName** | True if users can view their user name. | false | 
+| **userCanEditFullName** | True if users can edit their full name. | false | 
 | **userCanSeeUserName** | True if users can view their user name. | true |
 | **userCanSeeFullName** | True if users can view their full name. | true |
 | **enableUserImages** | True if user images are enabled. | true | 
