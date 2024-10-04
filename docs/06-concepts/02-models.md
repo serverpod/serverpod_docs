@@ -33,6 +33,10 @@ fields:
 
 It is also possible to set a `scope` on a per-field basis. By default all fields are visible to both the server and the client. The available scopes are `all`, `serverOnly`, `none`.
 
+:::info
+**none** is not typically used in serverpod apps. It is intended for the serverpod framework, itself.
+:::
+
 ```yaml
 class: SelectivelyHiddenClass
 fields:
