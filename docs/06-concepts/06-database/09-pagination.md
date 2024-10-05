@@ -93,12 +93,12 @@ In cursor-based pagination, the client provides a cursor as a reference point, a
     ```
 
 3. **Returning the cursor**:
-    When returning data to the client, also return the cursor for the next page.
+    When returning data to the client, also return the cursor, so it can be used to compute the starting point for the next page.
 
     ```dart
     return {
     'data': companies,
-    'nextCursor': companies.last.id,
+    'lastCursor': companies.last.id,
     };
     ```
 
