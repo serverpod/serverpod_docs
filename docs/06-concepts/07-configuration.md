@@ -1,10 +1,10 @@
 # Configurations
 
-Serverpod can be configured in a few different ways. The minimum required settings to provide is the configuration for the API server. If no settings are provided at all the default settings for the API server are used.
+Serverpod can be configured in a few different ways. The minimum required settings to provide is the configuration for the API server. If no settings are provided at all, the default settings for the API server are used.
 
 ## Configuration options
 
-There are three different ways to configure Serverpod, with environment variables, via yaml config files or by supplying the dart configuration object to the Serverpod constructor. The environment variables take precedence over the yaml configurations but both can be used simultaneously. The dart configuration object will override any environment variable or config file. The tables show all available configuration options provided in the Serverpod core library.
+There are three different ways to configure Serverpod: with environment variables, via yaml config files, or by supplying the dart configuration object to the Serverpod constructor. The environment variables take precedence over the yaml configurations but both can be used simultaneously. The dart configuration object will override any environment variable or config file. The tables show all available configuration options provided in the Serverpod core library.
 
 | Environment variable                         | Config file                          | Default   | Description                                      |
 |----------------------------------------------|--------------------------------------|-----------|--------------------------------------------------|
