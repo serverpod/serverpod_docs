@@ -71,7 +71,7 @@ var company = await Company.db.findFirstRow(
 This operation returns the first model matching the filtering criteria or `null`. See [filter](filter) and [sort](sort) for all filter operations.
 
 :::info
-Note that ordering of the entries is important here as it will return the fist row returned by the database query.
+If you include an `orderBy`, it will be evaluated before the list is reduced. In this case, `findFirstRow()` will return the first entry from the sorted list.
 :::
 
 ### Finding multiple rows
