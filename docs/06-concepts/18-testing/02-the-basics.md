@@ -1,0 +1,207 @@
+# The basics
+
+## Using `sessionBuilder` to set up a test scenario
+
+The `withServerpod` helper provides a `session` object that helps with setting up different scenarios for tests. It looks like the following:
+
+```dart
+/// A test specific builder to create a [Session] that for instance can be used to call database methods.
+/// The builder can also be passed to endpoint calls. The builder will create a new session for each call.
+abstract class TestSessionBuilder {
+  /// Given the properties set on the session through the `copyWith` method,
+  /// this returns a serverpod [Session] that has the configured state.
+  Session build();
+
+  /// Creates a new unique session with the provided properties.
+  /// This is useful for setting up different session states in the tests
+  /// or simulating multiple users.
+  TestSessionBuilder copyWith({
+    AuthenticationOverride? authentication,
+    bool? enableLogging,
+  });
+}
+```
+
+To create a new state, simply call `copyWith` with the new properties and use the new session builder in the endpoint call.
+
+Below follows examples of some common scenarios.
+
+### Setting authenticated state
+
+```dart
+withServerpod('Given AuthenticatedExample endpoint',
+    (sessionBuilder, endpoints) {
+  // Corresponds to an actual user id
+  const int userId = 1234;
+
+  group('when authenticated', () {
+    var authenticatedSessionBuilder = sessionBuilder.copyWith(
+      authentication:
+          AuthenticationOverride.authenticationInfo(userId, {Scope('user')}),
+    );
+
+    test('then calling `hello` should return greeting', () async {
+      final greeting = await endpoints.authenticatedExample
+          .hello(authenticatedSessionBuilder, 'Michael');
+      expect(greeting, 'Hello, Michael!');
+    });
+  });
+
+  group('when unauthenticated', () {
+    var unauthenticatedSessionBuilder = sessionBuilder.copyWith(
+      authentication: AuthenticationOverride.unauthenticated(),
+    );
+
+    test(
+        'then calling `hello` should throw `ServerpodUnauthenticatedException`',
+        () async {
+      final future = endpoints.authenticatedExample
+          .hello(unauthenticatedSessionBuilder, 'Michael');
+      await expectLater(
+          future, throwsA(isA<ServerpodUnauthenticatedException>()));
+    });
+  });
+});
+```
+
+### Seeding the database
+
+To seed the database before tests, simply `build` a `session` and pass to the database call exactly the same as in production code.
+
+:::info
+
+By default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` case. See the [rollback database configuration](#rollback-database-configuration) for how to configure this behavior.
+
+:::
+
+```dart
+withServerpod('Given Products endpoint when authenticated',
+    (sessionBuilder, endpoints) {
+  const int userId = 1234;
+  var authenticatedSession = sessionBuilder
+      .copyWith(
+        authentication: AuthenticationOverride.authenticationInfo(
+          userId,
+          {Scope('user')},
+        ),
+      )
+      .build();
+
+  setUp(() async {
+    await Product.db.insert(authenticatedSession, [
+      Product(name: 'Apple', price: 10),
+      Product(name: 'Banana', price: 10)
+    ]);
+  });
+
+  test('then calling `all` should return all products', () async {
+    final products = await endpoints.products.all(authenticatedSession);
+    expect(products, hasLength(2));
+    expect(products.map((p) => p.name), contains(['Apple', 'Banana']));
+  });
+});
+```
+
+## Environment
+
+By default `withServerpod` uses the `test` run mode and the database settings will be read from `config/test.yaml`.
+
+It is possible to override the default run mode by setting the `runMode` setting:
+
+```dart
+withServerpod(
+  'Given Products endpoint when authenticated',
+  (sessionBuilder, endpoints) {
+    /* test code */
+  },
+  runMode: ServerpodRunMode.development,
+);
+```
+
+## Configuration
+
+The following optional configuration options are available to pass as a second argument to `withServerpod`:
+
+```dart
+{
+  RollbackDatabase? rollbackDatabase = RollbackDatabase.afterEach,
+  String? runMode = ServerpodRunmode.test,
+  bool? enableSessionLogging = false,
+  bool? applyMigrations = true,
+}
+```
+
+### `rollbackDatabase` {#rollback-database-configuration}
+
+By default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` case. Just like the following enum describes, the behavior of the automatic rollbacks can be configured:
+
+```dart
+/// Options for when to rollback the database during the test lifecycle.
+enum RollbackDatabase {
+  /// After each test. This is the default.
+  afterEach,
+
+  /// After all tests.
+  afterAll,
+
+  /// Disable rolling back the database.
+  disabled,
+}
+```
+
+There are two main reasons to change the default setting:
+
+1. **Scenario tests**: when consecutive `test` cases depend on each other. While generally considered an anti-pattern, it can be useful when the set up for the test group is very expensive. In this case `rollbackDatabase` can be set to `RollbackDatabase.afterAll` to ensure that the database state persists between `test` cases. At the end of the `withServerpod` scope, all database changes will be rolled back.
+
+2. **Concurrent transactions in endpoints**: when concurrent calls are made to `session.db.transaction` inside an endpoint, it is no longer possible for the Serverpod test tools to do these operations as part of a top level transaction. In this case this feature should be disabled by passing `RollbackDatabase.disabled`.
+
+```dart
+Future<void> concurrentTransactionCalls(
+  Session session,
+) async {
+  await Future.wait([
+    session.db.transaction((tx) => /*...*/),
+    // Will throw `InvalidConfigurationException` if `rollbackDatabase` 
+    // is not set to `RollbackDatabase.disabled` in `withServerpod`
+    session.db.transaction((tx) => /*...*/),
+  ]);
+}
+```
+
+When setting `rollbackDatabase.disabled` to be able to test `concurrentTransactionCalls`, remember that the database has to be manually cleaned up to not leak data:
+
+```dart
+withServerpod(
+  'Given ProductsEndpoint when calling concurrentTransactionCalls',
+  (sessionBuilder, endpoints) {
+    tearDownAll(() async {
+      var session = sessionBuilder.build();
+      // If something was saved to the database in the endpoint,
+      // for example a `Product`, then it has to be cleaned up!
+      await Product.db.deleteWhere(
+        session,
+        where: (_) => Constant.bool(true),
+      );
+    });
+
+    test('then should execute and commit all transactions', () async {
+      var result =
+          await endpoints.products.concurrentTransactionCalls(sessionBuilder);
+      // ...
+    });
+  },
+  rollbackDatabase: RollbackDatabase.disabled,
+);
+```
+
+### `runMode`
+
+The run mode that Serverpod should be running in. Defaults to `test`.
+
+### `enableSessionLogging`
+
+Wether session logging should be enabled. Defaults to `false`.
+
+### `applyMigrations`
+
+Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
