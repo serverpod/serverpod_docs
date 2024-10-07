@@ -125,7 +125,7 @@ var user = await Company.db.findById(
   employeeId,
   include: Company.include(
     employees: Employee.includeList(
-      where: (t) => t.name.ilike('a%')
+      where: (t) => t.name.iLike('a%')
     ),
   ),
 );`
@@ -161,14 +161,14 @@ var user = await Company.db.findById(
   employeeId,
   include: Company.include(
     employees: Employee.includeList(
-      limit: 100,
+      limit: 10,
       offset: 10,
     ),
   ),
 );
 ```
 
-The example above retrieves the next 100 employees starting from the 11th record:
+The example above retrieves the next 10 employees starting from the 11th record:
 
 Using these methods in conjunction provides a powerful way to query, filter, and sort relational data efficiently.
 
