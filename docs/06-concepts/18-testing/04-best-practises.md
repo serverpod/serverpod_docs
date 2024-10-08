@@ -20,7 +20,7 @@ import 'serverpod_test_tools.dart'; ✅
 
 ### Database clean up
 
-Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test`.
+Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](the-basics#rollback-database-configuration) for more info on this behavior).
 
 ### Don't
 
@@ -101,3 +101,16 @@ void main() {
   });
 }
 ```
+
+## Unit and integration tests {#unit-integration}
+
+### Don't
+
+❌ Mix different types of tests together. It is significantly easier to navigate a project if the different types of tests are grouped.
+
+### Do
+
+✅ Have a clear structure for the different types of test. Serverpod recommends the following two folders in the `server`:
+
+- `test`: Unit tests.
+- `integration_test`: Tests for endpoints or business logic modules using the `withServerpod` helper.

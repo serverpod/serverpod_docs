@@ -44,8 +44,7 @@ abstract class AuthenticationOverride {
 Pass it to the `sessionBuilder.copyWith` to simulate different scenarios. Below follows an example for each case:
 
 ```dart
-withServerpod('Given AuthenticatedExample endpoint',
-    (sessionBuilder, endpoints) {
+withServerpod('Given AuthenticatedExample endpoint', (sessionBuilder, endpoints) {
   // Corresponds to an actual user id
   const int userId = 1234;
 
@@ -90,27 +89,18 @@ By default `withServerpod` does all database operations inside a transaction tha
 :::
 
 ```dart
-withServerpod('Given Products endpoint when authenticated',
-    (sessionBuilder, endpoints) {
-  const int userId = 1234;
-  var authenticatedSession = sessionBuilder
-      .copyWith(
-        authentication: AuthenticationOverride.authenticationInfo(
-          userId,
-          {Scope('user')},
-        ),
-      )
-      .build();
+withServerpod('Given Products endpoint', (sessionBuilder, endpoints) {
+  var session = sessionBuilder.build();
 
   setUp(() async {
-    await Product.db.insert(authenticatedSession, [
-      Product(name: 'Apple', price: 10),
-      Product(name: 'Banana', price: 10)
+    await Product.db.insert(session, [
+    Product(name: 'Apple', price: 10),
+    Product(name: 'Banana', price: 10)
     ]);
   });
 
   test('then calling `all` should return all products', () async {
-    final products = await endpoints.products.all(authenticatedSession);
+    final products = await endpoints.products.all(sessionBuilder);
     expect(products, hasLength(2));
     expect(products.map((p) => p.name), contains(['Apple', 'Banana']));
   });
@@ -125,7 +115,7 @@ It is possible to override the default run mode by setting the `runMode` setting
 
 ```dart
 withServerpod(
-  'Given Products endpoint when authenticated',
+  'Given Products endpoint',
   (sessionBuilder, endpoints) {
     /* test code */
   },
@@ -137,14 +127,12 @@ withServerpod(
 
 The following optional configuration options are available to pass as a second argument to `withServerpod`:
 
-```dart
-{
-  RollbackDatabase? rollbackDatabase = RollbackDatabase.afterEach,
-  String? runMode = ServerpodRunmode.test,
-  bool? enableSessionLogging = false,
-  bool? applyMigrations = true,
-}
-```
+|Property|Type|Default|
+|:-----|:-----|:---:|
+|`rollbackDatabase`|`RollbackDatabase?`|`RollbackDatabase.afterEach`|
+|`runMode`|`String?`|`ServerpodRunmode.test`|
+|`enableSessionLogging`|`bool?`|`false`|
+|`applyMigrations`|`bool?`|`true`|
 
 ### `rollbackDatabase` {#rollback-database-configuration}
 
@@ -225,45 +213,12 @@ Wether pending migrations should be applied when starting Serverpod. Defaults to
 
 The following exceptions are exported from the generated test tools file and can be thrown in various scenarios, see below.
 
-### `ServerpodUnauthenticatedException`
-
-```dart
-/// The user was not authenticated.
-class ServerpodUnauthenticatedException implements Exception {
-  ServerpodUnauthenticatedException();
-}
-
-```
-
-### `ServerpodInsufficientAccessException`
-
-```dart
-/// The authentication key provided did not have sufficient access.
-class ServerpodInsufficientAccessException implements Exception {
-  ServerpodInsufficientAccessException();
-}
-```
-
-### `InvalidConfigurationException`
-
-```dart
-/// Thrown when an invalid configuration state is found.
-class InvalidConfigurationException implements Exception {
-  final String message;
-  InvalidConfigurationException(this.message);
-}
-```
-
-### `ConnectionClosedException`
-
-```dart
-/// Thrown if a stream connection is closed with an error.
-/// For example, if the user authentication was revoked.
-class ConnectionClosedException implements Exception {
-  const ConnectionClosedException();
-}
-
-```
+|Exception|Description|
+|:-----|:-----|
+|`ServerpodUnauthenticatedException`|Thrown during an endpoint method call when the user was not authenticated.|
+|`ServerpodInsufficientAccessException`|Thrown during an endpoint method call when the authentication key provided did not have sufficient access.|
+|`ConnectionClosedException`|Thrown during an endpoint method call if a stream connection was closed with an error. For example, if the user authentication was revoked.|
+|`InvalidConfigurationException`|Thrown when an invalid configuration state is found.|
 
 ## Test helpers
 

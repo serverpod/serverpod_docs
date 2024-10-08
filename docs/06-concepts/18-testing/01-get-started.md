@@ -95,7 +95,7 @@ That's it, the project setup should be ready to start using the test tools!
 </p>
 </details>
 
-Go to the server directory and generate the test tools by running `serverpod generate`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`.
+Go to the server directory and generate the test tools by running `serverpod generate`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`. The folder name `integration_test` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-integration) for more information on this).
 
 The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
 
@@ -118,16 +118,16 @@ A few things to note from the above example:
 
 - The test tools should be imported from the generated test tools file and not the `serverpod_test` package.
 - The `withServerpod` callback takes two parameters: `sessionBuilder` and `endpoints`.
-  - `sessionBuilder` is used to build a `session` object that represents the state of the world during an endpoint call and is used to set up scenarios.
+  - `sessionBuilder` is used to build a `session` object that represents the server state during an endpoint call and is used to set up scenarios.
   - `endpoints` contains all your Serverpod endpoints and lets you call them.
 
-:::info
+:::tip
 
 The location of the test tools can be changed by changing the  `server_test_tools_path` key in `config/generator.yaml`. If you remove the `server_test_tools_path` key, the test tools will stop being generated.
 
 :::
 
-Before you can run the test you also need to start the Postgres and Redis:
+Before the test can be run the Postgres and Redis also have to be started:
 
 ```bash
 docker-compose up --build --detach
