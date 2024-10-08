@@ -118,7 +118,7 @@ A few things to note from the above example:
 
 - The test tools should be imported from the generated test tools file and not the `serverpod_test` package.
 - The `withServerpod` callback takes two parameters: `sessionBuilder` and `endpoints`.
-  - `sessionBuilder` is used to build a `session` object that represents the state of the world for your endpoints and is used to set up scenarios.
+  - `sessionBuilder` is used to build a `session` object that represents the state of the world during an endpoint call and is used to set up scenarios.
   - `endpoints` contains all your Serverpod endpoints and lets you call them.
 
 :::info

@@ -1,6 +1,6 @@
 # Advanced examples
 
-## Test business logic that depends on `session`
+## Test business logic that depends on `Session`
 
 It is common to break out business logic into modules and keep it separate from the endpoints. If such a module depends on a `Session` object (e.g to interact with the database), then the `withServerpod` helper can still be used and the second `endpoint` argument can simply be ignored:
 
@@ -34,7 +34,7 @@ withServerpod('Given decreasing product quantity when quantity is zero', (
 });
 ```
 
-## Multiple users interacting with a shared stream
+## Multiple users interacting with a shared stream {#multiple-users-with-stream}
 
 For cases where there are multiple users reading from or writing to a stream, such as real-time communication, it can be helpful to validate this behavior in tests.
 

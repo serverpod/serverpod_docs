@@ -2,7 +2,7 @@
 
 ## Using `sessionBuilder` to set up a test scenario
 
-The `withServerpod` helper provides a `session` object that helps with setting up different scenarios for tests. It looks like the following:
+The `withServerpod` helper provides a `sessionBuilder` object that helps with setting up different scenarios for tests. It looks like the following:
 
 ```dart
 /// A test specific builder to create a [Session] that for instance can be used to call database methods.
@@ -24,9 +24,24 @@ abstract class TestSessionBuilder {
 
 To create a new state, simply call `copyWith` with the new properties and use the new session builder in the endpoint call.
 
-Below follows examples of some common scenarios.
-
 ### Setting authenticated state
+
+To control the authenticated state of the session, the `AuthenticationOverride` class can be used:
+
+```dart
+/// An override for the authentication state in a test session.
+abstract class AuthenticationOverride {
+  /// Sets the session to be authenticated with the provided userId and scope.
+  static AuthenticationOverride authenticationInfo(
+          int userId, Set<Scope> scopes,
+          {String? authId});
+
+  /// Sets the session to be unauthenticated. This is the default.
+  static AuthenticationOverride unauthenticated();
+}
+```
+
+Pass it to the `sessionBuilder.copyWith` to simulate different scenarios. Below follows an example for each case:
 
 ```dart
 withServerpod('Given AuthenticatedExample endpoint',
@@ -205,3 +220,68 @@ Wether session logging should be enabled. Defaults to `false`.
 ### `applyMigrations`
 
 Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
+
+## Test exceptions
+
+The following exceptions are exported from the generated test tools file and can be thrown in various scenarios, see below.
+
+### `ServerpodUnauthenticatedException`
+
+```dart
+/// The user was not authenticated.
+class ServerpodUnauthenticatedException implements Exception {
+  ServerpodUnauthenticatedException();
+}
+
+```
+
+### `ServerpodInsufficientAccessException`
+
+```dart
+/// The authentication key provided did not have sufficient access.
+class ServerpodInsufficientAccessException implements Exception {
+  ServerpodInsufficientAccessException();
+}
+```
+
+### `InvalidConfigurationException`
+
+```dart
+/// Thrown when an invalid configuration state is found.
+class InvalidConfigurationException implements Exception {
+  final String message;
+  InvalidConfigurationException(this.message);
+}
+```
+
+### `ConnectionClosedException`
+
+```dart
+/// Thrown if a stream connection is closed with an error.
+/// For example, if the user authentication was revoked.
+class ConnectionClosedException implements Exception {
+  const ConnectionClosedException();
+}
+
+```
+
+## Test helpers
+
+### `flushEventQueue`
+
+Test helper to flush the event queue.
+Useful for waiting for async events to complete before continuing the test.
+
+```dart
+Future<void> flushEventQueue();
+```
+
+For example, if depending on a generator function to execute up to its `yield`, then the
+event queue can be flushed to ensure the generator has executed up to that point:
+
+```dart
+var stream = endpoints.someEndoint.generatorFunction(session);
+await flushEventQueue();
+```
+
+See also [this complete example](advanced-examples#multiple-users-with-stream).
