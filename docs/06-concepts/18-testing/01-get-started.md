@@ -135,4 +135,10 @@ docker-compose up --build --detach
 
 By default this starts up both the `development` and `test` profiles. To only start one profile, simply add `--profile test` to the command.
 
-Now the test is ready to be run!
+Now the test is ready to be run:
+
+```bash
+dart test integration_test
+```
+
+Happy testing!
