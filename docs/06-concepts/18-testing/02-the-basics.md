@@ -219,7 +219,7 @@ Wether pending migrations should be applied when starting Serverpod. Defaults to
 
 ## Test exceptions
 
-The following exceptions are exported from the generated test tools file and can be thrown in various scenarios, see below.
+The following exceptions are exported from the generated test tools file and can be thrown by the test tools in various scenarios, see below.
 
 |Exception|Description|
 |:-----|:-----|
