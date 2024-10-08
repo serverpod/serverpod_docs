@@ -2,6 +2,8 @@
 
 ## Imports
 
+While it's possible to import types and test helpers from the `serverpod_test`, it's completely redundant. The generated file exports everything that is needed. Adding an additional import is just unnecessary noise and will likely also be flagged as duplicated imports by the Dart linter.
+
 ### Don't
 
 ```dart
@@ -104,9 +106,11 @@ void main() {
 
 ## Unit and integration tests {#unit-integration}
 
+It is significantly easier to navigate a project if the different types of tests are clearly separated.
+
 ### Don't
 
-❌ Mix different types of tests together. It is significantly easier to navigate a project if the different types of tests are grouped.
+❌ Mix different types of tests together.
 
 ### Do
 
