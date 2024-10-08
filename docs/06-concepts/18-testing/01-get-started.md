@@ -37,6 +37,68 @@ redis_test:
     - test
 ```
 
+<details>
+<summary>Or copy the complete file here.</summary>
+<p>
+
+```yaml
+services:
+  # Development services
+  postgres:
+    image: postgres:16.3
+    ports:
+      - '8090:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: projectname
+      POSTGRES_PASSWORD: "<insert database development password>"
+    volumes:
+      - projectname_data:/var/lib/postgresql/data
+    profiles:
+      - '' # Default profile
+      - dev
+  redis:
+    image: redis:6.2.6
+    ports:
+      - '8091:6379'
+    command: redis-server --requirepass "<insert redis development password>"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    profiles:
+      - '' # Default profile
+      - dev
+
+  # Test services
+  postgres_test:
+    image: postgres:16.3
+    ports:
+      - '9090:5432'
+    environment:
+      POSTGRES_USER: postgres_test
+      POSTGRES_DB: projectname_test
+      POSTGRES_PASSWORD: "<insert database test password>"
+    volumes:
+      - projectname_data:/var/lib/postgresql/data
+    profiles:
+      - '' # Default profile
+      - test
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - '9091:6379'
+    command: redis-server --requirepass "<insert redis test password>"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    profiles:
+      - '' # Default profile
+      - test
+
+volumes:
+  projectname_data:
+```
+
+</p>
+</details>
 3. Create a `test.yaml` file and add it to the `config` directory:
 
 ```yaml
