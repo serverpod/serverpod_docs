@@ -2,7 +2,7 @@
 
 ## Using `sessionBuilder` to set up a test scenario
 
-The `withServerpod` helper provides a `sessionBuilder` that helps with setting up different scenarios for tests. To modify the session builder's properties, call its `copyWith` method. The copyWith method takes the following named parameters:
+The `withServerpod` helper provides a `sessionBuilder` that helps with setting up different scenarios for tests. To modify the session builder's properties, call its `copyWith` method. It takes the following named parameters:
 
 |Property|Type|Default|Description|
 |:-----|:-----|:---:|:-----|
