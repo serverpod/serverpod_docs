@@ -2,46 +2,44 @@
 
 ## Using `sessionBuilder` to set up a test scenario
 
-The `withServerpod` helper provides a `sessionBuilder` object that helps with setting up different scenarios for tests. It looks like the following:
+The `withServerpod` helper provides a `sessionBuilder` that helps with setting up different scenarios for tests. To modify the session builder's properties, call its `copyWith` method. The copyWith method takes the following named parameters:
+
+|Property|Type|Default|Description|
+|:-----|:-----|:---:|:-----|
+|`authentication`|`AuthenticationOverride?`|`AuthenticationOverride.unauthenticated()`|See section [Setting authenticated state](#setting-authenticated-state).|
+|`enableLogging`|`bool?`|`false`|Wether logging is turned on for the session.|
+
+The `copyWith` method creates a new unique session builder with the provided properties. This can then be used in endpoint calls (see section [Setting authenticated state](#setting-authenticated-state) for an example).
+
+To build out a `Session` (to use for [database calls](#seeding-the-database) or [pass on to functions](advanced-examples##business-logic-depends-on-session)), simply call the `build` method:
 
 ```dart
-/// A test specific builder to create a [Session] that for instance can be used to call database methods.
-/// The builder can also be passed to endpoint calls. The builder will create a new session for each call.
-abstract class TestSessionBuilder {
-  /// Given the properties set on the session through the `copyWith` method,
-  /// this returns a serverpod [Session] that has the configured state.
-  Session build();
-
-  /// Creates a new unique session with the provided properties.
-  /// This is useful for setting up different session states in the tests
-  /// or simulating multiple users.
-  TestSessionBuilder copyWith({
-    AuthenticationOverride? authentication,
-    bool? enableLogging,
-  });
-}
+Session session = sessionBuilder.build();
 ```
 
-To create a new state, simply call `copyWith` with the new properties and use the new session builder in the endpoint call.
+Given the properties set on the session builder through the `copyWith` method, this returns a Serverpod `Session` that has the corresponding state.
 
-### Setting authenticated state
+### Setting authenticated state {#setting-authenticated-state}
 
-To control the authenticated state of the session, the `AuthenticationOverride` class can be used:
+To control the authenticated state of the session, the `AuthenticationOverride` class can be used.
+
+To create an unauthenticated override (this is the default value for new sessions), call `AuthenticationOverride unauthenticated()`:
 
 ```dart
-/// An override for the authentication state in a test session.
-abstract class AuthenticationOverride {
-  /// Sets the session to be authenticated with the provided userId and scope.
-  static AuthenticationOverride authenticationInfo(
-          int userId, Set<Scope> scopes,
-          {String? authId});
-
-  /// Sets the session to be unauthenticated. This is the default.
-  static AuthenticationOverride unauthenticated();
-}
+static AuthenticationOverride unauthenticated();
 ```
 
-Pass it to the `sessionBuilder.copyWith` to simulate different scenarios. Below follows an example for each case:
+To create an authenticated override, call `AuthenticationOverride.authenticationInfo(...)`:
+
+```dart
+static AuthenticationOverride authenticationInfo(
+  int userId,
+  Set<Scope> scopes, {
+  String? authId,
+})
+```
+
+Pass these to `sessionBuilder.copyWith` to simulate different scenarios. Below follows an example for each case:
 
 ```dart
 withServerpod('Given AuthenticatedExample endpoint', (sessionBuilder, endpoints) {
@@ -78,9 +76,9 @@ withServerpod('Given AuthenticatedExample endpoint', (sessionBuilder, endpoints)
 });
 ```
 
-### Seeding the database
+### Seeding the database {#seeding-the-database}
 
-To seed the database before tests, simply `build` a `session` and pass to the database call exactly the same as in production code.
+To seed the database before tests, `build` a `session` and pass it to the database call just as in production code.
 
 :::info
 

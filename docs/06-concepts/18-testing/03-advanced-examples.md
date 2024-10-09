@@ -1,6 +1,6 @@
 # Advanced examples
 
-## Test business logic that depends on `Session`
+## Test business logic that depends on `Session` {#business-logic-depends-on-session}
 
 It is common to break out business logic into modules and keep it separate from the endpoints. If such a module depends on a `Session` object (e.g to interact with the database), then the `withServerpod` helper can still be used and the second `endpoint` argument can simply be ignored:
 
