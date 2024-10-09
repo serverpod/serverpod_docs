@@ -2,10 +2,16 @@
 
 Serverpod provides simple but feature rich test tools to make testing your backend a breeze.
 
+:::info
+
+For Serverpod Mini projects, everything related to the database in this guide can be ignored.
+
+:::
+
 <details>
 <summary> Have an existing project? Follow these steps first!</summary>
 <p>
-For existing projects, a few extra things need to be done:
+For existing non-Mini projects, a few extra things need to be done:
 1. Add the `server_test_tools_path` key to `config/generator.yaml`. Without this key, the test tools file is not generated. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`, but this can be set to any path (though should be outside of `lib` as per Dart's test conventions).
 
 2. New projects now come with a test profile in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
@@ -157,7 +163,7 @@ That's it, the project setup should be ready to start using the test tools!
 </p>
 </details>
 
-Go to the server directory and generate the test tools by running `serverpod generate`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`. The folder name `integration_test` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-integration) for more information on this).
+Go to the server directory and generate the test tools by running `serverpod generate --experimental-features testTools`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`. The folder name `integration_test` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-integration) for more information on this).
 
 The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
 
