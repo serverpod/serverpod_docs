@@ -7,7 +7,7 @@ It is common to break out business logic into modules and keep it separate from 
 ```dart
 withServerpod('Given decreasing product quantity when quantity is zero', (
   sessionBuilder,
-  _ /* Ignore */,
+  _,
 ) {
   var session = sessionBuilder.build();
 
