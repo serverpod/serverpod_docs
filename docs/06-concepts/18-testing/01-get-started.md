@@ -163,7 +163,7 @@ That's it, the project setup should be ready to start using the test tools!
 </p>
 </details>
 
-Go to the server directory and generate the test tools by running `serverpod generate --experimental-features testTools`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`. The folder name `integration_test` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-integration) for more information on this).
+Go to the server directory and generate the test tools by running `serverpod generate --experimental-features testTools`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`. The folder name `integration_test` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
 
 The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
 

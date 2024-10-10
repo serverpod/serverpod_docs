@@ -1,6 +1,6 @@
 # The basics
 
-## Using `sessionBuilder` to set up a test scenario
+## Set up a test scenario
 
 The `withServerpod` helper provides a `sessionBuilder` that helps with setting up different scenarios for tests. To modify the session builder's properties, call its `copyWith` method. It takes the following named parameters:
 
@@ -11,7 +11,7 @@ The `withServerpod` helper provides a `sessionBuilder` that helps with setting u
 
 The `copyWith` method creates a new unique session builder with the provided properties. This can then be used in endpoint calls (see section [Setting authenticated state](#setting-authenticated-state) for an example).
 
-To build out a `Session` (to use for [database calls](#seeding-the-database) or [pass on to functions](advanced-examples##business-logic-depends-on-session)), simply call the `build` method:
+To build out a `Session` (to use for [database calls](#seeding-the-database) or [pass on to functions](advanced-examples#test-business-logic-that-depends-on-session)), simply call the `build` method:
 
 ```dart
 Session session = sessionBuilder.build();
@@ -19,7 +19,7 @@ Session session = sessionBuilder.build();
 
 Given the properties set on the session builder through the `copyWith` method, this returns a Serverpod `Session` that has the corresponding state.
 
-### Setting authenticated state {#setting-authenticated-state}
+### Setting authenticated state
 
 To control the authenticated state of the session, the `AuthenticationOverride` class can be used.
 
@@ -76,7 +76,7 @@ withServerpod('Given AuthenticatedExample endpoint', (sessionBuilder, endpoints)
 });
 ```
 
-### Seeding the database {#seeding-the-database}
+### Seeding the database
 
 To seed the database before tests, `build` a `session` and pass it to the database call just as in production code.
 
@@ -245,4 +245,4 @@ var stream = endpoints.someEndoint.generatorFunction(session);
 await flushEventQueue();
 ```
 
-See also [this complete example](advanced-examples#multiple-users-with-stream).
+See also [this complete example](advanced-examples#multiple-users-interacting-with-a-shared-stream).

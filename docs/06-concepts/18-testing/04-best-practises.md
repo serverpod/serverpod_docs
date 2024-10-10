@@ -1,3 +1,8 @@
+---
+# Don't display do's and don'ts in the table of contents
+toc_max_heading_level: 2
+---
+
 # Best practises
 
 ## Imports
@@ -104,7 +109,7 @@ void main() {
 }
 ```
 
-## Unit and integration tests {#unit-integration}
+## Unit and integration tests
 
 It is significantly easier to navigate a project if the different types of tests are clearly separated.
 
