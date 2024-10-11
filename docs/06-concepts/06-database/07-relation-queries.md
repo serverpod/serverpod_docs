@@ -125,7 +125,7 @@ var user = await Company.db.findById(
   employeeId,
   include: Company.include(
     employees: Employee.includeList(
-      where: (t) => t.name.iLike('a%')
+      where: (t) => t.name.ilike('a%')
     ),
   ),
 );
