@@ -145,19 +145,19 @@ await User.db.find(
 In the example we fetch all users with a name that does not start with B.
 
 
-### iLike
+### ilike
 
-iLike works the same as `like` but is case-insensitive.
+`ilike` works the same as `like` but is case-insensitive.
 
 ```dart
 await User.db.find(
-  where: (t) => t.name.iLike('a%')
+  where: (t) => t.name.ilike('a%')
 );
 ```
 
 In the example we fetch all users with a name that starts with a or A.
 
-There is a negated version of iLike that can be used to exclude rows from the result.
+There is a negated version of `ilike` that can be used to exclude rows from the result.
 
 ```dart
 await User.db.find(
