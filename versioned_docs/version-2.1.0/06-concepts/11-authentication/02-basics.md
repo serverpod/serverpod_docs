@@ -6,7 +6,8 @@ The `Session` object provides information about the current user. A unique `user
 
 ```dart
 Future<void> myMethod(Session session) async {
-  var userId = await session.auth.authenticatedUserId;
+  final authenticationInfo = await session.authenticated;
+  final userId = authenticationInfo?.userId;
   ...
 }
 ```
