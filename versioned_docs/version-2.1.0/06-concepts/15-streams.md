@@ -146,7 +146,7 @@ In most cases, it's easiest to subscribe to a message channel in the `streamOpen
 @override
 Future<void> streamOpened(StreamingSession session) async {
   final authenticationInfo = await session.authenticated;
-  final userId = userAuthenticatedInfo?.userId;
+  final userId = authenticationInfo?.userId;
   session.messages.addListener(
     'user_$userId',
     (message) {
