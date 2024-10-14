@@ -18,6 +18,7 @@ The current options you can pass are:
 |:-----|:---|
 | **all** | Enables all available experimental features. |
 | **inheritance** | Allows using the `extends` keyword in your model files to create class hierarchies.|
+| **testTools** | Generates the Serverpod test tools, see the [testing get started page](testing/get-started) for more information.|
 
 ## Inheritance
 
