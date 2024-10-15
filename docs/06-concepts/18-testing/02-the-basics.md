@@ -195,14 +195,6 @@ withServerpod(
 );
 ```
 
-Additionally, when setting `rollbackDatabase.disabled`, it may also be needed to pass the `--concurrency=1` flag to the dart test runner. Otherwise multiple tests might pollute each others database state:
-
-```bash
-dart test integration_test --concurrency=1
-```
-
-For the other cases this is not an issue, as each `withServerpod` has its own transaction and will therefore be isolated.
-
 ### `runMode`
 
 The run mode that Serverpod should be running in. Defaults to `test`.

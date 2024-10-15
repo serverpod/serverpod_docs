@@ -206,7 +206,13 @@ By default this starts up both the `development` and `test` profiles. To only st
 Now the test is ready to be run:
 
 ```bash
-dart test integration_test
+dart test integration_test --concurrency=1
 ```
+
+:::note
+
+The `--concurrency=1` flag has to be set to ensure only one Serverpod server is running at a time.
+
+:::
 
 Happy testing!
