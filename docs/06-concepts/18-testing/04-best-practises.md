@@ -121,5 +121,5 @@ It is significantly easier to navigate a project if the different types of tests
 
 ✅ Have a clear structure for the different types of test. Serverpod recommends the following two folders in the `server`:
 
-- `test`: Unit tests.
-- `integration_test`: Tests for endpoints or business logic modules using the `withServerpod` helper.
+- `test/unit`: Unit tests.
+- `test/integration`: Tests for endpoints or business logic modules using the `withServerpod` helper.

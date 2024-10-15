@@ -18,7 +18,7 @@ For Serverpod Mini projects, everything related to the database in this guide ca
 <summary> Have an existing project? Follow these steps first!</summary>
 <p>
 For existing non-Mini projects, a few extra things need to be done:
-1. Add the `server_test_tools_path` key to `config/generator.yaml`. Without this key, the test tools file is not generated. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`, but this can be set to any path (though should be outside of `lib` as per Dart's test conventions).
+1. Add the `server_test_tools_path` key to `config/generator.yaml`. Without this key, the test tools file is not generated. The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`, but this can be set to any path (though should be outside of `lib` as per Dart's test conventions).
 
 2. New projects now come with a test profile in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
 
@@ -114,33 +114,30 @@ volumes:
 3. Create a `test.yaml` file and add it to the `config` directory:
 
 ```yaml
-# This is the configuration file for your local test environment. By
-# default, it runs a single server on port 8090. To set up your server, you will
+# This is the configuration file for your local test environment. All ports are set to zero in this file which makes the server find the next available port. This is needed to enable running tests concurrently.
 # need to add the name of the database you are connecting to and the user name.
 # The password for the database is stored in the config/passwords.yaml.
-#
-# When running your server locally, the server ports are the same as the public
-# facing ports.
+
 
 # Configuration for the main API test server.
 apiServer:
-  port: 9080
+  port: 0
   publicHost: localhost
-  publicPort: 9080
+  publicPort: 0
   publicScheme: http
 
 # Configuration for the Insights test server.
 insightsServer:
-  port: 9081
+  port: 0
   publicHost: localhost
-  publicPort: 9081
+  publicPort: 0
   publicScheme: http
 
 # Configuration for the web test server.
 webServer:
-  port: 9082
+  port: 0
   publicHost: localhost
-  publicPort: 9082
+  publicPort: 0
   publicScheme: http
 
 # This is the database setup for your test server.
@@ -165,11 +162,19 @@ test:
   redis: '<insert redis test password>'
 ```
 
+5. Add a `dart_test.yaml` file to the `server` directory (next to `pubspec.yaml`) with the following contents:
+
+```yaml
+tags:
+  integration: {}
+
+```
+
 That's it, the project setup should be ready to start using the test tools!
 </p>
 </details>
 
-Go to the server directory and generate the test tools by running `serverpod generate --experimental-features testTools`. The default location for the generated file is `integration_test/test_tools/serverpod_test_tools.dart`. The folder name `integration_test` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
+Go to the server directory and generate the test tools by running `serverpod generate --experimental-features testTools`. The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
 
 The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
 
@@ -212,7 +217,7 @@ By default this starts up both the `development` and `test` profiles. To only st
 Now the test is ready to be run:
 
 ```bash
-dart test integration_test
+dart test
 ```
 
 Happy testing!

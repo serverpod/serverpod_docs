@@ -1,5 +1,22 @@
 # Advanced examples
 
+## Run unit and integration tests separately
+
+To run unit and integration tests separately, the `"integration"` tag can be used as a filter. See the following examples:
+
+```bash
+# All tests (unit and integration)
+dart test
+
+# Only integration tests: add --tags (-t) flag
+dart test -t integration
+
+# Only unit tests: add --exclude-tags (-x) flag
+dart test -x integration
+```
+
+To change the name of this tag, see the [`testGroupTagsOverride`](the-basics#test-group-tags-override-configuration) configuration option.
+
 ## Test business logic that depends on `Session`
 
 It is common to break out business logic into modules and keep it separate from the endpoints. If such a module depends on a `Session` object (e.g to interact with the database), then the `withServerpod` helper can still be used and the second `endpoint` argument can simply be ignored:
