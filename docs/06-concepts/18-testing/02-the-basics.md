@@ -150,7 +150,7 @@ enum RollbackDatabase {
 }
 ```
 
-There are two main reasons to change the default setting:
+There are a few reasons to change the default setting:
 
 1. **Scenario tests**: when consecutive `test` cases depend on each other. While generally considered an anti-pattern, it can be useful when the set up for the test group is very expensive. In this case `rollbackDatabase` can be set to `RollbackDatabase.afterAll` to ensure that the database state persists between `test` cases. At the end of the `withServerpod` scope, all database changes will be rolled back.
 
@@ -202,6 +202,26 @@ dart test integration_test --concurrency=1
 ```
 
 For the other cases this is not an issue, as each `withServerpod` has its own transaction and will therefore be isolated.
+
+3. **Database exceptions that are quelled**: There is a specific edge case where the test tools behavior deviates from production behavior. See example below:
+
+```dart
+var transactionFuture = session.db.transaction((tx) async {
+    var data = UniqueData(number: 1, email: 'test@test.com');
+    try {
+        await UniqueData.db.insertRow(session, data, transaction: tx);
+        await UniqueData.db.insertRow(session, data, transaction: tx);
+    } on DatabaseException catch (_) {
+        // Ignore the database exception
+    }
+});
+
+// ATTENTION: This will throw an exception in production
+// but not in the test tools.
+await transactionFuture;
+```
+
+In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practise, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabse.disabled` will ensure the code behaves like in production.
 
 ### `runMode`
 
