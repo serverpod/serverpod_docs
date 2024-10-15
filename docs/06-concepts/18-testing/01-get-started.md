@@ -2,6 +2,12 @@
 
 Serverpod provides simple but feature rich test tools to make testing your backend a breeze.
 
+:::warning
+
+The test tools are an experimental feature. Experimental features should not be used in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
+
+:::
+
 :::info
 
 For Serverpod Mini projects, everything related to the database in this guide can be ignored.
