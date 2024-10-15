@@ -131,6 +131,7 @@ The following optional configuration options are available to pass as a second a
 |`runMode`|`String?`|`ServerpodRunmode.test`|
 |`enableSessionLogging`|`bool?`|`false`|
 |`applyMigrations`|`bool?`|`true`|
+|`testGroupTagsOverride`|`List<String>?`|`null`|
 
 ### `rollbackDatabase` {#rollback-database-configuration}
 
@@ -198,7 +199,7 @@ withServerpod(
 Additionally, when setting `rollbackDatabase.disabled`, it may also be needed to pass the `--concurrency=1` flag to the dart test runner. Otherwise multiple tests might pollute each others database state:
 
 ```bash
-dart test integration_test --concurrency=1
+dart test -t integration --concurrency=1
 ```
 
 For the other cases this is not an issue, as each `withServerpod` has its own transaction and will therefore be isolated.
@@ -234,6 +235,10 @@ Wether session logging should be enabled. Defaults to `false`.
 ### `applyMigrations`
 
 Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
+
+### `testGroupTagsOverride` {#test-group-tags-override-configuration}
+
+By default Serverpod test tools tags the `withServerpod` test group with `"integration"`. This is to provide a simple way to only run unit or integration tests. This property allows this tag to be overridden to something else. Defaults to `null` (i.e. no override).
 
 ## Test exceptions
 
