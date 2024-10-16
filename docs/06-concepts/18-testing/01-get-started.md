@@ -4,7 +4,7 @@ Serverpod provides simple but feature rich test tools to make testing your backe
 
 :::warning
 
-The test tools are an experimental feature. Experimental features should not be used in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
+The test tools is an experimental feature. Experimental features should not be used in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
 
 :::
 
