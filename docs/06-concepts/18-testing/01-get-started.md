@@ -18,22 +18,28 @@ For Serverpod Mini projects, everything related to the database in this guide ca
 <summary> Have an existing project? Follow these steps first!</summary>
 <p>
 For existing non-Mini projects, a few extra things need to be done:
-1. Add the `server_test_tools_path` key to `config/generator.yaml`. Without this key, the test tools file is not generated. The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`, but this can be set to any path (though should be outside of `lib` as per Dart's test conventions).
+1. Add the `server_test_tools_path` key with the value `test/integration/test_tools` to `config/generator.yaml`:
+
+```yaml
+server_test_tools_path: test/integration/test_tools
+```
+
+ Without this key, the test tools file is not generated. With the above config the location of the test tools file is `test/integration/test_tools/serverpod_test_tools.dart`, but this can be set to any folder (though should be outside of `lib` as per Dart's test conventions).
 
 2. New projects now come with a test profile in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
 
 ```yaml
-# Test services
+# Add to the existing services
 postgres_test:
   image: postgres:16.3
   ports:
     - '9090:5432'
   environment:
     POSTGRES_USER: postgres_test
-    POSTGRES_DB: projectname_test
+    POSTGRES_DB: <projectname>_test
     POSTGRES_PASSWORD: "<insert database test password>"
   volumes:
-    - projectname_data:/var/lib/postgresql/data
+    - <projectname>_test_data:/var/lib/postgresql/data
   profiles:
     - '' # Default profile
     - test
@@ -47,6 +53,9 @@ redis_test:
   profiles:
     - '' # Default profile
     - test
+volumes:
+  # ...
+  <projectname>_test_data:
 ```
 
 <details>
@@ -62,10 +71,10 @@ services:
       - '8090:5432'
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: projectname
+      POSTGRES_DB: <projectname>
       POSTGRES_PASSWORD: "<insert database development password>"
     volumes:
-      - projectname_data:/var/lib/postgresql/data
+      - <projectname>_data:/var/lib/postgresql/data
     profiles:
       - '' # Default profile
       - dev
@@ -87,10 +96,10 @@ services:
       - '9090:5432'
     environment:
       POSTGRES_USER: postgres_test
-      POSTGRES_DB: projectname_test
+      POSTGRES_DB: <projectname>_test
       POSTGRES_PASSWORD: "<insert database test password>"
     volumes:
-      - projectname_data:/var/lib/postgresql/data
+      - <projectname>_test_data:/var/lib/postgresql/data
     profiles:
       - '' # Default profile
       - test
@@ -106,7 +115,8 @@ services:
       - test
 
 volumes:
-  projectname_data:
+  <projectname>_data:
+  <projectname>_test_data:
 ```
 
 </p>
@@ -144,7 +154,7 @@ webServer:
 database:
   host: localhost
   port: 9090
-  name: projectname_test
+  name: <projectname>_test
   user: postgres
 
 # This is the setup for your Redis test instance.
@@ -170,24 +180,39 @@ tags:
 
 ```
 
+6. Finally, add the `test` and `serverpod_test` packages as dev dependencies in `pubspec.yaml`:
+
+```yaml
+dev_dependencies:
+  serverpod_test: <serverpod version> # Should be same version as the `serverpod` package
+  test: ^1.24.2
+```
+
 That's it, the project setup should be ready to start using the test tools!
 </p>
 </details>
 
-Go to the server directory and generate the test tools by running `serverpod generate --experimental-features testTools`. The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
+Go to the server directory and generate the test tools:
+
+ ```bash
+ serverpod generate --experimental-features testTools
+ ```
+
+The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
 
 The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
 
 ```dart
+import 'package:test/test.dart';
+
 // Import the generated file, it contains everything you need.
 import 'test_tools/serverpod_test_tools.dart';
 
 void main() {
   withServerpod('Given Example endpoint', (sessionBuilder, endpoints) {
     test('when calling `hello` then should return greeting', () async {
-      final greeting =
-          await endpoints.example.hello(sessionBuilder, 'Michael');
-      expect(greeting, 'Hello, Michael!');
+      final greeting = await endpoints.example.hello(sessionBuilder, 'Michael');
+      expect(greeting, 'Hello Michael');
     });
   });
 }
