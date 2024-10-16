@@ -184,8 +184,8 @@ tags:
 
 ```yaml
 dev_dependencies:
-  serverpod_test: 2.1.4 # Should be same version as the `serverpod` package
-  test: '>=1.0.0 <2.0.0'
+  serverpod_test: <serverpod version> # Should be same version as the `serverpod` package
+  test: ^1.24.2
 ```
 
 That's it, the project setup should be ready to start using the test tools!
