@@ -38,6 +38,20 @@ sessionLogs:
   consoleEnabled: true      # Logs are output to the console
 ```
 
+### Default Behavior for Session Logs
+
+By default, session logging behavior depends on whether the project has database support:
+
+- **When a database is present**
+
+  - `persistentEnabled` is set to `true`, meaning logs are stored in the database.
+  - `consoleEnabled` is set to `false` by default, meaning logs are not printed to the console unless explicitly enabled.
+  
+- **When no database is present**
+
+  - `persistentEnabled` is set to `false` since persistent logging requires a database.
+  - `consoleEnabled` is set to `true`, meaning logs are printed to the console by default.
+
 ### Important: Persistent Logging Requires a Database
 
 If `persistentEnabled` is set to `true` but **no database is configured**, a `StateError` will be thrown. Persistent logging requires database support, and Serverpod ensures that misconfigurations are caught early by raising this error.

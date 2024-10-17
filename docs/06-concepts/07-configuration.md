@@ -31,8 +31,8 @@ There are three different ways to configure Serverpod: with environment variable
 | SERVERPOD_REDIS_USER                         | redis.user                           | -         | The user name for Redis authentication           |
 | SERVERPOD_REDIS_ENABLED                      | redis.enabled                        | false     | Indicates if Redis is enabled                    |
 | SERVERPOD_MAX_REQUEST_SIZE                   | maxRequestSize                       | 524288    | The maximum size of requests allowed in bytes    |
-| SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED     | sessionLogs.persistentEnabled        | false     | Enables or disables logging session data to the database. If no database config is provided, it will default to `false`. |
-| SERVERPOD_SESSION_CONSOLE_LOG_ENABLED        | sessionLogs.consoleEnabled           | false     | Enables or disables logging session data to the console. |
+| SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED     | sessionLogs.persistentEnabled        | -    | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`. |
+| SERVERPOD_SESSION_CONSOLE_LOG_ENABLED        | sessionLogs.consoleEnabled           | -    | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`. |
 
 | Environment variable               | Passwords file  | Default | Description                                                       |
 |------------------------------------|-----------------|---------|-------------------------------------------------------------------|
