@@ -38,9 +38,9 @@ sessionLogs:
   consoleEnabled: true      # Logs are output to the console
 ```
 
-### Important: Override Behavior
+### Important: Persistent Logging Requires a Database
 
-If `persistentEnabled` is set to `true` (whether via environment variables or configuration file) but **no database is configured**, the `persistentEnabled` value will be automatically overridden to `false`. This ensures that session logs are not attempted to be written to the database when it is not in use.
+If `persistentEnabled` is set to `true` but **no database is configured**, a `StateError` will be thrown. Persistent logging requires database support, and Serverpod ensures that misconfigurations are caught early by raising this error.
 
 :::info
 
