@@ -129,9 +129,6 @@ volumes:
 # This is needed to enable running tests concurrently. To set up your server, you will
 # need to add the name of the database you are connecting to and the user name.
 # The password for the database is stored in the config/passwords.yaml.
-#
-# When running your server locally, the server ports are the same as the public
-# facing ports.
 
 # Configuration for the main API test server.
 apiServer:
