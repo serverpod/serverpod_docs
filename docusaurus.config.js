@@ -5,6 +5,8 @@ import { themes } from 'prism-react-renderer';
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 
+import versions from "./versions.json";
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Serverpod',
@@ -134,7 +136,20 @@ const config = {
        ] 
       }
     ]
-  ]
+  ],
+  themes: [
+    [
+      require.resolve("@getcanary/docusaurus-theme-search-pagefind"),
+      { 
+        styles: { 
+          "--canary-color-primary-c": 0.1, 
+          "--canary-color-primary-h": 270, 
+        }, 
+        includeRoutes: ["**/*"], 
+        excludeRoutes: ["next", ...versions].map(v => `**/${v}/**`),
+      },
+    ],
+  ],
 };
 
 module.exports = config;
