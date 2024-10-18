@@ -35,7 +35,7 @@ postgres_test:
   ports:
     - '9090:5432'
   environment:
-    POSTGRES_USER: postgres_test
+    POSTGRES_USER: postgres
     POSTGRES_DB: <projectname>_test
     POSTGRES_PASSWORD: "<insert database test password>"
   volumes:
@@ -95,7 +95,7 @@ services:
     ports:
       - '9090:5432'
     environment:
-      POSTGRES_USER: postgres_test
+      POSTGRES_USER: postgres
       POSTGRES_DB: <projectname>_test
       POSTGRES_PASSWORD: "<insert database test password>"
     volumes:
@@ -124,10 +124,11 @@ volumes:
 3. Create a `test.yaml` file and add it to the `config` directory:
 
 ```yaml
-# This is the configuration file for your local test environment. All ports are set to zero in this file which makes the server find the next available port. This is needed to enable running tests concurrently.
+# This is the configuration file for your test environment.
+# All ports are set to zero in this file which makes the server find the next available port.
+# This is needed to enable running tests concurrently. To set up your server, you will
 # need to add the name of the database you are connecting to and the user name.
 # The password for the database is stored in the config/passwords.yaml.
-
 
 # Configuration for the main API test server.
 apiServer:
