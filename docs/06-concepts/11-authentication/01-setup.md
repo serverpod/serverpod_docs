@@ -119,6 +119,7 @@ void run(List<String> args) async {
 | **maxPasswordLength** | The maximum length of passwords when signing up with email. | 128 |
 | **minPasswordLength** | The minimum length of passwords when signing up with email. | 8 |
 | **allowUnsecureRandom** | True if unsecure random number generation is allowed. If set to false, an error will be thrown if the platform does not support secure random number generation. | false |
+| **legacyUserSignOutBehavior** | Defines the default behavior for the deprecated `signOut` method used in the status endpoint. This setting controls whether users are signed out from all active devices (`SignOutOption.allDevices`) or just the current device (`SignOutOption.currentDevice`). | `SignOutOption.allDevices` |
 
 
 
