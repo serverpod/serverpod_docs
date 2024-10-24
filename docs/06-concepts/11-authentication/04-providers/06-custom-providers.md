@@ -225,7 +225,7 @@ class AuthenticatedEndpoint extends Endpoint {
 
 In this example, the `logout` endpoint removes all authentication tokens associated with the user. The user is then signed out and loses access to any protected endpoints.
 
-## Client setup
+## Client Setup
 
 The client must store and include the auth token in communication with the server. Luckily, the client-side authentication module handles this for you through the `SessionManager`.
 
@@ -248,3 +248,35 @@ if (serverResponse.success) {
 ```
 
 The example above shows how to register a signed-in user in the session manager.
+
+### Sign Out
+
+The `SessionManager` provides multiple ways to handle sign-out functionality, allowing you to either sign out from the current device or all devices:
+
+1. **signOutDevice**:  
+   This method allows the user to sign out of the current device while remaining signed in on other devices.
+
+   ```dart
+   await sessionManager.signOutDevice();
+   ```
+
+   This method is useful when the user wants to log out only from the device they are currently using while staying signed in on other devices.
+
+2. **signOutAllDevices**:  
+   This method signs the user out from all devices, effectively revoking all active sessions across all devices.
+
+   ```dart
+   await sessionManager.signOutAllDevices();
+   ```
+
+   This ensures that the user is completely signed out from every authenticated device.
+
+3. **Deprecated signOut Method**:  
+   The older `signOut` method has been deprecated but can still be used. It signs the user out from **all devices**. It is recommended to use `signOutAllDevices` for clarity and future compatibility.
+
+   ```dart
+   // Deprecated usage
+   await sessionManager.signOut();
+   ```
+
+   This method performs the same functionality as `signOutAllDevices` but is marked for deprecation and will be removed in future releases.
