@@ -113,13 +113,13 @@ class MyAuthenticationEndpoint extends Endpoint {
 
 The example above shows how to create an `AuthenticationResponse` with the auth token and user information.
 
-## Remove auth token
+## Managing Authentication Keys and Signing Out Users
 
-Serverpod provides built-in methods for managing user authentication across multiple devices. Below are the key functions for signing out users and revoking authentication keys.
+Serverpod provides built-in methods for managing user authentication across multiple devices. Below are the key functions for signing out users and revoking authentication keys. It is crucial to use these methods to ensure that all required steps, such as notifying clients and clearing session data, are properly handled.
 
 ### Revoking Authentication Keys (Per Device)
 
-To sign a user out from a specific device, you can revoke the authentication key associated with that session using the `revokeAuthKey` method. This method targets a specific session and leaves the user signed in on other devices.
+To sign a user out from a specific device, you can revoke the authentication key associated with that session using the `revokeAuthKey` method. This method targets a specific session and allows the user to remain signed in on other devices.
 
 #### Usage:
 
@@ -151,13 +151,15 @@ if (authKeys.isNotEmpty) {
 }
 ```
 
-In this example:
-- All authentication keys for the specified user are retrieved from the database.
-- The `revokeAuthKey` method is used to remove the last session (or whichever key you choose).
+#### Importance of Using Built-In Methods
 
-Alternatively, you can delete specific authentication tokens directly from the `AuthKey` table, based on custom criteria like `userId` or authentication method.
+Directly deleting authentication keys from the `AuthKey` table is not recommended, as this bypasses essential steps such as notifying connected clients and clearing the session's authentication data. The `revokeAuthKey` method performs several additional actions, including:
+- Sending a notification to the client via `session.messages.authenticationRevoked`.
+- Clearing the session’s authentication data with `session.updateAuthenticated(null)` if the user being signed out is the one currently authenticated.
 
-#### Example: Removing Specific Tokens
+Failure to use these built-in methods can lead to inconsistencies, such as clients not being aware that their session has been revoked.
+
+#### Example: Removing Specific Tokens (Direct Deletion)
 
 ```dart
 await AuthKey.db.deleteWhere(
@@ -166,11 +168,11 @@ await AuthKey.db.deleteWhere(
 );
 ```
 
-This example removes all authentication tokens associated with the user `userId` that were created with the `username` method.
+> ⚠️ **Warning**: While this approach removes authentication tokens directly from the `AuthKey` table, it does not handle the necessary notifications and session updates. It is strongly recommended to use `UserAuthentication.revokeAuthKey` to ensure a complete and consistent sign-out process, including notifying clients and clearing session data.
 
 ### Signing Out from All Devices
 
-The `signOutUser` method is used to log a user out from all devices where they are currently signed in. This method deletes all active authentication keys associated with the user, effectively ending all sessions for that user across all devices.
+The `signOutUser` method logs a user out from all devices where they are signed in. This method deletes all active authentication keys associated with the user, effectively ending all sessions for that user across all devices.
 
 #### Usage:
 
@@ -183,21 +185,23 @@ await UserAuthentication.signOutUser(
 
 #### Example 1: Signing Out a Specific User (With `userId`)
 
-In this example, we provide a specific `userId` to sign out that user from all their devices.
+In this example, a specific `userId` is provided to sign out that user from all their devices.
 
 ```dart
 // Sign out the user with ID 123 from all devices
 await UserAuthentication.signOutUser(
   session,
-  userId: 123,  // Sign out the specified user
+  userId: 123,
 );
 ```
 
-This will revoke all active sessions for the user with `userId` 123, signing them out from all devices they are logged into.
+In addition to deleting the user's authentication tokens, the `signOutUser` method also:
+- Notifies clients about the revoked authentication using `session.messages.authenticationRevoked`.
+- Updates the session’s authentication state with `session.updateAuthenticated(null)` if the user being signed out is the one currently authenticated.
 
 #### Example 2: Signing Out the Currently Authenticated User (Without `userId`)
 
-If no `userId` is provided, `signOutUser` will automatically sign out the user who is currently authenticated in the session. This can be useful when you want to log out the user who initiated the action.
+If no `userId` is provided, `signOutUser` will automatically sign out the user who is currently authenticated in the session.
 
 ```dart
 // Sign out the currently authenticated user
@@ -206,11 +210,11 @@ await UserAuthentication.signOutUser(
 );
 ```
 
-This will log out the user currently associated with the `session`. All active sessions for this user across all devices will be revoked.
+This method handles all necessary steps, including token deletion, client notifications, and session updates.
 
 ### Example: Removing All Auth Tokens in an Endpoint
 
-To sign out a user on all devices using an endpoint, the `signOutUser` method can be used within the `UserAuthentication` class. The method removes all auth tokens associated with the user.
+To sign out a user on all devices using an endpoint, the `signOutUser` method in the `UserAuthentication` class can be employed. This method ensures that all authentication tokens associated with the user are removed and that all related processes are correctly handled.
 
 ```dart
 class AuthenticatedEndpoint extends Endpoint {
@@ -223,7 +227,7 @@ class AuthenticatedEndpoint extends Endpoint {
 }
 ```
 
-In this example, the `logout` endpoint removes all authentication tokens associated with the user. The user is then signed out and loses access to any protected endpoints.
+In this example, the `logout` endpoint ensures that all authentication tokens are removed, and the user is signed out from all devices. The necessary client notifications and session updates are handled automatically.
 
 ## Client Setup
 
@@ -248,35 +252,3 @@ if (serverResponse.success) {
 ```
 
 The example above shows how to register a signed-in user in the session manager.
-
-### Sign Out
-
-The `SessionManager` provides multiple ways to handle sign-out functionality, allowing you to either sign out from the current device or all devices:
-
-1. **signOutDevice**:  
-   This method allows the user to sign out of the current device while remaining signed in on other devices.
-
-   ```dart
-   await sessionManager.signOutDevice();
-   ```
-
-   This method is useful when the user wants to log out only from the device they are currently using while staying signed in on other devices.
-
-2. **signOutAllDevices**:  
-   This method signs the user out from all devices, effectively revoking all active sessions across all devices.
-
-   ```dart
-   await sessionManager.signOutAllDevices();
-   ```
-
-   This ensures that the user is completely signed out from every authenticated device.
-
-3. **Deprecated signOut Method**:  
-   The older `signOut` method has been deprecated but can still be used. It signs the user out from **all devices**. It is recommended to use `signOutAllDevices` for clarity and future compatibility.
-
-   ```dart
-   // Deprecated usage
-   await sessionManager.signOut();
-   ```
-
-   This method performs the same functionality as `signOutAllDevices` but is marked for deprecation and will be removed in future releases.

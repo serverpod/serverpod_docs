@@ -124,3 +124,10 @@ The `StatusEndpoint` class includes methods for handling user sign-outs, whether
     ```dart
     await endpoints.status.signOut(session);  // Deprecated
     ```
+
+
+### Managing Authentication Keys and the Sign-Out Process
+
+In addition to the `StatusEndpoint` methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
+
+For more detailed information on managing authentication keys, revoking specific session tokens, and ensuring client notifications are handled correctly during the sign-out process, please refer to the [Managing Authentication Keys and Signing Out Users](providers/custom-providers#managing-authentication-keys-and-signing-out-users) section.
