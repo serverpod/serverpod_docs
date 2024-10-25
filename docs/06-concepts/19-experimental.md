@@ -24,7 +24,7 @@ The current options you can pass are:
 
 Inheritance allows you to define class hierarchies in your model files by sharing fields between parent and child classes, simplifying class structures and promoting consistency by avoiding duplicate field definitions.
 
-### Extending a  Class
+### Extending a Class
 
 To inherit from a class, use the `extends` keyword in your model files, as shown below:
 
