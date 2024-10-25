@@ -24,6 +24,10 @@ The current options you can pass are:
 
 Inheritance allows you to define class hierarchies in your model files by sharing fields between parent and child classes, simplifying class structures and promoting consistency by avoiding duplicate field definitions.
 
+### Extending a  Class
+
+To inherit from a class, use the `extends` keyword in your model files, as shown below:
+
 ```yaml
 class: ParentClass
 fields:
@@ -46,6 +50,37 @@ class ChildClass extends ParentClass {
 }
 ```
 
+### Sealed Classes
+
+In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies. A sealed class restricts which other classes can extend or implement it, allowing for more controlled inheritance. For example:
+
+```yaml
+class: ParentClass
+sealed: true
+fields:
+    name: String
+```
+
+```yaml
+class: ChildClass
+extends: ParentClass
+fields:
+    age: int
+```
+
+This will generate the following classes:
+
+```dart
+sealed class ParentClass {
+    String name;
+}
+
+class ChildClass extends ParentClass {
+    String name;
+    int age;
+}
+```
+
 :::info
-The `extends` keyword does not work for models with a `table` field.
+All files in a sealed hierarchy need to be located in the same sub directory.
 :::
