@@ -22,6 +22,10 @@ The current options you can pass are:
 
 ## Inheritance
 
+:::warning
+Adding a new subtype to a class hierarchy may introduce breaking changes for older clients. Ensure client compatibility when expanding class hierarchies to avoid deserialization issues.
+:::
+
 Inheritance allows you to define class hierarchies in your model files by sharing fields between parent and child classes, simplifying class structures and promoting consistency by avoiding duplicate field definitions.
 
 ### Extending a Class
@@ -52,7 +56,7 @@ class ChildClass extends ParentClass {
 
 ### Sealed Classes
 
-In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies. A sealed class restricts which other classes can extend or implement it, allowing for more controlled inheritance. For example:
+In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies, enabling exhaustive type checking. With sealed classes, the compiler knows all subclasses, ensuring that every possible case is handled when working with the model.
 
 ```yaml
 class: ParentClass
@@ -82,5 +86,5 @@ class ChildClass extends ParentClass {
 ```
 
 :::info
-All files in a sealed hierarchy need to be located in the same sub directory.
+All files in a sealed hierarchy need to be located in the same directory.
 :::
