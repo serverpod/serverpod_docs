@@ -224,14 +224,14 @@ The `SessionManager` provides several methods to monitor and control the user's 
    ```
 
 - **`signOutDevice`**  
-   Signs the user out from the current device, keeping them signed in on other devices.
+   Signs the user out from the current device, keeping them signed in on other devices. This is the most common scenario when signing out.
 
    ```dart
    await sessionManager.signOutDevice();
    ```
 
 - **`signOutAllDevices`**  
-   Signs the user out from all devices, revoking active sessions across every device.
+   Signs the user out from all devices, revoking active access across every device.
 
    ```dart
    await sessionManager.signOutAllDevices();

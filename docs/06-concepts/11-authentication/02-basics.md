@@ -97,21 +97,21 @@ class MyEndpoint extends Endpoint {
 Keep in mind that a scope is merely an arbitrary string and can be written in any format you prefer. However, it's crucial to use unique strings for each scope, as duplicated scope strings may lead to unintentional data exposure.
 :::
 
-## Managing Authentication in Serverpod's `StatusEndpoint`
+## User authentication
 
-The `StatusEndpoint` class includes methods for handling user sign-outs, whether from a single device, all devices, or via a deprecated method.
+The `StatusEndpoint` class includes methods for handling user sign-outs, whether from a single device or all devices.
 
-- **Sign out from the current device**
+- **Sign out device**
 
-    Use the `signOutDevice` method to log the user out of the current session only, leaving other sessions active.
+    Use the `signOutDevice` method to log the user out of the current device only, leaving other devices active.
 
     ```dart
     await endpoints.status.signOutDevice(session);
     ```
 
-- **Sign out from all devices**
+- **Sign out all devices**
 
-    Use the `signOutAllDevices` method to log the user out from all devices, effectively ending all active sessions.
+    Use the `signOutAllDevices` method to log the user out from all devices, effectively ending all active access.
 
     ```dart
     await endpoints.status.signOutAllDevices(session);
@@ -119,15 +119,15 @@ The `StatusEndpoint` class includes methods for handling user sign-outs, whether
 
 - **Deprecated method for signing out from all devices**
 
-    The `signOut` method is deprecated and will be removed in a future release. It currently allows signing out from all devices, but new implementations should use `signOutDevice` or `signOutAllDevices`.
+   The `signOut` method is deprecated. Its behavior is controlled by the `legacyUserSignOutBehavior` configuration option, which can be set up in the [Configure Authentication](setup#configure-authentication) section. New implementations should use `signOutDevice` or `signOutAllDevices` instead.
 
-    ```dart
-    await endpoints.status.signOut(session);  // Deprecated
-    ```
-
+   ```dart
+   await endpoints.status.signOut();  // Deprecated
+   ```
 
 ### Managing Authentication Keys and the Sign-Out Process
 
 In addition to the `StatusEndpoint` methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
 
-For more detailed information on managing authentication keys, revoking specific session tokens, and ensuring client notifications are handled correctly during the sign-out process, please refer to the [Managing Authentication Keys and Signing Out Users](providers/custom-providers#managing-authentication-keys-and-signing-out-users) section.
+For more detailed information on managing authentication keys, revoking specific tokens, and ensuring client notifications are handled correctly during the sign-out process, please refer to the [Managing Authentication Keys and Signing Out Users](providers/custom-providers#managing-authentication-keys-and-signing-out-users) section.
+
