@@ -238,7 +238,7 @@ The `SessionManager` provides several methods to monitor and control the user's 
    ```
 
 - **Deprecated `signOut` Method**  
-   The original `signOut` method is deprecated but can still be used to sign the user out from all devices. Using `signOutAllDevices` is recommended for better clarity and future support.
+   The original `signOut` method is deprecated. If the same behavior is desired, use `signOutAllDevices` instead.
 
    ```dart
    // Deprecated usage
