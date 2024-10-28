@@ -185,7 +185,7 @@ void main() async {
 The `SessionManager` provides several methods to monitor and control the user's session state:
 
 - **`isSignedIn`**  
-   Checks if the user is currently signed in, returning `true` for signed-in status and `false` otherwise.
+   Check the users authentication status.
 
    ```dart
    sessionManager.isSignedIn;
