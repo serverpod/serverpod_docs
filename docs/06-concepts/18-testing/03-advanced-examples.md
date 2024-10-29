@@ -113,3 +113,37 @@ withServerpod('Given CommunicationExampleEndpoint', (sessionBuilder, endpoints) 
   });
 });
 ```
+
+## Optimising number of database connections
+
+By default, Dart's test runner runs tests concurrently. The number of concurrent tests depends on the running hosts' available CPU cores. If the host has a lot of cores it could trigger a case where the number of connections to the database exceeeds the maximum connections limit set for the database, which will cause tests to fail.
+
+Each `withServerpod` call will lazily create its own Serverpod instance which will connect to the database. Specifically, the code that causes the Serverpod instance to be created is `sessionBuilder.build()`, which happens at the latest in an endpoint call if not called by the test before.
+
+If a test needs a session before the endpoint call (e.g. to seed the database), `sessionBuilder.build()` has to be called which then triggers a database connection attempt.
+
+If the max connection limit is hit, there are two options:
+
+- Raise the max connections limit on the database.
+- Build out the session in `setUp`/`setUpAll` instead of the top level scope:
+
+```dart
+withServerpod('Given example test', (sessionBuilder, endpoints) {
+  // Instead of this
+  var session = sessionBuilder.build();
+
+
+  // Do this to postpone connecting to the database until the test group is running
+  late Session session;
+  setUpAll(() {
+    session = sessionBuilder.build();
+  });
+  // ...
+});
+```
+
+:::info
+
+This case should be rare and the above example is not a recommended best practice unless this problem is anticipated, or it has started happening.
+
+:::
