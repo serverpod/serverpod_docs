@@ -6,7 +6,7 @@ The `Session` object provides information about the current user. A unique `user
 
 ```dart
 Future<void> myMethod(Session session) async {
-  var userId = await session.auth.authenticatedUserId;
+  var userId = (await session.authenticated)?.userId;
   ...
 }
 ```
@@ -103,7 +103,7 @@ The `StatusEndpoint` class includes methods for handling user sign-outs, whether
 
 - **Sign out device**
 
-    Use the `signOutDevice` method to log the user out of the current device only, leaving other devices active.
+    Use the `signOutDevice` method to log the user out of the current device only, closing streaming connections for this device while keeping other devices active.
 
     ```dart
     await endpoints.status.signOutDevice(session);
@@ -111,7 +111,7 @@ The `StatusEndpoint` class includes methods for handling user sign-outs, whether
 
 - **Sign out all devices**
 
-    Use the `signOutAllDevices` method to log the user out from all devices, effectively ending all active access.
+    Use the `signOutAllDevices` method to log the user out from all devices, closing all streaming connections and synchronizing server state.
 
     ```dart
     await endpoints.status.signOutAllDevices(session);
@@ -129,5 +129,4 @@ The `StatusEndpoint` class includes methods for handling user sign-outs, whether
 
 In addition to the `StatusEndpoint` methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
 
-For more detailed information on managing authentication keys, revoking specific tokens, and ensuring client notifications are handled correctly during the sign-out process, please refer to the [Managing Authentication Keys and Signing Out Users](providers/custom-providers#managing-authentication-keys-and-signing-out-users) section.
-
+For more detailed information on managing authentication keys, revoking specific tokens, and handling streaming connections during the sign-out process, please refer to the [Revoking authentication keys](providers/custom-providers#revoking-authentication-keys) section.
