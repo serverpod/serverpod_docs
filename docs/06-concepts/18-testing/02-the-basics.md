@@ -127,11 +127,21 @@ The following optional configuration options are available to pass as a second a
 
 |Property|Type|Default|
 |:-----|:-----|:---:|
+|`applyMigrations`|`bool?`|`true`|
+|`enableSessionLogging`|`bool?`|`false`|
 |`rollbackDatabase`|`RollbackDatabase?`|`RollbackDatabase.afterEach`|
 |`runMode`|`String?`|`ServerpodRunmode.test`|
-|`enableSessionLogging`|`bool?`|`false`|
-|`applyMigrations`|`bool?`|`true`|
-|`testGroupTagsOverride`|`List<String>?`|`null`|
+|`serverpodLoggingMode`|`ServerpodLoggingMode?`|`ServerpodLoggingMode.normal`|
+|`serverpodStartTimeout`|`Duration?`|`Duration(seconds: 30)`|
+|`testGroupTagsOverride`|`List<String>?`|`['integration']`|
+
+### `applyMigrations`
+
+Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
+
+### `enableSessionLogging`
+
+Wether session logging should be enabled. Defaults to `false`.
 
 ### `rollbackDatabase` {#rollback-database-configuration}
 
@@ -228,17 +238,17 @@ In production, the transaction call will throw if any database exception happene
 
 The run mode that Serverpod should be running in. Defaults to `test`.
 
-### `enableSessionLogging`
+### `serverpodLoggingMode`
 
-Wether session logging should be enabled. Defaults to `false`.
+The logging mode used when creating Serverpod. Defaults to `ServerpodLoggingMode.normal`.
 
-### `applyMigrations`
+### `serverpodStartTimeout`
 
-Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
+The timeout to use when starting Serverpod, which connects to the database among other things. Defaults to `Duration(seconds: 30)`.
 
 ### `testGroupTagsOverride` {#test-group-tags-override-configuration}
 
-By default Serverpod test tools tags the `withServerpod` test group with `"integration"`. This is to provide a simple way to only run unit or integration tests. This property allows this tag to be overridden to something else. Defaults to `null` (i.e. no override).
+By default Serverpod test tools tags the `withServerpod` test group with `"integration"`. This is to provide a simple way to only run unit or integration tests. This property allows this tag to be overridden to something else. Defaults to `['integration']`.
 
 ## Test exceptions
 
