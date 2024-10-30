@@ -182,66 +182,75 @@ void main() async {
 }
 ```
 
-The `SessionManager` has useful methods for viewing and monitoring the user's current state:
+The `SessionManager` has useful methods for viewing and monitoring the user's current state.
 
-- **Check authentication state**  
-   Check the users authentication status.
+#### Check authentication state
+To check if the user is signed in:
 
-   ```dart
-   sessionManager.isSignedIn;
-   ```
-
-- **Access current user**  
-   Will return a `UserInfo` if the user is currently signed in (or `null` if the user isn't signed in).
-
-   ```dart
-   sessionManager.signedInUser;
-   ```
-
-- **Register authentication**  
-   Set up a new authenticated session after successful login.  
-   For more details, visit [Custom Providers - Client Setup](providers/custom-providers#client-setup).
-
-   ```dart
-   await sessionManager.registerSignedInUser(
-     userInfo,
-     keyId,
-     authKey,
-   );
-   ```
-
-- **Monitor session changes**  
-   React to changes in authentication state, useful for updating UI or handling session events.
-
-   ```dart
-   @override
-   void initState() {
-     super.initState();
-     
-     // Rebuild the page if authentication state changes.
-     sessionManager.addListener(() {
-       setState(() {});
-     });
-   }
-   ```
-
-- **Sign Out Current Device**  
-   Signs the user out on this device only, preserving access on other devices. This is the recommended way to handle sign-outs.
-
-   ```dart
-   await sessionManager.signOutDevice();
-   ```
-
-- **Sign Out All Devices**  
-   Signs the user out across all devices where they are signed in.
-
-   ```dart
-   await sessionManager.signOutAllDevices();
-   ```
-
-:::info Deprecated Method
-The original `signOut` method is deprecated. If the same behavior is desired, use `signOutAllDevices` instead.
 ```dart
-await sessionManager.signOut();
+sessionManager.isSignedIn;
 ```
-:::
+Returns `true` if the user is signed in, or `false` otherwise.
+
+#### Access current user
+To retrieve information about the current user:
+
+```dart
+sessionManager.signedInUser;
+```
+Returns a `UserInfo` object if the user is signed in, or `null` if not.
+
+#### Register authentication
+To register the user in the session manager, storing their information and refreshing the streaming connection:
+
+```dart
+await sessionManager.registerSignedInUser(
+  userInfo,
+  keyId,
+  authKey,
+);
+```
+See [Custom Providers - Client Setup](providers/custom-providers#client-setup) for more details.
+
+#### Monitor authentication changes
+To add a listener that tracks changes in the user's authentication state, useful for updating the UI:
+
+```dart
+@override
+void initState() {
+  super.initState();
+  
+  // Rebuild the page if authentication state changes.
+  sessionManager.addListener(() {
+    setState(() {});
+  });
+}
+```
+The listener is triggered whenever the user's sign-in state changes.
+
+#### Sign out current device
+To sign the user out on the current device, preserving access on other devices:
+
+```dart
+await sessionManager.signOutDevice();
+```
+Returns `true` if the sign-out is successful, or `false` if it fails.
+
+#### Sign out all devices
+To sign the user out across all devices:
+
+```dart
+await sessionManager.signOutAllDevices();
+```
+Returns `true` if the user is successfully signed out from all devices, or `false` if it fails.
+
+
+:::info
+#### Deprecated method
+
+The `signOut` method is deprecated. To log out from all devices, use `signOutAllDevices`. For additional details, see the [Deprecated Method](basics#deprecated-method) section.
+
+```dart
+await sessionManager.signOut();  // Deprecated
+```
+::: 

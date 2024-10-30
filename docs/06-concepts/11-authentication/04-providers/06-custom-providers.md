@@ -179,7 +179,11 @@ await AuthKey.db.deleteWhere(
 );
 ```
 
-> ⚠️ **Warning**: Directly removing authentication tokens from the `AuthKey` table bypasses necessary processes such as closing streaming connections and synchronizing server state. It is strongly recommended to use `UserAuthentication.revokeAuthKey` to ensure a complete and consistent sign-out.
+:::warning
+
+Directly removing authentication tokens from the `AuthKey` table bypasses necessary processes such as closing streaming connections and synchronizing server state. It is strongly recommended to use `UserAuthentication.revokeAuthKey` to ensure a complete and consistent sign-out.
+
+:::
 
 #### Signing out all devices
 
