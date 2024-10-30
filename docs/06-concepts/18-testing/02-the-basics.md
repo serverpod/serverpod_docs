@@ -4,10 +4,10 @@
 
 The `withServerpod` helper provides a `sessionBuilder` that helps with setting up different scenarios for tests. To modify the session builder's properties, call its `copyWith` method. It takes the following named parameters:
 
-|Property|Type|Default|Description|
-|:-----|:-----|:---:|:-----|
-|`authentication`|`AuthenticationOverride?`|`AuthenticationOverride.unauthenticated()`|See section [Setting authenticated state](#setting-authenticated-state).|
-|`enableLogging`|`bool?`|`false`|Wether logging is turned on for the session.|
+|Property|Description|Default|
+|:---|:---|:---:|
+|`authentication`|See section [Setting authenticated state](#setting-authenticated-state).|`AuthenticationOverride.unauthenticated()`|
+|`enableLogging`|Whether logging is turned on for the session.|`false`|
 
 The `copyWith` method creates a new unique session builder with the provided properties. This can then be used in endpoint calls (see section [Setting authenticated state](#setting-authenticated-state) for an example).
 
@@ -125,13 +125,15 @@ withServerpod(
 
 The following optional configuration options are available to pass as a second argument to `withServerpod`:
 
-|Property|Type|Default|
+|Property|Description|Default|
 |:-----|:-----|:---:|
-|`rollbackDatabase`|`RollbackDatabase?`|`RollbackDatabase.afterEach`|
-|`runMode`|`String?`|`ServerpodRunmode.test`|
-|`enableSessionLogging`|`bool?`|`false`|
-|`applyMigrations`|`bool?`|`true`|
-|`testGroupTagsOverride`|`List<String>?`|`null`|
+|`applyMigrations`|Whether pending migrations should be applied when starting Serverpod.|`true`|
+|`enableSessionLogging`|Whether session logging should be enabled.|`false`|
+|`rollbackDatabase`|Options for when to rollback the database during the test lifecycle (or disable it). See detailed description [here](#rollback-database-configuration).|`RollbackDatabase.afterEach`|
+|`runMode`|The run mode that Serverpod should be running in.|`ServerpodRunmode.test`|
+|`serverpodLoggingMode`|The logging mode used when creating Serverpod.|`ServerpodLoggingMode.normal`|
+|`serverpodStartTimeout`|The timeout to use when starting Serverpod, which connects to the database among other things. Defaults to `Duration(seconds: 30)`.|`Duration(seconds: 30)`|
+|`testGroupTagsOverride`|By default Serverpod test tools tags the `withServerpod` test group with `"integration"`. This is to provide a simple way to only run unit or integration tests. This property allows this tag to be overridden to something else. Defaults to `['integration']`.|`['integration']`|
 
 ### `rollbackDatabase` {#rollback-database-configuration}
 
@@ -223,22 +225,6 @@ await transactionFuture;
 ```
 
 In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practise, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabse.disabled` will ensure the code behaves like in production.
-
-### `runMode`
-
-The run mode that Serverpod should be running in. Defaults to `test`.
-
-### `enableSessionLogging`
-
-Wether session logging should be enabled. Defaults to `false`.
-
-### `applyMigrations`
-
-Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
-
-### `testGroupTagsOverride` {#test-group-tags-override-configuration}
-
-By default Serverpod test tools tags the `withServerpod` test group with `"integration"`. This is to provide a simple way to only run unit or integration tests. This property allows this tag to be overridden to something else. Defaults to `null` (i.e. no override).
 
 ## Test exceptions
 
