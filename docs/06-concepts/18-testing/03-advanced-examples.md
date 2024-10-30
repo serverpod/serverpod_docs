@@ -15,7 +15,7 @@ dart test -t integration
 dart test -x integration
 ```
 
-To change the name of this tag, see the [`testGroupTagsOverride`](the-basics#test-group-tags-override-configuration) configuration option.
+To change the name of this tag, see the [`testGroupTagsOverride`](the-basics#configuration) configuration option.
 
 ## Test business logic that depends on `Session`
 
