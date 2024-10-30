@@ -7,7 +7,7 @@ The `withServerpod` helper provides a `sessionBuilder` that helps with setting u
 |Property|Type|Default|Description|
 |:-----|:-----|:---:|:-----|
 |`authentication`|`AuthenticationOverride?`|`AuthenticationOverride.unauthenticated()`|See section [Setting authenticated state](#setting-authenticated-state).|
-|`enableLogging`|`bool?`|`false`|Wether logging is turned on for the session.|
+|`enableLogging`|`bool?`|`false`|Whether logging is turned on for the session.|
 
 The `copyWith` method creates a new unique session builder with the provided properties. This can then be used in endpoint calls (see section [Setting authenticated state](#setting-authenticated-state) for an example).
 
@@ -137,11 +137,11 @@ The following optional configuration options are available to pass as a second a
 
 ### `applyMigrations`
 
-Wether pending migrations should be applied when starting Serverpod. Defaults to `true`.
+Whether pending migrations should be applied when starting Serverpod. Defaults to `true`.
 
 ### `enableSessionLogging`
 
-Wether session logging should be enabled. Defaults to `false`.
+Whether session logging should be enabled. Defaults to `false`.
 
 ### `rollbackDatabase` {#rollback-database-configuration}
 
