@@ -99,44 +99,43 @@ Keep in mind that a scope is merely an arbitrary string and can be written in an
 
 ## User authentication
 
+The `StatusEndpoint` class includes methods for handling user sign-outs, whether from a single device or all devices.
+
 :::info
-#### Managing Authentication Keys and the Sign-Out Process
 
 In addition to the `StatusEndpoint` methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
 
-For more detailed information on managing authentication keys, revoking specific tokens, and handling streaming connections during the sign-out process, please refer to the [Revoking authentication keys](providers/custom-providers#revoking-authentication-keys) section.
+For more detailed information on managing and revoking authentication keys, please refer to the [Revoking authentication keys](providers/custom-providers#revoking-authentication-keys) section.
 
 :::
 
-The `StatusEndpoint` class includes methods for handling user sign-outs, whether from a single device or all devices.
-
 #### Sign out device
 
-To sign the user out of the current device only, closing streaming connections for this device while keeping other devices active:
+To sign out a single device:
 
 ```dart
-await endpoints.status.signOutDevice(session);
+await client.modules.auth.status.signOutDevice();
 ```
 
-This method obtains the authentication key from session authentication information, then revokes the authentication key for the current device keeping other devices active.
+This status endpoint method obtains the authentication key from session's authentication information, then revokes that key.
 
 #### Sign out all devices
 
-To sign the user out from all devices, closing all streaming connections and synchronizing server state:
+To sign the user out across all devices:
 
 ```dart
-await endpoints.status.signOutAllDevices(session);
+await client.modules.auth.status.signOutAllDevices();
 ```
 
-This method retrieves the user ID from session authentication information, then revokes all authentication keys related to that user, signing that user out from all devices.
+This status endpoint retrieves the user ID from session's authentication information, then revokes all authentication keys related to that user.
 
-:::info
-#### Deprecated method
-The `signOut` method is deprecated. To sign out from all devices, use `signOutAllDevices`.
+:::info 
+<span id="deprecated-signout-endpoint"></span>
+The `signOut` status endpoint is deprecated. Use `signOutDevice` or `signOutAllDevices` instead.
 
 ```dart
-await endpoints.status.signOut(session);  // Deprecated
+await client.modules.auth.status.signOut();  // Deprecated
 ```
 
-The behavior of `signOut` is controlled by `legacyUserSignOutBehavior`, which you can adjust in the [configure authentication](setup#configure-authentication) section. For new implementations, use `signOutDevice` or `signOutAllDevices`.
+The behavior of `signOut` is controlled by `legacyUserSignOutBehavior`, which you can adjust in the [configure authentication](setup#configure-authentication) section. This allows you to control the signout behaviour of already shipped clients.
 ::: 

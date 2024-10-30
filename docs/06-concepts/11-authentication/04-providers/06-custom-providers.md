@@ -113,17 +113,15 @@ The example above shows how to create an `AuthenticationResponse` with the auth 
 
 ### Revoking authentication keys
 
-Serverpod provides built-in methods for managing user authentication across multiple devices. These methods handle several critical security and state management processes automatically, ensuring consistent and secure authentication state across your application. When using the authentication management methods (`signOutUser` or `revokeAuthKey`), the following key actions are automatically handled:
+Serverpod provides built-in methods for managing user authentication across multiple devices. These methods handle several critical security and state management processes automatically, ensuring consistent and secure authentication state across your servers. When using the authentication management methods (`signOutUser` or `revokeAuthKey`), the following key actions are automatically handled:
 
-- Closing all affected streaming connections to maintain connection integrity.
+- Closing all affected method streaming connections to maintain connection integrity.
 - Synchronizing authentication state across all connected servers.
 - Updating the session's authentication state with `session.updateAuthenticated(null)` if the affected user is currently authenticated.
 
 #### Revoking specific keys
 
-To revoke specific authentication keys, use the `revokeAuthKey` method. This method handles all required processes, including closing streaming connections and synchronizing authentication state across servers.
-
-#### Usage:
+To revoke specific authentication keys, use the `revokeAuthKey` method:
 
 ```dart
 await UserAuthentication.revokeAuthKey(
@@ -132,9 +130,9 @@ await UserAuthentication.revokeAuthKey(
 );
 ```
 
-#### Fetching and revoking an authentication key using AuthenticationInfo
+##### Fetching and revoking an authentication key using AuthenticationInfo
 
-To revoke a specific authentication key for the current session, you can directly access the session's authentication information and call the `revokeAuthKey` method.
+To revoke a specific authentication key for the current session, you can directly access the session's authentication information and call the `revokeAuthKey` method:
 
 ```dart
 // Fetch the authentication information for the current session
@@ -149,15 +147,15 @@ if (authId != null) {
 }
 ```
 
-#### Fetching and revoking a specific authentication key for a user
+##### Fetching and revoking a specific authentication key for a user
 
-To revoke a specific authentication key associated with a user, you can retrieve all authentication keys for that user and select the key you wish to revoke.
+To revoke a specific authentication key associated with a user, you can retrieve all authentication keys for that user and select the key you wish to revoke:
 
 ```dart
 // Fetch all authentication keys for the user
 var authKeys = await AuthKey.db.find(
   session,
-  where: (row) => row.userId.equals(userId),
+  where: (t) => t.userId.equals(userId),
 );
 
 // Revoke a specific key (for example, the last one)
@@ -170,7 +168,7 @@ if (authKeys.isNotEmpty) {
 }
 ```
 
-#### Removing specific tokens (direct deletion)
+##### Removing specific tokens (direct deletion)
 
 ```dart
 await AuthKey.db.deleteWhere(
@@ -181,15 +179,13 @@ await AuthKey.db.deleteWhere(
 
 :::warning
 
-Directly removing authentication tokens from the `AuthKey` table bypasses necessary processes such as closing streaming connections and synchronizing server state. It is strongly recommended to use `UserAuthentication.revokeAuthKey` to ensure a complete and consistent sign-out.
+Directly removing authentication tokens from the `AuthKey` table bypasses necessary processes such as closing method streaming connections and synchronizing servers state. It is strongly recommended to use `UserAuthentication.revokeAuthKey` to ensure a complete and consistent sign-out.
 
 :::
 
 #### Signing out all devices
 
-The `signOutUser` method logs a user out from all devices where they are signed in. This method deletes all authentication keys associated with the user, effectively ending all streaming connections across all devices.
-
-#### Usage with signOutUser
+The `signOutUser` method signs a user out from all devices:
 
 ```dart
 await UserAuthentication.signOutUser(
@@ -197,10 +193,11 @@ await UserAuthentication.signOutUser(
   userId: 123,  // Optional: If omitted, the currently authenticated user will be signed out
 );
 ```
+This method deletes all authentication keys associated with the user.
 
-#### Signing out a specific user
+##### Signing out a specific user
 
-In this example, a specific `userId` is provided to sign out that user from all their devices.
+In this example, a specific `userId` is provided to sign out that user from all their devices:
 
 ```dart
 // Sign out the user with ID 123 from all devices
@@ -210,9 +207,9 @@ await UserAuthentication.signOutUser(
 );
 ```
 
-#### Signing out the currently authenticated user
+##### Signing out the currently authenticated user
 
-If no `userId` is provided, `signOutUser` will automatically sign out the user who is currently authenticated in the session.
+If no `userId` is provided, `signOutUser` will automatically sign out the user who is currently authenticated in the session:
 
 ```dart
 // Sign out the currently authenticated user
@@ -223,7 +220,7 @@ await UserAuthentication.signOutUser(
 
 #### Creating a logout endpoint
 
-To sign out a user on all devices using an endpoint, the `signOutUser` method in the `UserAuthentication` class can be employed.
+To sign out a user on all devices using an endpoint, the `signOutUser` method in the `UserAuthentication` class can be used:
 
 ```dart
 class AuthenticatedEndpoint extends Endpoint {
