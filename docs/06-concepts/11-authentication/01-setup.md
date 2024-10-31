@@ -89,38 +89,35 @@ void run(List<String> args) async {
 
 ```
 
-
-
-|**Property**|Description|Default|
-|:-----|:---|:---:|
-| **maxAllowedEmailSignInAttempts** | Max allowed failed email sign in attempts within the reset period.| 5 |
-| **emailSignInFailureResetTime** | The reset period for email sign in attempts. Defaults to 5 minutes.| 5min |
-| **userCanEditUserImage** | True if users can update their profile images.| true |
-| **userCanEditUserName** | True if users can edit their user names. | true |
-| **userCanEditFullName** | True if users can edit their full name. | false | 
-| **userCanSeeUserName** | True if users can view their user name. | true |
-| **userCanSeeFullName** | True if users can view their full name. | true |
-| **enableUserImages** | True if user images are enabled. | true | 
-| **importUserImagesFromGoogleSignIn** | True if user images should be imported when signing in with Google. | true |
-| **userImageSize** | The size of user images. | 256 |
-| **userImageFormat** | The format used to store user images | jpg |
-| **userImageQuality** | The quality setting for images if JPG format is used. | 70 |
-| **userImageGenerator** | Generator used to produce default user images. | - |
-| **userInfoCacheLifetime** | The duration which user infos are cached locally in the server. | 1min |
-| **onUserWillBeCreated** | Called when a user is about to be created, gives a chance to abort the creation by returning false. | - |
-| **onUserCreated** | Called after a user has been created. Listen to this callback if you need to do additional setup. | - | 
-| **onUserUpdated** | Called whenever a user has been updated. This can be when the user name is changed or if the user uploads a new profile picture. | - |
-| **sendPasswordResetEmail** | Called when a user should be sent a reset code by email. | - | 
-| **sendValidationEmail** | Called when a user should be sent a validation code on account setup. | - |
-| **validationCodeLength** | The length of the validation code used in the authentication process. This value determines the number of digits in the validation code. Setting this value to **less than 3 reduces security.** | 8 |
-| **passwordResetExpirationTime** | The time for password resets to be valid. | 24h |
+| **Property** | **Description** | **Default** |
+|:-------------|:----------------|:-----------:|
+| **allowUnsecureRandom** | True if unsecure random number generation is allowed. If set to false, an error will be thrown if the platform does not support secure random number generation. | false |
+| **emailSignInFailureResetTime** | The reset period for email sign in attempts. Defaults to 5 minutes. | 5min |
+| **enableUserImages** | True if user images are enabled. | true |
 | **extraSaltyHash** | True if the server should use the accounts email address as part of the salt when storing password hashes (strongly recommended). | true |
-| **firebaseServiceAccountKeyJson** | Firebase service account key JSON file. Generate and download from the Firebase console. | - | 
+| **firebaseServiceAccountKeyJson** | Firebase service account key JSON file. Generate and download from the Firebase console. | - |
+| **importUserImagesFromGoogleSignIn** | True if user images should be imported when signing in with Google. | true |
+| **legacyUserSignOutBehavior** | Defines the default behavior for the deprecated `signOut` method used in the status endpoint. This setting controls whether users are signed out from all active devices (`SignOutOption.allDevices`) or just the current device (`SignOutOption.currentDevice`). | `SignOutOption.allDevices` |
+| **maxAllowedEmailSignInAttempts** | Max allowed failed email sign in attempts within the reset period. | 5 |
 | **maxPasswordLength** | The maximum length of passwords when signing up with email. | 128 |
 | **minPasswordLength** | The minimum length of passwords when signing up with email. | 8 |
-| **allowUnsecureRandom** | True if unsecure random number generation is allowed. If set to false, an error will be thrown if the platform does not support secure random number generation. | false |
-
-
+| **onUserCreated** | Called after a user has been created. Listen to this callback if you need to do additional setup. | - |
+| **onUserUpdated** | Called whenever a user has been updated. This can be when the user name is changed or if the user uploads a new profile picture. | - |
+| **onUserWillBeCreated** | Called when a user is about to be created, gives a chance to abort the creation by returning false. | - |
+| **passwordResetExpirationTime** | The time for password resets to be valid. | 24h |
+| **sendPasswordResetEmail** | Called when a user should be sent a reset code by email. | - |
+| **sendValidationEmail** | Called when a user should be sent a validation code on account setup. | - |
+| **userCanEditFullName** | True if users can edit their full name. | false |
+| **userCanEditUserImage** | True if users can update their profile images. | true |
+| **userCanEditUserName** | True if users can edit their user names. | true |
+| **userCanSeeFullName** | True if users can view their full name. | true |
+| **userCanSeeUserName** | True if users can view their user name. | true |
+| **userImageFormat** | The format used to store user images. | jpg |
+| **userImageGenerator** | Generator used to produce default user images. | - |
+| **userImageQuality** | The quality setting for images if JPG format is used. | 70 |
+| **userImageSize** | The size of user images. | 256 |
+| **userInfoCacheLifetime** | The duration which user infos are cached locally in the server. | 1min |
+| **validationCodeLength** | The length of the validation code used in the authentication process. This value determines the number of digits in the validation code. Setting this value to less than 3 reduces security. | 8 |
 
 ## Client setup
 
@@ -185,22 +182,74 @@ void main() async {
 }
 ```
 
-The `SessionManager` has useful methods for viewing and monitoring the user's current state:
+The `SessionManager` has useful methods for viewing and monitoring the user's current state.
 
-- The `signedInUser` will return a `UserInfo` if the user is currently signed in (or `null` if the user isn't signed in).
-- Use the `addListener` method to get notified of changes to the user's signed in state.
-- Sign out a user by calling the `signOut` method.
+#### Check authentication state
+To check if the user is signed in:
 
-For example it can be useful to subscribe to changes in the `SessionManager` and force a rerender of your app.
+```dart
+sessionManager.isSignedIn;
+```
+Returns `true` if the user is signed in, or `false` otherwise.
+
+#### Access current user
+To retrieve information about the current user:
+
+```dart
+sessionManager.signedInUser;
+```
+Returns a `UserInfo` object if the user is currently signed in, or `null` if the user is not.
+
+#### Register authentication
+To register a signed in user in the session manager:
+
+```dart
+await sessionManager.registerSignedInUser(
+  userInfo,
+  keyId,
+  authKey,
+);
+```
+This will persist the user information and refresh any open streaming connection, see [Custom Providers - Client Setup](providers/custom-providers#client-setup) for more details.
+
+#### Monitor authentication changes
+To add a listener that tracks changes in the user's authentication state, useful for updating the UI:
 
 ```dart
 @override
 void initState() {
   super.initState();
-
-  // Rebuild the page if signed in status changes.
+  
+  // Rebuild the page if authentication state changes.
   sessionManager.addListener(() {
     setState(() {});
   });
 }
 ```
+The listener is triggered whenever the user's sign-in state changes.
+
+#### Sign out current device
+To sign the user out on from the current device:
+
+```dart
+await sessionManager.signOutDevice();
+```
+Returns `true` if the sign-out is successful, or `false` if it fails.
+
+#### Sign out all devices
+To sign the user out across all devices:
+
+```dart
+await sessionManager.signOutAllDevices();
+```
+Returns `true` if the user is successfully signed out from all devices, or `false` if it fails.
+
+
+:::info
+
+The `signOut` method is deprecated. This method calls the deprecated `signOut` status endpoint. For additional details, see the [deprecated signout endpoint](basics#deprecated-signout-endpoint) section. Use `signOutDevice` or `signOutAllDevices` instead.
+
+```dart
+await sessionManager.signOut();  // Deprecated
+```
+::: 
