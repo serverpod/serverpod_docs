@@ -8,12 +8,6 @@ Serverpod supports two ways to stream data. The first approach, [streaming metho
 
 When an endpoint method is defined with `Stream` instead of `Future` as the return type or includes `Stream` as a method parameter, it is recognized as a streaming method. Streaming methods transmit data over a shared, self-managed web socket connection that automatically connects and disconnects from the server.
 
-:::warning
-
-Streaming methods are still experimental and may change in the future.
-
-:::
-
 ### Defining a streaming method
 
 Streaming methods are defined by using the `Stream` type as either the return value or a parameter.
