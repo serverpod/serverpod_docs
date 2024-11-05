@@ -82,7 +82,7 @@ values:
 
 :::info
 
-It's recommended to always set `serialized` to `byName` in any new Enum models, as this is less fragile and will be changed to the default setting in version 2 of Serverpod.
+It's recommended to always set `serialized` to `byName` in any new Enum models, as this is less fragile and will be changed to the default setting in version 3 of Serverpod.
 
 :::
 
