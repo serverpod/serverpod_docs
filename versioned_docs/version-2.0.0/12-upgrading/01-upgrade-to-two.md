@@ -380,7 +380,7 @@ factory ClassName.fromJson(
 
 ## Deprecation Notice for `SerializableEntity`
 
-The `SerializableEntity` class is deprecated and will be removed in version 2.1. Please implement the `SerializableModel` interface instead for creating serializable models.
+The `SerializableEntity` class is deprecated and will be removed in version 3. Please implement the `SerializableModel` interface instead for creating serializable models.
 
 ### Migration Guide
 
