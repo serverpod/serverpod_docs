@@ -2,12 +2,6 @@
 
 Serverpod provides simple but feature rich test tools to make testing your backend a breeze.
 
-:::warning
-
-The test tools is an experimental feature. Experimental features should not be used in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
-
-:::
-
 :::info
 
 For Serverpod Mini projects, everything related to the database in this guide can be ignored.
@@ -196,7 +190,7 @@ That's it, the project setup should be ready to start using the test tools!
 Go to the server directory and generate the test tools:
 
  ```bash
- serverpod generate --experimental-features=testTools
+ serverpod generate
  ```
 
 The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
