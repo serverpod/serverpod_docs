@@ -196,7 +196,7 @@ That's it, the project setup should be ready to start using the test tools!
 Go to the server directory and generate the test tools:
 
  ```bash
- serverpod generate --experimental-features testTools
+ serverpod generate --experimental-features=testTools
  ```
 
 The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
