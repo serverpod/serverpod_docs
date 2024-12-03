@@ -24,7 +24,20 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
     }
     ```
 
-3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
+3. There must be a method called `copyWith()`, which returns a new instance of the object with the specified fields replaced.
+
+    ```dart
+    ClassName copyWith({
+      String? name,
+    }) {
+      return ClassName(
+        name: name ?? this.name,
+      );
+    }
+    ```
+
+
+4. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
     ```yaml
     ...
