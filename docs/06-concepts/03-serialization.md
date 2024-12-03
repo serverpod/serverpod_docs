@@ -36,7 +36,6 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
     }
     ```
 
-
 4. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
     ```yaml
