@@ -4,34 +4,49 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
 
 1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
 
-```dart
-Map<String, dynamic> toJson() {
-  return {
-    name: 'John Doe',
-  };
-}
-```
+    ```dart
+    Map<String, dynamic> toJson() {
+      return {
+        name: 'John Doe',
+      };
+    }
+    ```
 
 2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization and a Serialization manager as parameters.
 
-```dart
-factory ClassName.fromJson(
-  Map<String, dynamic> json,
-  SerializationManager serializationManager,
-) {
-  return ClassName(
-    name: json['name'] as String,
-  );
-}
-```
+    ```dart
+    factory ClassName.fromJson(
+      Map<String, dynamic> json,
+      SerializationManager serializationManager,
+    ) {
+      return ClassName(
+        name: json['name'] as String,
+      );
+    }
+    ```
 
-3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
+3. There must be a method called `copyWith()`, which returns a new instance of the object with the specified fields replaced.
+    :::tip
+    In the framework, `copyWith()` is implemented as a deep copy to ensure immutability. We recommend following this approach when implementing it for custom classes to avoid unintentional side effects caused by shared mutable references.
+    :::
 
-```yaml
-...
-extraClasses:
-  - package:my_project_shared/my_project_shared.dart:ClassName
-```
+    ```dart
+    ClassName copyWith({
+      String? name,
+    }) {
+      return ClassName(
+        name: name ?? this.name,
+      );
+    }
+    ```
+
+4. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
+
+    ```yaml
+    ...
+    extraClasses:
+      - package:my_project_shared/my_project_shared.dart:ClassName
+    ```
 
 ## Setup example
 
