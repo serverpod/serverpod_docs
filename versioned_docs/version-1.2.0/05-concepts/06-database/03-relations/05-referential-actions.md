@@ -20,11 +20,23 @@ Use the following syntax to apply referential actions
 relation(onUpdate=<ACTION>, onDelete=<ACTION>)
 ```
 
-For instance, the default behavior in Serverpod can be expressed as.
+## Default values
+If no referential actions are specified, the default behavior will be applied.
+
+If the relation is defined as an [object relation](one-to-one#with-an-object), the default behavior is `NoAction` for both onUpdate and onDelete.
 
 ```yaml
-relation(onUpdate=NoAction, onDelete=Cascade)
+parent: Model?, relation(onUpdate=NoAction, onDelete=NoAction)
 ```
+
+
+If the relation is defined as an [id relation](one-to-one#with-an-id-field), the default behavior is `NoAction` for onUpdate and `Cascade` for onDelete.
+
+
+```yaml
+parentId: int?, relation(parent=model_table, onUpdate=NoAction, onDelete=Cascade)
+```
+
 :::info
 
 The sequence of onUpdate and onDelete is interchangeable.
@@ -41,4 +53,3 @@ fields:
 ```
 
 In the given example, if the `example` parent is updated, the `parentId` will be set to null. If the parent is deleted, no action will be taken for parentId.
-
