@@ -72,3 +72,21 @@ maxRequestSize: 1048576
 ## Return types
 
 The return type must be a typed Future. Supported return types are the same as for parameters.
+
+## Ignore endpoint definition
+
+If you want the code generator to ignore an endpoint definition, you can annotate the class with `@ignoreEndpoint`, imported from `serverpod_shared/annotations.dart`.  This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_shared/annotations.dart';
+
+@ignoreEndpoint
+class ExampleEndpoint extends Endpoint {
+  Future<String> hello(Session session, String name) async {
+    return 'Hello $name';
+  }
+}
+```
+
+The above code will not generate any server or client bindings for the example endpoint.
