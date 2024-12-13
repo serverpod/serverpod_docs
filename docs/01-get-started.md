@@ -122,7 +122,7 @@ These are the most important directories:
 
 - `config`: These are the configuration files for your Serverpod. These include a `password.yaml` file with your passwords and configurations for running your server in development, staging, and production. By default, everything is correctly configured to run your server locally.
 - `lib/src/endpoints`: This is the default location for your server's endpoints. When you add methods to an endpoint, Serverpod will generate the corresponding methods in your client.
-- `lib/src/models`: The model definition files are placed here. The files define the classes you can pass through your API and how they relate to your database. Serverpod generates serializable objects from the model definitions.
+- `lib/src/models`: Default location for your model definition files. The files define the classes you can pass through your API and how they relate to your database. Serverpod generates serializable objects from the model definitions.
 
 Both the `endpoints` and `models` directories contain sample files that give a quick idea of how they work. So this a great place to start learning.
 
@@ -167,9 +167,9 @@ To learn more about endpoints, see the [Working with endpoints](concepts/working
 
 Serverpod makes it easy to generate serializable classes that can be passed between server and client or used to communicate with the database.
 
-The structure for your serialized classes is defined in yaml-files in the `lib/src/models` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
+The structure for your serialized classes is defined in `spy.yaml` files anywhere in the `lib` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
 
-Here is a simple example of a yaml-file defining a serializable class:
+Here is a simple example of a `spy.yaml` file defining a serializable class:
 
 ```yaml
 class: Company
