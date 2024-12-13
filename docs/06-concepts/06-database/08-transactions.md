@@ -58,7 +58,7 @@ For a detailed explanation of the different isolation levels, see the [PostgreSQ
 
 ## Savepoints
 
-Savepoints allow you to create nested transactions within a transaction. This can be useful when you want to roll back to a specific point in the transaction without rolling back the entire transaction.
+A savepoint is a special mark inside a transaction that allows all commands that are executed after it was established to be rolled back, restoring the transaction state to what it was at the time of the savepoint.
 
 Read more about savepoints in the [PostgreSQL documentation](https://www.postgresql.org/docs/current/sql-savepoint.html).
 
