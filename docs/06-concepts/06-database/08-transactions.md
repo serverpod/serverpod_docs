@@ -113,4 +113,4 @@ await session.db.transaction((transaction) async {
 });
 ```
 
-In the example, two savepoints are created, after the company is inserted the first savepoint is released. This renders the second savepoint invalid. If the second savepoints is used to rollback, an exception will be thrown.
+In the example, two savepoints are created. After the company is inserted the first savepoint is released, which renders the second savepoint invalid. If the second savepoint is used to rollback, an exception will be thrown.
