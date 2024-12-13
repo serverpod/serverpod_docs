@@ -114,7 +114,7 @@ Serverpod generates some convenience methods on the Dart classes.
 
 ### copyWith
 
-The `copyWith` method allows for efficient object copying with selective field updates and is available on all generated `class`es. Here's how it operates:
+The `copyWith` method allows for efficient object copying with selective field updates and is available on all generated classes. Here's how it operates:
 
 ```dart
 var john = User(name: 'John Doe', age: 25);
