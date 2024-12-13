@@ -88,8 +88,8 @@ await session.db.transaction((transaction) async {
   // Create savepoint
   var savepoint = await transaction.createSavepoint();
 
-  // Changes rolled back 
   await Employee.db.insertRow(session, employee, transaction: transaction);
+  // Changes rolled back 
   await savepoint.rollback();
 });
 ```
