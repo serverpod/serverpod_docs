@@ -47,7 +47,7 @@ In the example we set the isolation level to `IsolationLevel.serializable`.
 
 The available isolation levels are:
 
-| Isolation Level | Value                 | Description |
+| Isolation Level | Constant              | Description |
 |-----------------|-----------------------|-------------|
 | Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in PostgresSQL |
 | Read committed | `IsolationLevel.readCommitted` | Each statement in the transaction sees a snapshot of the database as of the beginning of that statement. |
