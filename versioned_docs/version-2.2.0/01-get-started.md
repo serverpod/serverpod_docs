@@ -167,9 +167,9 @@ To learn more about endpoints, see the [Working with endpoints](concepts/working
 
 Serverpod makes it easy to generate serializable classes that can be passed between server and client or used to communicate with the database.
 
-The structure for your serialized classes is defined in yaml-files in the `lib/src/models` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
+The structure for your serialized classes is defined in YAML-files in the `lib/src/models` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
 
-Here is a simple example of a yaml-file defining a serializable class:
+Here is a simple example of a YAML-file defining a serializable class:
 
 ```yaml
 class: Company

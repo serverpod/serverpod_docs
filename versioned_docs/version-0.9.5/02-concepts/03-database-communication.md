@@ -27,7 +27,7 @@ fields:
 Likewise, if you only want a field to be accessible in the protocol but not stored in the server, you can add the `api` flag. By default, a field is accessible to both the API and the database.
 
 ### Database indexes
-For performance reasons, you may want to add indexes to your database tables. You add these in the yaml-files defining the serializable objects.
+For performance reasons, you may want to add indexes to your database tables. You add these in the YAML-files defining the serializable objects.
 
 ```yaml
 class: Company
