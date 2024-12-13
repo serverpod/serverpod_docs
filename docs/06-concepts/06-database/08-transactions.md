@@ -94,7 +94,7 @@ await session.db.transaction((transaction) async {
 });
 ```
 
-In the example, we create a savepoint after inserting a company. We then insert an employee but invoke a rollback to our savepoint. This results the database preserving the company but not the employee insertion.
+In the example, we create a savepoint after inserting a company. We then insert an employee but invoke a rollback to our savepoint. This results in the database preserving the company but not the employee insertion.
 
 #### Releasing savepoints
 
