@@ -104,7 +104,7 @@ To release a savepoint, call the `release` method on the savepoint object:
 
 ```dart
 await session.db.transaction((transaction) async {
-  // Create savepoint
+  // Create two savepoints
   var savepoint = await transaction.createSavepoint();
   var secondSavepoint = await transaction.createSavepoint();
 
