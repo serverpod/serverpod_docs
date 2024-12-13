@@ -43,7 +43,7 @@ await session.db.transaction(
 );
 ```
 
-In the example we set the isolation level to `IsolationLevel.serializable`.
+In the example the isolation level is set to `IsolationLevel.serializable`.
 
 The available isolation levels are:
 
