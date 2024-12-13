@@ -34,12 +34,10 @@ At the time of writing, the default isolation level for the PostgreSQL database 
 To set the isolation level, configure the `isolationLevel` property of the `TransactionSettings` object:
 
 ```dart
-var result = await session.db.transaction(
+await session.db.transaction(
   (transaction) async {
     await Company.db.insertRow(session, company, transaction: transaction);
     await Employee.db.insertRow(session, employee, transaction: transaction);
-    
-    return true;
   },
   settings: TransactionSettings(isolationLevel: IsolationLevel.serializable),
 );
