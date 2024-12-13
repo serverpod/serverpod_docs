@@ -36,7 +36,7 @@ If you are using VS Code, install our Serverpod extension. It will help you vali
 :::
 
 ## Creating models
-In Serverpod, you define your models in easy-to-read YAML-files, which you place in your server’s `lib/src/models` directory. Model files will be converted to Dart classes that can be serialized and sent to and from the server to your app. This is an example of a model file:
+In Serverpod, you define your models in easy-to-read YAML-files, which you place anywhere in your server’s `lib` directory with the `.spy.yaml` extension. Model files will be converted to Dart classes that can be serialized and sent to and from the server to your app. This is an example of a model file:
 
 ```yaml
 class: Company

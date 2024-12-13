@@ -1,6 +1,8 @@
 # Working with models
 
-Models are Yaml files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server. Using regular `.yaml` files within `lib/src/models` is supported, but it is recommended to use `.spy.yaml` (.spy stands for "Server Pod Yaml") to leverage syntax highlighting provided by the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code.
+Models are Yaml files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server.
+
+Using regular `.yaml` files within `lib/src/models` is supported, but it is recommended to use `.spy.yaml` (.spy stands for "Serverpod YAML"). Using this file type allows placing the model files anywhere in your servers `lib` directory and enables syntax highlighting provided by the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code.
 
 The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
 
@@ -114,7 +116,7 @@ Serverpod generates some convenience methods on the Dart classes.
 
 ### copyWith
 
-The `copyWith` method allows for efficient object copying with selective field updates and is available on all generated `class`es. Here's how it operates:
+The `copyWith` method allows for efficient object copying with selective field updates and is available on all generated classes. Here's how it operates:
 
 ```dart
 var john = User(name: 'John Doe', age: 25);

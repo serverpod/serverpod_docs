@@ -1,10 +1,10 @@
 # Indexing
 
-For performance reasons, you may want to add indexes to your database tables. These are added in the yaml-files defining the serializable objects.
+For performance reasons, you may want to add indexes to your database tables. These are added in the YAML-files defining the serializable objects.
 
 ### Add an index
 
-To add an index, add an `indexes` section to the yaml-file. The `indexes` section is a map where the key is the name of the index and the value is a map with the index details.
+To add an index, add an `indexes` section to the YAML-file. The `indexes` section is a map where the key is the name of the index and the value is a map with the index details.
 
 ```yaml
 class: Company

@@ -67,7 +67,7 @@ dependencies:
 
 ## Referencing a module
 
-It can be useful to reference serializable objects in other modules from the yaml-files in your model directory. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the auth package.
+It can be useful to reference serializable objects in other modules from the YAML-files in your models. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the auth package.
 
 ```yaml
 class: MyClass
