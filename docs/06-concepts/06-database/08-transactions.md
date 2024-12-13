@@ -55,3 +55,62 @@ The available isolation levels are:
 | Serializable | `IsolationLevel.serializable` | Gives the same guarantees as `IsolationLevel.repeatableRead` but also throws if read rows are updated by other transactions. |
 
 For a detailed explanation of the different isolation levels, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/transaction-iso.html).
+
+## Savepoints
+
+Savepoints allow you to create nested transactions within a transaction. This can be useful when you want to roll back to a specific point in the transaction without rolling back the entire transaction.
+
+Read more about savepoints in the [PostgreSQL documentation](https://www.postgresql.org/docs/current/sql-savepoint.html).
+
+### Creating savepoints
+To create a savepoint, call the `createSavepoint` method on the transaction object:
+
+```dart
+await session.db.transaction((transaction) async {
+  await Company.db.insertRow(session, company, transaction: transaction);
+  // Create savepoint
+  var savepoint = await transaction.createSavepoint();
+  await Employee.db.insertRow(session, employee, transaction: transaction);
+});
+```
+
+In the example, we create a savepoint after inserting a company but before inserting the employee. This gives us the option to roll back to the savepoint and preserve the company insertion.
+
+#### Rolling back to savepoints
+
+Once a savepoint is created, you can roll back to it by calling the `rollback` method on the savepoint object:
+
+```dart
+await session.db.transaction((transaction) async {
+  // Changes preserved in the database
+  await Company.db.insertRow(session, company, transaction: transaction);
+  
+  // Create savepoint
+  var savepoint = await transaction.createSavepoint();
+
+  // Changes rolled back 
+  await Employee.db.insertRow(session, employee, transaction: transaction);
+  await savepoint.rollback();
+});
+```
+
+In the example, we create a savepoint after inserting a company. We then insert an employee but invoke a rollback to our savepoint. This results the database preserving the company but not the employee insertion.
+
+#### Releasing savepoints
+
+Savepoints can also be released, which means that the changes made after the savepoint are preserved in the transaction. Releasing a savepoint will also render any subsequent savepoints invalid.
+
+To release a savepoint, call the `release` method on the savepoint object:
+
+```dart
+await session.db.transaction((transaction) async {
+  // Create savepoint
+  var savepoint = await transaction.createSavepoint();
+  var secondSavepoint = await transaction.createSavepoint();
+
+  await Company.db.insertRow(session, company, transaction: transaction);
+  await savepoint.release();
+});
+```
+
+In the example, two savepoints are created, after the company is inserted the first savepoint is released. This renders the second savepoint invalid. If the second savepoints is used to rollback, an exception will be thrown.
