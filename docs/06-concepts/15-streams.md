@@ -4,6 +4,12 @@ For some applications, it's not enough to be able to call server-side methods. Y
 
 Serverpod supports two ways to stream data. The first approach, [streaming methods](#streaming-methods), imitates how `Streams` work in Dart and offers a simple interface that automatically handles the connection with the server. In contrast, the second approach, [streaming endpoint](#streaming-endpoints), requires developers to manage the web socket connection. The second approach was Serverpod's initial solution for streaming data but will be removed in future updates.
 
+:::tip
+
+For a real-world example, check out [Pixorama](https://pixorama.live). It's a multi-user drawing experience showcasing Serverpod's real-time capabilities and comes with complete source code.
+
+:::
+
 ## Streaming Methods
 
 When an endpoint method is defined with `Stream` instead of `Future` as the return type or includes `Stream` as a method parameter, it is recognized as a streaming method. Streaming methods transmit data over a shared, self-managed web socket connection that automatically connects and disconnects from the server.
@@ -174,12 +180,6 @@ Future<void> handleStreamMessage(
   }
 }
 ```
-
-:::tip
-
-For a real-world example, check out [Pixorama](https://pixorama.live). It's a multi-user drawing experience showcasing Serverpod's real-time capabilities and comes with complete source code.
-
-:::
 
 ### Handling streams in your app
 
