@@ -83,7 +83,3 @@ class ChildClass extends ParentClass {
     int age;
 }
 ```
-
-:::info
-All files in a sealed hierarchy need to be located in the same directory.
-:::
