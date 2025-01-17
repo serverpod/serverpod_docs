@@ -16,7 +16,7 @@ The `UserInfo` is automatically populated when the user signs in. Different data
 
 :::tip
 
-The `Users` class contains many other convenient methods for working with users. You can find the full documentation [here](https://pub.dev/documentation/serverpod_auth_server/latest/protocol/Users-class.html).
+The `Users` class contains many other convenient methods for working with users. You can find the full documentation [here](https://pub.dev/documentation/serverpod_auth_server/latest/serverpod_auth_server/Users-class.html).
 
 :::
 
