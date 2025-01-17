@@ -1,4 +1,4 @@
-# Streams and messaging
+# Streams
 
 For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
 
@@ -143,43 +143,6 @@ Future<void> streamOpened(StreamingSession session) async {
 ```
 
 You can access the user object at any time by calling the `getUserObject` method. The user object is automatically discarded when a session ends.
-
-#### Internal server messaging
-
-A typical scenario when working with streams is to pass on messages from one user to another. For instance, if one client sends a chat message to the server, the server should send it to the correct user. Serverpod comes with a built-in messaging system that makes this easy. You can pass messages locally on a single server, but messages are passed through Redis by default. Passing the messages through Redis makes it possible to send the messages between multiple servers in a cluster.
-
-In most cases, it's easiest to subscribe to a message channel in the `streamOpened` method. The subscription will automatically be disposed of when the stream is closed. The following example will forward any message sent to a user identified by its user id.
-
-```dart
-@override
-Future<void> streamOpened(StreamingSession session) async {
-  final authenticationInfo = await session.authenticated;
-  final userId = authenticationInfo?.userId;
-  session.messages.addListener(
-    'user_$userId',
-    (message) {
-      sendStreamMessage(session, message);
-    },
-  );
-}
-```
-
-In your `handleStreamMessage` method, you can pass on messages to the correct channel.
-
-```dart
-@override
-Future<void> handleStreamMessage(
-  StreamingSession session,
-  SerializableModel message,
-) async {
-  if (message is MyChatMessage) {
-    session.messages.postMessage(
-      'user_${message.recipientId}',
-      message,
-    );
-  }
-}
-```
 
 ### Handling streams in your app
 
