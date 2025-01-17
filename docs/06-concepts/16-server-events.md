@@ -1,23 +1,24 @@
-# Messaging
+# Server events
 
-Serverpod framework comes with a built-in messaging system. This system enables efficient message exchange within and across servers, making it ideal for scenarios where shared state is needed, such as coordinating streams or managing data across a server cluster.
+Serverpod framework comes with a built-in event messaging system. This enables efficient message exchange within and across servers, making it ideal for scenarios where shared state is needed, such as coordinating streams or managing data across a server cluster.
 
-The message system is accessed through the `Session` object through the field `messages`.
+The event message system is accessed on the `Session` object through the field `messages`.
 
 ## Quick Reference
 
 Here is a quick reference to the key messaging methods:
 
-| Method | Purpose |
+| Method | Description |
 |--------|---------|
 | `postMessage`     | Send a message to a channel. |
 | `addListener`     | Add a listener to a channel. |
 | `removeListener`  | Remove a listener from a channel. |
 | `createStream`    | Create a stream that listens to a channel. |
+| `revokeAuthentication` | Revoke authentication tokens. |
 
 ## Sending messages
 
-To send a message, you can use the `postMessage` method. The message is published to the specified channel and needs to be a Serverpod Model.
+To send a message, you can use the `postMessage` method. The message is published to the specified channel and needs to be a Serverpod model.
 
 ```dart
 var message = UserUpdate(); // Model that represents changes to user data.
@@ -28,7 +29,7 @@ In the example above, the message published on the `user_updates` channel. Any s
 
 ### Global messages
 
-Serverpod uses Redis to pass messages between servers. To send a message to another server enable Redis, and then set the `global` parameter to `true` when posting a message.
+Serverpod uses Redis to pass messages between servers. To send a message to another server, enable Redis and then set the `global` parameter to `true` when posting a message.
 
 ```dart
 var message = UserUpdate(); // Model that represents changes to user data.
@@ -45,36 +46,7 @@ If Redis is not enabled, sending global messages will throw an exception.
 
 ## Receiving messages
 
-Receiving messages is just as simple as sending them! Serverpod provides two ways to handle incoming messages: by adding a listener to a channel or by creating a stream that subscribes to a channel.
-
-### Adding a listener
-
-To add a listener to a channel, use the `addListener` method. The listener will be called whenever a message is posted to the channel.
-
-```dart
-session.messages.addListener('user_updates', (message) {
-  print('Received message: $message');
-});
-```
-
-In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. The listener will be called regardless if a message is published globally by another server or internally by the same server.
-
-#### Listener lifetime
-
-The is automatically removed when the session is closed. To manually remove a listener, use the `removeListener` method.
-
-```dart
-var myListenerCallback = (message) {
-  print('Received message: $message');
-};
-// Register the listener
-session.messages.addListener('user_updates', myListenerCallback);
-
-// Remove the listener
-session.messages.removeListener('user_updates', myListenerCallback);
-```
-
-In the above example, the listener is first added and then removed from the `user_updates` channel.
+Receiving messages is just as simple as sending them! Serverpod provides two ways to handle incoming messages: by creating a stream that subscribes to a channel or by adding a listener to a channel.
 
 ### Creating a stream
 
@@ -89,7 +61,49 @@ stream.listen((message) {
 
 In the above example, a stream is created that listens to the `user_updates` channel and processes incoming requests.
 
-The stream is closed when the session is closed.
+#### Stream lifecycle
+
+The stream is automatically closed when the session is closed. If you want to close the stream manually, you simply cancel the stream subscription.
+
+```dart
+var stream = session.messages.createStream('user_updates');
+var subscription = stream.listen((message) {
+    print('Received message: $message');
+});
+
+subscription.cancel();
+```
+
+In the above example, the stream is first created and then canceled.
+
+### Adding a listener
+
+To add a listener to a channel, use the `addListener` method. The listener will be called whenever a message is posted to the channel.
+
+```dart
+session.messages.addListener('user_updates', (message) {
+  print('Received message: $message');
+});
+```
+
+In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. The listener will be called regardless if a message is published globally by another server or internally by the same server.
+
+#### Listener lifecycle
+
+The listener is automatically removed when the session is closed. To manually remove a listener, use the `removeListener` method.
+
+```dart
+var myListenerCallback = (message) {
+  print('Received message: $message');
+};
+// Register the listener
+session.messages.addListener('user_updates', myListenerCallback);
+
+// Remove the listener
+session.messages.removeListener('user_updates', myListenerCallback);
+```
+
+In the above example, the listener is first added and then removed from the `user_updates` channel.
 
 ## Revoke authentication
 
