@@ -109,16 +109,15 @@ To learn more about endpoints, see the [Working with endpoints](concepts/working
 ### Serializing data
 Serverpod makes it easy to generate serializable classes that can be passed between server and client or used to communicate with the database.
 
-The structure for your serialized classes is defined in yaml-files in the `lib/src/protocol` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
+The structure for your serialized classes is defined in YAML-files in the `lib/src/protocol` directory. Run `serverpod generate` in the home directory of the server to build the Dart code for the classes and make them accessible to both the server and client.
 
-Here is a simple example of a yaml-file defining a serializable class:
+Here is a simple example of a YAML-file defining a serializable class:
 
 ```yaml
 class: Company
 fields:
   name: String
   foundedDate: DateTime?
-  employees: List<Employee>
 ```
 
 Supported types are `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, and other serializable classes. You can also use `List`s and `Map`s of the supported types, just make sure to specify the types. Null safety is supported. The keys of `Map` must be non-nullable `String`s. Once your classes are generated, you can use them as parameters or return types to endpoint methods.

@@ -3,7 +3,7 @@
 It's a common task to read or update user information on your server. You can always retrieve the id of a signed-in user through the session object.
 
 ```dart
-var userId = await session.auth.authenticatedUserId;
+var userId = (await session.authenticated)?.userId;
 ```
 
 If you sign in users through the auth module, you will be able to retrieve more information through the static methods of the `Users` class.
@@ -16,7 +16,7 @@ The `UserInfo` is automatically populated when the user signs in. Different data
 
 :::tip
 
-The `Users` class contains many other convenient methods for working with users. You can find the full documentation [here](https://pub.dev/documentation/serverpod_auth_server/latest/protocol/Users-class.html).
+The `Users` class contains many other convenient methods for working with users. You can find the full documentation [here](https://pub.dev/documentation/serverpod_auth_server/latest/serverpod_auth_server/Users-class.html).
 
 :::
 
