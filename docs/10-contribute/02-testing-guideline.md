@@ -47,7 +47,7 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 **Example:**
 
 ```dart
-// Good - Tests are split
+// Do - Tests are split
 test('Given an empty list when a string is added then it appears at the first index', () {
   final list = [];
   list.add('hello');
@@ -60,7 +60,7 @@ test('Given an empty list when a string is added then list length increases by o
   expect(list.length, 1);
 });
 
-// Bad - Multiple independent checks in one test
+// Don't - Multiple independent checks in one test
 test('Add string to list and check index and length', () {
   final list = [];
   list.add('hello');
@@ -98,7 +98,7 @@ test('Add string to list and check index and length', () {
 **Example:**
 
 ```dart
-// Avoid mocking HTTP requests directly, test the logic that processes the response
+// Don't mock HTTP requests directly, test the logic that processes the response
 Future<String> fetchUserData() async {
   final response = await httpClient.get(url);
   return processResponse(response);
@@ -117,7 +117,7 @@ Future<String> fetchUserData() async {
 **Example:**
 
 ```dart
-// Good - Tests against behavior
+// Do - Tests against behavior
 String processUserData(String rawData) {
   return rawData.toUpperCase();
 }
@@ -127,7 +127,7 @@ test('Given a user name when processed then the name is capitalized', () {
   expect(result, 'JOHN');
 });
 
-// Bad - Tests against internal methods or state
+// Don't - Tests against internal methods or state
 class UserDataProcessor {
   String process(String rawData) {
     return _toUpperCase(rawData);
@@ -137,7 +137,7 @@ class UserDataProcessor {
   String toUpperCase(String input) => input.toUpperCase();
 }
 
-// Bad - Verifying internal method call
+// Don't - Verifying internal method call
 test('Given a user name when processed then toUpperCase is called', () {
   final processor = UserDataProcessor();
 
@@ -168,21 +168,21 @@ test('Given a user name when processed then toUpperCase is called', () {
 **Examples:**
 
 ```dart
-  // Good - Explicit test
+  // Do - Explicit test
   test('Given a number below threshold when validated then an error is collected', () {
     final result = validateNumber(3);
 
     expect(result.errors.first.message, 'Number must be 5 or greater.');
   });
 
-  // Good - Explicit test for out of range value
+  // Do - Explicit test for out of range value
   test('Given a number above range when validated then range error is collected', () {
     final result = validateNumber(11);
 
     expect(result.errors.first.message, 'Number must not exceed 10.');
   });
 
-  // Bad - Abstracted logic into a method
+  // Don't - Abstracted logic into a method
   void performValidationTest(int number, String expectedErrorMessage) {
     final result = validateNumber(number);
 
