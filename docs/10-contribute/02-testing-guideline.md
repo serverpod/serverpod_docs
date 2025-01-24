@@ -255,4 +255,4 @@ class UserBuilder {
 
 Consistent application of these principles leads to a robust and maintainable codebase, fostering confidence in our product's reliability and scalability.
 
-We acknowledge that there  are exceptions to the rules. But when deviating from the guidelines mentioned above you have to argue for why. You must have a reasonable argument that aligns with the core goals.
+We acknowledge that there are exceptions to the rules. But when deviating from the guidelines mentioned above you have to argue for why. You must have a reasonable argument that aligns with the core goals.
