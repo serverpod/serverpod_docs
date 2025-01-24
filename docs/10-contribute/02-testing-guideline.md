@@ -16,7 +16,7 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 
 ## Key Principles
 
-### 0. Test Independence
+### 1. Test Independence
 
 - **Tests should be completely independent of one another.**
 - The outcome of a test must never depend on any other test running before or after it.
@@ -24,7 +24,7 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 - Running a single test in isolation must produce the same result as running it alongside others.
 - **Exception to the rule:** e2e and integration tests. In scenarios where an external state (like a shared database) is involved, tests may require concurrency mode 1 to prevent interference. But each test should start and end in a clean state.
 
-### 1. Clear and Descriptive Test Descriptions
+### 2. Clear and Descriptive Test Descriptions
 
 - **Test descriptions should be understandable without reading the test code.**
 - If a test fails, the description alone should make it clear what behavior went wrong
@@ -39,7 +39,7 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 // Then a 403 Forbidden error is returned
 ```
 
-### 2. Focus on Single Responsibility
+### 3. Focus on Single Responsibility
 
 - Each test should **only test one thing**.
 - **Avoid** bundling multiple independent checks into a single test.
@@ -90,7 +90,7 @@ test('Add string to list and check index and length', () {
 
 \*Note: SourceSpanException is an object that describes a code error in a source file. See: \*[*https://api.flutter.dev/flutter/package-source\_span\_source\_span/SourceSpanException-class.html*](https://api.flutter.dev/flutter/package-source_span_source_span/SourceSpanException-class.html)&#x20;
 
-### 3. Pure Unit Testing
+### 4. Pure Unit Testing
 
 - **Unit tests should avoid mocking and side effects.**
 - Production code should push side effects **up the call stack**, allowing tests to cover pure methods.
@@ -108,7 +108,7 @@ Future<String> fetchUserData() async {
 
 - Test `processResponse` directly without mocking the `httpClient`.
 
-### 4. Implementation-Agnostic Tests
+### 5. Implementation-Agnostic Tests
 
 - **Do not couple tests to implementation details.**
 - Tests should only break if the behavior changes, not when refactoring code. This may be referred to as black box testing.
@@ -153,13 +153,13 @@ test('Given a user name when processed then toUpperCase is called', () {
 
 - In the bad example, the test verifies that an internal method (`_toUpperCase`) is called, coupling the test to the implementation. The good example validates only the output, ensuring the test focuses on behavior rather than internal details.
 
-### 5. Immutable Test Philosophy
+### 6. Immutable Test Philosophy
 
 - **Tests should rarely be modified.**
 - When functionality changes,  **add new tests** and/or **remove obsolete ones**.
 - Avoid altering existing tests unless fixing bugs, e.g. invalid tests.
 
-### 6. Simplicity Over Abstraction
+### 7. Simplicity Over Abstraction
 
 - The explicit examples make it clear what is being tested and reduce the need to jump between methods. The abstracted logic example hides test behavior, making it harder to understand specific test scenarios at a glance.
 - **Avoid abstraction in tests.**
