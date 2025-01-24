@@ -1,22 +1,22 @@
-# Serverpod Testing Philosophy
+# Serverpod testing philosophy
 
 ## Overview
 
 At Serverpod, our core testing philosophy revolves around achieving the following goals:
 
-- **Readable and Self-Explanatory Tests** – Tests should be easy to understand at a glance. Descriptions must clearly convey the purpose and expected outcome without needing to inspect the test's internal implementation.
-- **Resilient to Refactoring** – Tests should not break due to internal refactoring. As long as the external behavior remains consistent, tests should pass regardless of code structure changes.
-- **Focused on Behavior, Not Implementation** – We prioritize testing how the code behaves rather than how it is implemented. This prevents unnecessary coupling between tests and production code, fostering long-term stability.
-- **Easy to Maintain and Expand** – Tests should be simple to update or extend as the product evolves. Adding new features should not require widespread changes to existing tests.
-- **Effective at Catching Bugs** – The primary goal of testing is to identify and prevent bugs. Our tests are crafted to cover edge cases, ensure proper functionality, and catch potential regressions.
+- **Readable and self-explanatory tests** – Tests should be easy to understand at a glance. Descriptions must clearly convey the purpose and expected outcome without needing to inspect the test's internal implementation.
+- **Resilient to refactoring** – Tests should not break due to internal refactoring. As long as the external behavior remains consistent, tests should pass regardless of code structure changes.
+- **Focused on behavior, not implementation** – We prioritize testing how the code behaves rather than how it is implemented. This prevents unnecessary coupling between tests and production code, fostering long-term stability.
+- **Easy to maintain and expand** – Tests should be simple to update or extend as the product evolves. Adding new features should not require widespread changes to existing tests.
+- **Effective at catching bugs** – The primary goal of testing is to identify and prevent bugs. Our tests are crafted to cover edge cases, ensure proper functionality, and catch potential regressions.
 
 By adhering to the following principles, we ensure that our test suite remains a valuable and reliable asset as our codebase grows.
 
 This document outlines Serverpod's approach to testing  code. It serves as a guide for writing effective, maintainable, and meaningful tests across all our projects.
 
-## Key Principles
+## Key principles
 
-### 1. Test Independence
+### 1. Test independence
 
 - **Tests should be completely independent of one another.**
 - The outcome of a test must never depend on any other test running before or after it.
@@ -24,7 +24,7 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 - Running a single test in isolation must produce the same result as running it alongside others.
 - **Exception to the rule:** e2e and integration tests. In scenarios where an external state (like a shared database) is involved, tests may require concurrency mode 1 to prevent interference. But each test should start and end in a clean state.
 
-### 2. Clear and Descriptive Test Descriptions
+### 2. Clear and descriptive test descriptions
 
 - **Test descriptions should be understandable without reading the test code.**
 - If a test fails, the description alone should make it clear what behavior went wrong
@@ -39,7 +39,7 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 // Then a 403 Forbidden error is returned
 ```
 
-### 3. Focus on Single Responsibility
+### 3. Focus on single responsibility
 
 - Each test should **only test one thing**.
 - **Avoid** bundling multiple independent checks into a single test.
@@ -90,7 +90,7 @@ test('Add string to list and check index and length', () {
 
 \*Note: SourceSpanException is an object that describes a code error in a source file. See: \*[*https://api.flutter.dev/flutter/package-source\_span\_source\_span/SourceSpanException-class.html*](https://api.flutter.dev/flutter/package-source_span_source_span/SourceSpanException-class.html)&#x20;
 
-### 4. Pure Unit Testing
+### 4. Pure unit testing
 
 - **Unit tests should avoid mocking and side effects.**
 - Production code should push side effects **up the call stack**, allowing tests to cover pure methods.
@@ -108,7 +108,7 @@ Future<String> fetchUserData() async {
 
 - Test `processResponse` directly without mocking the `httpClient`.
 
-### 5. Implementation-Agnostic Tests
+### 5. Implementation-agnostic tests
 
 - **Do not couple tests to implementation details.**
 - Tests should only break if the behavior changes, not when refactoring code. This may be referred to as black box testing.
@@ -153,13 +153,13 @@ test('Given a user name when processed then toUpperCase is called', () {
 
 - In the bad example, the test verifies that an internal method (`_toUpperCase`) is called, coupling the test to the implementation. The good example validates only the output, ensuring the test focuses on behavior rather than internal details.
 
-### 6. Immutable Test Philosophy
+### 6. Immutable test philosophy
 
 - **Tests should rarely be modified.**
 - When functionality changes,  **add new tests** and/or **remove obsolete ones**.
 - Avoid altering existing tests unless fixing bugs, e.g. invalid tests.
 
-### 7. Simplicity Over Abstraction
+### 7. Simplicity over abstraction
 
 - The explicit examples make it clear what is being tested and reduce the need to jump between methods. The abstracted logic example hides test behavior, making it harder to understand specific test scenarios at a glance.
 - **Avoid abstraction in tests.**
@@ -199,12 +199,12 @@ test('Given a user name when processed then toUpperCase is called', () {
   });
 ```
 
-### 7. Beneficial Abstractions - Test Builders
+### 7. Beneficial abstractions - test builders
 
 - One abstraction we encourage is the **test builder pattern** for constructing test input objects.
 - Builders help create logical, valid objects while keeping tests simple and readable.
 
-**Key Characteristics:**
+**Key characteristics:**
 
 - Builder class names follow the pattern: `ObjectNameBuilder`.
 - Methods that set properties start with `with`, and return the builder instance (`this`).
@@ -252,7 +252,7 @@ class UserBuilder {
   - Ensures tests continue to produce valid objects as the code evolves.
   - Simplifies object creation without requiring deep lifecycle knowledge.
 
-## Final Thoughts
+## Final thoughts
 
 Consistent application of these principles leads to a robust and maintainable codebase, fostering confidence in our product's reliability and scalability.
 
