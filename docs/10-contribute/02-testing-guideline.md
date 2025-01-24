@@ -110,7 +110,7 @@ Future<String> fetchUserData() async {
 ### 4. Implementation-Agnostic Tests
 
 - **Do not couple tests to implementation details.**
-- Tests should only break if the behavior changes, not when refactoring code.
+- Tests should only break if the behavior changes, not when refactoring code. This may be referred to as black box testing.
 - **Unit tests must avoid knowledge of internal methods or variables.**
 - The use of `@visibleForTesting` is discouraged as it exposes internal details that should remain hidden. This annotation can lead to brittle tests that break during refactoring, even if external behavior remains the same.
 
