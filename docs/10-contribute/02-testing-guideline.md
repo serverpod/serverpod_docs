@@ -27,8 +27,9 @@ This document outlines Serverpod's approach to testing  code. It serves as a gui
 ### 1. Clear and Descriptive Test Descriptions
 
 - **Test descriptions should be understandable without reading the test code.**
-- If a test fails, the description alone should make it clear what went wrong.
+- If a test fails, the description alone should make it clear what behavior went wrong
 - **Format:** Descriptions follow the "Given, When, Then" style.
+  Given [a state or precondition] when [doing an action] then [a result is achieved]
 
 **Example:**
 
