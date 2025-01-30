@@ -1,5 +1,12 @@
 # Security Configuration
 
+:::info
+
+In a **production environment**, TLS termination is **normally handled by a load balancer** or **reverse proxy** (e.g., Nginx, AWS ALB, or Cloudflare).  
+However, Serverpod also supports setting up **TLS/SSL directly on the server**, allowing you to provide your own certificates if needed.
+
+:::
+
 Serverpod supports **TLS/SSL security configurations** through the **Dart configuration object**.  
 To enable SSL/TLS, you must pass a **`SecurityContextConfig`** to the `Serverpod` constructor.
 
@@ -29,13 +36,6 @@ Serverpod(
 ## Client Security Configuration
 
 When connecting to a **Serverpod server over HTTPS**, the client must be configured to trust the server's certificate.
-
-:::info
-
-In a **production environment**, TLS termination is **normally handled by a load balancer** or **reverse proxy** (e.g., Nginx, AWS ALB, or Cloudflare).  
-However, Serverpod also supports setting up **TLS/SSL directly on the server**, allowing you to provide your own certificates if needed.
-
-:::
 
 ### Dart Configuration Example
 
