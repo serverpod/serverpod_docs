@@ -1,12 +1,24 @@
 # Experimental features
 
 :::warning
-Experimental features should not be used in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
+Be cautious when using experimental features in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
 :::
 
-"Experimental Features" are cutting-edge additions to Serverpod that are currently under development or testing. These features allow developers to explore new functionalities and provide feedback, helping shape the future of Serverpod. However, they may not be fully stable or complete and are subject to change.
+"Experimental Features" are cutting-edge additions to Serverpod that are currently under development or testing or whose API is not yet stable.
+These features allow developers to explore new functionalities and provide feedback, helping shape the future of Serverpod.
+However, they may not be fully stable or complete and are subject to change.
 
-By default, experimental features are disabled. To opt into using them, include the `--experimental-features` flag when running the serverpod command:
+Experimental features are disabled by default, i.e. they are not active unless the developer opts-in.
+
+## Experimental internal APIs
+
+Experimental internal APIs are placed under the `experimental` sub-API of the `Serverpod` class.
+When an experimental feature matures it is moved from `experimental` to `Serverpod` proper.
+If possible, the experimental API will remain for some time as `@deprecated`, and then removed.
+
+## Command-line enabled features
+
+Some of the experimental features are enabled by including the `--experimental-features` flag when running the serverpod command:
 
 ```bash
 $ serverpod generate --experimental-features=all
@@ -96,26 +108,17 @@ These work both for exceptions thrown in application code and from the framework
 This can be used to get all exceptions reported in realtime to services for monitoring and diagnostics,
 such as [Sentry](https://sentry.io/), [Highlight](https://www.highlight.io/), and [Datadog](https://www.datadoghq.com/).
 
-It is easy to implement handlers and to implement custom filters in them.
+It is easy to implement handlers and define custom filters within them.
 Any number of handlers can be added.
 They are run asynchronously and should not affect the behavior or response times of the server.
 
 These event handlers are for diagnostics only,
-they do not allow any behavior-changing action such as suppressing exceptions or converting them to another type.
-
-### Experimental
-
-This is introduced as an experimental feature. The API should currently be regarded as unstable which means there may be breaking changes to it between minor versions of the Serverpod package. To make this clear, the important parameters and methods in the Serverpod class have their names prefixed with `unstable`.
-
-It is opt-in by providing event handlers to the Serverpod constructor,
-and by invoking the new method `unstableSubmitDiagnosticEvent`.
-
-When this feature and its interface has matured, proper names without `unstable` will be introduced. If possible, the `unstable` names will remain for some time as `@deprecated`, and then removed.
+they do not allow any behavior-changing action such as suppressing exceptions or converting them to another exception type.
 
 ### Setup
 
-The Serverpod constructor now accepts `unstableDiagnosticEventHandlers` among its `experimentalFeatures` specification,
-which is an optional array of diagnostic event handlers.
+This feature is enabled by providing one ore more `DiagnosticEventHandler` implementations
+to the Serverpod constructor's `experimentalFeatures` specification.
 
 Example:
 
@@ -134,7 +137,7 @@ Example:
 
 ### Submitting diagnostic events
 
-The API for submitting diagnostic events from user code, e.g. from endpoint methods, web calls and future calls,
+The API for submitting diagnostic events from user code, e.g. from endpoint methods, web calls, and future calls,
 is the new method `submitDiagnosticEvent` under the `experimental` member of the Serverpod class.
 
 ```dart
@@ -181,7 +184,8 @@ and otherwise ignored.
 
 ### Test support
 
-This feature also includes support via the Serverpod test framework. This means that the withServerpod construct can be used together with diagnostic event handlers to test that the events are submitted and propagated as intended.
+This feature also includes support via the Serverpod test framework.
+This means that the `withServerpod` construct can be used together with diagnostic event handlers to test that the events are submitted and propagated as intended.
 
 Example:
 
