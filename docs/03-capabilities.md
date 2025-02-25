@@ -44,10 +44,6 @@ Serverpod's future calls replace complicated cron jobs. Call a method anytime in
 
 Monitor the database and external services that you are using. Write custom health checks and get notified when something goes wrong.
 
-## Monitoring and error diagnostics integration
-
-Integrate with external services for monitoring and diagnostics, such as [Sentry](https://sentry.io/), [Highlight](https://www.highlight.io/), and [Datadog](https://www.datadoghq.com/), to get detailed and realtime monitoring and metrics.
-
 ## Easy deployment
 
 Serverpod comes with Terraform scripts for Google Cloud Platform and AWS, making deploying your server very quick. We are still working on scripts for other platforms. Please get in touch with us if you want to [contribute](/contribute).
