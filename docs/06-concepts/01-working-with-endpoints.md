@@ -55,9 +55,9 @@ You can pass the `--watch` flag to `serverpod generate` to watch for changed fil
 
 ## Passing parameters
 
-There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
+There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
 
-You can also pass `List` and `Map` as parameters, but they need to be strictly typed with one of the types mentioned above. For `Map`, the keys must be non-nullable strings. E.g., `Map<String, int?>` is valid, but `Map<int, String>` is not.
+You can also pass `List`, `Map`, `Record` and `Set` as parameters, but they need to be strictly typed with one of the types mentioned above. For `Map`, the keys must be non-nullable strings. E.g., `Map<String, int?>` is valid, but `Map<int, String>` is not.
 
 :::warning
 
