@@ -1,4 +1,4 @@
-# Community supported deployments
+# Community-supported deployments
 
 Serverpod can be deployed in multiple ways, and the community has developed tools to simplify the process. While these tools are not officially maintained by the Serverpod team, they can be a great starting point for getting your server up and running quickly.
 
