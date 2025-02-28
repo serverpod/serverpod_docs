@@ -40,6 +40,10 @@ There are three different ways to configure Serverpod: with environment variable
 | SERVERPOD_SERVICE_SECRET           | serviceSecret   | -       | The token used to connect with insights must be at least 20 chars |
 | SERVERPOD_REDIS_PASSWORD           | redis           | -       | The password for the Redis server                                 |
 
+| Environment variable               | Command line option | Description                                                       |
+|------------------------------------|---------------------|-------------------------------------------------------------------|
+| SERVERPOD_SERVER_ID                | `--server-id`         | Configures the id of the server instance. Defaults to `default`.|
+
 ### Config file example
 
 The config file should be named after the run mode you start the server in and it needs to be placed inside the `config` directory in the root of the server project. As an example, you have the `config/development.yaml` that will be used when running in the `development` run mode.
