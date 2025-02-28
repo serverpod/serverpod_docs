@@ -20,7 +20,7 @@ server_test_tools_path: test/integration/test_tools
 
  Without this key, the test tools file is not generated. With the above config the location of the test tools file is `test/integration/test_tools/serverpod_test_tools.dart`, but this can be set to any folder (though should be outside of `lib` as per Dart's test conventions).
 
-2. New projects now come with a test profile in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
+2. New projects now come with a test postgres and redis instance in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
 
 ```yaml
 # Add to the existing services
@@ -34,19 +34,13 @@ postgres_test:
     POSTGRES_PASSWORD: "<insert database test password>"
   volumes:
     - <projectname>_test_data:/var/lib/postgresql/data
-  profiles:
-    - '' # Default profile
-    - test
 redis_test:
   image: redis:6.2.6
   ports:
     - '9091:6379'
-  command: redis-server --requirepass "<insert redis test password>"
+  command: redis-server --requirepass 'REDIS_TEST_PASSWORD'
   environment:
     - REDIS_REPLICATION_MODE=master
-  profiles:
-    - '' # Default profile
-    - test
 volumes:
   # ...
   <projectname>_test_data:
@@ -69,9 +63,6 @@ services:
       POSTGRES_PASSWORD: "<insert database development password>"
     volumes:
       - <projectname>_data:/var/lib/postgresql/data
-    profiles:
-      - '' # Default profile
-      - dev
   redis:
     image: redis:6.2.6
     ports:
@@ -79,9 +70,6 @@ services:
     command: redis-server --requirepass "<insert redis development password>"
     environment:
       - REDIS_REPLICATION_MODE=master
-    profiles:
-      - '' # Default profile
-      - dev
 
   # Test services
   postgres_test:
@@ -94,9 +82,6 @@ services:
       POSTGRES_PASSWORD: "<insert database test password>"
     volumes:
       - <projectname>_test_data:/var/lib/postgresql/data
-    profiles:
-      - '' # Default profile
-      - test
   redis_test:
     image: redis:6.2.6
     ports:
@@ -104,9 +89,6 @@ services:
     command: redis-server --requirepass "<insert redis test password>"
     environment:
       - REDIS_REPLICATION_MODE=master
-    profiles:
-      - '' # Default profile
-      - test
 
 volumes:
   <projectname>_data:
@@ -231,9 +213,6 @@ Before the test can be run the Postgres and Redis also have to be started:
 ```bash
 docker-compose up --build --detach
 ```
-
-By default this starts up both the `development` and `test` profiles. To only start one profile, simply add `--profile test` to the command.
-
 Now the test is ready to be run:
 
 ```bash
