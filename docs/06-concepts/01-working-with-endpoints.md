@@ -1,6 +1,6 @@
 # Working with endpoints
 
-Endpoints are the connection points to the server from the client. With Serverpod, you add methods to your endpoint, and your client code will be generated to make the method call. For the code to be generated, you need to place your endpoint in the endpoints directory of your server. Your endpoint should extend the `Endpoint` class. For methods to be generated, they need to return a typed `Future`, and its first argument should be a `Session` object. The `Session` object holds information about the call being made and provides access to the database.
+Endpoints are the connection points to the server from the client. With Serverpod, you add methods to your endpoint, and your client code will be generated to make the method call. For the code to be generated, you need to place the endpoint file anywhere under the `lib` directory of your server. Your endpoint should extend the `Endpoint` class. For methods to be generated, they need to return a typed `Future`, and its first argument should be a `Session` object. The `Session` object holds information about the call being made and provides access to the database.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -55,9 +55,9 @@ You can pass the `--watch` flag to `serverpod generate` to watch for changed fil
 
 ## Passing parameters
 
-There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
+There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
 
-You can also pass `List` and `Map` as parameters, but they need to be strictly typed with one of the types mentioned above. For `Map`, the keys must be non-nullable strings. E.g., `Map<String, int?>` is valid, but `Map<int, String>` is not.
+You can also pass `List`, `Map`, `Record` and `Set` as parameters, but they need to be strictly typed with one of the types mentioned above.
 
 :::warning
 
@@ -72,3 +72,21 @@ maxRequestSize: 1048576
 ## Return types
 
 The return type must be a typed Future. Supported return types are the same as for parameters.
+
+## Ignore endpoint definition
+
+If you want the code generator to ignore an endpoint definition, you can annotate the class with `@ignoreEndpoint`, imported from `serverpod_shared/annotations.dart`.  This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_shared/annotations.dart';
+
+@ignoreEndpoint
+class ExampleEndpoint extends Endpoint {
+  Future<String> hello(Session session, String name) async {
+    return 'Hello $name';
+  }
+}
+```
+
+The above code will not generate any server or client bindings for the example endpoint.
