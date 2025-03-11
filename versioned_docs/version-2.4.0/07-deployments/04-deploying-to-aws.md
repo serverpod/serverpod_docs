@@ -46,6 +46,7 @@ Before deploying your server, you must configure your server’s top domain in A
 3. Enter your domain name and click _Create hosted zone_.
 4. The console will display a number of DNS names for Amazon’s name servers. You will need to have your domain registrar point to these name servers. Depending on your registrar, this process will be slightly different.
 5. Expand the _Hosted zone details_ and take note of your _Hosted zone ID_ (you will need it in your Terraform configuration later).
+6. The domain name servers are shown under Records.
 
 ![AWS hosted zone record](/img/1-hosted-zone.jpg)
 
