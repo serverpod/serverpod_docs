@@ -46,7 +46,7 @@ fields:
   employees: List<String>
 ```
 
-For types, you can use most basic Dart types, such as `String`, `double`, `int`, `bool`, `DateTime`, and `ByteData`. You can also include `List` and `Map`, just make sure to specify their types. Any other class specified among your models is also supported.
+For types, you can use most basic Dart types, such as `String`, `double`, `int`, `bool`, `DateTime`, `UuidValue`, `Uri`, `BigInt` and `ByteData`. You can also include `List`, `Set` and `Map`, just make sure to specify their types. Any supported type can also be used inside a `Record`. Any other class specified among your models is also supported.
 
 Whenever you add or edit a model file, run `serverpod generate` in your server directory. Then, Serverpod will generate all the updated Dart classes:
 
