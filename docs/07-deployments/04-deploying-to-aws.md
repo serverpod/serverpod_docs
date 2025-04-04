@@ -146,7 +146,7 @@ ExecStart=/home/ec2-user/serverpod/active/mypod_server/deploy/aws/scripts/run_se
 Restart=always
 
 [Install]
-WantedBy=muti-user.target
+WantedBy=multi-user.target
 WantedBy=network-online.target
 EOF
 
