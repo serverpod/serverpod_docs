@@ -92,6 +92,29 @@ It's recommended to always set `serialized` to `byName` in any new Enum models, 
 
 :::
 
+### Default value
+
+A default value is used when an unknown value is deserialized. This can happen, for example, if a new enum option is added and older clients receive it from the server, or if an enum option is removed but the database still contains the old value.
+
+To configure a default value, use the `default` keyword.
+
+```yaml
+enum: Animal
+serialized: byName
+default: unknown
+values:
+ - unknown
+ - dog
+ - cat
+ - bird
+```
+
+In the example above, if the Enum `Animal` receives an unknown option such as `"fish"` it will be deserialized to `Animal.unknown`. This is useful for maintaining backward compatibility when changing the enum values.
+
+:::warning
+If no default value is specified, deserialization of unknown values will throw an exception. Adding a default value prevents these exceptions, but may also hide real issues in your data. Use this feature with caution.
+:::
+
 ## Adding documentation
 
 Serverpod allows you to add documentation to your serializable objects in a similar way that you would add documentation to your Dart code. Use three hashes (###) to indicate that a comment should be considered documentation.
