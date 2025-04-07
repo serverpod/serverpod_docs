@@ -36,7 +36,7 @@ If you are using VS Code, install our Serverpod extension. It will help you vali
 :::
 
 ## Creating models
-In Serverpod, you define your models in easy-to-read YAML-files, which you place anywhere in your server’s `lib` directory with the `.spy.yaml` extension. Model files will be converted to Dart classes that can be serialized and sent to and from the server to your app. This is an example of a model file:
+In Serverpod, you define your models in easy-to-read YAML-files, which you place anywhere in your server's `lib` directory with the `.spy.yaml` extension. Model files will be converted to Dart classes that can be serialized and sent to and from the server to your app. This is an example of a model file:
 
 ```yaml
 class: Company
@@ -56,7 +56,7 @@ $ serverpod generate
 ```
 
 ## Adding methods to your server
-With Serverpod, you add Dart methods to endpoints placed in your server’s `lib/src/endpoints` directory. By doing so, Serverpod will analyze your server code and automatically generate the corresponding methods in your Flutter app. Calling a method on the server is just like calling a local method in your app.
+With Serverpod, you add Dart methods to endpoints placed in your server's `lib/src/endpoints` directory. By doing so, Serverpod will analyze your server code and automatically generate the corresponding methods in your Flutter app. Calling a method on the server is just like calling a local method in your app.
 
 For the server methods to work, there are a few things you need to keep in mind:
 
@@ -111,4 +111,4 @@ var result = await client.company.isLegit(company);
 ```
 
 ## Conclusion
-You are now ready to start exploring the exciting world of Serverpod! And even if you start out with Serverpod mini, you can always [upgrade](upgrading/upgrade-from-mini) to the full version later.
+You are now ready to start exploring the exciting world of Serverpod! And even if you start out with Serverpod mini, you can always [upgrade](../upgrading/upgrade-from-mini) to the full version later. 
