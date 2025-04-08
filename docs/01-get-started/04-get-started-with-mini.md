@@ -5,6 +5,7 @@ Serverpod Mini is a slimmer version of Serverpod that does not need to be connec
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/dSBK4JOZRyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 ## Create a new project
+
 Create a mini project by running:
 
 ```bash
@@ -36,6 +37,7 @@ If you are using VS Code, install our Serverpod extension. It will help you vali
 :::
 
 ## Creating models
+
 In Serverpod, you define your models in easy-to-read YAML-files, which you place anywhere in your server's `lib` directory with the `.spy.yaml` extension. Model files will be converted to Dart classes that can be serialized and sent to and from the server to your app. This is an example of a model file:
 
 ```yaml
@@ -56,6 +58,7 @@ $ serverpod generate
 ```
 
 ## Adding methods to your server
+
 With Serverpod, you add Dart methods to endpoints placed in your server's `lib/src/endpoints` directory. By doing so, Serverpod will analyze your server code and automatically generate the corresponding methods in your Flutter app. Calling a method on the server is just like calling a local method in your app.
 
 For the server methods to work, there are a few things you need to keep in mind:
@@ -92,6 +95,7 @@ $ serverpod generate
 ```
 
 ## Calling the server methods from the app
+
 When you run `serverpod generate` Serverpod will add your endpoints and server methods to the `client` object in your Flutter app. From the client, you can access all endpoints and methods.
 
 To call the endpoint method we just created from Flutter, just create a `Company` object, call the method, and await the result:
@@ -111,4 +115,5 @@ var result = await client.company.isLegit(company);
 ```
 
 ## Conclusion
-You are now ready to start exploring the exciting world of Serverpod! And even if you start out with Serverpod mini, you can always [upgrade](../upgrading/upgrade-from-mini) to the full version later. 
+
+You are now ready to start exploring the exciting world of Serverpod! And even if you start out with Serverpod mini, you can always [upgrade](../upgrading/upgrade-from-mini) to the full version later.

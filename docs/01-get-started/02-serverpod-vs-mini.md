@@ -26,4 +26,4 @@ __[Get started with Mini](get-started-with-mini)__
 | Easy deployment       |     ✅     |        ✅       |
 
 </p>
-</details> 
+</details>

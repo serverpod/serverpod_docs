@@ -105,4 +105,4 @@ If no matching row is found, `null` is returned.
 
 Working with a database is an extensive subject. Learn more in the [Database](../concepts/database/connection) section.
 
-::: 
+:::

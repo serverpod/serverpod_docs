@@ -24,4 +24,4 @@ var result = await client.example.hello('World');
 
 To learn more about endpoints, see the [Working with endpoints](../concepts/working-with-endpoints) section.
 
-::: 
+:::

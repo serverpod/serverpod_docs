@@ -17,4 +17,4 @@ Whenever you change your code in either the `endpoints` or `models` directory, y
 ```bash
 $ cd mypod/mypod_server
 $ serverpod generate
-``` 
+```
