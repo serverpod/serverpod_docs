@@ -138,6 +138,16 @@ const config = {
             // Moved in version 2.1.0
             from: ['/roadmap'],
             to: '/contribute',
+          },            
+          {
+            // Moved in version 2.5.0+2
+            from: ['/get-started'],
+            to: '/get-started/overview',
+          },            
+          {
+            // Moved in version 2.5.0+2
+            from: ['/get-started-with-mini'],
+            to: '/get-started/get-started-with-mini',
           },
         ],
       },
