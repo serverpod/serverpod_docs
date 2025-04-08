@@ -58,6 +58,6 @@ If `persistentEnabled` is set to `true` but **no database is configured**, a `St
 
 :::info
 
-The Serverpod GUI is coming soon, making it easy to read, search, and configure the logs.
+You can use the companion app  **[Serverpod Insights](../tools/insights)** to read, search, and configure the logs.
 
 :::
