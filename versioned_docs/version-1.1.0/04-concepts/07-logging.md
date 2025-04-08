@@ -20,6 +20,6 @@ Log entries are stored in the following tables of the database: `serverpod_log` 
 
 :::info
 
-The Serverpod GUI is coming soon, making it easy to read, search, and configure the logs.
+You can use the companion app  __[Serverpod Insights](../insights)__ to read, search, and configure the logs.
 
 :::
