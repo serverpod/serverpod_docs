@@ -19,4 +19,4 @@ Supported types are `bool`, `int`, `double`, `String`, `DateTime`, `ByteData`, a
 
 You can also create custom serialized classes with tools such as Freezed. Learn more in the [Serialization](../concepts/serialization) section.
 
-::: 
+:::

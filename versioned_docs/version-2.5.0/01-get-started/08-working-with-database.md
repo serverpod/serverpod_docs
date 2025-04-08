@@ -14,8 +14,6 @@ database:
   port: 8090
   name: projectname
   user: postgres
-
-...
 ```
 
 The password can be found in the file `config/passwords.yaml`.
@@ -23,8 +21,6 @@ The password can be found in the file `config/passwords.yaml`.
 ```yaml
 development:
   database: '<MY DATABASE PASSWORD>'
-
-...
 ```
 
 ## Migrations
@@ -105,4 +101,4 @@ If no matching row is found, `null` is returned.
 
 Working with a database is an extensive subject. Learn more in the [Database](../concepts/database/connection) section.
 
-::: 
+:::
