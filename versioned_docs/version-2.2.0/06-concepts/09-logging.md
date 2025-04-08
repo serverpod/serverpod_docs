@@ -58,6 +58,6 @@ If `persistentEnabled` is set to `true` but **no database is configured**, a `St
 
 :::info
 
-You can use the companion app  __[Serverpod Insights](../tools/insights)__ to read, search, and configure the logs.
+You can use the companion app  **[Serverpod Insights](../tools/insights)** to read, search, and configure the logs.
 
 :::
