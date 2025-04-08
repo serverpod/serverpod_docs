@@ -1,6 +1,6 @@
 # Creating a new Serverpod project
 
-The full version of Serverpod needs access to a Postgres database. The easiest way to set that up is to use our pre-configured Docker container. Install __[Flutter](https://flutter.dev/docs/get-started/install)__, __[Serverpod](/)__ and __[Docker Desktop](https://docs.docker.com/get-docker/)__ before you begin.
+The full version of Serverpod needs access to a Postgres database. The easiest way to set that up is to use our pre-configured Docker container. Install **[Flutter](https://flutter.dev/docs/get-started/install)**, **[Serverpod](/)** and **[Docker Desktop](https://docs.docker.com/get-docker/)** before you begin.
 
 Create a new project by running `serverpod create`.
 
@@ -22,7 +22,7 @@ This command will create a new directory called `mypod`, with three dart package
 
 ## Starting the server
 
-Make sure that __[Docker Desktop](https://www.docker.com/products/docker-desktop/)__ is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
+Make sure that **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
 $ cd mypod/mypod_server
@@ -64,7 +64,7 @@ The flag `-d chrome` runs the app in Chrome, for other run options please see th
 
 :::info
 
-__iOS Simulator__: Because an iOS simulator has its own localhost, it won't find the server running on your machine. Therefore, you will need to pass the IP address of your machine when creating the client in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this:
+**iOS Simulator**: Because an iOS simulator has its own localhost, it won't find the server running on your machine. Therefore, you will need to pass the IP address of your machine when creating the client in `mypod/mypod_flutter/lib/main.dart`. Depending on your local network, it might look something like this:
 
 ```dart
 var client = Client('http://192.168.1.117:8080/')
@@ -74,7 +74,7 @@ var client = Client('http://192.168.1.117:8080/')
 :::
 
 :::info
-__MacOS__:
+**MacOS**:
 If you run the app on MacOS, you will need to add permissions for outgoing connections in your Xcode project. To this, open the `Runner.xcworkspace` in Xcode. Then check the _Outgoing Connections (Client)_ under _Runner_ > _Signing & Capabilities_ > _App Sandbox_. Make sure to add the capability for all run configurations.
 
 :::
