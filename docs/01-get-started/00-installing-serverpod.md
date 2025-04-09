@@ -1,10 +1,16 @@
-# Meet Serverpod
+# Installation
+
+## Meet Serverpod
 
 Serverpod is an open-source, scalable app server written in Dart for the Flutter community. Serverpod automatically generates your model and client-side code by analyzing your server. Calling a remote endpoint is as easy as making a local method call.
+
+//TODO(dkbast): add a diagram of the architecture
 
 ## Why Serverpod?
 
 Serverpod is designed to be a full-stack solution for building server-side applications. It provides a powerful and flexible framework for building APIs, managing databases, and handling real-time communication. Serverpod is built on top of Dart and automatically generates a Flutter client making it easy to integrate with your existing Flutter applications.
+
+//TODO(dkbast): Add a testimonal compilation
 
 ### A Progressive Framework
 
@@ -16,7 +22,7 @@ Serverpod is built specifically for the Flutter community. It leverages the powe
 
 ### Open Source
 
-Serverpod is an open-source project, which means you can contribute to its development and customize it to fit your needs. The source code is available on GitHub, and we welcome contributions from the community. By using Serverpod, you are not only benefiting from a powerful framework but also supporting the open-source community.
+Serverpod is an open-source project, which means you can contribute to its development and customize it to fit your needs. The source code is available on GitHub, and we welcome contributions from the community.
 
 ## Installation
 
@@ -24,7 +30,7 @@ Serverpod is an open-source project, which means you can contribute to its devel
 
 Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed.
 
-:::
+:::info
 Check your Flutter installation by running the following command in your terminal:
 
 ```bash
@@ -35,7 +41,7 @@ $ flutter doctor
 
 To make use of Serverpods ORM capabilities, you need to have access to a PostgreSQL database. We recommend using Docker to run PostgreSQL locally. You will need to install Docker on your machine. You can find instructions for installing Docker on the official [Docker website](https://docs.docker.com/get-docker/). Each Serverpod projects comes with its own 'docker-compose.yaml' so there is no need for you to install containers just now. We will guide you through the process in the next section.
 
-:::
+:::info
 Check your Docker installation by running the following command in your terminal:
 
 ```bash
@@ -84,7 +90,7 @@ The project will be created in a new directory with the name you specify. For ex
 $ serverpod create my_counter
 ```
 
-:::
+:::tip
 The name of the project must be a valid Dart package name. This means it must start with a lowercase letter and can only contain lowercase letters, numbers, and underscores. For example, `my_counter` is a valid name, but `MyCounter` is not.
 :::
 
