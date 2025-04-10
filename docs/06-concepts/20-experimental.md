@@ -30,6 +30,7 @@ The current options you can pass are:
 |:-----|:---|
 | **all** | Enables all available experimental features. |
 | **inheritance** | Allows using the `extends` keyword in your model files to create class hierarchies.|
+| **changeIdType** | Allows declaring the `id` field in table model files to change the type of the `id` field. |
 
 ## Inheritance
 
@@ -98,6 +99,39 @@ class ChildClass extends ParentClass {
 
 :::info
 All files in a sealed hierarchy need to be located in the same directory.
+:::
+
+## Change ID type
+
+Changing the type of the `id` field allows you to customize the identifier type for your database tables. This is done by declaring the `id` field on table models with one of the supported types. If the field is omitted, the id field will still be created with type `int`, as have always been.
+
+The following types are supported for the `id` field:
+
+|**Type**|Default|Description|
+|:-----|:---|:---|
+| **int** | serial (optional) | 64-bit serial integer. |
+| **UuidValue** | random | UUID v4 value. |
+
+### Declaring a Custom ID Type
+
+To declare a custom type for the `id` field in a table model file, use the following syntax:
+
+```yaml
+class: UuidIdTable
+table: uuid_id_table
+fields:
+  id: UuidValue, default=random
+```
+
+```yaml
+class: IntIdTable
+table: int_id_table
+fields:
+  id: int, default=serial  // The default keyword for 'int' is optional.
+```
+
+:::info
+Note that when creating a new object for models using `UuidValue`, the `id` field value will be automatically generated, allowing for IDs to be created on the client side. This is useful for creating objects offline or using them before they are sent to the server. If desired, the ID can also be set to null to be generated on the database, as the field is nullable.
 :::
 
 ## Exception monitoring
