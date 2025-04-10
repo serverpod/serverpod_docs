@@ -24,6 +24,7 @@ There are three different ways to configure Serverpod: with environment variable
 | SERVERPOD_DATABASE_PORT                      | database.port                        | -         | The port number for the database connection      |
 | SERVERPOD_DATABASE_NAME                      | database.name                        | -         | The name of the database                         |
 | SERVERPOD_DATABASE_USER                      | database.user                        | -         | The user name for database authentication        |
+| SERVERPOD_DATABASE_SEARCH_PATHS                      | database.searchPaths                        | -         | The search paths for finding the tables in schemes other than 'public'        |
 | SERVERPOD_DATABASE_REQUIRE_SSL               | database.requireSsl                  | false     | Indicates if SSL is required for the database    |
 | SERVERPOD_DATABASE_IS_UNIX_SOCKET            | database.isUnixSocket                | false     | Specifies if the database connection is a Unix socket |
 | SERVERPOD_REDIS_HOST                         | redis.host                           | -         | The host address of the Redis server             |
@@ -72,6 +73,7 @@ database:
   port: 8090
   name: database_name
   user: postgres
+  searchPaths: public, custom_schema
 
 redis:
   enabled: false

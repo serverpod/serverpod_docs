@@ -19,10 +19,11 @@ database:
   port: 8090
   name: <YOUR_PROJECT_NAME>
   user: postgres
+  searchPaths: public, custom
 ...
 ```
 
-The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, and `user` is the username that is used to connect to the database.
+The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, `user` is the username that is used to connect to the database and `searchPaths` is a way of customizing the default schema search paths being used when accessing tables (by default Postgres uses 'public').
 
 :::caution
 
