@@ -19,17 +19,36 @@ database:
   port: 8090
   name: <YOUR_PROJECT_NAME>
   user: postgres
-  searchPaths: public, custom
 ...
 ```
 
-The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, `user` is the username that is used to connect to the database and `searchPaths` is a way of customizing the default schema search paths being used when accessing tables (by default Postgres uses 'public').
+The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, and `user` is the username that is used to connect to the database.
 
 :::caution
 
 By default, Postgres is listening for connections on port 5432. However, the Docker container shipped with Serverpod uses port 8090 to avoid conflicts. If you host your own instance, double-check that the correct port is specified in your configuration files.
 
 :::
+
+#### Configure search paths
+
+You can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
+
+To override this, use the optional `searchPaths` setting in your configuration:
+
+```yaml
+...
+database:
+  host: localhost
+  port: 8090
+  name: <YOUR_PROJECT_NAME>
+  user: postgres
+  searchPaths:  custom, public
+...
+```
+
+In this example, Postgres will look for tables in the `custom` schema first, and then fall back to `public` if needed. This gives you more control over where your data lives and how it’s accessed
+
 
 ### Database password
 
