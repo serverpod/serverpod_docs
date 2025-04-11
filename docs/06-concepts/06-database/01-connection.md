@@ -30,6 +30,26 @@ By default, Postgres is listening for connections on port 5432. However, the Doc
 
 :::
 
+#### Configure search paths
+
+You can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
+
+To override this, use the optional `searchPaths` setting in your configuration:
+
+```yaml
+...
+database:
+  host: localhost
+  port: 8090
+  name: <YOUR_PROJECT_NAME>
+  user: postgres
+  searchPaths:  custom, public
+...
+```
+
+In this example, Postgres will look for tables in the `custom` schema first, and then fall back to `public` if needed. This gives you more control over where your data lives and how it’s accessed
+
+
 ### Database password
 
 The database password is stored in a separate file called `passwords.yaml` in the same `config` directory. The password for each environment is stored under the `database` keyword in the file.
