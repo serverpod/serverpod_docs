@@ -90,12 +90,16 @@ Serverpod uses Google Cloud Storage's HMAC interoperability to handle file uploa
 
 1. Create a service account with the _Storage Admin_ role.
 2. Under _Cloud Storage_ > _Settings_ > _Interoperability_, create a new HMAC key for your newly created service account.
-3. Add the two keys you received in the previous step to your `config/password.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively.
+3. Add the two keys you received in the previous step to your `config/password.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively. You can also pass them in as environment variables. The environment variable names are `SERVERPOD_HMAC_ACCESS_KEY_ID` and `SERVERPOD_HMAC_SECRET_KEY`.
 4. When creating a new bucket, set the _Access control_ to _Fine-grained_ and disable the _Prevent public access_ option.
 
 You may also want to add the bucket as a backend for your load balancer to give it a custom domain name.
 
 When you have set up your GCP bucket, you need to configure it in Serverpod. Add the GCP package to your `pubspec.yaml` file and import it in your `server.dart` file.
+
+```bash
+$ dart pub add serverpod_cloud_storage_gcp
+```
 
 ```dart
 import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
@@ -117,9 +121,13 @@ After creating your Serverpod, you add a storage configuration. If you want to r
 
 ## Add a configuration for AWS S3
 
-This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file.
+This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file (`AWSAccessKeyId` and `AWSAccessKey`) or pass them in as environment variables (`SERVERPOD_AWS_ACCESS_KEY_ID` and `SERVERPOD_AWS_ACCESS_KEY`).
 
-When you are all set with the AWS setup, include the S3  package in your `pubspec.yaml` file and import it in your `server.dart` file.
+When you are all set with the AWS setup, include the S3 package in your `pubspec.yaml` file and import it in your `server.dart` file.
+
+```bash
+$ dart pub add serverpod_cloud_storage_s3
+```
 
 ```dart
 import 'package:serverpod_cloud_storage_s3/serverpod_cloud_storage_s3.dart'
