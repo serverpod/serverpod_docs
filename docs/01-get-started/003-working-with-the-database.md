@@ -1,10 +1,10 @@
 # Working with the database
 
-In this section we will build upon the models we have created in the previous section and add a database to store our favourite recipes.
+In this section, we will build upon the models we created in the previous section and add a database to store our favourite recipes.
 
 ## Create a new model to store the recipes
 
-Let's assume the user wants to store the recipe in the database. We will create a new model called `FavouriteRecipe` that will store the `Recipe` we created in the previous section
+Let's assume the user wants to store the recipe in the database. We will create a new model called `FavouriteRecipe` that will store the `Recipe` we created in the previous section.
 The key difference is that we now add the `table` keyword to the model. It's best practice to use lower_case_snake_case for the table name, so we will use `favourite_recipe` as the table name.
 We will also add a `userId` field to the model. This will be used to store the ID of the user who created the recipe. Since we don't have a user model yet, we will just use `-1` as the default value for the user ID.
 Since the user does not really need to know its userId, we will mark it as `serveronly`. This means that the field will not be available in the client code and will only be used on the server side.
@@ -13,7 +13,7 @@ Since the user does not really need to know its userId, we will mark it as `serv
 class: FavouriteRecipe
 table: favourite_recipe
 fields:
-  ### The actual recipe, by adding it like this we will embed it as a blob in this table
+  ### The actual recipe, by adding it like this, we will embed it as a blob in this table
   ### This is a good way to store models that are not too big and don't need to be queried
   ### separately. If you want to query the recipe separately, you can use a separate table.
   ### And create a relation to the recipe table.
@@ -28,7 +28,7 @@ Check out the reference for [database models](../concepts/database/models#keywor
 
 ## Generate the code
 
-To generate the code for the model, and create the migrations for the database (that is the sql code that will be run to create the table in the database), you need to run both `serverpod generate` and `serverpod create-migrations`.
+To generate the code for the model and create the migrations for the database (that is the SQL code that will be run to create the table in the database), you need to run both `serverpod generate` and `serverpod create-migrations`.
 
 ```bash
 $ cd my_project/my_project_server
@@ -61,12 +61,12 @@ We will be adding a few more methods to the `RecipeEndpoint` class we created in
 ```
 
 :::info
-The `session.db` object is used to access the database. You can use it to insert, update, delete and query the database. The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. If a model uses the `table` keyword it is automatically registered in the database and you can use it to query the database.
+The `session.db` object is used to access the database. You can use it to insert, update, delete and query the database. The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. If a model uses the `table` keyword, it is automatically registered in the database, and you can use it to query the database.
 :::
 
 ## Generate the code
 
-Like before, when you change something that has an effect on the client code you need to run `serverpod generate` - we don't need to run `serverpod create-migrations` again, because we already created the migrations in the previous step.
+Like before, when you change something that has an effect on the client code, you need to run `serverpod generate` - we don't need to run `serverpod create-migrations` again because we already created the migrations in the previous step.
 
 ```bash
 $ cd my_project/my_project_server
