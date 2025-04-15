@@ -6,6 +6,10 @@ Serverpod can be configured in a few different ways. The minimum required settin
 
 There are three different ways to configure Serverpod: with environment variables, via yaml config files, or by supplying the dart configuration object to the Serverpod constructor. The environment variables take precedence over the yaml configurations but both can be used simultaneously. The dart configuration object will override any environment variable or config file. The tables show all available configuration options provided in the Serverpod core library.
 
+### Configuration options for the server
+
+These can be separately declared for each run mode in the corresponding yaml file (`development.yaml`,`staging.yaml`, `production.yaml` and `testing.yaml`) or as environment variables.
+
 | Environment variable                     | Config file                   | Default   | Description                                                                                                                  |
 | ---------------------------------------- | ----------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | SERVERPOD_API_SERVER_PORT                | apiServer.port                | 8080      | The port number for the API server                                                                                           |
@@ -35,19 +39,31 @@ There are three different ways to configure Serverpod: with environment variable
 | SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED | sessionLogs.persistentEnabled | -         | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`. |
 | SERVERPOD_SESSION_CONSOLE_LOG_ENABLED    | sessionLogs.consoleEnabled    | -         | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`. |
 
+|  Environment variable | Command line option | Default | Description                               |
+| --------------------- | ------------------- | ------- | ----------------------------------------- |
+| SERVERPOD_SERVER_ID   | `--server-id`       | default | Configures the id of the server instance. |
+
+### Secrets
+
+Secrets are declared in the `passwords.yaml` file. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs.
+
+| Environment variable        | Passwords file | Default | Description                                                       |
+| --------------------------- | -------------- | ------- | ----------------------------------------------------------------- |
+| SERVERPOD_DATABASE_PASSWORD | database       | -       | The password for the database                                     |
+| SERVERPOD_SERVICE_SECRET    | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
+| SERVERPOD_REDIS_PASSWORD    | redis          | -       | The password for the Redis server                                 |
+
+#### Secrets for first party packages
+
+- [serverpod_cloud_storage_gcp](https://pub.dev/packages/serverpod_cloud_storage_gcp): Google Cloud Storage
+- [serverpod_cloud_storage_s3](https://pub.dev/packages/serverpod_cloud_storage_s3): Amazon S3
+
 | Environment variable         | Passwords file  | Default | Description                                                               |
 | ---------------------------- | --------------- | ------- | ------------------------------------------------------------------------- |
-| SERVERPOD_DATABASE_PASSWORD  | database        | -       | The password for the database                                             |
-| SERVERPOD_SERVICE_SECRET     | serviceSecret   | -       | The token used to connect with insights must be at least 20 chars         |
-| SERVERPOD_REDIS_PASSWORD     | redis           | -       | The password for the Redis server                                         |
 | SERVERPOD_HMAC_ACCESS_KEY_ID | HMACAccessKeyId | -       | The access key ID for HMAC authentication for serverpod_cloud_storage_gcp |
 | SERVERPOD_HMAC_SECRET_KEY    | HMACSecretKey   | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp    |
 | SERVERPOD_AWS_ACCESS_KEY_ID  | AWSAccessKeyId  | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3   |
 | SERVERPOD_AWS_SECRET_KEY     | AWSSecretKey    | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3      |
-
-|  Environment variable | Command line option | Description                                                      |
-| --------------------- | ------------------- | ---------------------------------------------------------------- |
-| SERVERPOD_SERVER_ID   | `--server-id`       | Configures the id of the server instance. Defaults to `default`. |
 
 ### Config file example
 
