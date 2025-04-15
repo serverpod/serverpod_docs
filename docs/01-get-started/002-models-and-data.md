@@ -1,20 +1,20 @@
 # Models and Data
 
-Serverpod ships with a powerful data modelling system that uses a definition file in yaml which then generates a Dart class with all the necessary code to serialize and deserialize the data. This allows you to define your data models for the server and the client in one place, eliminating any inconsistencies.
+Serverpod ships with a powerful data modelling system that uses a definition file in yaml which then generates a Dart class with all the necessary code to serialize and deserialize the data. This allows you to define your data models for the server and the client in one place, eliminating any inconsistencies. You can also have fields which are only visible on the server.
 
 ## Create a new model
 
-Models files can be placed anywhere in the `lib` directory. We will create a new file called `quote.spy.yaml` in the `lib/src/models` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
+Models files can be placed anywhere in the `lib` directory. We will create a new file called `recipe.spy.yaml` in the `lib/src/recepies/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
 
 ```yaml
 # This is a comment, using ### will create a doc comment on the generated class
-class: Quote
+class: Recipe
 fields:
-  ### The author of the quote in the format "<first name> <last name>"
+  ### The author of the recipe
   author: String
-  ### The quote text
+  ### The recipe text
   text: String
-  ### The date the quote was created
+  ### The date the recipe was created
   date: DateTime
 ```
 
@@ -25,49 +25,89 @@ You can use the basic types here or any models you have specified using a yaml f
 To generate the code for the model, you can run the following command in the root directory of your project:
 
 ```bash
-$ cd my_counter/my_counter_server
+$ cd my_project/my_project_server
 $ serverpod generate
 ```
 
-This will generate the code for the model and create a new file called `quote.dart` in the `lib/src/generated` directory. It will also update the client code in `my_counter/my_counter_client` so that you can use it in your Flutter app.
+This will generate the code for the model and create a new file called `recipe.dart` in the `lib/src/generated` directory. It will also update the client code in `my_project/my_project_client` so that you can use it in your Flutter app.
 
 ## Use the model in the server
 
-Now that we have created the model, we can use it in the server. We will do this in the `lib/src/endpoints/quote.dart` file. We will create a new function called `getQuote` that will return a random quote from the database.
+Now that we have created the model, we can use it in the server. We will update the `lib/src/endpoints/recipe.dart` file to now use the `Recipe` model instead of a simple string. We will also update the `generateRecipe` method to return a `Recipe` object instead of a string.
 
 ```dart
-TODO - add code snippet
+  Future<Recipe> generateRecipe(Session session, String ingredients) async {
+
+    // ... keep this like before
+
+    final response = await gemini.generateContent([Content.text(prompt)]);
+
+    final recipeText = response.text ??
+        'No recipe found. Please try again with different ingredients.';
+
+    final recipe = Recipe(
+      author: 'Gemini',
+      text: recipeText,
+      date: DateTime.now(),
+    );
+
+    return recipe;
 ```
 
-## Use the model in the client
+## Use the model in the app
 
-Now that we have created the model, we can use it in the client. We will do this in the `my_counter/my_counter_flutter/lib/main.dart` file. We will update our `QuoteWidget` so that it also displays the author and year of the quote.
+First we need to update our generated client by running `serverpod generate`
+
+```bash
+$ cd my_project/my_project_server
+$ serverpod generate
+```
+
+Now that we have created the model, we can use it in the client. We will do this in the `my_project/my_project_flutter/lib/main.dart` file. We will update our `RecipeWidget` so that it also displays the author and year of the recipe.
 
 ```dart
-TODO - add code snippet
+void _callGenerateRecipe() async {
+    try {
+      final result =
+          await client.recipe.generateRecipe(_textEditingController.text);
+      setState(() {
+        _errorMessage = null;
+        // we are now getting the text from the Recipe object
+        _resultMessage = result.text;
+        //
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = '$e';
+      });
+    }
+  }
 ```
 
 ## Run the app
 
-First we need to start the server. You can do this by running the following command in the root directory of your project:
+First we need to start the server:
 
 ```bash
-$ cd my_counter/my_counter_server
+$ cd my_project/my_project_server
+$ docker-compose up -d
 $ dart run bin/main.dart
 ```
 
-Then we can start the Flutter app. You can do this by running the following command in the root directory of your project:
+Then we can start the Flutter app:
 
 ```bash
-$ cd my_counter/my_counter_flutter
+$ cd my_project/my_project_flutter
 $ flutter run -d chrome
 ```
 
 This will start the Flutter app in your browser. It should look something like this:
 ![Example Flutter App](https://serverpod.dev/assets/img/flutter-example-web.png)
 
-Now you can click the button to get a new quote. The app will call the endpoint on the server and display the result in the app.
+Now you can click the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
 
 ## Next Steps
 
-Now we have seen what we can do with **serverpod mini** - let's take it a step further and add a database to our project. For that we will have to upgrade the `mini` project to a full `serverpod` project. We will do this in the next section.
+On the Flutter side there are quite a few things you could add, like a progress indicator while the request is being processed, or a nicer display of the result e.g. using a markdown renderer.
+
+In the next section you will learn how to use the database to store your favourite recipes and display them in your app.
