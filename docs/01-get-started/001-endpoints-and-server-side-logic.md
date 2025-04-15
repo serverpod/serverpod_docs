@@ -1,17 +1,17 @@
 # Endpoints and server side logic
 
-With Serverpod, calling endpoints is as simple as calling a function. Let's create your first custom endpoint and call it from the client. On the server you can do stuff that you don't want to do in the client, like calling an API which is secured by an API key, or accessing a database. The server can also do things that are not possible in the client, like sending push notifications or sending emails. In this example you will create an endpoint that calls the Gemini API. You will then call this endpoint from the client and display the result in the app.
+With Serverpod, calling endpoints is as simple as calling a function. Let's create your first custom endpoint and call it from the client. On the server, you can do stuff that you don't want to do in the client, like calling an API, which is secured by an API key, or accessing a database. The server can also do things that are not possible in the client, like sending push notifications or sending emails. In this example, you will create an endpoint that calls the Gemini API. You will then call this endpoint from the client and display the result in the app.
 
 ## Create a new project
 
-To create a new project, you can use the `serverpod create` command. This command will generate a new project with a server, a client and a Flutter app.
+You can use the `serverpod create` command to create a new project. This command will generate a new project with a server, a client, and a Flutter app.
 
 ```bash
 serverpod create magic_recipe
 ```
 
 :::tip
-If you check in the code right after creating the project you can investigate more easily the code you will be adding in this tutorial
+If you check in the code right after creating the project, you can investigate the code you will be adding to this tutorial.
 
 ```bash
 $ cd magic_recipe
@@ -34,7 +34,7 @@ development:
   gemini: '--- Your Gemini Api Key ---'
 ```
 
-Then we need to add the `google_gemini` package as a dependency to our server.
+Next we need to add the `google_gemini` package as a dependency to our server.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -75,7 +75,7 @@ class RecipeEndpoint extends Endpoint {
 ```
 
 :::tip
-When writing server side code, you want it to be "stateless". This means that you don't want to use any global variables or static variables. Instead think of each endpoint method as being a function that does stuff in a sub second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../concepts/scheduling) but you usually shouldn't keep the connection session open for longer durations. You want to use the `session` object that is passed to the endpoint function. This object contains all the information you need to access the database, call other endpoints. It is similar to the `context` in Flutter.
+When writing server-side code, you want it to be "stateless". This means that you don't want to use any global variables or static variables. Instead think of each endpoint method as being a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../concepts/scheduling), but you usually shouldn't keep the connection session open for longer durations. You want to use the `session` object that is passed to the endpoint function. This object contains all the information you need to access the database and other features of Serverpod. It is similar to the `context` in Flutter.
 :::
 
 Now you need to generate the code for the endpoint. You can do this by running the following command in the root directory of your project:

@@ -1,10 +1,10 @@
 # Models and Data
 
-Serverpod ships with a powerful data modelling system that uses a definition file in yaml which then generates a Dart class with all the necessary code to serialize and deserialize the data. This allows you to define your data models for the server and the client in one place, eliminating any inconsistencies. You can also have fields which are only visible on the server.
+Serverpod ships with a powerful data modelling system that uses a definition file in yaml to generate a Dart class with all the necessary code to serialize and deserialize the data. This allows you to define your data models for the server and the client in one place, eliminating any inconsistencies. You can also have fields which are only visible on the server.
 
 ## Create a new model
 
-Models files can be placed anywhere in the `lib` directory. We will create a new file called `recipe.spy.yaml` in the `lib/src/recepies/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
+Models files can be placed anywhere in the `lib` directory. We will create a new file called `recipe.spy.yaml` in the `lib/src/recipies/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
 
 ```yaml
 # This is a comment, using ### will create a doc comment on the generated class
@@ -18,7 +18,7 @@ fields:
   date: DateTime
 ```
 
-You can use the basic types here or any models you have specified using a yaml file, see [Working with models](../concepts/models) for more background information.
+You can use the basic types here or any models you have specified using a yaml file. For more backround information, see [Working with models](../concepts/models).
 
 ## Generate the code
 
@@ -29,11 +29,11 @@ $ cd my_project/my_project_server
 $ serverpod generate
 ```
 
-This will generate the code for the model and create a new file called `recipe.dart` in the `lib/src/generated` directory. It will also update the client code in `my_project/my_project_client` so that you can use it in your Flutter app.
+This will generate the code for the model and create a new file called `recipe.dart` in the `lib/src/generated` directory. It will also update the client code in `my_project/my_project_client` so you can use it in your Flutter app.
 
 ## Use the model in the server
 
-Now that we have created the model, we can use it in the server. We will update the `lib/src/endpoints/recipe.dart` file to now use the `Recipe` model instead of a simple string. We will also update the `generateRecipe` method to return a `Recipe` object instead of a string.
+Now that we have created the model, we can use it in the server code. We will now update the `lib/src/recipies/recipe_endpoint.dart` file to use the `Recipe` model instead of a simple string. We will also update the `generateRecipe` method to return a `Recipe` object instead of a string.
 
 ```dart
   Future<Recipe> generateRecipe(Session session, String ingredients) async {
@@ -56,7 +56,7 @@ Now that we have created the model, we can use it in the server. We will update 
 
 ## Use the model in the app
 
-First we need to update our generated client by running `serverpod generate`
+First, we need to update our generated client by running `serverpod generate`
 
 ```bash
 $ cd my_project/my_project_server
@@ -108,6 +108,6 @@ Now you can click the button to get a new recipe. The app will call the endpoint
 
 ## Next Steps
 
-On the Flutter side there are quite a few things you could add, like a progress indicator while the request is being processed, or a nicer display of the result e.g. using a markdown renderer.
+On the Flutter side, there are quite a few things you could add, like a progress indicator while the request is being processed or a nicer display of the result, e.g. using a markdown renderer.
 
-In the next section you will learn how to use the database to store your favourite recipes and display them in your app.
+In the next section, you will learn how to use the database to store your favourite recipes and display them in your app.
