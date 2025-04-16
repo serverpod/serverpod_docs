@@ -35,7 +35,7 @@ const config = {
           customCss: require.resolve('./src/css/custom.css'),
         },
         gtag: {
-          trackingID: 'G-TFEHVG44LQ',
+          trackingID: 'G-0EYLJMP04H',
           anonymizeIP: true,
         },
       }),
@@ -138,12 +138,12 @@ const config = {
             // Moved in version 2.1.0
             from: ['/roadmap'],
             to: '/contribute',
-          },            
+          },
           {
             // Moved in version 2.5.0+2
             from: ['/get-started'],
             to: '/get-started/overview',
-          },            
+          },
           {
             // Moved in version 2.5.0+2
             from: ['/get-started-with-mini'],
