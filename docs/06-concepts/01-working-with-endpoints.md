@@ -164,7 +164,7 @@ The sub-class applies the following modifications though:
 
 ### API versioning for breaking changes
 
-Endpoint sub-class can be useful when having to do a breaking change on an endpoint, but you want to keep sharing most of it's implementation with the old endpoint.
+An endpoint sub-class can be useful when having to do a breaking change on an endpoint, but you need to keep supporting existing clients. Doing so also allows you to keep sharing most of its implementation with the old endpoint.
 
 Imagine you had a "team" management endpoint where before a user could join if they had an e-mail address ending in the expected domain, but now it should be opened up for anyone to join if they can provide an "invite code".
 
