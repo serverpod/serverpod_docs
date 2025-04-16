@@ -155,7 +155,7 @@ class ExcitedGreeter extends GreeterBase {
 
 In the above example `ExcitedGreeter` inherits from `GreeterBase`. Since the base class is marked as `abstract` no client was generated for it, but now all of its visible endpoint methods would be exposed through the sub-class `ExcitedGreeter`.
 
-The sub-class applies the following modifications though:
+The sub-class `ExcitedGreeter` is an example of all possible modifications to the abstract base class and contains the following changes:
 
 - `hello` is overriden and augments the super class' implementation with a trailing `!!!`
 - `goodbye` is now exposed through the sub-class, as it was not individually hidden and the sub-class does not further augment it
