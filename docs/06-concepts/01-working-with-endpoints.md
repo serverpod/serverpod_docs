@@ -109,7 +109,7 @@ class ExampleEndpoint extends Endpoint {
 
 ## Endpoint inheritance
 
-It is possible to extend existing endpoints, from your own app or other modules, by subclassing them. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt-out by any of the aforementioned ways.
+Extending existing endpoints from your own app or other modules is possible by subclassing them. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out by any of the aforementioned ways.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -139,7 +139,7 @@ class ExcitedGreeter extends GreeterBase {
     return '${super.hello(session, name)}!!!';
   }
 
-  // to enable `wave`, which was marked with `@ignoreEndpoint` on the base class, you can override it on the sub-class and call the `super` implementation. This will create the method on the endpoint.
+  // To enable `wave`, which was marked with `@ignoreEndpoint` on the base class, you can override it on the sub-class and call the `super` implementation. This will create the method on the endpoint.
   // @override
   // Future<String> wave(Session session) async {
   //   return super.wave(session);
@@ -157,8 +157,8 @@ In the above example, `ExcitedGreeter` inherits from `GreeterBase`. Since the ba
 
 The sub-class `ExcitedGreeter` is an example of all possible modifications to the abstract base class and contains the following changes:
 
-- `hello` is overriden and augments the super class' implementation with a trailing `!!!`
-- `goodbye` is now exposed through the sub-class, as it was not individually hidden and the sub-class does not further augment it
+- `hello` is overridden and augments the super class' implementation with a trailing `!!!`
+- `goodbye` is now exposed through the sub-class, as it was not individually hidden, and the sub-class does not further augment it
 - `wave`, which is explicitly ignored in the base-class, is still not exposed, as the sub-class did not opt into re-exposing it
 - `wavePerson` was explicitly overriden to be ignored. Don't worry about the `throw` in the method implementation, which is only needed to satisfy the compiler. In practice, this method can not be called from the client anymore.
 
@@ -193,8 +193,8 @@ In the above example, we created a new `TeamV2` endpoint, which hides the `join`
 
 While we may have liked to re-use the `join` method name, Dart inheritance rules do not allow doing so.
 
-In your client, you could then move all usages from `client.team` to `client.teamV2` and eventually remove the old endpoint. Either by marking it with `@ignoreEndpoint` on the class or deleting it and moving the untouched method implementations you want to keep to the V2 endpoint class.
+In your client, you could then move all usages from `client.team` to `client.teamV2` and eventually remove the old endpoint. Either mark it with `@ignoreEndpoint` on the class or delete it and move the untouched method implementations you want to keep to the V2 endpoint class.
 
-An alternative pattern to consider would be to move all the business logic for an endpoint into a helper class, and then call into that from the endpoint. In case you want to create a V2 version later, you might be able to reuse most of the underlying business logic through that helper class, and don't have to sub-class the old endpoint. This has the added benefit of the endpoint class clearly listing all exposed methods, and you don't have to wonder what you inherit from the base class.
+An alternative pattern to consider would be to move all the business logic for an endpoint into a helper class and then call into that from the endpoint. In case you want to create a V2 version later, you might be able to reuse most of the underlying business logic through that helper class, and don't have to sub-class the old endpoint. This has the added benefit of the endpoint class clearly listing all exposed methods, and you don't have to wonder what you inherit from the base class.
 
-Either approach has its pros and cons, and it depends on the concrete circumstances to pick the one that is most useful. Both give you all the tools you need to extend and update your API while moving clients along gracefully, giving them time to update.
+Either approach has pros and cons, and it depends on the concrete circumstances to pick the most useful one. Both give you all the tools you need to extend and update your API while gracefully moving clients along and giving them time to update.
