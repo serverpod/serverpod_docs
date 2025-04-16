@@ -139,7 +139,7 @@ class ExcitedGreeter extends GreeterBase {
     return '${super.hello(session, name)}!!!';
   }
 
-  // to expose `wave` on the sub-class, override it like this to drop the `@ignoreEndpoint` annotation
+  // to enable `wave`, which was marked with `@ignoreEndpoint` on the base class, you can override it on the sub-class and call the `super` implementation. This will create the method on the endpoint.
   // @override
   // Future<String> wave(Session session) async {
   //   return super.wave(session);
