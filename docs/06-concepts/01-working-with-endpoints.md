@@ -107,94 +107,240 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-## Endpoint inheritance
+## Endpoint method inheritance
 
-Extending existing endpoints from your own app or other modules is possible by subclassing them. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out by any of the aforementioned ways.
+Endpoints can be based on other endpoint using inheritance like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
+
+Currently there are the following possibilities to extend another `Endpoint` class:
+
+### Inheriting from a concrete (visible) endpoint
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class Calculator extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
+  }
+}
+```
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class MyCalculator extends Calculator {
+  Future<int> subtract(Session session, int a, int b) async {
+    return a - b;
+  }
+}
+```
+
+The generated code will now contain both a `Calculator` and `MyCalculator` client.  
+The `MyCalculator` endpoint will not expose both `add` and `subtract` methods.
+
+To prevent usage of the base `Calculator` endpoint it might be appropriate to hide it.
+If the base class was defined in another module like shown above, then this is currently not possible. But if it's part of your own code, you could use the `@ignoreEndpoint` annotation from the previous section, or make it `abstract` as shown below.
+
+### Inheriting from an `abstract` base class
+
+Endpoints marked as `abstract` require that they get sub-classed in order to be exposed on the server.
+
+Suppose you had the following base class:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+abstract class Calculator extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
+  }
+}
+```
+
+So far this would not generate any client or server code.
+
+If you then added a subclass which extends this base class, this subclass would be exposed to clients.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class MyCalculator extends Calculator {}
+```
+
+This `MyCalculator` endpoint now exposes the `add` endpoint method from the base class implementation. You could further extend it like this:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class MyCalculator extends Calculator {
+  Future<int> subtract(Session session, int a, int b) async {
+    return a - b;
+  }
+}
+```
+
+Now the `MyCalculator` endpoint exposes the inherited `add` endpoint method as well as `subtract`.
+
+### Inheriting from an `@ignoreEndpoint` base class
+
+Suppose you had a endpoint class marked with `@ignoreEndpoint`, in which case no code would be generated for it.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+@ignoreEndpoint
+class Calculator extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
+  }
+}
+```
+
+You could then subclass it like this:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class MyCalculator extends Calculator {}
+```
+
+Now all of the public endpoint methods of the base class, in this case just `add` would be exposed by the `MyCalculator` client.
+Additionally further methods could be added to the `MyCalculator` subclass.
+
+### Overriding endpoint methods
+
+Suppose you had a base `Endpoint` class `Greeter` whose behavior you want to adopt.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
 abstract class GreeterBase extends Endpoint {
-  Future<String> hello(Session session, String name) async {
+  Future<String> greet(Session session, String name) async {
     return 'Hello $name';
   }
-
-  Future<String> goodbye(Session session, String name) async {
-    return 'Bye $name';
-  }
-
-  @ignoreEndpoint
-  Future<String> wave(Session session) async {
-    return '👋';
-  }
-
-  Future<String> wavePerson(Session session, String name) async {
-    return '👋 Hey $name';
-  }
 }
+```
+
+Now suppose you want to change the behavior of `greet`, to make it a little more excited. That could be achieved by subclassing that endpoint.
+
+In this case the base class is marked as `abstract`, but the following behavior would work just the same if it were marked with `@ignoredEndpoint` or just a plain `class`. Only that in the letter case you'd end up with 2 endpoints in the end.
+
+```dart
+import 'package:serverpod/serverpod.dart';
 
 class ExcitedGreeter extends GreeterBase {
   @override
-  Future<String> hello(Session session, String name) async {
+  Future<String> greet(Session session, String name) async {
     return '${super.hello(session, name)}!!!';
   }
-
-  // To enable `wave`, which was marked with `@ignoreEndpoint` on the base class, you can override it on the sub-class and call the `super` implementation. This will create the method on the endpoint.
-  // @override
-  // Future<String> wave(Session session) async {
-  //   return super.wave(session);
-  // }
-
-  @override
-  @ignoreEndpoint
-  Future<String> wavePerson(Session session, String name) async {
-    throw UnimplementedError();
-  }
 }
 ```
 
-In the above example, `ExcitedGreeter` inherits from `GreeterBase`. Since the base class is marked as `abstract`, no client was generated for it, but now all of its visible endpoint methods would be exposed through the sub-class `ExcitedGreeter`.
+The `ExcitedGreeter` endpoint will now contain the single `greet` method, and it's implementation will augment the base class' one by adding `!!!` to that result.
 
-The sub-class `ExcitedGreeter` is an example of all possible modifications to the abstract base class and contains the following changes:
+This way you can modify the behavior of endpoint methods, while still sharing the implementation through calls to `super` where it makes sense. Only be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
 
-- `hello` is overridden and augments the super class' implementation with a trailing `!!!`
-- `goodbye` is now exposed through the sub-class, as it was not individually hidden, and the sub-class does not further augment it
-- `wave`, which is explicitly ignored in the base-class, is still not exposed, as the sub-class did not opt into re-exposing it
-- `wavePerson` was explicitly overriden to be ignored. Don't worry about the `throw` in the method implementation, which is only needed to satisfy the compiler. In practice, this method can not be called from the client anymore.
+### Hiding endpoint methods with `@ignoreEndpoint`
 
-### API versioning for breaking changes
-
-An endpoint sub-class can be useful when having to do a breaking change on an endpoint, but you need to keep supporting existing clients. Doing so also allows you to keep sharing most of its implementation with the old endpoint.
-
-Imagine you had a "team" management endpoint where before a user could join if they had an e-mail address ending in the expected domain, but now it should be opened up for anyone to join if they can provide an "invite code".
+Suppose you had an endpoint class like this:
 
 ```dart
-@Deprecated('Use TeamV2Endpoint instead')
-class TeamEndpoint extends Endpoint {
-  Future<TeamInfo> join(Session session) async { … }
-  
-  // many more methods, like `leave` etc.
-}
+import 'package:serverpod/serverpod.dart';
 
-class TeamV2Endpoint extends TeamEndpoint {
-  @override
-  @ignoreEndpoint
-  Future<TeamInfo> join(Session session) async {
-    throw UnimplementedError();
+abstract class Calculator extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
   }
 
-  Future<TeamInfo> joinWithCode(Session session, String invitationCode) async {
-    …
+  Future<int> subtract(Session session, int a, int b) async {
+    return a - b;
   }
 }
 ```
 
-In the above example, we created a new `TeamV2` endpoint, which hides the `join` method and instead exposes a `joinWithCode` method, plus all the other inherited (and untouched) methods from the parent class.
+You might want to re-use the `add` methodm but do not want a `subtract` method on your endpoint.
+To achieve this, subclass the `Calculator`, but hide `subtract` with `@ignoreEndpoint` like so:
 
-While we may have liked to re-use the `join` method name, Dart inheritance rules do not allow doing so.
+```dart
+import 'package:serverpod/serverpod.dart';
 
-In your client, you could then move all usages from `client.team` to `client.teamV2` and eventually remove the old endpoint. Either mark it with `@ignoreEndpoint` on the class or delete it and move the untouched method implementations you want to keep to the V2 endpoint class.
+class Adder extends Calculator {
+  @ignoreEndpoint
+  Future<int> subtract(Session session, int a, int b) async {
+    throw UnimplementedError();
+  }
+}
+```
 
-An alternative pattern to consider would be to move all the business logic for an endpoint into a helper class and then call into that from the endpoint. In case you want to create a V2 version later, you might be able to reuse most of the underlying business logic through that helper class, and don't have to sub-class the old endpoint. This has the added benefit of the endpoint class clearly listing all exposed methods, and you don't have to wonder what you inherit from the base class.
+This `Adder` endpoint will only generate code for the `add` method, whereas `subtract` will not be visible from the client. Thus don't worry about the exception here. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `Adder`.
 
-Either approach has pros and cons, and it depends on the concrete circumstances to pick the most useful one. Both give you all the tools you need to extend and update your API while gracefully moving clients along and giving them time to update.
+### Unhiding endpoint methods with `@ignoreEndpoint`
+
+The reverse of the previous example would be a base endpoint that has a method marked with `@ignoreEndpoint`, which you now want to expose on the subclass.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+abstract class Calculator extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
+  }
+
+  // Ignored, as this expensive computation should not be exposed by default
+  @ignoreEndpoint
+  Future<BigInt> addBig(Session session, BigInt a, BigInt b) async {
+    return a + b;
+  }
+}
+```
+
+Since the base class is marked `abstract` no client or server code is generated so far at all.
+
+Now if you just subclass the `Calculator` endpoint like this, the generated client will only expose the simple `add` method.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class MyCalculator extends Calculator {}
+```
+
+In order to expose the `addBig` method on your endpoint, override it (thus unhiding it) and defer to the base class' implementation.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+class MyCalculator extends Calculator {
+  @override
+  Future<BigInt> addBig(Session session, BigInt a, BigInt b) async {
+    return super.addBig(session, a, b);
+  }
+}
+```
+
+Now the `MyCalculator` endpoint will expose both the `add` and `addBig` methods.
+
+### Building base endpoints for behavior
+
+Endpoint subclassing is not just useful to inherit (or hide) methods, it can also be used to pre-configure any other property of the `Endpoint` class.
+
+For example you could define a base class that requires callers to be logged in:
+
+```dart
+abstract class LoggedInEndpoint extends Endpoint {
+  @override
+  bool get requireLogin => true;
+}
+```
+
+And now every endpoint that extends `LoggedInEndpoint` will check that the user is logged in.
+
+Similarly you could wrap up a specific set of required scopes in a base endpoint, which you can then easily use for the app's endpoints instead of repeating the scopes in each:
+
+```dart
+abstract class AdminEndpoint extends Endpoint {
+  @override
+  Set<Scope> get requiredScopes => {Scope.admin};
+}
+```
+
+Again, just have your custom endpoint extend `AdminEndpoint` and you can be sure that the user has the appropriate permissions.
