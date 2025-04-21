@@ -109,9 +109,9 @@ class ExampleEndpoint extends Endpoint {
 
 ## Endpoint method inheritance
 
-Endpoints can be based on other endpoint using inheritance like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
+Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
 
-Currently there are the following possibilities to extend another `Endpoint` class:
+Currently, there are the following possibilities to extend another `Endpoint` class:
 
 ### Inheriting from a concrete (visible) endpoint
 
@@ -138,12 +138,12 @@ class MyCalculator extends Calculator {
 The generated code will now contain both a `Calculator` and `MyCalculator` client.  
 The `MyCalculator` endpoint will not expose both `add` and `subtract` methods.
 
-To prevent usage of the base `Calculator` endpoint it might be appropriate to hide it.
-If the base class was defined in another module like shown above, then this is currently not possible. But if it's part of your own code, you could use the `@ignoreEndpoint` annotation from the previous section, or make it `abstract` as shown below.
+To prevent usage of the base `Calculator` endpoint, it might be appropriate to hide it.
+If the base class was defined in another module as shown above, then this is currently not possible. But if it's part of your own code, you could use the `@ignoreEndpoint` annotation from the previous section, or make it `abstract` as shown below.
 
 ### Inheriting from an `abstract` base class
 
-Endpoints marked as `abstract` require that they get sub-classed in order to be exposed on the server.
+Endpoints marked as `abstract` require that they get subclassed to be exposed on the server.
 
 Suppose you had the following base class:
 
@@ -157,9 +157,9 @@ abstract class Calculator extends Endpoint {
 }
 ```
 
-So far this would not generate any client or server code.
+So far, this would not generate any client or server code.
 
-If you then added a subclass which extends this base class, this subclass would be exposed to clients.
+If you then added a subclass that extends this base class, this subclass would be exposed to clients.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -183,7 +183,7 @@ Now the `MyCalculator` endpoint exposes the inherited `add` endpoint method as w
 
 ### Inheriting from an `@ignoreEndpoint` base class
 
-Suppose you had a endpoint class marked with `@ignoreEndpoint`, in which case no code would be generated for it.
+Suppose you had an endpoint class marked with `@ignoreEndpoint`, in which case no code would be generated for it.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -204,8 +204,8 @@ import 'package:serverpod/serverpod.dart';
 class MyCalculator extends Calculator {}
 ```
 
-Now all of the public endpoint methods of the base class, in this case just `add` would be exposed by the `MyCalculator` client.
-Additionally further methods could be added to the `MyCalculator` subclass.
+Now, all of the public endpoint methods of the base class, in this case just `add`, would be exposed by the `MyCalculator` client.
+Additionally, further methods could be added to the `MyCalculator` subclass.
 
 ### Overriding endpoint methods
 
@@ -221,9 +221,9 @@ abstract class GreeterBase extends Endpoint {
 }
 ```
 
-Now suppose you want to change the behavior of `greet`, to make it a little more excited. That could be achieved by subclassing that endpoint.
+Now, suppose you want to change the behavior of `greet`, to make it a little more excited. That could be achieved by subclassing that endpoint.
 
-In this case the base class is marked as `abstract`, but the following behavior would work just the same if it were marked with `@ignoredEndpoint` or just a plain `class`. Only that in the letter case you'd end up with 2 endpoints in the end.
+In this case, the base class is marked as `abstract`, but the following behavior would work just the same if it were marked with `@ignoredEndpoint` or just a plain `class`. Only that in the letter case, you'd end up with 2 endpoints in the end.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -236,9 +236,9 @@ class ExcitedGreeter extends GreeterBase {
 }
 ```
 
-The `ExcitedGreeter` endpoint will now contain the single `greet` method, and it's implementation will augment the base class' one by adding `!!!` to that result.
+The `ExcitedGreeter` endpoint will now contain the single `greet` method, and its implementation will augment the base class's one by adding `!!!` to that result.
 
-This way you can modify the behavior of endpoint methods, while still sharing the implementation through calls to `super` where it makes sense. Only be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
+This way, you can modify the behavior of endpoint methods, while still sharing the implementation through calls to `super` where it makes sense. Only be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
 
 ### Hiding endpoint methods with `@ignoreEndpoint`
 
@@ -258,7 +258,7 @@ abstract class Calculator extends Endpoint {
 }
 ```
 
-You might want to re-use the `add` methodm but do not want a `subtract` method on your endpoint.
+You might want to re-use the `add` method, but do not want a `subtract` method on your endpoint.
 To achieve this, subclass the `Calculator`, but hide `subtract` with `@ignoreEndpoint` like so:
 
 ```dart
@@ -272,7 +272,7 @@ class Adder extends Calculator {
 }
 ```
 
-This `Adder` endpoint will only generate code for the `add` method, whereas `subtract` will not be visible from the client. Thus don't worry about the exception here. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `Adder`.
+This `Adder` endpoint will only generate code for the `add` method, whereas `subtract` will not be visible from the client. Thus, don't worry about the exception here. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `Adder`.
 
 ### Unhiding endpoint methods with `@ignoreEndpoint`
 
@@ -294,9 +294,9 @@ abstract class Calculator extends Endpoint {
 }
 ```
 
-Since the base class is marked `abstract` no client or server code is generated so far at all.
+Since the base class is marked `abstract`, no client or server code is generated so far at all.
 
-Now if you just subclass the `Calculator` endpoint like this, the generated client will only expose the simple `add` method.
+Now, if you just subclass the `Calculator` endpoint like this, the generated client will only expose the simple `add` method.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -323,7 +323,7 @@ Now the `MyCalculator` endpoint will expose both the `add` and `addBig` methods.
 
 Endpoint subclassing is not just useful to inherit (or hide) methods, it can also be used to pre-configure any other property of the `Endpoint` class.
 
-For example you could define a base class that requires callers to be logged in:
+For example, you could define a base class that requires callers to be logged in:
 
 ```dart
 abstract class LoggedInEndpoint extends Endpoint {
@@ -334,7 +334,7 @@ abstract class LoggedInEndpoint extends Endpoint {
 
 And now every endpoint that extends `LoggedInEndpoint` will check that the user is logged in.
 
-Similarly you could wrap up a specific set of required scopes in a base endpoint, which you can then easily use for the app's endpoints instead of repeating the scopes in each:
+Similarly, you could wrap up a specific set of required scopes in a base endpoint, which you can then easily use for the app's endpoints instead of repeating the scopes in each:
 
 ```dart
 abstract class AdminEndpoint extends Endpoint {
