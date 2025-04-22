@@ -139,4 +139,4 @@ This will start the Flutter app in your browser. It should look like this:
 
 ## Next Steps
 
-We have prepared a short series of tutorials designed to guide you through the core concepts of serverpod. After installing we recommend to checkout the lesson about working with [endpoints](/001-endpoints-and-server-side-logic). This will give you a good overview of how to create endpoints and how to use them in your Flutter app. This will be followed by working with models and the database.
+We have prepared a short series of tutorials designed to guide you through the core concepts of serverpod. If you want to dive right in we recommend to checkout the lesson about working with [endpoints](/endpoints-and-server-side-logic). This will give you a good overview of how to create endpoints and how to use them in your Flutter app. This will be followed by working with models and the database.
