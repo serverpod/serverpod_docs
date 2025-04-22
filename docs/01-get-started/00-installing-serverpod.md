@@ -1,3 +1,7 @@
+---
+sidebar_position: -1
+---
+
 # Installation
 
 ## Meet Serverpod
@@ -45,7 +49,7 @@ To make use of Serverpods ORM capabilities, you need to have access to a Postgre
 Check your Docker installation by running the following command in your terminal:
 
 ```bash
-$ docker --version
+$ docker info
 ```
 
 If you are using Docker desktop and you are getting an error here, make sure that Docker is running. You can check this by looking for the Docker icon in your system tray or taskbar. If it's not running, start Docker Desktop and try again.
@@ -67,17 +71,15 @@ $ serverpod
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
 
-### [Optional] Install the VS Code Extension
+### [Recommended] Install the VS Code Extension
 
-//TODO(dkbast): can we make the cli install the extension for you?
 The Serverpod VS Code extension makes it easy to work with your Serverpod projects. It provides real-time diagnostics and syntax highlighting for model files in your project.
 ![Serverpod extension](/img/syntax-highlighting.png)
 
 You can install the extension from the VS Code Marketplace: **[Serverpod extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod)**
 
-### [Optional] Install Serverpod Insights
+### [Recommended] Install Serverpod Insights
 
-//TODO(dkbast): can we make the cli install insights for you?
 **[Serverpod Insights](../tools/insights)** is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 ![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
 
@@ -122,7 +124,7 @@ $ dart run bin/main.dart --apply-migrations
 
 This will start the server and apply the migrations to the database. You can now access the server at `http://localhost:8080` - the webserver is available at `http://localhost:8082`. It should look like this:
 
-![Serverpod web](https://serverpod.dev/assets/img/serverpod-web.png)
+![Serverpod web](/img/getting-started/serverpod-web.png)
 
 Now let's run the client. You can do this by running the following command in the root directory of your project:
 
@@ -133,7 +135,7 @@ $ flutter run -d chrome
 
 This will start the Flutter app in your browser. It should look like this:
 
-![Example Flutter App](https://serverpod.dev/assets/img/flutter-example-web.png)
+![Example Flutter App](/img/getting-started/flutter-example-web.png)
 
 ## Next Steps
 
