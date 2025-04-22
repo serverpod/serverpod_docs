@@ -69,14 +69,20 @@ class RecipeEndpoint extends Endpoint {
       apiKey: geminiApiKey,
     );
 
-
     // A prompt to generate a recipe, the user will provide a free text input with the ingredients
     final prompt =
         'Generate a recipe using the following ingredients: $ingredients, always put the title of the recipe in the first line, and then the instructions. The recipe should be easy to follow and include all necessary steps. Please provide a detailed recipe.';
 
-    final response = await gemini.generateFromText(prompt);
+    final response = await gemini.generateContent([Content.text(prompt)]);
 
-    return response.text;
+    final responseText = response.text;
+
+    if (responseText == null || responseText.isEmpty) {
+      throw Exception(
+          'No recipe found. Please try again with different ingredients.');
+    }
+
+    return responseText;
   }
 }
 ```
@@ -92,7 +98,7 @@ $ cd magic_recipe/magic_recipe_server
 $ serverpod generate
 ```
 
-This will generate the code for the endpoint and create a new file called `recipe.dart` in the `lib/src/generated` directory. It will also update the client code in `magic_recipe/magic_recipe_client` so that you can call it in your Flutter app.
+This will generate the code for the endpoint and register it in the `generated/protocol.dart` file. You can check the generated code in the `lib/src/generated/protocol.dart` file. It will also generate the client code, so that you can call it on the client object `client.recipe.generateRecipe(...)`.
 
 ## Call the endpoint from the client
 
@@ -181,7 +187,7 @@ $ flutter run -d chrome
 
 This will start the Flutter app in your browser:
 
-![Example Flutter App](https://serverpod.dev/assets/img/flutter-example-web.png)
+![Example Flutter App](/img/getting-started/endpoint-chrome-result.png)
 
 Now you can click the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
 

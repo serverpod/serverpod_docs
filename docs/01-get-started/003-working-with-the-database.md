@@ -32,7 +32,7 @@ To generate the code for the model and create the migrations for the database (t
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ serverpod generate
-$ serverpod create-migrations
+$ serverpod create-migration
 ```
 
 You will also notice that there will be a new entry in your "migrations" folder - serverpod creates these migrations "step by step" - each time you have changes which are relevant to the database and run `serverpod create-migrations` a new migration file will be created. This is a good way to keep track of the changes you make to the database and to be able to roll back changes if needed.
@@ -60,7 +60,7 @@ class RecipeEndpoint extends Endpoint {
     // --- Add this ---
 
     // Save the recipe to the database, but don't block the response
-    unawaited(session.db.insertRow<Recipe>(recipe));
+    unawaited(Recipe.db.insertRow(session, recipe));
 
     // --- End of added code ---
 
@@ -93,9 +93,8 @@ class RecipeEndpoint extends Endpoint {
 ```
 
 :::info
-The `session.db` object can be used to access the database. You can use it to insert, update, delete and query the database. The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. If a model uses the `table` keyword, it is automatically registered in the database, and you can use it to query the database.
-
-You can also use the model class, to access the database like you see above (`Recipe.db.find(...)`). This is a shorthand for `session.db.find<Recipe>(...)`.
+The when adding a `table` to the model class definition, the model will now give you access to the database, specifically to the `recipes` table through `Recipe.db` (e.g. `Recipe.db.find(session)`.
+The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. See [CRUD](../concepts/database/crud) and [relation queries](../concepts/database/relation-queries) for more information.
 :::
 
 ## Generate the code
@@ -110,6 +109,8 @@ $ serverpod generate
 ## Call the endpoint from the app
 
 Now that we have updated the endpoint, we can call it from the app. We will do this in the `magic_recipe/magic_recipe_flutter/lib/main.dart` file. We will call the `getRecipes` method when the app starts and store the result in a list of `Recipe` objects. We will also update the UI to show the list of recipes.
+
+![Final result](/img/getting-started/final-result.png)
 
 If you want to see what changed, we suggest to creating a git commit now and then replacing the code in the `main.dart` file.
 
@@ -305,3 +306,24 @@ class ResultDisplay extends StatelessWidget {
   }
 }
 ```
+
+## Run the app
+
+First we need to start the server AND apply the migrations:
+
+```bash
+$ cd magic_recipe/magic_recipe_server
+$ docker-compose up -d
+$ dart run bin/main.dart --apply-migrations
+```
+
+Then we can start the Flutter app:
+
+```bash
+$ cd magic_recipe/magic_recipe_flutter
+$ flutter run -d chrome
+```
+
+## Summary
+
+You have now learned about the fundamentals of Serverpod - how to create and use endpoints with custom data models and how to store the data in a database. You have also learned how to use the generated client code to call the endpoints from your Flutter app. You can now use this knowledge to create your own endpoints and data models and store them in a database.

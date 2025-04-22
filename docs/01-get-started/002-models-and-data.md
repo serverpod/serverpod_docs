@@ -38,18 +38,10 @@ This will generate the code for the model and create a new file called `recipe.d
 Now that we have created the model, we can use it in the server code. We will now update the `lib/src/recipies/recipe_endpoint.dart` file to use the `Recipe` model instead of a simple string. We will also update the `generateRecipe` method to return a `Recipe` object instead of a string.
 
 ```dart
+// change the return type of the method to Recipe
   Future<Recipe> generateRecipe(Session session, String ingredients) async {
 
-    // ... keep this like before
-
-    final response = await gemini.generateContent([Content.text(prompt)]);
-
-    final responseText = response.text;
-
-    if (responseText == null || responseText.isEmpty) {
-      throw Exception(
-          'No recipe found. Please try again with different ingredients.');
-    }
+    // ... keep this like before, at the end of the method add this:
 
     final recipe = Recipe(
       author: 'Gemini',
