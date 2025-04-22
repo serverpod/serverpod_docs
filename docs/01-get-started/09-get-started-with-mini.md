@@ -1,6 +1,6 @@
 # Get started with Mini
 
-# Serverpod or Serverpod Mini?
+## Serverpod or Serverpod Mini?
 
 Serverpod Mini is a lightweight version of Serverpod that is perfect for small projects or when you want to try out Serverpod without setting up a Postgres database. If you start with Mini, you can upgrade to the full version of Serverpod anytime.
 
