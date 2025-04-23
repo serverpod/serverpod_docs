@@ -75,6 +75,8 @@ The return type must be a typed Future. Supported return types are the same as f
 
 ## Ignore endpoint definition
 
+### Ignore an entire `Endpoint` class
+
 If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@ignoreEndpoint`.  This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
 
 ```dart
@@ -90,7 +92,9 @@ class ExampleEndpoint extends Endpoint {
 
 The above code will not generate any server or client bindings for the example endpoint.
 
-Alternatively, you can disable single methods like in the example below, where `hello` is exposed to the client, but `goodbye` is not:
+### Ignore individual `Endpoint` methods
+
+Alternatively, you can disable single methods by annotation them with `@ignoreEndpoint`.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -107,128 +111,106 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
+In this case the `ExampleEndpoint` will only expose the `hello` method, whereas the `goodbye` method will not be accessible externally.
+
 ## Endpoint method inheritance
 
 Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
 
-### Inheriting from a concrete (visible) endpoint
+### Inheriting from a concrete (visible) `Endpoint` class
+
+Suppose there is an existing `CalculatorEndpoint` (presumably defined in another package, otherwise the existing one could be adapted) which you want to extend with further functionality.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-class Calculator extends Endpoint {
+class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
   }
 }
-```
 
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class MyCalculator extends Calculator {
+class MyCalculatorEndpoint extends CalculatorEndpoint {
   Future<int> subtract(Session session, int a, int b) async {
     return a - b;
   }
 }
 ```
 
-The generated code will now contain both a `Calculator` and `MyCalculator` client.  
-The `MyCalculator` endpoint will not expose both `add` and `subtract` methods.
+The generated client code will now be able to access both `CalculatorEndpoint` and `MyCalculatorEndpoint`.
+Whereas the `CalculatorEndpoint` only exposes the original `add` method, `MyCalculatorEndpoint` now exposes both the inherited `add` and its own `subtract` methods.
 
-To prevent usage of the base `Calculator` endpoint, it might be appropriate to hide it.
-If the base class was defined in another module as shown above, then this is currently not possible. But if it's part of your own code, you could use the `@ignoreEndpoint` annotation from the previous section, or make it `abstract` as shown below.
+### Inheriting from an `abstract` `Endpoint` class
 
-### Inheriting from an `abstract` base class
-
-Endpoints marked as `abstract` require that they get subclassed to be exposed on the server.
-
-Suppose you had the following base class:
+Endpoints marked as `abstract` are not added to the server. But if they are subclassed, their methods will be exposed through the subclass.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-abstract class Calculator extends Endpoint {
+abstract class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
   }
 }
+
+class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-So far, this would not generate any client or server code.
+The generated client code will only be able to access `MyCalculatorEndpoint`, as the abstract `CalculatorEndpoint` is not exposed on the server.
+`MyCalculatorEndpoint` exposes the `add` method it inherited from `CalculatorEndpoint`.
 
-If you then added a subclass that extends this base class, this subclass would be exposed to clients.
+
+#### Extending an `abstract` `Endpoint` class
+
+In the above example the `MyCalculatorEndpoint` only exposed the inherited `add` method. It can be further extended with custom methods like this:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-class MyCalculator extends Calculator {}
-```
-
-This `MyCalculator` endpoint now exposes the `add` endpoint method from the base class implementation. You could further extend it like this:
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class MyCalculator extends Calculator {
+class MyCalculatorEndpoint extends CalculatorEndpoint {
   Future<int> subtract(Session session, int a, int b) async {
     return a - b;
   }
 }
 ```
 
-Now the `MyCalculator` endpoint exposes the inherited `add` endpoint method as well as `subtract`.
+In this case it will expose both an `add` and a `subtract` method.
 
-### Inheriting from an `@ignoreEndpoint` base class
+### Inheriting from an `@ignoreEndpoint` `Endpoint` class
 
-Suppose you had an endpoint class marked with `@ignoreEndpoint`, in which case no code would be generated for it.
+Suppose you had an `Endpoint` class marked with `@ignoreEndpoint` and a subclass that extends it:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
 @ignoreEndpoint
-class Calculator extends Endpoint {
+class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
   }
 }
+
+class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-You could then subclass it like this:
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class MyCalculator extends Calculator {}
-```
-
-Now, all of the public endpoint methods of the base class, in this case just `add`, would be exposed by the `MyCalculator` client.
-Additionally, further methods could be added to the `MyCalculator` subclass.
+Since `CalculatorEndpoint` is marked as `@ignoreEndpoint` it will not be exposed on the server. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class.
 
 ### Overriding endpoint methods
 
-Suppose you had a base `Endpoint` class `Greeter` whose behavior you want to adopt.
+Suppose you had a `GreeterBaseEndpoint` whose behavior you want to adapt.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-abstract class GreeterBase extends Endpoint {
+abstract class GreeterBaseEndpoint extends Endpoint {
   Future<String> greet(Session session, String name) async {
     return 'Hello $name';
   }
 }
-```
 
-Now, suppose you want to change the behavior of `greet`, to make it a little more excited. That could be achieved by subclassing that endpoint.
-
-In this case, the base class is marked as `abstract`, but the following behavior would work just the same if it were marked with `@ignoredEndpoint` or just a plain `class`. Only that in the letter case, you'd end up with 2 endpoints in the end.
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class ExcitedGreeter extends GreeterBase {
+class ExcitedGreeterEndpoint extends GreeterBaseEndpoint {
   @override
   Future<String> greet(Session session, String name) async {
     return '${super.hello(session, name)}!!!';
@@ -236,18 +218,18 @@ class ExcitedGreeter extends GreeterBase {
 }
 ```
 
-The `ExcitedGreeter` endpoint will now contain the single `greet` method, and its implementation will augment the base class's one by adding `!!!` to that result.
+Since `GreeterBaseEndpoint` is `abstract`, it will not be exposed on the server. The `ExcitedGreeterEndpoint` will expose a single `greet` method, and its implementation will augment the super class's one by adding `!!!` to that result.
 
-This way, you can modify the behavior of endpoint methods, while still sharing the implementation through calls to `super` where it makes sense. Only be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
+This way, you can modify the behavior of endpoint methods, while still sharing the implementation through calls to `super`. Be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
 
 ### Hiding endpoint methods with `@ignoreEndpoint`
 
-Suppose you had an endpoint class like this:
+In case you want to hide methods from an endpoint use `@ignoreEndpoint` in the child class like so:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-abstract class Calculator extends Endpoint {
+abstract class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
   }
@@ -256,15 +238,8 @@ abstract class Calculator extends Endpoint {
     return a - b;
   }
 }
-```
 
-You might want to re-use the `add` method, but do not want a `subtract` method on your endpoint.
-To achieve this, subclass the `Calculator`, but hide `subtract` with `@ignoreEndpoint` like so:
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class Adder extends Calculator {
+class AdderEndpoint extends CalculatorEndpoint {
   @ignoreEndpoint
   Future<int> subtract(Session session, int a, int b) async {
     throw UnimplementedError();
@@ -272,7 +247,11 @@ class Adder extends Calculator {
 }
 ```
 
-This `Adder` endpoint will only generate code for the `add` method, whereas `subtract` will not be visible from the client. Thus, don't worry about the exception here. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `Adder`.
+
+Since `CalculatorEndpoint` is `abstract` it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@ignoreEndpoint` only the `add` method will be exposed.
+Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `AdderEndpoint`.
+
+Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@ignoreEndpoint`. Otherwise the method that should be hidden on the child would still be accessible via the parent class.
 
 ### Unhiding endpoint methods with `@ignoreEndpoint`
 
@@ -281,7 +260,7 @@ The reverse of the previous example would be a base endpoint that has a method m
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-abstract class Calculator extends Endpoint {
+abstract class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
   }
@@ -292,24 +271,8 @@ abstract class Calculator extends Endpoint {
     return a + b;
   }
 }
-```
 
-Since the base class is marked `abstract`, no client or server code is generated so far at all.
-
-Now, if you just subclass the `Calculator` endpoint like this, the generated client will only expose the simple `add` method.
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class MyCalculator extends Calculator {}
-```
-
-In order to expose the `addBig` method on your endpoint, override it (thus unhiding it) and defer to the base class' implementation.
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class MyCalculator extends Calculator {
+class MyCalculatorEndpoint extends CalculatorEndpoint {
   @override
   Future<BigInt> addBig(Session session, BigInt a, BigInt b) async {
     return super.addBig(session, a, b);
@@ -317,7 +280,7 @@ class MyCalculator extends Calculator {
 }
 ```
 
-Now the `MyCalculator` endpoint will expose both the `add` and `addBig` methods.
+Since `CalculatorEndpoint` is `abstract` it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overriden and thus lost the `@ignoreEndpoint` annotation.
 
 ### Building base endpoints for behavior
 
