@@ -161,7 +161,6 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {}
 The generated client code will only be able to access `MyCalculatorEndpoint`, as the abstract `CalculatorEndpoint` is not exposed on the server.
 `MyCalculatorEndpoint` exposes the `add` method it inherited from `CalculatorEndpoint`.
 
-
 #### Extending an `abstract` `Endpoint` class
 
 In the above example the `MyCalculatorEndpoint` only exposed the inherited `add` method. It can be further extended with custom methods like this:
@@ -246,7 +245,6 @@ class AdderEndpoint extends CalculatorEndpoint {
   }
 }
 ```
-
 
 Since `CalculatorEndpoint` is `abstract` it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@ignoreEndpoint` only the `add` method will be exposed.
 Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `AdderEndpoint`.
