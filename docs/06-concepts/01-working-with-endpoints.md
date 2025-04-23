@@ -199,7 +199,7 @@ Since `CalculatorEndpoint` is marked as `@ignoreEndpoint` it will not be exposed
 
 ### Overriding endpoint methods
 
-Suppose you had a `GreeterBaseEndpoint` whose behavior you want to adapt.
+It is possible to override methods of the super class. This can be useful when you want to modify the behavior of specific methods but preserve the rest.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
