@@ -164,7 +164,7 @@ The generated client code will only be able to access `MyCalculatorEndpoint`, as
 
 #### Extending an `abstract` `Endpoint` class
 
-In the above example the `MyCalculatorEndpoint` only exposed the inherited `add` method. It can be further extended with custom methods like this:
+In the above example, the `MyCalculatorEndpoint` only exposed the inherited `add` method. It can be further extended with custom methods like this:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -176,7 +176,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 }
 ```
 
-In this case it will expose both an `add` and a `subtract` method.
+In this case, it will expose both an `add` and a `subtract` method.
 
 ### Inheriting from an `Endpoint` class annotated with `@ignoreEndpoint`
 
@@ -199,7 +199,7 @@ Since `CalculatorEndpoint` is marked as `@ignoreEndpoint` it will not be exposed
 
 ### Overriding endpoint methods
 
-It is possible to override methods of the super class. This can be useful when you want to modify the behavior of specific methods but preserve the rest.
+It is possible to override methods of the superclass. This can be useful when you want to modify the behavior of specific methods but preserve the rest.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -218,9 +218,9 @@ class ExcitedGreeterEndpoint extends GreeterBaseEndpoint {
 }
 ```
 
-Since `GreeterBaseEndpoint` is `abstract`, it will not be exposed on the server. The `ExcitedGreeterEndpoint` will expose a single `greet` method, and its implementation will augment the super class's one by adding `!!!` to that result.
+Since `GreeterBaseEndpoint` is `abstract`, it will not be exposed on the server. The `ExcitedGreeterEndpoint` will expose a single `greet` method, and its implementation will augment the superclass's one by adding `!!!` to that result.
 
-This way, you can modify the behavior of endpoint methods, while still sharing the implementation through calls to `super`. Be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
+This way, you can modify the behavior of endpoint methods while still sharing the implementation through calls to `super`. Be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
 
 ### Hiding endpoint methods with `@ignoreEndpoint`
 
@@ -247,10 +247,10 @@ class AdderEndpoint extends CalculatorEndpoint {
 }
 ```
 
-Since `CalculatorEndpoint` is `abstract` it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@ignoreEndpoint` only the `add` method will be exposed.
-Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice nothing will ever call this method on `AdderEndpoint`.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@ignoreEndpoint` only the `add` method will be exposed.
+Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice, nothing will ever call this method on `AdderEndpoint`.
 
-Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@ignoreEndpoint`. Otherwise the method that should be hidden on the child would still be accessible via the parent class.
+Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@ignoreEndpoint`. Otherwise, the method that should be hidden on the child would still be accessible via the parent class.
 
 ### Unhiding endpoint methods annotated with `@ignoreEndpoint` in the super class
 
@@ -279,7 +279,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 }
 ```
 
-Since `CalculatorEndpoint` is `abstract` it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overriden and thus lost the `@ignoreEndpoint` annotation.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overridden and thus lost the `@ignoreEndpoint` annotation.
 
 ### Building base endpoints for behavior
 
