@@ -115,13 +115,14 @@ In this case the `ExampleEndpoint` will only expose the `hello` method, whereas 
 
 ## Endpoint method inheritance
 
-Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
+Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.  
+Inheritance gives you the possibility to modify the behavior of `Endpoint` classes defined in other Serverpod modules.
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
 
 ### Inheriting from an `Endpoint` class
 
-Suppose there is an existing `CalculatorEndpoint` (presumably defined in another package, otherwise the existing one could be adapted) which you want to extend with further functionality.
+Given an existing `Endpoint` class, it is possible to extend or modify its behavior while retaining the already exposed methods.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
