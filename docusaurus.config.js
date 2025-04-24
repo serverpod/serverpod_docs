@@ -49,6 +49,14 @@ const config = {
         respectPrefersColorScheme: true,
         disableSwitch: false,
       },
+      announcementBar: {
+        id: 'course_prelaunch',
+        content:
+          'We are working on an introductory Serverpod course and are looking for your input - if you are interested in early access please  <a target="_blank" rel="noopener noreferrer" href="#">join the waitlist</a>',
+        backgroundColor: '#fafbfc',
+        textColor: '#091E42',
+        isCloseable: false,
+      },
       navbar: {
         // title: 'My Site',
         logo: {
