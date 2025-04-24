@@ -119,7 +119,7 @@ Endpoints can be based on other endpoints using inheritance, like `class ChildEn
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
 
-### Inheriting from a concrete (visible) `Endpoint` class
+### Inheriting from an `Endpoint` class
 
 Suppose there is an existing `CalculatorEndpoint` (presumably defined in another package, otherwise the existing one could be adapted) which you want to extend with further functionality.
 
@@ -142,7 +142,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 The generated client code will now be able to access both `CalculatorEndpoint` and `MyCalculatorEndpoint`.
 Whereas the `CalculatorEndpoint` only exposes the original `add` method, `MyCalculatorEndpoint` now exposes both the inherited `add` and its own `subtract` methods.
 
-### Inheriting from an `abstract` `Endpoint` class
+### Inheriting from an `Endpoint` class marked `abstract`
 
 Endpoints marked as `abstract` are not added to the server. But if they are subclassed, their methods will be exposed through the subclass.
 
@@ -177,7 +177,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 
 In this case it will expose both an `add` and a `subtract` method.
 
-### Inheriting from an `@ignoreEndpoint` `Endpoint` class
+### Inheriting from an `Endpoint` class annotated with `@ignoreEndpoint`
 
 Suppose you had an `Endpoint` class marked with `@ignoreEndpoint` and a subclass that extends it:
 
@@ -251,7 +251,7 @@ Don't worry about the exception in the `subtract` implementation. That is only a
 
 Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@ignoreEndpoint`. Otherwise the method that should be hidden on the child would still be accessible via the parent class.
 
-### Unhiding endpoint methods with `@ignoreEndpoint`
+### Unhiding endpoint methods annotated with `@ignoreEndpoint` in the super class
 
 The reverse of the previous example would be a base endpoint that has a method marked with `@ignoreEndpoint`, which you now want to expose on the subclass.
 
