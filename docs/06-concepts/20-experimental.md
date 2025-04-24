@@ -107,10 +107,10 @@ Changing the type of the `id` field allows you to customize the identifier type 
 
 The following types are supported for the `id` field:
 
-|**Type**|Default|Description|
-|:-----|:---|:---|
-| **int** | serial (optional) | 64-bit serial integer. |
-| **UuidValue** | random | UUID v4 value. |
+| **Type**      | Default | Default Persist options | Default Model options | Description            |
+| :------------ | :------ | :---------------------- | :-------------------- | :--------------------- |
+| **int**       | serial  | serial (optional)       | -                     | 64-bit serial integer. |
+| **UuidValue** | random  | random                  | random                | UUID v4 value.         |
 
 ### Declaring a Custom ID Type
 
@@ -120,19 +120,28 @@ To declare a custom type for the `id` field in a table model file, use the follo
 class: UuidIdTable
 table: uuid_id_table
 fields:
-  id: UuidValue, default=random
+  id: UuidValue?, defaultPersist=random
 ```
 
 ```yaml
 class: IntIdTable
 table: int_id_table
 fields:
-  id: int, default=serial  // The default keyword for 'int' is optional.
+  id: int?, defaultPersist=serial  // The default keyword for 'int' is optional.
 ```
 
-:::info
-Note that when creating a new object for models using `UuidValue`, the `id` field value will be automatically generated, allowing for IDs to be created on the client side. This is useful for creating objects offline or using them before they are sent to the server. If desired, the ID can also be set to null to be generated on the database, as the field is nullable.
-:::
+#### Default Uuid model value
+
+For UUIDs, it is possible to configure the `defaultModel` value. This will ensure that UUIDs are generated as soon as the object is created, rather than when it is persisted to the database. This is useful for creating objects offline or using them before they are sent to the server.
+
+```yaml
+class: UuidIdTable
+table: uuid_id_table
+fields:
+  id: UuidValue, defaultModel=random
+```
+
+When using `defaultModel=random`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
 
 ## Exception monitoring
 
