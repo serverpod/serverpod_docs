@@ -26,10 +26,10 @@ $ serverpod generate --experimental-features=all
 
 The current options you can pass are:
 
-|**Feature**|Description|
-|:-----|:---|
-| **all** | Enables all available experimental features. |
-| **inheritance** | Allows using the `extends` keyword in your model files to create class hierarchies.|
+| **Feature**      | Description                                                                                |
+| :--------------- | :----------------------------------------------------------------------------------------- |
+| **all**          | Enables all available experimental features.                                               |
+| **inheritance**  | Allows using the `extends` keyword in your model files to create class hierarchies.        |
 | **changeIdType** | Allows declaring the `id` field in table model files to change the type of the `id` field. |
 
 ## Inheritance
