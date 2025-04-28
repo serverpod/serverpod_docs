@@ -1,10 +1,10 @@
 # Working with the database
 
-In this section, we will build upon the models we created in the previous section and add a database to store our favourite recipes.
+In this section, we will build upon the models we created in the previous section and add a database to store our favorite recipes that we create in the app.
 
-## Object database mapping
+## Object relation mapping
 
-We can now simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will create a new table in the database called `recipes` and map the `Recipe` model to this table.
+Any Serverpod model can be mapped to the database through Serverpod's object relation mapping (ORM). Simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will map the model to a new table in the database called `recipes`.
 
 ```yaml
 ### Our AI generated Recipe
@@ -27,18 +27,19 @@ Check out the reference for [database models](../concepts/database/models#keywor
 
 ## Migrations
 
-With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server.
+With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server. Since we modified one of our models, make sure to also run `serverpod generate`, to update the generated code in our server.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ serverpod create-migration
+$ serverpod generate
 ```
 
 You will notice that there will be a new entry in your "migrations" folder - serverpod creates these migrations "step by step" - each time you have changes which are relevant to the database and run `serverpod create-migrations` a new migration file will be created. This is a good way to keep track of the changes you make to the database and to be able to roll back changes if needed.
 
 ## Writing to the database
 
-Let's save all created recipes to the database. First we want to automatically store new recipes in the database. Because the `Recipe` now has a `table` it is now not just a serializable entity, but also a `TableRow` - that means that we can use the `insertRow` method to store it in the database.
+Let's save all the recipes we create to the database. Because the `Recipe` now has a `table` key, it is not just a serializable model but also a `TableRow`. This means that Serverpod has generated bindings for us to the database. You can access the bindings through the static `db` field of the `Recipe`. Here, you will find the `insertRow` method, which is used to create a new entry in the database.
 
 ```dart
 // recipe_endpoint.dart
@@ -70,9 +71,9 @@ class RecipeEndpoint extends Endpoint {
 
 ## Reading from the database
 
-Next we want to add a new endpoint that will return all the favourite recipes from the database. We will create a new method in the `RecipeEndpoint` class that will return all the recipes from the database.
+Next, let's add a new method to the `RecipeEndpoint` class that will return all the recipes that we have created and saved to the database.
 
-To make sure that we get them in the correct order, we can sort them by the date they were created.
+To make sure that we get them in the correct order, we sort them by the date they were created.
 
 ```dart
 // recipe_endpoint.dart
@@ -82,9 +83,9 @@ class RecipeEndpoint extends Endpoint {
 
   // ...
 
-  /// This method is used to get all the generated recipes from the database.
+  /// This method returns all the generated recipes from the database.
   Future<List<Recipe>> getRecipes(Session session) async {
-    // Get all the recipes from the database, sorted by date
+    // Get all the recipes from the database, sorted by date.
     return Recipe.db.find(
       session,
       orderBy: (t) => t.date,
@@ -100,7 +101,7 @@ The `insertRow` method is used to insert a new row in the database. The `find` m
 
 ## Generate the code
 
-Like before, when you change something that has an effect on the client code, you need to run `serverpod generate` - we don't need to run `serverpod create-migrations` again because we already created the migrations in the previous step.
+Like before, when you change something that has an effect on the client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created the migrations in the previous step.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -310,7 +311,7 @@ class ResultDisplay extends StatelessWidget {
 
 ## Run the app
 
-First we need to start the server AND apply the migrations:
+First, we need to start the server and apply the migrations by adding the `--apply-migrations` flag:
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -318,7 +319,10 @@ $ docker-compose up -d
 $ dart run bin/main.dart --apply-migrations
 ```
 
-Then we can start the Flutter app:
+:::tip
+When developing your server, it's always safe to pass the `--apply-migrations` flag. If no migration needs to be applied, the flag is simply ignored. In a production environment, you may want to have a bit more control.
+:::
+Now, start the Flutter app:
 
 ```bash
 $ cd magic_recipe/magic_recipe_flutter
@@ -327,12 +331,12 @@ $ flutter run -d chrome
 
 ## Summary
 
-You have now learned about the fundamentals of Serverpod - how to create and use endpoints with custom data models and how to store the data in a database. You have also learned how to use the generated client code to call the endpoints from your Flutter app. You can now use this knowledge to create your own endpoints and data models and store them in a database.
+You now know the fundamentals of Serverpod - how to create and use endpoints with custom data models and how to store the data in a database. You have also learned how to use the generated client code to call the endpoints from your Flutter app. We cannot wait to see what you will build with Flutter and Serverpod.
 
-If you get stuck, never be afraid to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). The Serverpod team is very active there, and many questions are also answered by other developers in the community.
+If you get stuck, never be afraid to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). The Serverpod team is very active there, and many questions are also answered by other developers.
 
 :::tip
 
-Working with a database is an extensive subject. Learn more in the [Database](../concepts/database/connection) section.
+Working with a database is an extensive subject, and Serverpod's ORM is very powerful. Learn more in the [Database](../concepts/database/connection) section.
 
 :::
