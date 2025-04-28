@@ -53,6 +53,65 @@ Now that you have created the model, you can use it in your server code. Let's u
     return recipe;
 ```
 
+<details>
+
+<summary>Click to see the full code</summary>
+<p>
+
+```dart
+/// This is the endpoint that will be used to generate a recipe using the
+/// Google Gemini API. It extends the Endpoint class and implements the
+/// generateRecipe method.
+class RecipeEndpoint extends Endpoint {
+  /// Pass in a list of ingredients and get a recipe back.
+  Future<Recipe> generateRecipe(Session session, String ingredients) async {
+    // Serverpod loads your passwords.yaml file and makes the passwords available
+    // in the session object.
+    final geminiApiKey = session.passwords['gemini'];
+    if (geminiApiKey == null) {
+      throw Exception('Gemini API key not found');
+    }
+    final gemini = GenerativeModel(
+      model: 'gemini-1.5-flash-latest',
+      apiKey: geminiApiKey,
+    );
+
+    // A prompt to generate a recipe, the user will provide a free text input with the ingredients
+    final prompt =
+        'Generate a recipe using the following ingredients: $ingredients, always put the title '
+        'of the recipe in the first line, and then the instructions. The recipe should be easy '
+        'to follow and include all necessary steps. Please provide a detailed recipe.';
+
+    final response = await gemini.generateContent([Content.text(prompt)]);
+
+    final responseText = response.text;
+
+    if (responseText == null || responseText.isEmpty) {
+      throw Exception(
+          'No recipe found. Please try again with different ingredients.');
+    }
+
+    final recipe = Recipe(
+      author: 'Gemini',
+      text: responseText,
+      date: DateTime.now(),
+      ingredients: ingredients,
+    );
+
+    // Save the recipe to the database, but don't block the response
+    unawaited(session.db.insertRow<Recipe>(recipe));
+
+    return recipe;
+
+    }
+
+}
+
+```
+
+</p>
+</details>
+
 ## Use the model in the app
 
 First, we need to update our generated client by running `serverpod generate`.
