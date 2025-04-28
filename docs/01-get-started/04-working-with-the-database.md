@@ -78,7 +78,6 @@ To make sure that we get them in the correct order, we sort them by the date the
 ```dart
 // recipe_endpoint.dart
 
-
 class RecipeEndpoint extends Endpoint {
 
   // ...
