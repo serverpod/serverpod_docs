@@ -29,3 +29,7 @@ The **8080** port returns a basic health check response. You can use this to che
 Serverpod Cloud is a managed service that allows you to deploy your Serverpod applications without having to worry about the underlying infrastructure.
 
 Serverpod Cloud is currently in private beta. Request access by [filling out this form](https://docs.google.com/forms/d/e/1FAIpQLSfBteB7hoLJ2xPgs0CXj9RpLt2gogvJZSpEv2ye8ziWuXfGFA/viewform). Once you have access, you can deploy your Serverpod applications to the cloud in just a few minutes and with zero configuration.
+
+## Other deployment options
+
+Checkout [choosing a deployment strategy](../deployments/deployment-strategy.md) for more information on how to deploy your Serverpod application to other platforms.
