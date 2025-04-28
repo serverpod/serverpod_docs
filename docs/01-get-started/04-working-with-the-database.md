@@ -59,12 +59,14 @@ class RecipeEndpoint extends Endpoint {
 
     // --- Add this ---
 
-    // Save the recipe to the database, but don't block the response
-    unawaited(Recipe.db.insertRow(session, recipe));
+    // Save the recipe to the database, the returned recipe has the id set
+    final recipeWithId = await Recipe.db.insertRow<Recipe>(session, recipe);
+
+    return recipeWithId;
 
     // --- End of added code ---
 
-    return recipe;
+    // delete `return recipe;`
   }
 
 ```
@@ -91,7 +93,80 @@ class RecipeEndpoint extends Endpoint {
       orderDescending: true,
     );
   }
+}
 ```
+
+<details>
+
+<summary>Click to see the full code</summary>
+<p>
+
+```dart
+import 'dart:async';
+
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:magic_recipe_server/src/generated/protocol.dart';
+import 'package:serverpod/serverpod.dart';
+
+/// This is the endpoint that will be used to generate a recipe using the
+/// Google Gemini API. It extends the Endpoint class and implements the
+/// generateRecipe method.
+class RecipeEndpoint extends Endpoint {
+  /// Pass in a list of ingredients and get a recipe back.
+  Future<Recipe> generateRecipe(Session session, String ingredients) async {
+    // Serverpod loads your passwords.yaml file and makes the passwords available
+    // in the session object.
+    final geminiApiKey = session.passwords['gemini'];
+    if (geminiApiKey == null) {
+      throw Exception('Gemini API key not found');
+    }
+    final gemini = GenerativeModel(
+      model: 'gemini-1.5-flash-latest',
+      apiKey: geminiApiKey,
+    );
+
+    // A prompt to generate a recipe, the user will provide a free text input with the ingredients
+    final prompt =
+        'Generate a recipe using the following ingredients: $ingredients, always put the title '
+        'of the recipe in the first line, and then the instructions. The recipe should be easy '
+        'to follow and include all necessary steps. Please provide a detailed recipe.';
+
+    final response = await gemini.generateContent([Content.text(prompt)]);
+
+    final responseText = response.text;
+
+    if (responseText == null || responseText.isEmpty) {
+      throw Exception(
+          'No recipe found. Please try again with different ingredients.');
+    }
+
+    final recipe = Recipe(
+      author: 'Gemini',
+      text: responseText,
+      date: DateTime.now(),
+      ingredients: ingredients,
+    );
+
+    // Save the recipe to the database, the returned recipe has the id set
+    final recipeWithId = await Recipe.db.insertRow<Recipe>(session, recipe);
+
+    return recipeWithId;
+  }
+
+  /// This method is used to get all the favourite recipes from the database.
+  Future<List<Recipe>> getRecipes(Session session) async {
+    // Get all the favourite recipes from the database
+    return Recipe.db.find(
+      session,
+      orderBy: (t) => t.date,
+      orderDescending: true,
+    );
+  }
+}
+```
+
+</p>
+</details>
 
 :::info
 The when adding a `table` to the model class definition, the model will now give you access to the database, specifically to the `recipes` table through `Recipe.db` (e.g. `Recipe.db.find(session)`.
