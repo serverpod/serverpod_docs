@@ -75,7 +75,9 @@ class RecipeEndpoint extends Endpoint {
 
     // A prompt to generate a recipe, the user will provide a free text input with the ingredients
     final prompt =
-        'Generate a recipe using the following ingredients: $ingredients, always put the title of the recipe in the first line, and then the instructions. The recipe should be easy to follow and include all necessary steps. Please provide a detailed recipe.';
+        'Generate a recipe using the following ingredients: $ingredients, always put the title '
+        'of the recipe in the first line, and then the instructions. The recipe should be easy '
+        'to follow and include all necessary steps. Please provide a detailed recipe.';
 
     final response = await gemini.generateContent([Content.text(prompt)]);
 
