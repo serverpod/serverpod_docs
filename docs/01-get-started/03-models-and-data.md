@@ -1,6 +1,6 @@
 # Models and Data
 
-Serverpod ships with a powerful data modelling system that uses a definition file in yaml to generate a Dart class with all the necessary code to serialize and deserialize the data. This allows you to define your data models for the server and the client in one place, eliminating any inconsistencies. You can also have fields which are only visible on the server.
+Serverpod ships with a powerful data modeling system that uses easy-to-read definition files in YAML. It generates Dart classes with all the necessary code to serialize and deserialize the data and connect to the database. This allows you to define your data models for the server and the app in one place, eliminating any inconsistencies. The models give you fine-grained control over the visibility of properties and how they interact with each other.
 
 ## Create a new model
 
@@ -20,11 +20,11 @@ fields:
   ingredients: String
 ```
 
-You can use the basic types here or any models you have specified using a yaml file. For more backround information, see [Working with models](../concepts/models).
+You can use most primitive Dart types here or any other models you have specified in other YAML files. You can also use typed `List`, `Map`, or `Set`. For detailed information, see [Working with models](../concepts/models)
 
 ## Generate the code
 
-To generate the code for the model, you can run the following command in the root directory of your project:
+To generate the code for the model, run the `serverpod generate` command in your server directory:
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -35,7 +35,7 @@ This will generate the code for the model and create a new file called `recipe.d
 
 ## Use the model in the server
 
-Now that we have created the model, we can use it in the server code. We will now update the `lib/src/recipies/recipe_endpoint.dart` file to use the `Recipe` model instead of a simple string. We will also update the `generateRecipe` method to return a `Recipe` object instead of a string.
+Now that you have created the model, you can use it in your server code. Let's update the `lib/src/recipies/recipe_endpoint.dart` file to make the `generateRecipe` method to return a `Recipe` object instead of a string.
 
 ```dart
 // change the return type of the method to Recipe
@@ -55,27 +55,27 @@ Now that we have created the model, we can use it in the server code. We will no
 
 ## Use the model in the app
 
-First, we need to update our generated client by running `serverpod generate`
+First, we need to update our generated client by running `serverpod generate`.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ serverpod generate
 ```
 
-Now that we have created the model, we can use it in the client. We will do this in the `magic_recipe/magic_recipe_flutter/lib/main.dart` file. We will update our `RecipeWidget` so that it also displays the author and year of the recipe.
+Now that we have created the `Recipe` model we can use it in the client. We will do this in the `magic_recipe/magic_recipe_flutter/lib/main.dart` file. Let's update our `RecipeWidget` so that it displays the author and year of the recipe in addition to the recipe itself.
 
 ```dart
 class MyHomePageState extends State<MyHomePage> {
 
-  // rename _resultMessage to _recipe and change the type to Recipe
+  // Rename _resultMessage to _recipe and change the type to Recipe.
   /// Holds the last result or null if no result exists yet.
   Recipe? _recipe;
 
   // keep stuff like before
 
-void _callGenerateRecipe() async {
+  void _callGenerateRecipe() async {
     try {
-      final result =
+      final recipe =
           await client.recipe.generateRecipe(_textEditingController.text);
       setState(() {
         _errorMessage = null;
@@ -110,7 +110,7 @@ void _callGenerateRecipe() async {
 
 ## Run the app
 
-First we need to start the server:
+First, start the server:
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -118,7 +118,7 @@ $ docker-compose up -d
 $ dart run bin/main.dart
 ```
 
-Then we can start the Flutter app:
+Then, start the Flutter app:
 
 ```bash
 $ cd magic_recipe/magic_recipe_flutter
@@ -128,10 +128,10 @@ $ flutter run -d chrome
 This will start the Flutter app in your browser. It should look something like this:
 ![Example Flutter App](https://serverpod.dev/assets/img/flutter-example-web.png)
 
-Now you can click the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
+Click the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
 
 ## Next Steps
 
-On the Flutter side, there are quite a few things you could add, like a progress indicator while the request is being processed or a nicer display of the result, e.g. using a markdown renderer.
+On the Flutter side, there are quite a few things that could be improved, like a progress indicator while the request is being processed or a nicer display of the result, e.g., using a markdown renderer.
 
-In the next section, you will learn how to use the database to store your favourite recipes and display them in your app.
+In the next section, you will learn how to use the database to store your favorite recipes and display them in your app.
