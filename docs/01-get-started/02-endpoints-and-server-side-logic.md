@@ -108,7 +108,7 @@ $ serverpod generate
 
 ## Call the endpoint from the client
 
-Now that you have created the endpoint, you can call it from the client. You will do this in the `magic_recipe/magic_recipe_flutter/main.dart` file. You can simply rename the callHello method to callGenerateRecipe and pass in the ingredients. It should similar to this, feel free to just copy and paste:
+Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe/magic_recipe_flutter/main.dart` file. Modify the `_callHello` method to call your new endpoint method and rename it to `_callGenerateRecipe`. It should look like this; feel free to just copy and paste:
 
 ```dart
 class MyHomePageState extends State<MyHomePage> {
