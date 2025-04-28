@@ -68,6 +68,7 @@ Now that we have created the `Recipe` model we can use it in the client. We will
 class MyHomePageState extends State<MyHomePage> {
 
   // Rename _resultMessage to _recipe and change the type to Recipe.
+
   /// Holds the last result or null if no result exists yet.
   Recipe? _recipe;
 
@@ -79,8 +80,8 @@ class MyHomePageState extends State<MyHomePage> {
           await client.recipe.generateRecipe(_textEditingController.text);
       setState(() {
         _errorMessage = null;
-        // we are now getting the text from the Recipe object
-        _resultMessage = result.text;
+        // we are now using the Recipe object instead of a string
+        _recipe = recipe;
         //
       });
     } catch (e) {
