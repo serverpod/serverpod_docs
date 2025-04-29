@@ -15,14 +15,7 @@ serverpod create magic_recipe
 ```
 
 :::tip
-If you check in the code right after creating the project, you can investigate the code you will be adding to this tutorial.
-
-```bash
-$ cd magic_recipe
-$ git init
-$ git add .
-$ git commit -m "Initial commit"
-```
+Always open the root directory of the project in your IDE. This will make it easier to navigate between the server and client packages. It will also prevent your analyzer going out of sync when you are running the generator.
 
 :::
 
@@ -83,18 +76,13 @@ class RecipeEndpoint extends Endpoint {
 
     final responseText = response.text;
 
-    if (responseText == null || responseText.isEmpty) {
-      throw Exception(
-          'No recipe found. Please try again with different ingredients.');
-    }
-
     return responseText;
   }
 }
 ```
 
-:::tip
-When writing server-side code, you want it to be "stateless". This means that you don't want to use any global variables or static variables. Instead think of each endpoint method as being a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../concepts/scheduling), but you usually shouldn't keep the connection session open for longer durations. You want to use the `session` object that is passed to the endpoint function. This object contains all the information you need to access the database and other features of Serverpod. It is similar to the `context` in Flutter.
+:::info
+For methods to be generated, they need to return a typed `Future`, where the type should be [serializable](../concepts/serialization), and its first parameter should be a `Session` object.
 :::
 
 Now, you need to generate the code for your new endpoint. You do this by running `serverpod generate` in the server directory of your project:
@@ -105,6 +93,10 @@ $ serverpod generate
 ```
 
 `serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
+
+:::note
+When writing server-side code, in most cases, you want it to be "stateless". This means you want to avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../concepts/scheduling), but you usually shouldn't keep the connection session open for longer durations. You want to use the `session` object passed to the endpoint function. This object contains all the information you need to access the database and other features of Serverpod. It is similar to the `context` in Flutter.
+:::
 
 ## Call the endpoint from the client
 

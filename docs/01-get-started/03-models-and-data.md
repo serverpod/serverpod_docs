@@ -86,11 +86,6 @@ class RecipeEndpoint extends Endpoint {
 
     final responseText = response.text;
 
-    if (responseText == null || responseText.isEmpty) {
-      throw Exception(
-          'No recipe found. Please try again with different ingredients.');
-    }
-
     final recipe = Recipe(
       author: 'Gemini',
       text: responseText,
