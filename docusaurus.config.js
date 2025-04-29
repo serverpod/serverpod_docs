@@ -49,6 +49,14 @@ const config = {
         respectPrefersColorScheme: true,
         disableSwitch: false,
       },
+      announcementBar: {
+        id: 'serverpod_cloud',
+        content:
+          'Deployments with zero configuration coming soon. 🚀 Join the <strong>Serverpod Cloud</strong> <a href="https://forms.gle/JgFCqW3NY6WdDfct5" target="_blank">waiting list</a>.',
+        backgroundColor: '#ffec9e',
+        textColor: '#000000',
+        isCloseable: false,
+      },
       navbar: {
         // title: 'My Site',
         logo: {
