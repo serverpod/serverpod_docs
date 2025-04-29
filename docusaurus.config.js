@@ -50,11 +50,11 @@ const config = {
         disableSwitch: false,
       },
       announcementBar: {
-        id: 'course_prelaunch',
+        id: 'serverpod_cloud',
         content:
-          'We are working on an introductory Serverpod course and are looking for your input - if you are interested in early access please  <a target="_blank" rel="noopener noreferrer" href="#">join the waitlist</a>',
-        backgroundColor: '#fafbfc',
-        textColor: '#091E42',
+          'Deployments with zero configuration coming soon. 🚀 Join the <strong>Serverpod Cloud</strong> <a href="https://forms.gle/JgFCqW3NY6WdDfct5" target="_blank">waiting list</a>.',
+        backgroundColor: '#ffec9e',
+        textColor: '#000000',
         isCloseable: false,
       },
       navbar: {
