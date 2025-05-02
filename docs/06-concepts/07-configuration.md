@@ -6,6 +6,22 @@ Serverpod can be configured in a few different ways. The minimum required settin
 
 There are three different ways to configure Serverpod: with environment variables, via yaml config files, or by supplying the dart configuration object to the Serverpod constructor. The environment variables take precedence over the yaml configurations but both can be used simultaneously. The dart configuration object will override any environment variable or config file. The tables show all available configuration options provided in the Serverpod core library.
 
+```mermaid
+flowchart TB
+    %% ── widest box first so YAML feels like the default bedrock
+    A["YAML config files<br/>(default)"]:::yaml
+    B["Environment variables<br/>(overrides YAML)"]:::env
+    C["Dart configuration object<br/>(overrides YAML and ENV)"]:::dart
+
+    A --> B
+    B --> C
+
+    %% Styles (optional – tweak to your theme)
+  class A yaml
+    class B env
+    class C dart
+```
+
 ### Configuration options for the server
 
 These can be separately declared for each run mode in the corresponding yaml file (`development.yaml`,`staging.yaml`, `production.yaml` and `testing.yaml`) or as environment variables.
