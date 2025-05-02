@@ -1,6 +1,7 @@
 ---
 sidebar_position: -1
 ---
+
 # Installation
 
 Serverpod is an open-source, scalable backend framework built specifically for Flutter developers. It allows you to use Dart for your entire stack, simplifying development and reducing context-switching.
@@ -28,28 +29,27 @@ print(greeting); // Hello World
 
 Serverpod is designed to grow with your needs. Start with a minimal setup and gradually introduce complexity as your application evolves:
 
-* **Modular:** Easily add new features or services when necessary.
-* **Scalable:** Grows from hobby project to millions of active users without changing a line of code.
-* **Flexible:** Adaptable to various project requirements. Plug in Redis or stay purely Postgres – your choice.
+- **Modular:** Easily add new features or services when necessary.
+- **Scalable:** Grows from hobby project to millions of active users without changing a line of code.
+- **Flexible:** Adaptable to various project requirements. Plug in Redis or stay purely Postgres – your choice.
 
 ### 🌟 Benefits of Serverpod
 
 Startups and agencies use Serverpod to streamline development processes, accelerate iteration cycles, and empower single developers to build full features:
 
-* **Reduced complexity:** Minimize friction by using a single language. Modules make sharing app and server code, database schemas, and APIs between your projects easy.
-* **Open and free:** Avoid vendor lock-in. Deploy servers anywhere you can run Dart.
-* **Stable and reliable:** Integrated logging, error monitoring, and automated database management. Battle-tested in real-world applications and secured by over 5,000 automated tests.
+- **Reduced complexity:** Minimize friction by using a single language. Modules make sharing app and server code, database schemas, and APIs between your projects easy.
+- **Open and free:** Avoid vendor lock-in. Deploy servers anywhere you can run Dart.
+- **Stable and reliable:** Integrated logging, error monitoring, and automated database management. Battle-tested in real-world applications and secured by over 5,000 automated tests.
 
 ### 🛠️ Features our developers love
 
 Serverpod comes packed with powerful features - batteries included.
 
-* **Intuitive ORM:** Eliminates the need for writing complex SQL and reduces the risk of database errors – all Dart-first, type-safe, statically analyzed, and with support for migrations and relations.
-* **Real-time capabilities:** Push data from your server using Dart streams without worrying about the WebSocket life cycle and message routing.
-* **Straightforward authentication:** Quickly integrate popular authentication providers like sign-in with Google, Apple, or Firebase.
-* **All essentials covered:** Built-in support for common tasks like handling file uploads, scheduling tasks, and caching data.
-* **Cloud ready:** Deploy to Serverpod Cloud with zero configuration (coming soon - join the waiting list), use pre-configured Docker containers, or use Terraform scripts for deploying to AWS or Google Cloud.
-
+- **Intuitive ORM:** Eliminates the need for writing complex SQL and reduces the risk of database errors – all Dart-first, type-safe, statically analyzed, and with support for migrations and relations.
+- **Real-time capabilities:** Push data from your server using Dart streams without worrying about the WebSocket life cycle and message routing.
+- **Straightforward authentication:** Quickly integrate popular authentication providers like sign-in with Google, Apple, or Firebase.
+- **All essentials covered:** Built-in support for common tasks like handling file uploads, scheduling tasks, and caching data.
+- **Cloud ready:** Deploy to Serverpod Cloud with zero configuration (coming soon - join the waiting list), use pre-configured Docker containers, or use Terraform scripts for deploying to AWS or Google Cloud.
 
 ## Installation
 
@@ -166,4 +166,4 @@ This will start the Flutter app in your browser. It should look like this:
 
 ## Next steps
 
-The quickest way to learn Serverpod is to follow our 30-minute [Getting Started](./get-started/) guide. This will give you an excellent overview of creating endpoints and models and working with the database. You will create a fun app that magically creates recipes from the ingredients you have in your fridge.
+The quickest way to learn Serverpod is to follow our 30-minute [Getting Started](./get-started/creating-endpoints) guide. This will give you an excellent overview of creating endpoints and models and working with the database. You will create a fun app that magically creates recipes from the ingredients you have in your fridge.

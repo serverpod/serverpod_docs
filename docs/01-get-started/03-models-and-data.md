@@ -4,6 +4,10 @@ Serverpod ships with a powerful data modeling system that uses easy-to-read defi
 
 ## Create a new model
 
+:::info
+This guide should be followed in order. If you are following along, you should have a working server and client app. If you don't, please start at [Creating Endpoints](./creating-endpoints).
+:::
+
 Models files can be placed anywhere in the `lib` directory. We will create a new file called `recipe.spy.yaml` in the `lib/src/recipies/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
 
 ```yaml

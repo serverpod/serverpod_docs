@@ -4,6 +4,10 @@ In this section, we will build upon the models we created in the previous sectio
 
 ## Object relation mapping
 
+:::info
+This guide should be followed in order. If you are following along, you should have a working server and client app. If you don't, please start at [Creating Endpoints](./creating-endpoints).
+:::
+
 Any Serverpod model can be mapped to the database through Serverpod's object relation mapping (ORM). Simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will map the model to a new table in the database called `recipes`.
 
 ```yaml
