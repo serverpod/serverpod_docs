@@ -18,6 +18,11 @@ const config = {
   projectName: 'serverpod.github.io', // Usually your repo name.
   trailingSlash: false,
 
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   presets: [
     [
       'classic',
