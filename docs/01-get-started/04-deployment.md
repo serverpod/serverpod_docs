@@ -30,4 +30,4 @@ Serverpod Cloud is currently in private beta. Request access by [filling out thi
 
 ## Other deployment options
 
-Checkout [choosing a deployment strategy](../deployments/deployment-strategy.md) for more information on how to deploy your Serverpod application to other platforms.
+Checkout [choosing a deployment strategy](../deployments/deployment-strategy) for more information on how to deploy your Serverpod application to other platforms.
