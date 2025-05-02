@@ -1,8 +1,6 @@
-# Deploying Serverpod
+# 4) Deploying Serverpod
 
-## Introduction
-
-## Server Requirements
+## Server requirements
 
 Since Serverpod is written in Dart, it can be compiled into native code and runs on any platform that is supported by the [Dart tooling](https://dart.dev/get-dart#system-requirements).
 

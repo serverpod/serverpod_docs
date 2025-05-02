@@ -1,12 +1,8 @@
-# Models and Data
+# 2) Models and Data
 
 Serverpod ships with a powerful data modeling system that uses easy-to-read definition files in YAML. It generates Dart classes with all the necessary code to serialize and deserialize the data and connect to the database. This allows you to define your data models for the server and the app in one place, eliminating any inconsistencies. The models give you fine-grained control over the visibility of properties and how they interact with each other.
 
 ## Create a new model
-
-:::info
-This guide should be followed in order. If you are following along, you should have a working server and client app. If you don't, please start at [Creating Endpoints](./creating-endpoints).
-:::
 
 Models files can be placed anywhere in the `lib` directory. We will create a new file called `recipe.spy.yaml` in the `lib/src/recipies/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
 
@@ -189,7 +185,7 @@ This will start the Flutter app in your browser. It should look something like t
 
 Click the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
 
-## Next Steps
+## Next steps
 
 On the Flutter side, there are quite a few things that could be improved, like a progress indicator while the request is being processed or a nicer display of the result, e.g., using a markdown renderer.
 

@@ -1,4 +1,4 @@
-# Get started with Mini
+# Serverpod Mini
 
 ## Serverpod or Serverpod Mini?
 
