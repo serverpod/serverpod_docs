@@ -4,8 +4,9 @@ Serverpod ships with a powerful data modeling system that uses easy-to-read defi
 
 ## Create a new model
 
-Models files can be placed anywhere in the `lib` directory. We will create a new file called `recipe.spy.yaml` in the `lib/src/recipies/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
+Models files can be placed anywhere in the servers `lib` directory. We will create a new file called`recipe.spy.yaml` in the `magic_recipe_server/lib/src/recipes/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
 
+<!--SNIPSTART 02-typed-endpoint-model-->
 ```yaml
 ### Our AI generated Recipe
 class: Recipe
@@ -19,6 +20,7 @@ fields:
   ### The ingredients the user has passed in
   ingredients: String
 ```
+<!--SNIPEND-->
 
 You can use most primitive Dart types here or any other models you have specified in other YAML files. You can also use typed `List`, `Map`, or `Set`. For detailed information, see [Working with models](../concepts/models)
 
@@ -37,12 +39,15 @@ This will generate the code for the model and create a new file called `recipe.d
 
 Now that you have created the model, you can use it in your server code. Let's update the `lib/src/recipies/recipe_endpoint.dart` file to make the `generateRecipe` method to return a `Recipe` object instead of a string.
 
+<!--SNIPSTART 02-typed-endpoint  {"selectedLines": ["4", "10-12", "39-48"]}-->
 ```dart
-// change the return type of the method to Recipe
+// ...
+import 'package:magic_recipe_server/src/generated/protocol.dart';
+// ...
+class RecipeEndpoint extends Endpoint {
+  /// Pass in a string containing the ingredients and get a recipe back.
   Future<Recipe> generateRecipe(Session session, String ingredients) async {
-
-    // ... keep this like before, at the end of the method add this:
-
+// ...
     final recipe = Recipe(
       author: 'Gemini',
       text: responseText,
@@ -51,22 +56,32 @@ Now that you have created the model, you can use it in your server code. Let's u
     );
 
     return recipe;
+  }
+}
 ```
+<!--SNIPEND-->
 
 <details>
 
 <summary>Click to see the full code</summary>
 <p>
 
+<!--SNIPSTART 02-typed-endpoint-->
 ```dart
+import 'dart:async';
+
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:magic_recipe_server/src/generated/protocol.dart';
+import 'package:serverpod/serverpod.dart';
+
 /// This is the endpoint that will be used to generate a recipe using the
 /// Google Gemini API. It extends the Endpoint class and implements the
 /// generateRecipe method.
 class RecipeEndpoint extends Endpoint {
-  /// Pass in a list of ingredients and get a recipe back.
+  /// Pass in a string containing the ingredients and get a recipe back.
   Future<Recipe> generateRecipe(Session session, String ingredients) async {
-    // Serverpod loads your passwords.yaml file and makes the passwords available
-    // in the session object.
+    // Serverpod automatically loads your passwords.yaml file and makes the passwords available
+    // in the session.passwords map.
     final geminiApiKey = session.passwords['gemini'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
@@ -86,6 +101,11 @@ class RecipeEndpoint extends Endpoint {
 
     final responseText = response.text;
 
+    // Check if the response is empty or null
+    if (responseText == null || responseText.isEmpty) {
+      throw Exception('No response from Gemini API');
+    }
+
     final recipe = Recipe(
       author: 'Gemini',
       text: responseText,
@@ -93,16 +113,11 @@ class RecipeEndpoint extends Endpoint {
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database, but don't block the response
-    unawaited(session.db.insertRow<Recipe>(recipe));
-
     return recipe;
-
-    }
-
+  }
 }
-
 ```
+<!--SNIPEND-->
 
 </p>
 </details>
@@ -118,58 +133,161 @@ $ serverpod generate
 
 Now that we have created the `Recipe` model we can use it in the client. We will do this in the `magic_recipe/magic_recipe_flutter/lib/main.dart` file. Let's update our `RecipeWidget` so that it displays the author and year of the recipe in addition to the recipe itself.
 
+<!--SNIPSTART 02-typed-endpoint-flutter  {"selectedLines": ["1-5", "15-36", "38-40", "69-83"]}-->
 ```dart
 class MyHomePageState extends State<MyHomePage> {
+  // Rename _resultMessage to _recipe and change the type to Recipe.
 
+  /// Holds the last result or null if no result exists yet.
+  Recipe? _recipe;
+// ...
+  void _callGenerateRecipe() async {
+    try {
+      setState(() {
+        _errorMessage = null;
+        _recipe = null;
+        _loading = true;
+      });
+      final result =
+          await client.recipe.generateRecipe(_textEditingController.text);
+      setState(() {
+        _errorMessage = null;
+        _recipe = result;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = '$e';
+        _recipe = null;
+        _loading = false;
+      });
+    }
+  }
+// ...
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+// ...
+                    // Change the ResultDisplay to use the Recipe object
+                    ResultDisplay(
+                  resultMessage: _recipe != null
+                      ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
+                      : null,
+                  errorMessage: _errorMessage,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+<!--SNIPEND-->
+
+<details>
+
+<summary>Click to see the full code</summary>
+<p>
+
+<!--SNIPSTART 02-typed-endpoint-flutter-->
+```dart
+class MyHomePageState extends State<MyHomePage> {
   // Rename _resultMessage to _recipe and change the type to Recipe.
 
   /// Holds the last result or null if no result exists yet.
   Recipe? _recipe;
 
-  // keep stuff like before
+  /// Holds the last error message that we've received from the server or null if no
+  /// error exists yet.
+  String? _errorMessage;
+
+  final _textEditingController = TextEditingController();
+
+  bool _loading = false;
 
   void _callGenerateRecipe() async {
     try {
-      final recipe =
+      setState(() {
+        _errorMessage = null;
+        _recipe = null;
+        _loading = true;
+      });
+      final result =
           await client.recipe.generateRecipe(_textEditingController.text);
       setState(() {
         _errorMessage = null;
-        // we are now using the Recipe object instead of a string
-        _recipe = recipe;
-        //
+        _recipe = result;
+        _loading = false;
       });
     } catch (e) {
       setState(() {
         _errorMessage = '$e';
+        _recipe = null;
+        _loading = false;
       });
     }
   }
 
-  // keep stuff like before
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-    // keep stuff like before
-    // at the bottom change the ResultDisplay to use the Recipe object
-
-                  ResultDisplay(
-                    resultMessage: _recipe != null
-                        ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
-                        : null,
-                    errorMessage: _errorMessage,
-                  ),
-
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: TextField(
+                controller: _textEditingController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your ingredients',
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: ElevatedButton(
+                onPressed: _loading ? null : _callGenerateRecipe,
+                child: _loading
+                    ? const Text('Loading...')
+                    : const Text('Send to Server'),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child:
+                    // Change the ResultDisplay to use the Recipe object
+                    ResultDisplay(
+                  resultMessage: _recipe != null
+                      ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
+                      : null,
+                  errorMessage: _errorMessage,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 ```
+<!--SNIPEND-->
 
+</p>
+</details>
 ## Run the app
 
 First, start the server:
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
-$ docker-compose up -d
+$ docker compose up -d
 $ dart run bin/main.dart
 ```
 
@@ -187,6 +305,6 @@ Click the button to get a new recipe. The app will call the endpoint on the serv
 
 ## Next steps
 
-On the Flutter side, there are quite a few things that could be improved, like a progress indicator while the request is being processed or a nicer display of the result, e.g., using a markdown renderer.
+On the Flutter side, there are quite a few things that could be improved, like a nicer display of the result, e.g., using a markdown renderer.
 
 In the next section, you will learn how to use the database to store your favorite recipes and display them in your app.

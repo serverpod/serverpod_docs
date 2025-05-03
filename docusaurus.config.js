@@ -111,6 +111,24 @@ const config = {
   ],
   plugins: [
     [
+      'docusaurus-plugin-snipsync',
+      {
+        origins: [
+          {
+            files: {
+              pattern: '../serverpod/examples/**/*.{dart,yaml}',
+            },
+          },
+        ],
+        targets: ['docs'],
+        features: {
+          enable_source_link: false,
+          allowed_target_extensions: ['.md', '.mdx'],
+          enable_code_block: true,
+        },
+      },
+    ],
+    [
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
@@ -138,12 +156,12 @@ const config = {
             // Moved in version 2.1.0
             from: ['/roadmap'],
             to: '/contribute',
-          },            
+          },
           {
             // Moved in version 2.5.0+2
             from: ['/get-started'],
             to: '/get-started/overview',
-          },            
+          },
           {
             // Moved in version 2.5.0+2
             from: ['/get-started-with-mini'],
