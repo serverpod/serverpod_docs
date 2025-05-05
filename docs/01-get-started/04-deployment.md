@@ -1,4 +1,8 @@
-# 4) Deploying Serverpod
+---
+sidebar_label: 4. Deploying Serverpod
+---
+
+# Deploying Serverpod
 
 ## Server requirements
 

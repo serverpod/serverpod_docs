@@ -1,4 +1,8 @@
-# 1) Creating endpoint methods
+---
+sidebar_label: 1. Creating endpoint methods
+---
+
+# Creating endpoint methods
 
 With Serverpod, calling an endpoint method in your server is as simple as calling a local method in your app. Let's create your first custom endpoint method and call it from the Flutter app. In this example, you will create a method that generates recipes from ingredients you may have in your fridge. Your server will talk with Google's Gemini API to make this magic happen. You will then call your endpoint method from the Flutter app and display the recipe.
 

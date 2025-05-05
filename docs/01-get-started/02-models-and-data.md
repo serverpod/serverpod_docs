@@ -1,4 +1,8 @@
-# 2) Models and Data
+---
+sidebar_label: 2. Models and data
+---
+
+# Models and data
 
 Serverpod ships with a powerful data modeling system that uses easy-to-read definition files in YAML. It generates Dart classes with all the necessary code to serialize and deserialize the data and connect to the database. This allows you to define your data models for the server and the app in one place, eliminating any inconsistencies. The models give you fine-grained control over the visibility of properties and how they interact with each other.
 

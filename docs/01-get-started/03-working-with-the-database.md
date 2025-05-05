@@ -1,4 +1,8 @@
-# 3) Working with the database
+---
+sidebar_label: 3. Working with the database
+---
+
+# Working with the database
 
 In this section, we will build upon the models we created in the previous section and add a database to store our favorite recipes that we create in the app.
 
