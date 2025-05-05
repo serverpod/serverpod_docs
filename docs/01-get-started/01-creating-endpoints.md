@@ -205,7 +205,7 @@ Let's try our new recipe app! First, start the server:
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ docker compose up -d
-$ dart run bin/main.dart --apply-migrations
+$ dart bin/main.dart --apply-migrations
 ```
 
 Now, you can start the Flutter app:

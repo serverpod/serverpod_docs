@@ -43,7 +43,7 @@ $ serverpod generate
 $ serverpod create-migration
 ```
 
-You will notice that there will be a new entry in your "migrations" folder - serverpod creates these migrations "step by step" - each time you have changes which are relevant to the database and run `serverpod create-migrations` a new migration file will be created. This is a good way to keep track of the changes you make to the database and to be able to roll back changes if needed.
+You will notice that there will be a new entry in your _migrations_ folder - serverpod creates these migrations "step by step" - each time you have changes which are relevant to the database and run `serverpod create-migrations` a new migration file will be created. This is a good way to keep track of the changes you make to the database and to be able to roll back changes if needed.
 
 ## Writing to the database
 
@@ -185,7 +185,7 @@ The `insertRow` method is used to insert a new row in the database. The `find` m
 
 ## Generate the code
 
-Like before, when you change something that has an effect on the client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created the migrations in the previous step.
+Like before, when you change something that has an effect on the client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created a migration in the previous step and haven't done any changes that affect the database.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -194,7 +194,7 @@ $ serverpod generate
 
 ## Call the endpoint from the app
 
-Now that we have updated the endpoint, we can call it from the app. We will do this in the `magic_recipe/magic_recipe_flutter/lib/main.dart` file. We will call the `getRecipes` method when the app starts and store the result in a list of `Recipe` objects. We will also update the UI to show the list of recipes.
+Now that we have updated the endpoint, we can call it from the app. We do this in the `magic_recipe_flutter/lib/main.dart` file. We will call the `getRecipes` method when the app starts and store the result in a list of `Recipe` objects. We will also update the UI to show the list of recipes.
 
 ![Final result](/img/getting-started/final-result.png)
 
@@ -433,7 +433,7 @@ First, we need to start the server and apply the migrations by adding the `--app
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ docker-compose up -d
-$ dart run bin/main.dart --apply-migrations
+$ dart bin/main.dart --apply-migrations
 ```
 
 :::tip

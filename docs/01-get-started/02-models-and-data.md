@@ -8,7 +8,7 @@ Serverpod ships with a powerful data modeling system that uses easy-to-read defi
 
 ## Create a new model
 
-Models files can be placed anywhere in the servers `lib` directory. We will create a new file called`recipe.spy.yaml` in the `magic_recipe_server/lib/src/recipes/` directory. This is where we will define our model. We like to use the extension `.spy.yaml` to indicate that this is a "serverpod yaml file".
+Models files can be placed anywhere in the server's `lib` directory. We will create a new model file called `recipe.spy.yaml` in the `magic_recipe_server/lib/src/recipes/` directory. We like to use the extension `.spy.yaml` to indicate that this is a _serverpod YAML_ file.
 
 <!--SNIPSTART 02-typed-endpoint-model-->
 ```yaml
@@ -292,7 +292,7 @@ First, start the server:
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ docker compose up -d
-$ dart run bin/main.dart
+$ dart bin/main.dart
 ```
 
 Then, start the Flutter app:
