@@ -28,7 +28,7 @@ class TeamEndpoint extends Endpoint {
 
 class TeamV2Endpoint extends TeamEndpoint {
   @override
-  @ignoreEndpoint
+  @doNotGenerate
   Future<TeamInfo> join(Session session) async {
     throw UnimplementedError();
   }
@@ -43,7 +43,7 @@ In the above example, we created a new `TeamV2` endpoint, which hides the `join`
 
 While we may have liked to re-use the `join` method name, Dart inheritance rules do not allow doing so. Otherwise, we would have to write the endpoint from scratch, meaning without inheritance, and re-implement all methods we would like to keep.
 
-In your client, you could then move all usages from `client.team` to `client.teamV2` and eventually (after all clients have upgraded) remove the old endpoint on the server. That means either marking the old endpoint with `@ignoreEndpoint` on the class or deleting it and moving the re-used method implementations you want to keep to the new V2 endpoint class.
+In your client, you could then move all usages from `client.team` to `client.teamV2` and eventually (after all clients have upgraded) remove the old endpoint on the server. That means either marking the old endpoint with `@doNotGenerate` on the class or deleting it and moving the re-used method implementations you want to keep to the new V2 endpoint class.
 
 An alternative pattern to consider would be to move all the business logic for an endpoint into a helper class and then call into that from the endpoint. In case you want to create a V2 version later, you might be able to reuse most of the underlying business logic through that helper class, and don't have to subclass the old endpoint. This has the added benefit of the endpoint class clearly listing all exposed methods, and you don't have to wonder what you inherit from the base class.
 
