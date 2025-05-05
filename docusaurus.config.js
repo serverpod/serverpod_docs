@@ -119,6 +119,21 @@ const config = {
               pattern: '../serverpod/examples/**/*.{dart,yaml}',
             },
           },
+          {
+            owner: serverpod,
+            repo: serverpod,
+            files: {
+              pattern: 'examples/**/*.{dart,yaml}',
+            },
+          },
+          {
+            owner: serverpod,
+            repo: serverpod,
+            ref: 'feat/add-getting-started-examples',
+            files: {
+              pattern: 'examples/**/*.{dart,yaml}',
+            },
+          },
         ],
         targets: ['docs'],
         features: {
