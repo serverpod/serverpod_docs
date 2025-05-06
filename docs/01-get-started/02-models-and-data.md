@@ -303,7 +303,7 @@ $ flutter run -d chrome
 ```
 
 This will start the Flutter app in your browser. It should look something like this:
-![Example Flutter App](https://serverpod.dev/assets/img/flutter-example-web.png)
+![Flutter Recipe App](/img/getting-started/flutter-web-ingredients.png)
 
 Click the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
 
