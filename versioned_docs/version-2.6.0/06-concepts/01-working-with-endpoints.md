@@ -77,12 +77,12 @@ The return type must be a typed Future. Supported return types are the same as f
 
 ### Ignore an entire `Endpoint` class
 
-If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@doNotGenerate`.  This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
+If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@ignoreEndpoint`.  This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-@doNotGenerate
+@ignoreEndpoint
 class ExampleEndpoint extends Endpoint {
   Future<String> hello(Session session, String name) async {
     return 'Hello $name';
@@ -94,7 +94,7 @@ The above code will not generate any server or client bindings for the example e
 
 ### Ignore individual `Endpoint` methods
 
-Alternatively, you can disable single methods by annotation them with `@doNotGenerate`.
+Alternatively, you can disable single methods by annotation them with `@ignoreEndpoint`.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -104,7 +104,7 @@ class ExampleEndpoint extends Endpoint {
     return 'Hello $name';
   }
 
-  @doNotGenerate
+  @ignoreEndpoint
   Future<String> goodbye(Session session, String name) async {
     return 'Bye $name';
   }
@@ -115,7 +115,7 @@ In this case the `ExampleEndpoint` will only expose the `hello` method, whereas 
 
 ## Endpoint method inheritance
 
-Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.  
+Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@ignoreEndpoint`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.  
 Inheritance gives you the possibility to modify the behavior of `Endpoint` classes defined in other Serverpod modules.
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
@@ -178,14 +178,14 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 
 In this case, it will expose both an `add` and a `subtract` method.
 
-### Inheriting from an `Endpoint` class annotated with `@doNotGenerate`
+### Inheriting from an `Endpoint` class annotated with `@ignoreEndpoint`
 
-Suppose you had an `Endpoint` class marked with `@doNotGenerate` and a subclass that extends it:
+Suppose you had an `Endpoint` class marked with `@ignoreEndpoint` and a subclass that extends it:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-@doNotGenerate
+@ignoreEndpoint
 class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
@@ -195,7 +195,7 @@ class CalculatorEndpoint extends Endpoint {
 class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-Since `CalculatorEndpoint` is marked as `@doNotGenerate` it will not be exposed on the server. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class.
+Since `CalculatorEndpoint` is marked as `@ignoreEndpoint` it will not be exposed on the server. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class.
 
 ### Overriding endpoint methods
 
@@ -222,9 +222,9 @@ Since `GreeterBaseEndpoint` is `abstract`, it will not be exposed on the server.
 
 This way, you can modify the behavior of endpoint methods while still sharing the implementation through calls to `super`. Be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
 
-### Hiding endpoint methods with `@doNotGenerate`
+### Hiding endpoint methods with `@ignoreEndpoint`
 
-In case you want to hide methods from an endpoint use `@doNotGenerate` in the child class like so:
+In case you want to hide methods from an endpoint use `@ignoreEndpoint` in the child class like so:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -240,21 +240,21 @@ abstract class CalculatorEndpoint extends Endpoint {
 }
 
 class AdderEndpoint extends CalculatorEndpoint {
-  @doNotGenerate
+  @ignoreEndpoint
   Future<int> subtract(Session session, int a, int b) async {
     throw UnimplementedError();
   }
 }
 ```
 
-Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@doNotGenerate` only the `add` method will be exposed.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@ignoreEndpoint` only the `add` method will be exposed.
 Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice, nothing will ever call this method on `AdderEndpoint`.
 
-Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@doNotGenerate`. Otherwise, the method that should be hidden on the child would still be accessible via the parent class.
+Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@ignoreEndpoint`. Otherwise, the method that should be hidden on the child would still be accessible via the parent class.
 
-### Unhiding endpoint methods annotated with `@doNotGenerate` in the super class
+### Unhiding endpoint methods annotated with `@ignoreEndpoint` in the super class
 
-The reverse of the previous example would be a base endpoint that has a method marked with `@doNotGenerate`, which you now want to expose on the subclass.
+The reverse of the previous example would be a base endpoint that has a method marked with `@ignoreEndpoint`, which you now want to expose on the subclass.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -265,7 +265,7 @@ abstract class CalculatorEndpoint extends Endpoint {
   }
 
   // Ignored, as this expensive computation should not be exposed by default
-  @doNotGenerate
+  @ignoreEndpoint
   Future<BigInt> addBig(Session session, BigInt a, BigInt b) async {
     return a + b;
   }
@@ -279,7 +279,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 }
 ```
 
-Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overridden and thus lost the `@doNotGenerate` annotation.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overridden and thus lost the `@ignoreEndpoint` annotation.
 
 ### Building base endpoints for behavior
 
