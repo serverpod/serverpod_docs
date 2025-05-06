@@ -103,7 +103,7 @@ You can **[install the extension](https://marketplace.visualstudio.com/items?ite
 
 ### Install Serverpod Insights (recommended)
 
-**[Serverpod Insights](../tools/insights)** is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
+**[Serverpod Insights](./09-tools/01-insights.md)** is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 ![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
 
 ## Creating a new project
@@ -142,7 +142,7 @@ $ docker compose down
 If you are using Docker Desktop, you can see and manage all your installed Docker containers from there. It's easy to start and stop containers, and to remove the ones you are no longer using.
 :::
 
-Now that the database is up and running we can start the Serverpod server. Because we are running the project for the first time, we need create the database tables used by Serverpod. This is done through a [database migration](./concepts/database/migrations). An initial migration is already created for us, so all we need to do is to pass the `--apply-migrations` flag to our server when we start it:
+Now that the database is up and running we can start the Serverpod server. Because we are running the project for the first time, we need create the database tables used by Serverpod. This is done through a [database migration](./06-concepts/06-database/11-migrations.md). An initial migration is already created for us, so all we need to do is to pass the `--apply-migrations` flag to our server when we start it:
 
 ```bash
 $ cd my_project/my_project_server
@@ -166,4 +166,4 @@ This will start the Flutter app in your browser. It should look like this:
 
 ## Next steps
 
-The quickest way to learn Serverpod is to follow our 30-minute __[Getting Started](./get-started/creating-endpoints)__ guide. This will give you an excellent overview of creating endpoints and models and working with the database. You will create a fun app that magically creates recipes from the ingredients you have in your fridge.
+The quickest way to learn Serverpod is to follow our 30-minute __[Getting Started](01-get-started/01-creating-endpoints.md)__ guide. This will give you an excellent overview of creating endpoints and models and working with the database. You will create a fun app that magically creates recipes from the ingredients you have in your fridge.

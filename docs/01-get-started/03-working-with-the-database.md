@@ -11,7 +11,6 @@ In this section, we will build upon the models we created in the previous sectio
 Any Serverpod model can be mapped to the database through Serverpod's object relation mapping (ORM). Simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will map the model to a new table in the database called `recipes`.
 
 <!--SNIPSTART 03-table-model-->
-
 ```yaml
 ### Our AI generated Recipe
 class: Recipe
@@ -26,11 +25,10 @@ fields:
   ### The ingredients the user has passed in
   ingredients: String
 ```
-
 <!--SNIPEND-->
 
 :::info
-Check out the reference for [database models](../concepts/database/models#keywords) for an overview of all available keywords.
+Check out the reference for [database models](../06-concepts/02-models.md#keywords-1) for an overview of all available keywords.
 :::
 
 ## Migrations
@@ -50,7 +48,6 @@ You will notice that there will be a new entry in your _migrations_ folder - ser
 Let's save all the recipes we create to the database. Because the `Recipe` now has a `table` key, it is not just a serializable model but also a `TableRow`. This means that Serverpod has generated bindings for us to the database. You can access the bindings through the static `db` field of the `Recipe`. Here, you will find the `insertRow` method, which is used to create a new entry in the database.
 
 <!--SNIPSTART 03-persisted-endpoint {"selectedLines": ["10-12", "39-51"]}-->
-
 ```dart
 // ...
 class RecipeEndpoint extends Endpoint {
@@ -71,7 +68,6 @@ class RecipeEndpoint extends Endpoint {
   }
 
 ```
-
 <!--SNIPEND-->
 
 ## Reading from the database
@@ -81,7 +77,6 @@ Next, let's add a new method to the `RecipeEndpoint` class that will return all 
 To make sure that we get them in the correct order, we sort them by the date they were created.
 
 <!--SNIPSTART 03-persisted-endpoint {"selectedLines": ["10-12", "52-61"]}-->
-
 ```dart
 // ...
 class RecipeEndpoint extends Endpoint {
@@ -99,7 +94,6 @@ class RecipeEndpoint extends Endpoint {
   }
 }
 ```
-
 <!--SNIPEND-->
 
 <details>
@@ -108,7 +102,6 @@ class RecipeEndpoint extends Endpoint {
 <p>
 
 <!--SNIPSTART 03-persisted-endpoint-->
-
 ```dart
 import 'dart:async';
 
@@ -172,7 +165,6 @@ class RecipeEndpoint extends Endpoint {
   }
 }
 ```
-
 <!--SNIPEND-->
 
 </p>
@@ -180,7 +172,7 @@ class RecipeEndpoint extends Endpoint {
 
 :::info
 The when adding a `table` to the model class definition, the model will now give you access to the database, specifically to the `recipes` table through `Recipe.db` (e.g. `Recipe.db.find(session)`.
-The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. See [CRUD](../concepts/database/crud) and [relation queries](../concepts/database/relation-queries) for more information.
+The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. See [CRUD](../06-concepts/06-database/05-crud.md) and [relation queries](../06-concepts/06-database/07-relation-queries.md) for more information.
 :::
 
 ## Generate the code
@@ -201,7 +193,6 @@ Now that we have updated the endpoint, we can call it from the app. We do this i
 If you want to see what changed, we suggest to creating a git commit now and then replacing the code in the `main.dart` file.
 
 <!--SNIPSTART 03-flutter-->
-
 ```dart
 import 'package:magic_recipe_client/magic_recipe_client.dart';
 import 'package:flutter/material.dart';
@@ -423,7 +414,6 @@ class ResultDisplay extends StatelessWidget {
   }
 }
 ```
-
 <!--SNIPEND-->
 
 ## Run the app
@@ -454,6 +444,6 @@ If you get stuck, never be afraid to ask questions in our [community on Github](
 
 :::tip
 
-Working with a database is an extensive subject, and Serverpod's ORM is very powerful. Learn more in the [Database](../concepts/database/connection) section.
+Working with a database is an extensive subject, and Serverpod's ORM is very powerful. Learn more in the [Database](../06-concepts/06-database/01-connection.md) section.
 
 :::

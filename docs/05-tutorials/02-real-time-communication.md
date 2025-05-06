@@ -8,7 +8,7 @@ _This tutorial is also available as a video._
 
 :::info
 
-Before you begin, make sure that you have [installed Serverpod](/). It's also recommended that you read the [Get started with Mini](../get-started/get-started-with-mini) guide.
+Before you begin, make sure that you have [installed Serverpod](/). It's also recommended that you read the [Get started with Mini](../serverpod-mini.md) guide.
 
 :::
 

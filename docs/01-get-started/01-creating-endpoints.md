@@ -92,7 +92,7 @@ class RecipeEndpoint extends Endpoint {
 <!--SNIPEND-->
 
 :::info
-For methods to be generated, they need to return a typed `Future`, where the type should be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or  [serializable models](../concepts/models). The first parameter should be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, or `Set` as long as they are typed.
+For methods to be generated, they need to return a typed `Future`, where the type should be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or  [serializable models](../06-concepts/02-models.md). The first parameter should be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, or `Set` as long as they are typed.
 :::
 
 Now, you need to generate the code for your new endpoint. You do this by running `serverpod generate` in the server directory of your project:
@@ -105,7 +105,7 @@ $ serverpod generate
 `serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
 
 :::note
-When writing server-side code, in most cases, you want it to be "stateless". This means you want to avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../concepts/scheduling), but you usually shouldn't keep the connection open for longer durations. The `Session` object contains all the information you need to access the database and other features of Serverpod. It is similar to the `BuildContext` in Flutter.
+When writing server-side code, in most cases, you want it to be "stateless". This means you want to avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../06-concepts/14-scheduling.md), but you usually shouldn't keep the connection open for longer durations. The `Session` object contains all the information you need to access the database and other features of Serverpod. It is similar to the `BuildContext` in Flutter.
 :::
 
 ## Call the endpoint from the client
