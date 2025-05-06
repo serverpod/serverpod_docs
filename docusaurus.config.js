@@ -120,15 +120,15 @@ const config = {
             },
           },
           {
-            owner: serverpod,
-            repo: serverpod,
+            owner: 'serverpod',
+            repo: 'serverpod',
             files: {
               pattern: 'examples/**/*.{dart,yaml}',
             },
           },
           {
-            owner: serverpod,
-            repo: serverpod,
+            owner: 'serverpod',
+            repo: 'serverpod',
             ref: 'feat/add-getting-started-examples',
             files: {
               pattern: 'examples/**/*.{dart,yaml}',
