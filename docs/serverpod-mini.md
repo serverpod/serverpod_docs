@@ -1,6 +1,32 @@
-# Get started with Mini
+# Serverpod Mini
 
-Serverpod Mini is a slimmer version of Serverpod that does not need to be connected to a Postgres database. Before you begin, make sure that you have **[Flutter](https://flutter.dev/docs/get-started/install)** and **[Serverpod](/)** installed.
+## Serverpod or Serverpod Mini?
+
+Serverpod Mini is a lightweight version of Serverpod that is perfect for small projects or when you want to try out Serverpod without setting up a Postgres database. If you start with Mini, you can upgrade to the full version of Serverpod anytime.
+
+<details open>
+<summary>__Serverpod vs Serverpod Mini comparison__</summary>
+<p>
+
+| Feature               | Serverpod | Serverpod Mini |
+| --------------------- | :-------: | :------------: |
+| Remote method calls   |    ✅     |       ✅       |
+| Generated data models |    ✅     |       ✅       |
+| Streaming data        |    ✅     |       ✅       |
+| Custom auth           |    ✅     |       ✅       |
+| Pre-built auth        |    ✅     |                |
+| Postgres database ORM |    ✅     |                |
+| Task scheduling       |    ✅     |                |
+| Basic logging         |    ✅     |       ✅       |
+| Serverpod Insights    |    ✅     |                |
+| Caching               |    ✅     |       ✅       |
+| File uploads          |    ✅     |                |
+| Health checks         |    ✅     |                |
+| Relic web server      |    ✅     |                |
+| Easy deployment       |    ✅     |       ✅       |
+
+</p>
+</details>
 
 <div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/dSBK4JOZRyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 

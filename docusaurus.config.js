@@ -124,6 +124,39 @@ const config = {
   ],
   plugins: [
     [
+      'docusaurus-plugin-snipsync',
+      {
+        origins: [
+          {
+            files: {
+              pattern: '../serverpod/examples/**/*.{dart,yaml}',
+            },
+          },
+          {
+            owner: 'serverpod',
+            repo: 'serverpod',
+            files: {
+              pattern: 'examples/**/*.{dart,yaml}',
+            },
+          },
+          {
+            owner: 'serverpod',
+            repo: 'serverpod',
+            ref: 'feat/add-getting-started-examples',
+            files: {
+              pattern: 'examples/**/*.{dart,yaml}',
+            },
+          },
+        ],
+        targets: ['docs'],
+        features: {
+          enable_source_link: false,
+          allowed_target_extensions: ['.md', '.mdx'],
+          enable_code_block: true,
+        },
+      },
+    ],
+    [
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
