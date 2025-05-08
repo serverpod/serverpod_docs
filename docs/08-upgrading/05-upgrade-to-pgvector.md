@@ -45,8 +45,8 @@ services:
 2. Recreate your containers to use the new image:
 
 ```bash
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
 ```
 
 <!-- markdownlint-disable-next-line MD029-->
