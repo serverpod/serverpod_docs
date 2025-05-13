@@ -306,11 +306,11 @@ stringDefault: String, default='This is a string'
 
 #### UuidValue
 
-| Type              | Keyword                       | Description                                                                                                                                       |
-| ----------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Random UUID**   | `random`                      | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used.                           |
-| **Random UUIDv7** | `random_v7`                   | Generates a random UUIDv7. On the Dart side, `Uuid().v7obj()` is used. On the database side, a generated `gen_random_uuid_v7()` function is used. |
-| **UUID String**   | A valid UUID version 4 string | Assigns a specific UUID to the field.                                                                                                             |
+| Type              | Keyword                                                                                                                                                                                                   | Description                                                                                                                                       |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Random UUID**   | `random`                                                                                                                                                                                                  | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used.                           |
+| **Random UUIDv7** | `random_v7`                                                                                                                                                                                               | Generates a random UUIDv7. On the Dart side, `Uuid().v7obj()` is used. On the database side, a generated `gen_random_uuid_v7()` function is used. |
+| **UUID String**   | Valid UUID in the format 'xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx' where M is the UUID version field. The upper two or three bits of digit N encode the variant. E.g. '550e8400-e29b-41d4-a716-446655440000' | Assigns a specific UUID to the field.                                                                                                             |
 
 **Example:**
 
