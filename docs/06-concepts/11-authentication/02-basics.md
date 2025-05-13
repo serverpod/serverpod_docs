@@ -8,9 +8,14 @@ The `Session` object provides information about the current user. A unique `user
 Future<void> myMethod(Session session) async {
   final authenticationInfo = await session.authenticated;
   final userIdentifier = authenticationInfo?.userIdentifier;
+  final userId = authenticationInfo?.userId;
   ...
 }
 ```
+
+:::note
+In addition to the `userIdentifier` `String` shown above, there is also a `userId` of type `int` available on the `AuthenticationInfo` object. This is exposed for historical reasons when users where always identified by a numeric ID. This is still necessary for some APIs, like the `serverpod_auth` module.
+:::
 
 You can also use the Session object to check if a user is authenticated:
 
