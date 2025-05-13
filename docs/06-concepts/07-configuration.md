@@ -55,9 +55,9 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED | sessionLogs.persistentEnabled | -         | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`. |
 | SERVERPOD_SESSION_CONSOLE_LOG_ENABLED    | sessionLogs.consoleEnabled    | -         | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`. |
 
-|  Environment variable | Command line option | Default | Description                               |
-| --------------------- | ------------------- | ------- | ----------------------------------------- |
-| SERVERPOD_SERVER_ID   | `--server-id`       | default | Configures the id of the server instance. |
+| Environment variable | Command line option | Default | Description                               |
+| -------------------- | ------------------- | ------- | ----------------------------------------- |
+| SERVERPOD_SERVER_ID  | `--server-id`       | default | Configures the id of the server instance. |
 
 ### Secrets
 
