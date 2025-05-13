@@ -28,7 +28,7 @@ final pod = Serverpod(
 In the above example, the `authenticationHandler` callback is overridden with a custom validation method. The method returns an `AuthenticationInfo` object with `userIdentifier` `"1"` and no scopes if the token is the literal "valid", otherwise `null`.
 
 :::note
-The `userIdentifier` passed to the `AuthenticationInfo` constructor, as the first parameter, will always be converted to a `String` and thus stored internally. For historical reasons there is a `userId` getter on the object that returns an `int`, if the string can be converted.
+The `userIdentifier` passed to the `AuthenticationInfo` constructor, as the first parameter, will always be converted to a `String` and thus stored internally. Since the default implementation of `serverpod_auth` uses numeric IDs for the users, there is a convenience getter `userId`, which returns the integer value.
 :::
 
 :::note
