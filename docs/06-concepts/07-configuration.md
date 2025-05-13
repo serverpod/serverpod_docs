@@ -54,6 +54,9 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_MAX_REQUEST_SIZE               | maxRequestSize                | 524288    | The maximum size of requests allowed in bytes                                                                                |
 | SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED | sessionLogs.persistentEnabled | -         | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`. |
 | SERVERPOD_SESSION_CONSOLE_LOG_ENABLED    | sessionLogs.consoleEnabled    | -         | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`. |
+| SERVERPOD_FUTURE_CALL_EXECUTION_ENABLED  | futureCallExecutionEnabled    | true      | Enables or disables the execution of future calls.                                                                           |
+| SERVERPOD_FUTURE_CALL_CONCURRENCY_LIMIT  | futureCall.concurrencyLimit   | 1         | The maximum number of concurrent future calls allowed. If the value is negative or null, no limit is applied.                |
+| SERVERPOD_FUTURE_CALL_SCAN_INTERVAL      | futureCall.scanInterval       | 5000      | The interval in milliseconds for scanning future calls                                                                       |
 
 | Environment variable | Command line option | Default | Description                               |
 | -------------------- | ------------------- | ------- | ----------------------------------------- |
@@ -120,6 +123,12 @@ maxRequestSize: 524288
 sessionLogs:
   persistentEnabled: true
   consoleEnabled: true
+
+futureCallExecutionEnabled: true
+
+futureCall:
+  concurrencyLimit: 5
+  scanInterval: 2000
 ```
 
 ### Passwords file example
