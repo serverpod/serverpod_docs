@@ -9,7 +9,7 @@ const darkCodeTheme = themes.dracula;
 const config = {
   title: 'Serverpod',
   tagline: 'The missing server for Flutter',
-  url: 'https://serverpod.github.io',
+  url: 'https://docs.serverpod.dev',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
