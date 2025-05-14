@@ -105,7 +105,7 @@ This option allows you to enable or disable the execution of future calls. By de
 Example configuration:
 
 ```yaml
-futureCallExecutionEnabled: true
+futureCallExecutionEnabled: false
 ```
 
 ### Concurrency limit
