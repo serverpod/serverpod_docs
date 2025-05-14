@@ -8,13 +8,13 @@ The event message system is accessed on the `Session` object through the field `
 
 Here is a quick reference to the key messaging methods:
 
-| Method | Description |
-|--------|---------|
-| `postMessage`     | Send a message to a channel. |
-| `addListener`     | Add a listener to a channel. |
-| `removeListener`  | Remove a listener from a channel. |
-| `createStream`    | Create a stream that listens to a channel. |
-| `revokeAuthentication` | Revoke authentication tokens. |
+| Method                 | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `postMessage`          | Send a message to a channel.               |
+| `addListener`          | Add a listener to a channel.               |
+| `removeListener`       | Remove a listener from a channel.          |
+| `createStream`         | Create a stream that listens to a channel. |
+| `revokeAuthentication` | Revoke authentication tokens.              |
 
 ## Sending messages
 
@@ -107,4 +107,4 @@ In the above example, the listener is first added and then removed from the `use
 
 ## Revoke authentication
 
-The messaging interface also exposes a method for revoking authentication. For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#Handling-revoked-authentication).
+The messaging interface also exposes a method for revoking authentication. For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#handling-revoked-authentication).

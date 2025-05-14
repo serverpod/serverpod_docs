@@ -132,7 +132,6 @@ await client.modules.auth.status.signOutAllDevices();
 This status endpoint retrieves the user ID from session's authentication information, then revokes all authentication keys related to that user.
 
 :::info 
-<span id="deprecated-signout-endpoint"></span>
 The `signOut` status endpoint is deprecated. Use `signOutDevice` or `signOutAllDevices` instead.
 
 ```dart
