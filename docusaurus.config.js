@@ -12,6 +12,7 @@ const config = {
   url: 'https://serverpod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
+  onBrokenAnchors: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',
   organizationName: 'serverpod', // Usually your GitHub org/user name.
@@ -186,14 +187,9 @@ const config = {
             to: '/contribute',
           },
           {
-            // Moved in version 2.5.0+2
+            // Moved in version 2.7.0
             from: ['/get-started'],
-            to: '/get-started/overview',
-          },
-          {
-            // Moved in version 2.5.0+2
-            from: ['/get-started-with-mini'],
-            to: '/get-started/get-started-with-mini',
+            to: '/get-started/creating-endpoints',
           },
         ],
       },

@@ -89,35 +89,35 @@ void run(List<String> args) async {
 
 ```
 
-| **Property** | **Description** | **Default** |
-|:-------------|:----------------|:-----------:|
-| **allowUnsecureRandom** | True if unsecure random number generation is allowed. If set to false, an error will be thrown if the platform does not support secure random number generation. | false |
-| **emailSignInFailureResetTime** | The reset period for email sign in attempts. Defaults to 5 minutes. | 5min |
-| **enableUserImages** | True if user images are enabled. | true |
-| **extraSaltyHash** | True if the server should use the accounts email address as part of the salt when storing password hashes (strongly recommended). | true |
-| **firebaseServiceAccountKeyJson** | Firebase service account key JSON file. Generate and download from the Firebase console. | - |
-| **importUserImagesFromGoogleSignIn** | True if user images should be imported when signing in with Google. | true |
-| **legacyUserSignOutBehavior** | Defines the default behavior for the deprecated `signOut` method used in the status endpoint. This setting controls whether users are signed out from all active devices (`SignOutOption.allDevices`) or just the current device (`SignOutOption.currentDevice`). | `SignOutOption.allDevices` |
-| **maxAllowedEmailSignInAttempts** | Max allowed failed email sign in attempts within the reset period. | 5 |
-| **maxPasswordLength** | The maximum length of passwords when signing up with email. | 128 |
-| **minPasswordLength** | The minimum length of passwords when signing up with email. | 8 |
-| **onUserCreated** | Called after a user has been created. Listen to this callback if you need to do additional setup. | - |
-| **onUserUpdated** | Called whenever a user has been updated. This can be when the user name is changed or if the user uploads a new profile picture. | - |
-| **onUserWillBeCreated** | Called when a user is about to be created, gives a chance to abort the creation by returning false. | - |
-| **passwordResetExpirationTime** | The time for password resets to be valid. | 24h |
-| **sendPasswordResetEmail** | Called when a user should be sent a reset code by email. | - |
-| **sendValidationEmail** | Called when a user should be sent a validation code on account setup. | - |
-| **userCanEditFullName** | True if users can edit their full name. | false |
-| **userCanEditUserImage** | True if users can update their profile images. | true |
-| **userCanEditUserName** | True if users can edit their user names. | true |
-| **userCanSeeFullName** | True if users can view their full name. | true |
-| **userCanSeeUserName** | True if users can view their user name. | true |
-| **userImageFormat** | The format used to store user images. | jpg |
-| **userImageGenerator** | Generator used to produce default user images. | - |
-| **userImageQuality** | The quality setting for images if JPG format is used. | 70 |
-| **userImageSize** | The size of user images. | 256 |
-| **userInfoCacheLifetime** | The duration which user infos are cached locally in the server. | 1min |
-| **validationCodeLength** | The length of the validation code used in the authentication process. This value determines the number of digits in the validation code. Setting this value to less than 3 reduces security. | 8 |
+| **Property**                         | **Description**                                                                                                                                                                                                                                                   |        **Default**         |
+| :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------: |
+| **allowUnsecureRandom**              | True if unsecure random number generation is allowed. If set to false, an error will be thrown if the platform does not support secure random number generation.                                                                                                  |           false            |
+| **emailSignInFailureResetTime**      | The reset period for email sign in attempts. Defaults to 5 minutes.                                                                                                                                                                                               |            5min            |
+| **enableUserImages**                 | True if user images are enabled.                                                                                                                                                                                                                                  |            true            |
+| **extraSaltyHash**                   | True if the server should use the accounts email address as part of the salt when storing password hashes (strongly recommended).                                                                                                                                 |            true            |
+| **firebaseServiceAccountKeyJson**    | Firebase service account key JSON file. Generate and download from the Firebase console.                                                                                                                                                                          |             -              |
+| **importUserImagesFromGoogleSignIn** | True if user images should be imported when signing in with Google.                                                                                                                                                                                               |            true            |
+| **legacyUserSignOutBehavior**        | Defines the default behavior for the deprecated `signOut` method used in the status endpoint. This setting controls whether users are signed out from all active devices (`SignOutOption.allDevices`) or just the current device (`SignOutOption.currentDevice`). | `SignOutOption.allDevices` |
+| **maxAllowedEmailSignInAttempts**    | Max allowed failed email sign in attempts within the reset period.                                                                                                                                                                                                |             5              |
+| **maxPasswordLength**                | The maximum length of passwords when signing up with email.                                                                                                                                                                                                       |            128             |
+| **minPasswordLength**                | The minimum length of passwords when signing up with email.                                                                                                                                                                                                       |             8              |
+| **onUserCreated**                    | Called after a user has been created. Listen to this callback if you need to do additional setup.                                                                                                                                                                 |             -              |
+| **onUserUpdated**                    | Called whenever a user has been updated. This can be when the user name is changed or if the user uploads a new profile picture.                                                                                                                                  |             -              |
+| **onUserWillBeCreated**              | Called when a user is about to be created, gives a chance to abort the creation by returning false.                                                                                                                                                               |             -              |
+| **passwordResetExpirationTime**      | The time for password resets to be valid.                                                                                                                                                                                                                         |            24h             |
+| **sendPasswordResetEmail**           | Called when a user should be sent a reset code by email.                                                                                                                                                                                                          |             -              |
+| **sendValidationEmail**              | Called when a user should be sent a validation code on account setup.                                                                                                                                                                                             |             -              |
+| **userCanEditFullName**              | True if users can edit their full name.                                                                                                                                                                                                                           |           false            |
+| **userCanEditUserImage**             | True if users can update their profile images.                                                                                                                                                                                                                    |            true            |
+| **userCanEditUserName**              | True if users can edit their user names.                                                                                                                                                                                                                          |            true            |
+| **userCanSeeFullName**               | True if users can view their full name.                                                                                                                                                                                                                           |            true            |
+| **userCanSeeUserName**               | True if users can view their user name.                                                                                                                                                                                                                           |            true            |
+| **userImageFormat**                  | The format used to store user images.                                                                                                                                                                                                                             |            jpg             |
+| **userImageGenerator**               | Generator used to produce default user images.                                                                                                                                                                                                                    |             -              |
+| **userImageQuality**                 | The quality setting for images if JPG format is used.                                                                                                                                                                                                             |             70             |
+| **userImageSize**                    | The size of user images.                                                                                                                                                                                                                                          |            256             |
+| **userInfoCacheLifetime**            | The duration which user infos are cached locally in the server.                                                                                                                                                                                                   |            1min            |
+| **validationCodeLength**             | The length of the validation code used in the authentication process. This value determines the number of digits in the validation code. Setting this value to less than 3 reduces security.                                                                      |             8              |
 
 ## Client setup
 
@@ -247,7 +247,7 @@ Returns `true` if the user is successfully signed out from all devices, or `fals
 
 :::info
 
-The `signOut` method is deprecated. This method calls the deprecated `signOut` status endpoint. For additional details, see the [deprecated signout endpoint](basics#deprecated-signout-endpoint) section. Use `signOutDevice` or `signOutAllDevices` instead.
+The `signOut` method is deprecated. This method calls the deprecated `signOut` status endpoint. For additional details, see the [deprecated signout endpoint](basics#sign-out-all-devices) section. Use `signOutDevice` or `signOutAllDevices` instead.
 
 ```dart
 await sessionManager.signOut();  // Deprecated

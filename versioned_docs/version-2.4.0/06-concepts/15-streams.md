@@ -77,7 +77,7 @@ Authentication is seamlessly integrated into streaming method calls. When a clie
 
 Authentication is validated when the stream is first established, utilizing the authentication data stored in the `Session` object. If a user's authentication is subsequently revoked—requiring denial of access to the stream—the stream will be promptly closed, and an exception will be thrown.
 
-For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#Handling-revoked-authentication).
+For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#handling-revoked-authentication).
 
 ### Error handling
 

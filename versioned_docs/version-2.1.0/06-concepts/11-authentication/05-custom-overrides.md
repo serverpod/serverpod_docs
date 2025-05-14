@@ -8,7 +8,7 @@ When running a custom auth integration it is up to you to build the authenticati
 
 ### Token validation
 
-The token validation is performed by providing a custom `authenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
+The token validation is performed by providing a custom `AuthenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
 
 ```dart
 // Initialize Serverpod and connect it with your generated code.
@@ -31,6 +31,10 @@ In the above example, the `authenticationHandler` callback is overridden with a 
 In the authenticationHandler callback the `authenticated` field on the session will always be `null` as it is the authenticationHandler that figures out who the user is.
 :::
 
+:::info
+By specifying the optional `authId` field in the `AuthenticationInfo` object you can link the user to a specific authentication id. This is useful when revoking authentication for a specific device.
+:::
+
 #### Scopes
 
 The scopes returned from the `authenticationHandler` is used to grant access to scope restricted endpoints. The `Scope` class is a simple wrapper around a nullable `String` in dart. This means that you can format your scopes however you want as long as they are in a String format.
@@ -41,6 +45,39 @@ Normally if you implement a JWT you would store the scopes inside the token. Whe
 List<String> scopes = extractScopes(token);
 Set<Scope> userScopes = scopes.map((scope) => Scope(scope)).toSet();
 ```
+
+### Handling revoked authentication 
+
+When a user's authentication is revoked, the server must be notified to respect the changes (e.g. to close method streams). Invoke the `session.messages.authenticationRevoked` method and raise the appropriate event to notify the server.
+
+```dart
+var userId = 1;
+var revokedScopes = ['write'];
+var message = RevokedAuthenticationScope(
+  scopes: revokedScopes,
+);
+
+await session.messages.authenticationRevoked(
+  userId,
+  message,
+);
+```
+
+##### Parameters
+
+- `userId` - The user id belonging to the `AuthenticationInfo` object to be revoked.
+- `message` - The revoked authentication event message. See below for the different type of messages.
+
+#### Revoked authentication messages
+There are three types of `RevokedAuthentication` messages that are used to specify the extent of the authentication revocation:
+
+| Message type | Description |
+|-----------|-------------|
+| `RevokedAuthenticationUser` | All authentication is revoked for a user. |
+| `RevokedAuthenticationAuthId` | A single authentication id is revoked for the user. This should match the `authId` field in the `AuthenticationInfo` object. |
+| `RevokedAuthenticationScope` | List of scopes that have been revoked for a user. |
+
+Each message type provides a tailored approach to revoke authentication based on different needs.
 
 ### Send token to client
 
