@@ -195,9 +195,9 @@ This means that `defaultPersist` only comes into play when the model does not pr
 
 #### Boolean
 
-| Type            | Keyword            | Description                                           |
-|-----------------|--------------------|-------------------------------------------------------|
-| **Boolean**     | `true` or `false`  | Sets the field to a boolean value, either `true` or `false`. |
+| Type        | Keyword           | Description                                                  |
+| ----------- | ----------------- | ------------------------------------------------------------ |
+| **Boolean** | `true` or `false` | Sets the field to a boolean value, either `true` or `false`. |
 
 **Example:**
 
@@ -207,10 +207,10 @@ boolDefault: bool, default=true
 
 #### DateTime
 
-| Type                    | Keyword       | Description                                                  |
-|-------------------------|---------------|--------------------------------------------------------------|
-| **Current Date and Time** | `now`        | Sets the field to the current date and time.                  |
-| **Specific UTC DateTime** | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time. |
+| Type                      | Keyword                                                          | Description                                  |
+| ------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
+| **Current Date and Time** | `now`                                                            | Sets the field to the current date and time. |
+| **Specific UTC DateTime** | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time.  |
 
 **Example:**
 
@@ -221,9 +221,9 @@ dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
 
 #### Double
 
-| Type            | Keyword            | Description                                           |
-|-----------------|--------------------|-------------------------------------------------------|
-| **Double**      | Any double value    | Sets the field to a specific double value.            |
+| Type       | Keyword          | Description                                |
+| ---------- | ---------------- | ------------------------------------------ |
+| **Double** | Any double value | Sets the field to a specific double value. |
 
 **Example:**
 
@@ -233,8 +233,8 @@ doubleDefault: double, default=10.5
 
 #### Duration
 
-| Type                | Keyword             | Description                                                                 |
-|---------------------|---------------------|-----------------------------------------------------------------------------|
+| Type                  | Keyword                                            | Description                                                                                                                                                |
+| --------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Specific Duration** | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
 
 **Example:**
@@ -245,9 +245,9 @@ durationDefault: Duration, default=1d 2h 10min 30s 100ms
 
 #### Enum
 
-| Type            | Keyword            | Description                                           |
-|-----------------|--------------------|-------------------------------------------------------|
-| **Enum**        | Any valid enum value | Sets the field to a specific enum value.               |
+| Type     | Keyword              | Description                              |
+| -------- | -------------------- | ---------------------------------------- |
+| **Enum** | Any valid enum value | Sets the field to a specific enum value. |
 
 **Example:**
 
@@ -282,9 +282,9 @@ In this example:
 
 #### Integer
 
-| Type            | Keyword            | Description                                           |
-|-----------------|--------------------|-------------------------------------------------------|
-| **Integer**     | Any integer value   | Sets the field to a specific integer value.           |
+| Type        | Keyword           | Description                                 |
+| ----------- | ----------------- | ------------------------------------------- |
+| **Integer** | Any integer value | Sets the field to a specific integer value. |
 
 **Example:**
 
@@ -294,9 +294,9 @@ intDefault: int, default=10
 
 #### String
 
-| Type            | Keyword            | Description                                           |
-|-----------------|--------------------|-------------------------------------------------------|
-| **String**      | Any string value    | Sets the field to a specific string value.            |
+| Type       | Keyword          | Description                                |
+| ---------- | ---------------- | ------------------------------------------ |
+| **String** | Any string value | Sets the field to a specific string value. |
 
 **Example:**
 
@@ -306,16 +306,18 @@ stringDefault: String, default='This is a string'
 
 #### UuidValue
 
-| Type               | Keyword            | Description                                           |
-|--------------------|--------------------|-------------------------------------------------------|
-| **Random UUID**    | `random`           | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used. |
-| **UUID String**    | A valid UUID version 4 string | Assigns a specific UUID to the field. |
+| Type              | Keyword                                                                                                                                                                                                   | Description                                                                                                                                       |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Random UUID**   | `random`                                                                                                                                                                                                  | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used.                           |
+| **Random UUIDv7** | `random_v7`                                                                                                                                                                                               | Generates a random UUIDv7. On the Dart side, `Uuid().v7obj()` is used. On the database side, a generated `gen_random_uuid_v7()` function is used. |
+| **UUID String**   | Valid UUID in the format 'xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx' where M is the UUID version field. The upper two or three bits of digit N encode the variant. E.g. '550e8400-e29b-41d4-a716-446655440000' | Assigns a specific UUID to the field.                                                                                                             |
 
 **Example:**
 
 ```yaml
 uuidDefaultRandom: UuidValue, default=random
 uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
+uuidDefaultRandomUuidV7: UuidValue, default=random_v7
 ```
 
 ### Example
@@ -342,28 +344,28 @@ fields:
 
 ## Keywords
 
-|**Keyword**|Note|[class](#class)|[exception](#exception)|[enum](#enum)|
-|---|---|:---:|:---:|:---:|
-|[**values**](#enum)|A special key for enums with a list of all enum values.                                                                |||✅|
-|[**serialized**](#enum)|Sets the mode enums are serialized in                                                                              |||✅|
-|[**serverOnly**](#limiting-visibility-of-a-generated-class)|Boolean flag if code generator only should create the code for the server.     |✅|✅|✅|
-|[**table**](database/models)|A name for the database table, enables generation of database code.                                           |✅|||
-|[**managedMigration**](database/migrations#opt-out-of-migrations)|A boolean flag to opt out of the database migration system.                                        |✅|||
-|[**fields**](#class)|All fields in the generated class should be listed here.                                                              |✅|✅||
-|[**type (fields)**](#class)|Denotes the data type for a field.                                                                             |✅|✅||
-|[**scope**](#limiting-visibility-of-a-generated-class)|Denotes the scope for a field.                                                      |✅|||
-|[**persist**](database/models)|A boolean flag if the data should be stored in the database or not can be negated with `!persist` |✅|||
-|[**relation**](database/relations/one-to-one)|Sets a relation between model files, requires a table name to be set.              |✅|||
-|[**name**](database/relations/one-to-one#bidirectional-relations)|Give a name to a relation to pair them.                        |✅|||
-|[**parent**](database/relations/one-to-one#with-an-id-field)|Sets the parent table on a relation.                                |✅|||
-|[**field**](database/relations/one-to-one#custom-foreign-key-field)|A manual specified foreign key field.                        |✅|||
-|[**onUpdate**](database/relations/referential-actions)|Set the referential actions when updating data in the database.           |✅|||
-|[**onDelete**](database/relations/referential-actions)|Set the referential actions when deleting data in the database.           |✅|||
-|[**optional**](database/relations/one-to-one#optional-relation)|A boolean flag to make a relation optional.                      |✅|||
-|[**indexes**](database/indexing)|Create indexes on your fields / columns.                                                        |✅|||
-|[**fields (index)**](database/indexing)|List the fields to create the indexes on.                                                |✅|||
-|[**type (index)**](database/indexing)|The type of index to create.                                                               |✅|||
-|[**unique**](database/indexing)|Boolean flag to make the entries unique in the database.                                         |✅|||
-|[**default**](#default-values)|Sets the default value for both the model and the database. This keyword cannot be used with **relation**.                                                     |✅|||
-|[**defaultModel**](#default-values)|Sets the default value for the model side. This keyword cannot be used with **relation**.                                                   |✅|||
-|[**defaultPersist**](#default-values)|Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**.                                |✅|||
+| **Keyword**                                                         | Note                                                                                                           | [class](#class) | [exception](#exception) | [enum](#enum) |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :-------------: | :---------------------: | :-----------: |
+| [**values**](#enum)                                                 | A special key for enums with a list of all enum values.                                                        |                 |                         |       ✅       |
+| [**serialized**](#enum)                                             | Sets the mode enums are serialized in                                                                          |                 |                         |       ✅       |
+| [**serverOnly**](#limiting-visibility-of-a-generated-class)         | Boolean flag if code generator only should create the code for the server.                                     |        ✅        |            ✅            |       ✅       |
+| [**table**](database/models)                                        | A name for the database table, enables generation of database code.                                            |        ✅        |                         |               |
+| [**managedMigration**](database/migrations#opt-out-of-migrations)   | A boolean flag to opt out of the database migration system.                                                    |        ✅        |                         |               |
+| [**fields**](#class)                                                | All fields in the generated class should be listed here.                                                       |        ✅        |            ✅            |               |
+| [**type (fields)**](#class)                                         | Denotes the data type for a field.                                                                             |        ✅        |            ✅            |               |
+| [**scope**](#limiting-visibility-of-a-generated-class)              | Denotes the scope for a field.                                                                                 |        ✅        |                         |               |
+| [**persist**](database/models)                                      | A boolean flag if the data should be stored in the database or not can be negated with `!persist`              |        ✅        |                         |               |
+| [**relation**](database/relations/one-to-one)                       | Sets a relation between model files, requires a table name to be set.                                          |        ✅        |                         |               |
+| [**name**](database/relations/one-to-one#bidirectional-relations)   | Give a name to a relation to pair them.                                                                        |        ✅        |                         |               |
+| [**parent**](database/relations/one-to-one#with-an-id-field)        | Sets the parent table on a relation.                                                                           |        ✅        |                         |               |
+| [**field**](database/relations/one-to-one#custom-foreign-key-field) | A manual specified foreign key field.                                                                          |        ✅        |                         |               |
+| [**onUpdate**](database/relations/referential-actions)              | Set the referential actions when updating data in the database.                                                |        ✅        |                         |               |
+| [**onDelete**](database/relations/referential-actions)              | Set the referential actions when deleting data in the database.                                                |        ✅        |                         |               |
+| [**optional**](database/relations/one-to-one#optional-relation)     | A boolean flag to make a relation optional.                                                                    |        ✅        |                         |               |
+| [**indexes**](database/indexing)                                    | Create indexes on your fields / columns.                                                                       |        ✅        |                         |               |
+| [**fields (index)**](database/indexing)                             | List the fields to create the indexes on.                                                                      |        ✅        |                         |               |
+| [**type (index)**](database/indexing)                               | The type of index to create.                                                                                   |        ✅        |                         |               |
+| [**unique**](database/indexing)                                     | Boolean flag to make the entries unique in the database.                                                       |        ✅        |                         |               |
+| [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.     |        ✅        |                         |               |
+| [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                      |        ✅        |                         |               |
+| [**defaultPersist**](#default-values)                               | Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**. |        ✅        |                         |               |
