@@ -12,6 +12,7 @@ const config = {
   url: 'https://serverpod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
+  onBrokenAnchors: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',
   organizationName: 'serverpod', // Usually your GitHub org/user name.
