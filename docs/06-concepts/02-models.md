@@ -18,7 +18,7 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](#vector-fields) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Limiting visibility of a generated class
 
@@ -132,6 +132,35 @@ fields:
   ### A list of people currently employed at the company.
   employees: List<Employee>
 ```
+
+## Vector fields
+
+The `Vector` type is used for storing high-dimensional vectors, which are specially useful for similarity search operations.
+
+```yaml
+class: Document
+table: document
+fields:
+  ### The category of the document (e.g., article, tutorial).
+  category: String
+
+  ### The contents of the document.
+  content: String
+
+  ### A vector field for storing document embeddings
+  embedding: Vector(1536)
+```
+
+The number in parentheses specifies the vector dimensions. Common dimensions include:
+- 1536 (OpenAI embeddings)
+- 768 (many sentence transformers)
+- 384 (smaller models)
+
+Vector fields support specialized distance operations for similarity search and filtering. See the [Vector distance operators](database/filter#vector-distance-operators) section for details.
+
+:::info
+The usage of Vector fields requires the pgvector PostgreSQL extension to be installed, which comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrading to pgvector support](../upgrading/upgrade-to-pgvector) guide.
+:::
 
 ## Generated code
 
@@ -365,6 +394,8 @@ fields:
 | [**indexes**](database/indexing)                                    | Create indexes on your fields / columns.                                                                       |        ✅        |                         |               |
 | [**fields (index)**](database/indexing)                             | List the fields to create the indexes on.                                                                      |        ✅        |                         |               |
 | [**type (index)**](database/indexing)                               | The type of index to create.                                                                                   |        ✅        |                         |               |
+| [**parameters (index)**](database/indexing#vector-indexes)          | Parameters for specialized index types like HNSW and IVFFLAT vector indexes.                                   |        ✅        |                         |               |
+| [**distanceFunction (index)**](database/indexing#vector-indexes)    | Distance function for vector indexes (l2, innerProduct, cosine, l1).                                           |        ✅        |                         |               |
 | [**unique**](database/indexing)                                     | Boolean flag to make the entries unique in the database.                                                       |        ✅        |                         |               |
 | [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.     |        ✅        |                         |               |
 | [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                      |        ✅        |                         |               |

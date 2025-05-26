@@ -62,3 +62,74 @@ indexes:
 ```
 
 If no type is specified the default is `btree`. All [PostgreSQL index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+
+### Vector indexes
+
+To enhance the performance of vector similarity search, it is possible to create specialized vector indexes on `Vector` fields. Serverpod supports both `HNSW` and `IVFFLAT` index types with full parameter specification.
+
+:::info
+Each vector index can only be created on a single `Vector` field. It is not possible to create a vector index on multiple fields of any kind.
+:::
+
+#### HNSW indexes
+
+Hierarchical Navigable Small World (HNSW) indexes provide fast approximate nearest neighbor search:
+
+```yaml
+class: Document
+table: document
+fields:
+  content: String
+  embedding: Vector(1536)
+indexes:
+  document_embedding_hnsw_idx:
+    fields: embedding
+    type: hnsw
+    distanceFunction: cosine
+    parameters:
+      m: 16
+      ef_construction: 64
+```
+
+Available HNSW parameters:
+- `m`: Maximum number of bi-directional links for each node (default: 16)
+- `efConstruction`: Size of the dynamic candidate list (default: 64)
+
+#### IVFFLAT indexes
+
+Inverted File with Flat compression (IVFFLAT) indexes are suitable for large datasets:
+
+```yaml
+class: Document
+table: document
+fields:
+  content: String
+  embedding: Vector(1536)
+indexes:
+  document_embedding_ivfflat_idx:
+    fields: embedding
+    type: ivfflat
+    distanceFunction: innerProduct
+    parameters:
+      lists: 100
+```
+
+Available IVFFLAT parameters:
+- `lists`: Number of inverted lists (default: 100)
+
+#### Distance functions
+
+Supported distance functions for vector indexes (`distanceFunction` parameter):
+
+| Distance Function | Description                   | Use Case                     |
+|-------------------|-------------------------------|------------------------------|
+| `l2`              | Euclidean distance            | Default for most embeddings  |
+| `innerProduct`    | Inner product                 | When vectors are normalized  |
+| `cosine`          | Cosine distance               | Text embeddings              |
+| `l1`              | Manhattan or taxicab distance | Sparse/high-dimensional data |
+
+:::tip
+If more than one distance function is going to be frequently used on the same vector field, consider creating one index for each distance function to ensure optimal performance.
+:::
+
+For more details on vector indexes and its configuration, refer to the [pgvector extension documentation](https://github.com/pgvector/pgvector/tree/master?tab=readme-ov-file#indexing).

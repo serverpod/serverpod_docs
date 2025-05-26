@@ -194,6 +194,49 @@ await User.db.find(
 
 In the example we fetch all users that has a name that starts with A *or* B.
 
+### Vector distance operators
+
+Vector fields support specialized distance operations for similarity search. Available vector distance operations:
+
+- `distanceL2` - Euclidean (L2) distance.
+- `distanceInnerProduct` - Inner product distance.
+- `distanceCosine` - Cosine distance.
+- `distanceL1` - Manhattan or taxicab (L1) distance.
+
+You can use vector distance operations with numeric comparisons for filtering and ordering:
+
+```dart
+// The vector to compare against
+var queryVector = Vector([0.1, 0.2, 0.3, ...]);
+
+// Find top documents similar to a query vector
+var similarDocs = await Document.db.find(
+  session,
+  where: (t) => t.embedding.distanceCosine(queryVector) < 0.5,
+  orderBy: (t) => t.embedding.distanceCosine(queryVector),
+  limit: 10,
+);
+
+// Filter by distance range
+var mediumSimilarity = await Document.db.find(
+  session,
+  where: (t) => t.embedding.distanceL2(queryVector).between(0.3, 0.8),
+);
+
+// Combine with other filters
+var filteredSimilarity = await Document.db.find(
+  session,
+  where: (t) => t.category.equals('article') &
+                (t.embedding.distanceCosine(queryVector) < 0.7),
+  orderBy: (t) => t.embedding.distanceCosine(queryVector),
+  limit: 10,
+);
+```
+
+:::tip
+For optimal performance with vector similarity searches, consider creating specialized vector indexes (HNSW or IVFFLAT) on your vector fields. See the [Vector indexes](indexing#vector-indexes) section for more details.
+:::
+
 ## Relation operations
 
 If a relation between two models is defined a [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relation, then relation operations are supported in Serverpod.
