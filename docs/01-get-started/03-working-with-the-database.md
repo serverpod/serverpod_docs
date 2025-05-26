@@ -422,7 +422,7 @@ First, we need to start the server and apply the migrations by adding the `--app
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
-$ docker-compose up -d
+$ docker compose up -d
 $ dart bin/main.dart --apply-migrations
 ```
 
