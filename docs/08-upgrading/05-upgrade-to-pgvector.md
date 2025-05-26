@@ -41,6 +41,7 @@ services:
       - <projectname>_test_data:/var/lib/postgresql/data
 ```
 
+<!-- markdownlint-disable-next-line MD029-->
 2. Recreate your containers to use the new image:
 
 ```bash
@@ -48,6 +49,7 @@ docker-compose down
 docker-compose up -d
 ```
 
+<!-- markdownlint-disable-next-line MD029-->
 3. Create your first vector field in a model:
 
 ```yaml
@@ -58,6 +60,7 @@ fields:
   embedding: Vector(1536)
 ```
 
+<!-- markdownlint-disable-next-line MD029-->
 4. Generate and apply a migration:
 
 ```bash
@@ -65,7 +68,7 @@ $ serverpod create-migration
 $ dart run bin/main.dart --apply-migrations
 ```
 
-For more details on creating and applying migrations, see the [Migrations](../concepts/database/migration) section.
+For more details on creating and applying migrations, see the [Migrations](../concepts/database/migrations) section.
 
 The pgvector extension will be automatically enabled during the first migration that includes a vector column.
 

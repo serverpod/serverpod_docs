@@ -152,6 +152,7 @@ fields:
 ```
 
 The number in parentheses specifies the vector dimensions. Common dimensions include:
+
 - 1536 (OpenAI embeddings)
 - 768 (many sentence transformers)
 - 384 (smaller models)
