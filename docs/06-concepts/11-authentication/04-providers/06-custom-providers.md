@@ -193,6 +193,7 @@ await UserAuthentication.signOutUser(
   userId: 123,  // Optional: If omitted, the currently authenticated user will be signed out
 );
 ```
+
 This method deletes all authentication keys associated with the user.
 
 ##### Signing out a specific user
