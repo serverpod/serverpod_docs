@@ -8,6 +8,7 @@ For Serverpod Mini projects, everything related to the database in this guide ca
 
 :::
 
+<!-- markdownlint-disable MD029 -->
 <details>
 <summary> Have an existing project? Follow these steps first!</summary>
 <p>
@@ -168,6 +169,7 @@ dev_dependencies:
 That's it, the project setup should be ready to start using the test tools!
 </p>
 </details>
+<!-- markdownlint-enable MD029 -->
 
 Go to the server directory and generate the test tools:
 

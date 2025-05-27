@@ -206,6 +206,7 @@ dart test -t integration --concurrency=1
 
 For the other cases this is not an issue, as each `withServerpod` has its own transaction and will therefore be isolated.
 
+<!-- markdownlint-disable MD029 -->
 3. **Database exceptions that are quelled**: There is a specific edge case where the test tools behavior deviates from production behavior. See example below:
 
 ```dart
@@ -225,6 +226,7 @@ await transactionFuture;
 ```
 
 In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practise, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabse.disabled` will ensure the code behaves like in production.
+<!-- markdownlint-enable MD029 -->
 
 ## Test exceptions
 
