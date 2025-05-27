@@ -4,7 +4,6 @@ In Serverpod the connection details and password for the database are stored ins
 
 The easiest way to get started is to use a Docker container to run your local Postgres server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run Postgres locally yourself.
 
-
 ### Connection details
 
 Each environment configuration contains a `database` keyword that specifies the connection details.
@@ -48,7 +47,6 @@ database:
 ```
 
 In this example, Postgres will look for tables in the `custom` schema first, and then fall back to `public` if needed. This gives you more control over where your data lives and how it’s accessed
-
 
 ### Database password
 
@@ -102,7 +100,6 @@ To connect to a remote Postgres server (that you have installed on a VPS or VDS)
 - You may need to open the database port on the machine. This may include configuring its firewall.
 - Update your Serverpod `database` config to use the public network address, database name, port, user, and password.
 
-
 ### Connecting to Google Cloud SQL
 
 You can connect to a Google Cloud SQL Postgres instance in two ways:
@@ -114,13 +111,14 @@ The next step is to update the database password in `passwords.yaml` and the con
 
 :::info
 
-If you are using the `isUnixSocket` don't forget to add **"/.s.PGSQL.5432"** to the end of the `host` IP address. Otherwise, your Google Cloud Run instance will not be able to connect to the database.
+If you are using the `isUnixSocket` don't forget to add __"/.s.PGSQL.5432"__ to the end of the `host` IP address. Otherwise, your Google Cloud Run instance will not be able to connect to the database.
 
 :::
 
 ### Connecting to AWS RDS
 
 You can connect to an AWS RDS Instance in two ways:
+
 1. Enable public access to the database and configure VPC/Subnets to accept your Serverpod's IP address.
 2. Use the Endpoint `database-name.some-unique-id.server-location.rds.amazonaws.com` to connect to it from AWS ECS.
 

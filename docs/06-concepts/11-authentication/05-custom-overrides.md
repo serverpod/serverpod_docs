@@ -50,7 +50,7 @@ List<String> scopes = extractScopes(token);
 Set<Scope> userScopes = scopes.map((scope) => Scope(scope)).toSet();
 ```
 
-### Handling revoked authentication 
+### Handling revoked authentication
 
 When a user's authentication is revoked, the server must be notified to respect the changes (e.g. to close method streams). Invoke the `session.messages.authenticationRevoked` method and raise the appropriate event to notify the server.
 
@@ -73,6 +73,7 @@ await session.messages.authenticationRevoked(
 - `message` - The revoked authentication event message. See below for the different type of messages.
 
 #### Revoked authentication messages
+
 There are three types of `RevokedAuthentication` messages that are used to specify the extent of the authentication revocation:
 
 | Message type | Description |
@@ -200,6 +201,7 @@ You will also need to implement the `AuthenticationHandler` accordingly, in orde
 
 The header value must be compliant with the HTTP header format defined in RFC 9110 HTTP Semantics, 11.6.2. Authorization.
 See:
+
 - [HTTP Authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
 - [RFC 9110, 11.6.2. Authorization](https://httpwg.org/specs/rfc9110.html#field.authorization)
 

@@ -34,6 +34,7 @@ void run(List<String> args) async {
   ...
 }
 ```
+
 Optionally, add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.
 
 ```yaml
@@ -71,8 +72,8 @@ $ dart run bin/main.dart --role maintenance --apply-migrations
 The full migration instructions can be found in the [migration guide](../database/migrations).
 
 ### Configure Authentication
-Serverpod's auth module comes with a default Authentication Configuration. To customize it, go to your main `server.dart` file, import the `serverpod_auth_server` module and set up the authentication configuration:
 
+Serverpod's auth module comes with a default Authentication Configuration. To customize it, go to your main `server.dart` file, import the `serverpod_auth_server` module and set up the authentication configuration:
 
 ```dart
 import 'package:serverpod_auth_server/module.dart' as auth;  
@@ -185,22 +186,27 @@ void main() async {
 The `SessionManager` has useful methods for viewing and monitoring the user's current state.
 
 #### Check authentication state
+
 To check if the user is signed in:
 
 ```dart
 sessionManager.isSignedIn;
 ```
+
 Returns `true` if the user is signed in, or `false` otherwise.
 
 #### Access current user
+
 To retrieve information about the current user:
 
 ```dart
 sessionManager.signedInUser;
 ```
+
 Returns a `UserInfo` object if the user is currently signed in, or `null` if the user is not.
 
 #### Register authentication
+
 To register a signed in user in the session manager:
 
 ```dart
@@ -210,9 +216,11 @@ await sessionManager.registerSignedInUser(
   authKey,
 );
 ```
+
 This will persist the user information and refresh any open streaming connection, see [Custom Providers - Client Setup](providers/custom-providers#client-setup) for more details.
 
 #### Monitor authentication changes
+
 To add a listener that tracks changes in the user's authentication state, useful for updating the UI:
 
 ```dart
@@ -226,24 +234,28 @@ void initState() {
   });
 }
 ```
+
 The listener is triggered whenever the user's sign-in state changes.
 
 #### Sign out current device
+
 To sign the user out on from the current device:
 
 ```dart
 await sessionManager.signOutDevice();
 ```
+
 Returns `true` if the sign-out is successful, or `false` if it fails.
 
 #### Sign out all devices
+
 To sign the user out across all devices:
 
 ```dart
 await sessionManager.signOutAllDevices();
 ```
-Returns `true` if the user is successfully signed out from all devices, or `false` if it fails.
 
+Returns `true` if the user is successfully signed out from all devices, or `false` if it fails.
 
 :::info
 
@@ -252,4 +264,5 @@ The `signOut` method is deprecated. This method calls the deprecated `signOut` s
 ```dart
 await sessionManager.signOut();  // Deprecated
 ```
-::: 
+
+:::

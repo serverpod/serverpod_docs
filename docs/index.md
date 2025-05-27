@@ -166,4 +166,4 @@ This will start the Flutter app in your browser. It should look like this:
 
 ## Next steps
 
-The quickest way to learn Serverpod is to follow our 30-minute __[Getting Started](01-get-started/01-creating-endpoints.md)__ guide. This will give you an excellent overview of creating endpoints and models and working with the database. You will create a fun app that magically creates recipes from the ingredients you have in your fridge.
+The quickest way to learn Serverpod is to follow our 30-minute **[Getting Started](01-get-started/01-creating-endpoints.md)** guide. This will give you an excellent overview of creating endpoints and models and working with the database. You will create a fun app that magically creates recipes from the ingredients you have in your fridge.
