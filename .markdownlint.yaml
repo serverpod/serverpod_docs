@@ -3,3 +3,4 @@ MD013: false
 MD014: false
 MD024: false
 MD033: false # Allow inline HTML
+MD059: false # Allow non descriptive link text

@@ -33,7 +33,6 @@ Simple query mode is suitable for:
 * Queries containing multiple statements.
 * Situations where the extended query protocol is not available (e.g., replication mode or with proxies like PGBouncer).
 
-
 ```dart
   DatabaseResult result = await session.db.unsafeSimpleQuery(
       r'SELECT * FROM mytable WHERE id = 1; SELECT * FROM othertable;'
@@ -78,4 +77,3 @@ var result = await db.unsafeQuery(
 :::danger
 Always sanitize your input when using raw query methods. For the `unsafeQuery` and `unsafeExecute` methods, use query parameters to prevent SQL injection. Avoid using `unsafeSimpleQuery` and `unsafeSimpleExecute` unless the simple query protocol is strictly required.
 :::
-
