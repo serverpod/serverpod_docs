@@ -79,7 +79,7 @@ The `migrations` directory contains a folder for each migration that is created,
 ├── migrations
 │    ├── 20231205080937028
 │    ├── 20231205081959122
-│    └── migration_registry.txt 
+│    └── migration_registry.txt
 ```
 
 Every migration is denoted by a directory labeled with a timestamp indicating when the migration was generated. Within the directory, there is a `migration_registry.txt` file. This file is automatically created whenever migrations are generated and serves the purpose of cataloging the migrations. Its primary function is to identify migration conflicts.
@@ -210,3 +210,15 @@ If a repair migration is applied at the same time as migrations, the repair migr
 Utilizing repair migrations it is easy to roll back the project to any migration. This is useful if you want to revert the database schema to a previous state. To roll back to a previous migration, create a repair migration targeting the migration you want to roll back to, then apply the repair migration.
 
 Note that data is not rolled back, only the database schema.
+
+To roll back to a previous migration, first create a repair migration targeting the desired migration version:
+
+```bash
+$ serverpod create-repair-migration --version 20230821135718-v1-0-0 --tag "roll-back-to-v1-0-0"
+```
+
+Then apply the repair migration, any repair migration will only be applied once:
+
+```bash
+$ dart run bin/main.dart --apply-repair-migration
+```
