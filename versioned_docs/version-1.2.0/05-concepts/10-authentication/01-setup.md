@@ -45,7 +45,7 @@ $ serverpod create-migration
 Start your database container from the server project.
 
 ```bash
-$ docker-compose up --build --detach
+$ docker compose up --build --detach
 ```
 
 Then apply the migration by starting the server with the `apply-migrations` flag.

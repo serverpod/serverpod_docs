@@ -34,7 +34,7 @@ Running single individual tests is useful when you are working on a specific fea
 2. Start the Docker container for the test server.
 ```bash
 cd tests/serverpod_test_server/docker_local
-docker-compose up --build --detach
+docker compose up --build --detach
 ./setup-tables
 ```
 3. Start the test server.

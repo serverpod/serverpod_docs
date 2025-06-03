@@ -211,7 +211,7 @@ The location of the test tools can be changed by changing the  `server_test_tool
 Before the test can be run the Postgres and Redis also have to be started:
 
 ```bash
-docker-compose up --build --detach
+docker compose up --build --detach
 ```
 Now the test is ready to be run:
 

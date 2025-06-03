@@ -58,11 +58,11 @@ It can take up to a few minutes the first time you run `serverpod create`. This 
 :::
 
 ## Starting the server
-Start your Docker containers with `docker-compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart` to start your server.
+Start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart` to start your server.
 
 ```bash
 cd mypod/mypod_server
-docker-compose up --build --detach
+docker compose up --build --detach
 dart bin/main.dart
 ```
 
@@ -77,6 +77,6 @@ Webserver listening on port 8082
 
 :::info
 
-If you need to stop the Docker containers at some point, just run `docker-compose stop` or use the Docker Desktop application. You can also use Docker Desktop to start, stop, and manage your containers.
+If you need to stop the Docker containers at some point, just run `docker compose stop` or use the Docker Desktop application. You can also use Docker Desktop to start, stop, and manage your containers.
 
 :::
