@@ -44,6 +44,9 @@ const config = {
           trackingID: 'G-0EYLJMP04H',
           anonymizeIP: true,
         },
+        googleTagManager: {
+          containerId: 'GTM-WG5VRRKX',
+        },
       }),
     ],
   ],
