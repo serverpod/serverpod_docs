@@ -65,10 +65,10 @@ If no type is specified the default is `btree`. All [PostgreSQL index types](htt
 
 ### Vector indexes
 
-To enhance the performance of vector similarity search, it is possible to create specialized vector indexes on `Vector` fields. Serverpod supports both `HNSW` and `IVFFLAT` index types with full parameter specification.
+To enhance the performance of vector similarity search, it is possible to create specialized vector indexes on vector fields (`Vector`, `HalfVector`, `SparseVector`, `Bit`). Serverpod supports both `HNSW` and `IVFFLAT` index types with full parameter specification.
 
 :::info
-Each vector index can only be created on a single `Vector` field. It is not possible to create a vector index on multiple fields of any kind.
+Each vector index can only be created on a single vector field. It is not possible to create a vector index on multiple fields of any kind.
 :::
 
 #### HNSW indexes
@@ -81,11 +81,27 @@ table: document
 fields:
   content: String
   embedding: Vector(1536)
+  keywords: SparseVector(10000)
+  hash: Bit(256)
 indexes:
   document_embedding_hnsw_idx:
     fields: embedding
     type: hnsw
     distanceFunction: cosine
+    parameters:
+      m: 16
+      ef_construction: 64
+  document_keywords_idx:
+    fields: keywords
+    type: hnsw  # SparseVector can only use HNSW
+    distanceFunction: innerProduct
+    parameters:
+      m: 16
+      ef_construction: 64
+  document_hash_idx:
+    fields: hash
+    type: hnsw
+    distanceFunction: hamming  # Bit vectors only support hamming or jaccard
     parameters:
       m: 16
       ef_construction: 64
@@ -127,6 +143,14 @@ Supported distance functions for vector indexes (`distanceFunction` parameter):
 | `innerProduct`    | Inner product                 | When vectors are normalized  |
 | `cosine`          | Cosine distance               | Text embeddings              |
 | `l1`              | Manhattan or taxicab distance | Sparse/high-dimensional data |
+| `hamming`         | Hamming distance              | Binary vectors (Bit type)    |
+| `jaccard`         | Jaccard distance              | Binary vectors (Bit type)    |
+
+Different vector types have specific limitations when creating indexes:
+
+- **SparseVector**: Can only use HNSW indexes (IVFFLAT is not supported).
+- **HalfVector**: When using IVFFLAT indexes, L1 distance function is not supported.
+- **Bit**: Only supports `hamming` (default) and `jaccard` distance functions.
 
 :::tip
 If more than one distance function is going to be frequently used on the same vector field, consider creating one index for each distance function to ensure optimal performance.
