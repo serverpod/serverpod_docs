@@ -59,9 +59,14 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_FUTURE_CALL_CONCURRENCY_LIMIT  | futureCall.concurrencyLimit   | 1         | The maximum number of concurrent future calls allowed. If the value is negative or null, no limit is applied.                                         |
 | SERVERPOD_FUTURE_CALL_SCAN_INTERVAL      | futureCall.scanInterval       | 5000      | The interval in milliseconds for scanning future calls                                                                                                |
 
-| Environment variable | Command line option | Default | Description                               |
-| -------------------- | ------------------- | ------- | ----------------------------------------- |
-| SERVERPOD_SERVER_ID  | `--server-id`       | default | Configures the id of the server instance. |
+| Environment variable             | Command line option        | Default     | Description                                                                                                      |
+| -------------------------------- | -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| SERVERPOD_MODE                   | `--mode`                   | development | Configures the mode of the server instance. Valid options are `development`, `staging`, `production` and `test`. |
+| SERVERPOD_SERVER_ID              | `--server-id`              | default     | Configures the id of the server instance.                                                                        |
+| SERVERPOD_ROLE                   | `--role`                   | monolith    | Configures the role of the server instance. Valid options are `monolith`, `serverless` and `maintenance`.        |
+| SERVERPOD_LOGGING                | `--logging`                | normal      | Configures the logging level. Valid options are `normal`, and `verbose`.                                         |
+| SERVERPOD_APPLY_MIGRATIONS       | `--apply-migrations`       | false       | Configures if migrations should be applied when the server starts.                                               |
+| SERVERPOD_APPLY_REPAIR_MIGRATION | `--apply-repair-migration` | false       | Configures if repair migrations should be applied when the server starts.                                        |
 
 ### Secrets
 
