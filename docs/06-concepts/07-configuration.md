@@ -61,10 +61,10 @@ These can be separately declared for each run mode in the corresponding yaml fil
 
 | Environment variable             | Command line option        | Default     | Description                                                                                                      |
 | -------------------------------- | -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| SERVERPOD_MODE                   | `--mode`                   | development | Configures the mode of the server instance. Valid options are `development`, `staging`, `production` and `test`. |
+| SERVERPOD_RUN_MODE               | `--mode`                   | development | Configures the mode of the server instance. Valid options are `development`, `staging`, `production` and `test`. |
 | SERVERPOD_SERVER_ID              | `--server-id`              | default     | Configures the id of the server instance.                                                                        |
-| SERVERPOD_ROLE                   | `--role`                   | monolith    | Configures the role of the server instance. Valid options are `monolith`, `serverless` and `maintenance`.        |
-| SERVERPOD_LOGGING                | `--logging`                | normal      | Configures the logging level. Valid options are `normal`, and `verbose`.                                         |
+| SERVERPOD_SERVER_ROLE            | `--role`                   | monolith    | Configures the role of the server instance. Valid options are `monolith`, `serverless` and `maintenance`.        |
+| SERVERPOD_LOGGING_MODE           | `--logging`                | normal      | Configures the logging level. Valid options are `normal`, and `verbose`.                                         |
 | SERVERPOD_APPLY_MIGRATIONS       | `--apply-migrations`       | false       | Configures if migrations should be applied when the server starts.                                               |
 | SERVERPOD_APPLY_REPAIR_MIGRATION | `--apply-repair-migration` | false       | Configures if repair migrations should be applied when the server starts.                                        |
 
