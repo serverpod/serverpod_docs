@@ -1,6 +1,8 @@
 # Support & community
 
-If you get stuck, you can get support through our Github community. The authors of Serverpod are checking in pretty much every day and helping out as much as we can.
+Welcome to the Serverpod community! We offer several ways to get help, stay informed, and connect with other developers.
+
+If you get stuck, you can get support through our GitHub community. The authors of Serverpod are checking in pretty much every day and helping out as much as we can.
 
 __[Public discussion board](https://github.com/serverpod/serverpod/discussions)__
 
@@ -18,6 +20,10 @@ __[Join the email list](https://serverpod.news)__
 
 ## Community updates
 
-We are continuously adding videos on Youtube, including announcements of major new features, tutorials, and tips.
+Stay connected with our video content! We regularly publish videos on YouTube covering:
+- Announcements of major new features
+- Step-by-step tutorials
+- Tips and best practices
+- Community highlights
 
 __[Follow our YouTube channel](https://www.youtube.com/@serverpod)__
