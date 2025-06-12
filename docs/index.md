@@ -51,7 +51,7 @@ Serverpod comes packed with powerful features - batteries included.
 - **Real-time capabilities:** Push data from your server using Dart streams without worrying about the WebSocket life cycle and message routing.
 - **Straightforward authentication:** Quickly integrate popular authentication providers like sign-in with Google, Apple, or Firebase.
 - **All essentials covered:** Built-in support for common tasks like handling file uploads, scheduling tasks, and caching data.
-- **Cloud ready:** Deploy to Serverpod Cloud with zero configuration (coming soon - [join the waiting list](https://forms.gle/JgFCqW3NY6WdDfct5)), use pre-configured Docker containers, or use Terraform scripts for deploying to AWS or Google Cloud.
+- **Cloud ready:** Deploy to Serverpod Cloud with zero configuration (coming soon - **[join the waiting list](https://forms.gle/JgFCqW3NY6WdDfct5)**), use pre-configured Docker containers, or use Terraform scripts for deploying to AWS or Google Cloud.
 
 ## Installation
 
@@ -68,7 +68,7 @@ $ flutter doctor
 
 :::
 
-To make use of Serverpod's database connectivity, you need to have access to a PostgreSQL database. We recommend using Docker to run PostgreSQL locally. You can find instructions for installing Docker on the official [Docker website](https://docs.docker.com/get-docker/). Each Serverpod project comes with its own `docker-compose.yaml`, so there is no need to install any custom containers. We will guide you through the process in the Getting Started section.
+To make use of Serverpod's database connectivity, you need to have access to a PostgreSQL database. We recommend using Docker to run PostgreSQL locally. You can find instructions for installing Docker on the official **[Docker website](https://docs.docker.com/get-docker/)**. Each Serverpod project comes with its own `docker-compose.yaml`, so there is no need to install any custom containers. We will guide you through the process in the Getting Started section.
 
 :::info
 Check your Docker installation by running the following command in your terminal:
@@ -77,7 +77,7 @@ Check your Docker installation by running the following command in your terminal
 $ docker info
 ```
 
-If you are using Docker Desktop and you are getting an error, make sure that Docker is running. You can check this by looking for the Docker icon in your system tray or taskbar. If it's not running, start Docker Desktop and try again.
+If you are using Docker Desktop and you get an error, make sure that Docker is running. You can check this by looking for the Docker icon in your system tray or taskbar. If it's not running, start Docker Desktop and try again.
 :::
 
 ### Install Serverpod
@@ -144,7 +144,7 @@ $ docker compose down
 If you are using Docker Desktop, you can see and manage all your installed Docker containers from there. It's easy to start and stop containers, and to remove the ones you are no longer using.
 :::
 
-Now that the database is up and running we can start the Serverpod server. Because we are running the project for the first time, we need create the database tables used by Serverpod. This is done through a [database migration](./06-concepts/06-database/11-migrations.md). An initial migration is already created for us, so all we need to do is to pass the `--apply-migrations` flag to our server when we start it:
+Now that the database is up and running we can start the Serverpod server. Because we are running the project for the first time, we need to create the database tables used by Serverpod. This is done through a [database migration](./06-concepts/06-database/11-migrations.md). An initial migration is already created for us, so all we need to do is pass the `--apply-migrations` flag when starting the server:
 
 ```bash
 $ cd my_project/my_project_server

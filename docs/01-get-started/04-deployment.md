@@ -6,11 +6,11 @@ sidebar_label: 4. Deploying Serverpod
 
 ## Server requirements
 
-Since Serverpod is written in Dart, it can be compiled into native code and runs on any platform that is supported by the [Dart tooling](https://dart.dev/get-dart#system-requirements).
+Serverpod is written in Dart and compiles to native code, allowing it to run on any platform supported by the [Dart tooling](https://dart.dev/get-dart#system-requirements).
 
-Many users will want to deploy Serverpod using Docker. There is a basic Dockerfile included in the project that can be used to build a Docker image. This image can then be run on any platform that supports Docker.
+Many users prefer to deploy Serverpod using Docker. The project includes a basic Dockerfile that you can use to build a Docker image, which can then be run on any Docker-compatible platform.
 
-If you don't use Docker, you will need [compile the Dart code](https://dart.dev/tools/dart-compile) and copy any assets and configuration files to the server since [asset bundling is not yet supported by Dart](https://github.com/dart-lang/sdk/issues/55195).
+For non-Docker deployments, you'll need to [compile the Dart code](https://dart.dev/tools/dart-compile) and manually copy your assets and configuration files to the server. This manual step is necessary since [asset bundling is not yet supported by Dart](https://github.com/dart-lang/sdk/issues/55195).
 
 ## Server configuration
 
@@ -22,9 +22,9 @@ By default Serverpod is active on three ports:
 
 You will also need to configure the database connection in the `config/production.yaml` file and **securely** provide the `config/passwords.yaml` file to the server.
 
-## Health check from load balancer
+## Health checks
 
-The **8080** port returns a basic health check response. You can use this to check if the server is running and is healthy.
+The server exposes a health check on the root endpoint `/` on port **8080**. Load balancers and monitoring systems can use this endpoint to verify that your server is running and healthy. The endpoint returns a basic health status response.
 
 ## Deploying with Serverpod Cloud
 
@@ -34,4 +34,4 @@ Serverpod Cloud is currently in private beta. Request access by [filling out thi
 
 ## Other deployment options
 
-Checkout [choosing a deployment strategy](../07-deployments/01-deployment-strategy.md) for more information on how to deploy your Serverpod application to other platforms.
+Check out [choosing a deployment strategy](../07-deployments/01-deployment-strategy.md) for more information on how to deploy your Serverpod application to other platforms.

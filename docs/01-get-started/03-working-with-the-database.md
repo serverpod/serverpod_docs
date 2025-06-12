@@ -4,11 +4,11 @@ sidebar_label: 3. Working with the database
 
 # Working with the database
 
-In this section, we will build upon the models we created in the previous section and add a database to store our favorite recipes that we create in the app.
+In this section, we will build upon the models we created in the previous section and add a database to store the recipes that users create in the app. This will allow our application to persist data between sessions.
 
 ## Object relation mapping
 
-Any Serverpod model can be mapped to the database through Serverpod's object relation mapping (ORM). Simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will map the model to a new table in the database called `recipes`.
+Any Serverpod model can be mapped to the database through Serverpod's object relation mapping (ORM). To enable database storage for our recipe model, simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will map the model to a new table in the database called `recipes`.
 
 <!--SNIPSTART 03-table-model-->
 ```yaml
@@ -33,7 +33,12 @@ Check out the reference for [database models](../06-concepts/02-models.md#keywor
 
 ## Migrations
 
-With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server. Since we modified one of our models, make sure to also run `serverpod generate`, to update the generated code in our server.
+Database migrations in Serverpod provide a way to safely evolve your database schema over time. When you make changes to your models that affect the database structure, you need to create a migration. A migration consists of SQL queries that update the database schema to match your model changes.
+
+To create a migration, follow these two steps in order:
+
+1. Run `serverpod generate` to update the generated code based on your model changes.
+2. Run `serverpod create-migration` to create the necessary database migration.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
@@ -41,11 +46,11 @@ $ serverpod generate
 $ serverpod create-migration
 ```
 
-You will notice that there will be a new entry in your _migrations_ folder - serverpod creates these migrations "step by step" - each time you have changes which are relevant to the database and run `serverpod create-migrations` a new migration file will be created. This is a good way to keep track of the changes you make to the database and to be able to roll back changes if needed.
+Each time you run `serverpod create-migration`, a new migration file will be created in your _migrations_ folder. These step-by-step migrations provide a history of your database changes and allow you to roll back changes if needed.
 
 ## Writing to the database
 
-Let's save all the recipes we create to the database. Because the `Recipe` now has a `table` key, it is not just a serializable model but also a `TableRow`. This means that Serverpod has generated bindings for us to the database. You can access the bindings through the static `db` field of the `Recipe`. Here, you will find the `insertRow` method, which is used to create a new entry in the database.
+Now that we've added the `table` keyword to our `Recipe` model, it becomes a `TableRow` type, giving us access to database operations. Serverpod automatically generates database bindings that we can access through the static `db` field of the `Recipe` class. Let's use the `insertRow` method to save new recipes to the database:
 
 <!--SNIPSTART 03-persisted-endpoint {"selectedLines": ["10-12", "39-51"]}-->
 ```dart
@@ -418,19 +423,20 @@ class ResultDisplay extends StatelessWidget {
 
 ## Run the app
 
-First, we need to start the server and apply the migrations by adding the `--apply-migrations` flag:
+To run the application with database support, follow these steps in order:
 
+First, start the database and apply migrations:
 ```bash
 $ cd magic_recipe/magic_recipe_server
-$ docker compose up -d
-$ dart bin/main.dart --apply-migrations
+$ docker compose up -d                   # Start the database container
+$ dart bin/main.dart --apply-migrations  # Apply any pending migrations
 ```
 
 :::tip
-When developing your server, it's always safe to pass the `--apply-migrations` flag. If no migration needs to be applied, the flag is simply ignored. In a production environment, you may want to have a bit more control.
+The `--apply-migrations` flag is safe to use during development - if no migrations are pending, it will simply be ignored. For production environments, you may want more controlled migration management.
 :::
-Now, start the Flutter app:
 
+Next, launch the Flutter app:
 ```bash
 $ cd magic_recipe/magic_recipe_flutter
 $ flutter run -d chrome
@@ -438,12 +444,14 @@ $ flutter run -d chrome
 
 ## Summary
 
-You now know the fundamentals of Serverpod - how to create and use endpoints with custom data models and how to store the data in a database. You have also learned how to use the generated client code to call the endpoints from your Flutter app. We cannot wait to see what you will build with Flutter and Serverpod.
+You've now learned the fundamentals of Serverpod:
 
-If you get stuck, never be afraid to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). The Serverpod team is very active there, and many questions are also answered by other developers.
+- Creating and using endpoints with custom data models.
+- Storing data persistently in a database.
+- Using the generated client code in your Flutter app.
+
+We're excited to see what you'll build with Flutter and Serverpod! If you need help, don't hesitate to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). Both the Serverpod team and community members are active and ready to help.
 
 :::tip
-
-Working with a database is an extensive subject, and Serverpod's ORM is very powerful. Learn more in the [Database](../06-concepts/06-database/01-connection.md) section.
-
+Database operations are a broad topic, and Serverpod's ORM offers many powerful features. To learn more about advanced database operations, check out the [Database](../06-concepts/06-database/01-connection.md) section.
 :::
