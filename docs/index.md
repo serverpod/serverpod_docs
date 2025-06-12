@@ -6,6 +6,8 @@ sidebar_position: -1
 
 Serverpod is an open-source, scalable backend framework built specifically for Flutter developers. It allows you to use Dart for your entire stack, simplifying development and reducing context-switching.
 
+<div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/teOnBD5d8b8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
 ## 🚀 Build your Flutter backend with Dart
 
 Maintain a single-language codebase with Serverpod. Write backend endpoints in Dart and call them directly from your Flutter app without writing boilerplate code. Our state-of-the-art code generation takes care of all the steps in between. Under the hood, Serverpod uses proven web standards and best practices.
