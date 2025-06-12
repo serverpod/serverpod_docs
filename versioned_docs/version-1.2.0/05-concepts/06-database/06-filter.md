@@ -26,9 +26,11 @@ Not equals is the negated version of equals.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.notEquals('Bob')
 );
 ```
+
 In the example we fetch all users with a name that is not Bob. If a non-`null` value is used as an argument for the notEquals comparison, rows with a `null` value in the column will be included in the result.
 
 ### Comparison operators
@@ -37,6 +39,7 @@ Compare a column to a value, these operators are support for `int`, `double`, `D
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.age > 25
 );
 ```
@@ -45,6 +48,7 @@ In the example we fetch all users that are older than 25 years old.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.age >= 25
 );
 ```
@@ -53,6 +57,7 @@ In the example we fetch users that are 25 years old or older.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.age < 25
 );
 ```
@@ -61,6 +66,7 @@ In the example we fetch all users that are younger than 25 years old.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.age <= 25
 );
 ```
@@ -69,19 +75,22 @@ In the example we fetch all users that are 25 years old or younger.
 
 ### Between
 
-The between method takes two values and checks if the columns value is between the two input variables *inclusively*.
+The between method takes two values and checks if the columns value is between the two input variables _inclusively_.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.age.between(18, 65)
 );
 ```
+
 In the example we fetch all users between 18 and 65 years old. This can also be expressed as `(t.age >= 18) & (t.age <= 65)`.
 
 The 'not between' operation functions similarly to 'between' but it negates the condition. It also works inclusively with the boundaries.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.age.notBetween(18, 65)
 );
 ```
@@ -94,6 +103,7 @@ In set can be used to match with several values at once. This method functions t
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.inSet({'Alice', 'Bob'})
 );
 ```
@@ -104,9 +114,11 @@ The 'not in set' operation functions similarly to `inSet`, but it negates the co
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.notInSet({'Alice', 'Bob'})
 );
 ```
+
 In the example we fetch all users with a name not matching Alice or Bob. Rows with a `null` value in the column will be included in the result. If an empty set is used as an argument for the notInSet comparison, all rows will be included in the result.
 
 ### Like
@@ -118,17 +130,18 @@ Two special characters enables matching against partial entries.
 - **`%`** Matching any sequence of character.
 - **`_`** Matching any single character.
 
-| String | Matcher | Is matching |
-|--|--|--|
-| abc | a% | true |
-| abc | _b% | true |
-| abc | a_c | true |
-| abc | b_ | false |
+| String |  Matcher | Is matching |
+| ------ | -------- | ----------- |
+| abc    |  a%      | true        |
+|  abc   | \_b%     | true        |
+| abc    | a_c      | true        |
+| abc    | b\_      | false       |
 
 We use like to match against a partial string.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.like('A%')
 );
 ```
@@ -139,11 +152,12 @@ There is a negated version of like that can be used to exclude rows from the res
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.notLike('B%')
 );
 ```
-In the example we fetch all users with a name that does not start with B.
 
+In the example we fetch all users with a name that does not start with B.
 
 ### ilike
 
@@ -151,6 +165,7 @@ In the example we fetch all users with a name that does not start with B.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.ilike('a%')
 );
 ```
@@ -161,9 +176,11 @@ There is a negated version of `ilike` that can be used to exclude rows from the 
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.name.notIlike('b%')
 );
 ```
+
 In the example we fetch all users with a name that does not start with b or B.
 
 ### Logical operators
@@ -174,15 +191,18 @@ The `&` operator is used to chain two statements together with an `and` operatio
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => (t.name.equals('Alice') & (t.age > 25))
 );
 ```
+
 In the example we fetch all users with the name "Alice" _and_ are older than 25.
 
 The `|` operator is used to chain two statements together with an `or` operation.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => (t.name.like('A%') | t.name.like('B%'))
 );
 ```
@@ -193,18 +213,20 @@ In the example we fetch all users that has a name that starts with A _or_ B.
 
 If a relation between two models is defined a [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relation, then relation operations are supported in Serverpod.
 
-### One-to-one 
+### One-to-one
 
-For 1:1 relations the columns of the relation can be accessed directly on the relation field. This enables filtering on related objects properties. 
+For 1:1 relations the columns of the relation can be accessed directly on the relation field. This enables filtering on related objects properties.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.address.street.like('%road%')
 );
 ```
-In the example each user has a relation to an address that has a street field. Using relation operations we then fetch all users where the related address has a street that contains the word "road". 
 
-### One-to-many 
+In the example each user has a relation to an address that has a street field. Using relation operations we then fetch all users where the related address has a street that contains the word "road".
+
+### One-to-many
 
 For 1:n relations, there are special filter methods where you can create sub-filters on all the related data. With them, you can answer questions on the aggregated result on many relations.
 
@@ -214,6 +236,7 @@ Count can be used to count the number of related entries in a 1:n relation. The 
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.orders.count() > 3
 );
 ```
@@ -224,19 +247,20 @@ We can apply a sub-filter to the `count` operator filter the related entries bef
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.orders.count((o) => o.itemType.equals('book')) > 3
 );
 ```
 
 In the example we fetch all users with more than three "book" orders.
 
-
 #### None
 
-None can be used to retrieve rows that have no related entries in a 1:n relation. Meaning if there exists a related entry then the row is omitted from the result. The operation is useful if you want to ensure that a many relation does not contain any related rows. 
+None can be used to retrieve rows that have no related entries in a 1:n relation. Meaning if there exists a related entry then the row is omitted from the result. The operation is useful if you want to ensure that a many relation does not contain any related rows.
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.orders.none()
 );
 ```
@@ -247,6 +271,7 @@ We can apply a sub-filter to the `none` operator to filter the related entries. 
 
 ```dart
 await User.db.find(
+  session,
   where:((t) => t.orders.none((o) => o.itemType.equals('book')))
 );
 ```
@@ -259,6 +284,7 @@ Any works similarly to the `any` method on lists in Dart. If there exists any re
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.orders.any()
 );
 ```
@@ -269,6 +295,7 @@ We can apply a sub-filter to the `any` operator to filter the related entries. M
 
 ```dart
 await User.db.find(
+  session,
   where:((t) => t.orders.any((o) => o.itemType.equals('book')))
 );
 ```
@@ -281,6 +308,7 @@ Every works similarly to the `every` method on lists in Dart. If every related e
 
 ```dart
 await User.db.find(
+  session,
   where: (t) => t.orders.every((o) => o.itemType.equals('book'))
 );
 ```

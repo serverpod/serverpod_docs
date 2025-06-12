@@ -195,8 +195,8 @@ $ serverpod create-migration
 In a Serverpod development project, the database is hosted in a docker container. To remove the existing database and start a new one run the following commands:
 
 ```bash
-$ docker-compose down -v
-$ docker-compose up --build --detach 
+$ docker compose down -v
+$ docker compose up --build --detach 
 ```
 
 The command first removes the running container along with its volume and the second command starts a new database from scratch.

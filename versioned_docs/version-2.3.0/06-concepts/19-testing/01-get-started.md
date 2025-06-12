@@ -229,7 +229,7 @@ The location of the test tools can be changed by changing the  `server_test_tool
 Before the test can be run the Postgres and Redis also have to be started:
 
 ```bash
-docker-compose up --build --detach
+docker compose up --build --detach
 ```
 
 By default this starts up both the `development` and `test` profiles. To only start one profile, simply add `--profile test` to the command.
