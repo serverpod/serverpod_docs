@@ -108,8 +108,9 @@ indexes:
 ```
 
 Available HNSW parameters:
-- `m`: Maximum number of bi-directional links for each node (default: 16)
-- `efConstruction`: Size of the dynamic candidate list (default: 64)
+
+- `m`: Maximum number of bidirectional links for each node (default: 16)
+- `ef_construction`: Size of the dynamic candidate list (default: 64)
 
 #### IVFFLAT indexes
 
@@ -131,6 +132,7 @@ indexes:
 ```
 
 Available IVFFLAT parameters:
+
 - `lists`: Number of inverted lists (default: 100)
 
 #### Distance functions
@@ -149,7 +151,7 @@ Supported distance functions for vector indexes (`distanceFunction` parameter):
 Different vector types have specific limitations when creating indexes:
 
 - **SparseVector**: Can only use HNSW indexes (IVFFLAT is not supported).
-- **HalfVector**: When using IVFFLAT indexes, L1 distance function is not supported.
+- **HalfVector**: When using IVFFLAT indexes, the L1 distance function is not supported.
 - **Bit**: Only supports `hamming` (default) and `jaccard` distance functions.
 
 :::tip

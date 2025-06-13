@@ -18,7 +18,7 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector, HalfVector, SparseVector, Bit](#vector-fields) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](#vector), [HalfVector](#halfvector), [SparseVector](#sparsevector), [Bit](#bit) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Limiting visibility of a generated class
 
@@ -135,7 +135,7 @@ fields:
 
 ## Vector fields
 
-Vector types are used for storing high-dimensional vectors, which are specially useful for similarity search operations.
+Vector types are used for storing high-dimensional vectors, which are especially useful for similarity search operations.
 
 When specifying vector types, the dimension is required between parentheses (e.g., `Vector(1536)`). Common dimensions include:
 
