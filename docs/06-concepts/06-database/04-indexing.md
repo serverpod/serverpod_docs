@@ -65,7 +65,7 @@ If no type is specified the default is `btree`. All [PostgreSQL index types](htt
 
 ### Vector indexes
 
-To enhance the performance of vector similarity search, it is possible to create specialized vector indexes on vector fields (`Vector`, `HalfVector`, `SparseVector`, `Bit`). Serverpod supports both `HNSW` and `IVFFLAT` index types with full parameter specification.
+To enhance the performance of vector similarity search, it is possible to create specialized vector indexes on vector fields (`Vector`, `HalfVector`, `SparseVector`, `Bit`). Serverpod supports both `hnsw` and `ivfflat` index types with full parameter specification.
 
 :::info
 Each vector index can only be created on a single vector field. It is not possible to create a vector index on multiple fields of any kind.
@@ -93,7 +93,7 @@ indexes:
       ef_construction: 64
   document_keywords_idx:
     fields: keywords
-    type: hnsw  # SparseVector can only use HNSW
+    type: hnsw
     distanceFunction: innerProduct
     parameters:
       m: 16
@@ -101,7 +101,7 @@ indexes:
   document_hash_idx:
     fields: hash
     type: hnsw
-    distanceFunction: hamming  # Bit vectors only support hamming or jaccard
+    distanceFunction: hamming
     parameters:
       m: 16
       ef_construction: 64
