@@ -137,6 +137,20 @@ fields:
 
 Vector types are used for storing high-dimensional vectors, which are specially useful for similarity search operations.
 
+When specifying vector types, the dimension is required between parentheses (e.g., `Vector(1536)`). Common dimensions include:
+
+- 1536 (OpenAI embeddings)
+- 768 (many sentence transformers)
+- 384 (smaller models)
+
+All vector types support specialized distance operations for similarity search and filtering. See the [Vector distance operators](database/filter#vector-distance-operators) section for details.
+
+To ensure optimal performance with vector similarity searches, consider creating specialized vector indexes on your vector fields. See the [Vector indexes](database/indexing#vector-indexes) section for more details.
+
+:::info
+The usage of Vector fields requires the pgvector PostgreSQL extension to be installed, which comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrading to pgvector support](../upgrading/upgrade-to-pgvector) guide.
+:::
+
 ### Vector
 
 The `Vector` type stores full-precision floating-point vectors for general-purpose embeddings.
@@ -193,18 +207,6 @@ fields:
   ### Binary vector for semantic hashing
   hash: Bit(256)
 ```
-
-The number in parentheses specifies the vector dimensions. Common dimensions include:
-
-- 1536 (OpenAI embeddings)
-- 768 (many sentence transformers)
-- 384 (smaller models)
-
-All vector types support specialized distance operations for similarity search and filtering. See the [Vector distance operators](database/filter#vector-distance-operators) section for details.
-
-:::info
-The usage of Vector fields requires the pgvector PostgreSQL extension to be installed, which comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrading to pgvector support](../upgrading/upgrade-to-pgvector) guide.
-:::
 
 ## Generated code
 
