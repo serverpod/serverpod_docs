@@ -208,7 +208,6 @@ The password file contains the secrets used by the server to connect to differen
 ```yaml
 shared:
   myCustomSharedSecret: 'secret_key'
-  stripeApiKey: 'sk_test_123...'
 
 development:
   database: 'development_password'
