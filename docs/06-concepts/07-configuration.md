@@ -73,39 +73,21 @@ These can be separately declared for each run mode in the corresponding yaml fil
 
 Secrets are declared in the `passwords.yaml` file. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs.
 
+You can define your own custom secrets in the [passwords file](#passwords-file-example) by adding them to either the `shared` section (to make them available in all run modes) or to specific run mode sections. These custom secrets will be available in your code through the `Session.passwords` map.
+
+#### Built-in Secrets
+
+The following table shows the built-in secrets that Serverpod uses for its core functionality. These can be configured either through environment variables or by adding the corresponding key in a respective run mode or shared section in the passwords file. These are separate from any custom passwords you might define.
+
 | Environment variable        | Passwords file | Default | Description                                                       |
 | --------------------------- | -------------- | ------- | ----------------------------------------------------------------- |
 | SERVERPOD_DATABASE_PASSWORD | database       | -       | The password for the database                                     |
 | SERVERPOD_SERVICE_SECRET    | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
 | SERVERPOD_REDIS_PASSWORD    | redis          | -       | The password for the Redis server                                 |
 
-### Custom Passwords
+#### Secrets for First Party Packages
 
-In addition to the predefined secrets above, you can define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available in your code as `myApiKey` (the prefix is stripped) through the `Session.passwords` map. These environment variables will override any passwords defined in the [passwords file](#passwords-file-example) if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
-
-| Environment variable format | Description                                                                                                                                      |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` prefix will be stripped from the key name. |
-
-#### Example
-
-To define a custom password through an environment variable, set it as an environment variable with the prefix:
-
-```bash
-export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
-```
-
-You can then access it in your endpoint code:
-
-```dart
-Future<void> processPayment(Session session, PaymentData data) async {
-  final stripeApiKey = session.passwords['stripeApiKey'];
-  // Use the API key to make requests to Stripe
-  ...
-}
-```
-
-#### Secrets for first party packages
+The following secrets are used by official Serverpod packages:
 
 - [serverpod_cloud_storage_gcp](https://pub.dev/packages/serverpod_cloud_storage_gcp): Google Cloud Storage
 - [serverpod_cloud_storage_s3](https://pub.dev/packages/serverpod_cloud_storage_s3): Amazon S3
@@ -116,6 +98,60 @@ Future<void> processPayment(Session session, PaymentData data) async {
 | SERVERPOD_HMAC_SECRET_KEY    | HMACSecretKey   | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp    |
 | SERVERPOD_AWS_ACCESS_KEY_ID  | AWSAccessKeyId  | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3   |
 | SERVERPOD_AWS_SECRET_KEY     | AWSSecretKey    | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3      |
+
+### Custom Passwords
+
+You can define custom passwords in two ways:
+
+#### 1. Via Passwords File
+
+Add your custom secrets directly to the passwords file under the `shared` section (available in all run modes) or under specific run mode sections:
+
+```yaml
+shared:
+  myCustomSharedSecret: 'secret_key'
+  stripeApiKey: 'sk_test_123...'
+
+development:
+  database: 'development_password'
+  redis: 'development_password'
+  serviceSecret: 'development_service_secret'
+  twilioApiKey: 'dev_twilio_key'
+
+production:
+  database: 'production_password'
+  redis: 'production_password'
+  serviceSecret: 'production_service_secret'
+  twilioApiKey: 'prod_twilio_key'
+```
+
+#### 2. Via Environment Variables
+
+You can also define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available as `myApiKey` (the prefix is stripped). These environment variables will override any passwords defined in the passwords file if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
+
+| Environment variable format | Description                                                                                                                               |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` will be stripped from the key name. |
+
+**Example:**
+
+To define a custom password through an environment variable:
+
+```bash
+export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
+```
+
+**Accessing Custom Passwords:**
+
+You can then access any custom password (whether defined in the passwords file or via environment variables) in your endpoint code through the `Session.passwords` map:
+
+```dart
+Future<void> processPayment(Session session, PaymentData data) async {
+  final stripeApiKey = session.passwords['stripeApiKey'];
+  // Use the API key to make requests to Stripe
+  ...
+}
+```
 
 ### Config file example
 
@@ -172,16 +208,19 @@ The password file contains the secrets used by the server to connect to differen
 ```yaml
 shared:
   myCustomSharedSecret: 'secret_key'
+  stripeApiKey: 'sk_test_123...'
 
 development:
   database: 'development_password'
   redis: 'development_password'
   serviceSecret: 'development_service_secret'
+  twilioApiKey: 'dev_twilio_key'
 
 production:
   database: 'production_password'
   redis: 'production_password'
   serviceSecret: 'production_service_secret'
+  twilioApiKey: 'prod_twilio_key'
 ```
 
 ### Dart config object example
