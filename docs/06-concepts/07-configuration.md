@@ -99,11 +99,11 @@ The following secrets are used by official Serverpod packages:
 | SERVERPOD_AWS_ACCESS_KEY_ID  | AWSAccessKeyId  | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3   |
 | SERVERPOD_AWS_SECRET_KEY     | AWSSecretKey    | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3      |
 
-### Custom Passwords
+#### Custom Secrets
 
 You can define custom passwords in two ways:
 
-#### 1. Via Passwords File
+##### 1. Via Passwords File
 
 Add your custom secrets directly to the passwords file under the `shared` section (available in all run modes) or under specific run mode sections:
 
@@ -125,7 +125,7 @@ production:
   twilioApiKey: 'prod_twilio_key'
 ```
 
-#### 2. Via Environment Variables
+##### 2. Via Environment Variables
 
 You can also define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available as `myApiKey` (the prefix is stripped). These environment variables will override any passwords defined in the passwords file if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
 
