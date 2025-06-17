@@ -71,9 +71,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 
 ### Secrets
 
-Secrets are declared in the `passwords.yaml` file. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs.
-
-You can define your own custom secrets in the [passwords file](#passwords-file-example) by adding them to either the `shared` section (to make them available in all run modes) or to specific run mode sections. These custom secrets will be available in your code through the `Session.passwords` map.
+Secrets are declared in the `passwords.yaml` file. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs. You can also define custom secrets using [environment variables](#2-via-environment-variables).
 
 #### Built-in Secrets
 
@@ -101,11 +99,13 @@ The following secrets are used by official Serverpod packages:
 
 #### Custom Secrets
 
+You can define your own custom secrets in the [passwords file](#passwords-file-example) by adding them to either the `shared` section (to make them available in all run modes) or to specific run mode sections. These custom secrets will be available in your code through the `Session.passwords` map.
+
 You can define custom passwords in two ways:
 
 ##### 1. Via Passwords File
 
-Add your custom secrets directly to the passwords file under the `shared` section (available in all run modes) or under specific run mode sections:
+Add your custom secrets directly to the passwords file under the `shared` section (available in all run modes) or under specific run mode sections.
 
 ```yaml
 shared:
