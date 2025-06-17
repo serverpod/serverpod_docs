@@ -79,6 +79,8 @@ Secrets are declared in the `passwords.yaml` file. The password file is structur
 | SERVERPOD_SERVICE_SECRET    | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
 | SERVERPOD_REDIS_PASSWORD    | redis          | -       | The password for the Redis server                                 |
 
+### Custom Passwords
+
 In addition to the predefined secrets above, you can define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available in your code as `myApiKey` (the prefix is stripped) through the `Session.passwords` map. These environment variables will override any passwords defined in the [passwords file](#passwords-file-example) if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
 
 | Environment variable format | Description                                                                                                                               |
