@@ -426,6 +426,7 @@ class ResultDisplay extends StatelessWidget {
 To run the application with database support, follow these steps in order:
 
 First, start the database and apply migrations:
+
 ```bash
 $ cd magic_recipe/magic_recipe_server
 $ docker compose up -d                   # Start the database container
@@ -437,6 +438,7 @@ The `--apply-migrations` flag is safe to use during development - if no migratio
 :::
 
 Next, launch the Flutter app:
+
 ```bash
 $ cd magic_recipe/magic_recipe_flutter
 $ flutter run -d chrome
