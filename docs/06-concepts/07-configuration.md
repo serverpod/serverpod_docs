@@ -83,9 +83,27 @@ Secrets are declared in the `passwords.yaml` file. The password file is structur
 
 In addition to the predefined secrets above, you can define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available in your code as `myApiKey` (the prefix is stripped) through the `Session.passwords` map. These environment variables will override any passwords defined in the [passwords file](#passwords-file-example) if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
 
-| Environment variable format | Description                                                                                                                               |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` will be stripped from the key name. |
+| Environment variable format | Description                                                                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` prefix will be stripped from the key name. |
+
+#### Example
+
+To define a custom password, set it as an environment variable:
+
+```bash
+export SERVERPOD_PASSWORD_stripe_api_key=sk_test_123...
+```
+
+You can then access it in your endpoint code:
+
+```dart
+Future<void> processPayment(Session session, PaymentData data) async {
+  final stripeApiKey = session.passwords['stripe_api_key'];
+  // Use the API key to make requests to Stripe
+  ...
+}
+```
 
 #### Secrets for first party packages
 
