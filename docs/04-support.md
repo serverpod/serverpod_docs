@@ -1,3 +1,7 @@
+---
+sidebar_label: 💬 Support & community
+---
+
 # Support & community
 
 Welcome to the Serverpod community! We offer several ways to get help, stay informed, and connect with other developers.

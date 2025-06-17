@@ -1,3 +1,7 @@
+---
+sidebar_label: 🛣️ Roadmap & contributions
+---
+
 # Roadmap & contributions
 
 Serverpod is built by the community, for the community. We believe the best software comes from collaboration, where many people contribute their ideas and skills. That's why we strive to make contributing as easy as possible and share our plans for future development in our public roadmap.

@@ -1,3 +1,7 @@
+---
+sidebar_label: 🐣 Serverpod Mini
+---
+
 # Serverpod Mini
 
 ## Serverpod or Serverpod Mini?
