@@ -101,48 +101,6 @@ class ChildClass extends ParentClass {
 All files in a sealed hierarchy need to be located in the same directory.
 :::
 
-## Change ID type
-
-Changing the type of the `id` field allows you to customize the identifier type for your database tables. This is done by declaring the `id` field on table models with one of the supported types. If the field is omitted, the id field will still be created with type `int`, as have always been.
-
-The following types are supported for the `id` field:
-
-| **Type**      | Default | Default Persist options | Default Model options | Description            |
-| :------------ | :------ | :---------------------- | :-------------------- | :--------------------- |
-| **int**       | serial  | serial (optional)       | -                     | 64-bit serial integer. |
-| **UuidValue** | random  | random                  | random                | UUID v4 value.         |
-
-### Declaring a Custom ID Type
-
-To declare a custom type for the `id` field in a table model file, use the following syntax:
-
-```yaml
-class: UuidIdTable
-table: uuid_id_table
-fields:
-  id: UuidValue?, defaultPersist=random
-```
-
-```yaml
-class: IntIdTable
-table: int_id_table
-fields:
-  id: int?, defaultPersist=serial  // The default keyword for 'int' is optional.
-```
-
-#### Default Uuid model value
-
-For UUIDs, it is possible to configure the `defaultModel` value. This will ensure that UUIDs are generated as soon as the object is created, rather than when it is persisted to the database. This is useful for creating objects offline or using them before they are sent to the server.
-
-```yaml
-class: UuidIdTable
-table: uuid_id_table
-fields:
-  id: UuidValue, defaultModel=random
-```
-
-When using `defaultModel=random`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
-
 ## Exception monitoring
 
 Serverpod allows you to monitor exceptions in a central and flexible way by using the new diagnostic event handlers.
