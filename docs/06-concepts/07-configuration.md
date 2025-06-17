@@ -99,9 +99,7 @@ The following secrets are used by official Serverpod packages:
 
 #### Custom Secrets
 
-You can define your own custom secrets in the [passwords file](#passwords-file-example) by adding them to either the `shared` section (to make them available in all run modes) or to specific run mode sections. These custom secrets will be available in your code through the `Session.passwords` map.
-
-You can define custom passwords in two ways:
+You can define your own custom secrets in two ways.
 
 ##### 1. Via Passwords File
 
