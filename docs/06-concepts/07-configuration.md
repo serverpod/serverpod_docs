@@ -89,17 +89,17 @@ In addition to the predefined secrets above, you can define custom passwords usi
 
 #### Example
 
-To define a custom password, set it as an environment variable:
+To define a custom password through an environment variable, set it as an environment variable with the prefix:
 
 ```bash
-export SERVERPOD_PASSWORD_stripe_api_key=sk_test_123...
+export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
 ```
 
 You can then access it in your endpoint code:
 
 ```dart
 Future<void> processPayment(Session session, PaymentData data) async {
-  final stripeApiKey = session.passwords['stripe_api_key'];
+  final stripeApiKey = session.passwords['stripeApiKey'];
   // Use the API key to make requests to Stripe
   ...
 }
