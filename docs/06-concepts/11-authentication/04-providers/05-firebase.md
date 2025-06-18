@@ -16,6 +16,8 @@ The server needs the service account credentials for access to your Firebase pro
 
 This will download the JSON file, rename it to `firebase_service_account_key.json` and place it in the `config` folder in your server project. Note that if this file is corrupt or if the name does not follow the convention here the authentication with firebase will fail.
 
+Alternatively, you can provide the contents of the JSON file through the environment variable `SERVERPOD_PASSWORD_serverpod_auth_firebaseServiceAccountKey`.
+
 :::danger
 The firebase_service_account_key.json file gives admin access to your Firebase project, never store it in version control.
 :::
@@ -87,8 +89,8 @@ You can also trigger the Firebase auth UI by calling the method `signInWithFireb
 
 ```dart
 await signInWithFirebase(
-  context: context, 
-  caller: client.modules.auth, 
+  context: context,
+  caller: client.modules.auth,
   authProviders: [
     firebase.PhoneAuthProvider(),
   ],

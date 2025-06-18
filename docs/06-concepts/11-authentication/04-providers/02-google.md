@@ -40,6 +40,8 @@ Create the server credentials in the google cloud console. Navigate to _Credenti
 
 Download the JSON file for your web application OAuth client. This file contains both the client id and the client secret. Rename the file to `google_client_secret.json` and place it in your server's `config` directory.
 
+Alternatively, you can provide the contents of the JSON file through the environment variable `SERVERPOD_PASSWORD_serverpod_auth_googleClientSecret`.
+
 :::warning
 
 The `google_client_secret.json` contains a private key and should not be version controlled.
