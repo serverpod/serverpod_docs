@@ -24,6 +24,15 @@ flowchart TB
 
 ### Configuration options for the server
 
+| Environment variable             | Command line option        | Config file option   | Default     | Description                                                                                                      |
+| -------------------------------- | -------------------------- | -------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| SERVERPOD_RUN_MODE               | `--mode`                   | N/A                  | development | Configures the mode of the server instance. Valid options are `development`, `staging`, `production` and `test`. |
+| SERVERPOD_SERVER_ID              | `--server-id`              | serverId             | default     | Configures the id of the server instance.                                                                        |
+| SERVERPOD_SERVER_ROLE            | `--role`                   | role                 | monolith    | Configures the role of the server instance. Valid options are `monolith`, `serverless` and `maintenance`.        |
+| SERVERPOD_LOGGING_MODE           | `--logging`                | logging              | normal      | Configures the logging level. Valid options are `normal`, and `verbose`.                                         |
+| SERVERPOD_APPLY_MIGRATIONS       | `--apply-migrations`       | applyMigrations      | false       | Configures if migrations should be applied when the server starts.                                               |
+| SERVERPOD_APPLY_REPAIR_MIGRATION | `--apply-repair-migration` | applyRepairMigration | false       | Configures if repair migrations should be applied when the server starts.                                        |
+
 These can be separately declared for each run mode in the corresponding yaml file (`development.yaml`,`staging.yaml`, `production.yaml` and `testing.yaml`) or as environment variables.
 
 | Environment variable                     | Config file                   | Default   | Description                                                                                                                                           |
@@ -51,6 +60,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_REDIS_PORT                     | redis.port                    | -         | The port number for the Redis server                                                                                                                  |
 | SERVERPOD_REDIS_USER                     | redis.user                    | -         | The user name for Redis authentication                                                                                                                |
 | SERVERPOD_REDIS_ENABLED                  | redis.enabled                 | false     | Indicates if Redis is enabled                                                                                                                         |
+| SERVERPOD_REDIS_REQUIRE_SSL              | redis.requireSsl              | false     | Indicates if SSL is required for the Redis connection                                                                                                 |
 | SERVERPOD_MAX_REQUEST_SIZE               | maxRequestSize                | 524288    | The maximum size of requests allowed in bytes                                                                                                         |
 | SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED | sessionLogs.persistentEnabled | -         | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`.                          |
 | SERVERPOD_SESSION_CONSOLE_LOG_ENABLED    | sessionLogs.consoleEnabled    | -         | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`.                          |
@@ -58,10 +68,6 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_FUTURE_CALL_EXECUTION_ENABLED  | futureCallExecutionEnabled    | true      | Enables or disables the execution of future calls.                                                                                                    |
 | SERVERPOD_FUTURE_CALL_CONCURRENCY_LIMIT  | futureCall.concurrencyLimit   | 1         | The maximum number of concurrent future calls allowed. If the value is negative or null, no limit is applied.                                         |
 | SERVERPOD_FUTURE_CALL_SCAN_INTERVAL      | futureCall.scanInterval       | 5000      | The interval in milliseconds for scanning future calls                                                                                                |
-
-| Environment variable | Command line option | Default | Description                               |
-| -------------------- | ------------------- | ------- | ----------------------------------------- |
-| SERVERPOD_SERVER_ID  | `--server-id`       | default | Configures the id of the server instance. |
 
 ### Secrets
 

@@ -20,7 +20,6 @@ serverpod create magic_recipe
 
 :::tip
 Always open the root directory of the project in your IDE. This will make it easier to navigate between the server and app packages. It will also prevent your analyzer from going out of sync when you generate code.
-
 :::
 
 ### Add the Gemini API to your project
@@ -197,7 +196,7 @@ class MyHomePageState extends State<MyHomePage> {
 ## Run the app
 
 :::tip
-Before you start your server, ensure no other Serverpod server is running. Also, ensure that Docker for another project isn't running. You can see and stop containers in the Docker Desktop app.
+Before you start your server, ensure no other Serverpod server is running. Also, ensure that Docker containers from other Serverpod projects aren't running to avoid port conflicts. You can see and stop containers in the Docker Desktop app.
 :::
 
 Let's try our new recipe app! First, start the server:

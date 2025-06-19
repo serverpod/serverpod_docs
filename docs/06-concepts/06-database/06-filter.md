@@ -211,18 +211,25 @@ In the example we fetch all users that has a name that starts with A _or_ B.
 
 ### Vector distance operators
 
-Vector fields support specialized distance operations for similarity search. Available vector distance operations:
+All vector field types support specialized distance operations for similarity search. Available vector distance operations:
 
+**Vector, HalfVector, and SparseVector fields:**
 - `distanceL2` - Euclidean (L2) distance.
 - `distanceInnerProduct` - Inner product distance.
 - `distanceCosine` - Cosine distance.
 - `distanceL1` - Manhattan or taxicab (L1) distance.
+
+**Bit vector fields:**
+- `distanceHamming` - Hamming distance.
+- `distanceJaccard` - Jaccard distance.
 
 You can use vector distance operations with numeric comparisons for filtering and ordering:
 
 ```dart
 // The vector to compare against
 var queryVector = Vector([0.1, 0.2, 0.3, ...]);
+var sparseQuery = SparseVector([0.0, 1.0, 0.0, 2.5, ...]);
+var binaryQuery = Bit([1, 0, 1, 1, 0, ...]);
 
 // Find top documents similar to a query vector
 var similarDocs = await Document.db.find(
@@ -230,6 +237,22 @@ var similarDocs = await Document.db.find(
   where: (t) => t.embedding.distanceCosine(queryVector) < 0.5,
   orderBy: (t) => t.embedding.distanceCosine(queryVector),
   limit: 10,
+);
+
+// Search using sparse vectors
+var keywordMatches = await Document.db.find(
+  session,
+  where: (t) => t.keywords.distanceInnerProduct(sparseQuery) < 0.3,
+  orderBy: (t) => t.keywords.distanceInnerProduct(sparseQuery),
+  limit: 5,
+);
+
+// Search using binary vectors with Hamming distance
+var binaryMatches = await Document.db.find(
+  session,
+  where: (t) => t.hash.distanceHamming(binaryQuery) < 10,
+  orderBy: (t) => t.hash.distanceHamming(binaryQuery),
+  limit: 5,
 );
 
 // Filter by distance range

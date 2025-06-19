@@ -41,7 +41,7 @@ This will generate the code for the model and create a new file called `recipe.d
 
 ## Use the model in the server
 
-Now that you have created the model, you can use it in your server code. Let's update the `lib/src/recipies/recipe_endpoint.dart` file to make the `generateRecipe` method to return a `Recipe` object instead of a string.
+Now that you have created the model, you can use it in your server code. Let's update the `lib/src/recipes/recipe_endpoint.dart` file to make the `generateRecipe` method return a `Recipe` object instead of a string.
 
 <!--SNIPSTART 02-typed-endpoint  {"selectedLines": ["4", "10-12", "39-48"]}-->
 ```dart
