@@ -101,7 +101,7 @@ await session.db.transaction((transaction) async {
 
 ### Creating custom runtime parameters
 
-Custom parameter groups can be created in one of two ways:
+Custom parameter groups can be created in one of the following ways:
 
 #### Using `MapRuntimeParameters`
 
@@ -126,7 +126,7 @@ await session.db.transaction((transaction) async {
 
 #### Extending `RuntimeParameters`
 
-Extending the base `RuntimeParameters` class directly, overriding the `options` getter:
+Extend the base `RuntimeParameters` class directly, overriding the `options` getter:
 
 ```dart
 import 'package:serverpod/database.dart';
@@ -146,6 +146,52 @@ class CustomRuntimeParameters extends RuntimeParameters {
     'another_param': param2,
   };
 }
+```
+
+#### Extending the builder class with custom methods
+
+Create an extension on `RuntimeParametersBuilder` to add custom methods that return instances of your custom runtime parameters class:
+
+```dart
+import 'package:serverpod/database.dart';
+
+extension CustomRuntimeParametersExtension on RuntimeParametersBuilder {
+  // Directly with `MapRuntimeParameters`, without a custom class.
+  MapRuntimeParameters mapCustomParameters({
+    required int param1,
+    required int param2,
+  }) {
+    return MapRuntimeParameters({
+      'custom_param': param1,
+      'another_param': param2,
+    });
+  }
+
+  // With a custom runtime parameters class as declared above.
+  CustomRuntimeParameters classCustomParameters({
+    required int param1,
+    required int param2,
+  }) {
+    return CustomRuntimeParameters(
+      param1: param1,
+      param2: param2,
+    );
+  }
+}
+```
+
+This allows you to use your custom parameters with the same builder pattern:
+
+```dart
+await session.db.transaction((transaction) async {
+  await transaction.setRuntimeParameters((params) => [
+    params.mapCustomParameters(param1: 100, param2: 200),
+    params.classCustomParameters(param1: 300, param2: 400),
+    params.hnswIndexQuery(efSearch: 64), // Can combine with built-in parameters
+  ]);
+
+  // Your queries here...
+});
 ```
 
 ### Parameter values
