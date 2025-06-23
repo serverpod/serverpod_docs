@@ -272,7 +272,7 @@ var filteredSimilarity = await Document.db.find(
 ```
 
 :::tip
-For optimal performance with vector similarity searches, consider creating specialized vector indexes (HNSW or IVFFLAT) on your vector fields. See the [Vector indexes](indexing#vector-indexes) section for more details.
+For optimal performance with vector similarity searches, consider creating specialized vector indexes (HNSW or IVFFLAT) on your vector fields. See the [Vector indexes](indexing#vector-indexes) section for more details. To fine-tune query execution, you can also set appropriate [runtime parameters](runtime-parameters) for vector queries.
 :::
 
 ## Relation operations
