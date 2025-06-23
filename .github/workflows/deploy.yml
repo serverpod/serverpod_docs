@@ -9,6 +9,7 @@ permissions:
 
 jobs:
     deploy:
+        if: github.repository == 'serverpod/serverpod_docs'
         runs-on: ubuntu-latest
         environment: deploy
         steps:
