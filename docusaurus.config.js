@@ -170,9 +170,9 @@ const config = {
             to: '/concepts/authentication/setup',
           },
           {
-            // Moved in version 1.1.1 and 2.1.0
-            from: ['/tutorials', '/tutorials/videos'],
-            to: '/tutorials/first-app',
+            // Moved in version 1.1.1, 2.1.0 and 2.9.0
+            from: ['/tutorials', '/tutorials/videos', '/tutorials/first-app'],
+            to: '/tutorials/tutorials/fundamentals',
           },
           {
             // Moved in version 1.2.0
