@@ -75,7 +75,7 @@ Existing parameter groups include:
 - **IVFFLAT index query parameters**: Control the behavior of IVFFLAT index queries.
 - **Schema search paths**: Control the search paths for database schemas.
 
-It is also possible to [create custom parameter groups](###creating-custom-runtime-parameters).
+It is also possible to [create custom parameter groups](#creating-custom-runtime-parameters).
 
 ### Combining multiple parameter groups
 
