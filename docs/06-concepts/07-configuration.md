@@ -83,13 +83,16 @@ Secrets are declared in the `passwords.yaml` file. The password file is structur
 
 - [serverpod_cloud_storage_gcp](https://pub.dev/packages/serverpod_cloud_storage_gcp): Google Cloud Storage
 - [serverpod_cloud_storage_s3](https://pub.dev/packages/serverpod_cloud_storage_s3): Amazon S3
+- [serverpod_auth_server](https://pub.dev/packages/serverpod_auth_server): Serverpod Auth Server
 
-| Environment variable         | Passwords file  | Default | Description                                                               |
-| ---------------------------- | --------------- | ------- | ------------------------------------------------------------------------- |
-| SERVERPOD_HMAC_ACCESS_KEY_ID | HMACAccessKeyId | -       | The access key ID for HMAC authentication for serverpod_cloud_storage_gcp |
-| SERVERPOD_HMAC_SECRET_KEY    | HMACSecretKey   | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp    |
-| SERVERPOD_AWS_ACCESS_KEY_ID  | AWSAccessKeyId  | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3   |
-| SERVERPOD_AWS_SECRET_KEY     | AWSSecretKey    | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3      |
+| Environment variable                                        | Passwords file                           | Default | Description                                                                   |
+| ----------------------------------------------------------- | ---------------------------------------- | ------- | ----------------------------------------------------------------------------- |
+| SERVERPOD_HMAC_ACCESS_KEY_ID                                | HMACAccessKeyId                          | -       | The access key ID for HMAC authentication for serverpod_cloud_storage_gcp     |
+| SERVERPOD_HMAC_SECRET_KEY                                   | HMACSecretKey                            | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp        |
+| SERVERPOD_AWS_ACCESS_KEY_ID                                 | AWSAccessKeyId                           | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3       |
+| SERVERPOD_AWS_SECRET_KEY                                    | AWSSecretKey                             | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3          |
+| SERVERPOD_PASSWORD_serverpod_auth_googleClientSecret        | serverpod_auth_googleClientSecret        | -       | The client secret for Google authentication for serverpod_auth_server         |
+| SERVERPOD_PASSWORD_serverpod_auth_firebaseServiceAccountKey | serverpod_auth_firebaseServiceAccountKey | -       | The service account key for Firebase authentication for serverpod_auth_server |
 
 ### Config file example
 
