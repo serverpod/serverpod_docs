@@ -96,7 +96,7 @@ await session.db.transaction((transaction) async {
 
 Custom parameter groups can be created in one of two ways:
 
-#### Using `MapRuntimeParameters`:
+#### Using `MapRuntimeParameters`
 
 Create an instance of the `MapRuntimeParameters` class, which allows you to set specific parameters by name:
 
@@ -117,7 +117,7 @@ await session.db.transaction((transaction) async {
 });
 ```
 
-#### Extending `RuntimeParameters`:
+#### Extending `RuntimeParameters`
 
 Extending the base `RuntimeParameters` class directly, overriding the `options` getter:
 
