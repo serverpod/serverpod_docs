@@ -219,3 +219,46 @@ void main() {
   });
 }
 ```
+
+## Shutdown Tasks
+
+Serverpod provides support for registering **shutdown tasks**—asynchronous operations that are executed when the server is shutting down. This is useful for performing cleanup operations such as saving application state or releasing external resources.
+
+Shutdown tasks are executed *after* the server has stopped accepting new requests, but *before* the Redis and database connections are closed.
+
+All registered shutdown tasks are executed concurrently, and the server waits for all tasks to complete before fully shutting down. If any task fails, the error is logged, but it does not prevent the server from shutting down.
+
+### Managing Shutdown Tasks
+
+To manage shutdown tasks, use the `experimental.shutdownTasks` API on your `Serverpod` instance. This API offers methods for adding and removing tasks.
+
+#### Add Shutdown Task
+
+Each shutdown task is identified by a unique `Object` identifier and executes a function that returns a `Future<void>`.
+
+To add a task, use the `addTask` method:
+
+```dart
+var serverpod = Serverpod(
+  ...
+);
+serverpod.experimental.shutdownTasks.addTask(
+  #taskIdentifier,
+  () async {
+    // Your shutdown logic here
+  },
+);
+
+```
+
+In the example above, a task is added with the identifier `taskIdentifier`. This identifier is used for logging any errors that occur during task execution.
+
+#### Remove Shutdown task
+
+To remove a shutdown task, use the `removeTask` method:
+
+```dart
+serverpod.experimental.shutdownTasks.removeTask(#taskIdentifier);
+```
+
+This will remove the previously registered task associated with `taskIdentifier`.
