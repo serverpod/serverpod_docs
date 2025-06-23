@@ -77,11 +77,11 @@ Secrets are declared in the `passwords.yaml` file. The password file is structur
 
 The following table shows the built-in secrets that Serverpod uses for its core functionality. These can be configured either through environment variables or by adding the corresponding key in a respective run mode or shared section in the passwords file. These are separate from any custom passwords you might define.
 
-| Environment variable        | Passwords file | Default | Description                                                       |
-| --------------------------- | -------------- | ------- | ----------------------------------------------------------------- |
-| SERVERPOD_DATABASE_PASSWORD | database       | -       | The password for the database                                     |
-| SERVERPOD_SERVICE_SECRET    | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
-| SERVERPOD_REDIS_PASSWORD    | redis          | -       | The password for the Redis server                                 |
+| Environment variable             | Passwords file | Default | Description                                                       |
+| -------------------------------- | -------------- | ------- | ----------------------------------------------------------------- |
+| SERVERPOD_PASSWORD_database      | database       | -       | The password for the database                                     |
+| SERVERPOD_PASSWORD_serviceSecret | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
+| SERVERPOD_PASSWORD_redis         | redis          | -       | The password for the Redis server                                 |
 
 #### Secrets for First Party Packages
 
@@ -93,10 +93,10 @@ The following secrets are used by official Serverpod packages:
 
 | Environment variable                                        | Passwords file                           | Default | Description                                                                   |
 | ----------------------------------------------------------- | ---------------------------------------- | ------- | ----------------------------------------------------------------------------- |
-| SERVERPOD_HMAC_ACCESS_KEY_ID                                | HMACAccessKeyId                          | -       | The access key ID for HMAC authentication for serverpod_cloud_storage_gcp     |
-| SERVERPOD_HMAC_SECRET_KEY                                   | HMACSecretKey                            | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp        |
-| SERVERPOD_AWS_ACCESS_KEY_ID                                 | AWSAccessKeyId                           | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3       |
-| SERVERPOD_AWS_SECRET_KEY                                    | AWSSecretKey                             | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3          |
+| SERVERPOD_PASSWORD_HMACAccessKeyId                          | HMACAccessKeyId                          | -       | The access key ID for HMAC authentication for serverpod_cloud_storage_gcp     |
+| SERVERPOD_PASSWORD_HMACSecretKey                            | HMACSecretKey                            | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp        |
+| SERVERPOD_PASSWORD_AWSAccessKeyId                           | AWSAccessKeyId                           | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3       |
+| SERVERPOD_PASSWORD_AWSSecretKey                             | AWSSecretKey                             | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3          |
 | SERVERPOD_PASSWORD_serverpod_auth_googleClientSecret        | serverpod_auth_googleClientSecret        | -       | The client secret for Google authentication for serverpod_auth_server         |
 | SERVERPOD_PASSWORD_serverpod_auth_firebaseServiceAccountKey | serverpod_auth_firebaseServiceAccountKey | -       | The service account key for Firebase authentication for serverpod_auth_server |
 
