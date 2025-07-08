@@ -4,7 +4,7 @@ Serverpod comes with built-in support for authentication. It is possible to buil
 
 Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
 
-We provide the following packages of ready-to use authentication providers. They all include a basic user profile courtesy of `serverpod_auth_profile`, and session management through `serverpod_auth_session`.
+We provide the following packages of ready-to-use authentication providers. They all include a basic user profile courtesy of `serverpod_auth_profile`, and session management through `serverpod_auth_session`.
 
 |Package|Functionality|
 |-|-|
@@ -22,7 +22,7 @@ Just follow any of the individual authentication provider guides to set the `Aut
 
 ## Email
 
-To get started with email based authentication, add `serverpod_auth_email` to your project. This will add a sign-up flow with email verification, and support logins and session management (through `serverpod_auth_session`). By default, this adds user profiles for each registration through `serverpod_auth_profile`.
+To get started with email-based authentication, add `serverpod_auth_email` to your project. This will add a sign-up flow with email verification, and support logins and session management (through `serverpod_auth_session`). By default, this adds user profiles for each registration through `serverpod_auth_profile`.
 
 The only requirement for using this module is having a way to send out emails, so users can receive the initial verification email and also request a password reset later on.
 
@@ -36,9 +36,9 @@ $ dart pub add serverpod_auth_email_server
 ```
 
 
-As the email auth module does not expose any endpoint by default, but rather just an [`abstract` endpoint](../working-with-endpoints#endpoint-method-inheritance), a subclass of the default implementation has to be added to the current project in order to expose its APIs to outside client.
+As the email auth module does not expose any endpoint by default, but rather just an [`abstract` endpoint](../working-with-endpoints#endpoint-method-inheritance), a subclass of the default implementation has to be added to the current project in order to expose its APIs to clients.
 
-For this add an `email_account_endpoint.dart` file to the project:
+For this, add an `email_account_endpoint.dart` file to the project:
 
 ```dart
 import 'package:serverpod_auth_email_server/serverpod_auth_email_server.dart'
@@ -111,9 +111,9 @@ If you're not hosting on Serverpod Cloud, you might consider an email sendout pr
 
 It is up to the application to decide how to use the callbacks. Basically there are 2 primary approaches possible:
 - Send out the `verificationCode` and require that the client initiating the request completes the operation (account creation or password reset). In that case the user could copy/paste or retype the (short) verification into a form on the client.
-- Alternatively emails could contain a deep link with both the respective request ID and the verification code, which would then even support them being opened on any device (e.g. on a desktop, even if the original request was made on mobile).
+- Alternatively, emails could contain a deep link with both the respective request ID and the verification code, which would then even support them being opened on any device (e.g. on a desktop, even if the original request was made on mobile).
 
-Additionally you need to update the `passwords.yaml` file to include secrets for both `serverpod_auth_session_sessionKeyHashPepper` and `serverpod_auth_email_account_passwordHashPepper`.  
+Additionally, update the `passwords.yaml` file to include secrets for both `serverpod_auth_session_sessionKeyHashPepper` and `serverpod_auth_email_account_passwordHashPepper`.  
 These should be random and at least 10 characters long. These pepper values must not be changed after the initial deployment of the server, as they are baked into every session key and stored password, and thus a rotation would invalidate previously created credentials.
 
 After a restart of the Serverpod the new endpoints will be usable from the client.
