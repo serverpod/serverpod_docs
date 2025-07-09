@@ -169,7 +169,23 @@ This checks on every login and registration request whether the email and passwo
 
 The `serverpod_auth` module can not yet be removed from the server’s source code, but nonetheless we should disable its endpoint. This will make sure that for example no new registration take place once the migration is underway.
 
-❗️ TODO: Support config disabling the endpoint
+Update the `AuthConfig` as follows (this likely is done in the `run` method as well:
+
+```dart
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
+
+auth.AuthConfig.set(
+  auth.AuthConfig(
+    … // retain all previous configurations
+    disableAccountEndpoints: true
+  ),
+);
+```
+
+This prevents any further logins or registrations on the legacy endpoints, so that no new user data is create while the migration is underway.
+
+<!-- TODO: This is fine to cover the auth modules, but the application's own entities could still get created, causing problems in the next deploy/migration.
+           So we need to find a complete way to shut down the external API. -->
 
 #### Update the client’s `SessionManager`
 
