@@ -15,16 +15,6 @@ The following classes have been renamed:
 | `WidgetRedirect` | `RedirectComponent` |
 | `WidgetList`     | `ListComponent`     |
 
-If you're importing from the relic library, the import path has changed:
-
-```dart
-// Before
-import 'package:serverpod/src/relic/web_widget.dart';
-
-// After
-import 'package:serverpod/src/relic/web_component.dart';
-```
-
 ### 1. Update Route Classes
 
 Update all route classes that extend `WidgetRoute` to extend `ComponentRoute`, and rename them to follow the new naming convention:
