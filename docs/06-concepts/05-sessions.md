@@ -46,57 +46,118 @@ For authentication features like user management and auth providers, see the [Au
 
 ## Session types
 
-Serverpod creates different session types based on the context:
+Serverpod automatically creates different session types based on the request context and endpoint configuration:
 
 ### MethodCallSession
 
-Created for endpoint method calls. Provides access to HTTP request data:
+Created when a client makes a standard HTTP request to an endpoint method that returns `Future<T>`. This is the most common session type for REST-like API calls.
 
 ```dart
-if (session is MethodCallSession) {
-  Uri uri = session.uri;
-  String body = session.body;
-  Map<String, dynamic> queryParams = session.queryParameters;
-  Request httpRequest = session.request;
-  
-  // Access client information
-  String remoteInfo = session.remoteInfo ?? 'unknown';
+// This endpoint creates a MethodCallSession
+Future<String> hello(Session session, String name) async {
+  if (session is MethodCallSession) {
+    // Access HTTP request details
+    Uri uri = session.uri;
+    String body = session.body;
+    Map<String, dynamic> queryParams = session.queryParameters;
+    Request httpRequest = session.request;
+    
+    // Access client information
+    String remoteInfo = session.remoteInfo ?? 'unknown';
+  }
+  return 'Hello $name';
 }
 ```
 
 ### MethodStreamSession
 
-Created for streaming endpoint connections with a unique connection ID:
+Created when an endpoint method returns `Stream<T>` or has stream parameters. The framework establishes a WebSocket connection and maintains it for the duration of the stream.
 
 ```dart
-if (session is MethodStreamSession) {
-  UuidValue connectionId = session.connectionId;
+// This endpoint creates a MethodStreamSession
+Stream<int> countToTen(Session session) async* {
+  if (session is MethodStreamSession) {
+    // Access the unique connection ID
+    UuidValue connectionId = session.connectionId;
+  }
+  
+  for (var i = 1; i <= 10; i++) {
+    yield i;
+    await Future.delayed(Duration(seconds: 1));
+  }
 }
 ```
 
 ### FutureCallSession
 
-Created when executing scheduled future calls:
+Created automatically by Serverpod when executing scheduled tasks. These sessions run in the background without any client connection.
 
 ```dart
-if (session is FutureCallSession) {
-  String futureCallName = session.futureCallName;
+// Schedule a task (this doesn't create a session yet)
+await serverpod.futureCallWithDelay(
+  'sendEmail',
+  EmailData(to: 'user@example.com'),
+  Duration(hours: 1),
+);
+
+// When the task executes, Serverpod creates a FutureCallSession
+class SendEmailCall extends FutureCall {
+  @override
+  Future<void> invoke(Session session, SerializableModel? object) async {
+    if (session is FutureCallSession) {
+      String taskName = session.futureCallName; // 'sendEmail'
+    }
+    // Send the email
+  }
 }
 ```
 
 ### WebCallSession
 
-Created for web server requests when handling custom web routes:
+Created when the web server handles HTTP requests to custom web routes (not API endpoints). Used for serving web pages, handling form submissions, and other web-specific operations.
 
 ```dart
-if (session is WebCallSession) {
-  // Handle web-specific operations
+// Configure a web route
+webServer.addRoute(
+  RouteRoot(
+    path: '/hello',
+    widget: MyWidget(),
+  ),
+  'hello',
+);
+
+// When someone visits /hello, a WebCallSession is created
+class MyWidget extends Component {
+  @override
+  Future<Component> build(Session session) async {
+    if (session is WebCallSession) {
+      // Handle web-specific operations
+      // Authentication is typically handled via cookies
+    }
+    return Text('Hello Web!');
+  }
 }
 ```
 
 ### InternalSession
 
-Used internally by Serverpod for operations outside client calls.
+Created for internal server operations that aren't triggered by client requests. Serverpod creates one persistent InternalSession at startup, and you can create additional ones for background tasks.
+
+```dart
+// Serverpod creates this automatically at startup
+// Used for system operations, migrations, etc.
+
+// You can create additional InternalSessions
+var session = await Serverpod.instance.createSession(
+  enableLogging: false,
+);
+try {
+  // Perform background operations
+  await User.db.deleteWhere(session, where: (t) => t.inactive);
+} finally {
+  await session.close();
+}
+```
 
 ## Working with sessions
 
