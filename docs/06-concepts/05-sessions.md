@@ -402,7 +402,7 @@ Always close manually created sessions to prevent memory leaks. Sessions store l
 
 ## Testing with sessions
 
-Serverpod provides a `TestSessionBuilder` for integration testing:
+Serverpod provides a `TestSessionBuilder` for integration testing. For detailed testing guidance, see the [Testing documentation](./19-testing/01-get-started.md).
 
 ```dart
 withServerpod('test group', (sessionBuilder, endpoints) {
