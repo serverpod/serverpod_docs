@@ -17,8 +17,6 @@ Every `Session` provides access to these essential properties:
 - **`storage`**: Cloud storage operations for files. See [File uploads documentation](./12-file-uploads.md)
 - **`messages`**: Real-time messaging between sessions. See [Streams documentation](./15-streams.md)
 - **`passwords`**: Passwords loaded from `config/passwords.yaml` and environment variables. See [Configuration documentation](./07-configuration.md)
-- **`server`**: The Server instance that created this session
-- **`serverpod`**: Access to the Serverpod singleton via `server.serverpod`
 
 ## Session identification
 
