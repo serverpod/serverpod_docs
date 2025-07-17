@@ -2,6 +2,12 @@
 
 The `Session` object is the central context for server operations in Serverpod. It provides access to the database, caching, authentication, file storage, messaging, and request information during method calls and streaming connections.
 
+:::note
+
+Don't confuse Session objects with user sessions. Session objects are request-scoped server contexts that exist only during a request, while user sessions are persistent authentication states. See the [Authentication documentation](./11-authentication/01-setup.md) for managing user sessions.
+
+:::
+
 ## Core properties
 
 Every `Session` provides access to these essential properties:
