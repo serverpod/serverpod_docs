@@ -12,11 +12,11 @@ Don't confuse Session objects with user sessions. Session objects are request-sc
 
 Every `Session` provides access to these essential properties:
 
-- **`db`**: Database access for queries and transactions
-- **`caches`**: Access to local and distributed caches
-- **`storage`**: Cloud storage operations for files
-- **`messages`**: Real-time messaging between sessions
-- **`passwords`**: Passwords loaded from `config/passwords.yaml`
+- **`db`**: Database access for queries and transactions. See [Database documentation](./06-database/01-connection.md)
+- **`caches`**: Access to local and distributed caches. See [Caching documentation](./08-caching.md)
+- **`storage`**: Cloud storage operations for files. See [File uploads documentation](./12-file-uploads.md)
+- **`messages`**: Real-time messaging between sessions. See [Streams documentation](./15-streams.md)
+- **`passwords`**: Passwords loaded from `config/passwords.yaml` and environment variables. See [Configuration documentation](./07-configuration.md)
 - **`server`**: The Server instance that created this session
 - **`serverpod`**: Access to the Serverpod singleton via `server.serverpod`
 
