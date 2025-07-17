@@ -64,19 +64,6 @@ if (session is MethodCallSession) {
 }
 ```
 
-### StreamingSession
-
-Created for WebSocket connections. Allows dynamic endpoint updates:
-
-```dart
-if (session is StreamingSession) {
-  session.updateAuthenticationKey(newKey);
-  // Access WebSocket-specific properties
-  Uri uri = session.uri;
-  Map<String, String> queryParams = session.queryParameters;
-}
-```
-
 ### MethodStreamSession
 
 Created for streaming endpoint connections with a unique connection ID:
@@ -149,6 +136,89 @@ session.removeWillCloseListener(listener);
 
 // Get session duration
 Duration duration = session.duration;
+```
+
+### Session closing
+
+When a session closes, Serverpod performs several important cleanup operations to ensure resources are properly released and logs are finalized.
+
+#### What happens during close
+
+The `close()` method performs these operations in order:
+
+1. **Executes will-close listeners** - All registered `WillCloseListener` callbacks run in the order they were added
+2. **Removes message listeners** - All MessageCentral channel subscriptions for this session are cleaned up
+3. **Finalizes logs** - Session logs are written to the database (if logging is enabled)
+4. **Returns log ID** - The database ID of the session log entry (if applicable)
+
+```dart
+// Close with error information for logging
+try {
+  // Some operation
+} catch (e, stackTrace) {
+  await session.close(error: e, stackTrace: stackTrace);
+  rethrow;
+}
+```
+
+#### How different session types close
+
+**Automatically closed sessions:**
+
+- **MethodCallSession** - Closed automatically after the endpoint method returns, even if an exception occurs
+- **WebCallSession** - Closed after handling the web request
+- **FutureCallSession** - Closed after the scheduled task completes
+- **MethodStreamSession** - Closed when the streaming method ends
+
+**Manually closed sessions:**
+
+- **InternalSession** - Must be explicitly closed with `session.close()`
+
+#### Resource cleanup
+
+During session close:
+
+- **Database connections** are returned to the connection pool (not closed)
+- **Message listeners** are automatically removed from all channels
+- **Logs** are finalized and persisted to the database
+- **Memory** used by the session is released
+
+:::warning
+
+**Important:** Sessions accumulate logs in memory until closed. Forgetting to close a manually created session will cause:
+
+- Memory leaks as logs accumulate
+- Logs never being written to the database
+- Message listeners remaining active
+- Potential performance degradation over time
+
+:::
+
+#### Best practices
+
+Always use try-finally blocks for manual sessions:
+
+```dart
+var session = await Serverpod.instance.createSession();
+try {
+  // Perform operations
+  await User.db.find(session);
+} finally {
+  // Ensures session closes even if an exception occurs
+  await session.close();
+}
+```
+
+Register cleanup operations with will-close listeners:
+
+```dart
+session.addWillCloseListener((session) async {
+  // Clean up external resources
+  await externalService.disconnect();
+  
+  // Cancel timers
+  myTimer?.cancel();
+});
 ```
 
 ### User state
