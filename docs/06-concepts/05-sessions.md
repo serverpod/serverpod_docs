@@ -4,7 +4,7 @@ A Session in Serverpod is a request-scoped context object that exists for the du
 
 :::note
 
-Sessions are not the same as user sessions. A Session object is created for every request and destroyed when the request completes, while user sessions represent persistent authentication states across multiple requests. See the [Authentication documentation](./11-authentication/01-setup.md) for managing user sessions.
+A Serverpod Session should not be confused with the concept of "web sessions" or "user sessions" which persist over multiple API calls. See the [Authentication documentation](./11-authentication/01-setup.md) for managing persistent authentication.
 
 :::
 
@@ -12,36 +12,61 @@ Sessions are not the same as user sessions. A Session object is created for ever
 
 Understanding the session lifecycle is crucial for proper resource management and avoiding common pitfalls in Serverpod applications.
 
-### Creation phase
+```mermaid
+flowchart TB
+    Request([Client Request]) --> Create[Session Created]
+    Create --> Init[Initialize]
+    
+    Init --> Check{Protected<br/>endpoint?}
+    Check -->|Yes| Validate[Validate auth]
+    Check -->|No| Active[Execute Endpoint Method]
+    Validate --> Active
+    Validate -->|Invalid| End2([Request rejected])
+    
+    Active -.-> Auth[Access session.authenticated]
+    Auth -.->|Lazy validation<br/>if needed| Active
+    
+    Active --> Close[Close Session]
+    Active -.-> Logs[Logs accumulate<br/>in memory]
+    
+    Logs -.-> Write
+    Close --> Write[Write logs<br/>to database]
+    Write --> End([Request Complete])
+```
 
-Sessions are created automatically by Serverpod when:
+### Client Request
 
-1. **HTTP request arrives** - A `MethodCallSession` is created for endpoint method calls
-2. **WebSocket connects** - A `MethodStreamSession` is created for streaming endpoints
-3. **Web route accessed** - A `WebCallSession` is created for custom web routes
-4. **Scheduled task runs** - A `FutureCallSession` is created for future calls
-5. **Manual creation** - An `InternalSession` is created via `Serverpod.instance.createSession()`
+When a client makes a request to your Serverpod server, the framework automatically determines what type of session to create based on the request type:
 
-During creation, Serverpod:
+1. **HTTP request** → `MethodCallSession` for endpoint method calls
+2. **WebSocket stream** → `MethodStreamSession` for streaming endpoints
+3. **WebSocket connection** → `StreamingSession` for real-time connections
+4. **Scheduled task** → `FutureCallSession` for future calls
+5. **Internal operations** → `InternalSession` created by framework or manually via `Serverpod.instance.createSession()`
 
-- Generates a unique session ID
+### Session Created & Initialize
+
+Once Serverpod determines the session type, it creates and initializes the session:
+
+- Generates a unique session ID (`UuidValue`)
 - Records the start time
-- Initializes the logging system (if enabled)
-- Sets up resource accessors (database, cache, storage, messaging)
-- Stores the authentication key (if provided)
+- Sets up the logging system (if enabled in configuration)
+- Initializes resource accessors (database, cache, storage, messaging)
+- Stores the authentication key (if provided in the request)
 
-Each session type is created automatically based on the context - you don't create them manually.
+Sessions are normally created automatically by the framework. The exception is `InternalSession`, which you create manually for background tasks (see [InternalSession - System operations](#internalsession---system-operations)).
 
-### Active phase
+### Execute Endpoint Method
 
-During the active phase, the session:
+During method execution, the session provides access to all server resources:
 
-1. **Provides lazy authentication** - Authentication is validated on first access to `session.authenticated`
-2. **Accumulates logs in memory** - All log entries are cached until session close
-3. **Tracks operation count** - Database queries are counted for monitoring
-4. **Maintains request context** - Endpoint name, method, and other metadata remain accessible
+1. **Authentication** - Validated automatically before execution if endpoint has `requireLogin: true` or `requiredScopes`, otherwise lazy-loaded on first access to `session.authenticated`
+2. **Logging** - Log entries accumulate in memory during execution
+3. **Database operations** - Queries are counted, timed, and logged
+4. **Request context** - Endpoint name, method, and metadata remain accessible
 
 ```dart
+// Example: Endpoint without requireLogin (uses lazy authentication)
 Future<User?> getUser(Session session, int userId) async {
   // Authentication is checked here on first access (lazy loading)
   var authInfo = await session.authenticated;
@@ -57,27 +82,57 @@ Future<User?> getUser(Session session, int userId) async {
 }
 ```
 
-### Destruction phase
+### Close Session
 
-Sessions are closed either automatically or manually:
+Sessions close either automatically or manually:
 
 **Automatic closure:**
 
-- Method calls: Closed automatically after the endpoint method completes
-- Streaming: Closed when the WebSocket connection ends
-- Future calls: Closed after the scheduled task completes
+- Method calls: After the endpoint method returns
+- Streaming: When the WebSocket connection ends
+- Future calls: After the scheduled task completes
 
 **Manual closure:**
 
-- Internal sessions must be explicitly closed with `session.close()`
+- Internal sessions: Must call `session.close()` explicitly
 
-During closure, Serverpod:
+When closing, the session:
 
-1. **Prevents further operations** - The session becomes unusable
-2. **Executes will-close listeners** - Runs any registered cleanup callbacks
-3. **Removes message listeners** - Cleans up all channel subscriptions
-4. **Finalizes logs** - Writes accumulated logs to the database
-5. **Returns session log ID** - For debugging and tracing
+1. Becomes unusable (further operations throw `StateError`)
+2. Executes any cleanup callbacks registered with `addWillCloseListener()`
+3. Removes all message channel subscriptions
+
+#### Cleanup callbacks
+
+For custom resources that need cleanup when a session closes:
+
+```dart
+Future<void> processWithExternalService(Session session) async {
+  var service = await ExternalService.connect();
+
+  // Ensure cleanup even if session closes unexpectedly
+  session.addWillCloseListener((session) async {
+    await service.disconnect();
+  });
+
+  // Use service...
+}
+```
+
+### Write logs to database
+
+After the session closes, all accumulated logs are written to the database in a single batch:
+
+- All log entries stored in memory during execution are persisted
+- Database query timings and counts are recorded
+- Session metadata (duration, endpoint, method) is saved
+- Returns a session log ID for debugging and tracing
+
+**Exception:** Streaming sessions write logs immediately instead of batching.
+
+### Request Complete
+
+Once logs are written, the request lifecycle is complete and all resources are released.
 
 ### Invalid session usage
 
@@ -100,43 +155,34 @@ Future<void> badExample(Session session) async {
 
 ## Authentication flow
 
-Authentication in sessions follows a lazy-loading pattern:
+Authentication in sessions works differently based on endpoint configuration:
 
-1. **Authentication key passed** - Client sends auth key in header or query parameter
+### For endpoints with `requireLogin: true` or `requiredScopes`
+
+1. **Authentication key passed** - Client sends auth key in header
+2. **Validation on request** - Authentication is validated immediately before the endpoint method executes
+3. **Result cached** - Authentication info is cached for the session lifetime
+
+### For other endpoints (lazy loading)
+
+1. **Authentication key passed** - Client sends auth key in header
 2. **Key stored in session** - Session stores the key but doesn't validate yet
 3. **First access triggers validation** - Calling `session.authenticated` runs the authentication handler
 4. **Result cached** - Authentication info is cached for the session lifetime
 
-This lazy pattern means:
+This approach means:
 
-- Unauthenticated endpoints don't pay the authentication cost
-- Authentication errors only occur when actually checking authentication
+- Protected endpoints fail fast if authentication is invalid
+- Unprotected endpoints don't pay the authentication cost unless needed
 - Multiple calls to `session.authenticated` don't re-validate
 
 ## Logging mechanics
 
-The session logging system is designed to batch operations for performance:
-
-### Memory accumulation
-
-During the session lifetime:
-
-- All log entries are stored in memory
-- Database queries are tracked with timing information
-- Message logs record endpoint execution time
-- No database writes occur until session close
-
-```dart
-// Logs accumulate in memory during the session
-session.log('Starting process');              // Stored in memory
-var result = await complexOperation(session); // Queries tracked
-session.log('Process complete');               // Still in memory
-// All logs written to database when session closes
-```
+The session logging system is designed to batch operations for performance (default behavior):
 
 ### Write timing
 
-**Method calls**: Logs are written once when the session closes
+**Method calls**: Logs are written once when the session closes (default)
 
 ```dart
 // Logs written after method completes
@@ -148,26 +194,16 @@ Future<String> myMethod(Session session) async {
 }
 ```
 
-**Streaming sessions**: Can be configured for continuous or batched logging
+**Streaming sessions**: Write logs continuously by default
 
 ```dart
-// In config: logStreamingSessionsContinuously: true
 Stream<int> count(Session session) async* {
   for (var i = 0; i < 10; i++) {
-    session.log('Count: $i'); // Written immediately if configured
+    session.log('Count: $i'); // Written immediately
     yield i;
   }
 }
 ```
-
-### Configuration impact
-
-Logging behavior is controlled by `LogSettings`:
-
-- `logAllSessions`: Log every session
-- `logSlowSessions`: Only log sessions exceeding duration threshold
-- `logFailedSessions`: Only log sessions that throw exceptions
-- `logLevel`: Minimum level for log entries (debug, info, warning, error)
 
 ### Lost logs
 
@@ -257,36 +293,6 @@ try {
 }
 ```
 
-### Pitfall 3: Accessing global cache without Redis
-
-**Problem:**
-
-```dart
-// ❌ Throws assertion error if Redis not enabled
-await session.caches.global.put('key', data);
-```
-
-**Solution - Enable Redis in config:**
-
-```yaml
-# config/development.yaml
-redis:
-  enabled: true # Default is false
-  host: localhost
-  port: 6379
-```
-
-Or check before using:
-
-```dart
-// Use local cache as fallback
-if (Features.enableRedis) {
-  await session.caches.global.put('key', data);
-} else {
-  await session.caches.local.put('key', data);
-}
-```
-
 ## Working with different session types
 
 Understanding when each session type appears in your code:
@@ -340,9 +346,9 @@ class EmailSender extends FutureCall {
 
 ### InternalSession - System operations
 
-Created for: Manual background work
-Lifetime: Until explicitly closed
-Common in: Database migrations, batch imports, maintenance tasks
+Created for: Internal framework operations and manual background work
+Lifetime: Until explicitly closed (manual sessions only)
+Common in: Database migrations, batch imports, maintenance tasks, framework internals
 
 ```dart
 // Cleanup old data periodically
@@ -410,38 +416,23 @@ Future.delayed(Duration(hours: 1), () async {
 });
 ```
 
-### 3. Register cleanup with will-close listeners
+### 3. Handle errors properly
 
-For custom resources that need cleanup:
-
-```dart
-Future<void> processWithExternalService(Session session) async {
-  var service = await ExternalService.connect();
-
-  // Ensure cleanup even if session closes unexpectedly
-  session.addWillCloseListener((session) async {
-    await service.disconnect();
-  });
-
-  // Use service...
-}
-```
-
-### 4. Handle errors properly
-
-Pass exceptions to session close for proper logging:
+Always handle exceptions to prevent unclosed sessions:
 
 ```dart
-var session = await Serverpod.instance.createSession();
-try {
-  await riskyOperation(session);
-} catch (e, stackTrace) {
-  // Logs error information with the session
-  await session.close(error: e, stackTrace: stackTrace);
-  rethrow;
+// ✅ Good - Errors won't prevent session cleanup
+Future<void> safeOperation() async {
+  var session = await Serverpod.instance.createSession();
+  try {
+    await riskyOperation(session);
+  } catch (e) {
+    session.log('Operation failed: $e', level: LogLevel.error);
+    // Handle error appropriately
+  } finally {
+    await session.close();
+  }
 }
-// Normal close if no error
-await session.close();
 ```
 
 ## Quick reference
@@ -456,7 +447,7 @@ await session.close();
 
 ### Key methods
 
-- **`authenticated`** - Get authentication info (lazy-loaded)
+- **`authenticated`** - Get authentication info (pre-validated for protected endpoints, lazy-loaded for others)
 - **`isUserSignedIn`** - Quick auth check
 - **`log(message, level)`** - Add log entry
 - **`close(error, stackTrace)`** - Manual session cleanup
