@@ -10,202 +10,65 @@ A Serverpod Session should not be confused with the concept of "web sessions" or
 
 :::
 
+## Quick reference
+
+### Essential properties
+
+- **`db`** - Database access. [See database docs](./06-database/01-connection.md)
+- **`caches`** - Local and distributed caching. [See caching docs](./08-caching.md)
+- **`storage`** - File storage operations. [See file uploads](./12-file-uploads.md)
+- **`messages`** - Server events for real-time communication. [See server events docs](./16-server-events.md)
+- **`passwords`** - Credentials from config and environment. [See configuration](./07-configuration.md)
+
+### Key methods
+
+- **`log(message, level)`** - Add log entry
+- **`close(error, stackTrace)`** - Manual session cleanup
+- **`addWillCloseListener(callback)`** - Register cleanup callback
+
 ## Session types
 
-### Automatic sessions
+Serverpod creates different session types based on the context:
 
-These sessions are automatically managed by Serverpod - created when a request arrives and closed when the request completes:
+| Type | Created For | Lifetime | Common Use Cases |
+|------|-------------|----------|------------------|
+| **MethodCallSession** | `Future<T>` endpoint methods | Single request | API calls, CRUD operations |
+| **WebCallSession** | Web server routes | Single request | Web pages, form submissions |
+| **MethodStreamSession** | `Stream<T>` endpoint methods | Stream duration | Real-time updates, chat |
+| **StreamingSession** | WebSocket connections | Connection duration | Live dashboards, multiplayer |
+| **FutureCallSession** | Scheduled tasks | Task execution | Email sending, batch jobs |
+| **InternalSession** | Manual creation | Until closed | Background work, migrations |
 
-#### MethodCallSession - Standard API calls
-
-Created for: `Future<T>` endpoint methods  
-Lifetime: Single request-response cycle  
-Common in: Data fetching, CRUD operations, business logic
+### Example: Automatic session (MethodCallSession)
 
 ```dart
 Future<String> hello(Session session, String name) async {
-  // You're working with a MethodCallSession here
-  // It will close automatically after this method returns
+  // MethodCallSession is created automatically
   return 'Hello $name';
+  // Session closes automatically when method returns
 }
 ```
 
-#### WebCallSession - Web server routes
+### Example: Manual session (InternalSession)
 
-Created for: HTTP requests to web server routes  
-Lifetime: Single request-response cycle  
-Common in: Serving web pages, handling form submissions, REST APIs
+InternalSession is the only session type that requires manual management:
 
 ```dart
-// In your web server setup
-webServer.get('/hello', (request, response) async {
-  // WebCallSession is created for web routes
-  var session = request.session as WebCallSession;
-  
-  // Access Serverpod resources through the session
-  var data = await MyData.db.find(session);
-  
-  response.send('Hello from web route');
-  // Session closes when response is sent
-});
-```
-
-#### MethodStreamSession - Streaming methods
-
-Created for: `Stream<T>` endpoint methods or stream parameters  
-Lifetime: Duration of the stream  
-Common in: Chat applications, live notifications, real-time collaboration
-
-```dart
-Stream<Message> chat(Session session, Stream<String> incoming) async* {
-  // MethodStreamSession stays open for the stream duration
-  await for (var message in incoming) {
-    yield Message(text: message, time: DateTime.now());
-  }
-  // Closes when stream completes
-}
-```
-
-#### StreamingSession - WebSocket connections
-
-Created for: Persistent WebSocket connections  
-Lifetime: Duration of the WebSocket connection  
-Common in: Real-time updates, live dashboards, multiplayer games
-
-```dart
-class MyController extends StreamingEndpoint {
-  @override
-  Future<void> handleStreamMessage(
-    StreamingSession session, 
-    SerializableModel message,
-  ) async {
-    // StreamingSession shared across all streams in the WebSocket
-    // Stays open until WebSocket disconnects
-    if (message is ChatMessage) {
-      sendStreamMessage(session, message);
-    }
-  }
-}
-```
-
-#### FutureCallSession - Background tasks
-
-Created for: Scheduled operations  
-Lifetime: Task execution duration  
-Common in: Email sending, report generation, data cleanup
-
-```dart
-class EmailSender extends FutureCall {
-  @override
-  Future<void> invoke(Session session, EmailData? data) async {
-    // FutureCallSession created just for this task
-    await sendEmail(session, data!);
-    // Closes when task completes
-  }
-}
-```
-
-### Manual sessions
-
-These sessions require explicit lifecycle management by the developer:
-
-#### InternalSession - System operations
-
-Created for: Internal framework operations and manual background work  
-Lifetime: Until explicitly closed (manual sessions only)  
-Common in: Database migrations, batch imports, maintenance tasks, framework internals
-
-#### Managing InternalSession lifecycle
-
-Unlike the automatic sessions, InternalSessions require manual lifecycle management:
-
-**1. Creation** - You explicitly create the session:
-```dart
-var session = await Serverpod.instance.createSession(
-  enableLogging: false, // Optional: disable logging for system tasks
-);
-```
-
-**2. Active phase** - The session remains active indefinitely until you close it:
-- Full access to all Serverpod resources (database, cache, storage)
-- Logs accumulate in memory if logging is enabled
-- No automatic timeout or cleanup
-- Can be passed between functions and used across async boundaries
-
-**3. Manual closure** - You MUST close the session:
-```dart
-await session.close(); // Required - releases resources and writes logs
-```
-
-**4. After closure:**
-- Session becomes unusable (operations throw `StateError`)
-- Accumulated logs are written to database (if logging was enabled)
-- Database connections are released
-- Memory is freed
-
-#### Best practices for InternalSession
-
-Always use try-finally to ensure closure:
-
-```dart
-// ✅ Good - Guaranteed cleanup
 Future<void> performMaintenance() async {
   var session = await Serverpod.instance.createSession();
   try {
-    // Perform database operations
+    // Perform operations
     await cleanupOldRecords(session);
     await updateStatistics(session);
-    await optimizeIndexes(session);
   } finally {
-    await session.close(); // Always executes
-  }
-}
-
-// ❌ Bad - Session leaks if error occurs
-Future<void> riskyOperation() async {
-  var session = await Serverpod.instance.createSession();
-  await performDangerousOperation(session); // If this throws...
-  await session.close(); // This never runs! Memory leak!
-}
-```
-
-Common use cases:
-
-```dart
-// Scheduled maintenance tasks
-Future<void> dailyCleanup() async {
-  var session = await Serverpod.instance.createSession(
-    enableLogging: false, // Skip logging for routine tasks
-  );
-  try {
-    await OldData.db.deleteWhere(
-      session,
-      where: (t) => t.createdAt < DateTime.now().subtract(Duration(days: 90)),
-    );
-  } finally {
-    await session.close();
-  }
-}
-
-// Background processing
-Future<void> processUploadedFile(String filePath) async {
-  var session = await Serverpod.instance.createSession();
-  try {
-    var data = await parseFile(filePath);
-    await ImportedData.db.insertRows(session, data);
-    session.log('Imported ${data.length} records');
-  } catch (e) {
-    session.log('Import failed: $e', level: LogLevel.error);
-    rethrow;
-  } finally {
-    await session.close();
+    await session.close(); // Must close manually!
   }
 }
 ```
+
+**Important**: Always use try-finally with InternalSession to prevent memory leaks.
 
 ## Session lifecycle
-
-Understanding the session lifecycle is crucial for proper resource management and avoiding common pitfalls in Serverpod applications.
 
 ```mermaid
 flowchart TB
@@ -216,131 +79,15 @@ flowchart TB
     Close --> End([Request Complete])
 ```
 
-### Client Request → Session Created
+Sessions follow a predictable lifecycle from creation to cleanup. When a client makes a request, Serverpod automatically creates the appropriate session type (see table above), initializes it with a unique ID, and sets up access to resources like the database, cache, and file storage. The only exception is `InternalSession`, which you create manually for background tasks.
 
-When a client makes a request to your Serverpod server, the framework automatically creates the appropriate session type:
+During the active phase, your endpoint method executes with full access to Serverpod resources through the session. You can query the database, write logs, send messages, and access storage - all operations are tracked and tied to this specific session. When the method completes, most sessions close automatically, writing any accumulated logs to the database and releasing all resources.
 
-1. **HTTP request to API endpoint** → `MethodCallSession` for endpoint method calls
-2. **HTTP request to web route** → `WebCallSession` for web server routes
-3. **WebSocket stream** → `MethodStreamSession` for streaming endpoints
-4. **WebSocket connection** → `StreamingSession` for real-time connections
-5. **Scheduled task** → `FutureCallSession` for future calls
-6. **Internal operations** → `InternalSession` created by framework or manually via `Serverpod.instance.createSession()`
-
-### Initialize
-
-Once Serverpod determines the session type, it creates and initializes the session:
-
-- Generates a unique session ID (`UuidValue`)
-- Records the start time
-- Sets up the logging system (if enabled in configuration)
-- Initializes resource accessors (database, cache, storage, messaging)
-
-Sessions are normally created automatically by the framework. The exception is `InternalSession`, which you create manually for background tasks.
-
-### Execute Endpoint Method
-
-During method execution, the session provides access to all server resources:
-
-1. **Logging** - Log entries accumulate in memory during execution (non-streaming endpoints) or written immediately (streaming endpoints)
-2. **Database operations** - Queries are counted, timed, and logged
-3. **Request context** - Endpoint name, method, and metadata remain accessible
-
-```dart
-// Example: Using session resources during execution
-Future<User?> getUser(Session session, int userId) async {
-  // Logs accumulate in memory
-  session.log('Fetching user $userId');
-
-  // Database operations are tracked
-  return await User.db.findById(session, userId);
-}
-```
-
-### Close Session
-
-Sessions close either automatically or manually:
-
-**Automatic closure:**
-
-- Method calls: After the endpoint method returns
-- Streaming methods: After the stream completes
-- Streaming endpoints: When the WebSocket connection ends  
-- Future calls: After the scheduled task completes
-
-
-When closing, the session:
-
-1. Becomes unusable (further operations throw `StateError`)
-2. Executes any cleanup callbacks registered with `addWillCloseListener()`
-3. Removes all message channel subscriptions
-
-#### Cleanup callbacks
-
-For custom resources that need cleanup when a session closes:
-
-```dart
-Future<void> processWithExternalService(Session session) async {
-  var service = await ExternalService.connect();
-
-  // Ensure cleanup even if session closes unexpectedly
-  session.addWillCloseListener((session) async {
-    await service.disconnect();
-  });
-
-  // Use service...
-}
-```
-
-### Request Complete
-
-Once the session closes, all resources are released and any accumulated logs are written to the database (see [Logging](#logging) for details).
+Manual sessions (`InternalSession`) require explicit closure with `session.close()`. Forgetting to close these sessions causes memory leaks as logs accumulate indefinitely. Always use try-finally blocks to ensure proper cleanup. After any session closes, attempting to use it throws a `StateError`.
 
 ## Logging
 
-The session logging system is designed to batch operations for performance (default behavior):
-
-### How logs are written
-
-After the session closes, all accumulated logs are written to the database in a single batch:
-
-- All log entries stored in memory during execution are persisted
-- Database query timings and counts are recorded
-- Session metadata (duration, endpoint, method) is saved
-- Returns a session log ID for debugging and tracing
-
-### Write timing
-
-**Method calls**: Logs are written once when the session closes (default)
-
-```dart
-// Logs written after method completes
-Future<String> myMethod(Session session) async {
-  session.log('Step 1');
-  session.log('Step 2');
-  return 'done';
-  // <- Logs written to database here
-}
-```
-
-**Streaming sessions**: Write logs continuously by default
-
-```dart
-Stream<int> count(Session session) async* {
-  for (var i = 0; i < 10; i++) {
-    session.log('Count: $i'); // Written immediately
-    yield i;
-  }
-}
-```
-
-### Lost logs
-
-If a session isn't properly closed:
-
-- Logs remain in memory and are never written
-- Memory usage grows until the process restarts
-- Debugging information is permanently lost
+Serverpod batches log entries for performance. During normal operations, logs accumulate in memory and are written to the database in a single batch when the session closes. This includes all your `session.log()` calls, database query timings, and session metadata. The exception is streaming sessions, which write logs continuously by default to avoid memory buildup during long connections. **Warning**: If you forget to close a manual session (`InternalSession`), logs remain in memory indefinitely and are never persisted - this is a common cause of both memory leaks and missing debug information.
 
 ## Common pitfalls and solutions
 
@@ -491,31 +238,9 @@ Future<void> safeOperation() async {
 }
 ```
 
-## Quick reference
+## Testing
 
-### Essential properties
-
-- **`db`** - Database access. [See database docs](./06-database/01-connection.md)
-- **`caches`** - Local and distributed caching. [See caching docs](./08-caching.md)
-- **`storage`** - File storage operations. [See file uploads](./12-file-uploads.md)
-- **`messages`** - Server events for real-time communication. [See server events docs](./16-server-events.md)
-- **`passwords`** - Credentials from config and environment. [See configuration](./07-configuration.md)
-
-### Key methods
-
-- **`log(message, level)`** - Add log entry
-- **`close(error, stackTrace)`** - Manual session cleanup
-- **`addWillCloseListener(callback)`** - Register cleanup callback
-
-### Testing
-
-When testing endpoints, you need a way to create valid sessions without going through the full HTTP request cycle. The `TestSessionBuilder` provides a controlled environment for integration tests, allowing you to:
-
-- Test endpoints directly without HTTP overhead
-- Configure authentication state for testing protected endpoints
-- Access the same session context your endpoints would receive in production
-
-For detailed testing strategies, see the [testing documentation](./19-testing/01-get-started.md).
+When testing endpoints, you need a way to create valid sessions without going through the full HTTP request cycle. The `TestSessionBuilder` provides a controlled environment for integration tests:
 
 ```dart
 withServerpod('test group', (sessionBuilder, endpoints) {
@@ -525,3 +250,5 @@ withServerpod('test group', (sessionBuilder, endpoints) {
   });
 });
 ```
+
+For detailed testing strategies, see the [testing documentation](./19-testing/01-get-started.md).
