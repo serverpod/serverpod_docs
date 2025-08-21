@@ -130,12 +130,12 @@ Two special characters enables matching against partial entries.
 - **`%`** Matching any sequence of character.
 - **`_`** Matching any single character.
 
-| String |  Matcher | Is matching |
-| ------ | -------- | ----------- |
-| abc    |  a%      | true        |
-|  abc   | \_b%     | true        |
-| abc    | a_c      | true        |
-| abc    | b\_      | false       |
+| String | Matcher | Is matching |
+| ------ | ------- | ----------- |
+| abc    | a%      | true        |
+| abc    | \_b%    | true        |
+| abc    | a_c     | true        |
+| abc    | b\_     | false       |
 
 We use like to match against a partial string.
 
