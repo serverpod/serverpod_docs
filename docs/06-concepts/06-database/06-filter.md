@@ -130,12 +130,12 @@ Two special characters enables matching against partial entries.
 - **`%`** Matching any sequence of character.
 - **`_`** Matching any single character.
 
-| String |  Matcher | Is matching |
-| ------ | -------- | ----------- |
-| abc    |  a%      | true        |
-|  abc   | \_b%     | true        |
-| abc    | a_c      | true        |
-| abc    | b\_      | false       |
+| String | Matcher | Is matching |
+| ------ | ------- | ----------- |
+| abc    | a%      | true        |
+| abc    | \_b%    | true        |
+| abc    | a_c     | true        |
+| abc    | b\_     | false       |
 
 We use like to match against a partial string.
 
@@ -208,6 +208,28 @@ await User.db.find(
 ```
 
 In the example we fetch all users that has a name that starts with A _or_ B.
+
+The `~` operator is used to negate an expression with a `not` operation.
+
+```dart
+await User.db.find(
+  session,
+  where: (t) => ~t.name.equals('Alice')
+);
+```
+
+In the example we fetch all users that do _not_ have the name "Alice".
+
+The `~` operator can also be used with more complex expressions:
+
+```dart
+await User.db.find(
+  session,
+  where: (t) => ~(t.name.like('A%') | t.age > 25)
+);
+```
+
+In the example we fetch all users that do _not_ have a name starting with "A" _and_ are _not_ older than 25.
 
 ### Vector distance operators
 
