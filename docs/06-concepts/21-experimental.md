@@ -10,6 +10,10 @@ However, they may not be fully stable or complete and are subject to change.
 
 Experimental features are disabled by default, i.e. they are not active unless the developer opts-in.
 
+:::note
+To make the LSP server understand the usage of experimental flags and avoid complaints about unknown syntax on model files, configure experimental features in the `config/generator.yaml` file. See the [configuration documentation](configuration#experimental-features) for more details.
+:::
+
 ## Experimental internal APIs
 
 Experimental internal APIs are placed under the `experimental` sub-API of the `Serverpod` class.
