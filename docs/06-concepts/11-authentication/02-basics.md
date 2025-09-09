@@ -38,6 +38,55 @@ class MyEndpoint extends Endpoint {
 }
 ```
 
+## Explicitly allowing unauthenticated access
+
+In some cases, you may want to explicitly allow certain endpoints or methods to be accessed without authentication. Serverpod provides the `@unauthenticatedClientCall` annotation for this purpose.
+
+When an endpoint or method is annotated with `@unauthenticatedClientCall`:
+- No authentication will be added to the header on the client when calling it.
+- The server will receive calls as if there is no user signed in.
+
+:::info
+Under the hood, the `@unauthenticatedClientCall` annotation makes the client omit authentication headers for calls to the annotated endpoint or method. On the server side, it ensures that the session is treated as unauthenticated for those calls, regardless of any existing authentication state.
+:::
+
+You can use this annotation in two ways:
+
+1. On the entire endpoint class to make all methods unauthenticated:
+```dart
+@unauthenticatedClientCall
+class UnauthenticatedEndpoint extends Endpoint {
+  Future<bool> someMethod(Session session) async {
+    return session.isUserSignedIn; // Will always return false
+  }
+
+  Stream<bool> someStream(Session session) async* {
+    yield await session.isUserSignedIn; // Will always return false
+  }
+}
+```
+
+2. On specific methods to make only those methods unauthenticated:
+```dart
+class PartiallyUnauthenticatedEndpoint extends Endpoint {
+  @unauthenticatedClientCall
+  Future<bool> publicMethod(Session session) async {
+    return session.isUserSignedIn; // Will always return false
+  }
+
+  Future<bool> authenticatedMethod(Session session) async {
+    return session.isUserSignedIn;
+  }
+}
+```
+
+This is particularly useful for endpoints that must not receive authentication, such as JWT refresh endpoints.
+
+:::warning
+Using `@unauthenticatedClientCall` on an endpoint or method that also has `requireLogin` set to true will lead to a conflict. Since the client will suppress sending authentication information, but the server will expect it, calls to such endpoints or methods will always fail with an authentication error.
+:::
+
+
 ## Authorization on endpoints
 
 Serverpod also supports scopes for restricting access. One or more scopes can be associated with a user. For instance, this can be used to give admin access to a specific user. To restrict access for an endpoint, override the `requiredScopes` property. Note that setting `requiredScopes` implicitly sets `requireLogin` to true.
