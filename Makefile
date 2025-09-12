@@ -21,7 +21,7 @@ version:
 
 # Format markdown files
 format:
-	markdownlint './docs/**/*.md'
+	markdownlint './docs/**/*.md' --config markdownlint.yaml --fix
 
 # Install markdownlint globally
 install-linter:

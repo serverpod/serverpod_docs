@@ -43,6 +43,7 @@ class MyEndpoint extends Endpoint {
 In some cases, you may want to explicitly allow certain endpoints or methods to be accessed without authentication. Serverpod provides the `@unauthenticatedClientCall` annotation for this purpose.
 
 When an endpoint or method is annotated with `@unauthenticatedClientCall`:
+
 - No authentication will be added to the header on the client when calling it.
 - The server will receive calls as if there is no user signed in.
 
@@ -53,6 +54,7 @@ Under the hood, the `@unauthenticatedClientCall` annotation makes the client omi
 You can use this annotation in two ways:
 
 1. On the entire endpoint class to make all methods unauthenticated:
+
 ```dart
 @unauthenticatedClientCall
 class UnauthenticatedEndpoint extends Endpoint {
@@ -67,6 +69,7 @@ class UnauthenticatedEndpoint extends Endpoint {
 ```
 
 2. On specific methods to make only those methods unauthenticated:
+
 ```dart
 class PartiallyUnauthenticatedEndpoint extends Endpoint {
   @unauthenticatedClientCall
@@ -85,7 +88,6 @@ This is particularly useful for endpoints that must not receive authentication, 
 :::warning
 Using `@unauthenticatedClientCall` on an endpoint or method that also has `requireLogin` set to true will lead to a conflict. Since the client will suppress sending authentication information, but the server will expect it, calls to such endpoints or methods will always fail with an authentication error.
 :::
-
 
 ## Authorization on endpoints
 

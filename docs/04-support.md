@@ -25,6 +25,7 @@ __[Join the email list](https://serverpod.news)__
 ## Community updates
 
 Stay connected with our video content! We regularly publish videos on YouTube covering:
+
 - Announcements of major new features
 - Step-by-step tutorials
 - Tips and best practices
