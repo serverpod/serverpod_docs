@@ -236,12 +236,14 @@ In the example we fetch all users that do _not_ have a name starting with "A" _a
 All vector field types support specialized distance operations for similarity search. Available vector distance operations:
 
 **Vector, HalfVector, and SparseVector fields:**
+
 - `distanceL2` - Euclidean (L2) distance.
 - `distanceInnerProduct` - Inner product distance.
 - `distanceCosine` - Cosine distance.
 - `distanceL1` - Manhattan or taxicab (L1) distance.
 
 **Bit vector fields:**
+
 - `distanceHamming` - Hamming distance.
 - `distanceJaccard` - Jaccard distance.
 
