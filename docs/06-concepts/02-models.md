@@ -20,6 +20,20 @@ fields:
 
 Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](#vector), [HalfVector](#halfvector), [SparseVector](#sparsevector), [Bit](#bit) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
+
+### Required fields
+Nullable types are supported by adding a `?` after the type. E.g., `String?` or `List<Employee>?`. The optional `required` keyword makes the generated field a required constructor parameter. 
+
+```yaml
+class: Person
+fields:
+  name: String
+  nickname: String?, required
+  age: int?
+```
+
+In the example above, `nickname` will be a required constructor parameter.
+
 ### Limiting visibility of a generated class
 
 By default, generated code for your serializable objects is available both on the server and the client. You may want to have the code on the server side only. E.g., if the serializable object is connected to a database table containing private information.
@@ -428,6 +442,7 @@ fields:
 | [**managedMigration**](database/migrations#opt-out-of-migrations)   | A boolean flag to opt out of the database migration system.                                                    |        ✅        |                         |               |
 | [**fields**](#class)                                                | All fields in the generated class should be listed here.                                                       |        ✅        |            ✅            |               |
 | [**type (fields)**](#class)                                         | Denotes the data type for a field.                                                                             |        ✅        |            ✅            |               |
+| [**required**](#required-fields)                                    | Makes the field as required. This keyword can only be used for **nullable** fields.                            |        ✅        |            ✅            |               |
 | [**scope**](#limiting-visibility-of-a-generated-class)              | Denotes the scope for a field.                                                                                 |        ✅        |                         |               |
 | [**persist**](database/models)                                      | A boolean flag if the data should be stored in the database or not can be negated with `!persist`              |        ✅        |                         |               |
 | [**relation**](database/relations/one-to-one)                       | Sets a relation between model files, requires a table name to be set.                                          |        ✅        |                         |               |
