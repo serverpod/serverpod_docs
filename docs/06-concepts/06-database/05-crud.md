@@ -92,19 +92,32 @@ See [filter](filter) and [sort](sort) for all filter and sorting operations and 
 
 ## Update
 
-There are two update operations available.
+There are multiple update operations available for different use cases.
 
 ### Update a single row
 
 To update a single row, use the `updateRow` method.
 
 ```dart
-var company = await Company.db.findById(session, companyId); // Fetched company has its id set 
+var company = await Company.db.findById(session, companyId); // Fetched company has its id set
 company.name = 'New name';
 var updatedCompany = await Company.db.updateRow(session, company);
 ```
 
 The object that you update must have its `id` set to a non-`null` value and the id needs to exist on a row in the database. The `updateRow` method returns the updated object.
+
+#### Update specific columns
+
+It is possible to target one or several columns that you want to mutate, meaning any other column will be left unmodified even if the dart object has introduced a change.
+
+```dart
+var company = await Company.db.findById(session, companyId);
+company.name = 'New name';
+company.address = 'Baker street';
+var updatedCompany = await Company.db.updateRow(session, company, columns: (t) => [t.name]);
+```
+
+In the above example, only the company name will be updated, the address column will not be changed.
 
 ### Update several rows
 
@@ -118,25 +131,66 @@ var updatedCompanies = await Company.db.update(session, companies);
 
 This is an atomic operation, meaning no entries will be updated if any entry fails to be updated. The `update` method returns a `List` of the updated objects.
 
-### Update a specific column
+#### Update specific columns
 
-It is possible to target one or several columns that you want to mutate, meaning any other column will be left unmodified even if the dart object has introduced a change.
-
-Update a single row, the following code will update the company name, but will not change the address column.
-
-```dart
-var company = await Company.db.findById(session, companyId); 
-company.name = 'New name';
-company.address = 'Baker street';
-var updatedCompany = await Company.db.updateRow(session, company, columns: (t) => [t.name]);
-```
-
-The same syntax is available for multiple rows.
+The same syntax is available for updating specific columns on multiple rows.
 
 ```dart
 var companies = await Company.db.find(session);
 companies = companies.map((c) => c.copyWith(name: 'New name', address: 'Baker Street')).toList();
 var updatedCompanies = await Company.db.update(session, companies, columns: (t) => [t.name]);
+```
+
+### Update by ID
+
+To update a row by its ID without fetching it first, use the `updateById` method. This method allows you to specify which columns to update directly.
+
+```dart
+var updatedCompany = await Company.db.updateById(
+  session,
+  companyId,
+  columnValues: (t) => [t.name('New name'), t.address('New address')],
+);
+```
+
+The `updateById` method updates only the specified columns for the row with the given ID. The method returns the updated row, or throws a `DatabaseUpdateRowException` if no row with the given ID exists. At least one column must be specified in the `columnValues` parameter, otherwise an `ArgumentError` will be thrown.
+
+You can also update columns to null values:
+
+```dart
+var updatedCompany = await Company.db.updateById(
+  session,
+  companyId,
+  columnValues: (t) => [t.name(null), t.address(null)],
+);
+```
+
+### Update where
+
+To update rows based on filter criteria, use the `updateWhere` method. This method allows you to update specific columns for all rows matching a where clause.
+
+```dart
+var updatedCompanies = await Company.db.updateWhere(
+  session,
+  columnValues: (t) => [t.name('Updated name')],
+  where: (t) => t.name.like('%Ltd'),
+);
+```
+
+The `updateWhere` method updates all rows matching the where expression, modifying only the specified columns. The method returns a list of the updated rows. If no rows match the criteria, an empty list is returned. See [filter](filter) for all available filtering operations.
+
+The method also supports [pagination](pagination) and [ordering](sort):
+
+```dart
+var updatedCompanies = await Company.db.updateWhere(
+  session,
+  columnValues: (t) => [t.name('Updated name'), t.address('New address')],
+  where: (t) => t.id > 100,
+  orderBy: (t) => t.id,
+  orderDescending: false,
+  limit: 10,
+  offset: 5,
+);
 ```
 
 ## Delete
@@ -148,7 +202,7 @@ Deleting rows from the database is done in a similar way to updating rows. Howev
 To delete a single row, use the `deleteRow` method.
 
 ```dart
-var company = await Company.db.findById(session, companyId); // Fetched company has its id set 
+var company = await Company.db.findById(session, companyId); // Fetched company has its id set
 var companyDeleted = await Company.db.deleteRow(session, company);
 ```
 
@@ -175,7 +229,7 @@ var companiesDeleted = await Company.db.deleteWhere(
 );
 ```
 
-The above example will delete any row that ends in *Ltd*. The `deleteWhere` method returns a `List` of the models deleted.
+The above example will delete any row that ends in _Ltd_. The `deleteWhere` method returns a `List` of the models deleted.
 
 ## Count
 
@@ -183,7 +237,7 @@ Count is a special type of query that helps counting the number of rows in the d
 
 ```dart
 var count = await Company.db.count(
-  session, 
+  session,
   where: (t) => t.name.like('s%'),
 );
 ```
