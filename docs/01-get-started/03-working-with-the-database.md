@@ -127,7 +127,7 @@ class RecipeEndpoint extends Endpoint {
       throw Exception('Gemini API key not found');
     }
     final gemini = GenerativeModel(
-      model: 'gemini-1.5-flash-latest',
+      model: 'gemini-2.0-flash',
       apiKey: geminiApiKey,
     );
 
