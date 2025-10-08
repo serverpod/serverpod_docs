@@ -44,7 +44,6 @@ apiServer:
   publicHost: localhost # Change this line
   publicPort: 8080
   publicScheme: http
-...
 ```
 
 :::info
@@ -77,7 +76,7 @@ The return type must be a typed Future. Supported return types are the same as f
 
 ### Ignore an entire `Endpoint` class
 
-If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@doNotGenerate`.  This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
+If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@doNotGenerate`. This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -115,7 +114,7 @@ In this case the `ExampleEndpoint` will only expose the `hello` method, whereas 
 
 ## Endpoint method inheritance
 
-Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.  
+Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
 Inheritance gives you the possibility to modify the behavior of `Endpoint` classes defined in other Serverpod modules.
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
@@ -159,8 +158,7 @@ abstract class CalculatorEndpoint extends Endpoint {
 class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-The generated client code will only be able to access `MyCalculatorEndpoint`, as the abstract `CalculatorEndpoint` is not exposed on the server.
-`MyCalculatorEndpoint` exposes the `add` method it inherited from `CalculatorEndpoint`.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. However, an abstract client class will be generated, which will be extended by the class generated from `MyCalculatorEndpoint`. The concrete client exposes the `add` method it inherited from `CalculatorEndpoint`. See [Client-side endpoint inheritance](#client-side-endpoint-inheritance) for more details on how abstract endpoints are represented on the client.
 
 #### Extending an `abstract` `Endpoint` class
 
@@ -195,7 +193,7 @@ class CalculatorEndpoint extends Endpoint {
 class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-Since `CalculatorEndpoint` is marked as `@doNotGenerate` it will not be exposed on the server. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class.
+Since `CalculatorEndpoint` is marked as `@doNotGenerate`, it will not be exposed on the server and no client class will be generated for it. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class. Unlike abstract endpoints, when a parent is marked with `@doNotGenerate`, the generated client class will implement the base endpoint class directly rather than extending a generated abstract parent class.
 
 ### Overriding endpoint methods
 
@@ -248,7 +246,7 @@ class AdderEndpoint extends CalculatorEndpoint {
 ```
 
 Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@doNotGenerate` only the `add` method will be exposed.
-Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice, nothing will ever call this method on `AdderEndpoint`.
+Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice, nothing will ever call this method on `AdderEndpoint`.
 
 Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@doNotGenerate`. Otherwise, the method that should be hidden on the child would still be accessible via the parent class.
 
@@ -306,3 +304,168 @@ abstract class AdminEndpoint extends Endpoint {
 ```
 
 Again, just have your custom endpoint extend `AdminEndpoint` and you can be sure that the user has the appropriate permissions.
+
+## Client-side endpoint inheritance
+
+When you use endpoint inheritance on the server, Serverpod generates matching client-side classes that mirror your inheritance hierarchy. This allows you to write type-safe client code that works with abstract endpoint types.
+
+### Abstract endpoint client generation
+
+When you define an abstract endpoint on the server, Serverpod generates an abstract client endpoint class. This is particularly useful for module developers who want to provide base functionality that users can extend.
+
+**Server-side abstract endpoint:**
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+abstract class CalculatorEndpoint extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
+  }
+}
+```
+
+**Generated client-side abstract class:**
+
+```dart
+abstract class EndpointCalculator extends EndpointRef {
+  EndpointCalculator(EndpointCaller caller) : super(caller);
+
+  Future<int> add(int a, int b);
+}
+```
+
+When you extend this abstract endpoint in your server:
+
+```dart
+class MyCalculatorEndpoint extends CalculatorEndpoint {
+  Future<int> subtract(Session session, int a, int b) async {
+    return a - b;
+  }
+}
+```
+
+The generated client class will extend the abstract client class:
+
+```dart
+class EndpointMyCalculator extends EndpointCalculator {
+  EndpointMyCalculator(EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'myCalculator';
+
+  @override
+  Future<int> add(int a, int b) => caller.callServerEndpoint<int>(
+        'myCalculator',
+        'add',
+        {'a': a, 'b': b},
+      );
+
+  Future<int> subtract(int a, int b) => caller.callServerEndpoint<int>(
+        'myCalculator',
+        'subtract',
+        {'a': a, 'b': b},
+      );
+}
+```
+
+### Using `getEndpointOfType` for type-safe endpoint access
+
+When working with abstract endpoints, you can use the `getEndpointOfType` method to retrieve concrete endpoint instances by their type. This is especially useful when writing code that depends on abstract endpoint interfaces provided by modules.
+
+```dart
+// Get an endpoint by its type
+var calculator = client.getEndpointOfType<EndpointCalculator>();
+
+// Now you can call methods defined in the abstract base class
+var result = await calculator.add(5, 3);
+```
+
+The `getEndpointOfType` method will:
+
+- Return the single endpoint of the requested type if only one exists.
+- Throw `ServerpodClientEndpointNotFound` if no endpoint of that type is found.
+- Throw `ServerpodClientMultipleEndpointsFound` if multiple endpoints of that type exist.
+
+#### Disambiguating multiple endpoints
+
+If you have multiple concrete implementations of the same abstract endpoint, you can disambiguate by providing the endpoint name:
+
+```dart
+// Server-side: Two implementations of the same abstract endpoint
+class BasicCalculatorEndpoint extends CalculatorEndpoint {}
+class AdvancedCalculatorEndpoint extends CalculatorEndpoint {
+  Future<int> multiply(Session session, int a, int b) async {
+    return a * b;
+  }
+}
+```
+
+```dart
+// Client-side: Specify which implementation you want
+var basicCalc = client.getEndpointOfType<EndpointCalculator>('basicCalculator');
+var advancedCalc = client.getEndpointOfType<EndpointCalculator>('advancedCalculator');
+```
+
+#### Use case: Module-provided abstract endpoints
+
+This pattern is particularly powerful for modules. A module can provide an abstract endpoint that defines an interface, and users of the module can extend it to expose the functionality on their server:
+
+**In a module (e.g., `serverpod_auth`):**
+
+Declare an abstract endpoint with common methods on the server:
+
+```dart
+abstract class AuthSessionEndpoint extends Endpoint {
+  Future<bool> isAuthenticated(Session session) async {
+    return await session.isUserSignedIn;
+  }
+
+  Future<bool> logout(Session session, {required bool allSessions}) async {
+    // Implementation...
+  }
+}
+```
+
+Write client-side code that depends on the generated abstract type and uses its methods:
+
+```dart
+class UserLoggedInWidget extends StatelessWidget {
+  final Client client;
+
+  UserLoggedInWidget({required this.client});
+
+  // Will throw if no concrete implementation of the endpoint exists.
+  EndpointAuthSession get sessionEndpoint =>
+      client.getEndpointOfType<EndpointAuthSession>();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: sessionEndpoint.isAuthenticated(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData && snapshot.data == true) {
+          return Text('User is logged in');
+        } else {
+          return Text('User is not logged in');
+        }
+      },
+    );
+  }
+}
+```
+
+**In the user application:**
+
+The user will just have to extend the abstract endpoint to expose it on their server. Then, any client code that depends on the abstract endpoint will work seamlessly, regardless of the concrete class name or location.
+
+```dart
+// Extend the module's abstract endpoint to expose it
+class SessionEndpoint extends AuthSessionEndpoint {}
+```
+
+This approach allows module developers to provide reusable endpoint logic while giving application developers full control over which endpoints are exposed on their server.
