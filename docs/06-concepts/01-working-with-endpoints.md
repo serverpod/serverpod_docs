@@ -193,7 +193,7 @@ class CalculatorEndpoint extends Endpoint {
 class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-Since `CalculatorEndpoint` is marked as `@doNotGenerate`, it will not be exposed on the server and no client class will be generated for it. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class. Unlike abstract endpoints, when a parent is marked with `@doNotGenerate`, the generated client class will extend the base endpoint class directly rather than a generated abstract parent class.
+Since `CalculatorEndpoint` is marked as `@doNotGenerate`, it will not be exposed on the server and no client class will be generated for it. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class. Unlike abstract endpoints, when a parent is marked with `@doNotGenerate`, the generated client class will implement the base endpoint class directly rather than extending a generated abstract parent class.
 
 ### Overriding endpoint methods
 
