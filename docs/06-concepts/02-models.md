@@ -64,6 +64,43 @@ fields:
 Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](database/models) section.
 :::
 
+### Immutable classes
+
+By default, generated classes in Serverpod are mutable, meaning their fields can be changed after creation. However, you can make a class immutable by setting the `immutable` property to `true`. Immutable classes are especially useful when working with state management solutions or when you need value-based equality.
+
+```yaml
+class: ImmutableUser
+immutable: true
+fields:
+  name: String
+  email: String
+```
+
+When you mark a class as immutable:
+
+1. **All fields become final**: Fields cannot be reassigned after the object is created
+2. **Generates `operator ==`**: Provides deep equality comparison between instances
+3. **Generates `hashCode`**: Ensures instances with the same values have the same hash code
+4. **Compatible with `copyWith`**: You can still create modified copies of immutable objects using the `copyWith` method
+
+Example usage:
+
+```dart
+var user1 = ImmutableUser(name: 'Alice', email: 'alice@example.com');
+var user2 = ImmutableUser(name: 'Alice', email: 'alice@example.com');
+
+// Equality comparison works based on values
+print(user1 == user2); // true
+
+// Fields are final and cannot be reassigned
+// user1.name = 'Bob'; // This would cause a compile error
+
+// Use copyWith to create modified copies
+var user3 = user1.copyWith(name: 'Bob');
+print(user3.name); // Bob
+print(user3.email); // alice@example.com
+```
+
 ## Exception
 
 The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
@@ -437,6 +474,7 @@ fields:
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :-------------: | :---------------------: | :-----------: |
 | [**values**](#enum)                                                 | A special key for enums with a list of all enum values.                                                        |                 |                         |       ✅       |
 | [**serialized**](#enum)                                             | Sets the mode enums are serialized in                                                                          |                 |                         |       ✅       |
+| [**immutable**](#immutable-classes)                                 | Boolean flag to generate an immutable class with final fields, equals operator, and hashCode.                  |        ✅        |            ✅            |               |
 | [**serverOnly**](#limiting-visibility-of-a-generated-class)         | Boolean flag if code generator only should create the code for the server.                                     |        ✅        |            ✅            |       ✅       |
 | [**table**](database/models)                                        | A name for the database table, enables generation of database code.                                            |        ✅        |                         |               |
 | [**managedMigration**](database/migrations#opt-out-of-migrations)   | A boolean flag to opt out of the database migration system.                                                    |        ✅        |                         |               |
