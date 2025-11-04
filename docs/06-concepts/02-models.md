@@ -83,8 +83,6 @@ When you mark a class as immutable:
 3. **Generates `hashCode`**: Ensures instances with the same values have the same hash code
 4. **Compatible with `copyWith`**: You can still create modified copies of immutable objects using the `copyWith` method
 
-This behavior is similar to what the [Freezed](https://pub.dev/packages/freezed) package provides, but integrated directly into Serverpod's code generation.
-
 :::info
 Immutable classes are particularly useful with state management libraries like [Riverpod](https://riverpod.dev), [Bloc](https://bloclibrary.dev), or [Redux](https://pub.dev/packages/redux), which rely on immutability for change detection and state comparison.
 :::
