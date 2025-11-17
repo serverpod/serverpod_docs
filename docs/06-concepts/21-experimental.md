@@ -100,10 +100,6 @@ class ChildClass extends ParentClass {
 }
 ```
 
-:::info
-All files in a sealed hierarchy need to be located in the same directory.
-:::
-
 ## Exception monitoring
 
 Serverpod allows you to monitor exceptions in a central and flexible way by using the new diagnostic event handlers.

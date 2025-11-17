@@ -97,10 +97,6 @@ class ChildClass extends ParentClass {
 }
 ```
 
-:::info
-All files in a sealed hierarchy need to be located in the same directory.
-:::
-
 ## Change ID type
 
 Changing the type of the `id` field allows you to customize the identifier type for your database tables. This is done by declaring the `id` field on table models with one of the supported types. If the field is omitted, the id field will still be created with type `int`, as have always been.
