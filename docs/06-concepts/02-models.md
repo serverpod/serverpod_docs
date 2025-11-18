@@ -101,6 +101,141 @@ print(user3.name); // Bob
 print(user3.email); // alice@example.com
 ```
 
+## Inheritance
+
+Serverpod models support inheritance, which allows you to define class hierarchies that share fields between parent and child classes. This simplifies class structures and promotes consistency by avoiding duplicate field definitions. Generated classes will maintain the same type hierarchy as the model files.
+
+:::warning
+Adding a new subtype to a class hierarchy may introduce breaking changes for older clients. Ensure client compatibility when expanding class hierarchies to avoid deserialization issues.
+:::
+
+### Extending a Class
+
+To inherit from a class, use the `extends` keyword in your model files, as shown below:
+
+```yaml
+class: ParentClass
+fields:
+  name: String
+```
+
+```yaml
+class: ChildClass
+extends: ParentClass
+fields:
+  age: int
+```
+
+This will generate a class with both `name` and `age` fields.
+
+#### Inheritance on table models
+
+Inheritance can also be used with table models. However, **only one class** in an inheritance hierarchy can have a `table` property defined. The table can be placed at any level in the inheritance chain (top, middle or bottom).
+
+:::info
+This is a current limitation due to the parent class implementing the `table` getter and other table-related fields, so classes that `extends` the parent cannot override such properties with different types. This might be lifted with a future implementation of `interface` support for table models.
+:::
+
+When a class in the hierarchy has a table, all inherited fields are stored as columns in that table. The `id` field is automatically added to table classes and inherited by child classes. You can customize the `id` type in a parent class, and children will inherit it.
+
+A common use case for inheritance on table models is to have a base class that defines a custom `id` type, audit fields and other common properties that must be present on several table models. Below is an example:
+
+```yaml
+class: BaseClass
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+```
+
+```yaml
+class: ChildClass
+extends: BaseClass
+table: child_table
+fields:
+  name: String
+
+indexes:
+  created_at_index:
+    fields: createdAt  # Index on inherited field
+```
+
+**ServerOnly Inheritance**: If a parent class is marked as `serverOnly`, all child classes must also be marked as `serverOnly`. A non-serverOnly class cannot extend a serverOnly class, but a serverOnly child can extend a non-serverOnly parent.
+
+**Additional Restrictions**:
+
+- You can only extend classes from your own project, not from modules.
+- Child classes cannot redefine fields that exist in parent classes.
+
+Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes.
+
+### Sealed Classes
+
+In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies, enabling exhaustive type checking. With sealed classes, the compiler knows all subclasses, ensuring that every possible case is handled when working with the model.
+
+:::info
+If a class is sealed, it cannot have a table property. This is because a sealed class is abstract and cannot be instantiated, so it cannot represent a table row.
+:::
+
+```yaml
+class: ParentClass
+sealed: true
+fields:
+  name: String
+```
+
+```yaml
+class: ChildClass
+extends: ParentClass
+fields:
+  age: int
+```
+
+This will generate the following classes:
+
+```dart
+sealed class ParentClass {
+  String name;
+}
+
+class ChildClass extends ParentClass {
+  String name;
+  int age;
+}
+```
+
+## Polymorphism Support
+
+Serverpod supports polymorphism for models that use inheritance. When you define a class hierarchy you can use parent types as parameters and return types in your endpoints, and Serverpod will automatically serialize and deserialize the correct subtype based on the runtime type.
+
+### Using Polymorphic Types in Endpoints
+
+Polymorphic types can be used as parameters and return types in endpoint methods and streaming endpoints. The runtime type is preserved through serialization and deserialization:
+
+```dart
+class AnimalOwnerEndpoint extends Endpoint {
+  Future<Animal> assignOwner(Session session, {required Animal animal}) async {
+    if (animal.owner != null) {
+      return animal;
+    }
+
+    final owner = switch (animal) {
+      Dog dog => (await Dog.db.findById(session, dog.id))?.dogOwner,
+      Cat cat => (await Cat.db.findById(session, cat.id))?.catOwner,
+      _ => throw Exception('Unknown animal'),
+    };
+
+    if (owner == null) {
+      throw Exception('Owner not found');
+    }
+
+    return animal.copyWith(owner: owner);
+  }
+}
+```
+
+Polymorphic types also work seamlessly in Lists, Maps, Sets, Records, and nullable contexts.
+
 ## Exception
 
 The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
@@ -499,3 +634,5 @@ fields:
 | [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.     |        ✅        |                         |               |
 | [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                      |        ✅        |                         |               |
 | [**defaultPersist**](#default-values)                               | Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**. |        ✅        |                         |               |
+| [**extends**](#inheritance)                                         | Specifies a parent class to inherit from.                                                                      |        ✅        |            ✅            |               |
+| [**sealed**](#inheritance)                                          | Boolean flag to create a sealed class hierarchy, enabling exhaustive type checking.                             |        ✅        |                         |               |
