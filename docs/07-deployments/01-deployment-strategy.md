@@ -6,10 +6,10 @@ The main two options are running Serverpod on a cluster of servers or on a serve
 
 Here are some pros and cons for the different options:
 
-|      | Server cluster | Serverless |
-| :--- | :--------| :--------- |
+|      | Server cluster                                                                            | Serverless                                                          |
+| :--- | :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
 | Pros | All features are supported.  Great for real time communication.  Cost efficient at scale. | Minimal starting cost.  Easier configuration.  Minimal maintenance. |
-| Cons | Slightly higher starting cost.  More complex to set up. | Limited feature set.  The server cannot have a state. |
+| Cons | Slightly higher starting cost.  More complex to set up.                                   | Limited feature set.  The server cannot have a state.               |
 
 The features that currently are not supported by the serverless option are:
 
