@@ -208,28 +208,72 @@ class ChildClass extends ParentClass {
 
 Serverpod supports polymorphism for models that use inheritance. When you define a class hierarchy you can use parent types as parameters and return types in your endpoints, and Serverpod will automatically serialize and deserialize the correct subtype based on the runtime type.
 
+Below is an example of a polymorphic model hierarchy. The `EmailNotification` and `SMSNotification` classes extend the `Notification` sealed class. Each notification type has its own table and specific fields for delivery. Note that it is not possible to define relations towards the `Notification` class, since it does not have a table.
+
+```yaml
+class: Notification
+sealed: true
+fields:
+  title: String
+  message: String
+  createdAt: DateTime, default=now
+  sentAt: DateTime?
+```
+
+```yaml
+class: EmailNotification
+extends: Notification
+table: email_notification
+fields:
+  recipientEmail: String
+  subject: String
+```
+
+```yaml
+class: SMSNotification
+extends: Notification
+table: sms_notification
+fields:
+  phoneNumber: String
+  provider: String?
+```
+
 ### Using Polymorphic Types in Endpoints
 
 Polymorphic types can be used as parameters and return types in endpoint methods and streaming endpoints. The runtime type is preserved through serialization and deserialization:
 
 ```dart
-class AnimalOwnerEndpoint extends Endpoint {
-  Future<Animal> assignOwner(Session session, {required Animal animal}) async {
-    if (animal.owner != null) {
-      return animal;
-    }
-
-    final owner = switch (animal) {
-      Dog dog => (await Dog.db.findById(session, dog.id))?.dogOwner,
-      Cat cat => (await Cat.db.findById(session, cat.id))?.catOwner,
-      _ => throw Exception('Unknown animal'),
+class NotificationEndpoint extends Endpoint {
+  Future<Notification> sendNotification(
+    Session session, {
+    required Notification notification,
+  }) async {
+    final sentNotification = switch (notification) {
+      EmailNotification email => await _sendEmail(session, email),
+      SMSNotification sms => await _sendSMS(session, sms),
     };
 
-    if (owner == null) {
-      throw Exception('Owner not found');
-    }
+    return sentNotification.copyWith(sentAt: DateTime.now());
+  }
 
-    return animal.copyWith(owner: owner);
+  /// Save to database and send email
+  Future<EmailNotification> _sendEmail(
+    Session session,
+    EmailNotification notification,
+  ) async {
+    final saved = await EmailNotification.db.insertRow(session, notification);
+    // ... email sending logic
+    return saved;
+  }
+
+  /// Save to database and send SMS
+  Future<SMSNotification> _sendSMS(
+    Session session,
+    SMSNotification notification,
+  ) async {
+    final saved = await SMSNotification.db.insertRow(session, notification);
+    // ... SMS sending logic
+    return saved;
   }
 }
 ```
