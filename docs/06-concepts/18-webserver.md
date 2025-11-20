@@ -204,16 +204,11 @@ pod.webServer.addRoute(ApiRoute(), '/api/data');
 ```
 
 :::info Error Handling
-The examples in this documentation omit error handling for brevity. In production code, you should handle potential exceptions:
-- `jsonDecode()` can throw `FormatException` for invalid JSON
-- Database operations can throw exceptions
-- File operations can fail
+The examples in this documentation omit error handling for brevity. In production code, you should handle potential exceptions from `jsonDecode()`, database operations, and file operations.
 
-If an exception escapes your handler, Serverpod will automatically return:
-- **500 Internal Server Error** for general exceptions
-- **400 Bad Request** for malformed headers or invalid requests
+**Recommended approach**: Use error handling middleware (see the Middleware section below) to catch exceptions globally rather than adding try-catch blocks to every route handler. This centralizes error handling and ensures consistent error responses across your API.
 
-For better user experience, catch and handle exceptions explicitly to return appropriate error responses.
+If an exception escapes all handlers and middleware, Serverpod will automatically return a **500 Internal Server Error** response.
 :::
 
 ### HTTP methods
@@ -699,6 +694,45 @@ Handler corsMiddleware(Handler innerHandler) {
 
 pod.webServer.addMiddleware(corsMiddleware, '/api');
 ```
+
+### Error handling middleware
+
+A global error handling middleware can catch exceptions from routes and return appropriate error responses:
+
+```dart
+Handler errorHandlingMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    try {
+      return await innerHandler(request);
+    } on FormatException catch (e) {
+      // Handle JSON parsing errors
+      return Response.badRequest(
+        body: Body.fromString(
+          jsonEncode({'error': 'Invalid request format', 'message': e.message}),
+          mimeType: MimeType.json,
+        ),
+      );
+    } catch (e, stackTrace) {
+      // Log the error
+      print('Error handling ${request.method} ${request.url.path}: $e');
+      print(stackTrace);
+      
+      // Return a generic error response
+      return Response.internalServerError(
+        body: Body.fromString(
+          jsonEncode({'error': 'Internal server error'}),
+          mimeType: MimeType.json,
+        ),
+      );
+    }
+  };
+}
+
+// Apply to all routes
+pod.webServer.addMiddleware(errorHandlingMiddleware, '/');
+```
+
+With error handling middleware in place, your route handlers can focus on business logic without extensive try-catch blocks. Uncaught exceptions will be caught and converted to appropriate HTTP responses.
 
 ### Middleware execution order
 
