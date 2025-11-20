@@ -203,6 +203,19 @@ class ApiRoute extends Route {
 pod.webServer.addRoute(ApiRoute(), '/api/data');
 ```
 
+:::info Error Handling
+The examples in this documentation omit error handling for brevity. In production code, you should handle potential exceptions:
+- `jsonDecode()` can throw `FormatException` for invalid JSON
+- Database operations can throw exceptions
+- File operations can fail
+
+If an exception escapes your handler, Serverpod will automatically return:
+- **500 Internal Server Error** for general exceptions
+- **400 Bad Request** for malformed headers or invalid requests
+
+For better user experience, catch and handle exceptions explicitly to return appropriate error responses.
+:::
+
 ### HTTP methods
 
 Routes can specify which HTTP methods they respond to using the `methods` parameter. The available methods are:
@@ -353,6 +366,19 @@ pod.webServer.fallbackRoute = NotFoundRoute();
 For complex applications, you can create modular route classes that register multiple sub-routes by overriding the `injectIn` method. This allows you to organize related routes into reusable modules.
 
 When you call `pod.webServer.addRoute(route, path)`, Serverpod calls `route.injectIn(router)` on a router group for the specified path. By overriding `injectIn`, you can register multiple routes instead of just one.
+
+:::info Session Access in Modular Routes
+When using `injectIn()` with handler functions (`router.get('/', _handler)`), your handlers receive only a `Request` parameter. To access the `Session`, use `request.session`:
+
+```dart
+Future<Result> _handler(Request request) async {
+  final session = request.session;  // Extract Session from Request
+  // ... use session
+}
+```
+
+This differs from `Route.handleCall()` which receives both Session and Request as explicit parameters. The modular route pattern uses Relic's router directly, which only provides Request to handlers.
+:::
 
 #### Creating a CRUD module
 
