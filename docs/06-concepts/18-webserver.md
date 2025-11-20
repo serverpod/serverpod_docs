@@ -900,7 +900,8 @@ class ApiRoute extends Route {
     final userAgent = request.headers.userAgent;          // String?
     final host = request.headers.host;                    // HostHeader?
     
-    // Raw access still available for custom headers
+    // Raw string access is also available for any header
+    final authRaw = request.headers['Authorization'];     // Iterable<String>?
     final custom = request.headers['X-Custom-Header'];    // Iterable<String>?
     
     return Response.ok();
