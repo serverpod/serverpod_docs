@@ -876,3 +876,327 @@ pod.webServer.addMiddleware(logRequests(), '/');
 ```
 
 This logs all requests with method, path, status code, and response time.
+
+## Typed headers
+
+Serverpod's web server (via Relic) provides a type-safe header system that goes beyond simple string-based HTTP headers. Instead of working with raw strings, you can access and set HTTP headers using strongly-typed Dart objects with automatic parsing and validation.
+
+### Reading typed headers
+
+Access typed headers through extension methods on `request.headers`:
+
+```dart
+class ApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Type-safe accessors return parsed objects or null
+    final auth = request.headers.authorization;          // AuthorizationHeader?
+    final contentType = request.headers.contentType;      // ContentTypeHeader?
+    final cookies = request.headers.cookie;               // CookieHeader?
+    final userAgent = request.headers.userAgent;          // String?
+    final host = request.headers.host;                    // HostHeader?
+    
+    // Raw access still available for custom headers
+    final custom = request.headers['X-Custom-Header'];    // Iterable<String>?
+    
+    return Response.ok();
+  }
+}
+```
+
+Common request headers include:
+- `authorization` - AuthorizationHeader (Bearer/Basic/Digest)
+- `contentType` - ContentTypeHeader
+- `contentLength` - int
+- `cookie` - CookieHeader
+- `accept` - AcceptHeader (media types)
+- `acceptEncoding` - AcceptEncodingHeader
+- `acceptLanguage` - AcceptLanguageHeader
+- `userAgent` - String
+- `host` - HostHeader
+- `referer` - Uri
+- `origin` - Uri
+
+### Setting typed headers
+
+Set typed headers in responses using the `Headers.build()` builder pattern:
+
+```dart
+return Response.ok(
+  headers: Headers.build((h) {
+    h.cacheControl = CacheControlHeader(
+      maxAge: 3600,
+      publicCache: true,
+    );
+    h.contentType = ContentTypeHeader(
+      mimeType: MimeType.json,
+      charset: 'utf-8',
+    );
+    
+    // Set custom headers (raw)
+    h['X-API-Version'] = ['2.0'];
+  }),
+  body: Body.fromString(jsonEncode(data)),
+);
+```
+
+Common response headers include:
+- `cacheControl` - CacheControlHeader
+- `setCookie` - SetCookieHeader
+- `location` - Uri
+- `contentDisposition` - ContentDispositionHeader
+- `etag` - ETagHeader
+- `vary` - VaryHeader
+
+### AuthorizationHeader - Authentication
+
+The `AuthorizationHeader` supports three authentication schemes:
+
+**Bearer Token (JWT, OAuth):**
+```dart
+final auth = request.headers.authorization;
+
+if (auth is BearerAuthorizationHeader) {
+  final token = auth.token;  // The actual token string
+  
+  // Validate token
+  if (!await validateToken(token)) {
+    return Response.unauthorized();
+  }
+}
+```
+
+**Basic Authentication:**
+```dart
+if (auth is BasicAuthorizationHeader) {
+  final username = auth.username;
+  final password = auth.password;
+  
+  // Validate credentials
+  if (!await validateCredentials(username, password)) {
+    return Response.unauthorized();
+  }
+}
+```
+
+**Setting Bearer token:**
+```dart
+headers: Headers.build((h) {
+  h.authorization = BearerAuthorizationHeader(token: 'eyJhbGc...');
+}),
+```
+
+### CacheControlHeader - Cache directives
+
+Control caching behavior with type-safe cache directives:
+
+```dart
+// Public cache with 1 hour expiration
+headers: Headers.build((h) {
+  h.cacheControl = CacheControlHeader(
+    maxAge: 3600,                  // Cache for 1 hour
+    publicCache: true,             // Shared cache allowed
+    mustRevalidate: true,          // Must revalidate after expiry
+    staleWhileRevalidate: 86400,   // Can use stale for 1 day while revalidating
+  );
+}),
+```
+
+```dart
+// Secure defaults for sensitive data
+headers: Headers.build((h) {
+  h.cacheControl = CacheControlHeader(
+    noStore: true,      // Don't store anywhere
+    noCache: true,      // Must revalidate
+    privateCache: true, // Only private cache
+  );
+}),
+```
+
+Available directives:
+- `noCache`, `noStore` - Cache control flags
+- `maxAge`, `sMaxAge` - Seconds of freshness
+- `mustRevalidate`, `proxyRevalidate` - Revalidation requirements
+- `publicCache`, `privateCache` - Cache scope
+- `staleWhileRevalidate`, `staleIfError` - Stale caching
+- `immutable` - Content never changes
+
+### ContentDispositionHeader - File downloads
+
+Specify how content should be handled (inline display or download):
+
+```dart
+// File download with proper filename
+headers: Headers.build((h) {
+  h.contentDisposition = ContentDispositionHeader(
+    type: 'attachment',
+    parameters: [
+      ContentDispositionParameter(name: 'filename', value: 'report.pdf'),
+    ],
+  );
+}),
+```
+
+```dart
+// With extended encoding (RFC 5987) for non-ASCII filenames
+h.contentDisposition = ContentDispositionHeader(
+  type: 'attachment',
+  parameters: [
+    ContentDispositionParameter(
+      name: 'filename',
+      value: 'rapport.pdf',
+      isExtended: true,
+      encoding: 'UTF-8',
+    ),
+  ],
+);
+```
+
+### CookieHeader and SetCookieHeader - Cookies
+
+**Reading cookies from requests:**
+```dart
+final cookieHeader = request.headers.cookie;
+
+if (cookieHeader != null) {
+  // Find a specific cookie
+  final sessionId = cookieHeader.getCookie('session_id')?.value;
+  
+  // Iterate all cookies
+  for (final cookie in cookieHeader.cookies) {
+    print('${cookie.name}=${cookie.value}');
+  }
+}
+```
+
+**Setting cookies in responses:**
+```dart
+headers: Headers.build((h) {
+  h.setCookie = SetCookieHeader(
+    name: 'session_id',
+    value: '12345abcde',
+    maxAge: 3600,                    // 1 hour
+    path: Uri.parse('/'),
+    domain: Uri.parse('example.com'),
+    secure: true,                    // HTTPS only
+    httpOnly: true,                  // No JavaScript access
+    sameSite: SameSite.strict,       // CSRF protection
+  );
+}),
+```
+
+SameSite values:
+- `SameSite.lax` - Default, not sent on cross-site requests (except navigation)
+- `SameSite.strict` - Never sent on cross-site requests
+- `SameSite.none` - Sent on all requests (requires `secure: true`)
+
+### Complete examples
+
+**Secure API with authentication and caching:**
+```dart
+class SecureApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Check authorization
+    final auth = request.headers.authorization;
+    if (auth is! BearerAuthorizationHeader) {
+      return Response.unauthorized();
+    }
+    
+    // Validate token
+    if (!await validateToken(auth.token)) {
+      return Response.forbidden();
+    }
+    
+    // Return data with cache headers
+    return Response.ok(
+      headers: Headers.build((h) {
+        h.cacheControl = CacheControlHeader(
+          maxAge: 300,           // 5 minutes
+          publicCache: true,
+          mustRevalidate: true,
+        );
+        h.contentType = ContentTypeHeader(
+          mimeType: MimeType.json,
+          charset: 'utf-8',
+        );
+      }),
+      body: Body.fromString(jsonEncode(data)),
+    );
+  }
+}
+```
+
+**File download with proper headers:**
+```dart
+class DownloadRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final fileId = request.pathParameters[#fileId];
+    final file = await getFile(session, fileId);
+    
+    return Response.ok(
+      headers: Headers.build((h) {
+        h.contentDisposition = ContentDispositionHeader(
+          type: 'attachment',
+          parameters: [
+            ContentDispositionParameter(
+              name: 'filename',
+              value: file.name,
+              isExtended: true,
+              encoding: 'UTF-8',
+            ),
+          ],
+        );
+        h.contentType = ContentTypeHeader(
+          mimeType: file.mimeType,
+        );
+        h.cacheControl = CacheControlHeader(
+          noCache: true,
+          mustRevalidate: true,
+        );
+      }),
+      body: Body.fromBytes(file.content),
+    );
+  }
+}
+```
+
+**Cookie-based sessions:**
+```dart
+class LoginRoute extends Route {
+  LoginRoute() : super(methods: {Method.post});
+
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Authenticate user...
+    final sessionToken = await authenticateAndCreateSession(session, request);
+    
+    return Response.ok(
+      headers: Headers.build((h) {
+        h.setCookie = SetCookieHeader(
+          name: 'session_id',
+          value: sessionToken,
+          maxAge: 86400,           // 24 hours
+          path: Uri.parse('/'),
+          secure: true,            // HTTPS only
+          httpOnly: true,          // No JavaScript access
+          sameSite: SameSite.lax,  // CSRF protection
+        );
+      }),
+      body: Body.fromString(
+        jsonEncode({'status': 'logged_in'}),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+```
+
+:::tip Best Practices
+- Use typed headers for automatic parsing and validation
+- Set appropriate cache headers for better performance
+- Use `secure: true` and `httpOnly: true` for sensitive cookies
+- Set proper `ContentDisposition` headers for file downloads
+- Use `SameSite` cookie attribute for CSRF protection
+:::
