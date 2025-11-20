@@ -1200,3 +1200,149 @@ class LoginRoute extends Route {
 - Set proper `ContentDisposition` headers for file downloads
 - Use `SameSite` cookie attribute for CSRF protection
 :::
+
+### Creating custom typed headers
+
+You can create your own typed headers by defining a header class and a `HeaderAccessor`. Here's a simple example for a custom `X-API-Version` header:
+
+```dart
+// Define your typed header class
+final class ApiVersionHeader {
+  final int major;
+  final int minor;
+
+  ApiVersionHeader({required this.major, required this.minor});
+
+  // Parse from string format "1.2"
+  factory ApiVersionHeader.parse(String value) {
+    final parts = value.split('.');
+    if (parts.length != 2) {
+      throw const FormatException('Invalid API version format');
+    }
+    
+    final major = int.tryParse(parts[0]);
+    final minor = int.tryParse(parts[1]);
+    
+    if (major == null || minor == null) {
+      throw const FormatException('Invalid API version numbers');
+    }
+    
+    return ApiVersionHeader(major: major, minor: minor);
+  }
+
+  // Encode to string format
+  String encode() => '$major.$minor';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ApiVersionHeader &&
+          major == other.major &&
+          minor == other.minor;
+
+  @override
+  int get hashCode => Object.hash(major, minor);
+
+  @override
+  String toString() => 'ApiVersionHeader($major.$minor)';
+}
+
+// Create a HeaderCodec for encoding/decoding
+const _apiVersionCodec = HeaderCodec.single(
+  ApiVersionHeader.parse,
+  (ApiVersionHeader value) => [value.encode()],
+);
+
+// Create a global HeaderAccessor
+const apiVersionHeader = HeaderAccessor(
+  'x-api-version',
+  _apiVersionCodec,
+);
+```
+
+**Using your custom header:**
+
+```dart
+// Reading the header
+class ApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final version = apiVersionHeader[request.headers]();
+    
+    if (version != null && version.major < 2) {
+      return Response.badRequest(
+        body: Body.fromString('API version 2.0 or higher required'),
+      );
+    }
+    
+    return Response.ok();
+  }
+}
+
+// Setting the header
+return Response.ok(
+  headers: Headers.build((h) {
+    apiVersionHeader[h].set(ApiVersionHeader(major: 2, minor: 1));
+  }),
+);
+```
+
+**Multi-value header example:**
+
+For headers that can have multiple comma-separated values:
+
+```dart
+final class CustomTagsHeader {
+  final List<String> tags;
+
+  CustomTagsHeader({required List<String> tags})
+      : tags = List.unmodifiable(tags);
+
+  // Parse from multiple values or comma-separated
+  factory CustomTagsHeader.parse(Iterable<String> values) {
+    final allTags = values
+        .expand((v) => v.split(','))
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet()
+        .toList();
+    
+    if (allTags.isEmpty) {
+      throw const FormatException('Tags cannot be empty');
+    }
+    
+    return CustomTagsHeader(tags: allTags);
+  }
+
+  List<String> encode() => [tags.join(', ')];
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomTagsHeader &&
+          const ListEquality().equals(tags, other.tags);
+
+  @override
+  int get hashCode => const ListEquality().hash(tags);
+}
+
+// Use HeaderCodec (not HeaderCodec.single) for multi-value
+const _customTagsCodec = HeaderCodec(
+  CustomTagsHeader.parse,
+  (CustomTagsHeader value) => value.encode(),
+);
+
+const customTagsHeader = HeaderAccessor(
+  'x-custom-tags',
+  _customTagsCodec,
+);
+```
+
+**Key points:**
+
+- Use `HeaderCodec.single()` when your header has only one value
+- Use `HeaderCodec()` when your header can have multiple comma-separated values
+- Define the `HeaderAccessor` as a global `const`
+- Throw `FormatException` for invalid header values
+- Implement `==` and `hashCode` for value equality
+- The `HeaderAccessor` automatically caches parsed values for performance
