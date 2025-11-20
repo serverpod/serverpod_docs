@@ -277,7 +277,7 @@ pod.webServer.addRoute(ApiRoute(), '/api/data');
 
 :::info The examples in this documentation omit error handling for brevity. See
 the Error Handling section in Middleware below for the recommended approach
-using global error handling middleware. :::
+using global error-handling middleware. :::
 
 ### HTTP methods
 
@@ -797,12 +797,12 @@ pod.webServer.addMiddleware(corsMiddleware, '/api');
 ### Error handling
 
 Production applications need robust error handling. Rather than adding try-catch
-blocks to every route, use error handling middleware to catch exceptions
+blocks to every route, use error-handling middleware to catch exceptions
 globally and return consistent error responses.
 
-#### Error handling middleware
+#### Error-handling middleware
 
-Error handling middleware wraps all your routes and catches any exceptions they
+Error-handling middleware wraps all your routes and catches any exceptions they
 throw:
 
 ```dart
@@ -838,7 +838,7 @@ Handler errorHandlingMiddleware(Handler innerHandler) {
 pod.webServer.addMiddleware(errorHandlingMiddleware, '/');
 ```
 
-With error handling middleware in place, your route handlers can focus on
+With error-handling middleware in place, your route handlers can focus on
 business logic without extensive try-catch blocks. The middleware catches common
 exceptions like:
 
@@ -847,7 +847,7 @@ exceptions like:
 - Any other uncaught exceptions - Returns 500 with error details logged
 
 If an exception escapes all middleware, Serverpod will automatically return a
-500 Internal Server Error response. However, using error handling middleware
+500 Internal Server Error response. However, using error-handling middleware
 gives you control over error responses and logging.
 
 ### Middleware execution order
