@@ -216,9 +216,13 @@ Routes also support wildcard matching for catching all paths:
 // Single-level wildcard - matches /item/foo but not /item/foo/bar
 pod.webServer.addRoute(ItemRoute(), '/item/*');
 
-// Multi-level wildcard - matches /item/foo and /item/foo/bar/baz
+// Tail-match wildcard - matches /item/foo and /item/foo/bar/baz
 pod.webServer.addRoute(ItemRoute(), '/item/**');
 ```
+
+:::info Performance Guarantee
+The `/**` wildcard is a **tail-match** pattern and can only appear at the end of a route path (e.g., `/static/**`). Patterns like `/a/**/b` are not supported. This design ensures O(h) route lookup performance, where h is the path length, without backtracking. This keeps routing fast and predictable, even with many routes.
+:::
 
 Access the matched path information through the `Request` object:
 
