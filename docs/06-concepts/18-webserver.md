@@ -7,6 +7,8 @@ share data for applications that need both an app and traditional web pages. You
 can also use the web server to create webhooks or generate custom REST APIs to
 communicate with 3rd party services.
 
+Serverpod's web server is built on the [Relic](https://github.com/serverpod/relic) framework, giving you access to its routing engine, middleware system, and typed headers. This means you get the benefits of Serverpod's database integration and business logic alongside Relic's web server capabilities.
+
 :::caution
 
 Serverpod's web server is still experimental, and the APIs may change in the
@@ -205,17 +207,9 @@ Method.post});
 
 // Register the route pod.webServer.addRoute(ApiRoute(), '/api/data'); ```
 
-:::info Error Handling The examples in this documentation omit error handling
-for brevity. In production code, you should handle potential exceptions from
-`jsonDecode()`, database operations, and file operations.
-
-**Recommended approach**: Use error handling middleware (see the Middleware
-section below) to catch exceptions globally rather than adding try-catch blocks
-to every route handler. This centralizes error handling and ensures consistent
-error responses across your API.
-
-If an exception escapes all handlers and middleware, Serverpod will
-automatically return a **500 Internal Server Error** response. :::
+:::info The examples in this documentation omit error handling for brevity. See
+the Error Handling section in Middleware below for the recommended approach
+using global error handling middleware. :::
 
 ### HTTP methods
 
@@ -548,10 +542,13 @@ Authorization'); }), ); }
 
 pod.webServer.addMiddleware(corsMiddleware, '/api'); ```
 
-### Error handling middleware
+### Error handling
 
-A global error handling middleware can catch exceptions from routes and return
-appropriate error responses:
+Production applications need robust error handling. Rather than adding try-catch blocks to every route, use error handling middleware to catch exceptions globally and return consistent error responses.
+
+#### Error handling middleware
+
+Error handling middleware wraps all your routes and catches any exceptions they throw:
 
 ```dart Handler errorHandlingMiddleware(Handler innerHandler) { return (Request
 request) async { try { return await innerHandler(request); } on FormatException
@@ -569,8 +566,13 @@ print(stackTrace);
 '/'); ```
 
 With error handling middleware in place, your route handlers can focus on
-business logic without extensive try-catch blocks. Uncaught exceptions will be
-caught and converted to appropriate HTTP responses.
+business logic without extensive try-catch blocks. The middleware catches common exceptions like:
+
+- `FormatException` from `jsonDecode()` - Returns 400 Bad Request
+- Database errors - Returns 500 Internal Server Error with logging
+- Any other uncaught exceptions - Returns 500 with error details logged
+
+If an exception escapes all middleware, Serverpod will automatically return a 500 Internal Server Error response. However, using error handling middleware gives you control over error responses and logging.
 
 ### Middleware execution order
 
@@ -609,7 +611,8 @@ per-request state.
 :::info Note that Serverpod's `Route.handleCall()` already receives a `Session`
 parameter which includes authenticated user information if available. Use
 `ContextProperty` for web-specific request data that isn't part of the standard
-Session. :::
+Session, such as request IDs, feature flags, or API version information
+extracted from headers. :::
 
 #### Why use ContextProperty?
 
@@ -618,12 +621,13 @@ Since `Request` objects are immutable, you can't modify them directly.
 can be accessed by all downstream middleware and handlers. Common use cases
 include:
 
-- **Request ID tracking** - Add correlation IDs for logging and tracing
-- **Tenant identification** - Multi-tenant application context from
-  subdomains/headers
-- **Feature flags** - Request-specific feature toggles based on headers/cookies
-- **Rate limiting** - Store rate limit state per request
+- **Request ID tracking** - Generated correlation IDs for distributed tracing
+  (purely request-scoped, not session data)
 - **API versioning** - Extract and store API version from headers
+- **Feature flags** - Request-specific toggles based on headers or A/B testing
+- **Rate limiting** - Per-request rate limit state
+- **Tenant identification** - Multi-tenant context from subdomains (when not
+  part of user session)
 
 #### Creating a ContextProperty
 
