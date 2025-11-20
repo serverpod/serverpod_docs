@@ -1338,6 +1338,38 @@ const customTagsHeader = HeaderAccessor(
 );
 ```
 
+**Optional: Add extension methods for convenient access**
+
+For better ergonomics, you can add extension methods to access your custom headers with property syntax:
+
+```dart
+extension CustomHeadersEx on Headers {
+  ApiVersionHeader? get apiVersion => apiVersionHeader[this]();
+  CustomTagsHeader? get customTags => customTagsHeader[this]();
+}
+
+extension CustomMutableHeadersEx on MutableHeaders {
+  set apiVersion(ApiVersionHeader? value) => apiVersionHeader[this].set(value);
+  set customTags(CustomTagsHeader? value) => customTagsHeader[this].set(value);
+}
+```
+
+Now you can use property syntax instead of the bracket notation:
+
+```dart
+// Reading with property syntax
+final version = request.headers.apiVersion;
+final tags = request.headers.customTags;
+
+// Setting with property syntax
+return Response.ok(
+  headers: Headers.build((h) {
+    h.apiVersion = ApiVersionHeader(major: 2, minor: 1);
+    h.customTags = CustomTagsHeader(tags: ['production', 'v2']);
+  }),
+);
+```
+
 **Key points:**
 
 - Use `HeaderCodec.single()` when your header has only one value
@@ -1346,3 +1378,4 @@ const customTagsHeader = HeaderAccessor(
 - Throw `FormatException` for invalid header values
 - Implement `==` and `hashCode` for value equality
 - The `HeaderAccessor` automatically caches parsed values for performance
+- Optionally add extension methods for convenient property-style access
