@@ -597,37 +597,273 @@ For a request to `/api/users`, the execution order is:
 6. `authMiddleware` (after)
 7. `loggingMiddleware` (after)
 
-### Using ContextProperty for request-scoped data
+### Request-scoped data with ContextProperty
 
-Instead of modifying the request object, use `ContextProperty` to attach data that middleware or routes can access:
+`ContextProperty<T>` provides a type-safe way to attach data to a `Request` object that can be accessed by downstream middleware and route handlers. This is the recommended pattern for passing computed or authenticated data through your request pipeline.
+
+#### Why use ContextProperty?
+
+Instead of modifying the `Request` object directly (which you can't do since it's immutable), `ContextProperty` allows you to associate additional data with a request. Common use cases include:
+
+- **Authentication** - Attach the authenticated user to the request
+- **Rate limiting** - Store rate limit state per request
+- **Request ID tracking** - Add correlation IDs for logging
+- **Tenant identification** - Multi-tenant application context
+- **Feature flags** - Request-specific feature toggles
+
+#### Creating a ContextProperty
+
+Define a `ContextProperty` as a top-level constant or static field:
 
 ```dart
-final userProperty = ContextProperty<User>();
+// Define a property for the authenticated user
+final userProperty = ContextProperty<UserInfo>();
+
+// Define a property for request ID
+final requestIdProperty = ContextProperty<String>();
+
+// Optional: with a default value
+final featureFlagsProperty = ContextProperty<FeatureFlags>(
+  defaultValue: () => FeatureFlags.defaults(),
+);
+```
+
+#### Setting values in middleware
+
+Middleware can set values on the context property, making them available to all downstream handlers:
+
+```dart
+final userProperty = ContextProperty<UserInfo>();
 
 Handler authMiddleware(Handler innerHandler) {
   return (Request request) async {
+    // Extract and verify token
     final token = request.headers.authorization?.headerValue;
+    
+    if (token == null) {
+      return Response.unauthorized(
+        body: Body.fromString('Authentication required'),
+      );
+    }
+    
+    // Validate token and get user info
     final user = await getUserFromToken(token);
     
+    if (user == null) {
+      return Response.forbidden(
+        body: Body.fromString('Invalid token'),
+      );
+    }
+    
     // Attach user to request context
+    userProperty[request] = user;
+    
+    // Continue to next handler with user attached
+    return await innerHandler(request);
+  };
+}
+```
+
+#### Accessing values in routes
+
+Route handlers can retrieve the value from the context property:
+
+```dart
+class UserProfileRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Get the authenticated user from context
+    final user = userProperty[request];
+    
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode({
+          'id': user.id,
+          'name': user.name,
+          'email': user.email,
+        }),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+```
+
+#### Safe access with getOrNull
+
+If a value might not be set, use `getOrNull()` to avoid exceptions:
+
+```dart
+class OptionalAuthRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Safely get user, returns null if not authenticated
+    final user = userProperty.getOrNull(request);
+    
+    if (user != null) {
+      return Response.ok(
+        body: Body.fromString('Hello, ${user.name}!'),
+      );
+    } else {
+      return Response.ok(
+        body: Body.fromString('Hello, guest!'),
+      );
+    }
+  }
+}
+```
+
+#### Complete authentication example
+
+Here's a complete example showing authentication middleware with context properties:
+
+```dart
+// Define the user info class
+class UserInfo {
+  final int id;
+  final String name;
+  final String email;
+  final List<String> roles;
+  
+  UserInfo({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.roles,
+  });
+}
+
+// Define the context property
+final userProperty = ContextProperty<UserInfo>();
+
+// Authentication middleware
+Handler authMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    final authHeader = request.headers.authorization;
+    
+    if (authHeader == null) {
+      return Response.unauthorized(
+        body: Body.fromString('Missing authorization header'),
+      );
+    }
+    
+    // Extract bearer token
+    final token = authHeader.headerValue;
+    if (!token.startsWith('Bearer ')) {
+      return Response.unauthorized(
+        body: Body.fromString('Invalid authorization format'),
+      );
+    }
+    
+    final bearerToken = token.substring(7);
+    
+    // Validate token and get user (implement your own logic)
+    final session = request.session;
+    final user = await validateTokenAndGetUser(session, bearerToken);
+    
+    if (user == null) {
+      return Response.forbidden(
+        body: Body.fromString('Invalid or expired token'),
+      );
+    }
+    
+    // Attach user to context
     userProperty[request] = user;
     
     return await innerHandler(request);
   };
 }
 
-// Access in your route
-class UserProfileRoute extends Route {
+// Role-checking middleware
+Handler requireRole(String role) {
+  return (Handler innerHandler) {
+    return (Request request) async {
+      final user = userProperty[request];
+      
+      if (!user.roles.contains(role)) {
+        return Response.forbidden(
+          body: Body.fromString('Insufficient permissions'),
+        );
+      }
+      
+      return await innerHandler(request);
+    };
+  };
+}
+
+// Usage in your server
+pod.webServer.addMiddleware(authMiddleware, '/api');
+pod.webServer.addMiddleware(requireRole('admin'), '/api/admin');
+
+// Routes automatically have access to the user
+class UserDashboardRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    final user = userProperty[request]; // Get the authenticated user
+    final user = userProperty[request];
+    
+    // Fetch user-specific data
+    final data = await fetchDashboardData(session, user.id);
     
     return Response.ok(
-      body: Body.fromString('Hello, ${user.name}!'),
+      body: Body.fromString(
+        jsonEncode(data),
+        mimeType: MimeType.json,
+      ),
     );
   }
 }
 ```
+
+#### Multiple context properties
+
+You can use multiple context properties for different types of data:
+
+```dart
+final userProperty = ContextProperty<UserInfo>();
+final requestIdProperty = ContextProperty<String>();
+final tenantProperty = ContextProperty<String>();
+
+Handler requestContextMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Generate and attach request ID
+    final requestId = Uuid().v4();
+    requestIdProperty[request] = requestId;
+    
+    // Extract tenant from subdomain or header
+    final tenant = extractTenant(request);
+    tenantProperty[request] = tenant;
+    
+    return await innerHandler(request);
+  };
+}
+
+// Later in your route
+class TenantDataRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final user = userProperty[request];
+    final requestId = requestIdProperty[request];
+    final tenant = tenantProperty[request];
+    
+    session.log('Request $requestId for tenant $tenant by user ${user.id}');
+    
+    // Fetch tenant-specific data
+    final data = await fetchTenantData(session, tenant, user.id);
+    
+    return Response.ok(
+      body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
+    );
+  }
+}
+```
+
+:::tip Best Practices
+- Define `ContextProperty` instances as top-level constants or static fields
+- Use descriptive names for your properties (e.g., `userProperty`, not just `user`)
+- Use `getOrNull()` when the value might not be set
+- Set properties in middleware, not in routes
+- Use specific types for better type safety
+:::
 
 ### Built-in logging middleware
 
