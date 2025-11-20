@@ -55,13 +55,16 @@ In the future, we plan to add a widget library to Serverpod with widgets corresp
 
 ## Special widgets and routes
 
-Serverpod comes with a few useful special widgets and routes you can use out of the box. When returning these special widget types, Serverpod's web server will automatically set the correct HTTP status codes and content types.
+While `WidgetRoute` is great for custom HTML pages, Serverpod provides several built-in widgets and routes for common use cases. These special types automatically handle HTTP status codes and content types, so you don't need to configure them manually.
 
-- `ListWidget` concatenates a list of other widgets into a single widget.
-- `JsonWidget` renders a JSON document from a serializable structure of maps, lists, and basic values.
-- `RedirectWidget` creates a redirect to another URL.
+**Built-in widgets:**
+- `ListWidget` - Concatenates multiple widgets into a single response
+- `JsonWidget` - Renders JSON documents from serializable data structures
+- `RedirectWidget` - Creates HTTP redirects to other URLs
 
-To serve a static directory, use the `StaticRoute.directory()` method. Serverpod will set the correct content types for most file types automatically.
+**Serving static files:**
+
+Static assets like images, CSS, and JavaScript files are essential for web applications. The `StaticRoute.directory()` method makes it easy to serve entire directories with automatic content-type detection for common file formats.
 
 ### Static file cache-busting
 
@@ -164,9 +167,13 @@ The web server passes a `Session` object to the `WidgetRoute` class' `build` met
 
 ## Advanced routing
 
+The basic `WidgetRoute` is perfect for server-rendered HTML pages, but modern web applications often need more flexibility. Whether you're building REST APIs, handling file uploads, or creating webhooks for third-party integrations, Serverpod's routing system provides the tools you need.
+
+This section explores advanced routing patterns including custom route handlers, HTTP method handling, path parameters, wildcards, and modular route organization. These patterns give you fine-grained control over how your web server processes requests and generates responses.
+
 ### Custom Route classes
 
-While `WidgetRoute` is convenient for rendering HTML pages, you can also create custom `Route` subclasses for more control over the response. This is useful for REST APIs, file downloads, or custom response handling.
+While `WidgetRoute` is convenient for rendering HTML pages, the `Route` base class gives you complete control over request handling. By extending `Route` and implementing `handleCall()`, you can build REST APIs, serve files, or handle any custom HTTP interaction. This is ideal when you need to work directly with request bodies, headers, and response formats.
 
 ```dart
 class ApiRoute extends Route {
@@ -358,9 +365,9 @@ pod.webServer.fallbackRoute = NotFoundRoute();
 
 ### Modular routes with injectIn
 
-For complex applications, you can create modular route classes that register multiple sub-routes by overriding the `injectIn` method. This allows you to organize related routes into reusable modules.
+As your web server grows, managing dozens of individual route registrations can become unwieldy. Modular routes solve this by letting you group related endpoints into reusable modules. For example, you might create a `UserCrudModule` that handles all user-related endpoints (`GET /users`, `POST /users`, `PUT /users/:id`, etc.) in a single cohesive unit.
 
-When you call `pod.webServer.addRoute(route, path)`, Serverpod calls `route.injectIn(router)` on a router group for the specified path. By overriding `injectIn`, you can register multiple routes instead of just one.
+The key to modular routes is the `injectIn()` method. When you call `pod.webServer.addRoute(route, path)`, Serverpod calls `route.injectIn(router)` on a router group for that path. By overriding `injectIn()`, you can register multiple handler functions instead of implementing a single `handleCall()` method. This pattern is perfect for REST resources, API modules, or any group of related endpoints.
 
 :::info Session Access in Modular Routes
 When using `injectIn()` with handler functions (`router.get('/', _handler)`), your handlers receive only a `Request` parameter. To access the `Session`, use `request.session`:
@@ -591,7 +598,9 @@ When overriding `injectIn`, you typically don't need to implement `handleCall` s
 
 ## Middleware
 
-Middleware allows you to add cross-cutting functionality to your web server, such as authentication, logging, CORS handling, or request validation. Middleware functions wrap your route handlers, executing code before and after the request is processed.
+Routes handle the core logic of your application, but many concerns cut across multiple routes: logging every request, validating API keys, handling CORS headers, or catching errors. Rather than duplicating this code in each route, middleware lets you apply it globally or to specific path prefixes.
+
+Middleware functions are wrappers that sit between the incoming request and your route handler. They can inspect or modify requests before they reach your routes, and transform responses before they're sent back to the client. This makes middleware perfect for authentication, logging, error handling, and any other cross-cutting concern in your web server.
 
 ### Adding middleware
 
@@ -755,7 +764,9 @@ For a request to `/api/users`, the execution order is:
 
 ### Request-scoped data with ContextProperty
 
-`ContextProperty<T>` provides a type-safe way to attach data to a `Request` object that can be accessed by downstream middleware and route handlers. This is the recommended pattern for passing computed data through your request pipeline.
+Middleware often needs to pass computed data to downstream handlers. For example, a tenant identification middleware might extract the tenant ID from a subdomain, or a logging middleware might generate a request ID for tracing. Since `Request` objects are immutable, you can't just add properties to them. This is where `ContextProperty` comes in.
+
+`ContextProperty<T>` provides a type-safe way to attach data to a `Request` object without modifying it. Think of it as a side channel for request-scoped data that middleware can write to and routes can read from. The data is automatically cleaned up when the request completes, making it perfect for per-request state.
 
 :::info
 Note that Serverpod's `Route.handleCall()` already receives a `Session` parameter which includes authenticated user information if available. Use `ContextProperty` for web-specific request data that isn't part of the standard Session.
@@ -763,7 +774,7 @@ Note that Serverpod's `Route.handleCall()` already receives a `Session` paramete
 
 #### Why use ContextProperty?
 
-Instead of modifying the `Request` object directly (which you can't do since it's immutable), `ContextProperty` allows you to associate additional data with a request. Common use cases include:
+Since `Request` objects are immutable, you can't modify them directly. `ContextProperty` allows you to associate additional data with a request that can be accessed by all downstream middleware and handlers. Common use cases include:
 
 - **Request ID tracking** - Add correlation IDs for logging and tracing
 - **Tenant identification** - Multi-tenant application context from subdomains/headers
@@ -1015,7 +1026,9 @@ This logs all requests with method, path, status code, and response time.
 
 ## Typed headers
 
-Serverpod's web server (via Relic) provides a type-safe header system that goes beyond simple string-based HTTP headers. Instead of working with raw strings, you can access and set HTTP headers using strongly-typed Dart objects with automatic parsing and validation.
+HTTP headers are traditionally accessed as strings, which means you need to manually parse values, handle edge cases, and validate formats. Serverpod's web server (via Relic) provides a better approach: typed headers that automatically parse header values into strongly-typed Dart objects.
+
+For example, instead of parsing `Authorization: Bearer abc123` as a string and extracting the token yourself, you can access `request.headers.authorization` to get a `BearerAuthorizationHeader` object with the token already parsed and validated. This eliminates boilerplate code, catches errors early, and makes your code more maintainable.
 
 ### Reading typed headers
 
@@ -1340,7 +1353,11 @@ class LoginRoute extends Route {
 
 ### Creating custom typed headers
 
-You can create your own typed headers by defining a header class and a `HeaderAccessor`. Here's a simple example for a custom `X-API-Version` header:
+While Relic provides typed headers for all standard HTTP headers, your application may use custom headers for API versioning, feature flags, or application-specific metadata. Rather than falling back to string-based access for these custom headers, you can create your own typed headers using the same pattern Relic uses internally.
+
+Creating a custom typed header involves three steps: defining the header class with parsing logic, creating a codec for serialization, and setting up a `HeaderAccessor` for type-safe access. Once configured, your custom headers work just like the built-in ones, with automatic parsing, validation, and convenient property-style access.
+
+Here's a complete example for a custom `X-API-Version` header:
 
 ```dart
 // Define your typed header class
