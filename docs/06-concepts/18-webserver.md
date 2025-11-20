@@ -127,6 +127,37 @@ This approach ensures:
 - When files change, new hashes force cache invalidation
 - No manual version management needed
 
+### Conditional requests (ETags and Last-Modified)
+
+`StaticRoute` automatically supports HTTP conditional requests through Relic's `StaticHandler`. This provides efficient caching without transferring file content when unchanged:
+
+**Supported features:**
+- **ETag headers** - Content-based fingerprinting for cache validation
+- **Last-Modified headers** - Timestamp-based cache validation
+- **If-None-Match** - Client sends ETag, server returns 304 Not Modified if unchanged
+- **If-Modified-Since** - Client sends timestamp, server returns 304 if not modified
+
+These work automatically without configuration:
+
+```dart
+// Client first request:
+// GET /static/logo.png
+// Response: 200 OK
+//   ETag: "abc123"
+//   Last-Modified: Tue, 15 Nov 2024 12:00:00 GMT
+//   Content-Length: 12345
+//   [file content]
+
+// Client subsequent request:
+// GET /static/logo.png
+//   If-None-Match: "abc123"
+// Response: 304 Not Modified
+//   ETag: "abc123"
+//   [no body - saves bandwidth]
+```
+
+When combined with cache-busting, conditional requests provide a fallback validation mechanism even for cached assets, ensuring efficient delivery while maintaining correctness.
+
 ## Database access and logging
 
 The web server passes a `Session` object to the `WidgetRoute` class' `build` method. This gives you access to all the features you typically get from a standard method call to an endpoint. Use the database, logging, or caching the same way you would in a method call.
