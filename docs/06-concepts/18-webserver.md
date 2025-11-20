@@ -605,27 +605,26 @@ Handler loggingMiddleware(Handler innerHandler) {
 }
 ```
 
-### Authentication middleware
+### API key validation middleware
 
-A common use case is adding authentication to protected routes:
+A common use case is validating API keys for protected routes:
 
 ```dart
-Handler authMiddleware(Handler innerHandler) {
+Handler apiKeyMiddleware(Handler innerHandler) {
   return (Request request) async {
-    // Check for authentication token
-    final authHeader = request.headers.authorization;
+    // Check for API key in header
+    final apiKey = request.headers['X-API-Key']?.firstOrNull;
     
-    if (authHeader == null) {
+    if (apiKey == null) {
       return Response.unauthorized(
-        body: Body.fromString('Authentication required'),
+        body: Body.fromString('API key required'),
       );
     }
     
-    // Verify token (simplified example)
-    final token = authHeader.headerValue;
-    if (!await verifyToken(token)) {
+    // Verify API key
+    if (!await isValidApiKey(apiKey)) {
       return Response.forbidden(
-        body: Body.fromString('Invalid token'),
+        body: Body.fromString('Invalid API key'),
       );
     }
     
@@ -635,8 +634,12 @@ Handler authMiddleware(Handler innerHandler) {
 }
 
 // Apply to protected routes
-pod.webServer.addMiddleware(authMiddleware, '/admin');
+pod.webServer.addMiddleware(apiKeyMiddleware, '/api');
 ```
+
+:::info
+For user authentication, use Serverpod's built-in authentication system which integrates with the `Session` object. The middleware examples here are for additional web-specific validations like API keys, rate limiting, or request validation.
+:::
 
 ### CORS middleware
 
