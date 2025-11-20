@@ -26,11 +26,11 @@ By default, Serverpod will listen on ports 8080, 8081, and 8082. The ports are u
 
 Serverpod can assume different roles depending on your configuration. If you run Serverpod on a single server or a cluster of servers, you typically will want to use the default `monolith` role. If you use a serverless service, use the `serverless` role. When Serverpod runs as a monolith, it will handle all maintenance tasks, such as health checks and future calls. If you run it serverless, you will need to schedule a cron job to start Serverpod in the `maintenance` role once every minute if you need support for future calls and health checks.
 
-| Role          | Function |
-| :------------ | :------- |
-| `monolith`    | Handles incoming connections and maintenance tasks. Allows the server to contain a state. Default role. |
-| `serverless`  | Only handles incoming connections. |
-| `maintenance` | Runs the maintenance tasks once, then exits. |
+| Role          | Function                                                                                                 |
+| :------------ | :------------------------------------------------------------------------------------------------------- |
+| `monolith`    | Handles incoming connections and maintenance tasks. Allows the server to contain a state. Default role.  |
+| `serverless`  | Only handles incoming connections.                                                                       |
+| `maintenance` | Runs the maintenance tasks once, then exits.                                                             |
 
 You can specify the role of your server when you launch it by setting the `--role` argument.
 
@@ -44,9 +44,9 @@ Running Serverpod through a Docker container is often the best option as it prov
 
 You will get a `Dockerfile` created in your server directory when you set up a new project. The file works out of the box but can be tailored to your needs. The file has no build options, but you can define environment variables when running it. The following variables are supported.
 
-| Environment variable | Meaning |
-| :------------------- | :------ |
-| `runmode`            | The run mode to start the server in, possible values are `development` (default), `staging`, or `production`. |
-| `serverid`           | Identifier of your server, default is `default` |
+| Environment variable | Meaning                                                                                                                                           |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `runmode`            | The run mode to start the server in, possible values are `development` (default), `staging`, or `production`.                                     |
+| `serverid`           | Identifier of your server, default is `default`                                                                                                   |
 | `logging`            | Logging mode at startup, default is `normal`, but you can specify `verbose` to get more information during startup which can help with debugging. |
-| `role`               | The role that the server will assume, possible values are `monolith` (default), `serverless`, or `maintenance`. |
+| `role`               | The role that the server will assume, possible values are `monolith` (default), `serverless`, or `maintenance`.                                   |
