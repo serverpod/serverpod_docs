@@ -72,3 +72,291 @@ Static files are configured to be cached hard by the web browser and through Clo
 ## Database access and logging
 
 The web server passes a `Session` object to the `WidgetRoute` class' `build` method. This gives you access to all the features you typically get from a standard method call to an endpoint. Use the database, logging, or caching the same way you would in a method call.
+
+## Advanced routing
+
+### Custom Route classes
+
+While `WidgetRoute` is convenient for rendering HTML pages, you can also create custom `Route` subclasses for more control over the response. This is useful for REST APIs, file downloads, or custom response handling.
+
+```dart
+class ApiRoute extends Route {
+  ApiRoute() : super(methods: {Method.get, Method.post});
+
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Access request method
+    if (request.method == Method.post) {
+      // Read request body
+      final body = await request.readAsString();
+      final data = jsonDecode(body);
+      
+      // Process and return JSON response
+      return Response.ok(
+        body: Body.fromString(
+          jsonEncode({'status': 'success', 'data': data}),
+          mimeType: MimeType.json,
+        ),
+      );
+    }
+    
+    // Return data for GET requests
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode({'message': 'Hello from API'}),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+
+// Register the route
+pod.webServer.addRoute(ApiRoute(), '/api/data');
+```
+
+### HTTP methods
+
+Routes can specify which HTTP methods they respond to using the `methods` parameter. The available methods are:
+
+- `Method.get` - Retrieve data
+- `Method.post` - Create new resources
+- `Method.put` - Update resources (full replacement)
+- `Method.patch` - Update resources (partial)
+- `Method.delete` - Delete resources
+- `Method.head` - Same as GET but without response body
+- `Method.options` - Query supported methods (used for CORS)
+
+```dart
+class UserRoute extends Route {
+  UserRoute() : super(
+    methods: {Method.get, Method.post, Method.delete},
+  );
+
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    switch (request.method) {
+      case Method.get:
+        return await _getUser(request);
+      case Method.post:
+        return await _createUser(request);
+      case Method.delete:
+        return await _deleteUser(request);
+      default:
+        return Response.methodNotAllowed();
+    }
+  }
+}
+```
+
+### Path parameters and wildcards
+
+Routes support path parameters and wildcard matching:
+
+```dart
+// Single-level wildcard - matches /item/foo but not /item/foo/bar
+pod.webServer.addRoute(ItemRoute(), '/item/*');
+
+// Multi-level wildcard - matches /item/foo and /item/foo/bar/baz
+pod.webServer.addRoute(ItemRoute(), '/item/**');
+```
+
+Access the matched path information through the `Request` object:
+
+```dart
+@override
+Future<Result> handleCall(Session session, Request request) async {
+  // Get the remaining path after the route prefix
+  final remainingPath = request.url.path;
+  
+  // Access query parameters
+  final id = request.url.queryParameters['id'];
+  
+  return Response.ok(
+    body: Body.fromString('Path: $remainingPath, ID: $id'),
+  );
+}
+```
+
+### Fallback routes
+
+You can set a fallback route that handles requests when no other route matches:
+
+```dart
+class NotFoundRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    return Response.notFound(
+      body: Body.fromString('Page not found: ${request.url.path}'),
+    );
+  }
+}
+
+// Set as fallback
+pod.webServer.fallbackRoute = NotFoundRoute();
+```
+
+## Middleware
+
+Middleware allows you to add cross-cutting functionality to your web server, such as authentication, logging, CORS handling, or request validation. Middleware functions wrap your route handlers, executing code before and after the request is processed.
+
+### Adding middleware
+
+Use the `addMiddleware` method to apply middleware to specific path prefixes:
+
+```dart
+// Apply to all routes
+pod.webServer.addMiddleware(loggingMiddleware, '/');
+
+// Apply only to API routes
+pod.webServer.addMiddleware(authMiddleware, '/api');
+```
+
+### Creating custom middleware
+
+Middleware is a function that takes a `Handler` and returns a new `Handler`. Here's a simple logging middleware example:
+
+```dart
+Handler loggingMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    final start = DateTime.now();
+    print('→ ${request.method.name.toUpperCase()} ${request.url.path}');
+    
+    // Call the next handler in the chain
+    final response = await innerHandler(request);
+    
+    final duration = DateTime.now().difference(start);
+    print('← ${response.statusCode} (${duration.inMilliseconds}ms)');
+    
+    return response;
+  };
+}
+```
+
+### Authentication middleware
+
+A common use case is adding authentication to protected routes:
+
+```dart
+Handler authMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Check for authentication token
+    final authHeader = request.headers.authorization;
+    
+    if (authHeader == null) {
+      return Response.unauthorized(
+        body: Body.fromString('Authentication required'),
+      );
+    }
+    
+    // Verify token (simplified example)
+    final token = authHeader.headerValue;
+    if (!await verifyToken(token)) {
+      return Response.forbidden(
+        body: Body.fromString('Invalid token'),
+      );
+    }
+    
+    // Continue to the next handler
+    return await innerHandler(request);
+  };
+}
+
+// Apply to protected routes
+pod.webServer.addMiddleware(authMiddleware, '/admin');
+```
+
+### CORS middleware
+
+Enable Cross-Origin Resource Sharing for your API:
+
+```dart
+Handler corsMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Handle preflight requests
+    if (request.method == Method.options) {
+      return Response.ok(
+        headers: Headers.build((h) {
+          h.set('Access-Control-Allow-Origin', '*');
+          h.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+          h.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }),
+      );
+    }
+    
+    // Process the request
+    final response = await innerHandler(request);
+    
+    // Add CORS headers to response
+    return response.change(
+      headers: Headers.build((h) {
+        h.set('Access-Control-Allow-Origin', '*');
+      }),
+    );
+  };
+}
+
+pod.webServer.addMiddleware(corsMiddleware, '/api');
+```
+
+### Middleware execution order
+
+Middleware is applied based on path hierarchy, with more specific paths taking precedence. Within the same path, middleware executes in the order it was registered:
+
+```dart
+pod.webServer.addMiddleware(loggingMiddleware, '/');      // Executes first (outer)
+pod.webServer.addMiddleware(authMiddleware, '/api');      // Executes second (inner) for /api routes
+pod.webServer.addMiddleware(rateLimitMiddleware, '/api'); // Executes third (innermost) for /api routes
+```
+
+For a request to `/api/users`, the execution order is:
+1. `loggingMiddleware` (before)
+2. `authMiddleware` (before)
+3. `rateLimitMiddleware` (before)
+4. Your route handler
+5. `rateLimitMiddleware` (after)
+6. `authMiddleware` (after)
+7. `loggingMiddleware` (after)
+
+### Using ContextProperty for request-scoped data
+
+Instead of modifying the request object, use `ContextProperty` to attach data that middleware or routes can access:
+
+```dart
+final userProperty = ContextProperty<User>();
+
+Handler authMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    final token = request.headers.authorization?.headerValue;
+    final user = await getUserFromToken(token);
+    
+    // Attach user to request context
+    userProperty[request] = user;
+    
+    return await innerHandler(request);
+  };
+}
+
+// Access in your route
+class UserProfileRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final user = userProperty[request]; // Get the authenticated user
+    
+    return Response.ok(
+      body: Body.fromString('Hello, ${user.name}!'),
+    );
+  }
+}
+```
+
+### Built-in logging middleware
+
+Serverpod re-exports Relic's built-in `logRequests()` middleware for convenient request logging:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+pod.webServer.addMiddleware(logRequests(), '/');
+```
+
+This logs all requests with method, path, status code, and response time.
