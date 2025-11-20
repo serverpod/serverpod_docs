@@ -1,216 +1,93 @@
 # Upgrade to 3.0
 
-## Web Server: Widget to Component Rename
+## Web Server Changes
 
-In Serverpod 3.0, all web server related "Widget" classes have been renamed to "Component" to better reflect their purpose and avoid confusion with Flutter widgets.
+### Widget Class Naming Updates
 
-The following classes have been renamed:
+In Serverpod 3.0, the web server widget classes have been reorganized for better clarity:
 
-| Old Name         | New Name            |
-| ---------------- | ------------------- |
-| `Widget`         | `Component`         |
-| `AbstractWidget` | `AbstractComponent` |
-| `WidgetRoute`    | `ComponentRoute`    |
-| `WidgetJson`     | `JsonComponent`     |
-| `WidgetRedirect` | `RedirectComponent` |
-| `WidgetList`     | `ListComponent`     |
+- The old `Widget` class (for template-based widgets) has been renamed to `TemplateWidget`
+- The old `AbstractWidget` class has been renamed to `WebWidget`
+- Legacy class names (`Widget`, `AbstractWidget`, `WidgetList`, `WidgetJson`, `WidgetRedirect`) are deprecated but still available for backward compatibility
 
-### 1. Update Route Classes
+The `WidgetRoute` class remains unchanged and continues to be the base class for web routes.
 
-Update all route classes that extend `WidgetRoute` to extend `ComponentRoute`, and rename them to follow the new naming convention:
+**Recommended migration:**
 
-**Before:**
+If you're using the old `Widget` class, update to `TemplateWidget`:
 
 ```dart
-class RouteRoot extends WidgetRoute {
-  @override
-  Future<Widget> build(Session session, HttpRequest request) async {
-    return MyPageWidget();
-  }
-}
-```
-
-**After:**
-
-```dart
-class RootRoute extends ComponentRoute {
-  @override
-  Future<Component> build(Session session, HttpRequest request) async {
-    return MyPageComponent();
-  }
-}
-```
-
-### 2. Update Component Classes
-
-Update all classes that extend `Widget` to extend `Component`, and rename them from "Widget" to "Component":
-
-**Before:**
-
-```dart
+// Old (deprecated but still works)
 class MyPageWidget extends Widget {
   MyPageWidget({required String title}) : super(name: 'my_page') {
-    values = {
-      'title': title,
-    };
+    values = {'title': title};
+  }
+}
+
+// New (recommended)
+class MyPageWidget extends TemplateWidget {
+  MyPageWidget({required String title}) : super(name: 'my_page') {
+    values = {'title': title};
   }
 }
 ```
 
-**After:**
+### Static Route Updates
 
-```dart
-class MyPageComponent extends Component {
-  MyPageComponent({required String title}) : super(name: 'my_page') {
-    values = {
-      'title': title,
-    };
-  }
-}
-```
-
-### 3. Update Abstract Components
-
-If you have custom abstract components, update them from `AbstractWidget` to `AbstractComponent` and rename accordingly:
+The `RouteStaticDirectory` class has been deprecated in favor of `StaticRoute.directory()`:
 
 **Before:**
 
 ```dart
-class CustomWidget extends AbstractWidget {
-  @override
-  String toString() {
-    return '<html>...</html>';
-  }
-}
+pod.webServer.addRoute(
+  RouteStaticDirectory(
+    serverDirectory: 'static',
+    basePath: '/',
+  ),
+  '/static/**',
+);
 ```
 
 **After:**
 
 ```dart
-class CustomComponent extends AbstractComponent {
-  @override
-  String toString() {
-    return '<html>...</html>';
-  }
-}
+pod.webServer.addRoute(
+  StaticRoute.directory(Directory('static')),
+  '/static/**',
+);
 ```
 
-### 4. Update Special Component Types
-
-Update references to special component types:
-
-**Before:**
+The new `StaticRoute` provides better cache control options. You can use the built-in static helper methods for common caching scenarios:
 
 ```dart
-// JSON responses
-return WidgetJson(object: {'status': 'success'});
-
-// Redirects
-return WidgetRedirect(url: '/login');
-
-// Component lists
-return WidgetList(widgets: [widget1, widget2]);
+// Example with immutable public caching
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    Directory('static'),
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 3600),
+  ),
+  '/static/**',
+);
 ```
 
-**After:**
+Other available cache control factory methods:
+- `StaticRoute.public(maxAge: seconds)` - Public cache with optional max-age
+- `StaticRoute.publicImmutable(maxAge: seconds)` - Public immutable cache with optional max-age
+- `StaticRoute.privateNoCache()` - Private cache with no-cache directive
+- `StaticRoute.noStore()` - No storage allowed
+
+You can also provide a custom factory function:
 
 ```dart
-// JSON responses
-return JsonComponent(object: {'status': 'success'});
-
-// Redirects
-return RedirectComponent(url: '/login');
-
-// Component lists
-return ListComponent(widgets: [widget1, widget2]);
-```
-
-### 5. Update Route Registration
-
-Update your route registration to use the renamed route classes:
-
-**Before:**
-
-```dart
-pod.webServer.addRoute(RouteRoot(), '/');
-pod.webServer.addRoute(RouteRoot(), '/index.html');
-```
-
-**After:**
-
-```dart
-pod.webServer.addRoute(RootRoute(), '/');
-pod.webServer.addRoute(RootRoute(), '/index.html');
-```
-
-### Directory Structure
-
-For consistency with the new naming convention, we recommend renaming your `widgets/` directories to `components/`. However, this is not strictly required - the directory structure can remain unchanged if needed.
-
-### Class Names
-
-For consistency and clarity, we recommend updating all class names from "Widget" to "Component" (e.g., `MyPageWidget` → `MyPageComponent`). While you can keep your existing class names and only update the inheritance, following the new naming convention will make your code more maintainable and consistent with Serverpod's conventions.
-
-### Complete Example
-
-Here's a complete example of migrating a simple web page:
-
-**Before:**
-
-```dart
-// lib/src/web/widgets/default_page_widget.dart
-import 'package:serverpod/serverpod.dart';
-
-class DefaultPageWidget extends Widget {
-  DefaultPageWidget() : super(name: 'default') {
-    values = {
-      'served': DateTime.now(),
-      'runmode': Serverpod.instance.runMode,
-    };
-  }
-}
-
-// lib/src/web/routes/root.dart
-import 'dart:io';
-import 'package:my_server/src/web/widgets/default_page_widget.dart';
-import 'package:serverpod/serverpod.dart';
-
-class RouteRoot extends WidgetRoute {
-  @override
-  Future<Widget> build(Session session, HttpRequest request) async {
-    return DefaultPageWidget();
-  }
-}
-```
-
-**After:**
-
-```dart
-// lib/src/web/components/default_page_component.dart (renamed file and directory)
-import 'package:serverpod/serverpod.dart';
-
-class DefaultPageComponent extends Component {
-  DefaultPageComponent() : super(name: 'default') {
-    values = {
-      'served': DateTime.now(),
-      'runmode': Serverpod.instance.runMode,
-    };
-  }
-}
-
-// lib/src/web/routes/root.dart
-import 'dart:io';
-import 'package:my_server/src/web/components/default_page_component.dart';
-import 'package:serverpod/serverpod.dart';
-
-class RootRoute extends ComponentRoute {
-  @override
-  Future<Component> build(Session session, HttpRequest request) async {
-    return DefaultPageComponent();
-  }
-}
-
-// server.dart
-pod.webServer.addRoute(RootRoute(), '/');
-pod.webServer.addRoute(RootRoute(), '/index.html');
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    Directory('static'),
+    cacheControlFactory: (ctx, fileInfo) => CacheControlHeader(
+      publicCache: true,
+      maxAge: 3600,
+      immutable: true,
+    ),
+  ),
+  '/static/**',
+);
 ```
