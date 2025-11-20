@@ -1,79 +1,63 @@
 # Web server
 
-In addition to the application server, Serverpod comes with a built-in web
-server. The web server allows you to access your database and business layer the
-same way you would from a method call from an app. This makes it simple to
-share data for applications that need both an app and traditional web pages. You
-can also use the web server to create webhooks or generate custom REST APIs to
-communicate with third-party services.
+In addition to the application server, Serverpod comes with a built-in web server. The web server allows you to access your database and business layer the same way you would from a method call from an app. This makes it simple to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or generate custom REST APIs to communicate with third-party services.
 
 Serverpod's web server is built on the [Relic](https://github.com/serverpod/relic) framework, giving you access to its routing engine, middleware system, and typed headers. This means you get the benefits of Serverpod's database integration and business logic alongside Relic's web server capabilities.
 
 :::caution
 
-Serverpod's web server is still experimental, and the APIs may change in the
-future. This documentation should give you some hints on getting started, but we
-plan to add more extensive documentation as the web server matures.
+Serverpod's web server is still experimental, and the APIs may change in the future. This documentation should give you some hints on getting started, but we plan to add more extensive documentation as the web server matures.
 
 :::
 
-When you create a new Serverpod project, it sets up a web server by default.
-When working with the web server, there are two main classes to understand;
-`WidgetRoute` and `TemplateWidget`. The `WidgetRoute` provides an entry point
-for a call to the server and returns a `WebWidget`. The `TemplateWidget` renders
-a web page using templates, while other `WebWidget` types can render JSON or
-other custom responses.
+When you create a new Serverpod project, it sets up a web server by default. When working with the web server, there are two main classes to understand; `WidgetRoute` and `TemplateWidget`. The `WidgetRoute` provides an entry point for a call to the server and returns a `WebWidget`. The `TemplateWidget` renders a web page using templates, while other `WebWidget` types can render JSON or other custom responses.
 
 ## Creating new routes and widgets
 
-To add new pages to your web server, you add new routes. Typically, you do this
-in your server.dart file before you start the Serverpod. By default, Serverpod
-comes with a `RootRoute` and a static directory.
+To add new pages to your web server, you add new routes. Typically, you do this in your server.dart file before you start the Serverpod. By default, Serverpod comes with a `RootRoute` and a static directory.
 
-When receiving a web request, Serverpod will search and match the routes in the
-order they were added. You can end a route's path with an asterisk (`*`) to
-match all paths with the same beginning.
+When receiving a web request, Serverpod will search and match the routes in the order they were added. You can end a route's path with an asterisk (`*`) to match all paths with the same beginning.
 
-```dart // Add a single page. pod.webServer.addRoute(MyRoute(),
-'/my/page/address');
+```dart
+// Add a single page.
+pod.webServer.addRoute(MyRoute(), '/my/page/address');
 
-// Match all paths that start with /item/ pod.webServer.addRoute(AnotherRoute(),
-'/item/*'); ```
+// Match all paths that start with /item/
+pod.webServer.addRoute(AnotherRoute(), '/item/*');
+```
 
-Typically, you want to create custom routes for your pages. Do this by
-overriding the WidgetRoute class and implementing the build method.
+Typically, you want to create custom routes for your pages. Do this by overriding the WidgetRoute class and implementing the build method.
 
-```dart class MyRoute extends WidgetRoute { @override Future<TemplateWidget>
-build(Session session, Request request) async { return MyPageWidget(title: 'Home
-page'); } } ```
+```dart
+class MyRoute extends WidgetRoute {
+  @override
+  Future<TemplateWidget> build(Session session, Request request) async {
+    return MyPageWidget(title: 'Home page');
+  }
+}
+```
 
-Your route's build method returns a `WebWidget`. The `TemplateWidget` consists
-of an HTML template file and a corresponding Dart class. Create a new custom
-widget by extending the `TemplateWidget` class. Then add a corresponding HTML
-template and place it in the `web/templates` directory. The HTML file uses the
-[Mustache](https://mustache.github.io/) template language. You set your template
-parameters by updating the `values` field of your widget class. The values are
-converted to `String` objects before being passed to the template. This makes it
-possible to nest widgets, similarly to how widgets work in Flutter.
+Your route's build method returns a `WebWidget`. The `TemplateWidget` consists of an HTML template file and a corresponding Dart class. Create a new custom widget by extending the `TemplateWidget` class. Then add a corresponding HTML template and place it in the `web/templates` directory. The HTML file uses the [Mustache](https://mustache.github.io/) template language. You set your template parameters by updating the `values` field of your widget class. The values are converted to `String` objects before being passed to the template. This makes it possible to nest widgets, similarly to how widgets work in Flutter.
 
-```dart class MyPageWidget extends TemplateWidget { MyPageWidget({required
-String title}) : super(name: 'my_page') { values = { 'title': title, }; } } ```
+```dart
+class MyPageWidget extends TemplateWidget {
+  MyPageWidget({required String title}) : super(name: 'my_page') {
+    values = {
+      'title': title,
+    };
+  }
+}
+```
 
 :::info
 
-In the future, we plan to add a widget library to Serverpod with widgets
-corresponding to the standard widgets used by Flutter, such as Column, Row,
-Padding, Container, etc. This would make it possible to render server-side
-widgets with similar code used within Flutter.
+In the future, we plan to add a widget library to Serverpod with widgets corresponding to the standard widgets used by Flutter, such as Column, Row, Padding, Container, etc. This would make it possible to render server-side widgets with similar code used within Flutter.
 
 :::
 
 ## Special widgets and routes
 
-While `WidgetRoute` is great for custom HTML pages, Serverpod provides several
-built-in widgets and routes for common use cases. These special types
-automatically handle HTTP status codes and content types, so you don't need to
-configure them manually.
+While `WidgetRoute` is great for custom HTML pages, Serverpod provides several built-in widgets and routes for common use cases. These special types automatically handle HTTP status codes and content types, so you don't need to configure them manually.
 
 **Built-in widgets:**
 - `ListWidget` - Concatenates multiple widgets into a single response
@@ -82,53 +66,66 @@ configure them manually.
 
 **Serving static files:**
 
-Static assets like images, CSS, and JavaScript files are essential for web
-applications. The `StaticRoute.directory()` method makes it easy to serve entire
-directories with automatic content-type detection for common file formats.
+Static assets like images, CSS, and JavaScript files are essential for web applications. The `StaticRoute.directory()` method makes it easy to serve entire directories with automatic content-type detection for common file formats.
 
 ### Static file cache-busting
 
-When deploying static assets, browsers and CDNs (like CloudFront) cache files
-aggressively for performance. This means updated files may not be served to
-users unless you implement a cache-busting strategy.
+When deploying static assets, browsers and CDNs (like CloudFront) cache files aggressively for performance. This means updated files may not be served to users unless you implement a cache-busting strategy.
 
-Serverpod provides `CacheBustingConfig` to automatically version your static
-files:
+Serverpod provides `CacheBustingConfig` to automatically version your static files:
 
-```dart final staticDir = Directory('web/static');
+```dart
+final staticDir = Directory('web/static');
 
-final cacheBustingConfig = CacheBustingConfig( mountPrefix: '/static',
-fileSystemRoot: staticDir, separator: '@', // or use custom separator like '___'
+final cacheBustingConfig = CacheBustingConfig(
+  mountPrefix: '/static',
+  fileSystemRoot: staticDir,
+  separator: '@',  // or use custom separator like '___'
 );
 
-pod.webServer.addRoute( StaticRoute.directory( staticDir, cacheBustingConfig:
-cacheBustingConfig, cacheControlFactory: StaticRoute.publicImmutable(maxAge:
-31536000), ), '/static/**', ); ```
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    staticDir,
+    cacheBustingConfig: cacheBustingConfig,
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000),
+  ),
+  '/static/**',
+);
+```
 
 **Generating versioned URLs:**
 
 Use the `assetPath()` method to generate cache-busted URLs for your assets:
 
-```dart // In your route handler final imageUrl = await
-cacheBustingConfig.assetPath('/static/logo.png'); // Returns:
-/static/logo@<hash>.png
+```dart
+// In your route handler
+final imageUrl = await cacheBustingConfig.assetPath('/static/logo.png');
+// Returns: /static/logo@<hash>.png
 
-// Pass to your template return MyPageWidget(logoUrl: imageUrl); ```
+// Pass to your template
+return MyPageWidget(logoUrl: imageUrl);
+```
 
 The cache-busting system:
 - Automatically generates content-based hashes for asset versioning
 - Allows custom separators (default `@`, but you can use `___` or any other)
 - Preserves file extensions
-- Works transparently - requesting `/static/logo@abc123.png` serves
-  `/static/logo.png`
+- Works transparently - requesting `/static/logo@abc123.png` serves `/static/logo.png`
 
 **Combining with cache control:**
 
 For optimal performance, combine cache-busting with aggressive caching:
 
-```dart pod.webServer.addRoute( StaticRoute.directory( staticDir,
-cacheBustingConfig: cacheBustingConfig, cacheControlFactory:
-StaticRoute.publicImmutable(maxAge: 31536000), // 1 year ), '/static/**', ); ```
+```dart
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    staticDir,
+    cacheBustingConfig: cacheBustingConfig,
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000), // 1 year
+  ),
+  '/static/**',
+);
+```
 
 This approach ensures:
 - Browsers cache files for a long time (better performance)
@@ -137,84 +134,91 @@ This approach ensures:
 
 ### Conditional requests (ETags and Last-Modified)
 
-`StaticRoute` automatically supports HTTP conditional requests through Relic's
-`StaticHandler`. This provides efficient caching without transferring file
-content when unchanged:
+`StaticRoute` automatically supports HTTP conditional requests through Relic's `StaticHandler`. This provides efficient caching without transferring file content when unchanged:
 
 **Supported features:**
 - **ETag headers** - Content-based fingerprinting for cache validation
 - **Last-Modified headers** - Timestamp-based cache validation
-- **If-None-Match** - Client sends ETag, server returns 304 Not Modified if
-  unchanged
-- **If-Modified-Since** - Client sends timestamp, server returns 304 if not
-  modified
+- **If-None-Match** - Client sends ETag, server returns 304 Not Modified if unchanged
+- **If-Modified-Since** - Client sends timestamp, server returns 304 if not modified
 
 These work automatically without configuration:
 
-```dart // Client first request: // GET /static/logo.png // Response: 200 OK //
-ETag: "abc123" // Last-Modified: Tue, 15 Nov 2024 12:00:00 GMT //
-Content-Length: 12345 // [file content]
+```dart
+// Client first request:
+// GET /static/logo.png
+// Response: 200 OK
+//   ETag: "abc123"
+//   Last-Modified: Tue, 15 Nov 2024 12:00:00 GMT
+//   Content-Length: 12345
+//   [file content]
 
-// Client subsequent request: // GET /static/logo.png // If-None-Match: "abc123"
-// Response: 304 Not Modified // ETag: "abc123" // [no body - saves bandwidth]
+// Client subsequent request:
+// GET /static/logo.png
+//   If-None-Match: "abc123"
+// Response: 304 Not Modified
+//   ETag: "abc123"
+//   [no body - saves bandwidth]
 ```
 
-When combined with cache-busting, conditional requests provide a fallback
-validation mechanism even for cached assets, ensuring efficient delivery while
-maintaining correctness.
+When combined with cache-busting, conditional requests provide a fallback validation mechanism even for cached assets, ensuring efficient delivery while maintaining correctness.
 
 ## Database access and logging
 
-The web server passes a `Session` object to the `WidgetRoute` class' `build`
-method. This gives you access to all the features you typically get from a
-standard method call to an endpoint. Use the database, logging, or caching the
-same way you would in a method call.
+The web server passes a `Session` object to the `WidgetRoute` class' `build` method. This gives you access to all the features you typically get from a standard method call to an endpoint. Use the database, logging, or caching the same way you would in a method call.
 
 ## Advanced routing
 
-The basic `WidgetRoute` is perfect for server-rendered HTML pages, but modern
-web applications often need more flexibility. Whether you're building REST APIs,
-handling file uploads, or creating webhooks for third-party integrations,
-Serverpod's routing system provides the tools you need.
+The basic `WidgetRoute` is perfect for server-rendered HTML pages, but modern web applications often need more flexibility. Whether you're building REST APIs, handling file uploads, or creating webhooks for third-party integrations, Serverpod's routing system provides the tools you need.
 
-This section explores advanced routing patterns including custom route handlers,
-HTTP method handling, path parameters, wildcards, and modular route
-organization. These patterns give you fine-grained control over how your web
-server processes requests and generates responses.
+This section explores advanced routing patterns including custom route handlers, HTTP method handling, path parameters, wildcards, and modular route organization. These patterns give you fine-grained control over how your web server processes requests and generates responses.
 
 ### Custom Route classes
 
-While `WidgetRoute` is convenient for rendering HTML pages, the `Route` base
-class gives you complete control over request handling. By extending `Route` and
-implementing `handleCall()`, you can build REST APIs, serve files, or handle any
-custom HTTP interaction. This is ideal when you need to work directly with
-request bodies, headers, and response formats.
+While `WidgetRoute` is convenient for rendering HTML pages, the `Route` base class gives you complete control over request handling. By extending `Route` and implementing `handleCall()`, you can build REST APIs, serve files, or handle any custom HTTP interaction. This is ideal when you need to work directly with request bodies, headers, and response formats.
 
-```dart class ApiRoute extends Route { ApiRoute() : super(methods: {Method.get,
-Method.post});
+```dart
+class ApiRoute extends Route {
+  ApiRoute() : super(methods: {Method.get, Method.post});
 
-  @override Future<Result> handleCall(Session session, Request request) async {
-  // Access request method if (request.method == Method.post) { // Read request
-  body final body = await request.readAsString(); final data = jsonDecode(body);
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Access request method
+    if (request.method == Method.post) {
+      // Read request body
+      final body = await request.readAsString();
+      final data = jsonDecode(body);
       
-      // Process and return JSON response return Response.ok( body:
-      Body.fromString( jsonEncode({'status': 'success', 'data': data}),
-      mimeType: MimeType.json, ), ); }
-    
-    // Return data for GET requests return Response.ok( body: Body.fromString(
-    jsonEncode({'message': 'Hello from API'}), mimeType: MimeType.json, ), ); }
+      // Process and return JSON response
+      return Response.ok(
+        body: Body.fromString(
+          jsonEncode({'status': 'success', 'data': data}),
+          mimeType: MimeType.json,
+        ),
+      );
     }
+    
+    // Return data for GET requests
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode({'message': 'Hello from API'}),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
 
-// Register the route pod.webServer.addRoute(ApiRoute(), '/api/data'); ```
+// Register the route
+pod.webServer.addRoute(ApiRoute(), '/api/data');
+```
 
-:::info The examples in this documentation omit error handling for brevity. See
-the Error Handling section in Middleware below for the recommended approach
-using global error handling middleware. :::
+:::info
+The examples in this documentation omit error handling for brevity. See the Error Handling section in Middleware below for the recommended approach using global error handling middleware.
+:::
 
 ### HTTP methods
 
-Routes can specify which HTTP methods they respond to using the `methods`
-parameter. The available methods are:
+Routes can specify which HTTP methods they respond to using the `methods` parameter. The available methods are:
 
 - `Method.get` - Retrieve data
 - `Method.post` - Create new resources
@@ -224,196 +228,314 @@ parameter. The available methods are:
 - `Method.head` - Same as GET but without response body
 - `Method.options` - Query supported methods (used for CORS)
 
-```dart class UserRoute extends Route { UserRoute() : super( methods:
-{Method.get, Method.post, Method.delete}, );
+```dart
+class UserRoute extends Route {
+  UserRoute() : super(
+    methods: {Method.get, Method.post, Method.delete},
+  );
 
-  @override Future<Result> handleCall(Session session, Request request) async {
-  switch (request.method) { case Method.get: return await _getUser(request);
-  case Method.post: return await _createUser(request); case Method.delete:
-  return await _deleteUser(request); default: return
-  Response.methodNotAllowed(); } } } ```
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    switch (request.method) {
+      case Method.get:
+        return await _getUser(request);
+      case Method.post:
+        return await _createUser(request);
+      case Method.delete:
+        return await _deleteUser(request);
+      default:
+        return Response.methodNotAllowed();
+    }
+  }
+}
+```
 
 ### Path parameters
 
-Routes support named path parameters using the `:paramName` syntax. These are
-automatically extracted and made available through the `Request` object:
+Routes support named path parameters using the `:paramName` syntax. These are automatically extracted and made available through the `Request` object:
 
-```dart class UserRoute extends Route { UserRoute() : super(methods:
-{Method.get});
+```dart
+class UserRoute extends Route {
+  UserRoute() : super(methods: {Method.get});
 
-  @override void injectIn(RelicRouter router) { // Define route with path
-  parameter router.get('/:id', asHandler); }
+  @override
+  void injectIn(RelicRouter router) {
+    // Define route with path parameter
+    router.get('/:id', asHandler);
+  }
 
-  @override Future<Result> handleCall(Session session, Request request) async {
-  // Extract path parameter using symbol final id = request.pathParameters[#id];
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Extract path parameter using symbol
+    final id = request.pathParameters[#id];
     
-    if (id == null) { return Response.badRequest( body: Body.fromString('Missing
-    user ID'), ); }
+    if (id == null) {
+      return Response.badRequest(
+        body: Body.fromString('Missing user ID'),
+      );
+    }
     
-    final userId = int.tryParse(id); if (userId == null) { return
-    Response.badRequest( body: Body.fromString('Invalid user ID'), ); }
+    final userId = int.tryParse(id);
+    if (userId == null) {
+      return Response.badRequest(
+        body: Body.fromString('Invalid user ID'),
+      );
+    }
     
     final user = await User.db.findById(session, userId);
     
-    if (user == null) { return Response.notFound(); }
+    if (user == null) {
+      return Response.notFound();
+    }
     
-    return Response.ok( body: Body.fromString( jsonEncode(user.toJson()),
-    mimeType: MimeType.json, ), ); } }
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode(user.toJson()),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
 
 // Register at /api/users - will match /api/users/123
-pod.webServer.addRoute(UserRoute(), '/api/users'); ```
+pod.webServer.addRoute(UserRoute(), '/api/users');
+```
 
 You can use multiple path parameters in a single route:
 
-```dart router.get('/:userId/posts/:postId', handler); // Matches:
-/123/posts/456 // request.pathParameters[#userId] => '123' //
-request.pathParameters[#postId] => '456' ```
+```dart
+router.get('/:userId/posts/:postId', handler);
+// Matches: /123/posts/456
+// request.pathParameters[#userId] => '123'
+// request.pathParameters[#postId] => '456'
+```
 
 ### Wildcards
 
 Routes also support wildcard matching for catching all paths:
 
-```dart // Single-level wildcard - matches /item/foo but not /item/foo/bar
+```dart
+// Single-level wildcard - matches /item/foo but not /item/foo/bar
 pod.webServer.addRoute(ItemRoute(), '/item/*');
 
 // Tail-match wildcard - matches /item/foo and /item/foo/bar/baz
-pod.webServer.addRoute(ItemRoute(), '/item/**'); ```
+pod.webServer.addRoute(ItemRoute(), '/item/**');
+```
 
-:::info Performance Guarantee The `/**` wildcard is a **tail-match** pattern and
-can only appear at the end of a route path (e.g., `/static/**`). Patterns like
-`/a/**/b` are not supported. This design ensures O(h) route lookup performance,
-where h is the path length, without backtracking. This keeps routing fast and
-predictable, even with many routes. :::
+:::info Performance Guarantee
+The `/**` wildcard is a **tail-match** pattern and can only appear at the end of a route path (e.g., `/static/**`). Patterns like `/a/**/b` are not supported. This design ensures O(h) route lookup performance, where h is the path length, without backtracking. This keeps routing fast and predictable, even with many routes.
+:::
 
 Access the matched path information through the `Request` object:
 
-```dart @override Future<Result> handleCall(Session session, Request request)
-async { // Get the remaining path after the route prefix final remainingPath =
-request.url.path;
+```dart
+@override
+Future<Result> handleCall(Session session, Request request) async {
+  // Get the remaining path after the route prefix
+  final remainingPath = request.url.path;
   
-  // Access query parameters final query = request.url.queryParameters['query'];
+  // Access query parameters
+  final query = request.url.queryParameters['query'];
   
-  return Response.ok( body: Body.fromString('Path: $remainingPath, Query:
-  $query'), ); } ```
+  return Response.ok(
+    body: Body.fromString('Path: $remainingPath, Query: $query'),
+  );
+}
+```
 
 ### Fallback routes
 
 You can set a fallback route that handles requests when no other route matches:
 
-```dart class NotFoundRoute extends Route { @override Future<Result>
-handleCall(Session session, Request request) async { return Response.notFound(
-body: Body.fromString('Page not found: ${request.url.path}'), ); } }
+```dart
+class NotFoundRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    return Response.notFound(
+      body: Body.fromString('Page not found: ${request.url.path}'),
+    );
+  }
+}
 
-// Set as fallback pod.webServer.fallbackRoute = NotFoundRoute(); ```
+// Set as fallback
+pod.webServer.fallbackRoute = NotFoundRoute();
+```
 
 ### Modular routes with injectIn
 
-As your web server grows, managing dozens of individual route registrations can
-become unwieldy. Modular routes solve this by letting you group related
-endpoints into reusable modules. For example, you might create a
-`UserCrudModule` that handles all user-related endpoints (`GET /users`, `POST
-/users`, `PUT /users/:id`, etc.) in a single cohesive unit.
+As your web server grows, managing dozens of individual route registrations can become unwieldy. Modular routes solve this by letting you group related endpoints into reusable modules. For example, you might create a `UserCrudModule` that handles all user-related endpoints (`GET /users`, `POST /users`, `PUT /users/:id`, etc.) in a single cohesive unit.
 
-The key to modular routes is the `injectIn()` method. When you call
-`pod.webServer.addRoute(route, path)`, Serverpod calls `route.injectIn(router)`
-on a router group for that path. By overriding `injectIn()`, you can register
-multiple handler functions instead of implementing a single `handleCall()`
-method. This pattern is perfect for REST resources, API modules, or any group of
-related endpoints.
+The key to modular routes is the `injectIn()` method. When you call `pod.webServer.addRoute(route, path)`, Serverpod calls `route.injectIn(router)` on a router group for that path. By overriding `injectIn()`, you can register multiple handler functions instead of implementing a single `handleCall()` method. This pattern is perfect for REST resources, API modules, or any group of related endpoints.
 
-:::info Session Access in Modular Routes When using `injectIn()` with handler
-functions (`router.get('/', _handler)`), your handlers receive only a `Request`
-parameter. To access the `Session`, use `request.session`:
+:::info Session Access in Modular Routes
+When using `injectIn()` with handler functions (`router.get('/', _handler)`), your handlers receive only a `Request` parameter. To access the `Session`, use `request.session`:
 
-```dart Future<Result> _handler(Request request) async { final session =
-request.session; // Extract Session from Request // ... use session } ```
+```dart
+Future<Result> _handler(Request request) async {
+  final session = request.session;  // Extract Session from Request
+  // ... use session
+}
+```
 
-This differs from `Route.handleCall()` which receives both Session and Request
-as explicit parameters. The modular route pattern uses Relic's router directly,
-which only provides Request to handlers. :::
+This differs from `Route.handleCall()` which receives both Session and Request as explicit parameters. The modular route pattern uses Relic's router directly, which only provides Request to handlers.
+:::
 
 #### Creating a CRUD module
 
-Here's an example of a modular CRUD route that registers multiple endpoints with
-path parameters:
+Here's an example of a modular CRUD route that registers multiple endpoints with path parameters:
 
-```dart class UserCrudModule extends Route { @override void injectIn(RelicRouter
-router) { // Register multiple routes with path parameters router ..get('/',
-_list) ..get('/:id', _get) ..post('/', _create) ..put('/:id', _update)
-..delete('/:id', _delete); }
+```dart
+class UserCrudModule extends Route {
+  @override
+  void injectIn(RelicRouter router) {
+    // Register multiple routes with path parameters
+    router
+      ..get('/', _list)
+      ..get('/:id', _get)
+      ..post('/', _create)
+      ..put('/:id', _update)
+      ..delete('/:id', _delete);
+  }
 
-  // Handler methods Future<Result> _list(Request request) async { final session
-  = request.session; final users = await User.db.find(session);
+  // Handler methods
+  Future<Result> _list(Request request) async {
+    final session = request.session;
+    final users = await User.db.find(session);
     
-    return Response.ok( body: Body.fromString( jsonEncode(users.map((u) =>
-    u.toJson()).toList()), mimeType: MimeType.json, ), ); }
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode(users.map((u) => u.toJson()).toList()),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
 
-  Future<Result> _get(Request request) async { // Extract path parameter using
-  symbol final id = request.pathParameters[#id]; if (id == null) { return
-  Response.badRequest( body: Body.fromString('Missing user ID'), ); }
+  Future<Result> _get(Request request) async {
+    // Extract path parameter using symbol
+    final id = request.pathParameters[#id];
+    if (id == null) {
+      return Response.badRequest(
+        body: Body.fromString('Missing user ID'),
+      );
+    }
     
-    final userId = int.tryParse(id); if (userId == null) { return
-    Response.badRequest( body: Body.fromString('Invalid user ID'), ); }
+    final userId = int.tryParse(id);
+    if (userId == null) {
+      return Response.badRequest(
+        body: Body.fromString('Invalid user ID'),
+      );
+    }
     
-    final session = request.session; final user = await
-    User.db.findById(session, userId);
+    final session = request.session;
+    final user = await User.db.findById(session, userId);
     
-    if (user == null) { return Response.notFound( body: Body.fromString('User
-    not found'), ); }
+    if (user == null) {
+      return Response.notFound(
+        body: Body.fromString('User not found'),
+      );
+    }
     
-    return Response.ok( body: Body.fromString( jsonEncode(user.toJson()),
-    mimeType: MimeType.json, ), ); }
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode(user.toJson()),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
 
-  Future<Result> _create(Request request) async { final body = await
-  request.readAsString(); final data = jsonDecode(body); final session =
-  request.session;
-    
-    final user = User(name: data['name'], email: data['email']); await
-    User.db.insertRow(session, user);
-    
-    return Response.created( body: Body.fromString( jsonEncode(user.toJson()),
-    mimeType: MimeType.json, ), ); }
-
-  Future<Result> _update(Request request) async { // Extract path parameter
-  using symbol final id = request.pathParameters[#id]; if (id == null) { return
-  Response.badRequest( body: Body.fromString('Missing user ID'), ); }
-    
-    final userId = int.tryParse(id); if (userId == null) { return
-    Response.badRequest( body: Body.fromString('Invalid user ID'), ); }
-    
-    final body = await request.readAsString(); final data = jsonDecode(body);
+  Future<Result> _create(Request request) async {
+    final body = await request.readAsString();
+    final data = jsonDecode(body);
     final session = request.session;
     
-    final user = await User.db.findById(session, userId); if (user == null) {
-    return Response.notFound( body: Body.fromString('User not found'), ); }
+    final user = User(name: data['name'], email: data['email']);
+    await User.db.insertRow(session, user);
     
-    user.name = data['name'] ?? user.name; user.email = data['email'] ??
-    user.email; await User.db.updateRow(session, user);
-    
-    return Response.ok( body: Body.fromString( jsonEncode(user.toJson()),
-    mimeType: MimeType.json, ), ); }
+    return Response.created(
+      body: Body.fromString(
+        jsonEncode(user.toJson()),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
 
-  Future<Result> _delete(Request request) async { // Extract path parameter
-  using symbol final id = request.pathParameters[#id]; if (id == null) { return
-  Response.badRequest( body: Body.fromString('Missing user ID'), ); }
+  Future<Result> _update(Request request) async {
+    // Extract path parameter using symbol
+    final id = request.pathParameters[#id];
+    if (id == null) {
+      return Response.badRequest(
+        body: Body.fromString('Missing user ID'),
+      );
+    }
     
-    final userId = int.tryParse(id); if (userId == null) { return
-    Response.badRequest( body: Body.fromString('Invalid user ID'), ); }
+    final userId = int.tryParse(id);
+    if (userId == null) {
+      return Response.badRequest(
+        body: Body.fromString('Invalid user ID'),
+      );
+    }
     
-    final session = request.session; final deleted = await
-    User.db.deleteRow(session, userId);
+    final body = await request.readAsString();
+    final data = jsonDecode(body);
+    final session = request.session;
     
-    if (!deleted) { return Response.notFound( body: Body.fromString('User not
-    found'), ); }
+    final user = await User.db.findById(session, userId);
+    if (user == null) {
+      return Response.notFound(
+        body: Body.fromString('User not found'),
+      );
+    }
     
-    return Response.noContent(); }
+    user.name = data['name'] ?? user.name;
+    user.email = data['email'] ?? user.email;
+    await User.db.updateRow(session, user);
+    
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode(user.toJson()),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
 
-  // Required by Route but not used since we override injectIn @override
-  Future<Result> handleCall(Session session, Request request) async { throw
-  UnimplementedError('This route uses injectIn'); } }
+  Future<Result> _delete(Request request) async {
+    // Extract path parameter using symbol
+    final id = request.pathParameters[#id];
+    if (id == null) {
+      return Response.badRequest(
+        body: Body.fromString('Missing user ID'),
+      );
+    }
+    
+    final userId = int.tryParse(id);
+    if (userId == null) {
+      return Response.badRequest(
+        body: Body.fromString('Invalid user ID'),
+      );
+    }
+    
+    final session = request.session;
+    final deleted = await User.db.deleteRow(session, userId);
+    
+    if (!deleted) {
+      return Response.notFound(
+        body: Body.fromString('User not found'),
+      );
+    }
+    
+    return Response.noContent();
+  }
+
+  // Required by Route but not used since we override injectIn
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    throw UnimplementedError('This route uses injectIn');
+  }
+}
 
 // Register the entire CRUD module under /api/users
-pod.webServer.addRoute(UserCrudModule(), '/api/users'); ```
+pod.webServer.addRoute(UserCrudModule(), '/api/users');
+```
 
 This creates the following RESTful endpoints:
 - `GET /api/users` - List all users
@@ -422,125 +544,163 @@ This creates the following RESTful endpoints:
 - `PUT /api/users/:id` - Update a user (e.g., `/api/users/123`)
 - `DELETE /api/users/:id` - Delete a user (e.g., `/api/users/123`)
 
-:::tip Path parameters are accessed using symbols:
-`request.pathParameters[#paramName]`. Always validate and parse these values
-since they come from user input as strings. :::
+:::tip
+Path parameters are accessed using symbols: `request.pathParameters[#paramName]`. Always validate and parse these values since they come from user input as strings.
+:::
 
 #### Composing multiple modules
 
 You can create a parent module that composes multiple sub-modules:
 
-```dart class ApiModule extends Route { @override void injectIn(RelicRouter
-router) { // Inject sub-modules at different paths
-router.group('/users').inject(UserCrudModule());
-router.group('/posts').inject(PostCrudModule());
-router.group('/comments').inject(CommentCrudModule());
+```dart
+class ApiModule extends Route {
+  @override
+  void injectIn(RelicRouter router) {
+    // Inject sub-modules at different paths
+    router.group('/users').inject(UserCrudModule());
+    router.group('/posts').inject(PostCrudModule());
+    router.group('/comments').inject(CommentCrudModule());
     
-    // Add module-level routes router.get('/health', _healthCheck); }
+    // Add module-level routes
+    router.get('/health', _healthCheck);
+  }
 
-  Future<Result> _healthCheck(Request request) async { return Response.ok( body:
-  Body.fromString( jsonEncode({'status': 'healthy', 'timestamp':
-  DateTime.now().toIso8601String()}), mimeType: MimeType.json, ), ); }
+  Future<Result> _healthCheck(Request request) async {
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode({'status': 'healthy', 'timestamp': DateTime.now().toIso8601String()}),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
 
-  @override Future<Result> handleCall(Session session, Request request) async {
-  throw UnimplementedError('This route uses injectIn'); } }
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    throw UnimplementedError('This route uses injectIn');
+  }
+}
 
-// Register the entire API module pod.webServer.addRoute(ApiModule(), '/api');
+// Register the entire API module
+pod.webServer.addRoute(ApiModule(), '/api');
 ```
 
 This pattern enables you to:
 - **Organize routes hierarchically** - Group related functionality together
 - **Reuse route modules** - Use the same module in different applications
 - **Compose complex APIs** - Build large APIs from smaller, focused modules
-- **Separate concerns** - Keep route registration logic separate from handler
-  implementation
+- **Separate concerns** - Keep route registration logic separate from handler implementation
 
-:::tip When overriding `injectIn`, you typically don't need to implement
-`handleCall` since you're registering handler functions directly with the
-router. You can throw `UnimplementedError` in `handleCall` to make it clear the
-method isn't used. :::
+:::tip
+When overriding `injectIn`, you typically don't need to implement `handleCall` since you're registering handler functions directly with the router. You can throw `UnimplementedError` in `handleCall` to make it clear the method isn't used.
+:::
 
 ## Middleware
 
-Routes handle the core logic of your application, but many concerns cut across
-multiple routes: logging every request, validating API keys, handling CORS
-headers, or catching errors. Rather than duplicating this code in each route,
-middleware lets you apply it globally or to specific path prefixes.
+Routes handle the core logic of your application, but many concerns cut across multiple routes: logging every request, validating API keys, handling CORS headers, or catching errors. Rather than duplicating this code in each route, middleware lets you apply it globally or to specific path prefixes.
 
-Middleware functions are wrappers that sit between the incoming request and your
-route handler. They can inspect or modify requests before they reach your
-routes, and transform responses before they're sent back to the client. This
-makes middleware perfect for authentication, logging, error handling, and any
-other cross-cutting concern in your web server.
+Middleware functions are wrappers that sit between the incoming request and your route handler. They can inspect or modify requests before they reach your routes, and transform responses before they're sent back to the client. This makes middleware perfect for authentication, logging, error handling, and any other cross-cutting concern in your web server.
 
 ### Adding middleware
 
 Use the `addMiddleware` method to apply middleware to specific path prefixes:
 
-```dart // Apply to all routes pod.webServer.addMiddleware(loggingMiddleware,
-'/');
+```dart
+// Apply to all routes
+pod.webServer.addMiddleware(loggingMiddleware, '/');
 
-// Apply only to API routes pod.webServer.addMiddleware(authMiddleware, '/api');
+// Apply only to API routes
+pod.webServer.addMiddleware(authMiddleware, '/api');
 ```
 
 ### Creating custom middleware
 
-Middleware is a function that takes a `Handler` and returns a new `Handler`.
-Here's a simple logging middleware example:
+Middleware is a function that takes a `Handler` and returns a new `Handler`. Here's a simple logging middleware example:
 
-```dart Handler loggingMiddleware(Handler innerHandler) { return (Request
-request) async { final start = DateTime.now(); print('→
-${request.method.name.toUpperCase()} ${request.url.path}');
+```dart
+Handler loggingMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    final start = DateTime.now();
+    print('→ ${request.method.name.toUpperCase()} ${request.url.path}');
     
-    // Call the next handler in the chain final response = await
-    innerHandler(request);
+    // Call the next handler in the chain
+    final response = await innerHandler(request);
     
-    final duration = DateTime.now().difference(start); print('←
-    ${response.statusCode} (${duration.inMilliseconds}ms)');
+    final duration = DateTime.now().difference(start);
+    print('← ${response.statusCode} (${duration.inMilliseconds}ms)');
     
-    return response; }; } ```
+    return response;
+  };
+}
+```
 
 ### API key validation middleware
 
 A common use case is validating API keys for protected routes:
 
-```dart Handler apiKeyMiddleware(Handler innerHandler) { return (Request
-request) async { // Check for API key in header final apiKey =
-request.headers['X-API-Key']?.firstOrNull;
+```dart
+Handler apiKeyMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Check for API key in header
+    final apiKey = request.headers['X-API-Key']?.firstOrNull;
     
-    if (apiKey == null) { return Response.unauthorized( body:
-    Body.fromString('API key required'), ); }
+    if (apiKey == null) {
+      return Response.unauthorized(
+        body: Body.fromString('API key required'),
+      );
+    }
     
-    // Verify API key if (!await isValidApiKey(apiKey)) { return
-    Response.forbidden( body: Body.fromString('Invalid API key'), ); }
+    // Verify API key
+    if (!await isValidApiKey(apiKey)) {
+      return Response.forbidden(
+        body: Body.fromString('Invalid API key'),
+      );
+    }
     
-    // Continue to the next handler return await innerHandler(request); }; }
+    // Continue to the next handler
+    return await innerHandler(request);
+  };
+}
 
-// Apply to protected routes pod.webServer.addMiddleware(apiKeyMiddleware,
-'/api'); ```
+// Apply to protected routes
+pod.webServer.addMiddleware(apiKeyMiddleware, '/api');
+```
 
-:::info For user authentication, use Serverpod's built-in authentication system
-which integrates with the `Session` object. The middleware examples here are for
-additional web-specific validations like API keys, rate limiting, or request
-validation. :::
+:::info
+For user authentication, use Serverpod's built-in authentication system which integrates with the `Session` object. The middleware examples here are for additional web-specific validations like API keys, rate limiting, or request validation.
+:::
 
 ### CORS middleware
 
 Enable Cross-Origin Resource Sharing for your API:
 
-```dart Handler corsMiddleware(Handler innerHandler) { return (Request request)
-async { // Handle preflight requests if (request.method == Method.options) {
-return Response.ok( headers: Headers.build((h) {
-h.set('Access-Control-Allow-Origin', '*'); h.set('Access-Control-Allow-Methods',
-'GET, POST, PUT, DELETE'); h.set('Access-Control-Allow-Headers', 'Content-Type,
-Authorization'); }), ); }
+```dart
+Handler corsMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Handle preflight requests
+    if (request.method == Method.options) {
+      return Response.ok(
+        headers: Headers.build((h) {
+          h.set('Access-Control-Allow-Origin', '*');
+          h.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+          h.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }),
+      );
+    }
     
-    // Process the request final response = await innerHandler(request);
+    // Process the request
+    final response = await innerHandler(request);
     
-    // Add CORS headers to response return response.change( headers:
-    Headers.build((h) { h.set('Access-Control-Allow-Origin', '*'); }), ); }; }
+    // Add CORS headers to response
+    return response.change(
+      headers: Headers.build((h) {
+        h.set('Access-Control-Allow-Origin', '*');
+      }),
+    );
+  };
+}
 
-pod.webServer.addMiddleware(corsMiddleware, '/api'); ```
+pod.webServer.addMiddleware(corsMiddleware, '/api');
+```
 
 ### Error handling
 
@@ -550,23 +710,40 @@ Production applications need robust error handling. Rather than adding try-catch
 
 Error handling middleware wraps all your routes and catches any exceptions they throw:
 
-```dart Handler errorHandlingMiddleware(Handler innerHandler) { return (Request
-request) async { try { return await innerHandler(request); } on FormatException
-catch (e) { // Handle JSON parsing errors return Response.badRequest( body:
-Body.fromString( jsonEncode({'error': 'Invalid request format', 'message':
-e.message}), mimeType: MimeType.json, ), ); } catch (e, stackTrace) { // Log the
-error print('Error handling ${request.method} ${request.url.path}: $e');
-print(stackTrace);
+```dart
+Handler errorHandlingMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    try {
+      return await innerHandler(request);
+    } on FormatException catch (e) {
+      // Handle JSON parsing errors
+      return Response.badRequest(
+        body: Body.fromString(
+          jsonEncode({'error': 'Invalid request format', 'message': e.message}),
+          mimeType: MimeType.json,
+        ),
+      );
+    } catch (e, stackTrace) {
+      // Log the error
+      print('Error handling ${request.method} ${request.url.path}: $e');
+      print(stackTrace);
       
-      // Return a generic error response return Response.internalServerError(
-      body: Body.fromString( jsonEncode({'error': 'Internal server error'}),
-      mimeType: MimeType.json, ), ); } }; }
+      // Return a generic error response
+      return Response.internalServerError(
+        body: Body.fromString(
+          jsonEncode({'error': 'Internal server error'}),
+          mimeType: MimeType.json,
+        ),
+      );
+    }
+  };
+}
 
-// Apply to all routes pod.webServer.addMiddleware(errorHandlingMiddleware,
-'/'); ```
+// Apply to all routes
+pod.webServer.addMiddleware(errorHandlingMiddleware, '/');
+```
 
-With error handling middleware in place, your route handlers can focus on
-business logic without extensive try-catch blocks. The middleware catches common exceptions like:
+With error handling middleware in place, your route handlers can focus on business logic without extensive try-catch blocks. The middleware catches common exceptions like:
 
 - `FormatException` from `jsonDecode()` - Returns 400 Bad Request
 - Database errors - Returns 500 Internal Server Error with logging
@@ -576,14 +753,13 @@ If an exception escapes all middleware, Serverpod will automatically return a 50
 
 ### Middleware execution order
 
-Middleware is applied based on path hierarchy, with more specific paths taking
-precedence. Within the same path, middleware executes in the order it was
-registered:
+Middleware is applied based on path hierarchy, with more specific paths taking precedence. Within the same path, middleware executes in the order it was registered:
 
-```dart pod.webServer.addMiddleware(loggingMiddleware, '/'); // Executes first
-(outer) pod.webServer.addMiddleware(authMiddleware, '/api'); // Executes second
-(inner) for /api routes pod.webServer.addMiddleware(rateLimitMiddleware,
-'/api'); // Executes third (innermost) for /api routes ```
+```dart
+pod.webServer.addMiddleware(loggingMiddleware, '/');      // Executes first (outer)
+pod.webServer.addMiddleware(authMiddleware, '/api');      // Executes second (inner) for /api routes
+pod.webServer.addMiddleware(rateLimitMiddleware, '/api'); // Executes third (innermost) for /api routes
+```
 
 For a request to `/api/users`, the execution order is:
 1. `loggingMiddleware` (before)
@@ -596,232 +772,295 @@ For a request to `/api/users`, the execution order is:
 
 ### Request-scoped data with ContextProperty
 
-Middleware often needs to pass computed data to downstream handlers. For
-example, a tenant identification middleware might extract the tenant ID from a
-subdomain, or a logging middleware might generate a request ID for tracing.
-Since `Request` objects are immutable, you can't just add properties to them.
-This is where `ContextProperty` comes in.
+Middleware often needs to pass computed data to downstream handlers. For example, a tenant identification middleware might extract the tenant ID from a subdomain, or a logging middleware might generate a request ID for tracing. Since `Request` objects are immutable, you can't just add properties to them. This is where `ContextProperty` comes in.
 
-`ContextProperty<T>` provides a type-safe way to attach data to a `Request`
-object without modifying it. Think of it as a side channel for request-scoped
-data that middleware can write to and routes can read from. The data is
-automatically cleaned up when the request completes, making it perfect for
-per-request state.
+`ContextProperty<T>` provides a type-safe way to attach data to a `Request` object without modifying it. Think of it as a side channel for request-scoped data that middleware can write to and routes can read from. The data is automatically cleaned up when the request completes, making it perfect for per-request state.
 
-:::info Note that Serverpod's `Route.handleCall()` already receives a `Session`
-parameter which includes authenticated user information if available. Use
-`ContextProperty` for web-specific request data that isn't part of the standard
-Session, such as request IDs, feature flags, or API version information
-extracted from headers. :::
+:::info
+Note that Serverpod's `Route.handleCall()` already receives a `Session` parameter which includes authenticated user information if available. Use `ContextProperty` for web-specific request data that isn't part of the standard Session, such as request IDs, feature flags, or API version information extracted from headers.
+:::
 
 #### Why use ContextProperty?
 
-Since `Request` objects are immutable, you can't modify them directly.
-`ContextProperty` allows you to associate additional data with a request that
-can be accessed by all downstream middleware and handlers. Common use cases
-include:
+Since `Request` objects are immutable, you can't modify them directly. `ContextProperty` allows you to associate additional data with a request that can be accessed by all downstream middleware and handlers. Common use cases include:
 
-- **Request ID tracking** - Generated correlation IDs for distributed tracing
-  (purely request-scoped, not session data)
+- **Request ID tracking** - Generated correlation IDs for distributed tracing (purely request-scoped, not session data)
 - **API versioning** - Extract and store API version from headers
 - **Feature flags** - Request-specific toggles based on headers or A/B testing
 - **Rate limiting** - Per-request rate limit state
-- **Tenant identification** - Multi-tenant context from subdomains (when not
-  part of user session)
+- **Tenant identification** - Multi-tenant context from subdomains (when not part of user session)
 
 #### Creating a ContextProperty
 
 Define a `ContextProperty` as a top-level constant or static field:
 
-```dart // Define a property for request ID tracking final requestIdProperty =
-ContextProperty<String>();
+```dart
+// Define a property for request ID tracking
+final requestIdProperty = ContextProperty<String>();
 
-// Define a property for tenant identification final tenantProperty =
-ContextProperty<String>();
+// Define a property for tenant identification
+final tenantProperty = ContextProperty<String>();
 
-// Optional: with a default value final featureFlagsProperty =
-ContextProperty<FeatureFlags>( defaultValue: () => FeatureFlags.defaults(), );
+// Optional: with a default value
+final featureFlagsProperty = ContextProperty<FeatureFlags>(
+  defaultValue: () => FeatureFlags.defaults(),
+);
 ```
 
 #### Setting values in middleware
 
-Middleware can set values on the context property, making them available to all
-downstream handlers:
+Middleware can set values on the context property, making them available to all downstream handlers:
 
-```dart final requestIdProperty = ContextProperty<String>();
+```dart
+final requestIdProperty = ContextProperty<String>();
 
-Handler requestIdMiddleware(Handler innerHandler) { return (Request request)
-async { // Generate a unique request ID for tracing final requestId =
-Uuid().v4();
+Handler requestIdMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Generate a unique request ID for tracing
+    final requestId = Uuid().v4();
     
-    // Attach to request context requestIdProperty[request] = requestId;
+    // Attach to request context
+    requestIdProperty[request] = requestId;
     
-    // Log the incoming request print('[$requestId] ${request.method}
-    ${request.url.path}');
+    // Log the incoming request
+    print('[$requestId] ${request.method} ${request.url.path}');
     
-    // Continue to next handler final response = await innerHandler(request);
+    // Continue to next handler
+    final response = await innerHandler(request);
     
-    // Log the response print('[$requestId] Response: ${response.statusCode}');
+    // Log the response
+    print('[$requestId] Response: ${response.statusCode}');
     
-    // Optionally add request ID to response headers return response.change(
-    headers: {'X-Request-ID': requestId}, ); }; } ```
+    // Optionally add request ID to response headers
+    return response.change(
+      headers: {'X-Request-ID': requestId},
+    );
+  };
+}
+```
 
 #### Accessing values in routes
 
 Route handlers can retrieve the value from the context property:
 
-```dart class ApiRoute extends Route { @override Future<Result>
-handleCall(Session session, Request request) async { // Get the request ID from
-context final requestId = requestIdProperty[request];
+```dart
+class ApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Get the request ID from context
+    final requestId = requestIdProperty[request];
     
-    // Use it for logging or tracing session.log('Processing request
-    $requestId');
+    // Use it for logging or tracing
+    session.log('Processing request $requestId');
     
-    // Your route logic here final data = await processRequest(session);
+    // Your route logic here
+    final data = await processRequest(session);
     
-    return Response.ok( body: Body.fromString( jsonEncode(data), mimeType:
-    MimeType.json, ), ); } } ```
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode(data),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+```
 
 #### Safe access with getOrNull
 
 If a value might not be set, use `getOrNull()` to avoid exceptions:
 
-```dart class TenantRoute extends Route { @override Future<Result>
-handleCall(Session session, Request request) async { // Safely get tenant,
-returns null if not set final tenant = tenantProperty.getOrNull(request);
+```dart
+class TenantRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Safely get tenant, returns null if not set
+    final tenant = tenantProperty.getOrNull(request);
     
-    if (tenant != null) { // Fetch tenant-specific data final data = await
-    session.db.find<Data>(where: (t) => t.tenantId.equals(tenant)); return
-    Response.ok( body: Body.fromString(jsonEncode(data), mimeType:
-    MimeType.json), ); } else { return Response.badRequest( body:
-    Body.fromString('Missing tenant identifier'), ); } } } ```
+    if (tenant != null) {
+      // Fetch tenant-specific data
+      final data = await session.db.find<Data>(where: (t) => t.tenantId.equals(tenant));
+      return Response.ok(
+        body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
+      );
+    } else {
+      return Response.badRequest(
+        body: Body.fromString('Missing tenant identifier'),
+      );
+    }
+  }
+}
+```
 
 #### Complete multi-tenant example
 
 Here's a complete example showing tenant identification from subdomains:
 
-```dart // Define the context property for tenant ID final tenantProperty =
-ContextProperty<String>();
+```dart
+// Define the context property for tenant ID
+final tenantProperty = ContextProperty<String>();
 
-// Tenant identification middleware (extracts from subdomain) Handler
-tenantMiddleware(Handler innerHandler) { return (Request request) async { final
-host = request.headers.host;
+// Tenant identification middleware (extracts from subdomain)
+Handler tenantMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    final host = request.headers.host;
     
-    if (host == null) { return Response.badRequest( body:
-    Body.fromString('Missing host header'), ); }
+    if (host == null) {
+      return Response.badRequest(
+        body: Body.fromString('Missing host header'),
+      );
+    }
     
-    // Extract tenant from subdomain (e.g., acme.example.com -> "acme") final
-    parts = host.host.split('.'); if (parts.length < 2) { return
-    Response.badRequest( body: Body.fromString('Invalid hostname format'), ); }
+    // Extract tenant from subdomain (e.g., acme.example.com -> "acme")
+    final parts = host.host.split('.');
+    if (parts.length < 2) {
+      return Response.badRequest(
+        body: Body.fromString('Invalid hostname format'),
+      );
+    }
     
     final tenant = parts.first;
     
-    // Validate tenant exists (implement your own logic) final session =
-    request.session; final tenantExists = await validateTenant(session, tenant);
+    // Validate tenant exists (implement your own logic)
+    final session = request.session;
+    final tenantExists = await validateTenant(session, tenant);
     
-    if (!tenantExists) { return Response.notFound( body: Body.fromString('Tenant
-    not found'), ); }
+    if (!tenantExists) {
+      return Response.notFound(
+        body: Body.fromString('Tenant not found'),
+      );
+    }
     
-    // Attach tenant to context tenantProperty[request] = tenant;
+    // Attach tenant to context
+    tenantProperty[request] = tenant;
     
-    return await innerHandler(request); }; }
+    return await innerHandler(request);
+  };
+}
 
-// Usage in your server pod.webServer.addMiddleware(tenantMiddleware, '/');
+// Usage in your server
+pod.webServer.addMiddleware(tenantMiddleware, '/');
 
-// Routes automatically have access to the tenant class TenantDataRoute extends
-Route { @override Future<Result> handleCall(Session session, Request request)
-async { final tenant = tenantProperty[request];
+// Routes automatically have access to the tenant
+class TenantDataRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final tenant = tenantProperty[request];
     
-    // Fetch tenant-specific data final data = await session.db.find<Product>(
-    where: (p) => p.tenantId.equals(tenant), );
+    // Fetch tenant-specific data
+    final data = await session.db.find<Product>(
+      where: (p) => p.tenantId.equals(tenant),
+    );
     
-    return Response.ok( body: Body.fromString( jsonEncode(data.map((p) =>
-    p.toJson()).toList()), mimeType: MimeType.json, ), ); } } ```
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode(data.map((p) => p.toJson()).toList()),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+```
 
 #### Multiple context properties
 
 You can use multiple context properties for different types of data:
 
-```dart final requestIdProperty = ContextProperty<String>(); final
-tenantProperty = ContextProperty<String>(); final apiVersionProperty =
-ContextProperty<String>();
+```dart
+final requestIdProperty = ContextProperty<String>();
+final tenantProperty = ContextProperty<String>();
+final apiVersionProperty = ContextProperty<String>();
 
-Handler requestContextMiddleware(Handler innerHandler) { return (Request
-request) async { // Generate and attach request ID final requestId =
-Uuid().v4(); requestIdProperty[request] = requestId;
+Handler requestContextMiddleware(Handler innerHandler) {
+  return (Request request) async {
+    // Generate and attach request ID
+    final requestId = Uuid().v4();
+    requestIdProperty[request] = requestId;
     
-    // Extract tenant from subdomain or header final host =
-    request.headers.host; if (host != null) { final tenant =
-    host.host.split('.').first; tenantProperty[request] = tenant; }
+    // Extract tenant from subdomain or header
+    final host = request.headers.host;
+    if (host != null) {
+      final tenant = host.host.split('.').first;
+      tenantProperty[request] = tenant;
+    }
     
-    // Extract API version from header final apiVersion =
-    request.headers['X-API-Version']?.firstOrNull ?? '1.0';
+    // Extract API version from header
+    final apiVersion = request.headers['X-API-Version']?.firstOrNull ?? '1.0';
     apiVersionProperty[request] = apiVersion;
     
-    return await innerHandler(request); }; }
+    return await innerHandler(request);
+  };
+}
 
-// Later in your route class DataRoute extends Route { @override Future<Result>
-handleCall(Session session, Request request) async { final requestId =
-requestIdProperty[request]; final tenant = tenantProperty[request]; final
-apiVersion = apiVersionProperty[request];
+// Later in your route
+class DataRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final requestId = requestIdProperty[request];
+    final tenant = tenantProperty[request];
+    final apiVersion = apiVersionProperty[request];
     
     session.log('Request $requestId for tenant $tenant (API v$apiVersion)');
     
-    // Fetch tenant-specific data final data = await fetchTenantData(session,
-    tenant);
+    // Fetch tenant-specific data
+    final data = await fetchTenantData(session, tenant);
     
-    return Response.ok( body: Body.fromString(jsonEncode(data), mimeType:
-    MimeType.json), ); } } ```
+    return Response.ok(
+      body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
+    );
+  }
+}
+```
 
 :::tip Best Practices
 - Define `ContextProperty` instances as top-level constants or static fields
-- Use descriptive names for your properties (e.g., `requestIdProperty`, not just
-  `requestId`)
+- Use descriptive names for your properties (e.g., `requestIdProperty`, not just `requestId`)
 - Use `getOrNull()` when the value might not be set
 - Set properties in middleware, not in routes
-- Use specific types for better type safety :::
+- Use specific types for better type safety
+:::
 
 ### Built-in logging middleware
 
-Serverpod re-exports Relic's built-in `logRequests()` middleware for convenient
-request logging:
+Serverpod re-exports Relic's built-in `logRequests()` middleware for convenient request logging:
 
-```dart import 'package:serverpod/serverpod.dart';
+```dart
+import 'package:serverpod/serverpod.dart';
 
-pod.webServer.addMiddleware(logRequests(), '/'); ```
+pod.webServer.addMiddleware(logRequests(), '/');
+```
 
 This logs all requests with method, path, status code, and response time.
 
 ## Typed headers
 
-HTTP headers are traditionally accessed as strings, which means you need to
-manually parse values, handle edge cases, and validate formats. Serverpod's web
-server (via Relic) provides a better approach: typed headers that automatically
-parse header values into strongly-typed Dart objects.
+HTTP headers are traditionally accessed as strings, which means you need to manually parse values, handle edge cases, and validate formats. Serverpod's web server (via Relic) provides a better approach: typed headers that automatically parse header values into strongly-typed Dart objects.
 
-For example, instead of parsing `Authorization: Bearer abc123` as a string and
-extracting the token yourself, you can access `request.headers.authorization` to
-get a `BearerAuthorizationHeader` object with the token already parsed and
-validated. This eliminates boilerplate code, catches errors early, and makes
-your code more maintainable.
+For example, instead of parsing `Authorization: Bearer abc123` as a string and extracting the token yourself, you can access `request.headers.authorization` to get a `BearerAuthorizationHeader` object with the token already parsed and validated. This eliminates boilerplate code, catches errors early, and makes your code more maintainable.
 
 ### Reading typed headers
 
 Access typed headers through extension methods on `request.headers`:
 
-```dart class ApiRoute extends Route { @override Future<Result>
-handleCall(Session session, Request request) async { // Type-safe accessors
-return parsed objects or null final auth = request.headers.authorization; //
-AuthorizationHeader? final contentType = request.headers.contentType; //
-ContentTypeHeader? final cookies = request.headers.cookie; // CookieHeader?
-final userAgent = request.headers.userAgent; // String? final host =
-request.headers.host; // HostHeader?
+```dart
+class ApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Type-safe accessors return parsed objects or null
+    final auth = request.headers.authorization;          // AuthorizationHeader?
+    final contentType = request.headers.contentType;      // ContentTypeHeader?
+    final cookies = request.headers.cookie;               // CookieHeader?
+    final userAgent = request.headers.userAgent;          // String?
+    final host = request.headers.host;                    // HostHeader?
     
-    // Raw string access is also available for any header final authRaw =
-    request.headers['Authorization']; // Iterable<String>? final custom =
-    request.headers['X-Custom-Header']; // Iterable<String>?
+    // Raw string access is also available for any header
+    final authRaw = request.headers['Authorization'];     // Iterable<String>?
+    final custom = request.headers['X-Custom-Header'];    // Iterable<String>?
     
-    return Response.ok(); } } ```
+    return Response.ok();
+  }
+}
+```
 
 Common request headers include:
 - `authorization` - AuthorizationHeader (Bearer/Basic/Digest)
@@ -840,12 +1079,24 @@ Common request headers include:
 
 Set typed headers in responses using the `Headers.build()` builder pattern:
 
-```dart return Response.ok( headers: Headers.build((h) { h.cacheControl =
-CacheControlHeader( maxAge: 3600, publicCache: true, ); h.contentType =
-ContentTypeHeader( mimeType: MimeType.json, charset: 'utf-8', );
+```dart
+return Response.ok(
+  headers: Headers.build((h) {
+    h.cacheControl = CacheControlHeader(
+      maxAge: 3600,
+      publicCache: true,
+    );
+    h.contentType = ContentTypeHeader(
+      mimeType: MimeType.json,
+      charset: 'utf-8',
+    );
     
-    // Set custom headers (raw) h['X-API-Version'] = ['2.0']; }), body:
-    Body.fromString(jsonEncode(data)), ); ```
+    // Set custom headers (raw)
+    h['X-API-Version'] = ['2.0'];
+  }),
+  body: Body.fromString(jsonEncode(data)),
+);
+```
 
 Common response headers include:
 - `cacheControl` - CacheControlHeader
@@ -859,38 +1110,66 @@ Common response headers include:
 
 The `AuthorizationHeader` supports three authentication schemes:
 
-**Bearer Token (JWT, OAuth):** ```dart final auth =
-request.headers.authorization;
+**Bearer Token (JWT, OAuth):**
+```dart
+final auth = request.headers.authorization;
 
-if (auth is BearerAuthorizationHeader) { final token = auth.token; // The actual
-token string
+if (auth is BearerAuthorizationHeader) {
+  final token = auth.token;  // The actual token string
   
-  // Validate token if (!await validateToken(token)) { return
-  Response.unauthorized(); } } ```
+  // Validate token
+  if (!await validateToken(token)) {
+    return Response.unauthorized();
+  }
+}
+```
 
-**Basic Authentication:** ```dart if (auth is BasicAuthorizationHeader) { final
-username = auth.username; final password = auth.password;
+**Basic Authentication:**
+```dart
+if (auth is BasicAuthorizationHeader) {
+  final username = auth.username;
+  final password = auth.password;
   
-  // Validate credentials if (!await validateCredentials(username, password)) {
-  return Response.unauthorized(); } } ```
+  // Validate credentials
+  if (!await validateCredentials(username, password)) {
+    return Response.unauthorized();
+  }
+}
+```
 
-**Setting Bearer token:** ```dart headers: Headers.build((h) { h.authorization =
-BearerAuthorizationHeader(token: 'eyJhbGc...'); }), ```
+**Setting Bearer token:**
+```dart
+headers: Headers.build((h) {
+  h.authorization = BearerAuthorizationHeader(token: 'eyJhbGc...');
+}),
+```
 
 ### CacheControlHeader - Cache directives
 
 Control caching behavior with type-safe cache directives:
 
-```dart // Public cache with 1 hour expiration headers: Headers.build((h) {
-h.cacheControl = CacheControlHeader( maxAge: 3600, // Cache for 1 hour
-publicCache: true, // Shared cache allowed mustRevalidate: true, // Must
-revalidate after expiry staleWhileRevalidate: 86400, // Can use stale for 1 day
-while revalidating ); }), ```
+```dart
+// Public cache with 1 hour expiration
+headers: Headers.build((h) {
+  h.cacheControl = CacheControlHeader(
+    maxAge: 3600,                  // Cache for 1 hour
+    publicCache: true,             // Shared cache allowed
+    mustRevalidate: true,          // Must revalidate after expiry
+    staleWhileRevalidate: 86400,   // Can use stale for 1 day while revalidating
+  );
+}),
+```
 
-```dart // Secure defaults for sensitive data headers: Headers.build((h) {
-h.cacheControl = CacheControlHeader( noStore: true, // Don't store anywhere
-noCache: true, // Must revalidate privateCache: true, // Only private cache );
-}), ```
+```dart
+// Secure defaults for sensitive data
+headers: Headers.build((h) {
+  h.cacheControl = CacheControlHeader(
+    noStore: true,      // Don't store anywhere
+    noCache: true,      // Must revalidate
+    privateCache: true, // Only private cache
+  );
+}),
+```
 
 Available directives:
 - `noCache`, `noStore` - Cache control flags
@@ -904,32 +1183,65 @@ Available directives:
 
 Specify how content should be handled (inline display or download):
 
-```dart // File download with proper filename headers: Headers.build((h) {
-h.contentDisposition = ContentDispositionHeader( type: 'attachment', parameters:
-[ ContentDispositionParameter(name: 'filename', value: 'report.pdf'), ], ); }),
+```dart
+// File download with proper filename
+headers: Headers.build((h) {
+  h.contentDisposition = ContentDispositionHeader(
+    type: 'attachment',
+    parameters: [
+      ContentDispositionParameter(name: 'filename', value: 'report.pdf'),
+    ],
+  );
+}),
 ```
 
-```dart // With extended encoding (RFC 5987) for non-ASCII filenames
-h.contentDisposition = ContentDispositionHeader( type: 'attachment', parameters:
-[ ContentDispositionParameter( name: 'filename', value: 'rapport.pdf',
-isExtended: true, encoding: 'UTF-8', ), ], ); ```
+```dart
+// With extended encoding (RFC 5987) for non-ASCII filenames
+h.contentDisposition = ContentDispositionHeader(
+  type: 'attachment',
+  parameters: [
+    ContentDispositionParameter(
+      name: 'filename',
+      value: 'rapport.pdf',
+      isExtended: true,
+      encoding: 'UTF-8',
+    ),
+  ],
+);
+```
 
 ### CookieHeader and SetCookieHeader - Cookies
 
-**Reading cookies from requests:** ```dart final cookieHeader =
-request.headers.cookie;
+**Reading cookies from requests:**
+```dart
+final cookieHeader = request.headers.cookie;
 
-if (cookieHeader != null) { // Find a specific cookie final sessionId =
-cookieHeader.getCookie('session_id')?.value;
+if (cookieHeader != null) {
+  // Find a specific cookie
+  final sessionId = cookieHeader.getCookie('session_id')?.value;
   
-  // Iterate all cookies for (final cookie in cookieHeader.cookies) {
-  print('${cookie.name}=${cookie.value}'); } } ```
+  // Iterate all cookies
+  for (final cookie in cookieHeader.cookies) {
+    print('${cookie.name}=${cookie.value}');
+  }
+}
+```
 
-**Setting cookies in responses:** ```dart headers: Headers.build((h) {
-h.setCookie = SetCookieHeader( name: 'session_id', value: '12345abcde', maxAge:
-3600, // 1 hour path: Uri.parse('/'), domain: Uri.parse('example.com'), secure:
-true, // HTTPS only httpOnly: true, // No JavaScript access sameSite:
-SameSite.strict, // CSRF protection ); }), ```
+**Setting cookies in responses:**
+```dart
+headers: Headers.build((h) {
+  h.setCookie = SetCookieHeader(
+    name: 'session_id',
+    value: '12345abcde',
+    maxAge: 3600,                    // 1 hour
+    path: Uri.parse('/'),
+    domain: Uri.parse('example.com'),
+    secure: true,                    // HTTPS only
+    httpOnly: true,                  // No JavaScript access
+    sameSite: SameSite.strict,       // CSRF protection
+  );
+}),
+```
 
 SameSite values:
 - `SameSite.lax` - Default, not sent on cross-site requests (except navigation)
@@ -938,171 +1250,287 @@ SameSite values:
 
 ### Complete examples
 
-**Secure API with authentication and caching:** ```dart class SecureApiRoute
-extends Route { @override Future<Result> handleCall(Session session, Request
-request) async { // Check authorization final auth =
-request.headers.authorization; if (auth is! BearerAuthorizationHeader) { return
-Response.unauthorized(); }
+**Secure API with authentication and caching:**
+```dart
+class SecureApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Check authorization
+    final auth = request.headers.authorization;
+    if (auth is! BearerAuthorizationHeader) {
+      return Response.unauthorized();
+    }
     
-    // Validate token if (!await validateToken(auth.token)) { return
-    Response.forbidden(); }
+    // Validate token
+    if (!await validateToken(auth.token)) {
+      return Response.forbidden();
+    }
     
-    // Return data with cache headers return Response.ok( headers:
-    Headers.build((h) { h.cacheControl = CacheControlHeader( maxAge: 300, // 5
-    minutes publicCache: true, mustRevalidate: true, ); h.contentType =
-    ContentTypeHeader( mimeType: MimeType.json, charset: 'utf-8', ); }), body:
-    Body.fromString(jsonEncode(data)), ); } } ```
+    // Return data with cache headers
+    return Response.ok(
+      headers: Headers.build((h) {
+        h.cacheControl = CacheControlHeader(
+          maxAge: 300,           // 5 minutes
+          publicCache: true,
+          mustRevalidate: true,
+        );
+        h.contentType = ContentTypeHeader(
+          mimeType: MimeType.json,
+          charset: 'utf-8',
+        );
+      }),
+      body: Body.fromString(jsonEncode(data)),
+    );
+  }
+}
+```
 
-**File download with proper headers:** ```dart class DownloadRoute extends Route
-{ @override Future<Result> handleCall(Session session, Request request) async {
-final fileId = request.pathParameters[#fileId]; final file = await
-getFile(session, fileId);
+**File download with proper headers:**
+```dart
+class DownloadRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final fileId = request.pathParameters[#fileId];
+    final file = await getFile(session, fileId);
     
-    return Response.ok( headers: Headers.build((h) { h.contentDisposition =
-    ContentDispositionHeader( type: 'attachment', parameters: [
-    ContentDispositionParameter( name: 'filename', value: file.name, isExtended:
-    true, encoding: 'UTF-8', ), ], ); h.contentType = ContentTypeHeader(
-    mimeType: file.mimeType, ); h.cacheControl = CacheControlHeader( noCache:
-    true, mustRevalidate: true, ); }), body: Body.fromBytes(file.content), ); }
-    } ```
+    return Response.ok(
+      headers: Headers.build((h) {
+        h.contentDisposition = ContentDispositionHeader(
+          type: 'attachment',
+          parameters: [
+            ContentDispositionParameter(
+              name: 'filename',
+              value: file.name,
+              isExtended: true,
+              encoding: 'UTF-8',
+            ),
+          ],
+        );
+        h.contentType = ContentTypeHeader(
+          mimeType: file.mimeType,
+        );
+        h.cacheControl = CacheControlHeader(
+          noCache: true,
+          mustRevalidate: true,
+        );
+      }),
+      body: Body.fromBytes(file.content),
+    );
+  }
+}
+```
 
-**Cookie-based sessions:** ```dart class LoginRoute extends Route { LoginRoute()
-: super(methods: {Method.post});
+**Cookie-based sessions:**
+```dart
+class LoginRoute extends Route {
+  LoginRoute() : super(methods: {Method.post});
 
-  @override Future<Result> handleCall(Session session, Request request) async {
-  // Authenticate user... final sessionToken = await
-  authenticateAndCreateSession(session, request);
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    // Authenticate user...
+    final sessionToken = await authenticateAndCreateSession(session, request);
     
-    return Response.ok( headers: Headers.build((h) { h.setCookie =
-    SetCookieHeader( name: 'session_id', value: sessionToken, maxAge: 86400, //
-    24 hours path: Uri.parse('/'), secure: true, // HTTPS only httpOnly: true,
-    // No JavaScript access sameSite: SameSite.lax, // CSRF protection ); }),
-    body: Body.fromString( jsonEncode({'status': 'logged_in'}), mimeType:
-    MimeType.json, ), ); } } ```
+    return Response.ok(
+      headers: Headers.build((h) {
+        h.setCookie = SetCookieHeader(
+          name: 'session_id',
+          value: sessionToken,
+          maxAge: 86400,           // 24 hours
+          path: Uri.parse('/'),
+          secure: true,            // HTTPS only
+          httpOnly: true,          // No JavaScript access
+          sameSite: SameSite.lax,  // CSRF protection
+        );
+      }),
+      body: Body.fromString(
+        jsonEncode({'status': 'logged_in'}),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+```
 
 :::tip Best Practices
 - Use typed headers for automatic parsing and validation
 - Set appropriate cache headers for better performance
 - Use `secure: true` and `httpOnly: true` for sensitive cookies
 - Set proper `ContentDisposition` headers for file downloads
-- Use `SameSite` cookie attribute for CSRF protection :::
+- Use `SameSite` cookie attribute for CSRF protection
+:::
 
 ### Creating custom typed headers
 
-While Relic provides typed headers for all standard HTTP headers, your
-application may use custom headers for API versioning, feature flags, or
-application-specific metadata. Rather than falling back to string-based access
-for these custom headers, you can create your own typed headers using the same
-pattern Relic uses internally.
+While Relic provides typed headers for all standard HTTP headers, your application may use custom headers for API versioning, feature flags, or application-specific metadata. Rather than falling back to string-based access for these custom headers, you can create your own typed headers using the same pattern Relic uses internally.
 
-Creating a custom typed header involves three steps: defining the header class
-with parsing logic, creating a codec for serialization, and setting up a
-`HeaderAccessor` for type-safe access. Once configured, your custom headers work
-just like the built-in ones, with automatic parsing, validation, and convenient
-property-style access.
+Creating a custom typed header involves three steps: defining the header class with parsing logic, creating a codec for serialization, and setting up a `HeaderAccessor` for type-safe access. Once configured, your custom headers work just like the built-in ones, with automatic parsing, validation, and convenient property-style access.
 
 Here's a complete example for a custom `X-API-Version` header:
 
-```dart // Define your typed header class final class ApiVersionHeader { final
-int major; final int minor;
+```dart
+// Define your typed header class
+final class ApiVersionHeader {
+  final int major;
+  final int minor;
 
   ApiVersionHeader({required this.major, required this.minor});
 
-  // Parse from string format "1.2" factory ApiVersionHeader.parse(String value)
-  { final parts = value.split('.'); if (parts.length != 2) { throw const
-  FormatException('Invalid API version format'); }
+  // Parse from string format "1.2"
+  factory ApiVersionHeader.parse(String value) {
+    final parts = value.split('.');
+    if (parts.length != 2) {
+      throw const FormatException('Invalid API version format');
+    }
     
-    final major = int.tryParse(parts[0]); final minor = int.tryParse(parts[1]);
+    final major = int.tryParse(parts[0]);
+    final minor = int.tryParse(parts[1]);
     
-    if (major == null || minor == null) { throw const FormatException('Invalid
-    API version numbers'); }
+    if (major == null || minor == null) {
+      throw const FormatException('Invalid API version numbers');
+    }
     
-    return ApiVersionHeader(major: major, minor: minor); }
+    return ApiVersionHeader(major: major, minor: minor);
+  }
 
-  // Encode to string format String encode() => '$major.$minor';
+  // Encode to string format
+  String encode() => '$major.$minor';
 
-  @override bool operator ==(Object other) => identical(this, other) || other is
-  ApiVersionHeader && major == other.major && minor == other.minor;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ApiVersionHeader &&
+          major == other.major &&
+          minor == other.minor;
 
-  @override int get hashCode => Object.hash(major, minor);
+  @override
+  int get hashCode => Object.hash(major, minor);
 
-  @override String toString() => 'ApiVersionHeader($major.$minor)'; }
+  @override
+  String toString() => 'ApiVersionHeader($major.$minor)';
+}
 
-// Create a HeaderCodec for encoding/decoding const _apiVersionCodec =
-HeaderCodec.single( ApiVersionHeader.parse, (ApiVersionHeader value) =>
-[value.encode()], );
+// Create a HeaderCodec for encoding/decoding
+const _apiVersionCodec = HeaderCodec.single(
+  ApiVersionHeader.parse,
+  (ApiVersionHeader value) => [value.encode()],
+);
 
-// Create a global HeaderAccessor const apiVersionHeader = HeaderAccessor(
-'x-api-version', _apiVersionCodec, ); ```
+// Create a global HeaderAccessor
+const apiVersionHeader = HeaderAccessor(
+  'x-api-version',
+  _apiVersionCodec,
+);
+```
 
 **Using your custom header:**
 
-```dart // Reading the header class ApiRoute extends Route { @override
-Future<Result> handleCall(Session session, Request request) async { final
-version = apiVersionHeader[request.headers]();
+```dart
+// Reading the header
+class ApiRoute extends Route {
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final version = apiVersionHeader[request.headers]();
     
-    if (version != null && version.major < 2) { return Response.badRequest(
-    body: Body.fromString('API version 2.0 or higher required'), ); }
+    if (version != null && version.major < 2) {
+      return Response.badRequest(
+        body: Body.fromString('API version 2.0 or higher required'),
+      );
+    }
     
-    return Response.ok(); } }
+    return Response.ok();
+  }
+}
 
-// Setting the header return Response.ok( headers: Headers.build((h) {
-apiVersionHeader[h].set(ApiVersionHeader(major: 2, minor: 1)); }), ); ```
+// Setting the header
+return Response.ok(
+  headers: Headers.build((h) {
+    apiVersionHeader[h].set(ApiVersionHeader(major: 2, minor: 1));
+  }),
+);
+```
 
 **Multi-value header example:**
 
 For headers that can have multiple comma-separated values:
 
-```dart final class CustomTagsHeader { final List<String> tags;
+```dart
+final class CustomTagsHeader {
+  final List<String> tags;
 
-  CustomTagsHeader({required List<String> tags}) : tags =
-  List.unmodifiable(tags);
+  CustomTagsHeader({required List<String> tags})
+      : tags = List.unmodifiable(tags);
 
-  // Parse from multiple values or comma-separated factory
-  CustomTagsHeader.parse(Iterable<String> values) { final allTags = values
-  .expand((v) => v.split(',')) .map((t) => t.trim()) .where((t) => t.isNotEmpty)
-  .toSet() .toList();
+  // Parse from multiple values or comma-separated
+  factory CustomTagsHeader.parse(Iterable<String> values) {
+    final allTags = values
+        .expand((v) => v.split(','))
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet()
+        .toList();
     
-    if (allTags.isEmpty) { throw const FormatException('Tags cannot be empty');
+    if (allTags.isEmpty) {
+      throw const FormatException('Tags cannot be empty');
     }
     
-    return CustomTagsHeader(tags: allTags); }
+    return CustomTagsHeader(tags: allTags);
+  }
 
   List<String> encode() => [tags.join(', ')];
 
-  @override bool operator ==(Object other) => identical(this, other) || other is
-  CustomTagsHeader && const ListEquality().equals(tags, other.tags);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomTagsHeader &&
+          const ListEquality().equals(tags, other.tags);
 
-  @override int get hashCode => const ListEquality().hash(tags); }
+  @override
+  int get hashCode => const ListEquality().hash(tags);
+}
 
-// Use HeaderCodec (not HeaderCodec.single) for multi-value const
-_customTagsCodec = HeaderCodec( CustomTagsHeader.parse, (CustomTagsHeader value)
-=> value.encode(), );
+// Use HeaderCodec (not HeaderCodec.single) for multi-value
+const _customTagsCodec = HeaderCodec(
+  CustomTagsHeader.parse,
+  (CustomTagsHeader value) => value.encode(),
+);
 
-const customTagsHeader = HeaderAccessor( 'x-custom-tags', _customTagsCodec, );
+const customTagsHeader = HeaderAccessor(
+  'x-custom-tags',
+  _customTagsCodec,
+);
 ```
 
 **Optional: Add extension methods for convenient access**
 
-For better ergonomics, you can add extension methods to access your custom
-headers with property syntax:
+For better ergonomics, you can add extension methods to access your custom headers with property syntax:
 
-```dart extension CustomHeadersEx on Headers { ApiVersionHeader? get apiVersion
-=> apiVersionHeader[this](); CustomTagsHeader? get customTags =>
-customTagsHeader[this](); }
+```dart
+extension CustomHeadersEx on Headers {
+  ApiVersionHeader? get apiVersion => apiVersionHeader[this]();
+  CustomTagsHeader? get customTags => customTagsHeader[this]();
+}
 
-extension CustomMutableHeadersEx on MutableHeaders { set
-apiVersion(ApiVersionHeader? value) => apiVersionHeader[this].set(value); set
-customTags(CustomTagsHeader? value) => customTagsHeader[this].set(value); } ```
+extension CustomMutableHeadersEx on MutableHeaders {
+  set apiVersion(ApiVersionHeader? value) => apiVersionHeader[this].set(value);
+  set customTags(CustomTagsHeader? value) => customTagsHeader[this].set(value);
+}
+```
 
 Now you can use property syntax instead of the bracket notation:
 
-```dart // Reading with property syntax final version =
-request.headers.apiVersion; final tags = request.headers.customTags;
+```dart
+// Reading with property syntax
+final version = request.headers.apiVersion;
+final tags = request.headers.customTags;
 
-// Setting with property syntax return Response.ok( headers: Headers.build((h) {
-h.apiVersion = ApiVersionHeader(major: 2, minor: 1); h.customTags =
-CustomTagsHeader(tags: ['production', 'v2']); }), ); ```
+// Setting with property syntax
+return Response.ok(
+  headers: Headers.build((h) {
+    h.apiVersion = ApiVersionHeader(major: 2, minor: 1);
+    h.customTags = CustomTagsHeader(tags: ['production', 'v2']);
+  }),
+);
+```
 
 **Key points:**
 
