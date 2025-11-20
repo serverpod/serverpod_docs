@@ -192,21 +192,29 @@ content when unchanged:
 
 These work automatically without configuration:
 
-```dart
-// Client first request:
-// GET /static/logo.png
-// Response: 200 OK
-//   ETag: "abc123"
-//   Last-Modified: Tue, 15 Nov 2024 12:00:00 GMT
-//   Content-Length: 12345
-//   [file content]
+**Initial request:**
+```http
+GET /static/logo.png HTTP/1.1
+Host: example.com
 
-// Client subsequent request:
-// GET /static/logo.png
-//   If-None-Match: "abc123"
-// Response: 304 Not Modified
-//   ETag: "abc123"
-//   [no body - saves bandwidth]
+HTTP/1.1 200 OK
+ETag: "abc123"
+Last-Modified: Tue, 15 Nov 2024 12:00:00 GMT
+Content-Length: 12345
+
+[file content]
+```
+
+**Subsequent request with ETag:**
+```http
+GET /static/logo.png HTTP/1.1
+Host: example.com
+If-None-Match: "abc123"
+
+HTTP/1.1 304 Not Modified
+ETag: "abc123"
+
+[no body - saves bandwidth]
 ```
 
 When combined with cache-busting, conditional requests provide a fallback
