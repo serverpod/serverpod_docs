@@ -63,11 +63,69 @@ Serverpod comes with a few useful special widgets and routes you can use out of 
 
 To serve a static directory, use the `StaticRoute.directory()` method. Serverpod will set the correct content types for most file types automatically.
 
-:::caution
+### Static file cache-busting
 
-Static files are configured to be cached hard by the web browser and through Cloudfront's content delivery network (if you use the AWS deployment). If you change static files, they will need to be renamed, or users will most likely access old files. To make this easier, you can add a version number when referencing the static files. The version number will be ignored when looking up the actual file. E.g., `/static/my_image@v42.png` will serve to the `/static/my_image.png` file. More advanced cache management will be coming to a future version of Serverpod.
+When deploying static assets, browsers and CDNs (like CloudFront) cache files aggressively for performance. This means updated files may not be served to users unless you implement a cache-busting strategy.
 
-:::
+Serverpod provides `CacheBustingConfig` to automatically version your static files:
+
+```dart
+final staticDir = Directory('web/static');
+
+final cacheBustingConfig = CacheBustingConfig(
+  mountPrefix: '/static',
+  fileSystemRoot: staticDir,
+  separator: '@',  // or use custom separator like '___'
+);
+
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    staticDir,
+    cacheBustingConfig: cacheBustingConfig,
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000),
+  ),
+  '/static/**',
+);
+```
+
+**Generating versioned URLs:**
+
+Use the `assetPath()` method to generate cache-busted URLs for your assets:
+
+```dart
+// In your route handler
+final imageUrl = await cacheBustingConfig.assetPath('/static/logo.png');
+// Returns: /static/logo@<hash>.png
+
+// Pass to your template
+return MyPageWidget(logoUrl: imageUrl);
+```
+
+The cache-busting system:
+- Automatically generates content-based hashes for asset versioning
+- Allows custom separators (default `@`, but you can use `___` or any other)
+- Preserves file extensions
+- Works transparently - requesting `/static/logo@abc123.png` serves `/static/logo.png`
+
+**Combining with cache control:**
+
+For optimal performance, combine cache-busting with aggressive caching:
+
+```dart
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    staticDir,
+    cacheBustingConfig: cacheBustingConfig,
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000), // 1 year
+  ),
+  '/static/**',
+);
+```
+
+This approach ensures:
+- Browsers cache files for a long time (better performance)
+- When files change, new hashes force cache invalidation
+- No manual version management needed
 
 ## Database access and logging
 
