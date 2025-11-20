@@ -692,28 +692,32 @@ For a request to `/api/users`, the execution order is:
 
 ### Request-scoped data with ContextProperty
 
-`ContextProperty<T>` provides a type-safe way to attach data to a `Request` object that can be accessed by downstream middleware and route handlers. This is the recommended pattern for passing computed or authenticated data through your request pipeline.
+`ContextProperty<T>` provides a type-safe way to attach data to a `Request` object that can be accessed by downstream middleware and route handlers. This is the recommended pattern for passing computed data through your request pipeline.
+
+:::info
+Note that Serverpod's `Route.handleCall()` already receives a `Session` parameter which includes authenticated user information if available. Use `ContextProperty` for web-specific request data that isn't part of the standard Session.
+:::
 
 #### Why use ContextProperty?
 
 Instead of modifying the `Request` object directly (which you can't do since it's immutable), `ContextProperty` allows you to associate additional data with a request. Common use cases include:
 
-- **Authentication** - Attach the authenticated user to the request
+- **Request ID tracking** - Add correlation IDs for logging and tracing
+- **Tenant identification** - Multi-tenant application context from subdomains/headers
+- **Feature flags** - Request-specific feature toggles based on headers/cookies
 - **Rate limiting** - Store rate limit state per request
-- **Request ID tracking** - Add correlation IDs for logging
-- **Tenant identification** - Multi-tenant application context
-- **Feature flags** - Request-specific feature toggles
+- **API versioning** - Extract and store API version from headers
 
 #### Creating a ContextProperty
 
 Define a `ContextProperty` as a top-level constant or static field:
 
 ```dart
-// Define a property for the authenticated user
-final userProperty = ContextProperty<UserInfo>();
-
-// Define a property for request ID
+// Define a property for request ID tracking
 final requestIdProperty = ContextProperty<String>();
+
+// Define a property for tenant identification
+final tenantProperty = ContextProperty<String>();
 
 // Optional: with a default value
 final featureFlagsProperty = ContextProperty<FeatureFlags>(
@@ -726,33 +730,29 @@ final featureFlagsProperty = ContextProperty<FeatureFlags>(
 Middleware can set values on the context property, making them available to all downstream handlers:
 
 ```dart
-final userProperty = ContextProperty<UserInfo>();
+final requestIdProperty = ContextProperty<String>();
 
-Handler authMiddleware(Handler innerHandler) {
+Handler requestIdMiddleware(Handler innerHandler) {
   return (Request request) async {
-    // Extract and verify token
-    final token = request.headers.authorization?.headerValue;
+    // Generate a unique request ID for tracing
+    final requestId = Uuid().v4();
     
-    if (token == null) {
-      return Response.unauthorized(
-        body: Body.fromString('Authentication required'),
-      );
-    }
+    // Attach to request context
+    requestIdProperty[request] = requestId;
     
-    // Validate token and get user info
-    final user = await getUserFromToken(token);
+    // Log the incoming request
+    print('[$requestId] ${request.method} ${request.url.path}');
     
-    if (user == null) {
-      return Response.forbidden(
-        body: Body.fromString('Invalid token'),
-      );
-    }
+    // Continue to next handler
+    final response = await innerHandler(request);
     
-    // Attach user to request context
-    userProperty[request] = user;
+    // Log the response
+    print('[$requestId] Response: ${response.statusCode}');
     
-    // Continue to next handler with user attached
-    return await innerHandler(request);
+    // Optionally add request ID to response headers
+    return response.change(
+      headers: {'X-Request-ID': requestId},
+    );
   };
 }
 ```
@@ -762,19 +762,21 @@ Handler authMiddleware(Handler innerHandler) {
 Route handlers can retrieve the value from the context property:
 
 ```dart
-class UserProfileRoute extends Route {
+class ApiRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    // Get the authenticated user from context
-    final user = userProperty[request];
+    // Get the request ID from context
+    final requestId = requestIdProperty[request];
+    
+    // Use it for logging or tracing
+    session.log('Processing request $requestId');
+    
+    // Your route logic here
+    final data = await processRequest(session);
     
     return Response.ok(
       body: Body.fromString(
-        jsonEncode({
-          'id': user.id,
-          'name': user.name,
-          'email': user.email,
-        }),
+        jsonEncode(data),
         mimeType: MimeType.json,
       ),
     );
@@ -787,119 +789,90 @@ class UserProfileRoute extends Route {
 If a value might not be set, use `getOrNull()` to avoid exceptions:
 
 ```dart
-class OptionalAuthRoute extends Route {
+class TenantRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    // Safely get user, returns null if not authenticated
-    final user = userProperty.getOrNull(request);
+    // Safely get tenant, returns null if not set
+    final tenant = tenantProperty.getOrNull(request);
     
-    if (user != null) {
+    if (tenant != null) {
+      // Fetch tenant-specific data
+      final data = await session.db.find<Data>(where: (t) => t.tenantId.equals(tenant));
       return Response.ok(
-        body: Body.fromString('Hello, ${user.name}!'),
+        body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
       );
     } else {
-      return Response.ok(
-        body: Body.fromString('Hello, guest!'),
+      return Response.badRequest(
+        body: Body.fromString('Missing tenant identifier'),
       );
     }
   }
 }
 ```
 
-#### Complete authentication example
+#### Complete multi-tenant example
 
-Here's a complete example showing authentication middleware with context properties:
+Here's a complete example showing tenant identification from subdomains:
 
 ```dart
-// Define the user info class
-class UserInfo {
-  final int id;
-  final String name;
-  final String email;
-  final List<String> roles;
-  
-  UserInfo({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.roles,
-  });
-}
+// Define the context property for tenant ID
+final tenantProperty = ContextProperty<String>();
 
-// Define the context property
-final userProperty = ContextProperty<UserInfo>();
-
-// Authentication middleware
-Handler authMiddleware(Handler innerHandler) {
+// Tenant identification middleware (extracts from subdomain)
+Handler tenantMiddleware(Handler innerHandler) {
   return (Request request) async {
-    final authHeader = request.headers.authorization;
+    final host = request.headers.host;
     
-    if (authHeader == null) {
-      return Response.unauthorized(
-        body: Body.fromString('Missing authorization header'),
+    if (host == null) {
+      return Response.badRequest(
+        body: Body.fromString('Missing host header'),
       );
     }
     
-    // Extract bearer token
-    final token = authHeader.headerValue;
-    if (!token.startsWith('Bearer ')) {
-      return Response.unauthorized(
-        body: Body.fromString('Invalid authorization format'),
+    // Extract tenant from subdomain (e.g., acme.example.com -> "acme")
+    final parts = host.host.split('.');
+    if (parts.length < 2) {
+      return Response.badRequest(
+        body: Body.fromString('Invalid hostname format'),
       );
     }
     
-    final bearerToken = token.substring(7);
+    final tenant = parts.first;
     
-    // Validate token and get user (implement your own logic)
+    // Validate tenant exists (implement your own logic)
     final session = request.session;
-    final user = await validateTokenAndGetUser(session, bearerToken);
+    final tenantExists = await validateTenant(session, tenant);
     
-    if (user == null) {
-      return Response.forbidden(
-        body: Body.fromString('Invalid or expired token'),
+    if (!tenantExists) {
+      return Response.notFound(
+        body: Body.fromString('Tenant not found'),
       );
     }
     
-    // Attach user to context
-    userProperty[request] = user;
+    // Attach tenant to context
+    tenantProperty[request] = tenant;
     
     return await innerHandler(request);
   };
 }
 
-// Role-checking middleware
-Handler requireRole(String role) {
-  return (Handler innerHandler) {
-    return (Request request) async {
-      final user = userProperty[request];
-      
-      if (!user.roles.contains(role)) {
-        return Response.forbidden(
-          body: Body.fromString('Insufficient permissions'),
-        );
-      }
-      
-      return await innerHandler(request);
-    };
-  };
-}
-
 // Usage in your server
-pod.webServer.addMiddleware(authMiddleware, '/api');
-pod.webServer.addMiddleware(requireRole('admin'), '/api/admin');
+pod.webServer.addMiddleware(tenantMiddleware, '/');
 
-// Routes automatically have access to the user
-class UserDashboardRoute extends Route {
+// Routes automatically have access to the tenant
+class TenantDataRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    final user = userProperty[request];
+    final tenant = tenantProperty[request];
     
-    // Fetch user-specific data
-    final data = await fetchDashboardData(session, user.id);
+    // Fetch tenant-specific data
+    final data = await session.db.find<Product>(
+      where: (p) => p.tenantId.equals(tenant),
+    );
     
     return Response.ok(
       body: Body.fromString(
-        jsonEncode(data),
+        jsonEncode(data.map((p) => p.toJson()).toList()),
         mimeType: MimeType.json,
       ),
     );
@@ -912,9 +885,9 @@ class UserDashboardRoute extends Route {
 You can use multiple context properties for different types of data:
 
 ```dart
-final userProperty = ContextProperty<UserInfo>();
 final requestIdProperty = ContextProperty<String>();
 final tenantProperty = ContextProperty<String>();
+final apiVersionProperty = ContextProperty<String>();
 
 Handler requestContextMiddleware(Handler innerHandler) {
   return (Request request) async {
@@ -923,25 +896,32 @@ Handler requestContextMiddleware(Handler innerHandler) {
     requestIdProperty[request] = requestId;
     
     // Extract tenant from subdomain or header
-    final tenant = extractTenant(request);
-    tenantProperty[request] = tenant;
+    final host = request.headers.host;
+    if (host != null) {
+      final tenant = host.host.split('.').first;
+      tenantProperty[request] = tenant;
+    }
+    
+    // Extract API version from header
+    final apiVersion = request.headers['X-API-Version']?.firstOrNull ?? '1.0';
+    apiVersionProperty[request] = apiVersion;
     
     return await innerHandler(request);
   };
 }
 
 // Later in your route
-class TenantDataRoute extends Route {
+class DataRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    final user = userProperty[request];
     final requestId = requestIdProperty[request];
     final tenant = tenantProperty[request];
+    final apiVersion = apiVersionProperty[request];
     
-    session.log('Request $requestId for tenant $tenant by user ${user.id}');
+    session.log('Request $requestId for tenant $tenant (API v$apiVersion)');
     
     // Fetch tenant-specific data
-    final data = await fetchTenantData(session, tenant, user.id);
+    final data = await fetchTenantData(session, tenant);
     
     return Response.ok(
       body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
@@ -952,7 +932,7 @@ class TenantDataRoute extends Route {
 
 :::tip Best Practices
 - Define `ContextProperty` instances as top-level constants or static fields
-- Use descriptive names for your properties (e.g., `userProperty`, not just `user`)
+- Use descriptive names for your properties (e.g., `requestIdProperty`, not just `requestId`)
 - Use `getOrNull()` when the value might not be set
 - Set properties in middleware, not in routes
 - Use specific types for better type safety
