@@ -1,4 +1,5 @@
 # Authentication
+
 Serverpod comes with built-in user management and authentication. You can either build your custom authentication method or use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins.
 
 ## The basics
@@ -20,6 +21,7 @@ It's most common to use the `auth` module for handling sign ins, but you can als
 :::
 
 ### Restricting access to endpoints
+
 It is common to want to restrict access to an endpoint to users that have signed in. You can do this by overriding the `requireLogin` property of the `Endpoint` class.
 
 ```dart
@@ -53,6 +55,7 @@ await Users.updateUserScopes(session, userId, {Scope.admin});
 ```
 
 ## Installing the auth module
+
 Serverpod's auth module makes it easy to authenticate users through email or 3rd parties. Currently supported is Signing in with email, Google, Apple, and Firebase. Future versions of the authentication module will include more options. Using this module requires some setup with Google and Apple to work.
 
 The authentication module also handles basic user information, such as user names and profile pictures.
@@ -62,6 +65,7 @@ The authentication module also handles basic user information, such as user name
 Please refer to the previous section, [Modules](./modules), for instructions on how to add a module to your project.
 
 ## App setup
+
 First, add dependencies to your app's `pubspec.yaml` file for the methods of signing in that you want to support. Make sure to use the same version numbers as for Serverpod itself.
 
 ```yaml
@@ -71,7 +75,7 @@ dependencies:
   serverpod_flutter: ^1.x.x
   auth_example_client:
     path: ../auth_example_client
-  
+
   serverpod_auth_shared_flutter: ^1.x.x
   serverpod_auth_email_flutter: ^1.x.x
   serverpod_auth_google_flutter: ^1.x.x
@@ -107,11 +111,13 @@ void main() async {
 ```
 
 The `SessionManager` has useful methods for viewing and monitoring the user's current state:
+
 - The `signedInUser` will return a `UserInfo` if the user is currently signed in (or `null` if the user isn't signed in).
 - Use the `addListener` method to get notified of changes to the user's signed in state.
 - Sign out a user by calling the `signOut` method.
 
 ## Setting up Sign in with Email
+
 To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Sendgrid or Mandrill, support SMTP.
 
 In your main `server.dart` file, you can configure the auth module. First, make sure to include the module:
@@ -135,18 +141,21 @@ auth.AuthConfig.set(auth.AuthConfig(
 // Start the server.
 await pod.start();
 ```
+
 :::info
 
-For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/chat/chat_server/lib/server.dart).
+For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/legacy/chat/chat_server/lib/server.dart).
 
 :::
 
 In your app, you will need to add the `serverpod_auth_email_flutter` package to your `pubspec.yaml`. The package includes both methods for creating a custom email sign-in form and a pre-made `SignInWithEmailButton` widget. If you are building custom forms, it is helpful to read the documentation provided in the module and review the code in the [SignInWithEmailDialog](https://github.com/serverpod/serverpod/blob/main/modules/serverpod_auth/serverpod_auth_email_flutter/lib/src/signin_dialog.dart).
 
 ## Setting up Sign in with Google
+
 To set up Sign in with Google, you will need a Google account for your organization and set up a new project. For the project, you need to set up _Credentials_ and _Oauth consent screen_. You will also need to add the `serverpod_auth_google_flutter` package to your app and do some additional setup depending on each platform.
 
 ### Configure Google Cloud console and your server
+
 In the Google Cloud console, you need to set up a few things:
 
 1. Activate the _People API_ for your project. You find it in _APIs & Services_ > _Enabled APIs & services_.
@@ -155,7 +164,7 @@ In the Google Cloud console, you need to set up a few things:
    - Add `.../auth/userinfo.email` and `.../auth/userinfo.profile` to your `Scopes`.
 3. Add OAuth 2.0 credentials for your web application. Do this under _APIs & Services_ > _Credentials_.
    - Create a _Web application OAuth Client ID_. This is required even if you only want to provide sign-in with iOS or Android, as the server uses it to access Google's APIs.
-   - For _Authorized JavaScript origins`, enter your domain name.
+   - For \_Authorized JavaScript origins`, enter your domain name.
    - For _Authorized redirect URIs_, enter your domain name. You may also want to add your development server here, e.g., `http://localhost:8080`.
    - Download the JSON file for your web application OAuth client. This file contains both the client id and the client secret. Rename the file to `google_client_secret.json` and place it in your server's `config` directory.
 4. Add OAuth 2.0 credentials for iOS and Android.
@@ -172,6 +181,7 @@ The `google_client_secret.json` contains a private key and should not be version
 :::
 
 ### Configure your app
+
 You need to take platform-dependent steps to configure Sign in with Google in your app.
 
 - Add the `serverpod_auth_google_flutter` package to your app.
@@ -185,6 +195,7 @@ Rather than using the `GoogleService-Info.plist` file for iOS, you can pass the 
 :::
 
 ### Calling Google APIs
+
 The default setup allows access to basic user information, such as email, profile image, and name. You may require additional access scopes, such as accessing a user's calendar, contacts, or files. To do this, you will need to:
 
 - Add the required scopes to the OAuth consent screen.
@@ -227,11 +238,13 @@ Adding additional scopes may require approval by Google. On the OAuth consent sc
 :::
 
 ## Setting up Sign in with Apple
+
 You will need an Apple developer account to configure Sign in with Apple. Follow the instructions in [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple).
 
 _Note that Sign in with Apple may not work on some versions of the Simulator (iOS 13.5 works). This issue doesn't affect real devices._
 
 ## Setting up Sign in with Firebase
+
 Serverpod uses FlutterFire UI to handle authentication through Firebase. It allows you to add social sign-in types that Serverpod doesn't directly support.
 
 To add authentication with Firebase, you must first install and initialize the Firebase CLI tools and Flutter fire. Follow the instructions [here](https://firebase.google.com/docs/flutter/setup?platform=web) for your Flutter project. In the Firebase console, configure the different social sign-ins you plan to use. Then pass your provider configurations to either the signInWithFirebase method or the SignInWithFirebaseButton of the [serverpod_auth_firebase_flutter](https://pub.dev/packages/serverpod_auth_firebase_flutter) package.
@@ -245,6 +258,7 @@ Serverpod automatically merges accounts that are using the same email addresses,
 :::
 
 ## Working with users
+
 It's a common task to read or update user information on your server. You can always retrieve the id of a signed-in user through the session object.
 
 ```dart
@@ -266,6 +280,7 @@ The `Users` class contains many other convenient methods for working with users.
 :::
 
 ## Displaying or editing user images
+
 The module has built-in methods for handling a user's basic settings, including uploading new profile pictures.
 
 ![UserImageButton](https://github.com/serverpod/serverpod/raw/main/misc/images/user-image-button.png)
