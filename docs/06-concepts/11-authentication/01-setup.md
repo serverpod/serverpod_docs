@@ -140,7 +140,7 @@ dependencies:
     sdk: flutter
   serverpod_flutter: ^1.x.x
   auth_example_client:
-    path: ../auth_example_client
+    path: ../legacy/auth_example/auth_example_client
   
   serverpod_auth_shared_flutter: ^1.x.x
 ```
