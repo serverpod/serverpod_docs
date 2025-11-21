@@ -103,6 +103,7 @@ await pod.start();
 ```
 
 This creates a complete CRUD API:
+
 - `GET /api/recipes` - List all recipes
 - `GET /api/recipes/123` - Get a specific recipe by ID
 - `POST /api/recipes` - Create a new recipe
@@ -177,6 +178,7 @@ pod.webServer.addRoute(
 ```
 
 Now files in `web/static/` are accessible at `/static/`:
+
 - `web/static/logo.png` → `http://localhost:8080/static/logo.png`
 - `web/static/css/style.css` → `http://localhost:8080/static/css/style.css`
 

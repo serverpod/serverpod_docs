@@ -71,6 +71,7 @@ pod.webServer.addRoute(
 ```
 
 Other available cache control factory methods:
+
 - `StaticRoute.public(maxAge: seconds)` - Public cache with optional max-age
 - `StaticRoute.publicImmutable(maxAge: seconds)` - Public immutable cache with optional max-age
 - `StaticRoute.privateNoCache()` - Private cache with no-cache directive
