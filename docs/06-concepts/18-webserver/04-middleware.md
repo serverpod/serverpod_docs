@@ -193,13 +193,38 @@ pod.webServer.addMiddleware(rateLimitMiddleware, '/api'); // Executes third (inn
 
 For a request to `/api/users`, the execution order is:
 
-1. `loggingMiddleware` (before)
-2. `authMiddleware` (before)
-3. `rateLimitMiddleware` (before)
-4. Your route handler
-5. `rateLimitMiddleware` (after)
-6. `authMiddleware` (after)
-7. `loggingMiddleware` (after)
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Logging as loggingMiddleware
+    participant Auth as authMiddleware
+    participant RateLimit as rateLimitMiddleware
+    participant Handler as Route Handler
+
+    Client->>Logging: Request /api/users
+    activate Logging
+    Note over Logging: Before logic
+    Logging->>Auth: 
+    activate Auth
+    Note over Auth: Before logic
+    Auth->>RateLimit: 
+    activate RateLimit
+    Note over RateLimit: Before logic
+    RateLimit->>Handler: 
+    activate Handler
+    Note over Handler: Execute route logic
+    Handler-->>RateLimit: Response
+    deactivate Handler
+    Note over RateLimit: After logic
+    RateLimit-->>Auth: 
+    deactivate RateLimit
+    Note over Auth: After logic
+    Auth-->>Logging: 
+    deactivate Auth
+    Note over Logging: After logic
+    Logging-->>Client: Response
+    deactivate Logging
+```
 
 ## Request-scoped data with ContextProperty
 
