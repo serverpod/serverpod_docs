@@ -140,7 +140,7 @@ await pod.start();
 ```
 :::info
 
-For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/chat/chat_server/lib/server.dart).
+For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/legacy/chat/chat_server/lib/server.dart).
 
 :::
 

@@ -8,10 +8,9 @@ A comprehensive tutorial covering email/password sign-in complete with sending t
 You need to install the auth module before you continue, see [Setup](../setup).
 :::
 
-
 ## Server-side Configuration
 
-In your main `server.dart` file,  import the `serverpod_auth_server` module, and set up the authentication configuration:
+In your main `server.dart` file, import the `serverpod_auth_server` module, and set up the authentication configuration:
 
 ```dart
 import 'package:serverpod_auth_server/module.dart' as auth;
@@ -35,7 +34,7 @@ await pod.start();
 
 :::info
 
-For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/chat/chat_server/lib/server.dart).
+For debugging purposes, you can print the validation code to the console. The chat module example does just this. You can view that code [here](https://github.com/serverpod/serverpod/blob/main/examples/legacy/chat/chat_server/lib/server.dart).
 
 :::
 
@@ -78,7 +77,6 @@ The package includes both methods for creating a custom email sign-in form and a
 The triggered modal will look like this:
 
 ![SignInWithEmailDialog](/img/authentication/providers/email/2-auth-email-dialog.png)
-
 
 ## Custom UI with EmailAuthController
 
