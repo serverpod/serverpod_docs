@@ -106,7 +106,7 @@ class UsersApiRoute extends Route {
 
 See [Routing](routing) for details.
 
-### Static files → staticroute
+### Static files → `StaticRoute`
 For serving CSS, JavaScript, images, or other static assets:
 
 ```dart
@@ -117,9 +117,6 @@ pod.webServer.addRoute(
 ```
 
 See [Static Files](static-files) for cache-busting and optimization.
-
-### Html pages → external frameworks
-For server-side HTML rendering, consider integrating with [Jaspr](https://docs.page/schultek/jaspr) rather than using Serverpod's built-in HTML widgets. See [Server-Side HTML](server-side-html) for basic widget usage.
 
 ## Database access
 
