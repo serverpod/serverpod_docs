@@ -29,13 +29,13 @@ Middleware is a function that takes a `Handler` and returns a new `Handler`.
 Here's a simple logging middleware example:
 
 ```dart
-Handler loggingMiddleware(Handler innerHandler) {
+Handler loggingMiddleware(Handler next) {
   return (Request request) async {
     final start = DateTime.now();
     print('→ ${request.method.name.toUpperCase()} ${request.url.path}');
 
     // Call the next handler in the chain
-    final response = await innerHandler(request);
+    final response = await next(request);
 
     final duration = DateTime.now().difference(start);
     print('← ${response.statusCode} (${duration.inMilliseconds}ms)');
@@ -50,7 +50,7 @@ Handler loggingMiddleware(Handler innerHandler) {
 A common use case is validating API keys for protected routes:
 
 ```dart
-Handler apiKeyMiddleware(Handler innerHandler) {
+Handler apiKeyMiddleware(Handler next) {
   return (Request request) async {
     // Check for API key in header
     final apiKey = request.headers['X-API-Key']?.firstOrNull;
@@ -69,7 +69,7 @@ Handler apiKeyMiddleware(Handler innerHandler) {
     }
 
     // Continue to the next handler
-    return await innerHandler(request);
+    return await next(request);
   };
 }
 
@@ -91,7 +91,7 @@ validation.
 Enable Cross-Origin Resource Sharing for your API:
 
 ```dart
-Handler corsMiddleware(Handler innerHandler) {
+Handler corsMiddleware(Handler next) {
   return (Request request) async {
     // Handle preflight requests
     if (request.method == Method.options) {
@@ -109,7 +109,7 @@ Handler corsMiddleware(Handler innerHandler) {
     }
 
     // Process the request
-    final response = await innerHandler(request);
+    final response = await next(request);
 
     // Add CORS headers to response
     return response.copyWith(
@@ -135,10 +135,10 @@ Error-handling middleware wraps all your routes and catches any exceptions they
 throw:
 
 ```dart
-Handler errorHandlingMiddleware(Handler innerHandler) {
+Handler errorHandlingMiddleware(Handler next) {
   return (Request request) async {
     try {
-      return await innerHandler(request);
+      return await next(request);
     } on FormatException catch (e) {
       // Handle JSON parsing errors
       return Response.badRequest(
@@ -226,7 +226,7 @@ sequenceDiagram
     deactivate Logging
 ```
 
-## Request-scoped data with contextproperty
+## Request-scoped data with `ContextProperty`
 
 Middleware often needs to pass computed data to downstream handlers. For
 example, a tenant identification middleware might extract the tenant ID from a
@@ -249,7 +249,7 @@ request IDs, feature flags, or API version information extracted from headers.
 
 :::
 
-### Why use contextproperty?
+### Why use `ContextProperty`?
 
 Since `Request` objects are immutable, you can't modify them directly.
 `ContextProperty` allows you to associate additional data with a request that
@@ -264,7 +264,7 @@ include:
 - **Tenant identification** - Multi-tenant context from subdomains (when not
   part of user session)
 
-### Creating a contextproperty
+### Creating a `ContextProperty`
 
 Define a `ContextProperty` as a top-level constant or static field:
 
@@ -290,7 +290,7 @@ downstream handlers:
 ```dart
 final requestIdProperty = ContextProperty<String>('requestId');
 
-Handler requestIdMiddleware(Handler innerHandler) {
+Handler requestIdMiddleware(Handler next) {
   return (Request request) async {
     // Generate a unique request ID for tracing
     final requestId = Uuid().v4();
@@ -302,7 +302,7 @@ Handler requestIdMiddleware(Handler innerHandler) {
     print('[$requestId] ${request.method} ${request.url.path}');
 
     // Continue to next handler
-    final response = await innerHandler(request);
+    final response = await next(request);
 
     // Log the response
     print('[$requestId] Response: ${response.statusCode}');
@@ -344,7 +344,7 @@ class ApiRoute extends Route {
 }
 ```
 
-### Safe access with getornull
+### Safe access with `getOrNull
 
 If a value might not be set, use `getOrNull()` to avoid exceptions:
 
@@ -379,7 +379,7 @@ Here's a complete example showing tenant identification from subdomains:
 final tenantProperty = ContextProperty<String>('tenant');
 
 // Tenant identification middleware (extracts from subdomain)
-Handler tenantMiddleware(Handler innerHandler) {
+Handler tenantMiddleware(Handler next) {
   return (Request request) async {
     final host = request.headers.host;
 
@@ -412,7 +412,7 @@ Handler tenantMiddleware(Handler innerHandler) {
     // Attach tenant to context
     tenantProperty[request] = tenant;
 
-    return await innerHandler(request);
+    return await next(request);
   };
 }
 
@@ -449,7 +449,7 @@ final requestIdProperty = ContextProperty<String>('requestId');
 final tenantProperty = ContextProperty<String>('tenant');
 final apiVersionProperty = ContextProperty<String>('apiVersion');
 
-Handler requestContextMiddleware(Handler innerHandler) {
+Handler requestContextMiddleware(Handler next) {
   return (Request request) async {
     // Generate and attach request ID
     final requestId = Uuid().v4();
@@ -466,7 +466,7 @@ Handler requestContextMiddleware(Handler innerHandler) {
     final apiVersion = request.headers['X-API-Version']?.firstOrNull ?? '1.0';
     apiVersionProperty[request] = apiVersion;
 
-    return await innerHandler(request);
+    return await next(request);
   };
 }
 
