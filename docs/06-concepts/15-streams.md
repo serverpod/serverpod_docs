@@ -120,6 +120,10 @@ Read more about serializable exceptions here: [Serializable exceptions](exceptio
 
 ## Streaming Endpoints
 
+:::warning
+Streaming Endpoints are deprecated and will be removed in a future version of Serverpod. Use [Streaming Methods](#streaming-methods) instead for a simpler and more robust streaming experience.
+:::
+
 Streaming endpoints were Serverpod's first attempt at streaming data. This approach is more manual, requiring developers to manage the WebSocket connection to the server.
 
 ### Handling streams server-side
