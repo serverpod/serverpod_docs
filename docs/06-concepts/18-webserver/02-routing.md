@@ -6,7 +6,7 @@ provides powerful routing features for complex applications: HTTP method
 filtering, path parameters, wildcards, and fallback handling. Understanding
 these patterns helps you build clean, maintainable APIs.
 
-## Custom Route classes
+## Custom route classes
 
 While `WidgetRoute` is convenient for rendering HTML pages, the `Route` base
 class gives you complete control over request handling. By extending `Route` and
@@ -57,7 +57,7 @@ global error-handling middleware.
 
 :::
 
-## HTTP methods
+## Http methods
 
 Routes can specify which HTTP methods they respond to using the `methods`
 parameter. The available methods are:
@@ -210,7 +210,7 @@ class NotFoundRoute extends Route {
 pod.webServer.fallbackRoute = NotFoundRoute();
 ```
 
-## Next Steps
+## Next steps
 
 - Learn about [modular routes](modular-routes) for organizing complex APIs
 - Add [middleware](middleware) for request processing and error handling

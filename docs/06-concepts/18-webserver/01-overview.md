@@ -1,10 +1,10 @@
-# Web Server Overview
+# Overview
 
 In addition to the application server, Serverpod comes with a built-in web server. The web server allows you to access your database and business layer the same way you would from a method call from an app. This makes it simple to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or define custom REST APIs to communicate with third-party services.
 
 Serverpod's web server is built on the [Relic](https://github.com/serverpod/relic) framework, giving you access to its routing engine, middleware system, and typed headers. This means you get the benefits of Serverpod's database integration and business logic alongside Relic's web server capabilities.
 
-## Your First Route
+## Your first route
 
 When you create a new Serverpod project, it sets up a web server by default. Here's how to add a simple API endpoint:
 
@@ -33,9 +33,9 @@ await pod.start();
 
 Visit `http://localhost:8080/api/hello` to see your API response.
 
-## Core Concepts
+## Core concepts
 
-### Routes and Handlers
+### Routes and handlers
 
 A **Route** is a destination in your web server that handles requests and generates responses. Routes extend the `Route` base class and implement the `handleCall()` method:
 
@@ -53,7 +53,7 @@ The `handleCall()` method receives:
 - **Session** - Access to your database, logging, and authenticated user
 - **Request** - The HTTP request with headers, body, and URL information
 
-### Response Types
+### Response types
 
 Return different response types based on your needs:
 
@@ -70,7 +70,7 @@ return Response.notFound(body: Body.fromString('Not found'));
 return Response.internalServerError(body: Body.fromString('Server error'));
 ```
 
-### Adding Routes
+### Adding routes
 
 Routes are added with a path pattern:
 
@@ -84,9 +84,9 @@ pod.webServer.addRoute(StaticRoute.directory(Directory('web')), '/static/**');
 
 Routes are matched in the order they were added.
 
-## When to Use What
+## When to use what
 
-### REST APIs → Custom Routes
+### Rest apis → custom routes
 For REST APIs, webhooks, or custom HTTP handlers, use custom `Route` classes:
 
 ```dart
@@ -106,7 +106,7 @@ class UsersApiRoute extends Route {
 
 See [Routing](routing) for details.
 
-### Static Files → StaticRoute
+### Static files → staticroute
 For serving CSS, JavaScript, images, or other static assets:
 
 ```dart
@@ -118,10 +118,10 @@ pod.webServer.addRoute(
 
 See [Static Files](static-files) for cache-busting and optimization.
 
-### HTML Pages → External Frameworks
+### Html pages → external frameworks
 For server-side HTML rendering, consider integrating with [Jaspr](https://docs.page/schultek/jaspr) rather than using Serverpod's built-in HTML widgets. See [Server-Side HTML](server-side-html) for basic widget usage.
 
-## Database Access
+## Database access
 
 The `Session` parameter gives you full access to your Serverpod database:
 
@@ -145,7 +145,7 @@ class UserRoute extends Route {
 }
 ```
 
-## Next Steps
+## Next steps
 
 - **[Routing](routing)** - Learn about HTTP methods, path parameters, and wildcards
 - **[Modular Routes](modular-routes)** - Organize related endpoints with `injectIn()`

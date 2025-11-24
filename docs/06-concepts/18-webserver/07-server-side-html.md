@@ -118,7 +118,7 @@ class DataRoute extends WidgetRoute {
 }
 ```
 
-## Next Steps
+## Next steps
 
 - For modern server-side rendering, explore
   [Jaspr](https://docs.page/schultek/jaspr) integration
