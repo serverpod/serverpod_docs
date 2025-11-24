@@ -46,18 +46,25 @@ pod.webServer.addRoute(
 Available cache control factories:
 
 - **`StaticRoute.publicImmutable()`** - For versioned assets that never change
+
   ```dart
   StaticRoute.publicImmutable(maxAge: const Duration(years: 1)) // 1 year, perfect for cache-busted files
   ```
+
 - **`StaticRoute.public()`** - For public assets with revalidation
+
   ```dart
   StaticRoute.public(maxAge: const Duration(hours: 1))
   ```
+
 - **`StaticRoute.privateNoCache()`** - For user-specific files
+
   ```dart
   StaticRoute.privateNoCache()  // Must revalidate every time
   ```
+
 - **`StaticRoute.noStore()`** - For sensitive content that shouldn't be cached
+
   ```dart
   StaticRoute.noStore()  // Never cache
   ```

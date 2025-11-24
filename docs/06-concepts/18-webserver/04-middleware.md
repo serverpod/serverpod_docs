@@ -344,7 +344,7 @@ class ApiRoute extends Route {
 }
 ```
 
-### Safe access with `getOrNull
+### Safe access with `getOrNull`
 
 If a value might not be set, use `getOrNull()` to avoid exceptions:
 

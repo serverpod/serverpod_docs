@@ -87,7 +87,7 @@ Common response headers include:
 - Set appropriate cache headers for better performance
 - Use `secure: true` and `httpOnly: true` for sensitive cookies
 - Set proper `ContentDisposition` headers for file downloads
-- Use `SameSite` cookie attribute for CSRF protection 
+- Use `SameSite` cookie attribute for CSRF protection
 
 :::
 
