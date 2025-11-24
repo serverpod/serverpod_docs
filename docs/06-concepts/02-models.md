@@ -292,7 +292,7 @@ In these cases, Serverpod will handle the unknown class name gracefully by deser
 
 #### Example Scenario
 
-Consider a notification system where you initially had three notification types:
+Consider a notification system where you initially had four notification classes:
 
 ```yaml
 class: Notification
@@ -327,6 +327,8 @@ If you later remove `PushNotification` from your server but a client or database
 
 ```dart
 class NotificationEndpoint extends Endpoint {
+  // When deserializing a list of polymorphic types, entries with unknown
+  // class names will be deserialized as null, requiring nullable list items
   Future<void> processNotifications(
     Session session,
     List<Notification?> notifications,
