@@ -78,6 +78,7 @@ in Flutter.
 Serverpod provides several built-in widgets for common use cases:
 
 - **`ListWidget`** - Concatenates multiple widgets into a single response
+
   ```dart
   return ListWidget(children: [
     HeaderWidget(),
@@ -87,11 +88,13 @@ Serverpod provides several built-in widgets for common use cases:
   ```
 
 - **`JsonWidget`** - Renders JSON documents from serializable data structures
+
   ```dart
   return JsonWidget({'status': 'success', 'data': myData});
   ```
 
 - **`RedirectWidget`** - Creates HTTP redirects to other URLs
+
   ```dart
   return RedirectWidget('/new/location');
   ```

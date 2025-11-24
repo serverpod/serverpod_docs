@@ -50,6 +50,7 @@ class ApiRoute extends Route {
 ```
 
 The `handleCall()` method receives:
+
 - **Session** - Access to your database, logging, and authenticated user
 - **Request** - The HTTP request with headers, body, and URL information
 
@@ -87,6 +88,7 @@ Routes are matched in the order they were added.
 ## When to use what
 
 ### Rest apis → custom routes
+
 For REST APIs, webhooks, or custom HTTP handlers, use custom `Route` classes:
 
 ```dart
@@ -107,6 +109,7 @@ class UsersApiRoute extends Route {
 See [Routing](routing) for details.
 
 ### Static files → `StaticRoute`
+
 For serving CSS, JavaScript, images, or other static assets:
 
 ```dart
@@ -145,7 +148,6 @@ class UserRoute extends Route {
 ## Next steps
 
 - **[Routing](routing)** - Learn about HTTP methods, path parameters, and wildcards
-- **[Modular Routes](modular-routes)** - Organize related endpoints with `injectIn()`
 - **[Middleware](middleware)** - Add cross-cutting functionality like error handling and logging
 - **[Static Files](static-files)** - Serve static assets with cache-busting
 - **[Typed Headers](typed-headers)** - Work with HTTP headers in a type-safe way
