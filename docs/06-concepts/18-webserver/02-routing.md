@@ -203,6 +203,12 @@ Future<Result> handleCall(Session session, Request request) async {
 }
 ```
 
+::: A note on literal vs dynamic segments
+
+Routing never does back-tracking, and adding a route with a literal segment always wins over dynamic segments such as wildcards. Say you have a route registered at `/**`, and another at `/a/b`, then `/a/c` will not be matched, because `a`  wins over `**` on the first segment, and `c` doesn't match on the second (only `b` does). Some find this behavior surprising. What you probably meant was for the `/**` to act as a fallback route. You should use an explicit `fallback` route for that instead.
+
+:::
+
 ## Fallback routes
 
 You can set a fallback route that handles requests when no other route matches:
