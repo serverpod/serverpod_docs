@@ -37,7 +37,7 @@ Control how browsers and CDNs cache your static files using the
 pod.webServer.addRoute(
   StaticRoute.directory(
     staticDir,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000), // 1 year
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(years: 1)),
   ),
   '/static/**',
 );
@@ -47,11 +47,11 @@ Available cache control factories:
 
 - **`StaticRoute.publicImmutable()`** - For versioned assets that never change
   ```dart
-  StaticRoute.publicImmutable(maxAge: 31536000)  // 1 year, perfect for cache-busted files
+  StaticRoute.publicImmutable(maxAge: const Duration(years: 1)) // 1 year, perfect for cache-busted files
   ```
 - **`StaticRoute.public()`** - For public assets with revalidation
   ```dart
-  StaticRoute.public(maxAge: 3600)  // 1 hour, then revalidate
+  StaticRoute.public(maxAge: const Duration(hours: 1))
   ```
 - **`StaticRoute.privateNoCache()`** - For user-specific files
   ```dart
@@ -84,7 +84,7 @@ pod.webServer.addRoute(
   StaticRoute.directory(
     staticDir,
     cacheBustingConfig: cacheBustingConfig,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000),
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(years: 1)),
   ),
   '/static/**',
 );
@@ -111,28 +111,7 @@ The cache-busting system:
 - Works transparently - requesting `/static/logo@abc123.png` serves
   `/static/logo.png`
 
-### Combining with cache control
-
-For optimal performance, combine cache-busting with aggressive caching:
-
-```dart
-pod.webServer.addRoute(
-  StaticRoute.directory(
-    staticDir,
-    cacheBustingConfig: cacheBustingConfig,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 31536000), // 1 year
-  ),
-  '/static/**',
-);
-```
-
-This approach ensures:
-
-- Browsers cache files for a long time (better performance)
-- When files change, new hashes force cache invalidation
-- No manual version management needed
-
-## Conditional requests (etags and last-modified)
+## Conditional requests (`Etags` and `Last-Modified`)
 
 `StaticRoute` automatically supports HTTP conditional requests through Relic's
 `StaticHandler`. This provides efficient caching without transferring file
