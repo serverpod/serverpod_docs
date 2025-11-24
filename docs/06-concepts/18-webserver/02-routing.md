@@ -245,9 +245,9 @@ This differs from `Route.handleCall()` which receives both Session and Request
 as explicit parameters. The modular route pattern uses Relic's router directly,
 which only provides Request to handlers.
 
-### Creating a crud module
+### Creating a module
 
-Here's an example of a modular CRUD route that registers multiple endpoints with
+Here's an example of a modular route that registers multiple endpoints with
 path parameters:
 
 ```dart
@@ -258,9 +258,6 @@ class UserCrudModule extends Route {
     router
       ..get('/', _list)
       ..get('/:id', _get)
-      ..post('/', _create)
-      ..put('/:id', _update)
-      ..delete('/:id', _delete);
   }
 
   // Handler methods
@@ -308,95 +305,6 @@ class UserCrudModule extends Route {
       ),
     );
   }
-
-  Future<Result> _create(Request request) async {
-    final body = await request.readAsString();
-    final data = jsonDecode(body);
-    final session = request.session;
-
-    final user = User(name: data['name'], email: data['email']);
-    await User.db.insertRow(session, user);
-
-    return Response.created(
-      body: Body.fromString(
-        jsonEncode(user.toJson()),
-        mimeType: MimeType.json,
-      ),
-    );
-  }
-
-  Future<Result> _update(Request request) async {
-    // Extract path parameter using symbol
-    final id = request.pathParameters[#id];
-    if (id == null) {
-      return Response.badRequest(
-        body: Body.fromString('Missing user ID'),
-      );
-    }
-
-    final userId = int.tryParse(id);
-    if (userId == null) {
-      return Response.badRequest(
-        body: Body.fromString('Invalid user ID'),
-      );
-    }
-
-    final body = await request.readAsString();
-    final data = jsonDecode(body);
-    final session = request.session;
-
-    final user = await User.db.findById(session, userId);
-    if (user == null) {
-      return Response.notFound(
-        body: Body.fromString('User not found'),
-      );
-    }
-
-    user.name = data['name'] ?? user.name;
-    user.email = data['email'] ?? user.email;
-    await User.db.updateRow(session, user);
-
-    return Response.ok(
-      body: Body.fromString(
-        jsonEncode(user.toJson()),
-        mimeType: MimeType.json,
-      ),
-    );
-  }
-
-  Future<Result> _delete(Request request) async {
-    // Extract path parameter using symbol
-    final id = request.pathParameters[#id];
-    if (id == null) {
-      return Response.badRequest(
-        body: Body.fromString('Missing user ID'),
-      );
-    }
-
-    final userId = int.tryParse(id);
-    if (userId == null) {
-      return Response.badRequest(
-        body: Body.fromString('Invalid user ID'),
-      );
-    }
-
-    final session = request.session;
-    final deleted = await User.db.deleteRow(session, userId);
-
-    if (!deleted) {
-      return Response.notFound(
-        body: Body.fromString('User not found'),
-      );
-    }
-
-    return Response.noContent();
-  }
-
-  // Required by Route but not used since we override injectIn
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    throw UnimplementedError('This route uses injectIn');
-  }
 }
 
 // Register the entire CRUD module under /api/users
@@ -407,9 +315,6 @@ This creates the following RESTful endpoints:
 
 - `GET /api/users` - List all users
 - `GET /api/users/:id` - Get a specific user (e.g., `/api/users/123`)
-- `POST /api/users` - Create a new user
-- `PUT /api/users/:id` - Update a user (e.g., `/api/users/123`)
-- `DELETE /api/users/:id` - Delete a user (e.g., `/api/users/123`)
 
 :::tip
 
