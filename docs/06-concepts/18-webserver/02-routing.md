@@ -419,59 +419,6 @@ strings.
 
 :::
 
-### Composing multiple modules
-
-You can create a parent module that composes multiple sub-modules:
-
-```dart
-class ApiModule extends Route {
-  @override
-  void injectIn(RelicRouter router) {
-    // Inject sub-modules at different paths
-    router.group('/users').inject(UserCrudModule());
-    router.group('/posts').inject(PostCrudModule());
-    router.group('/comments').inject(CommentCrudModule());
-
-    // Add module-level routes
-    router.get('/health', _healthCheck);
-  }
-
-  Future<Result> _healthCheck(Request request) async {
-    return Response.ok(
-      body: Body.fromString(
-        jsonEncode({'status': 'healthy', 'timestamp': DateTime.now().toIso8601String()}),
-        mimeType: MimeType.json,
-      ),
-    );
-  }
-
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    throw UnimplementedError('This route uses injectIn');
-  }
-}
-
-// Register the entire API module
-pod.webServer.addRoute(ApiModule(), '/api');
-```
-
-This pattern enables you to:
-
-- **Organize routes hierarchically** - Group related functionality together
-- **Reuse route modules** - Use the same module in different applications
-- **Compose complex APIs** - Build large APIs from smaller, focused modules
-- **Separate concerns** - Keep route registration logic separate from handler
-  implementation
-
-:::tip
-
-When overriding `injectIn`, you typically don't need to implement `handleCall`
-since you're registering handler functions directly with the router. You can
-throw `UnimplementedError` in `handleCall` to make it clear the method isn't
-used.
-
-:::
-
 ## Next steps
 
 - Add [middleware](middleware) for cross-cutting concerns like logging and
