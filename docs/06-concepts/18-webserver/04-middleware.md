@@ -494,4 +494,3 @@ class DataRoute extends Route {
 
 - Serve [static files](static-files) with caching and compression
 - Use [typed headers](typed-headers) for type-safe header access
-- Learn about [modular routes](modular-routes) for organizing complex APIs

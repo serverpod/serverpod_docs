@@ -232,4 +232,3 @@ return Response.ok(
 
 - Serve [static files](static-files) with caching and compression
 - Add [middleware](middleware) for cross-cutting concerns
-- Learn about [modular routes](modular-routes) for organizing complex APIs
