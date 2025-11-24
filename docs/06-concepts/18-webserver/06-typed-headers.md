@@ -1,4 +1,4 @@
-# Typed Headers
+# Typed headers
 
 HTTP headers are traditionally accessed as strings, which means you need to
 manually parse values, handle edge cases, and validate formats. Serverpod's web
@@ -81,11 +81,11 @@ Common response headers include:
 - `etag` - ETagHeader
 - `vary` - VaryHeader
 
-## AuthorizationHeader - Authentication
+## Authorizationheader - authentication
 
 The `AuthorizationHeader` supports three authentication schemes:
 
-### Bearer Token (JWT, OAuth)
+### Bearer token (jwt, oauth)
 
 ```dart
 final auth = request.headers.authorization;
@@ -100,7 +100,7 @@ if (auth is BearerAuthorizationHeader) {
 }
 ```
 
-### Basic Authentication
+### Basic authentication
 
 ```dart
 if (auth is BasicAuthorizationHeader) {
@@ -114,7 +114,7 @@ if (auth is BasicAuthorizationHeader) {
 }
 ```
 
-### Setting Bearer token
+### Setting bearer token
 
 ```dart
 headers: Headers.build((h) {
@@ -122,7 +122,7 @@ headers: Headers.build((h) {
 }),
 ```
 
-## CacheControlHeader - Cache directives
+## Cachecontrolheader - cache directives
 
 Control caching behavior with type-safe cache directives:
 
@@ -158,7 +158,7 @@ Available directives:
 - `staleWhileRevalidate`, `staleIfError` - Stale caching
 - `immutable` - Content never changes
 
-## ContentDispositionHeader - File downloads
+## Contentdispositionheader - file downloads
 
 Specify how content should be handled (inline display or download):
 
@@ -189,7 +189,7 @@ h.contentDisposition = ContentDispositionHeader(
 );
 ```
 
-## CookieHeader and SetCookieHeader - Cookies
+## Cookieheader and setcookieheader - cookies
 
 ### Reading cookies from requests
 
@@ -232,7 +232,7 @@ SameSite values:
 
 ## Complete examples
 
-### Secure API with authentication and caching
+### Secure api with authentication and caching
 
 ```dart
 class SecureApiRoute extends Route {
@@ -536,7 +536,7 @@ return Response.ok(
 - The `HeaderAccessor` automatically caches parsed values for performance
 - Optionally add extension methods for convenient property-style access
 
-## Next Steps
+## Next steps
 
 - Serve [static files](static-files) with caching and compression
 - Add [middleware](middleware) for cross-cutting concerns

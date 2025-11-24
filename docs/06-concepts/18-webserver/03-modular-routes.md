@@ -1,4 +1,4 @@
-# Modular Routes
+# Modular routes
 
 As your web server grows, managing dozens of individual route registrations can
 become unwieldy. Modular routes solve this by letting you group related
@@ -13,7 +13,7 @@ multiple handler functions instead of implementing a single `handleCall()`
 method. This pattern is perfect for REST resources, API modules, or any group of
 related endpoints.
 
-## Session Access in Modular Routes
+## Session access in modular routes
 
 When using `injectIn()` with handler functions (`router.get('/', _handler)`),
 your handlers receive only a `Request` parameter. To access the `Session`, use
@@ -30,7 +30,7 @@ This differs from `Route.handleCall()` which receives both Session and Request
 as explicit parameters. The modular route pattern uses Relic's router directly,
 which only provides Request to handlers.
 
-## Creating a CRUD module
+## Creating a crud module
 
 Here's an example of a modular CRUD route that registers multiple endpoints with
 path parameters:
@@ -257,7 +257,7 @@ used.
 
 :::
 
-## Next Steps
+## Next steps
 
 - Add [middleware](middleware) for cross-cutting concerns like logging and
   error handling

@@ -1,4 +1,4 @@
-# Static Files
+# Static files
 
 Static assets like images, CSS, and JavaScript files are essential for web
 applications. The `StaticRoute.directory()` method makes it easy to serve entire
@@ -90,7 +90,7 @@ pod.webServer.addRoute(
 );
 ```
 
-### Generating versioned URLs
+### Generating versioned urls
 
 Use the `assetPath()` method to generate cache-busted URLs for your assets:
 
@@ -132,7 +132,7 @@ This approach ensures:
 - When files change, new hashes force cache invalidation
 - No manual version management needed
 
-## Conditional requests (ETags and Last-Modified)
+## Conditional requests (etags and last-modified)
 
 `StaticRoute` automatically supports HTTP conditional requests through Relic's
 `StaticHandler`. This provides efficient caching without transferring file
@@ -180,7 +180,7 @@ When combined with cache-busting, conditional requests provide a fallback
 validation mechanism even for cached assets, ensuring efficient delivery while
 maintaining correctness.
 
-## Next Steps
+## Next steps
 
 - Learn about [typed headers](typed-headers) for type-safe header access
 - Explore [middleware](middleware) for cross-cutting concerns

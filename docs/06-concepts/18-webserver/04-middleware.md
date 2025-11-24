@@ -45,7 +45,7 @@ Handler loggingMiddleware(Handler innerHandler) {
 }
 ```
 
-## API key validation middleware
+## Api key validation middleware
 
 A common use case is validating API keys for protected routes:
 
@@ -86,7 +86,7 @@ validation.
 
 :::
 
-## CORS middleware
+## Cors middleware
 
 Enable Cross-Origin Resource Sharing for your API:
 
@@ -226,7 +226,7 @@ sequenceDiagram
     deactivate Logging
 ```
 
-## Request-scoped data with ContextProperty
+## Request-scoped data with contextproperty
 
 Middleware often needs to pass computed data to downstream handlers. For
 example, a tenant identification middleware might extract the tenant ID from a
@@ -249,7 +249,7 @@ request IDs, feature flags, or API version information extracted from headers.
 
 :::
 
-### Why use ContextProperty?
+### Why use contextproperty?
 
 Since `Request` objects are immutable, you can't modify them directly.
 `ContextProperty` allows you to associate additional data with a request that
@@ -264,7 +264,7 @@ include:
 - **Tenant identification** - Multi-tenant context from subdomains (when not
   part of user session)
 
-### Creating a ContextProperty
+### Creating a contextproperty
 
 Define a `ContextProperty` as a top-level constant or static field:
 
@@ -344,7 +344,7 @@ class ApiRoute extends Route {
 }
 ```
 
-### Safe access with getOrNull
+### Safe access with getornull
 
 If a value might not be set, use `getOrNull()` to avoid exceptions:
 
@@ -490,7 +490,7 @@ class DataRoute extends Route {
 }
 ```
 
-## Next Steps
+## Next steps
 
 - Serve [static files](static-files) with caching and compression
 - Use [typed headers](typed-headers) for type-safe header access
