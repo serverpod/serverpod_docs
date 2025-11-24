@@ -156,6 +156,14 @@ router.get('/:userId/posts/:postId', handler);
 // request.pathParameters[#postId] => '456'
 ```
 
+:::tip
+
+Path parameters are accessed using symbols: `request.pathParameters[#paramName]`.
+Always validate and parse these values since they come from user input as
+strings.
+
+:::
+
 ## Wildcards
 
 Routes also support wildcard matching for catching all paths:
@@ -315,14 +323,6 @@ This creates the following RESTful endpoints:
 
 - `GET /api/users` - List all users
 - `GET /api/users/:id` - Get a specific user (e.g., `/api/users/123`)
-
-:::tip
-
-Path parameters are accessed using symbols: `request.pathParameters[#paramName]`.
-Always validate and parse these values since they come from user input as
-strings.
-
-:::
 
 ## Next steps
 
