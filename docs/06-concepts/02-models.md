@@ -280,6 +280,123 @@ class NotificationEndpoint extends Endpoint {
 
 Polymorphic types also work seamlessly in Lists, Maps, Sets, Records, and nullable contexts.
 
+### Handling Unknown Class Names
+
+When deserializing polymorphic types, Serverpod uses the class name encoded in the serialized data to determine which concrete subtype to instantiate. However, there are situations where the class name in the incoming data may not correspond to any known class on the server:
+
+- A class was removed or renamed during a refactoring
+- An older client is sending data with a class that no longer exists
+- A newer client is sending data with a class that hasn't been deployed to the server yet
+
+In these cases, Serverpod will handle the unknown class name gracefully by deserializing that specific value as `null` instead of throwing an exception. This allows your application to continue processing the request without crashing, though you'll lose the data for that particular object.
+
+#### Example Scenario
+
+Consider a notification system where you initially had three notification types:
+
+```yaml
+class: Notification
+sealed: true
+fields:
+  title: String
+  message: String
+```
+
+```yaml
+class: EmailNotification
+extends: Notification
+fields:
+  recipientEmail: String
+```
+
+```yaml
+class: SMSNotification
+extends: Notification
+fields:
+  phoneNumber: String
+```
+
+```yaml
+class: PushNotification
+extends: Notification
+fields:
+  deviceToken: String
+```
+
+If you later remove `PushNotification` from your server but a client or database still contains serialized `PushNotification` objects, attempting to deserialize those objects will result in `null` values rather than errors.
+
+```dart
+class NotificationEndpoint extends Endpoint {
+  Future<void> processNotifications(
+    Session session,
+    List<Notification?> notifications,
+  ) async {
+    for (final notification in notifications) {
+      if (notification == null) {
+        // Unknown class type was encountered during deserialization
+        session.log('Skipping notification with unknown class type');
+        continue;
+      }
+      
+      // Process known notification types
+      switch (notification) {
+        case EmailNotification email:
+          await _sendEmail(session, email);
+        case SMSNotification sms:
+          await _sendSMS(session, sms);
+      }
+    }
+  }
+}
+```
+
+#### Best Practices for Schema Evolution
+
+To minimize issues with unknown class names, follow these best practices:
+
+1. **Use nullable types for polymorphic fields**: When defining fields that use polymorphic types, consider making them nullable (`Notification?` instead of `Notification`) to explicitly handle the case where deserialization returns `null`.
+
+2. **Plan for backward compatibility**: Before removing a class from your hierarchy, ensure that:
+   - All clients have been updated to stop using the removed class
+   - Database records containing the removed class have been migrated or cleaned up
+   - Any cached data or message queues have been flushed
+
+3. **Add fallback handling**: When processing polymorphic data, always check for `null` values and handle them appropriately:
+
+   ```dart
+   Future<void> handleNotification(Session session, Notification? notification) async {
+     if (notification == null) {
+       // Log the occurrence for monitoring
+       session.log('Received notification with unknown class type', level: LogLevel.warning);
+       return;
+     }
+     // Process the notification normally
+   }
+   ```
+
+4. **Monitor for unknown types**: Add logging or monitoring to track when `null` values are returned from polymorphic deserialization. This can help you identify compatibility issues between different versions of your client and server.
+
+5. **Consider a migration period**: When removing a class, maintain it as deprecated for a few release cycles before completely removing it, giving all clients time to upgrade.
+
+6. **Use sealed classes judiciously**: Sealed classes provide exhaustive type checking at compile time, but they also make it more difficult to evolve your schema. Balance the benefits of exhaustive checking with the flexibility needs of your API evolution strategy.
+
+:::warning
+When working with Lists, Maps, or Sets of polymorphic types, unknown class names will result in `null` entries in the collection. Make sure to filter out `null` values or handle them appropriately in your code:
+
+```dart
+// Filter out null values from a list
+final validNotifications = notifications.whereType<Notification>().toList();
+
+// Or handle nulls explicitly
+for (final notification in notifications) {
+  if (notification != null) {
+    // Process notification
+  }
+}
+```
+
+:::
+
 ## Exception
 
 The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
