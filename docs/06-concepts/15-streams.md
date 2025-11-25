@@ -118,7 +118,7 @@ In the example above, the client sends an error to the server, which then throws
 
 Read more about serializable exceptions here: [Serializable exceptions](exceptions).
 
-## Streaming Endpoints
+## Streaming Endpoints (Deprecated)
 
 :::warning
 Streaming Endpoints are deprecated and will be removed in a future version of Serverpod. Use [Streaming Methods](#streaming-methods) instead for a simpler and more robust streaming experience.
