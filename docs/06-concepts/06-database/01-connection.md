@@ -52,6 +52,36 @@ In this example, Postgres will look for tables in the `custom` schema first, and
 It is also possible to set the search paths using [runtime parameters](runtime-parameters) directly on the server startup (or on a specific transaction). If the paths are set on both the configuration file and as runtime parameters, the runtime parameters will take precedence.
 :::
 
+#### Configure connection pool size
+
+By default, Serverpod uses a connection pool with a maximum of 10 connections to the database. You can customize this limit using the `maxConnectionCount` setting:
+
+```yaml
+...
+database:
+  host: localhost
+  port: 8090
+  name: <YOUR_PROJECT_NAME>
+  user: postgres
+  maxConnectionCount: 20
+...
+```
+
+To allow unlimited connections, set `maxConnectionCount` to `0` or a negative value:
+
+```yaml
+...
+database:
+  host: localhost
+  port: 8090
+  name: <YOUR_PROJECT_NAME>
+  user: postgres
+  maxConnectionCount: 0  # Unlimited connections
+...
+```
+
+You can also configure this setting via the environment variable `SERVERPOD_DATABASE_MAX_CONNECTION_COUNT`.
+
 ### Database password
 
 The database password is stored in a separate file called `passwords.yaml` in the same `config` directory. The password for each environment is stored under the `database` keyword in the file.
