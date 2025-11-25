@@ -2,7 +2,7 @@
 
 For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
 
-Serverpod supports two ways to stream data. The first approach, [streaming methods](#streaming-methods), imitates how `Streams` work in Dart and offers a simple interface that automatically handles the connection with the server. In contrast, the second approach, [streaming endpoint](#streaming-endpoints), requires developers to manage the web socket connection. The second approach was Serverpod's initial solution for streaming data but will be removed in future updates.
+Serverpod supports streaming data through [streaming methods](#streaming-methods), which imitate how `Streams` work in Dart and offer a simple interface that automatically handles the connection with the server.
 
 :::tip
 
@@ -118,7 +118,11 @@ In the example above, the client sends an error to the server, which then throws
 
 Read more about serializable exceptions here: [Serializable exceptions](exceptions).
 
-## Streaming Endpoints
+## Streaming Endpoints (Deprecated)
+
+:::warning
+Streaming Endpoints are deprecated and will be removed in a future version of Serverpod. Use [Streaming Methods](#streaming-methods) instead for a simpler and more robust streaming experience.
+:::
 
 Streaming endpoints were Serverpod's first attempt at streaming data. This approach is more manual, requiring developers to manage the WebSocket connection to the server.
 
