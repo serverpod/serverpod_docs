@@ -56,6 +56,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_DATABASE_SEARCH_PATHS          | database.searchPaths          | -         | The search paths used for all database connections                                                                                                    |
 | SERVERPOD_DATABASE_REQUIRE_SSL           | database.requireSsl           | false     | Indicates if SSL is required for the database                                                                                                         |
 | SERVERPOD_DATABASE_IS_UNIX_SOCKET        | database.isUnixSocket         | false     | Specifies if the database connection is a Unix socket                                                                                                 |
+| SERVERPOD_DATABASE_MAX_CONNECTION_COUNT  | database.maxConnectionCount   | 10        | The maximum number of connections in the database pool. Set to 0 or a negative value for unlimited connections.                                       |
 | SERVERPOD_REDIS_HOST                     | redis.host                    | -         | The host address of the Redis server                                                                                                                  |
 | SERVERPOD_REDIS_PORT                     | redis.port                    | -         | The port number for the Redis server                                                                                                                  |
 | SERVERPOD_REDIS_USER                     | redis.user                    | -         | The user name for Redis authentication                                                                                                                |
@@ -182,6 +183,7 @@ database:
   port: 8090
   name: database_name
   user: postgres
+  maxConnectionCount: 10
 
 redis:
   enabled: false
