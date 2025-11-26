@@ -13,7 +13,6 @@ const config = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',
   organizationName: 'serverpod', // Usually your GitHub org/user name.
   projectName: 'serverpod.github.io', // Usually your repo name.
@@ -21,6 +20,9 @@ const config = {
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    }
   },
   themes: ['@docusaurus/theme-mermaid'],
 

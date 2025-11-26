@@ -1,6 +1,6 @@
 # Upgrade to 2.2
 
-Serverpod 2.2 includes new test tools that make it easy to create tests for endpoint methods. For new projects they are configured by default, but existing projects need to go through some steps to enable it (see below). The full documentation of this feature can also be found [here](../concepts/testing/get-started).
+Serverpod 2.2 includes new test tools that make it easy to create tests for endpoint methods. For new projects they are configured by default, but existing projects need to go through some steps to enable it (see below). The full documentation of this feature can also be found [here](../../concepts/testing/get-started).
 
 ## Add test tools to existing projects
 
