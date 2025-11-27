@@ -40,7 +40,7 @@ jobs:
               cp target/CNAME target/docs
               cp -r src/build/* target/docs
               cd target
-              git add -A
+              git add .
               if git diff --cached --quiet; then
                 echo "No changes to deploy — skipping commit and push."
                 exit 0
