@@ -280,6 +280,42 @@ class NotificationEndpoint extends Endpoint {
 
 Polymorphic types also work seamlessly in Lists, Maps, Sets, Records, and nullable contexts.
 
+### Handling Unknown Class Names
+
+When deserializing polymorphic types, Serverpod uses the class name encoded in the serialized data to determine which concrete subtype to instantiate. However, there are situations where the class name in the incoming data may not correspond to any known class on the server or client:
+
+- An older client is sending data with a class that no longer exists on the server.
+- An older client is receiving data from a class that was added lately on the server.
+- A newer client is sending data with a class that hasn't been deployed to the server yet.
+
+If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking backward compatibility.
+
+#### Example Scenario
+
+Consider a notification system where you initially had the following type:
+
+```yaml
+# Notification class that was not originally inherited.
+class: Notification
+fields:
+  title: String
+  message: String
+```
+
+If you later add another notification type to the server, older clients will deserialize it as the base `Notification` class instead of throwing an exception.
+
+```yaml
+# New class that is not yet available on some older clients.
+class: EmailNotification
+extends: Notification
+fields:
+  recipientEmail: String
+```
+
+:::warning
+Note that this behavior does not apply if the base class is a `sealed` class, since it is not possible to instantiate a `sealed` class. In this case, an exception will be thrown.
+:::
+
 ## Exception
 
 The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](exceptions).
