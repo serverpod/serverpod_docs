@@ -290,6 +290,10 @@ When deserializing polymorphic types, Serverpod uses the class name encoded in t
 
 If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking backward compatibility.
 
+:::info
+This will only work for non-streaming endpoints. Streaming endpoints will always throw an exception if the class name is not known.
+:::
+
 #### Example Scenario
 
 Consider a notification system where you initially had the following type:
