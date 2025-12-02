@@ -31,14 +31,14 @@ To generate our recipes, we will use Google's free Gemini API. To use it, you mu
 # This file is not included in the git repository. You can safely add your API key here.
 # The API key is used to authenticate with the Gemini API.
 development:
-  gemini: '--- Your Gemini Api Key ---'
+  geminiApiKey: '--- Your Gemini Api Key ---'
 ```
 
-Next, we add Google's Gemini package as a dependency to our server.
+Next, we add the Dartantic AI package as a dependency to our server. This package provides a convenient interface for working with different AI providers, including Google's Gemini API.
 
 ```bash
 $ cd magic_recipe/magic_recipe_server
-$ dart pub add google_generative_ai
+$ dart pub add dartantic_ai
 ```
 
 ## Create a new endpoint
@@ -47,9 +47,7 @@ Create a new file in `magic_recipe_server/lib/src/recipes/` called `recipe_endpo
 
 <!--SNIPSTART 01-getting-started-endpoint-->
 ```dart
-import 'dart:async';
-
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
 import 'package:serverpod/serverpod.dart';
 
 /// This is the endpoint that will be used to generate a recipe using the
@@ -59,28 +57,33 @@ class RecipeEndpoint extends Endpoint {
   /// Pass in a string containing the ingredients and get a recipe back.
   Future<String> generateRecipe(Session session, String ingredients) async {
     // Serverpod automatically loads your passwords.yaml file and makes the passwords available
-    // in the session.passwords map.
-    final geminiApiKey = session.passwords['gemini'];
+    // in the session.passwords map. Passwords in the 'shared' section are available in all
+    // configurations.
+    final geminiApiKey = session.passwords['geminiApiKey'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
     }
-    final gemini = GenerativeModel(
-      model: 'gemini-2.0-flash',
-      apiKey: geminiApiKey,
+
+    // Set up the Gemini API agent.
+    Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
+    final agent = Agent.forProvider(
+      Providers.google,
+      chatModelName: 'gemini-2.5-flash-lite',
     );
 
-    // A prompt to generate a recipe, the user will provide a free text input with the ingredients
+    // A prompt to generate a recipe, the user will provide a free text input with the ingredients.
     final prompt =
-        'Generate a recipe using the following ingredients: $ingredients, always put the title '
-        'of the recipe in the first line, and then the instructions. The recipe should be easy '
-        'to follow and include all necessary steps. Please provide a detailed recipe.';
+        'Generate a recipe using the following ingredients: $ingredients. '
+        'Always put the title of the recipe in the first line, and then the instructions. '
+        'The recipe should be easy to follow and include all necessary steps. '
+        'Please provide a detailed recipe.';
 
-    final response = await gemini.generateContent([Content.text(prompt)]);
+    final response = await agent.send(prompt);
 
-    final responseText = response.text;
+    final responseText = response.output;
 
-    // Check if the response is empty or null
-    if (responseText == null || responseText.isEmpty) {
+    // Check if the response is empty.
+    if (responseText.isEmpty) {
       throw Exception('No response from Gemini API');
     }
 
@@ -173,7 +176,7 @@ class MyHomePageState extends State<MyHomePage> {
                 onPressed: _loading ? null : _callGenerateRecipe,
                 child: _loading
                     ? const Text('Loading...')
-                    : const Text('Send to Server'),
+                    : const Text('Generate Recipe'),
               ),
             ),
             Expanded(
