@@ -57,8 +57,7 @@ class RecipeEndpoint extends Endpoint {
   /// Pass in a string containing the ingredients and get a recipe back.
   Future<String> generateRecipe(Session session, String ingredients) async {
     // Serverpod automatically loads your passwords.yaml file and makes the passwords available
-    // in the session.passwords map. Passwords in the 'shared' section are available in all
-    // configurations.
+    // in the session.passwords map.
     final geminiApiKey = session.passwords['geminiApiKey'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');

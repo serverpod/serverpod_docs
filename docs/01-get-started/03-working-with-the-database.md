@@ -133,7 +133,7 @@ class RecipeEndpoint extends Endpoint {
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
-    // A prompt to generate a recipe, the user will provide a free text input with the ingredients
+    // A prompt to generate a recipe, the user will provide a free text input with the ingredients.
     final prompt =
         'Generate a recipe using the following ingredients: $ingredients, always put the title '
         'of the recipe in the first line, and then the instructions. The recipe should be easy '
@@ -142,7 +142,7 @@ class RecipeEndpoint extends Endpoint {
     final response = await agent.send(prompt);
     final responseText = response.output;
 
-    // Check if the response is empty
+    // Check if the response is empty.
     if (responseText.isEmpty) {
       throw Exception('No response from Gemini API');
     }
@@ -154,7 +154,7 @@ class RecipeEndpoint extends Endpoint {
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database, the returned recipe has the id set
+    // Save the recipe to the database, the returned recipe has the id set.
     final recipeWithId = await Recipe.db.insertRow(session, recipe);
 
     return recipeWithId;
