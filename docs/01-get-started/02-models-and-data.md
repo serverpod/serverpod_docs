@@ -90,6 +90,7 @@ class RecipeEndpoint extends Endpoint {
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
     }
+    
     // Configure the Dartantic AI agent for Gemini before sending the prompt.
     Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(
@@ -173,7 +174,7 @@ class MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
 // ...
-                    // Change the ResultDisplay to use the Recipe object
+                    // Change the ResultDisplay to use the Recipe object.
                     ResultDisplay(
                   resultMessage: _recipe != null
                       ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
@@ -266,7 +267,7 @@ class MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: SingleChildScrollView(
                 child:
-                    // Change the ResultDisplay to use the Recipe object
+                    // Change the ResultDisplay to use the Recipe object.
                     ResultDisplay(
                   resultMessage: _recipe != null
                       ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'

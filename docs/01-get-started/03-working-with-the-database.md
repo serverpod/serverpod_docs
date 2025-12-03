@@ -66,7 +66,7 @@ class RecipeEndpoint extends Endpoint {
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database, the returned recipe has the id set
+    // Save the recipe to the database, the returned recipe has the id set.
     final recipeWithId = await Recipe.db.insertRow(session, recipe);
 
     return recipeWithId;
@@ -126,6 +126,7 @@ class RecipeEndpoint extends Endpoint {
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
     }
+    
     // Configure the Dartantic AI agent for Gemini before sending the prompt.
     Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(

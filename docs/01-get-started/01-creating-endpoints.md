@@ -63,7 +63,7 @@ class RecipeEndpoint extends Endpoint {
       throw Exception('Gemini API key not found');
     }
 
-    // Set up the Gemini API agent.
+    // Configure the Dartantic AI agent for Gemini before sending the prompt.
     Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(
       Providers.google,
