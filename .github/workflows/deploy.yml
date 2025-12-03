@@ -41,7 +41,10 @@ jobs:
               cp -r src/build/* target/docs
               cd target
               git add .
+              if git diff --cached --quiet; then
+                echo "No changes to deploy — skipping commit and push."
+                exit 0
+              fi
               git commit -m "Deployed by Serverpod docs deploy action"
               git push
 
-            
