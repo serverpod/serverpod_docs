@@ -66,7 +66,7 @@ class RecipeEndpoint extends Endpoint {
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database, the returned recipe has the id set
+    // Save the recipe to the database, the returned recipe has the id set.
     final recipeWithId = await Recipe.db.insertRow(session, recipe);
 
     return recipeWithId;
@@ -110,7 +110,7 @@ class RecipeEndpoint extends Endpoint {
 ```dart
 import 'dart:async';
 
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
 import 'package:magic_recipe_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -122,27 +122,29 @@ class RecipeEndpoint extends Endpoint {
   Future<Recipe> generateRecipe(Session session, String ingredients) async {
     // Serverpod automatically loads your passwords.yaml file and makes the passwords available
     // in the session.passwords map.
-    final geminiApiKey = session.passwords['gemini'];
+    final geminiApiKey = session.passwords['geminiApiKey'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
     }
-    final gemini = GenerativeModel(
-      model: 'gemini-2.0-flash',
-      apiKey: geminiApiKey,
+    
+    // Configure the Dartantic AI agent for Gemini before sending the prompt.
+    Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
+    final agent = Agent.forProvider(
+      Providers.google,
+      chatModelName: 'gemini-2.5-flash-lite',
     );
 
-    // A prompt to generate a recipe, the user will provide a free text input with the ingredients
+    // A prompt to generate a recipe, the user will provide a free text input with the ingredients.
     final prompt =
         'Generate a recipe using the following ingredients: $ingredients, always put the title '
         'of the recipe in the first line, and then the instructions. The recipe should be easy '
         'to follow and include all necessary steps. Please provide a detailed recipe.';
 
-    final response = await gemini.generateContent([Content.text(prompt)]);
+    final response = await agent.send(prompt);
+    final responseText = response.output;
 
-    final responseText = response.text;
-
-    // Check if the response is empty or null
-    if (responseText == null || responseText.isEmpty) {
+    // Check if the response is empty.
+    if (responseText.isEmpty) {
       throw Exception('No response from Gemini API');
     }
 
@@ -153,7 +155,7 @@ class RecipeEndpoint extends Endpoint {
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database, the returned recipe has the id set
+    // Save the recipe to the database, the returned recipe has the id set.
     final recipeWithId = await Recipe.db.insertRow(session, recipe);
 
     return recipeWithId;
