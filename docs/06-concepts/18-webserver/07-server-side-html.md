@@ -5,7 +5,7 @@ For simple HTML pages, you can use `WidgetRoute` and `TemplateWidget`. The
 `WebWidget`. The `TemplateWidget` (which extends `WebWidget`) renders web pages
 using Mustache templates.
 
-### Creating a WidgetRoute
+## Creating a WidgetRoute
 
 Create custom routes by extending the `WidgetRoute` class and implementing the
 `build` method:
@@ -22,7 +22,7 @@ class MyRoute extends WidgetRoute {
 pod.webServer.addRoute(MyRoute(), '/my/page/address');
 ```
 
-### Creating a TemplateWidget
+## Creating a TemplateWidget
 
 A `TemplateWidget` consists of a Dart class and a corresponding HTML template
 file. Create a custom widget by extending `TemplateWidget`:

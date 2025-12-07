@@ -45,7 +45,7 @@ class ApiRoute extends Route {
 }
 ```
 
-You need to register your custom routes with the build in router in under a given path:
+You need to register your custom routes with the built-in router under a given path:
 
 ```dart
 // Register the route
@@ -74,65 +74,19 @@ class UserRoute extends Route {
 
 ## Path parameters
 
-Routes support named path parameters using the `:paramName` syntax. These are
-automatically extracted and made available through the `Request` object:
+Define path parameters in your route pattern using the `:paramName` syntax:
 
 ```dart
-class UserRoute extends Route {
-  UserRoute() : super(methods: {Method.get});
-
-  static const _idParam = IntPathParam(#id); // Typed accessor
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    // Extract path parameter using typed accessor
-    int userId = request.pathParameters.get(_idParam);
-    final user = await User.db.findById(session, userId);
-    if (user == null) {
-      return Response.notFound();
-    }
-
-    return Response.ok(
-      body: Body.fromString(
-        jsonEncode(user.toJson()),
-        mimeType: MimeType.json,
-      ),
-    );
-  }
-}
-
-// Register at /api/users - will match /api/users/123 with #id = 123
 pod.webServer.addRoute(UserRoute(), '/api/users/:id');
+// Matches: /api/users/123, /api/users/456, etc.
 ```
 
 You can use multiple path parameters in a single route:
 
 ```dart
 pod.webServer.addRoute(route, '/:userId/posts/:postId');
-// Matches: /123/posts/456 with #userId = 123, and #postId = 456
+// Matches: /123/posts/456
 ```
-
-:::tip Accessing path parameters
-
-Path parameters are normally accessed using const constructed `PathParam<T>`
-instances. These combine the `Symbol` used to identify the parameter, with its
-parser, and automatically handles caching.
-
-Example:
-
-```dart
-const _userIdParam = IntPathParam(#userId);
-const _postIdParam = IntPathParam(#postId);
-int userId = request.pathParameters.get(_userIdParam); // throw if missing, ..
-int postId = request.pathParameters.get(_postIdParam); // .. or not an int
-```
-
-You can also access raw non-parsed value with
-`request.pathParameters.raw[#userId]`. Always validate and parse these values
-since they come from user input as strings.
-
-To learn more about typed path parameters consult the [Relic documentation](https://docs.dartrelic.dev/).
-
-:::
 
 ## Wildcards
 
@@ -255,6 +209,7 @@ explicit parameters).
 
 ## Next steps
 
+- **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
 - **[Middleware](middleware)** - Intercept and transform requests and responses
 - **[Static Files](static-files)** - Serve static assets
 - **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server

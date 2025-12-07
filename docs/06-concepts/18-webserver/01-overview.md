@@ -148,6 +148,7 @@ class UserRoute extends Route {
 ## Next steps
 
 - **[Routing](routing)** - Match requests to handlers by method and URL pattern
+- **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
 - **[Middleware](middleware)** - Intercept and transform requests and responses
 - **[Static Files](static-files)** - Serve static assets
 - **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server

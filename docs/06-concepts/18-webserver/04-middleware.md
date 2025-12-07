@@ -196,5 +196,6 @@ class TenantDataRoute extends Route {
 
 ## Next steps
 
+- **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
 - **[Static Files](static-files)** - Serve static assets
 - **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
