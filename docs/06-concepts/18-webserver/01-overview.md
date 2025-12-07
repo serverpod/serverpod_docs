@@ -147,7 +147,7 @@ class UserRoute extends Route {
 
 ## Next steps
 
-- **[Routing](routing)** - Learn about HTTP methods, path parameters, and wildcards
-- **[Middleware](middleware)** - Add cross-cutting functionality like error handling and logging
-- **[Static Files](static-files)** - Serve static assets with cache-busting
-- **[Typed Headers](typed-headers)** - Work with HTTP headers in a type-safe way
+- **[Routing](routing)** - Match requests to handlers by method and URL pattern
+- **[Middleware](middleware)** - Intercept and transform requests and responses
+- **[Static Files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server

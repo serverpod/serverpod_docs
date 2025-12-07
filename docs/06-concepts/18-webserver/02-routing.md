@@ -54,44 +54,21 @@ pod.webServer.addRoute(ApiRoute(), '/api/data');
 
 :::info
 
-The examples in this documentation omit error handling for brevity. See the
-Error Handling section in Middleware below for the recommended approach using
-global error-handling middleware.
+The examples in this documentation omit error handling for brevity.
 
 :::
 
 ## Http methods
 
 Routes can specify which HTTP methods they respond to using the `methods`
-parameter. The available methods are:
-
-- `Method.get` - Retrieve data
-- `Method.post` - Create new resources
-- `Method.put` - Update resources (full replacement)
-- `Method.patch` - Update resources (partial)
-- `Method.delete` - Delete resources
-- `Method.head` - Same as GET but without response body
-- `Method.options` - Query supported methods (used for CORS)
+parameter.
 
 ```dart
 class UserRoute extends Route {
   UserRoute() : super(
     methods: {Method.get, Method.post, Method.delete},
   );
-
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    switch (request.method) {
-      case Method.get:
-        return await _getUser(request);
-      case Method.post:
-        return await _createUser(request);
-      case Method.delete:
-        return await _deleteUser(request);
-      default:
-        return Response.methodNotAllowed();
-    }
-  }
+  // ...
 }
 ```
 
@@ -104,32 +81,12 @@ automatically extracted and made available through the `Request` object:
 class UserRoute extends Route {
   UserRoute() : super(methods: {Method.get});
 
-  @override
-  void injectIn(RelicRouter router) {
-    // Define route with path parameter
-    router.get('/:id', asHandler);
-  }
-
+  static const _idParam = IntPathParam(#id); // Typed accessor
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    // Extract path parameter using symbol
-    final id = request.pathParameters[#id];
-
-    if (id == null) {
-      return Response.badRequest(
-        body: Body.fromString('Missing user ID'),
-      );
-    }
-
-    final userId = int.tryParse(id);
-    if (userId == null) {
-      return Response.badRequest(
-        body: Body.fromString('Invalid user ID'),
-      );
-    }
-
+    // Extract path parameter using typed accessor
+    int userId = request.pathParameters.get(_idParam);
     final user = await User.db.findById(session, userId);
-
     if (user == null) {
       return Response.notFound();
     }
@@ -143,24 +100,37 @@ class UserRoute extends Route {
   }
 }
 
-// Register at /api/users - will match /api/users/123
-pod.webServer.addRoute(UserRoute(), '/api/users');
+// Register at /api/users - will match /api/users/123 with #id = 123
+pod.webServer.addRoute(UserRoute(), '/api/users/:id');
 ```
 
 You can use multiple path parameters in a single route:
 
 ```dart
-router.get('/:userId/posts/:postId', handler);
-// Matches: /123/posts/456
-// request.pathParameters[#userId] => '123'
-// request.pathParameters[#postId] => '456'
+pod.webServer.addRoute(route, '/:userId/posts/:postId');
+// Matches: /123/posts/456 with #userId = 123, and #postId = 456
 ```
 
-:::tip
+:::tip Accessing path parameters
 
-Path parameters are accessed using symbols: `request.pathParameters[#paramName]`.
-Always validate and parse these values since they come from user input as
-strings.
+Path parameters are normally accessed using const constructed `PathParam<T>`
+instances. These combine the `Symbol` used to identify the parameter, with its
+parser, and automatically handles caching.
+
+Example:
+
+```dart
+const _userIdParam = IntPathParam(#userId);
+const _postIdParam = IntPathParam(#postId);
+int userId = request.pathParameters.get(_userIdParam); // throw if missing, ..
+int postId = request.pathParameters.get(_postIdParam); // .. or not an int
+```
+
+You can also access raw non-parsed value with
+`request.pathParameters.raw[#userId]`. Always validate and parse these values
+since they come from user input as strings.
+
+To learn more about typed path parameters consult the Relic documentation.
 
 :::
 
@@ -176,13 +146,10 @@ pod.webServer.addRoute(ItemRoute(), '/item/*');
 pod.webServer.addRoute(ItemRoute(), '/item/**');
 ```
 
-:::info Performance Guarantee
+:::info Tail matches
 
 The `/**` wildcard is a **tail-match** pattern and can only appear at the end of
 a route path (e.g., `/static/**`). Patterns like `/a/**/b` are not supported.
-This design ensures O(h) route lookup performance, where h is the path length,
-without backtracking. This keeps routing fast and predictable, even with many
-routes.
 
 :::
 
@@ -192,7 +159,7 @@ Access the matched path information through the `Request` object:
 @override
 Future<Result> handleCall(Session session, Request request) async {
   // Get the remaining path after the route prefix
-  final remainingPath = request.url.path;
+  final remainingPath = request.remainingPath;
 
   // Access query parameters
   final query = request.url.queryParameters['query'];
@@ -202,12 +169,6 @@ Future<Result> handleCall(Session session, Request request) async {
   );
 }
 ```
-
-::: A note on literal vs dynamic segments
-
-Routing never does back-tracking, and adding a route with a literal segment always wins over dynamic segments such as wildcards. Say you have a route registered at `/**`, and another at `/a/b`, then `/a/c` will not be matched, because `a`  wins over `**` on the first segment, and `c` doesn't match on the second (only `b` does). Some find this behavior surprising. What you probably meant was for the `/**` to act as a fallback route. You should use an explicit `fallback` route for that instead.
-
-:::
 
 ## Fallback routes
 
@@ -227,11 +188,11 @@ class NotFoundRoute extends Route {
 pod.webServer.fallbackRoute = NotFoundRoute();
 ```
 
-## Modular routes
+## Modules
 
 As your web server grows, managing dozens of individual route registrations can
-become unwieldy. Modular routes solve this by letting you group related
-endpoints into reusable modules. For example, you might create a
+become unwieldy. Modules solve this by letting you group related
+endpoints into reusable components. For example, you might create a
 `UserCrudModule` that handles all user-related endpoints (`GET /users`,
 `POST /users`, `PUT /users/:id`, etc.) in a single cohesive unit.
 
@@ -241,23 +202,6 @@ on a router group for that path. By overriding `injectIn()`, you can register
 multiple handler functions instead of implementing a single `handleCall()`
 method. This pattern is perfect for REST resources, API modules, or any group of
 related endpoints.
-
-### Session access in modular routes
-
-When using `injectIn()` with handler functions (`router.get('/', _handler)`),
-your handlers receive only a `Request` parameter. To access the `Session`, use
-`request.session`:
-
-```dart
-Future<Result> _handler(Request request) async {
-  final session = request.session;  // Extract Session from Request
-  // ... use session
-}
-```
-
-This differs from `Route.handleCall()` which receives both Session and Request
-as explicit parameters. The modular route pattern uses Relic's router directly,
-which only provides Request to handlers.
 
 ### Creating a module
 
@@ -271,7 +215,7 @@ class UserCrudModule extends Route {
     // Register multiple routes with path parameters
     router
       ..get('/', _list)
-      ..get('/:id', _get)
+      ..get('/:id', _get);
   }
 
   // Handler methods
@@ -287,23 +231,10 @@ class UserCrudModule extends Route {
     );
   }
 
+  static const _idParam = IntPathParam(#id);
   Future<Result> _get(Request request) async {
-    // Extract path parameter using symbol
-    final id = request.pathParameters[#id];
-    if (id == null) {
-      return Response.badRequest(
-        body: Body.fromString('Missing user ID'),
-      );
-    }
-
-    final userId = int.tryParse(id);
-    if (userId == null) {
-      return Response.badRequest(
-        body: Body.fromString('Invalid user ID'),
-      );
-    }
-
-    final session = request.session;
+    int userId = request.pathParameters.get(_idParam);
+    final session = await request.session;
     final user = await User.db.findById(session, userId);
 
     if (user == null) {
@@ -330,9 +261,27 @@ This creates the following RESTful endpoints:
 - `GET /api/users` - List all users
 - `GET /api/users/:id` - Get a specific user (e.g., `/api/users/123`)
 
+:::tip Session access in modular routes
+
+When using `injectIn()` with handler functions (`router.get('/', _handler)`),
+your handlers receive only a `Request` parameter. To access the `Session`, use
+`await request.session`:
+
+```dart
+Future<Result> _handler(Request request) async {
+  final session = await request.session;  // Extract Session from Request
+  // ... use session
+}
+```
+
+This differs from `Route.handleCall()` which receives both as explicit
+parameters. The modular route pattern uses Relic's router directly, which
+doesn't know about Serverpod's `Session`.
+
+:::
+
 ## Next steps
 
-- Add [middleware](middleware) for cross-cutting concerns like logging and
-  error handling
-- Learn about [typed headers](typed-headers) for type-safe header access
-- Explore [static file serving](static-files) for assets and downloads
+- **[Middleware](middleware)** - Intercept and transform requests and responses
+- **[Static Files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server

@@ -43,32 +43,6 @@ pod.webServer.addRoute(
 );
 ```
 
-Available cache control factories:
-
-- **`StaticRoute.publicImmutable()`** - For versioned assets that never change
-
-  ```dart
-  StaticRoute.publicImmutable(maxAge: const Duration(years: 1)) // 1 year, perfect for cache-busted files
-  ```
-
-- **`StaticRoute.public()`** - For public assets with revalidation
-
-  ```dart
-  StaticRoute.public(maxAge: const Duration(hours: 1))
-  ```
-
-- **`StaticRoute.privateNoCache()`** - For user-specific files
-
-  ```dart
-  StaticRoute.privateNoCache()  // Must revalidate every time
-  ```
-
-- **`StaticRoute.noStore()`** - For sensitive content that shouldn't be cached
-
-  ```dart
-  StaticRoute.noStore()  // Never cache
-  ```
-
 ## Static file cache-busting
 
 When deploying static assets, browsers and CDNs (like CloudFront) cache files
@@ -165,9 +139,3 @@ ETag: "abc123"
 When combined with cache-busting, conditional requests provide a fallback
 validation mechanism even for cached assets, ensuring efficient delivery while
 maintaining correctness.
-
-## Next steps
-
-- Learn about [typed headers](typed-headers) for type-safe header access
-- Explore [middleware](middleware) for cross-cutting concerns
-- Understand [routing](routing) for custom request handling

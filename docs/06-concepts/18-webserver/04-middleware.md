@@ -16,38 +16,14 @@ other cross-cutting concern in your web server.
 Use the `addMiddleware` method to apply middleware to specific path prefixes:
 
 ```dart
-// Apply to all routes
-pod.webServer.addMiddleware(loggingMiddleware, '/');
-
-// Apply only to API routes
-pod.webServer.addMiddleware(authMiddleware, '/api');
+// Apply to all routes below `/path`
+pod.webServer.addMiddleware(myMiddleware, '/path');
 ```
 
 ## Creating custom middleware
 
 Middleware is a function that takes a `Handler` and returns a new `Handler`.
-Here's a simple logging middleware example:
-
-```dart
-Handler loggingMiddleware(Handler next) {
-  return (Request request) async {
-    final start = DateTime.now();
-    print('→ ${request.method.name.toUpperCase()} ${request.url.path}');
-
-    // Call the next handler in the chain
-    final response = await next(request);
-
-    final duration = DateTime.now().difference(start);
-    print('← ${response.statusCode} (${duration.inMilliseconds}ms)');
-
-    return response;
-  };
-}
-```
-
-## Api key validation middleware
-
-A common use case is validating API keys for protected routes:
+Here's a simple example that validates API keys for protected routes:
 
 ```dart
 Handler apiKeyMiddleware(Handler next) {
@@ -78,106 +54,12 @@ pod.webServer.addMiddleware(apiKeyMiddleware, '/api');
 ```
 
 :::info
-
 For user authentication, use Serverpod's built-in authentication system which
 integrates with the `Session` object. The middleware examples here are for
 additional web-specific validations like API keys, rate limiting, or request
 validation.
 
 :::
-
-## Cors middleware
-
-Enable Cross-Origin Resource Sharing for your API:
-
-```dart
-Handler corsMiddleware(Handler next) {
-  return (Request request) async {
-    // Handle preflight requests
-    if (request.method == Method.options) {
-      return Response.ok(
-        headers: Headers.build((h) {
-          h.accessControlAllowOrigin = const AccessControlAllowOriginHeader.wildcard();
-          h.accessControlAllowMethods = AccessControlAllowMethodsHeader.methods(
-            methods: [Method.get, Method.post, Method.put, Method.delete],
-          );
-          h.accessControlAllowHeaders = AccessControlAllowHeadersHeader.headers(
-            headers: ['Content-Type', 'Authorization'],
-          );
-        }),
-      );
-    }
-
-    // Process the request
-    final response = await next(request);
-
-    // Add CORS headers to response
-    return response.copyWith(
-      headers: response.headers.transform((h) {
-        h.accessControlAllowOrigin = const AccessControlAllowOriginHeader.wildcard();
-      }),
-    );
-  };
-}
-
-pod.webServer.addMiddleware(corsMiddleware, '/api');
-```
-
-## Error handling
-
-Production applications need robust error handling. Rather than adding try-catch
-blocks to every route, use error-handling middleware to catch exceptions
-globally and return consistent error responses.
-
-### Error-handling middleware
-
-Error-handling middleware wraps all your routes and catches any exceptions they
-throw:
-
-```dart
-Handler errorHandlingMiddleware(Handler next) {
-  return (Request request) async {
-    try {
-      return await next(request);
-    } on FormatException catch (e) {
-      // Handle JSON parsing errors
-      return Response.badRequest(
-        body: Body.fromString(
-          jsonEncode({'error': 'Invalid request format', 'message': e.message}),
-          mimeType: MimeType.json,
-        ),
-      );
-    } catch (e, stackTrace) {
-      // Log the error
-      print('Error handling ${request.method} ${request.url.path}: $e');
-      print(stackTrace);
-
-      // Return a generic error response
-      return Response.internalServerError(
-        body: Body.fromString(
-          jsonEncode({'error': 'Internal server error'}),
-          mimeType: MimeType.json,
-        ),
-      );
-    }
-  };
-}
-
-// Apply to all routes
-pod.webServer.addMiddleware(errorHandlingMiddleware, '/');
-```
-
-With error-handling middleware in place, your route handlers can focus on
-business logic without extensive try-catch blocks. The middleware catches common
-exceptions like:
-
-- `FormatException` from `jsonDecode()` - Returns 400 Bad Request
-- Database errors - Returns 500 Internal Server Error with logging
-- Any other uncaught exceptions - Returns 500 with error details logged
-
-If an exception escapes all middleware, Serverpod will automatically return a
-500 Internal Server Error response. However, using error-handling middleware
-gives you control over error responses and logging.
 
 ## Middleware execution order
 
@@ -186,25 +68,20 @@ precedence. Within the same path, middleware executes in the order it was
 registered:
 
 ```dart
-pod.webServer.addMiddleware(loggingMiddleware, '/');      // Executes first (outer)
-pod.webServer.addMiddleware(authMiddleware, '/api');      // Executes second (inner) for /api routes
-pod.webServer.addMiddleware(rateLimitMiddleware, '/api'); // Executes third (innermost) for /api routes
+pod.webServer.addMiddleware(rateLimitMiddleware, '/api/users'); // Executes last for /api (inner)
+pod.webServer.addMiddleware(apiKeyMiddleware, '/api');          // Executes first for /api (outer)
 ```
 
-For a request to `/api/users`, the execution order is:
+For a request to `/api/users/list`, the execution order is:
 
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Logging as loggingMiddleware
-    participant Auth as authMiddleware
+    participant Auth as apiKeyMiddleware
     participant RateLimit as rateLimitMiddleware
     participant Handler as Route Handler
 
-    Client->>Logging: Request /api/users
-    activate Logging
-    Note over Logging: Before logic
-    Logging->>Auth: 
+    Client->>Auth: 
     activate Auth
     Note over Auth: Before logic
     Auth->>RateLimit: 
@@ -219,14 +96,10 @@ sequenceDiagram
     RateLimit-->>Auth: 
     deactivate RateLimit
     Note over Auth: After logic
-    Auth-->>Logging: 
-    deactivate Auth
-    Note over Logging: After logic
-    Logging-->>Client: Response
-    deactivate Logging
+    Auth-->>Client: Response
 ```
 
-## Request-scoped data with `ContextProperty`
+## Request-scoped data
 
 Middleware often needs to pass computed data to downstream handlers. For
 example, a tenant identification middleware might extract the tenant ID from a
@@ -249,37 +122,19 @@ request IDs, feature flags, or API version information extracted from headers.
 
 :::
 
-### Why use `ContextProperty`?
-
-Since `Request` objects are immutable, you can't modify them directly.
-`ContextProperty` allows you to associate additional data with a request that
-can be accessed by all downstream middleware and handlers. Common use cases
-include:
-
-- **Request ID tracking** - Generated correlation IDs for distributed tracing
-  (purely request-scoped, not session data)
-- **API versioning** - Extract and store API version from headers
-- **Feature flags** - Request-specific toggles based on headers or A/B testing
-- **Rate limiting** - Per-request rate limit state
-- **Tenant identification** - Multi-tenant context from subdomains (when not
-  part of user session)
-
 ### Creating a `ContextProperty`
 
-Define a `ContextProperty` as a top-level constant or static field:
+Define a `ContextProperty` as a top-level static field:
 
 ```dart
-// Define a property for request ID tracking
-final requestIdProperty = ContextProperty<String>('requestId');
+// Define a private context property.
+final _tenantProperty = ContextProperty<String>('tenant');
 
-// Define a property for tenant identification
-final tenantProperty = ContextProperty<String>('tenant');
-
-// Optional: with a default value
-final featureFlagsProperty = ContextProperty<FeatureFlags>(
-  'featureFlags',
-  defaultValue: () => FeatureFlags.defaults(),
-);
+// Create a public getter extension to allow handlers and other middleware to
+// read, but not modify the context property.
+extension tenantPropertyEx on Request {
+  String get tenant => _tenantProperty.get(this); // get throw on null, [] doesn't  
+}
 ```
 
 ### Setting values in middleware
@@ -288,31 +143,27 @@ Middleware can set values on the context property, making them available to all
 downstream handlers:
 
 ```dart
-final requestIdProperty = ContextProperty<String>('requestId');
-
-Handler requestIdMiddleware(Handler next) {
+// in same file
+ 
+// Tenant identification middleware (extracts from subdomain)
+Handler tenantMiddleware(Handler next) {
   return (Request request) async {
-    // Generate a unique request ID for tracing
-    final requestId = Uuid().v4();
+    final host = request.headers.host;
 
-    // Attach to request context
-    requestIdProperty[request] = requestId;
+    // Validate tenant exists (implement your own logic)
+    final session = request.session;
+    final tenant = await extractAndValidateTenant(session, host);
 
-    // Log the incoming request
-    print('[$requestId] ${request.method} ${request.url.path}');
+    if (tenant == null) {
+      return Response.notFound(
+        body: Body.fromString('Tenant not found'),
+      );
+    }
 
-    // Continue to next handler
-    final response = await next(request);
+    // Attach tenant to context
+    _tenantProperty[request] = tenant;
 
-    // Log the response
-    print('[$requestId] Response: ${response.statusCode}');
-
-    // Optionally add request ID to response headers
-    return response.copyWith(
-      headers: response.headers.transform((h) {
-        h['X-Request-ID'] = [requestId];
-      }),
-    );
+    return await next(request);
   };
 }
 ```
@@ -322,108 +173,11 @@ Handler requestIdMiddleware(Handler next) {
 Route handlers can retrieve the value from the context property:
 
 ```dart
-class ApiRoute extends Route {
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    // Get the request ID from context
-    final requestId = requestIdProperty[request];
-
-    // Use it for logging or tracing
-    session.log('Processing request $requestId');
-
-    // Your route logic here
-    final data = await processRequest(session);
-
-    return Response.ok(
-      body: Body.fromString(
-        jsonEncode(data),
-        mimeType: MimeType.json,
-      ),
-    );
-  }
-}
-```
-
-### Safe access with `getOrNull`
-
-If a value might not be set, use `getOrNull()` to avoid exceptions:
-
-```dart
-class TenantRoute extends Route {
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    // Safely get tenant, returns null if not set
-    final tenant = tenantProperty.getOrNull(request);
-
-    if (tenant != null) {
-      // Fetch tenant-specific data
-      final data = await session.db.find<Data>(where: (t) => t.tenantId.equals(tenant));
-      return Response.ok(
-        body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
-      );
-    } else {
-      return Response.badRequest(
-        body: Body.fromString('Missing tenant identifier'),
-      );
-    }
-  }
-}
-```
-
-### Complete multi-tenant example
-
-Here's a complete example showing tenant identification from subdomains:
-
-```dart
-// Define the context property for tenant ID
-final tenantProperty = ContextProperty<String>('tenant');
-
-// Tenant identification middleware (extracts from subdomain)
-Handler tenantMiddleware(Handler next) {
-  return (Request request) async {
-    final host = request.headers.host;
-
-    if (host == null) {
-      return Response.badRequest(
-        body: Body.fromString('Missing host header'),
-      );
-    }
-
-    // Extract tenant from subdomain (e.g., acme.example.com -> "acme")
-    final parts = host.host.split('.');
-    if (parts.length < 2) {
-      return Response.badRequest(
-        body: Body.fromString('Invalid hostname format'),
-      );
-    }
-
-    final tenant = parts.first;
-
-    // Validate tenant exists (implement your own logic)
-    final session = request.session;
-    final tenantExists = await validateTenant(session, tenant);
-
-    if (!tenantExists) {
-      return Response.notFound(
-        body: Body.fromString('Tenant not found'),
-      );
-    }
-
-    // Attach tenant to context
-    tenantProperty[request] = tenant;
-
-    return await next(request);
-  };
-}
-
-// Usage in your server
-pod.webServer.addMiddleware(tenantMiddleware, '/');
-
 // Routes automatically have access to the tenant
 class TenantDataRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
-    final tenant = tenantProperty[request];
+    final tenant = request.tenant; // using the previously defined extension
 
     // Fetch tenant-specific data
     final data = await session.db.find<Product>(
@@ -440,57 +194,7 @@ class TenantDataRoute extends Route {
 }
 ```
 
-### Multiple context properties
-
-You can use multiple context properties for different types of data:
-
-```dart
-final requestIdProperty = ContextProperty<String>('requestId');
-final tenantProperty = ContextProperty<String>('tenant');
-final apiVersionProperty = ContextProperty<String>('apiVersion');
-
-Handler requestContextMiddleware(Handler next) {
-  return (Request request) async {
-    // Generate and attach request ID
-    final requestId = Uuid().v4();
-    requestIdProperty[request] = requestId;
-
-    // Extract tenant from subdomain or header
-    final host = request.headers.host;
-    if (host != null) {
-      final tenant = host.host.split('.').first;
-      tenantProperty[request] = tenant;
-    }
-
-    // Extract API version from header
-    final apiVersion = request.headers['X-API-Version']?.firstOrNull ?? '1.0';
-    apiVersionProperty[request] = apiVersion;
-
-    return await next(request);
-  };
-}
-
-// Later in your route
-class DataRoute extends Route {
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    final requestId = requestIdProperty[request];
-    final tenant = tenantProperty[request];
-    final apiVersion = apiVersionProperty[request];
-
-    session.log('Request $requestId for tenant $tenant (API v$apiVersion)');
-
-    // Fetch tenant-specific data
-    final data = await fetchTenantData(session, tenant);
-
-    return Response.ok(
-      body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
-    );
-  }
-}
-```
-
 ## Next steps
 
-- Serve [static files](static-files) with caching and compression
-- Use [typed headers](typed-headers) for type-safe header access
+- **[Static Files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
