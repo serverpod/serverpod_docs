@@ -111,7 +111,7 @@ This is where `ContextProperty` comes in.
 object without modifying it. Think of it as a side channel for request-scoped
 data that middleware can write to and routes can read from. The data is
 automatically cleaned up when the request completes, making it perfect for
-per-request state.
+per-request state. For more details, see the [Relic documentation](https://docs.dartrelic.dev/).
 
 :::info
 

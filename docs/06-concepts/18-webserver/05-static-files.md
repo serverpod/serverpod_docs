@@ -50,7 +50,7 @@ aggressively for performance. This means updated files may not be served to
 users unless you implement a cache-busting strategy.
 
 Serverpod provides `CacheBustingConfig` to automatically version your static
-files:
+files. For more details, see the [Relic documentation](https://docs.dartrelic.dev/).
 
 ```dart
 final staticDir = Directory('web/static');

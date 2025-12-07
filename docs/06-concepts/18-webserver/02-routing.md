@@ -130,7 +130,7 @@ You can also access raw non-parsed value with
 `request.pathParameters.raw[#userId]`. Always validate and parse these values
 since they come from user input as strings.
 
-To learn more about typed path parameters consult the Relic documentation.
+To learn more about typed path parameters consult the [Relic documentation](https://docs.dartrelic.dev/).
 
 :::
 
