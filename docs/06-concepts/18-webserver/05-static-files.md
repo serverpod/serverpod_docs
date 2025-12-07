@@ -139,3 +139,5 @@ ETag: "abc123"
 When combined with cache-busting, conditional requests provide a fallback
 validation mechanism even for cached assets, ensuring efficient delivery while
 maintaining correctness.
+
+For dynamic content that changes per request, see [Server-side HTML](server-side-html).

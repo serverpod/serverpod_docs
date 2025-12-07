@@ -188,25 +188,14 @@ class NotFoundRoute extends Route {
 pod.webServer.fallbackRoute = NotFoundRoute();
 ```
 
-## Modules
+:::tip Advanced: Grouping routes into modules
 
 As your web server grows, managing dozens of individual route registrations can
-become unwieldy. Modules solve this by letting you group related
-endpoints into reusable components. For example, you might create a
-`UserCrudModule` that handles all user-related endpoints (`GET /users`,
-`POST /users`, `PUT /users/:id`, etc.) in a single cohesive unit.
+become unwieldy. You can group related endpoints into reusable modules by
+overriding the `injectIn()` method. This lets you register multiple handler
+functions instead of implementing a single `handleCall()` method.
 
-The key to modular routes is the `injectIn()` method. When you call
-`pod.webServer.addRoute(route, path)`, Serverpod calls `route.injectIn(router)`
-on a router group for that path. By overriding `injectIn()`, you can register
-multiple handler functions instead of implementing a single `handleCall()`
-method. This pattern is perfect for REST resources, API modules, or any group of
-related endpoints.
-
-### Creating a module
-
-Here's an example of a modular route that registers multiple endpoints with
-path parameters:
+Here's an example:
 
 ```dart
 class UserCrudModule extends Route {
@@ -256,27 +245,11 @@ class UserCrudModule extends Route {
 pod.webServer.addRoute(UserCrudModule(), '/api/users');
 ```
 
-This creates the following RESTful endpoints:
+This creates `GET /api/users` and `GET /api/users/:id` endpoints.
 
-- `GET /api/users` - List all users
-- `GET /api/users/:id` - Get a specific user (e.g., `/api/users/123`)
-
-:::tip Session access in modular routes
-
-When using `injectIn()` with handler functions (`router.get('/', _handler)`),
-your handlers receive only a `Request` parameter. To access the `Session`, use
-`await request.session`:
-
-```dart
-Future<Result> _handler(Request request) async {
-  final session = await request.session;  // Extract Session from Request
-  // ... use session
-}
-```
-
-This differs from `Route.handleCall()` which receives both as explicit
-parameters. The modular route pattern uses Relic's router directly, which
-doesn't know about Serverpod's `Session`.
+Note that handlers receive only a `Request` parameter. To access the `Session`,
+use `request.session` (unlike `Route.handleCall()` which receives both as
+explicit parameters).
 
 :::
 
