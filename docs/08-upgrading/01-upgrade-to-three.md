@@ -13,6 +13,7 @@ The new authentication module has separate migration documentation. This guide c
 ## Breaking Changes Summary
 
 - **Web Server:** Relic framework integration (custom routes need updates)
+- **Authentication:** `AuthenticationInfo` changes, `session.authenticated` now synchronous
 - **Enum Serialization:** Default changed from `byIndex` to `byName`
 - **Model System:** `SerializableEntity` removed
 - **Widget Classes:** Renamed for clarity (legacy names deprecated)
@@ -25,7 +26,8 @@ The new authentication module has separate migration documentation. This guide c
 4. Update custom Route classes (see Web Server section)
 5. Update enum serialization strategy (see Enum section)
 6. Replace `SerializableEntity` with `SerializableModel` in custom models
-7. Test and deploy
+7. Update custom `AuthenticationInfo` usage (see Authentication section)
+8. Test and deploy
 
 ## Web Server (Relic Framework)
 
@@ -110,6 +112,41 @@ class MyEndpoint extends Endpoint {
     return 'IP: $ip, UA: $userAgent';
   }
 }
+```
+
+## Authentication
+
+Serverpod 3.0 includes several changes to the authentication system that improve type safety and performance.
+
+### AuthenticationInfo Changes
+
+The `AuthenticationInfo` class has been updated:
+
+- `authId` is now non-nullable (previously optional)
+- `userIdentifier` parameter type changed from `Object` to `String`
+
+### session.authenticated is Now Synchronous
+
+Authentication is now resolved when the session is created, making `session.authenticated` synchronous. This improves performance by eliminating repeated async lookups.
+
+```dart
+// Before (async)
+final auth = await session.authenticated;
+
+// After (sync)
+final auth = session.authenticated;
+```
+
+### Client Auth Key Provider
+
+A new `authKeyProvider` interface has been introduced to support multiple authentication key formats. The previous `authenticationKeyManager` is deprecated.
+
+```dart
+// Before
+Client(host)..authenticationKeyManager = myManager;
+
+// After
+Client(host)..authKeyProvider = myProvider;
 ```
 
 ## Enum Serialization
