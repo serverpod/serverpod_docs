@@ -1,14 +1,13 @@
 # Upgrade to 3.0
 
-## Requirements
-
-- Baseline: Serverpod 2.9.0+
-- Minimum Dart SDK: 3.8.0
-- Minimum Flutter SDK: 3.32.0
-
 :::note
 The new authentication module has separate migration documentation. This guide covers only core framework changes.
 :::
+
+## Requirements
+
+- Dart SDK: 3.8.0+
+- Flutter SDK: 3.32.0+
 
 ## Breaking Changes Summary
 
@@ -18,16 +17,65 @@ The new authentication module has separate migration documentation. This guide c
 - **Model System:** `SerializableEntity` removed
 - **Widget Classes:** Renamed for clarity (legacy names deprecated)
 
-## Migration Steps
+## Updating Your Project
 
-1. Update Dart SDK to 3.8.0+ and Flutter SDK to 3.32.0+
-2. Update all Serverpod packages to 3.0 in `pubspec.yaml`
-3. Run `dart pub upgrade` and `serverpod generate`
-4. Update custom Route classes (see Web Server section)
-5. Update enum serialization strategy (see Enum section)
-6. Replace `SerializableEntity` with `SerializableModel` in custom models
-7. Update custom `AuthenticationInfo` usage (see Authentication section)
-8. Test and deploy
+### Update the CLI
+
+Update the Serverpod command line interface to the latest version:
+
+```bash
+dart pub global activate serverpod_cli
+```
+
+Verify the installed version:
+
+```bash
+serverpod version
+```
+
+### Update pubspec.yaml Files
+
+Update the `pubspec.yaml` files in your `server`, `client`, and `flutter` directories. Change all Serverpod package versions to `3.0.0` (or later 3.x version).
+
+Update the Dart SDK constraint in all `pubspec.yaml` files:
+
+```yaml
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+```
+
+### Update the Dockerfile
+
+Update the Dart version in your project's `Dockerfile`:
+
+```docker
+FROM dart:3.8 AS build
+
+...
+```
+
+### Run Updates
+
+After updating your `pubspec.yaml` files, run these commands in each package directory:
+
+```bash
+dart pub upgrade
+```
+
+Then regenerate your project in your `server` directory:
+
+```bash
+serverpod generate
+```
+
+## Migration Checklist
+
+1. Update CLI, pubspec files, and Dockerfile (see above)
+2. Update custom Route classes (see Web Server section)
+3. Update enum serialization strategy (see Enum section)
+4. Replace `SerializableEntity` with `SerializableModel` in custom models
+5. Update custom `AuthenticationInfo` usage (see Authentication section)
+6. Test and deploy
 
 ## Web Server (Relic Framework)
 
