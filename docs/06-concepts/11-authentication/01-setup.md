@@ -14,8 +14,10 @@ Serverpod's auth module makes it easy to authenticate users through email or 3rd
 
 Add the auth modules as dependencies to the server project's `pubspec.yaml`.
 
-```sh
-$ dart pub add serverpod_auth_idp_server
+```yaml
+dependencies:
+  ...
+  serverpod_auth_idp_server: 3.x.x
 ```
 
 The `serverpod_auth_idp_server` package contains all components required to configure authentication services.
@@ -48,54 +50,15 @@ void run(List<String> args) async {
         // Algorithm used to sign the tokens (`hmacSha512` or `ecdsaSha512`).
         algorithm: JwtAlgorithm.hmacSha512(
           // Private key to sign the tokens. Must be a valid HMAC SHA-512 key.
-          SecretKey(pod.getPassword('jwtPrivateKey')!),
+          SecretKey(pod.getPassword('jwtHmacSha512PrivateKey')!),
         )
       ),
     ],
   );
 
-
   await pod.start();
 }
 ```
-
-Optionally, add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.
-
-```yaml
-modules:
-  serverpod_auth_core:
-    nickname: auth_core
-  serverpod_auth_idp:
-    nickname: auth_idp
-```
-
-While still in the server project, generate the client code and endpoint methods for the auth module by running the `serverpod generate` command line tool.
-
-```bash
-$ serverpod generate
-```
-
-### Initialize the auth database
-
-After adding the module to the server project, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
-
-```bash
-$ serverpod create-migration
-```
-
-Start your database container from the server project.
-
-```bash
-$ docker compose up --build --detach
-```
-
-Then apply the migration by starting the server with the `apply-migrations` flag.
-
-```bash
-$ dart run bin/main.dart --role maintenance --apply-migrations
-```
-
-The full migration instructions can be found in the [migration guide](../database/migrations).
 
 ### Token Manager Configuration
 
@@ -104,7 +67,7 @@ The authentication system uses token managers to handle authentication tokens. Y
 Serverpod provides two built-in token manager builders:
 
 - `JwtConfig` to use JWT-based authentication.
-- `ServerSideSessionsConfig` to use session-based authentication.
+- `ServerSideSessionsConfig` to use server-side sessions authentication.
 
 For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](05-token-managers) documentation.
 
@@ -119,17 +82,50 @@ Identity providers handle authentication with different methods (Email, Google, 
 
 By default, endpoints for all providers are disabled. To enable a provider, it is necessary to:
 
-- Pass its config object to the `identityProviderBuilders` parameter of the `pod.initializeAuthServices()` method.
-- Extend the identity provider abstract endpoint (example below).
-- Run `serverpod generate` to generate the client code.
+1. Pass its config object to the `identityProviderBuilders` parameter of the `pod.initializeAuthServices()` method.
 
-```dart
-import 'package:serverpod_auth_idp_server/providers/email.dart';
+    ```dart
+    pod.initializeAuthServices(
+      identityProviderBuilders: [
+        EmailIdpConfig( /* configuration options */ ),
+      ],
+    );
+    ```
 
-class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
-```
+   :::tip
+   Some identity providers might require configuration on external services, such as the Google client secret. Such configuration will be required by the provider config object.
+   :::
 
-When doing this, the endpoint will be exposed on the server and its methods will be available on the generated client.
+2. Extend the identity provider abstract endpoint.
+
+    ```dart
+    import 'package:serverpod_auth_idp_server/providers/email.dart';
+
+    class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+    ```
+
+3. Run `serverpod generate` to generate the client code and endpoint methods for the provider.
+
+    ```bash
+    $ serverpod generate
+    ```
+
+4. Create a migration to initialize the database for the provider.
+
+    ```bash
+    # Create the migration
+    $ serverpod create-migration
+
+    # Start the database container
+    $ docker compose up --build --detach
+
+    # Apply the migration
+    $ dart run bin/main.dart --role maintenance --apply-migrations
+    ```
+
+    :::info
+    If this is the first time creating migrations after adding the module, besides the provider tables, all auth module tables will also be created. More detailed migration instructions can be found in the [migration guide](../database/migrations).
+    :::
 
 ### Storing Secrets
 
@@ -182,7 +178,7 @@ Add the `serverpod_auth_idp_client` package to your client project's `pubspec.ya
 ```yaml
 dependencies:
   ...
-  serverpod_auth_idp_client: ^3.x.x
+  serverpod_auth_idp_client: 3.x.x
 ```
 
 ## App setup
@@ -193,8 +189,8 @@ First, add dependencies to your app's `pubspec.yaml` file for the methods of sig
 dependencies:
   flutter:
     sdk: flutter
-  serverpod_auth_idp_flutter: ^3.x.x
-  serverpod_flutter: ^3.x.x
+  serverpod_auth_idp_flutter: 3.x.x
+  serverpod_flutter: 3.x.x
   your_client:
     path: ../your_client
 ```
@@ -269,3 +265,7 @@ SignInWidget(
 ```
 
 This widget is a convenient way to use identity providers out-of-the-box, but you can also fully customize it or replace it with your own implementation. See the [UI Components](06-ui-components) documentation for more details.
+
+#### Updating the UI based on authentication state
+
+Instead of navigating to the home screen using the `onAuthenticated` callback, you can listen to authentication state changes and update the UI accordingly. See the [Client-side authentication](02-basics#monitor-authentication-changes) section for more details.
