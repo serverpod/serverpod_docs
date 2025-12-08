@@ -243,7 +243,7 @@ The following APIs have been removed in Serverpod 3.0:
 
 ## Deprecated APIs
 
-The following APIs have been deprecated and will be removed in a future version:
+The following APIs have been deprecated but will continue to work for the foreseeable future to maintain compatibility with older clients. They will be removed in a future major version:
 
 - Legacy streaming endpoints → Use [streaming methods](/concepts/streams) for new code
 
