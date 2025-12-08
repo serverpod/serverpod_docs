@@ -576,4 +576,3 @@ Middleware errorHandlingMiddleware() {
 6. **Document configuration**: If middleware accepts parameters, document them clearly.
 
 7. **Avoid side effects**: Be cautious with middleware that modifies global state or external systems.
-
