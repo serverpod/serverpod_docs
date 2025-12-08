@@ -46,12 +46,14 @@ pod.webServer.addRoute(
     webDir,
     fallback: File('web/app/index.html'),
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(days: 365),
+      maxAge: const Duration(minutes: 5),
     ),
   ),
   '/**',
 );
 ```
+
+See [Static Files](static-files#cache-control) for more on cache control.
 
 ## Cache busting
 
@@ -71,7 +73,7 @@ pod.webServer.addRoute(
     fallback: File('web/app/index.html'),
     cacheBustingConfig: cacheBustingConfig,
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(days: 365),
+      maxAge: const Duration(minutes: 5),
     ),
   ),
   '/**',

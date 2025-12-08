@@ -37,7 +37,7 @@ Control how browsers and CDNs cache your static files using the
 pod.webServer.addRoute(
   StaticRoute.directory(
     staticDir,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(years: 1)),
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(minutes: 5)),
   ),
   '/static/**',
 );
@@ -65,7 +65,7 @@ pod.webServer.addRoute(
   StaticRoute.directory(
     staticDir,
     cacheBustingConfig: cacheBustingConfig,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(years: 1)),
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(minutes: 5)),
   ),
   '/static/**',
 );

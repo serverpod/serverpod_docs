@@ -89,12 +89,14 @@ pod.webServer.addRoute(
   FlutterRoute(
     Directory('web/app'),
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(days: 365),
+      maxAge: const Duration(minutes: 5),
     ),
   ),
   '/**',
 );
 ```
+
+See [Static Files](static-files#cache-control) for more on cache control.
 
 ## Cache busting
 
@@ -113,7 +115,7 @@ pod.webServer.addRoute(
     webDir,
     cacheBustingConfig: cacheBustingConfig,
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(days: 365),
+      maxAge: const Duration(minutes: 5),
     ),
   ),
   '/**',
