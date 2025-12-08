@@ -21,22 +21,7 @@ This configuration:
 
 ## Building Flutter for web
 
-Flutter supports two compilation targets for web: JavaScript and WebAssembly (WASM).
-
-### JavaScript build
-
-The standard JavaScript build works in all modern browsers:
-
-```bash
-cd my_project_flutter
-flutter build web
-```
-
-This creates the build output in `build/web/`.
-
-### WASM build
-
-For improved performance and multi-threading support, use the WASM build:
+Build your Flutter app for web with WASM support for improved performance and multi-threading:
 
 ```bash
 cd my_project_flutter
