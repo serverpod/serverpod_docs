@@ -70,7 +70,7 @@ serverpod generate
 
 ### Create and apply migrations
 
-A database migration is required for Serverpod 3.0. The session log table now stores authenticated user IDs as `String` instead of `int` to support non-numeric identifiers (e.g., UUIDs).
+A database migration is required for Serverpod 3.0. The session log table now stores authenticated user IDs as `String` instead of `int` to support non-numeric identifiers (e.g., `UUID`s).
 
 Create and apply the migration:
 
@@ -170,7 +170,7 @@ The `RouteStaticDirectory` class has been deprecated in favor of `StaticRoute.di
 ```dart
 pod.webServer.addRoute(
   RouteStaticDirectory(
-    serverDirectory: 'static',
+    serverDirectory: 'web/static',
     basePath: '/',
   ),
   '/static/**',
@@ -181,7 +181,7 @@ pod.webServer.addRoute(
 
 ```dart
 pod.webServer.addRoute(
-  StaticRoute.directory(Directory('static')),
+  StaticRoute.directory(Directory('web/static')),
   '/static/**',
 );
 ```
@@ -191,7 +191,7 @@ The new `StaticRoute` provides better cache control options. You can use the bui
 ```dart
 pod.webServer.addRoute(
   StaticRoute.directory(
-    Directory('static'),
+    Directory('web/static'),
     cacheControlFactory: StaticRoute.publicImmutable(maxAge: 3600),
   ),
   '/static/**',
@@ -210,7 +210,7 @@ You can also provide a custom factory function:
 ```dart
 pod.webServer.addRoute(
   StaticRoute.directory(
-    Directory('static'),
+    Directory('web/static'),
     cacheControlFactory: (ctx, fileInfo) => CacheControlHeader(
       publicCache: true,
       maxAge: 3600,
