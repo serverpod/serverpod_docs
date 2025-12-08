@@ -149,11 +149,15 @@ The web server widget classes have been reorganized for better clarity. Legacy c
 
 The `WidgetRoute` class remains unchanged and continues to be the base class for web routes.
 
-```dart
-// Before
-Future<Widget> build(...) => Widget(name: 'page')..values = {...};
+**Before:**
 
-// After
+```dart
+Future<Widget> build(...) => Widget(name: 'page')..values = {...};
+```
+
+**After:**
+
+```dart
 Future<WebWidget> build(...) => TemplateWidget(name: 'page', values: {...});
 ```
 
@@ -161,12 +165,60 @@ Future<WebWidget> build(...) => TemplateWidget(name: 'page', values: {...});
 
 The `RouteStaticDirectory` class has been deprecated in favor of `StaticRoute.directory()`:
 
-```dart
-// Before
-RouteStaticDirectory(serverDirectory: 'web', basePath: '/static')
+**Before:**
 
-// After
-StaticRoute.directory(serverDirectory: 'web', basePath: '/static')
+```dart
+pod.webServer.addRoute(
+  RouteStaticDirectory(
+    serverDirectory: 'static',
+    basePath: '/',
+  ),
+  '/static/**',
+);
+```
+
+**After:**
+
+```dart
+pod.webServer.addRoute(
+  StaticRoute.directory(Directory('static')),
+  '/static/**',
+);
+```
+
+The new `StaticRoute` provides better cache control options. You can use the built-in static helper methods for common caching scenarios:
+
+```dart
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    Directory('static'),
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: 3600),
+  ),
+  '/static/**',
+);
+```
+
+Available cache control factory methods:
+
+- `StaticRoute.public(maxAge: seconds)` - Public cache with optional max-age
+- `StaticRoute.publicImmutable(maxAge: seconds)` - Public immutable cache with optional max-age
+- `StaticRoute.privateNoCache()` - Private cache with no-cache directive
+- `StaticRoute.noStore()` - No storage allowed
+
+You can also provide a custom factory function:
+
+```dart
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    Directory('static'),
+    cacheControlFactory: (ctx, fileInfo) => CacheControlHeader(
+      publicCache: true,
+      maxAge: 3600,
+      immutable: true,
+    ),
+  ),
+  '/static/**',
+);
 ```
 
 ## Session.request property
@@ -200,11 +252,15 @@ The `AuthenticationInfo` class has been updated:
 
 Authentication is now resolved when the session is created, making `session.authenticated` synchronous. This improves performance by eliminating repeated async lookups.
 
-```dart
-// Before (async)
-final auth = await session.authenticated;
+**Before (async):**
 
-// After (sync)
+```dart
+final auth = await session.authenticated;
+```
+
+**After (sync):**
+
+```dart
 final auth = session.authenticated;
 ```
 
@@ -212,11 +268,15 @@ final auth = session.authenticated;
 
 The `authKeyProvider` interface replaces the previous `authenticationKeyManager`. This interface has been simplified to make it more explicit what the client needs—it now only requires something that can provide an auth key wrapped as a header.
 
-```dart
-// Before
-Client(host)..authenticationKeyManager = myManager;
+**Before:**
 
-// After
+```dart
+Client(host)..authenticationKeyManager = myManager;
+```
+
+**After:**
+
+```dart
 Client(host)..authKeyProvider = myProvider;
 ```
 
@@ -250,13 +310,17 @@ values:
 
 The `SerializableEntity` class, deprecated since Serverpod 2.0, has been removed. Replace `extends SerializableEntity` with `implements SerializableModel` in your custom model classes.
 
+**Before:**
+
 ```dart
-// Before
 class CustomClass extends SerializableEntity {
   Map<String, dynamic> toJson() => {'name': name};
 }
+```
 
-// After
+**After:**
+
+```dart
 class CustomClass implements SerializableModel {
   Map<String, dynamic> toJson() => {'name': name};
   factory CustomClass.fromJson(Map<String, dynamic> json) => CustomClass(json['name']);
@@ -273,10 +337,9 @@ The following deprecated YAML keywords have been removed. Run `serverpod generat
 | `database`     | `scope=serverOnly`       |
 | `api`          | `!persist`               |
 
-**Example:**
+**Before:**
 
 ```yaml
-# Before
 class: Company
 table: company
 fields:
@@ -284,8 +347,11 @@ fields:
   ceoId: int, parent=employee
   internalNotes: String, database
   tempData: String, api
+```
 
-# After
+**After:**
+
+```yaml
 class: Company
 table: company
 fields:
