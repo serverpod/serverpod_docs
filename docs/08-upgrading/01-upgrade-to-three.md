@@ -49,8 +49,6 @@ import 'dart:io';
 class MyRoute extends Route {
   @override
   Future<bool> handleCall(Session session, HttpRequest request) async {
-    final ip = request.remoteIpAddress;
-    final userAgent = request.headers.value('user-agent');
     request.response.write('<html><body>Hello</body></html>');
     return true;
   }
@@ -63,8 +61,6 @@ class MyRoute extends Route {
 class MyRoute extends Route {
   @override
   FutureOr<Result> handleCall(Session session, Request request) async {
-    final ip = request.remoteInfo;
-    final userAgent = request.headers.userAgent;
     return Response.ok(
       body: Body.fromString('<html><body>Hello</body></html>', mimeType: MimeType.html),
     );
@@ -74,10 +70,10 @@ class MyRoute extends Route {
 
 **Changes:**
 
-- `HttpRequest` → `Request`
+- `HttpRequest` → `Request` (from Relic)
 - `Future<bool>` → `FutureOr<Result>`
-- `request.remoteIpAddress` → `request.remoteInfo`
-- `request.headers.value()` → `request.headers.userAgent` or `request.headers['name']`
+- `request.remoteIpAddress` → `request.remoteInfo` (both return `String`)
+- `request.headers.value('name')` → `request.headers['name']`
 - Return `Response` instead of `bool`
 
 ### Widget Class Names
