@@ -137,6 +137,8 @@ class MyRoute extends Route {
 
 ### Widget class names
 
+The web server widget classes have been reorganized for better clarity. Legacy class names are deprecated but still available for backward compatibility.
+
 | Old (Deprecated) | New              |
 | ---------------- | ---------------- |
 | `AbstractWidget` | `WebWidget`      |
@@ -145,12 +147,26 @@ class MyRoute extends Route {
 | `WidgetJson`     | `JsonWidget`     |
 | `WidgetRedirect` | `RedirectWidget` |
 
+The `WidgetRoute` class remains unchanged and continues to be the base class for web routes.
+
 ```dart
 // Before
 Future<Widget> build(...) => Widget(name: 'page')..values = {...};
 
 // After
 Future<WebWidget> build(...) => TemplateWidget(name: 'page', values: {...});
+```
+
+### Static route updates
+
+The `RouteStaticDirectory` class has been deprecated in favor of `StaticRoute.directory()`:
+
+```dart
+// Before
+RouteStaticDirectory(serverDirectory: 'web', basePath: '/static')
+
+// After
+StaticRoute.directory(serverDirectory: 'web', basePath: '/static')
 ```
 
 ## Session.request property
