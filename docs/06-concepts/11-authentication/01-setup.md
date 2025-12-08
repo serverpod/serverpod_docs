@@ -1,8 +1,8 @@
 # Setup
 
-Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins and currently supports signing in with email, Google, Apple, Firebase (upcoming) and Passkeys.
+Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth_idp` module. The module makes it easy to authenticate with email, social sign-ins and more.
 
-Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
+The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-provider-configuration) section for details on all available providers.
 
 ![Sign-in with Serverpod](https://github.com/serverpod/serverpod/raw/main/misc/images/sign-in.png)
 
@@ -18,11 +18,11 @@ Add the auth modules as dependencies to the server project's `pubspec.yaml`.
 $ dart pub add serverpod_auth_idp_server
 ```
 
-The `serverpod_auth_idp_server` package provides identity providers (Email, Google, Apple, Passkey) and exports all core components from the `serverpod_auth_core_server` package.
+The `serverpod_auth_idp_server` package contains all components required to configure authentication services.
 
 ### Configure Authentication Services
 
-In your main `server.dart` file, configure the authentication system using `pod.initializeAuthServices()`. This replaces the old `AuthConfig.set()` approach and provides a more flexible, modular architecture.
+In your main `server.dart` file, configure the authentication system using the `pod.initializeAuthServices()` extension method.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -43,8 +43,11 @@ void run(List<String> args) async {
   pod.initializeAuthServices(
     tokenManagerBuilders: [
       JwtConfig(
+        // Pepper used to hash the refresh token secret.
         refreshTokenHashPepper: pod.getPassword('jwtRefreshTokenHashPepper')!,
+        // Algorithm used to sign the tokens (`hmacSha512` or `ecdsaSha512`).
         algorithm: JwtAlgorithm.hmacSha512(
+          // Private key to sign the tokens. Must be a valid HMAC SHA-512 key.
           SecretKey(pod.getPassword('jwtPrivateKey')!),
         )
       ),
@@ -98,81 +101,35 @@ The full migration instructions can be found in the [migration guide](../databas
 
 The authentication system uses token managers to handle authentication tokens. You need to configure at least one token manager to be used as the primary token manager. Additional token managers can be configured to be used for validation and management operations.
 
-For more details on token managers, see the [Token Managers](05-token-managers) documentation.
+Serverpod provides two built-in token manager builders:
 
-#### JWT-based Token Manager
+- `JwtConfig` to use JWT-based authentication.
+- `ServerSideSessionsConfig` to use session-based authentication.
 
-The `JwtConfig` uses JWT (JSON Web Tokens) for stateless authentication.
+For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](05-token-managers) documentation.
 
-```dart
-final authenticationTokenConfig = JwtConfig(
-  refreshTokenHashPepper: pod.getPassword(
-    'jwtRefreshTokenHashPepper',
-  )!,
-  algorithm: JwtAlgorithm.hmacSha512(
-    SecretKey(pod.getPassword('jwtPrivateKey')!),
-  ),
-  // Optional: Set fallback algorithms for token verification
-  // This is useful for allowing old tokens to be validated after a rotation.
-  fallbackVerificationAlgorithms: [
-    JwtAlgorithm.hmacSha512(
-      SecretKey(pod.getPassword('fallbackJwtPrivateKey')!),
-    ),
-  ],
-  // Optional: Configure token lifetimes
-  accessTokenLifetime: Duration(minutes: 10),
-  refreshTokenLifetime: Duration(days: 14),
-  // Optional: Add custom claims to tokens.
-  extraClaimsProvider: (session, context) async {
-    return {
-      'userRole': 'admin',
-    };
-  },
-  // Check the [JwtConfig] documentation for more options.
-);
-```
-
-**Required configuration:**
-
-- `algorithm`: Required. The algorithm to use for signing tokens (HMAC SHA-512 or ECDSA SHA-512).
-- `refreshTokenHashPepper`: Required. A secret pepper for hashing refresh tokens. Must be at least 10 characters long.
-
-For more details on configuration options, check the `JwtConfig` in-code documentation.
-
-#### Session-based Token Manager
-
-The `ServerSideSessionsConfig` uses session-based tokens stored in the database. This was the default on previous versions of the authentication module, but also results in more database queries for validation and management operations.
-
-```dart
-final serverSideSessionsConfig = ServerSideSessionsConfig(
-  sessionKeyHashPepper: pod.getPassword('serverSideSessionKeyHashPepper')!,
-  // Optional: Fallback peppers for pepper rotation
-  // This is useful for allowing old sessions to be validated after a rotation.
-  fallbackSessionKeyHashPeppers: [
-    pod.getPassword('oldSessionKeyHashPepper')!,
-  ],
-  // Optional: Set default session lifetime (default is to never expire)
-  defaultSessionLifetime: Duration(days: 30),
-  // Optional: Set inactivity timeout (default is to never timeout)
-  defaultSessionInactivityTimeout: Duration(days: 7),
-  // Check the [ServerSideSessionsConfig] documentation for more options.
-);
-```
-
-**Required configuration:**
-
-- `sessionKeyHashPepper`: Required. A secret pepper used for hashing session keys. Must be at least 10 characters long.
-
-For more details on configuration options, check the `ServerSideSessionsConfig` in-code documentation.
-
-### Identity Provider Configuration
+### Identity Providers Configuration
 
 Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
 
-- **Email**: Requires email sending callbacks. See [Email Provider](providers/email) for details.
-- **Google**: Requires Google OAuth credentials. See [Google Provider](providers/google) for details.
-- **Apple**: Requires Apple Sign-In credentials. See [Apple Provider](providers/apple) for details.
-- **Passkey (experimental)**: Requires Passkey credentials. See [Passkey Provider](providers/passkey) for details.
+- **Email**: Sign-up and sign-in with email and password. See [Email Provider](providers/email) for details.
+- **Google**: Sign-in with Google. See [Google Provider](providers/google) for details.
+- **Apple**: Sign-in with Apple. See [Apple Provider](providers/apple) for details.
+- **Passkey (experimental)**: Sign-in with Passkey. See [Passkey Provider](providers/passkey) for details.
+
+By default, endpoints for all providers are disabled. To enable a provider, it is necessary to:
+
+- Pass its config object to the `identityProviderBuilders` parameter of the `pod.initializeAuthServices()` method.
+- Extend the identity provider abstract endpoint (example below).
+- Run `serverpod generate` to generate the client code.
+
+```dart
+import 'package:serverpod_auth_idp_server/providers/email.dart';
+
+class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+```
+
+When doing this, the endpoint will be exposed on the server and its methods will be available on the generated client.
 
 ### Storing Secrets
 
@@ -188,6 +145,17 @@ development:
   emailSecretHashPepper: 'your-email-pepper-here'
   googleClientSecret: '{"type":"service_account",...}'
   # ... other secrets
+```
+
+Or use environment variables:
+
+```bash
+export SERVERPOD_SERVER_SIDE_SESSION_KEY_HASH_PEPPER='your-session-pepper-here'
+export SERVERPOD_JWT_REFRESH_TOKEN_HASH_PEPPER='your-refresh-token-pepper-here'
+export SERVERPOD_JWT_PRIVATE_KEY='your-private-key-here'
+export SERVERPOD_EMAIL_SECRET_HASH_PEPPER='your-email-pepper-here'
+export SERVERPOD_GOOGLE_CLIENT_SECRET='{"type":"service_account",...}'
+# ... other secrets
 ```
 
 :::info
@@ -275,3 +243,29 @@ await client.auth.initialize();
 This is equivalent to calling `restore()` followed by `validateAuthentication()`. If the authentication is no longer valid, the user is automatically signed out.
 
 See [Client-side authentication](02-basics#client-side-authentication) for more details on how to interact with the authentication state from the client.
+
+### Present the authentication UI
+
+The `serverpod_auth_idp_flutter` package provides a `SignInWidget` that automatically detects enabled authentication providers and displays the appropriate sign-in options.
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+
+SignInWidget(
+  client: client,
+  onAuthenticated: () {
+    // Navigate to home screen
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => HomePage()),
+    );
+  },
+  onError: (error) {
+    // Handle errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $error')),
+    );
+  },
+)
+```
+
+This widget is a convenient way to use identity providers out-of-the-box, but you can also fully customize it or replace it with your own implementation. See the [UI Components](06-ui-components) documentation for more details.

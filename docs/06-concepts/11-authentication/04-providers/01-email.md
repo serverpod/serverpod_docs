@@ -69,6 +69,16 @@ void _sendPasswordResetCode(
 }
 ```
 
+Then, extend the abstract endpoint to expose it on the server and generate the client code:
+
+```dart
+import 'package:serverpod_auth_idp_server/providers/email.dart';
+
+class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+```
+
+Run `serverpod generate` to generate the client code with the endpoint methods.
+
 ### Configuration options
 
 - `secretHashPepper`: Required. A secret pepper used for hashing passwords and verification codes. Must be at least 10 characters long.
