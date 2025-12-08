@@ -1,184 +1,60 @@
 # Upgrade to 3.0
 
-## Web Server: Widget to Component Rename
+## Requirements
 
-In Serverpod 3.0, all web server related "Widget" classes have been renamed to "Component" to better reflect their purpose and avoid confusion with Flutter widgets.
+- Baseline: Serverpod 2.9.0+
+- Minimum Dart SDK: 3.8.0
+- Minimum Flutter SDK: 3.32.0
 
-The following classes have been renamed:
+:::note
+The new authentication module has separate migration documentation. This guide covers only core framework changes.
+:::
 
-| Old Name         | New Name            |
-| ---------------- | ------------------- |
-| `Widget`         | `Component`         |
-| `AbstractWidget` | `AbstractComponent` |
-| `WidgetRoute`    | `ComponentRoute`    |
-| `WidgetJson`     | `JsonComponent`     |
-| `WidgetRedirect` | `RedirectComponent` |
-| `WidgetList`     | `ListComponent`     |
+## Breaking Changes Summary
 
-### 1. Update Route Classes
+- **Web Server:** Relic framework integration (custom routes need updates)
+- **Enum Serialization:** Default changed from `byIndex` to `byName`
+- **Model System:** `SerializableEntity` removed
+- **Polymorphism:** No longer experimental
+- **Widget Classes:** Renamed for clarity (legacy names deprecated)
 
-Update all route classes that extend `WidgetRoute` to extend `ComponentRoute`, and rename them to follow the new naming convention:
+## Migration Steps
 
-**Before:**
+1. Update Dart SDK to 3.8.0+ and Flutter SDK to 3.32.0+
+2. Update all Serverpod packages to 3.0 in `pubspec.yaml`
+3. Run `dart pub upgrade` and `serverpod generate`
+4. Update custom Route classes (see Web Server section)
+5. Update enum serialization strategy (see Enum section)
+6. Replace `SerializableEntity` with `SerializableModel`
+7. Remove experimental flags from polymorphic models
+8. Test and deploy
 
-```dart
-class RouteRoot extends WidgetRoute {
-  @override
-  Future<Widget> build(Session session, HttpRequest request) async {
-    return MyPageWidget();
-  }
-}
-```
+## Breaking Changes
 
-**After:**
+### 1. Web Server (Relic Framework)
 
-```dart
-class RootRoute extends ComponentRoute {
-  @override
-  Future<Component> build(Session session, HttpRequest request) async {
-    return MyPageComponent();
-  }
-}
-```
+Serverpod 3.0 uses the [Relic framework](https://pub.dev/packages/relic).
 
-### 2. Update Component Classes
+#### Route.handleCall Signature
 
-Update all classes that extend `Widget` to extend `Component`, and rename them from "Widget" to "Component":
+| Aspect   | Serverpod 2.x         | Serverpod 3.0          |
+| -------- | --------------------- | ---------------------- |
+| Request  | `HttpRequest request` | `Request request`      |
+| Return   | `Future<bool>`        | `FutureOr<Result>`     |
+| Response | `return true`         | `return Response.ok()` |
 
 **Before:**
 
 ```dart
-class MyPageWidget extends Widget {
-  MyPageWidget({required String title}) : super(name: 'my_page') {
-    values = {
-      'title': title,
-    };
-  }
-}
-```
-
-**After:**
-
-```dart
-class MyPageComponent extends Component {
-  MyPageComponent({required String title}) : super(name: 'my_page') {
-    values = {
-      'title': title,
-    };
-  }
-}
-```
-
-### 3. Update Abstract Components
-
-If you have custom abstract components, update them from `AbstractWidget` to `AbstractComponent` and rename accordingly:
-
-**Before:**
-
-```dart
-class CustomWidget extends AbstractWidget {
-  @override
-  String toString() {
-    return '<html>...</html>';
-  }
-}
-```
-
-**After:**
-
-```dart
-class CustomComponent extends AbstractComponent {
-  @override
-  String toString() {
-    return '<html>...</html>';
-  }
-}
-```
-
-### 4. Update Special Component Types
-
-Update references to special component types:
-
-**Before:**
-
-```dart
-// JSON responses
-return WidgetJson(object: {'status': 'success'});
-
-// Redirects
-return WidgetRedirect(url: '/login');
-
-// Component lists
-return WidgetList(widgets: [widget1, widget2]);
-```
-
-**After:**
-
-```dart
-// JSON responses
-return JsonComponent(object: {'status': 'success'});
-
-// Redirects
-return RedirectComponent(url: '/login');
-
-// Component lists
-return ListComponent(widgets: [widget1, widget2]);
-```
-
-### 5. Update Route Registration
-
-Update your route registration to use the renamed route classes:
-
-**Before:**
-
-```dart
-pod.webServer.addRoute(RouteRoot(), '/');
-pod.webServer.addRoute(RouteRoot(), '/index.html');
-```
-
-**After:**
-
-```dart
-pod.webServer.addRoute(RootRoute(), '/');
-pod.webServer.addRoute(RootRoute(), '/index.html');
-```
-
-### Directory Structure
-
-For consistency with the new naming convention, we recommend renaming your `widgets/` directories to `components/`. However, this is not strictly required - the directory structure can remain unchanged if needed.
-
-### Class Names
-
-For consistency and clarity, we recommend updating all class names from "Widget" to "Component" (e.g., `MyPageWidget` → `MyPageComponent`). While you can keep your existing class names and only update the inheritance, following the new naming convention will make your code more maintainable and consistent with Serverpod's conventions.
-
-### Complete Example
-
-Here's a complete example of migrating a simple web page:
-
-**Before:**
-
-```dart
-// lib/src/web/widgets/default_page_widget.dart
-import 'package:serverpod/serverpod.dart';
-
-class DefaultPageWidget extends Widget {
-  DefaultPageWidget() : super(name: 'default') {
-    values = {
-      'served': DateTime.now(),
-      'runmode': Serverpod.instance.runMode,
-    };
-  }
-}
-
-// lib/src/web/routes/root.dart
 import 'dart:io';
-import 'package:my_server/src/web/widgets/default_page_widget.dart';
-import 'package:serverpod/serverpod.dart';
 
-class RouteRoot extends WidgetRoute {
+class MyRoute extends Route {
   @override
-  Future<Widget> build(Session session, HttpRequest request) async {
-    return DefaultPageWidget();
+  Future<bool> handleCall(Session session, HttpRequest request) async {
+    final ip = request.remoteIpAddress;
+    final userAgent = request.headers.value('user-agent');
+    request.response.write('<html><body>Hello</body></html>');
+    return true;
   }
 }
 ```
@@ -186,31 +62,134 @@ class RouteRoot extends WidgetRoute {
 **After:**
 
 ```dart
-// lib/src/web/components/default_page_component.dart (renamed file and directory)
-import 'package:serverpod/serverpod.dart';
-
-class DefaultPageComponent extends Component {
-  DefaultPageComponent() : super(name: 'default') {
-    values = {
-      'served': DateTime.now(),
-      'runmode': Serverpod.instance.runMode,
-    };
-  }
-}
-
-// lib/src/web/routes/root.dart
-import 'dart:io';
-import 'package:my_server/src/web/components/default_page_component.dart';
-import 'package:serverpod/serverpod.dart';
-
-class RootRoute extends ComponentRoute {
+class MyRoute extends Route {
   @override
-  Future<Component> build(Session session, HttpRequest request) async {
-    return DefaultPageComponent();
+  FutureOr<Result> handleCall(Session session, Request request) async {
+    final ip = request.remoteInfo;
+    final userAgent = request.headers.userAgent;
+    return Response.ok(
+      body: Body.fromString('<html><body>Hello</body></html>', mimeType: MimeType.html),
+    );
   }
 }
-
-// server.dart
-pod.webServer.addRoute(RootRoute(), '/');
-pod.webServer.addRoute(RootRoute(), '/index.html');
 ```
+
+**Changes:**
+
+- `HttpRequest` → `Request`
+- `Future<bool>` → `FutureOr<Result>`
+- `request.remoteIpAddress` → `request.remoteInfo`
+- `request.headers.value()` → `request.headers.userAgent` or `request.headers['name']`
+- Return `Response` instead of `bool`
+
+#### Session.request Property
+
+Endpoint methods can access request information via `session.request`. Use optional chaining as it's `null` on some session types.
+
+```dart
+class MyEndpoint extends Endpoint {
+  Future<String> getClientInfo(Session session) async {
+    final ip = session.request?.remoteInfo ?? 'unknown';
+    final userAgent = session.request?.headers.userAgent ?? 'unknown';
+    return 'IP: $ip, UA: $userAgent';
+  }
+}
+```
+
+#### Widget Class Names
+
+| Old (Deprecated) | New              |
+| ---------------- | ---------------- |
+| `AbstractWidget` | `WebWidget`      |
+| `Widget`         | `TemplateWidget` |
+| `WidgetList`     | `ListWidget`     |
+| `WidgetJson`     | `JsonWidget`     |
+| `WidgetRedirect` | `RedirectWidget` |
+
+```dart
+// Before
+Future<Widget> build(...) => Widget(name: 'page')..values = {...};
+
+// After
+Future<WebWidget> build(...) => TemplateWidget(name: 'page', values: {...});
+```
+
+### 2. Enum Serialization
+
+Default changed from `byIndex` to `byName`.
+
+**Keep old behavior:**
+
+```yaml
+enum: UserRole
+serialized: byIndex # Add this
+values:
+  - admin
+  - user
+```
+
+**Use new default:**
+
+```yaml
+enum: UserRole
+# byName is now default
+values:
+  - admin
+  - user
+```
+
+### 3. Model System
+
+#### SerializableEntity Removed
+
+Replace `extends SerializableEntity` with `implements SerializableModel`.
+
+```dart
+// Before
+class CustomClass extends SerializableEntity {
+  Map<String, dynamic> toJson() => {'name': name};
+}
+
+// After
+class CustomClass implements SerializableModel {
+  Map<String, dynamic> toJson() => {'name': name};
+  factory CustomClass.fromJson(Map<String, dynamic> json) => CustomClass(json['name']);
+}
+```
+
+### 4. Polymorphism
+
+Inheritance is now stable. Remove `inheritance` from `experimental_features` in `config/generator.yaml`.
+
+**Before:**
+
+```yaml
+# config/generator.yaml
+experimental_features:
+  inheritance: true
+```
+
+**After:**
+
+```yaml
+# config/generator.yaml
+# Remove the inheritance key (or entire section if that was the only feature)
+```
+
+### 5. Removed Items
+
+- `SerializableEntity` class → Use `SerializableModel` interface
+- `customConstructor` map → Removed
+- Legacy streaming endpoints → Use [streaming methods](/concepts/streams)
+- Deprecated YAML keywords → Run `serverpod generate` for errors
+
+### 6. Other Changes
+
+- **Server Lifecycle:** Graceful SIGTERM shutdown, auto-stop on integrity check failure in dev mode
+
+## Resources
+
+- [Serverpod Documentation](https://docs.serverpod.dev)
+- [Relic Framework](https://pub.dev/packages/relic)
+- [GitHub Issues](https://github.com/serverpod/serverpod/issues)
+- [Discord Community](https://serverpod.dev/discord)
