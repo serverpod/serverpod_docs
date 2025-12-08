@@ -68,6 +68,17 @@ Then regenerate your project in your `server` directory:
 serverpod generate
 ```
 
+### Create and apply migrations
+
+A database migration is required for Serverpod 3.0. The session log table now stores authenticated user IDs as `String` instead of `int` to support non-numeric identifiers (e.g., UUIDs).
+
+Create and apply the migration:
+
+```bash
+serverpod create-migration
+dart run bin/main.dart --apply-migrations
+```
+
 ## Migration checklist
 
 1. Update CLI, pubspec files, and Dockerfile (see above)
@@ -285,9 +296,11 @@ The following APIs have been deprecated but will continue to work for the forese
 
 Additional improvements in Serverpod 3.0:
 
-- **Graceful SIGTERM Shutdown:** The server now handles `SIGTERM` signals gracefully, allowing in-flight requests to complete before shutting down. This improves behavior in containerized deployments (Docker, Kubernetes) where orchestrators send `SIGTERM` before terminating processes.
+- **Session log user ID as String:** The session log table now stores authenticated user IDs as `String` instead of `int`. This enables support for non-numeric identifiers such as UUIDs. A database migration is required (see [Create and apply migrations](#create-and-apply-migrations)).
 
-- **Auto-stop on Integrity Check Failure:** In development mode, the server now automatically stops if the database integrity check fails (e.g., schema mismatch). This prevents running with an inconsistent database state during development.
+- **Graceful SIGTERM shutdown:** The server now handles `SIGTERM` signals gracefully, allowing in-flight requests to complete before shutting down. This improves behavior in containerized deployments (Docker, Kubernetes) where orchestrators send `SIGTERM` before terminating processes.
+
+- **Auto-stop on integrity check failure:** In development mode, the server now automatically stops if the database integrity check fails (e.g., schema mismatch). This prevents running with an inconsistent database state during development.
 
 ## Resources
 
