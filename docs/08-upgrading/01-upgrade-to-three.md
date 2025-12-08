@@ -9,7 +9,7 @@ The new authentication module has separate migration documentation. This guide c
 - Dart SDK: 3.8.0+
 - Flutter SDK: 3.32.0+
 
-## Breaking Changes Summary
+## Breaking changes summary
 
 - **Web Server:** Relic framework integration (custom routes need updates)
 - **Authentication:** `AuthenticationInfo` changes, `session.authenticated` now synchronous
@@ -17,7 +17,7 @@ The new authentication module has separate migration documentation. This guide c
 - **Model System:** `SerializableEntity` removed
 - **Widget Classes:** Renamed for clarity (legacy names deprecated)
 
-## Updating Your Project
+## Updating your project
 
 ### Update the CLI
 
@@ -33,7 +33,7 @@ Verify the installed version:
 serverpod version
 ```
 
-### Update pubspec.yaml Files
+### Update pubspec.yaml files
 
 Update the `pubspec.yaml` files in your `server`, `client`, and `flutter` directories. Change all Serverpod package versions to `3.0.0` (or later 3.x version).
 
@@ -54,7 +54,7 @@ FROM dart:3.8 AS build
 ...
 ```
 
-### Run Updates
+### Run updates
 
 After updating your `pubspec.yaml` files, run these commands in each package directory:
 
@@ -68,7 +68,7 @@ Then regenerate your project in your `server` directory:
 serverpod generate
 ```
 
-## Migration Checklist
+## Migration checklist
 
 1. Update CLI, pubspec files, and Dockerfile (see above)
 2. Update custom Route classes (see Web Server section)
@@ -77,11 +77,11 @@ serverpod generate
 5. Update custom `AuthenticationInfo` usage (see Authentication section)
 6. Test and deploy
 
-## Web Server (Relic Framework)
+## Web server (Relic framework)
 
 Serverpod 3.0 integrates the [Relic framework](https://pub.dev/packages/relic) for web server functionality, bringing it out of experimental status. This provides improved performance, better request/response handling, and built-in WebSocket support.
 
-### Route.handleCall Signature
+### Route.handleCall signature
 
 | Aspect   | Serverpod 2.x         | Serverpod 3.0          |
 | -------- | --------------------- | ---------------------- |
@@ -124,7 +124,7 @@ class MyRoute extends Route {
 - `request.headers.value('name')` → `request.headers['name']`
 - Return `Response` instead of `bool`
 
-### Widget Class Names
+### Widget class names
 
 | Old (Deprecated) | New              |
 | ---------------- | ---------------- |
@@ -142,7 +142,7 @@ Future<Widget> build(...) => Widget(name: 'page')..values = {...};
 Future<WebWidget> build(...) => TemplateWidget(name: 'page', values: {...});
 ```
 
-## Session.request Property
+## Session.request property
 
 With the Relic framework integration, the `Session` object now provides access to the underlying HTTP request through the `request` property. This allows endpoint methods to access request metadata such as client IP address and headers directly from the session.
 
@@ -162,14 +162,14 @@ class MyEndpoint extends Endpoint {
 
 Serverpod 3.0 includes several changes to the authentication system that improve type safety and performance.
 
-### AuthenticationInfo Changes
+### AuthenticationInfo changes
 
 The `AuthenticationInfo` class has been updated:
 
 - `authId` is now non-nullable (previously optional)
 - `userIdentifier` parameter type changed from `Object` to `String`
 
-### session.authenticated is Now Synchronous
+### session.authenticated is now synchronous
 
 Authentication is now resolved when the session is created, making `session.authenticated` synchronous. This improves performance by eliminating repeated async lookups.
 
@@ -181,7 +181,7 @@ final auth = await session.authenticated;
 final auth = session.authenticated;
 ```
 
-### Client Auth Key Provider
+### Client auth key provider
 
 A new `authKeyProvider` interface has been introduced to support multiple authentication key formats. The previous `authenticationKeyManager` is deprecated.
 
@@ -193,7 +193,7 @@ Client(host)..authenticationKeyManager = myManager;
 Client(host)..authKeyProvider = myProvider;
 ```
 
-## Enum Serialization
+## Enum serialization
 
 The default enum serialization strategy has changed from `byIndex` to `byName`. This change improves robustness when reordering or adding enum values, as serialized data remains valid even if the enum definition changes. With `byName`, the string representation is stored instead of the numeric index, making your data more resilient and easier to debug.
 
@@ -217,7 +217,7 @@ values:
   - user
 ```
 
-## SerializableEntity Removed
+## SerializableEntity removed
 
 The `SerializableEntity` class, deprecated since Serverpod 2.0, has been removed. Replace `extends SerializableEntity` with `implements SerializableModel` in your custom model classes.
 
@@ -247,7 +247,7 @@ The following APIs have been deprecated and will be removed in a future version:
 
 - Legacy streaming endpoints → Use [streaming methods](/concepts/streams) for new code
 
-## Other Changes
+## Other changes
 
 Additional improvements in Serverpod 3.0:
 
