@@ -217,7 +217,9 @@ values:
   - user
 ```
 
-## SerializableEntity removed
+## Model changes
+
+### SerializableEntity removed
 
 The `SerializableEntity` class, deprecated since Serverpod 2.0, has been removed. Replace `extends SerializableEntity` with `implements SerializableModel` in your custom model classes.
 
@@ -234,12 +236,44 @@ class CustomClass implements SerializableModel {
 }
 ```
 
+### Removed YAML keywords
+
+The following deprecated YAML keywords have been removed. Run `serverpod generate` to see errors with migration guidance.
+
+| Old keyword    | Replacement              |
+| -------------- | ------------------------ |
+| `parent=table` | `relation(parent=table)` |
+| `database`     | `scope=serverOnly`       |
+| `api`          | `!persist`               |
+
+**Example:**
+
+```yaml
+# Before
+class: Company
+table: company
+fields:
+  name: String
+  ceoId: int, parent=employee
+  internalNotes: String, database
+  tempData: String, api
+
+# After
+class: Company
+table: company
+fields:
+  name: String
+  ceoId: int, relation(parent=employee)
+  internalNotes: String, scope=serverOnly
+  tempData: String, !persist
+```
+
 ## Removed APIs
 
 The following APIs have been removed in Serverpod 3.0:
 
 - `SerializableEntity` class → Use `SerializableModel` interface
-- Deprecated YAML keywords (`parent`, `database`, `api`) → Run `serverpod generate` to see errors with migration guidance
+- YAML keywords `parent`, `database`, `api` → See [Model changes](#model-changes) section
 
 ## Deprecated APIs
 
