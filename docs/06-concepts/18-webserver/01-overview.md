@@ -152,3 +152,5 @@ class UserRoute extends Route {
 - **[Middleware](middleware)** - Intercept and transform requests and responses
 - **[Static Files](static-files)** - Serve static assets
 - **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
+- **[Single Page Apps](single-page-apps)** - Serve SPAs with client-side routing
+- **[Flutter Web Apps](flutter-web)** - Serve Flutter web applications
