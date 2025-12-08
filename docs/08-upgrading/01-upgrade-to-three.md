@@ -183,7 +183,7 @@ final auth = session.authenticated;
 
 ### Client auth key provider
 
-A new `authKeyProvider` interface has been introduced to support multiple authentication key formats. The previous `authenticationKeyManager` is deprecated.
+The `authKeyProvider` interface replaces the previous `authenticationKeyManager`. This interface has been simplified to make it more explicit what the client needs—it now only requires something that can provide an auth key wrapped as a header.
 
 ```dart
 // Before
