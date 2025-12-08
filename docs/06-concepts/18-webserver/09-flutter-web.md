@@ -80,20 +80,6 @@ pod.webServer.addRoute(
 );
 ```
 
-## Custom index file
-
-By default, `FlutterRoute` uses `index.html` in the specified directory. To use a different file:
-
-```dart
-pod.webServer.addRoute(
-  FlutterRoute(
-    Directory('web/app'),
-    indexFile: File('web/app/custom.html'),
-  ),
-  '/**',
-);
-```
-
 ## Cache control
 
 Configure caching for Flutter's static assets:
