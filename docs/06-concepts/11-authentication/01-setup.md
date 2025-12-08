@@ -4,7 +4,7 @@ Serverpod comes with built-in user management and authentication. It is possible
 
 The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-provider-configuration) section for details on all available providers.
 
-![Sign-in with Serverpod](https://github.com/serverpod/serverpod/raw/main/misc/images/sign-in.png)
+![Sign-in with Serverpod](/static/img/authentication/sign-in-widget.png)
 
 ## Installing the auth module
 
