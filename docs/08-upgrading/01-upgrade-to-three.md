@@ -251,7 +251,9 @@ The following APIs have been deprecated and will be removed in a future version:
 
 Additional improvements in Serverpod 3.0:
 
-- **Server Lifecycle:** Graceful SIGTERM shutdown, auto-stop on integrity check failure in dev mode
+- **Graceful SIGTERM Shutdown:** The server now handles `SIGTERM` signals gracefully, allowing in-flight requests to complete before shutting down. This improves behavior in containerized deployments (Docker, Kubernetes) where orchestrators send `SIGTERM` before terminating processes.
+
+- **Auto-stop on Integrity Check Failure:** In development mode, the server now automatically stops if the database integrity check fails (e.g., schema mismatch). This prevents running with an inconsistent database state during development.
 
 ## Resources
 
