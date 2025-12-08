@@ -222,7 +222,7 @@ values:
 
 ```yaml
 enum: UserRole
-# byName is now default
+# serialized: byName - is now default
 values:
   - admin
   - user
@@ -278,13 +278,6 @@ fields:
   internalNotes: String, scope=serverOnly
   tempData: String, !persist
 ```
-
-## Removed APIs
-
-The following APIs have been removed in Serverpod 3.0:
-
-- `SerializableEntity` class → Use `SerializableModel` interface
-- YAML keywords `parent`, `database`, `api` → See [Model changes](#model-changes) section
 
 ## Deprecated APIs
 
