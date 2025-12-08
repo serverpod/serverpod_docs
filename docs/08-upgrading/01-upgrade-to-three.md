@@ -11,11 +11,11 @@ The new authentication module has separate migration documentation. This guide c
 
 ## Breaking changes summary
 
-- **Web Server:** Relic framework integration (custom routes need updates)
-- **Authentication:** `AuthenticationInfo` changes, `session.authenticated` now synchronous
-- **Enum Serialization:** Default changed from `byIndex` to `byName`
-- **Model System:** `SerializableEntity` removed
-- **Widget Classes:** Renamed for clarity (legacy names deprecated)
+- [**Web server:**](#web-server-relic-framework) Relic framework integration (custom routes need updates)
+- [**Session.request:**](#sessionrequest-property) New property to access HTTP request from endpoints
+- [**Authentication:**](#authentication) `AuthenticationInfo` changes, `session.authenticated` now synchronous
+- [**Enum serialization:**](#enum-serialization) Default changed from `byIndex` to `byName`
+- [**Model changes:**](#model-changes) `SerializableEntity` removed, YAML keywords updated
 
 ## Updating your project
 
