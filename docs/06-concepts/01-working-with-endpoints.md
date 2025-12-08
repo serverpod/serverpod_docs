@@ -577,35 +577,3 @@ Middleware errorHandlingMiddleware() {
 
 7. **Avoid side effects**: Be cautious with middleware that modifies global state or external systems.
 
-### Testing middleware
-
-Example test structure:
-
-```dart
-import 'package:test/test.dart';
-import 'package:serverpod/serverpod.dart';
-
-void main() {
-  test('Middleware adds custom header', () async {
-    final middleware = customHeaderMiddleware();
-
-    // Create a mock handler
-    Handler mockHandler = (req) async {
-      return Response(statusCode: 200, body: 'OK');
-    };
-
-    // Wrap the handler with middleware
-    final wrappedHandler = middleware(mockHandler);
-
-    // Create a test request
-    final request = Request(/* ... */);
-
-    // Execute
-    final response = await wrappedHandler(request);
-
-    // Assert
-    expect(response.headers['X-Custom-Header']?.first, 'my-value');
-  });
-}
-```
-
