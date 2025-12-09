@@ -1,5 +1,5 @@
 ---
-sidebar_label: 3. Working with the database
+sidebar_label: 3️⃣ Working with the database
 ---
 
 # Working with the database
