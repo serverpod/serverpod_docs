@@ -29,15 +29,15 @@ pod.initializeAuthServices(
 ```
 
 :::tip
-If can use the `JwtConfigFromPasswords` constructor in replacement of the `JwtConfig` above to automatically load the credentials from the `config/passwords.yaml` file or environment variables. On the file, it will expect the following keys:
+You can use the `JwtConfigFromPasswords` constructor in replacement of the `JwtConfig` above to automatically load the credentials from the `config/passwords.yaml` file or environment variables. It will expect either the following keys on the file:
 
-- `jwtRefreshTokenHashPepper`
-- `jwtHmacSha512PrivateKey`
+    - `jwtRefreshTokenHashPepper`
+    - `jwtHmacSha512PrivateKey`
 
 Or the following environment variables:
 
-- `SERVERPOD_PASSWORD_jwtRefreshTokenHashPepper`
-- `SERVERPOD_PASSWORD_jwtHmacSha512PrivateKey`
+    - `SERVERPOD_PASSWORD_jwtRefreshTokenHashPepper`
+    - `SERVERPOD_PASSWORD_jwtHmacSha512PrivateKey`
 :::
 
 ### Basic configuration options

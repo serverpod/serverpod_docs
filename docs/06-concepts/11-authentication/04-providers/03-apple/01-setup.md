@@ -89,7 +89,23 @@ void run(List<String> args) async {
 ```
 
 :::tip
-If can use the `AppleIdpConfigFromPasswords` constructor in replacement of the `AppleIdpConfig` above to automatically load the credentials from the `config/passwords.yaml` file or environment variables.
+You can use the `AppleIdpConfigFromPasswords` constructor in replacement of the `AppleIdpConfig` above to automatically load the credentials from the `config/passwords.yaml` file or environment variables. It will expect either the following keys on the file:
+
+   - `appleServiceIdentifier`
+   - `appleBundleIdentifier`
+   - `appleRedirectUri`
+   - `appleTeamId`
+   - `appleKeyId`
+   - `appleKey`
+
+Or the following environment variables:
+
+   - `SERVERPOD_PASSWORD_appleServiceIdentifier`
+   - `SERVERPOD_PASSWORD_appleBundleIdentifier`
+   - `SERVERPOD_PASSWORD_appleRedirectUri`
+   - `SERVERPOD_PASSWORD_appleTeamId`
+   - `SERVERPOD_PASSWORD_appleKeyId`
+   - `SERVERPOD_PASSWORD_appleKey`
 :::
 
 Then, extend the abstract endpoint to expose it on the server:
