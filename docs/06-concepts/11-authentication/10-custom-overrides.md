@@ -1,6 +1,6 @@
 # Custom overrides
 
-It is recommended to use the `serverpod_auth` package but if you have special requirements not fulfilled by it, you can implement your authentication module. Serverpod is designed to make it easy to add custom authentication overrides.
+It is recommended to use the `serverpod_auth_idp` package but if you have special requirements not fulfilled by it, you can implement your authentication module. Serverpod is designed to make it easy to add custom authentication overrides.
 
 ## Server setup
 
@@ -28,11 +28,11 @@ final pod = Serverpod(
 In the above example, the `authenticationHandler` callback is overridden with a custom validation method. The method returns an `AuthenticationInfo` object with `userIdentifier` `"1"` and no scopes if the token is the literal "valid", otherwise `null`.
 
 :::note
-The `userIdentifier` passed to the `AuthenticationInfo` constructor, as the first parameter, will always be converted to a `String` and thus stored internally. Since the default implementation of `serverpod_auth` uses numeric IDs for the users, there is a convenience getter `userId`, which returns the integer value.
+The `userIdentifier` passed to the `AuthenticationInfo` constructor, as the first parameter, will always be converted to a `String` and thus stored internally. Since the default implementation uses `UuidValue` for the users, there is a convenience getter `userId`, which returns the `UuidValue` value.
 :::
 
 :::note
-In the authenticationHandler callback the `authenticated` field on the session will always be `null` as it is the authenticationHandler that figures out who the user is.
+In the `authenticationHandler` callback the `authenticated` field on the session will always be `null` as it is the `authenticationHandler` that figures out who the user is.
 :::
 
 :::info
@@ -107,81 +107,51 @@ In the above example, the `login` method authenticates the user and creates an a
 
 ## Client setup
 
-Enabling authentication in the client is as simple as configuring a key manager and placing any token in it. If a key manager is configured, the client will automatically query the manager for a token and include it in communication with the server.
+Enabling authentication in the client is as simple as configuring an auth key provider. If an auth key provider is configured, the client will automatically query the provider for an authentication header value and include it in communication with the server.
 
-### Configure key manager
+### Configure auth key provider
 
-Key managers need to implement the `AuthenticationKeyManager` interface. The key manager is configured when creating the client by passing it as the named parameter `authenticationKeyManager`. If no key manager is configured, the client will not include tokens in requests to the server.
+Auth key providers need to implement the `ClientAuthKeyProvider` interface. The provider is configured when creating the client by passing it as the named parameter `authKeyProvider`. If no provider is configured, the client will not include authentication headers in requests to the server.
 
 ```dart
-class SimpleAuthKeyManager extends AuthenticationKeyManager {
+import 'package:serverpod_client/serverpod_client.dart';
+
+class SimpleAuthKeyProvider implements ClientAuthKeyProvider {
   String? _key;
 
   @override
-  Future<String?> get() async {
-    return _key;
+  Future<String?> get authHeaderValue async {
+    if (_key == null) return null;
+    return wrapAsBasicAuthHeaderValue(_key!);
   }
 
-  @override
   Future<void> put(String key) async {
     _key = key;
   }
 
-  @override
   Future<void> remove() async {
     _key = null;
   }
 }
 
-
-var client = Client('http://$localhost:8080/',
-    authenticationKeyManager: SimpleAuthKeyManager())
+var client = Client('http://$localhost:8080/')
+  ..authKeyProvider = SimpleAuthKeyProvider()
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
-In the above example, the `SimpleAuthKeyManager` is configured as the client's authentication key manager. The `SimpleAuthKeyManager` stores the token in memory.
+In the above example, the `SimpleAuthKeyProvider` is configured as the client's authentication key provider. The `SimpleAuthKeyProvider` stores the token in memory and wraps it as a Basic auth header value using the `wrapAsBasicAuthHeaderValue` utility function.
 
 :::info
-
-The `SimpleAuthKeyManager` is not practical and should only be used for testing. A secure implementation of the key manager is available in the `serverpod_auth_shared_flutter` package named `FlutterAuthenticationKeyManager`. It provides safe, persistent storage for the auth token.
-
+The `SimpleAuthKeyProvider` is not practical and should only be used for testing. A secure implementation of the auth key provider is available in the `serverpod_auth_core_flutter` package. It provides safe, persistent storage for the auth token.
 :::
 
-The key manager is then available through the client's `authenticationKeyManager` field.
+The auth key provider is then available through the client's `authKeyProvider` field. It is useful to create a getter for it to avoid unnecessary casting.
 
 ```dart
-var keyManager = client.authenticationKeyManager;
+var authProvider = client.authKeyProvider as SimpleAuthKeyProvider;
 ```
 
-### Store token
-
-When the client receives a token from the server, it is responsible for storing it in the key manager using the `put` method. The key manager will then include the token in all requests to the server.
-
-```dart
-await client.authenticationKeyManager?.put(token);
-```
-
-In the above example, the `token` is placed in the key manager. It will now be included in communication with the server.
-
-### Remove token
-
-To remove the token from the key manager, call the `remove` method.
-
-```dart
-await client.authenticationKeyManager?.remove();
-```
-
-The above example removes any token from the key manager.
-
-### Retrieve token
-
-To retrieve the token from the key manager, call the `get` method.
-
-```dart
-var token = await client.authenticationKeyManager?.get();
-```
-
-The above example retrieves the token from the key manager and stores it in the `token` variable.
+It is the responsibility of the client to store the token in the auth key provider.
 
 ## Authentication schemes
 
@@ -195,7 +165,7 @@ In other words the default transport implementation is "invisible" to user code.
 
 If you are implementing your own authentication and are using the `basic` scheme, note that this is supported but will be automatically unwrapped i.e. decoded on the server side before being handed to your `AuthenticationHandler` implementation. It will in this case receive the decoded auth key value after the `basic` scheme name.
 
-If you are implementing a different authentication scheme, for example OAuth 2 using bearer tokens, you should override the default method `toHeaderValue` of `AuthenticationKeyManager`. This client-side method converts the authentication key to the format that shall be sent as a transport header to the server.
+If you are implementing a different authentication scheme, for example OAuth2 using bearer tokens, you should return the appropriate header value from the `authHeaderValue` getter of your `ClientAuthKeyProvider` implementation. You can use the utility functions `wrapAsBasicAuthHeaderValue` or `wrapAsBearerAuthHeaderValue` to format the token correctly.
 
 You will also need to implement the `AuthenticationHandler` accordingly, in order to process that header value server-side.
 
@@ -210,34 +180,28 @@ An approach to adding OAuth handling might make changes to the above code akin t
 Client side:
 
 ```dart
-class MyOAuthKeyManager extends AuthenticationKeyManager {
+import 'package:serverpod_client/serverpod_client.dart';
+
+class MyOAuthKeyProvider implements ClientAuthKeyProvider {
   String? _key;
 
   @override
-  Future<String?> get() async {
-    return _key;
+  Future<String?> get authHeaderValue async {
+    if (_key == null) return null;
+    return wrapAsBearerAuthHeaderValue(myBearerTokenObtainer(_key!));
   }
 
-  @override
   Future<void> put(String key) async {
     _key = key;
   }
 
-  @override
   Future<void> remove() async {
     _key = null;
   }
-
-  @override
-  Future<String?> toHeaderValue(String? key) async {
-    if (key == null) return null;
-    return 'Bearer ${myBearerTokenObtainer(key)}';
-  }
 }
 
-
-var client = Client('http://$localhost:8080/',
-    authenticationKeyManager: SimpleAuthKeyManager())
+var client = Client('http://$localhost:8080/')
+  ..authKeyProvider = MyOAuthKeyProvider()
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
