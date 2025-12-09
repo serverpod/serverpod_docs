@@ -4,7 +4,7 @@ Serverpod comes with built-in user management and authentication. It is possible
 
 The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-provider-configuration) section for details on all available providers.
 
-![Sign-in with Serverpod](/static/img/authentication/sign-in-widget.png)
+![Sign-in with Serverpod](../../../static/img/authentication/sign-in-widget.png)
 
 ## Installing the auth module
 
@@ -66,8 +66,8 @@ The authentication system uses token managers to handle authentication tokens. Y
 
 Serverpod provides two built-in token manager builders:
 
-- `JwtConfig` to use JWT-based authentication.
-- `ServerSideSessionsConfig` to use server-side sessions authentication.
+- `JwtConfig` to use JWT-based authentication. See [JWT Token Manager](05-token-managers/02-jwt-token-manager) for details.
+- `ServerSideSessionsConfig` to use server-side sessions authentication. See [Server-Side Sessions Token Manager](05-token-managers/03-server-side-sessions-token-manager) for details.
 
 For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](05-token-managers) documentation.
 
@@ -75,10 +75,10 @@ For more details on how to configure token managers or create custom ones, see t
 
 Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
 
-- **Email**: Sign-up and sign-in with email and password. See [Email Provider](providers/email) for details.
-- **Google**: Sign-in with Google. See [Google Provider](providers/google) for details.
-- **Apple**: Sign-in with Apple. See [Apple Provider](providers/apple) for details.
-- **Passkey (experimental)**: Sign-in with Passkey. See [Passkey Provider](providers/passkey) for details.
+- **Email**: Sign-up and sign-in with email and password. See [Email Provider](./04-providers/01-email/01-setup) for details.
+- **Google**: Sign-in with Google. See [Google Provider](./04-providers/02-google/01-setup) for details.
+- **Apple**: Sign-in with Apple. See [Apple Provider](./04-providers/03-apple/01-setup) for details.
+- **Passkey (experimental)**: Sign-in with Passkey. See [Passkey Provider](./04-providers/04-passkey/01-setup) for details.
 
 By default, endpoints for all providers are disabled. To enable a provider, it is necessary to:
 
