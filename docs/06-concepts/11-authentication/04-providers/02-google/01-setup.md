@@ -195,7 +195,24 @@ Then, on the `web/index.html` file, add the following to the `<head>` section:
 
 ![Google credentials](/img/authentication/providers/google/2-credentials.png)
 
-## Flutter implementation
+## Present the authentication UI
+
+### Initializing the `GoogleSignInService`
+
+To use the GoogleSignInService, you need to initialize it in your main function. The initialization is done from the `initializeGoogleSignIn()` extension method on the `FlutterAuthSessionManager`.
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:your_client/your_client.dart';
+
+final client = Client('http://localhost:8080/')
+  ..authSessionManager = FlutterAuthSessionManager();
+
+void main() {
+  client.auth.initialize();
+  client.auth.initializeGoogleSignIn();
+}
+```
 
 ### Using GoogleSignInWidget
 

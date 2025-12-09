@@ -22,7 +22,6 @@ To keep old passwords valid after a pepper change, use the `fallbackSecretHashPe
 
 ```dart
 final emailIdpConfig = EmailIdpConfigFromPasswords(
-  secretHashPepper: pod.getPassword('newEmailSecretHashPepper')!,
   fallbackSecretHashPeppers: [
     pod.getPassword('oldEmailSecretHashPepper')!,
   ],

@@ -37,7 +37,7 @@ GoogleSignInWidget(
 
   // Scopes to request from Google
   // These are the default scopes, you can add additional scopes as needed.
-  scopes: [
+  scopes: const [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
   ],
