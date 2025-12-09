@@ -147,3 +147,114 @@ controller.addListener(() {
   });
 });
 ```
+
+## The email authentication flow
+
+The email authentication flow uses the following screens:
+
+- `EmailFlowScreen.login` - Login with email and password
+- `EmailFlowScreen.startRegistration` - Start registration with email
+- `EmailFlowScreen.verifyRegistration` - Verify registration code
+- `EmailFlowScreen.completeRegistration` - Set password to complete registration
+- `EmailFlowScreen.requestPasswordReset` - Request password reset
+- `EmailFlowScreen.verifyPasswordReset` - Verify password reset code
+- `EmailFlowScreen.completePasswordReset` - Set new password
+
+### Navigating between screens
+
+The controller handles navigation between screens automatically when calling the methods associated with each screen, but you can also navigate manually:
+
+```dart
+// Navigate to a specific screen
+controller.navigateTo(EmailFlowScreen.startRegistration);
+
+// Navigate back
+if (controller.canNavigateBack) {
+  controller.navigateBack();
+}
+```
+
+### EmailAuthController Methods
+
+The controller provides methods for each step of the authentication flow:
+
+:::info
+The `EmailAuthController` already exposes internal text controllers for the email, password and verification code inputs. You can use these to build your own custom UI. All controllers are shared between login, registration and password reset flows for good UX. The `EmailAuthController` will handle the cleanup of the text controllers upon navigation as needed.
+:::
+
+#### Login
+
+```dart
+// Set email and password in the controller's text controllers
+controller.emailController.text = 'user@example.com';
+controller.passwordController.text = 'password123';
+
+// Call login
+await controller.login();
+```
+
+#### Registration Flow
+
+The registration flow consists of three steps:
+
+1. **Start Registration** - Request a verification code:
+
+```dart
+controller.emailController.text = 'user@example.com';
+await controller.startRegistration();
+// Controller navigates to verification screen
+```
+
+2. **Verify Registration Code** - Enter the verification code:
+
+```dart
+controller.verificationCodeController.text = '12345678';
+await controller.verifyRegistrationCode();
+// Controller navigates to password setup screen
+```
+
+3. **Complete Registration** - Set password:
+
+```dart
+controller.passwordController.text = 'securePassword123';
+await controller.finishRegistration();
+// User is now authenticated
+```
+
+#### Password Reset Flow
+
+The password reset flow also consists of three steps:
+
+1. **Request Password Reset**:
+
+```dart
+controller.emailController.text = 'user@example.com';
+await controller.startPasswordReset();
+// Controller navigates to verification screen
+```
+
+2. **Verify Reset Code**:
+
+```dart
+controller.verificationCodeController.text = '12345678';
+await controller.verifyPasswordResetCode();
+// Controller navigates to new password screen
+```
+
+3. **Complete Password Reset**:
+
+```dart
+controller.passwordController.text = 'newSecurePassword123';
+await controller.finishPasswordReset();
+// User is authenticated with new password
+```
+
+### Resending Verification Codes
+
+To resend a verification code:
+
+```dart
+await controller.resendVerificationCode();
+```
+
+This will resend the code based on the current screen (registration or password reset).
