@@ -43,7 +43,7 @@ For the full list of operations, see the [UserProfiles](https://pub.dev/document
 
 ## Attaching additional information
 
-The recommended way to attach additional information to an authenticated user is to use a relation in the Database. This makes it easy to query the data later based on the user's `authId`.
+The recommended way to attach additional information to an authenticated user is to use a relation in the Database. This makes it easy to query the data later based on the user's authentication identifier.
 
 ```yaml
 class: MyDomainData
