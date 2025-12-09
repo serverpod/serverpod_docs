@@ -66,19 +66,19 @@ The authentication system uses token managers to handle authentication tokens. Y
 
 Serverpod provides two built-in token manager builders:
 
-- `JwtConfig` to use JWT-based authentication. See [JWT Token Manager](05-token-managers/02-jwt-token-manager) for details.
-- `ServerSideSessionsConfig` to use server-side sessions authentication. See [Server-Side Sessions Token Manager](05-token-managers/03-server-side-sessions-token-manager) for details.
+- `JwtConfig` to use JWT-based authentication. See [JWT Token Manager](./token-managers/jwt-token-manager) for details.
+- `ServerSideSessionsConfig` to use server-side sessions authentication. See [Server-Side Sessions Token Manager](./token-managers/server-side-sessions-token-manager) for details.
 
-For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](05-token-managers) documentation.
+For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](./token-managers/managing-tokens) documentation.
 
 ### Identity Providers Configuration
 
 Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
 
-- **Email**: Sign-up and sign-in with email and password. See [Email Provider](./04-providers/01-email/01-setup) for details.
-- **Google**: Sign-in with Google. See [Google Provider](./04-providers/02-google/01-setup) for details.
-- **Apple**: Sign-in with Apple. See [Apple Provider](./04-providers/03-apple/01-setup) for details.
-- **Passkey (experimental)**: Sign-in with Passkey. See [Passkey Provider](./04-providers/04-passkey/01-setup) for details.
+- **Email**: Sign-up and sign-in with email and password. See [Email Provider](./providers/email/setup) for details.
+- **Google**: Sign-in with Google. See [Google Provider](./providers/google/setup) for details.
+- **Apple**: Sign-in with Apple. See [Apple Provider](./providers/apple/setup) for details.
+- **Passkey (experimental)**: Sign-in with Passkey. See [Passkey Provider](./providers/passkey/setup) for details.
 
 By default, endpoints for all providers are disabled. To enable a provider, it is necessary to:
 
@@ -238,7 +238,7 @@ await client.auth.initialize();
 
 This is equivalent to calling `restore()` followed by `validateAuthentication()`. If the authentication is no longer valid, the user is automatically signed out.
 
-See [Client-side authentication](02-basics#client-side-authentication) for more details on how to interact with the authentication state from the client.
+See [Client-side authentication](./basics#client-side-authentication) for more details on how to interact with the authentication state from the client.
 
 ### Present the authentication UI
 
@@ -277,8 +277,8 @@ class SignInPage extends StatelessWidget {
 }
 ```
 
-This widget is a convenient way to use identity providers out-of-the-box, but you can also fully customize it or replace it with your own implementation. See the [UI Components](06-ui-components) documentation for more details.
+This widget is a convenient way to use identity providers out-of-the-box, but you can also fully customize it or replace it with your own implementation. See the [UI Components](./ui-components) documentation for more details.
 
 #### Updating the UI based on authentication state
 
-Instead of navigating to the home screen using the `onAuthenticated` callback, you can listen to authentication state changes and update the UI accordingly. See the [Client-side authentication](02-basics#monitor-authentication-changes) section for more details.
+Instead of navigating to the home screen using the `onAuthenticated` callback, you can listen to authentication state changes and update the UI accordingly. See the [Client-side authentication](./basics#monitor-authentication-changes) section for more details.

@@ -69,7 +69,7 @@ Then apply the migration by starting the server with the `apply-migrations` flag
 $ dart run bin/main.dart --role maintenance --apply-migrations
 ```
 
-The full migration instructions can be found in the [migration guide](../database/migrations).
+The full migration instructions can be found in the [migration guide](../../database/migrations).
 
 ### Configure Authentication
 

@@ -85,13 +85,13 @@ import 'package:serverpod_auth_idp_server/providers/google.dart';
 class GoogleIdpEndpoint extends GoogleIdpBaseEndpoint {}
 ```
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../01-setup#identity-providers-configuration).
+Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 
-- `clientSecret`: Required. Google OAuth client secret loaded from JSON. See the [configuration section](./02-configuration) for details on different ways to load the client secret.
+- `clientSecret`: Required. Google OAuth client secret loaded from JSON. See the [configuration section](./configuration) for details on different ways to load the client secret.
 
-For more details on configuration options, such as customizing account validation, accessing Google APIs, and more, see the [configuration section](./02-configuration).
+For more details on configuration options, such as customizing account validation, accessing Google APIs, and more, see the [configuration section](./configuration).
 
 :::warning
 The `google_client_secret.json` contains a private key and should not be version controlled. Store it securely using environment variables or secret management.
@@ -216,7 +216,7 @@ void main() {
 
 ### Using GoogleSignInWidget
 
-If you have configured the `SignInWidget` as described in the [setup section](../../01-setup#present-the-authentication-ui), the Google identity provider will be automatically detected and displayed in the sign-in widget.
+If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Google identity provider will be automatically detected and displayed in the sign-in widget.
 
 You can also use the `GoogleSignInWidget` to include the Google authentication flow in your own custom UI.
 
@@ -246,4 +246,4 @@ The widget automatically handles:
 - Token management.
 - Underlying Google Sign-In package error handling.
 
-For details on how to customize the Google Sign-In UI in your Flutter app, see the [customizing the UI section](./03-customizing-the-ui).
+For details on how to customize the Google Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).

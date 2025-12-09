@@ -76,7 +76,7 @@ import 'package:serverpod_auth_idp_server/providers/email.dart';
 class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
 ```
 
-Then, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../01-setup#identity-providers-configuration).
+Then, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 
@@ -84,7 +84,7 @@ Then, run `serverpod generate` to generate the client code and create a migratio
 - `sendRegistrationVerificationCode`: A callback that will be called to send the registration verification code to the user. Here you should call the email sending service to send the verification code to the user.
 - `sendPasswordResetVerificationCode`: A callback that will be called to send the password reset verification code to the user. Here you should call the email sending service to send the verification code to the user.
 
-For more details on configuration options, such as customizing password requirements, verification code generation, rate limiting, and more, see the [configuration section](./02-configuration).
+For more details on configuration options, such as customizing password requirements, verification code generation, rate limiting, and more, see the [configuration section](./configuration).
 
 :::tip
 If you are using the `config/passwords.yaml` file or environment variables, you can use the `EmailIdpConfigFromPasswords` constructor to automatically load the secret pepper. It will expect the `emailSecretHashPepper` key or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable to be set with the secret pepper value.
@@ -92,7 +92,7 @@ If you are using the `config/passwords.yaml` file or environment variables, you 
 
 ## Client-side configuration
 
-If you have configured the `SignInWidget` as described in the [setup section](../../01-setup#present-the-authentication-ui), the Email identity provider will be automatically detected and displayed in the sign-in widget.
+If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Email identity provider will be automatically detected and displayed in the sign-in widget.
 
 You can also use the `EmailSignInWidget` to include the email authentication flow in your own custom UI.
 
@@ -122,4 +122,4 @@ The widget automatically handles:
 - Password reset flow with email verification.
 - Navigation between screens.
 
-For details on how to display the email authentication UI in your Flutter app, see the [customizing the UI section](./03-customizing-the-ui).
+For details on how to display the email authentication UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).

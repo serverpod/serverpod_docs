@@ -116,7 +116,7 @@ import 'package:serverpod_auth_idp_server/providers/apple.dart';
 class AppleIdpEndpoint extends AppleIdpBaseEndpoint {}
 ```
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../01-setup#identity-providers-configuration).
+Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 
@@ -127,7 +127,7 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 - `keyId`: Required. The ID of the key associated with the Sign in with Apple service.
 - `key`: Required. The secret contents of the private key file received from Apple.
 
-For more details on configuration options, see the [configuration section](./02-configuration).
+For more details on configuration options, see the [configuration section](./configuration).
 
 ## Client-side configuration
 
@@ -178,7 +178,7 @@ void main() {
 
 ### Using AppleSignInWidget
 
-If you have configured the `SignInWidget` as described in the [setup section](../../01-setup#present-the-authentication-ui), the Apple identity provider will be automatically detected and displayed in the sign-in widget.
+If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Apple identity provider will be automatically detected and displayed in the sign-in widget.
 
 You can also use the `AppleSignInWidget` to include the Apple authentication flow in your own custom UI.
 
@@ -207,4 +207,4 @@ The widget automatically handles:
 - Token management.
 - Underlying Apple Sign-In package error handling.
 
-For details on how to customize the Apple Sign-In UI in your Flutter app, see the [customizing the UI section](./03-customizing-the-ui).
+For details on how to customize the Apple Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).

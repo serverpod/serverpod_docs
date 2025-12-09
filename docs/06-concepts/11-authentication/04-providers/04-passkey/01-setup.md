@@ -7,7 +7,7 @@ This provider is currently experimental and implemented only on the server-side.
 :::
 
 :::caution
-You need to install the auth module before you continue, see [Setup](../../01-setup).
+You need to install the auth module before you continue, see [Setup](../../setup).
 :::
 
 ## Server-side configuration
@@ -62,7 +62,7 @@ import 'package:serverpod_auth_idp_server/providers/passkey.dart';
 class PasskeyIdpEndpoint extends PasskeyIdpBaseEndpoint {}
 ```
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../01-setup#identity-providers-configuration).
+Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

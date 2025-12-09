@@ -5,8 +5,8 @@ The authentication system uses token managers to handle authentication tokens. T
 ## Default Token Managers
 
 Serverpod provides two built-in token managers:
-- `JwtTokenManager` for JWT-based authentication. See [JWT Token Manager](02-jwt-token-manager) for details.
-- `ServerSideSessionsTokenManager` for session-based authentication. See [Server-Side Sessions Token Manager](03-server-side-sessions-token-manager) for details.
+- `JwtTokenManager` for JWT-based authentication. See [JWT Token Manager](./jwt-token-manager) for details.
+- `ServerSideSessionsTokenManager` for session-based authentication. See [Server-Side Sessions Token Manager](./server-side-sessions-token-manager) for details.
 
 ## Using the token managers
 

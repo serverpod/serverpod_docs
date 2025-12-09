@@ -10,7 +10,7 @@ Below is a non-exhaustive list of some of the most common configuration options.
 
 A pepper is a server-side secret that is added, along with a unique salt, to a password before it is hashed and stored. The pepper makes it harder for an attacker to crack password hashes if they have only gained access to the database.
 
-The pepper is configured via the `secretHashPepper` property in `EmailIdpConfig`, as shown in the [server-side configuration](./01-setup#server-side-configuration) section. Its [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
+The pepper is configured via the `secretHashPepper` property in `EmailIdpConfig`, as shown in the [server-side configuration](./setup#server-side-configuration) section. Its [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
 
 :::warning
 If the pepper is changed, all passwords in the database will need to be re-hashed with the new pepper, or the old pepper needs to be added as a fallback pepper. Store the pepper securely and never expose it to the client.
@@ -64,7 +64,7 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
 ```
 
 :::warning
-Remember to configure the `verificationCodeConfig` parameter on the `EmailSignInWidget` to match the length of the verification code you generate. Otherwise, users will never be able to enter the verification code correctly. See the [customizing the UI section](./03-customizing-the-ui) for more details.
+Remember to configure the `verificationCodeConfig` parameter on the `EmailSignInWidget` to match the length of the verification code you generate. Otherwise, users will never be able to enter the verification code correctly. See the [customizing the UI section](./customizing-the-ui) for more details.
 :::
 
 ### Reacting to events
