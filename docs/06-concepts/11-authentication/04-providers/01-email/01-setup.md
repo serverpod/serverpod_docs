@@ -1,4 +1,4 @@
-# Email Identity Provider Setup
+# Setup
 
 To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
 
@@ -87,7 +87,7 @@ Then, run `serverpod generate` to generate the client code and create a migratio
 For more details on configuration options, such as customizing password requirements, verification code generation, rate limiting, and more, see the [configuration section](./02-configuration).
 
 :::tip
-If you are using the `config/passwords.yaml` file or environment variables, you can use the `EmailIdpConfigFromPasswords` constructor to automatically load the secret pepper. It will expect the `emailSecretHashPepper` key or the `SERVERPOD_EMAIL_SECRET_HASH_PEPPER` environment variable to be set with the secret pepper value.
+If you are using the `config/passwords.yaml` file or environment variables, you can use the `EmailIdpConfigFromPasswords` constructor to automatically load the secret pepper. It will expect the `emailSecretHashPepper` key or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable to be set with the secret pepper value.
 :::
 
 ## Client-side configuration

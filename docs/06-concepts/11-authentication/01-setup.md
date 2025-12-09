@@ -129,7 +129,7 @@ By default, endpoints for all providers are disabled. To enable a provider, it i
 
 ### Storing Secrets
 
-Secrets like peppers and private keys should be stored securely. The example above uses `pod.getPassword()` which reads from your `config/passwords.yaml` file or environment variables.
+Secrets like peppers and private keys should be stored securely. The example above uses `pod.getPassword()` which reads from your `config/passwords.yaml` file or environment variables in the format `SERVERPOD_PASSWORD_<key>='value'`.
 
 Add secrets to `config/passwords.yaml`:
 
@@ -137,25 +137,25 @@ Add secrets to `config/passwords.yaml`:
 development:
   serverSideSessionKeyHashPepper: 'your-session-pepper-here'
   jwtRefreshTokenHashPepper: 'your-refresh-token-pepper-here'
-  jwtPrivateKey: 'your-private-key-here'
+  jwtHmacSha512PrivateKey: 'your-private-key-here'
   emailSecretHashPepper: 'your-email-pepper-here'
   googleClientSecret: '{"type":"service_account",...}'
   # ... other secrets
 ```
 
-Or use environment variables:
+Or use environment variables in the expected format:
 
 ```bash
-export SERVERPOD_SERVER_SIDE_SESSION_KEY_HASH_PEPPER='your-session-pepper-here'
-export SERVERPOD_JWT_REFRESH_TOKEN_HASH_PEPPER='your-refresh-token-pepper-here'
-export SERVERPOD_JWT_PRIVATE_KEY='your-private-key-here'
-export SERVERPOD_EMAIL_SECRET_HASH_PEPPER='your-email-pepper-here'
-export SERVERPOD_GOOGLE_CLIENT_SECRET='{"type":"service_account",...}'
+export SERVERPOD_PASSWORD_serverSideSessionKeyHashPepper='your-session-pepper-here'
+export SERVERPOD_PASSWORD_jwtRefreshTokenHashPepper='your-refresh-token-pepper-here'
+export SERVERPOD_PASSWORD_jwtHmacSha512PrivateKey='your-private-key-here'
+export SERVERPOD_PASSWORD_emailSecretHashPepper='your-email-pepper-here'
+export SERVERPOD_PASSWORD_googleClientSecret='{"type":"service_account",...}'
 # ... other secrets
 ```
 
 :::info
-When using the `config/passwords.yaml` file or environment variables, you can use a convenience version of token manager and identity provider builders that already load secrets from the passwords file while still allowing you to pass additional configuration options.
+When using the `config/passwords.yaml` file or environment variables, you can use a convenience version of token manager and identity provider builders that already load secrets using `pod.getPassword()` while still allowing you to pass additional configuration options.
 
 ```dart
 final jwtConfig = JwtConfigFromPasswords();
@@ -245,23 +245,36 @@ See [Client-side authentication](02-basics#client-side-authentication) for more 
 The `serverpod_auth_idp_flutter` package provides a `SignInWidget` that automatically detects enabled authentication providers and displays the appropriate sign-in options.
 
 ```dart
+import 'package:flutter/material.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:your_client/your_client.dart';
 
-SignInWidget(
-  client: client,
-  onAuthenticated: () {
-    // Navigate to home screen
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => HomePage()),
+class SignInPage extends StatelessWidget {
+  final Client client;
+
+  const SignInPage({required this.client, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SignInWidget(
+        client: client,
+        onAuthenticated: () {
+          // Navigate to home screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => HomePage()),
+          );
+        },
+        onError: (error) {
+          // Handle errors
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $error')),
+          );
+        },
+      ),
     );
-  },
-  onError: (error) {
-    // Handle errors
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $error')),
-    );
-  },
-)
+  }
+}
 ```
 
 This widget is a convenient way to use identity providers out-of-the-box, but you can also fully customize it or replace it with your own implementation. See the [UI Components](06-ui-components) documentation for more details.
