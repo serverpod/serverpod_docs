@@ -1,5 +1,5 @@
 ---
-sidebar_label: 1. Creating endpoint methods
+sidebar_label: 1️⃣ Creating endpoint methods
 ---
 
 # Creating endpoint methods

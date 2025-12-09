@@ -1,5 +1,5 @@
 ---
-sidebar_label: 2. Models and data
+sidebar_label: 2️⃣ Models and data
 ---
 
 # Models and data

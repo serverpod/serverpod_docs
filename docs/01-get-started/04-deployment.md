@@ -1,5 +1,5 @@
 ---
-sidebar_label: 4. Deploying Serverpod
+sidebar_label: 4️⃣ Deploying Serverpod
 ---
 
 # Deploying Serverpod
