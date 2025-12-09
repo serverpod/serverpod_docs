@@ -1,14 +1,13 @@
 # The basics
 
-Serverpod automatically checks if the user is logged in and if the user has the right privileges to access the endpoint. When using the `serverpod_auth` module you will not have to worry about keeping track of tokens, refreshing them or, even including them in requests as this all happens automatically under the hood.
+Serverpod automatically checks if the user is logged in and if the user has the right privileges to access each endpoint. When using the Serverpod Authentication modules, you will not have to worry about keeping track of tokens, refreshing them or even including them in requests as this all happens automatically under the hood.
 
-The `Session` object provides information about the current user. A unique `userIdentifier` identifies a user. You should use this id whenever you a referring to a user. Access the id of a signed-in user through the `authenticated` asynchronous getter of the `Session` object. Since the default implementation of `serverpod_auth` uses numeric IDs for the users, there is a convenience getter `userId` on the `AuthenticationInfo`, which returns the integer value.
+The `Session` object provides information about the current user. A unique `userIdentifier` identifies a user as a `UuidValue`. You should use this id whenever you are referring to a user. Access the id of a signed-in user through the `authenticated` asynchronous getter of the `Session` object.
 
 ```dart
 Future<void> myMethod(Session session) async {
   final authenticationInfo = await session.authenticated;
   final userIdentifier = authenticationInfo?.userIdentifier;
-  final userId = authenticationInfo?.userId;
   ...
 }
 ```
@@ -55,33 +54,33 @@ You can use this annotation in two ways:
 
 1. On the entire endpoint class to make all methods unauthenticated:
 
-```dart
-@unauthenticatedClientCall
-class UnauthenticatedEndpoint extends Endpoint {
-  Future<bool> someMethod(Session session) async {
-    return session.isUserSignedIn; // Will always return false
-  }
+    ```dart
+    @unauthenticatedClientCall
+    class UnauthenticatedEndpoint extends Endpoint {
+      Future<bool> someMethod(Session session) async {
+        return session.isUserSignedIn; // Will always return false
+      }
 
-  Stream<bool> someStream(Session session) async* {
-    yield await session.isUserSignedIn; // Will always return false
-  }
-}
-```
+      Stream<bool> someStream(Session session) async* {
+        yield await session.isUserSignedIn; // Will always return false
+      }
+    }
+    ```
 
 2. On specific methods to make only those methods unauthenticated:
 
-```dart
-class PartiallyUnauthenticatedEndpoint extends Endpoint {
-  @unauthenticatedClientCall
-  Future<bool> publicMethod(Session session) async {
-    return session.isUserSignedIn; // Will always return false
-  }
+    ```dart
+    class PartiallyUnauthenticatedEndpoint extends Endpoint {
+      @unauthenticatedClientCall
+      Future<bool> publicMethod(Session session) async {
+        return session.isUserSignedIn; // Will always return false
+      }
 
-  Future<bool> authenticatedMethod(Session session) async {
-    return session.isUserSignedIn;
-  }
-}
-```
+      Future<bool> authenticatedMethod(Session session) async {
+        return session.isUserSignedIn;
+      }
+    }
+    ```
 
 This is particularly useful for endpoints that must not receive authentication, such as JWT refresh endpoints.
 
@@ -110,10 +109,12 @@ class MyEndpoint extends Endpoint {
 
 ### Managing scopes
 
-New users are created without any scopes. To update a user's scopes, use the `Users` class's `updateUserScopes` method (requires the `serverpod_auth_server` package). This method replaces all previously stored scopes.
+New users are created without any scopes. To update a user's scopes, use the `AuthUsers` class's `updateUserScopes` method. This method replaces all previously stored scopes.
 
 ```dart
-await Users.updateUserScopes(session, userId, {Scope.admin});
+import 'package:serverpod_auth_idp_server/core.dart';
+
+await AuthUsers.update(session, authUserId: authUserId, scopes: {Scope.admin});
 ```
 
 ### Custom scopes
@@ -150,44 +151,99 @@ class MyEndpoint extends Endpoint {
 Keep in mind that a scope is merely an arbitrary string and can be written in any format you prefer. However, it's crucial to use unique strings for each scope, as duplicated scope strings may lead to unintentional data exposure.
 :::
 
-## User authentication
+## Client-side authentication
 
-The `StatusEndpoint` class includes methods for handling user sign-outs, whether from a single device or all devices.
+On the client side, authentication state is managed through the `FlutterAuthSessionManager`, which is accessible via `client.auth`.
 
 :::info
-
-In addition to the `StatusEndpoint` methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
-
-For more detailed information on managing and revoking authentication keys, please refer to the [Revoking authentication keys](providers/custom-providers#revoking-authentication-keys) section.
-
+If you are building a pure Dart application using Serverpod, you can use the `ClientAuthSessionManager` declared in the `serverpod_auth_core_client` package instead of the `FlutterAuthSessionManager`. It has the same functionality, with the exception of a `authInfoListenable` getter that is tied to the Flutter framework.
 :::
 
-#### Sign out device
+### Check authentication state
 
-To sign out a single device:
+To check if the user is signed in:
 
 ```dart
-await client.modules.auth.status.signOutDevice();
+bool isSignedIn = client.auth.isAuthenticated;
 ```
 
-This status endpoint method obtains the authentication key from session's authentication information, then revokes that key.
+Returns `true` if the user is signed in, or `false` otherwise.
+
+### Access current authentication info
+
+To retrieve information about the current authentication:
+
+```dart
+AuthSuccess? authInfo = client.auth.authInfo;
+```
+
+Returns an `AuthSuccess` object if the user is currently signed in, or `null` if the user is not.
+
+### Register authentication
+
+To register a signed in user, call:
+
+```dart
+await client.auth.updateSignedInUser(authInfo);
+```
+
+This will persist the authentication information and refresh any open streaming connection. This is the method used by identity providers to register a signed in user. For more details on providers, see [Custom Providers](providers/custom-providers).
+
+### Monitor authentication changes
+
+The `FlutterAuthSessionManager` exposes an `authInfoNotifier` that is a `ValueListenable<AuthSuccess?>` to be used for listening to changes. This is useful for updating the UI when the authentication state changes:
+
+```dart
+@override
+void initState() {
+  super.initState();
+
+  // Listen to authentication state changes.
+  client.auth.authInfoNotifier.addListener(_onAuthStateChanged);
+}
+
+// Don't forget to remove the listener when the widget is disposed.
+@override
+void dispose() {
+  client.auth.authInfoNotifier.removeListener(_onAuthStateChanged);
+  super.dispose();
+}
+
+void _onAuthStateChanged() {
+  setState(() {
+    // UI will rebuild when auth state changes.
+  });
+}
+```
+
+The listener is triggered whenever the user's sign-in state changes.## User authentication
+
+### Signing out users
+
+The `FlutterAuthSessionManager` provides methods for handling user sign-outs, whether from a single device or all devices.
+
+:::info
+The below methods use the `StatusEndpoint` methods under the hood, which are also directly accessible on the client using the `client.modules.auth.status` getter. In addition to these methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
+
+For more detailed information on managing and revoking authentication keys, please refer to the [Managing tokens](./token-managers/managing-tokens#revoking-tokens) section.
+:::
+
+#### Sign out current device
+
+To sign the user out from the current device:
+
+```dart
+await client.auth.signOutDevice();
+```
+
+Returns `true` if the sign-out is successful, or `false` if it fails. Either way, the sign-out will be performed on the application and update the authentication state.
 
 #### Sign out all devices
 
 To sign the user out across all devices:
 
 ```dart
-await client.modules.auth.status.signOutAllDevices();
+await client.auth.signOutAllDevices();
 ```
 
-This status endpoint retrieves the user ID from session's authentication information, then revokes all authentication keys related to that user.
-
-:::info
-The `signOut` status endpoint is deprecated. Use `signOutDevice` or `signOutAllDevices` instead.
-
-```dart
-await client.modules.auth.status.signOut();  // Deprecated
-```
-
-The behavior of `signOut` is controlled by `legacyUserSignOutBehavior`, which you can adjust in the [configure authentication](setup#configure-authentication) section. This allows you to control the signout behaviour of already shipped clients.
-:::
+Returns `true` if the user is successfully signed out from all devices, or `false` if it fails. Also proceed with the sign-out on the application regardless of the result of the operation on the server.

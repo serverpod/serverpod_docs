@@ -1,31 +1,72 @@
 # Working with users
 
-It's a common task to read or update user information on your server. You can always retrieve the id of a signed-in user through the session object.
+The authentication module provides conventient ways to work with your authenticated users and their related profile data.
+
+## Authenticated users
+
+All authenticated users have an authentication identifier, that uniquely identifies them across the server. This can be retrieved from the `session` object as a `String` through the `userIdentifier` property or as a `UuidValue` from the `authUserId` extension provided by the authentication module.
 
 ```dart
-var userId = (await session.authenticated)?.userId;
+var userIdString = session.authenticated?.userIdentifier;
+// requires `import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart';`
+var userIdUuidValue = session.authenticated?.authUserId;
 ```
 
-If you sign in users through the auth module, you will be able to retrieve more information through the static methods of the `Users` class.
+Further operations on the authenticated user can be performed using the `AuthUsers` class which is provide by the `AuthServices` instance.
 
 ```dart
-var userInfo = await Users.findUserByUserId(session, userId!);
+await AuthServices.instance.authUsers.delete(session, userIdUuidValue);
 ```
 
-The `UserInfo` is automatically populated when the user signs in. Different data may be available depending on which method was used for authentication.
+For the full list of operations, see the [AuthUsers](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/AuthUsers-class.html) class documentation.
 
-:::tip
+## User profiles
 
-The `Users` class contains many other convenient methods for working with users. You can find the full documentation [here](https://pub.dev/documentation/serverpod_auth_server/latest/serverpod_auth_server/Users-class.html).
+By default, all authenticated users have a `UserProfile` object that contains information about the signed-in user. To access the `UserProfile` object, you can use the `userProfile` extension on the `AuthenticationInfo` object.
 
-:::
+```dart
+var userProfile = session.authenticated.userProfile(session);
+```
 
-## Displaying or editing user images
+The `UserProfile` contains a basic set of information about the user, such as their full name, email address, and profile picture.
 
-The module has built-in methods for handling a user's basic settings, including uploading new profile pictures.
+This information is automatically populated when the user signs in. Based on the authentication method used, different data may be available.
 
-![UserImageButton](https://github.com/serverpod/serverpod/raw/main/misc/images/user-image-button.png)
+It's a common task to read or update user information on your server. The `UserProfiles` class provides many convenient methods for working with user profiles and is accessible through the `AuthServices` instance.
 
-To display a user's profile picture, use the `CircularUserImage` widget and pass a `UserInfo` retrieved from the `SessionManager`.
+```dart
+await AuthServices.instance.userProfiles.changeFullName(session, authUserId, 'my name');
+```
 
-To edit a user profile image, use the `UserImageButton` widget. It will automatically fetch the signed-in user's profile picture and communicate with the server.
+For the full list of operations, see the [UserProfiles](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/UserProfiles-class.html) class documentation.
+
+
+## Attaching additional information
+
+The recommended way to attach additional information to an authenticated user is to use a relation in the Database. This makes it easy to query the data later based on the user's authentication identifier.
+
+```yaml
+class: MyDomainData
+table: my_domain_data
+fields:
+  ### The [AuthUser] this profile belongs to
+  authUser: module:auth:AuthUser?, relation(onDelete=Cascade)
+  additionalInfo: String
+
+indexes:
+  auth_user_id_unique_idx:
+    fields: authUserId
+    unique: true
+```
+
+The model above creates a relation to the `AuthUser` table (using a nickname) and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
+
+This makes it easy to query the additional information later based on the user's `authId`.
+
+```dart
+final authUserId = session.authenticated?.authUserId;
+final additionalInfo = await MyDomainData.db.findFirstRow(
+    session,
+    where: (t) => t.authUserId.equals(authUserId!),
+);
+```

@@ -1,10 +1,10 @@
 # Setup
 
-Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins and currently supports signing in with email, Google, Apple, and Firebase.
+Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth_idp` module. The module makes it easy to authenticate with email, social sign-ins and more.
 
-Future versions of the authentication module will include more options. If you write another authentication module, please consider [contributing](/contribute) your code.
+The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-providers-configuration) section for details on all available providers.
 
-![Sign-in with Serverpod](https://github.com/serverpod/serverpod/raw/main/misc/images/sign-in.png)
+![Sign-in with Serverpod](../../../static/img/authentication/sign-in-widget.png)
 
 ## Installing the auth module
 
@@ -12,122 +12,173 @@ Serverpod's auth module makes it easy to authenticate users through email or 3rd
 
 ## Server setup
 
-Add the module as a dependency to the server project's `pubspec.yaml`.
-
-```sh
-$ dart pub add serverpod_auth_server
-```
-
-Add the authentication handler to the Serverpod instance.
-
-```dart
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
-
-void run(List<String> args) async {
-  var pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-    authenticationHandler: auth.authenticationHandler, // Add this line
-  );
-
-  ...
-}
-```
-
-Optionally, add a nickname for the module in the `config/generator.yaml` file. This nickname will be used as the name of the module in the code.
-
-```yaml
-modules:
-  serverpod_auth:
-    nickname: auth
-```
-
-While still in the server project, generate the client code and endpoint methods for the auth module by running the `serverpod generate` command line tool.
-
-```bash
-$ serverpod generate
-```
-
-### Initialize the auth database
-
-After adding the module to the server project, you need to initialize the database. First you have to create a new migration that includes the auth module tables. This is done by running the `serverpod create-migration` command line tool in the server project.
-
-```bash
-$ serverpod create-migration
-```
-
-Start your database container from the server project.
-
-```bash
-$ docker compose up --build --detach
-```
-
-Then apply the migration by starting the server with the `apply-migrations` flag.
-
-```bash
-$ dart run bin/main.dart --role maintenance --apply-migrations
-```
-
-The full migration instructions can be found in the [migration guide](../database/migrations).
-
-### Configure Authentication
-
-Serverpod's auth module comes with a default Authentication Configuration. To customize it, go to your main `server.dart` file, import the `serverpod_auth_server` module and set up the authentication configuration:
-
-```dart
-import 'package:serverpod_auth_server/module.dart' as auth;  
-  
-void run(List<String> args) async {
-
-  auth.AuthConfig.set(auth.AuthConfig(  
-    minPasswordLength: 12,
-  ));  
-    
-  // Start the Serverpod server.  
-  await pod.start();
-}
-
-```
-
-| **Property**                         | **Description**                                                                                                                                                                                                                                                   |        **Default**         |
-| :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------: |
-| **allowUnsecureRandom**              | True if unsecure random number generation is allowed. If set to false, an error will be thrown if the platform does not support secure random number generation.                                                                                                  |           false            |
-| **emailSignInFailureResetTime**      | The reset period for email sign in attempts. Defaults to 5 minutes.                                                                                                                                                                                               |            5min            |
-| **enableUserImages**                 | True if user images are enabled.                                                                                                                                                                                                                                  |            true            |
-| **extraSaltyHash**                   | True if the server should use the accounts email address as part of the salt when storing password hashes (strongly recommended).                                                                                                                                 |            true            |
-| **firebaseServiceAccountKeyJson**    | Firebase service account key JSON file. Generate and download from the Firebase console.                                                                                                                                                                          |             -              |
-| **importUserImagesFromGoogleSignIn** | True if user images should be imported when signing in with Google.                                                                                                                                                                                               |            true            |
-| **legacyUserSignOutBehavior**        | Defines the default behavior for the deprecated `signOut` method used in the status endpoint. This setting controls whether users are signed out from all active devices (`SignOutOption.allDevices`) or just the current device (`SignOutOption.currentDevice`). | `SignOutOption.allDevices` |
-| **maxAllowedEmailSignInAttempts**    | Max allowed failed email sign in attempts within the reset period.                                                                                                                                                                                                |             5              |
-| **maxPasswordLength**                | The maximum length of passwords when signing up with email.                                                                                                                                                                                                       |            128             |
-| **minPasswordLength**                | The minimum length of passwords when signing up with email.                                                                                                                                                                                                       |             8              |
-| **onUserCreated**                    | Called after a user has been created. Listen to this callback if you need to do additional setup.                                                                                                                                                                 |             -              |
-| **onUserUpdated**                    | Called whenever a user has been updated. This can be when the user name is changed or if the user uploads a new profile picture.                                                                                                                                  |             -              |
-| **onUserWillBeCreated**              | Called when a user is about to be created, gives a chance to abort the creation by returning false.                                                                                                                                                               |             -              |
-| **passwordResetExpirationTime**      | The time for password resets to be valid.                                                                                                                                                                                                                         |            24h             |
-| **sendPasswordResetEmail**           | Called when a user should be sent a reset code by email.                                                                                                                                                                                                          |             -              |
-| **sendValidationEmail**              | Called when a user should be sent a validation code on account setup.                                                                                                                                                                                             |             -              |
-| **userCanEditFullName**              | True if users can edit their full name.                                                                                                                                                                                                                           |           false            |
-| **userCanEditUserImage**             | True if users can update their profile images.                                                                                                                                                                                                                    |            true            |
-| **userCanEditUserName**              | True if users can edit their user names.                                                                                                                                                                                                                          |            true            |
-| **userCanSeeFullName**               | True if users can view their full name.                                                                                                                                                                                                                           |            true            |
-| **userCanSeeUserName**               | True if users can view their user name.                                                                                                                                                                                                                           |            true            |
-| **userImageFormat**                  | The format used to store user images.                                                                                                                                                                                                                             |            jpg             |
-| **userImageGenerator**               | Generator used to produce default user images.                                                                                                                                                                                                                    |             -              |
-| **userImageQuality**                 | The quality setting for images if JPG format is used.                                                                                                                                                                                                             |             70             |
-| **userImageSize**                    | The size of user images.                                                                                                                                                                                                                                          |            256             |
-| **userInfoCacheLifetime**            | The duration which user infos are cached locally in the server.                                                                                                                                                                                                   |            1min            |
-| **validationCodeLength**             | The length of the validation code used in the authentication process. This value determines the number of digits in the validation code. Setting this value to less than 3 reduces security.                                                                      |             8              |
-
-## Client setup
-
-Add the auth client in your client project's `pubspec.yaml`.
+Add the auth modules as dependencies to the server project's `pubspec.yaml`.
 
 ```yaml
 dependencies:
   ...
-  serverpod_auth_client: ^1.x.x
+  serverpod_auth_idp_server: 3.x.x
+```
+
+The `serverpod_auth_idp_server` package contains all components required to configure authentication services.
+
+### Configure Authentication Services
+
+In your main `server.dart` file, configure the authentication system using the `pod.initializeAuthServices()` extension method.
+
+```dart
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_idp_server/core.dart';
+
+import 'src/generated/protocol.dart';
+import 'src/generated/endpoints.dart';
+
+void run(List<String> args) async {
+  final pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+  );
+
+  // Set up authentication services
+  // The `pod.getPassword()` will get the value from `config/passwords.yaml`.
+  pod.initializeAuthServices(
+    tokenManagerBuilders: [
+      JwtConfig(
+        // Pepper used to hash the refresh token secret.
+        refreshTokenHashPepper: pod.getPassword('jwtRefreshTokenHashPepper')!,
+        // Algorithm used to sign the tokens (`hmacSha512` or `ecdsaSha512`).
+        algorithm: JwtAlgorithm.hmacSha512(
+          // Private key to sign the tokens. Must be a valid HMAC SHA-512 key.
+          SecretKey(pod.getPassword('jwtHmacSha512PrivateKey')!),
+        )
+      ),
+    ],
+  );
+
+  await pod.start();
+}
+```
+
+### Token Manager Configuration
+
+The authentication system uses token managers to handle authentication tokens. You need to configure at least one token manager to be used as the primary token manager. Additional token managers can be configured to be used for validation and management operations.
+
+Serverpod provides two built-in token manager builders:
+
+- `JwtConfig` to use JWT-based authentication. See [JWT Token Manager](./token-managers/jwt-token-manager) for details.
+- `ServerSideSessionsConfig` to use server-side sessions authentication. See [Server-Side Sessions Token Manager](./token-managers/server-side-sessions-token-manager) for details.
+
+For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](./token-managers/managing-tokens) documentation.
+
+### Identity Providers Configuration
+
+Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
+
+- **Email**: Sign-up and sign-in with email and password. See [Email Provider](./providers/email/setup) for details.
+- **Google**: Sign-in with Google. See [Google Provider](./providers/google/setup) for details.
+- **Apple**: Sign-in with Apple. See [Apple Provider](./providers/apple/setup) for details.
+- **Passkey (experimental)**: Sign-in with Passkey. See [Passkey Provider](./providers/passkey/setup) for details.
+
+By default, endpoints for all providers are disabled. To enable a provider, it is necessary to:
+
+1. Pass its config object to the `identityProviderBuilders` parameter of the `pod.initializeAuthServices()` method.
+
+    ```dart
+    pod.initializeAuthServices(
+      identityProviderBuilders: [
+        EmailIdpConfig( /* configuration options */ ),
+      ],
+    );
+    ```
+
+   :::tip
+   Some identity providers might require configuration on external services, such as the Google client secret. Such configuration will be required by the provider config object.
+   :::
+
+2. Extend the identity provider abstract endpoint.
+
+    ```dart
+    import 'package:serverpod_auth_idp_server/providers/email.dart';
+
+    class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+    ```
+
+3. Run `serverpod generate` to generate the client code and endpoint methods for the provider.
+
+    ```bash
+    $ serverpod generate
+    ```
+
+4. Create a migration to initialize the database for the provider.
+
+    ```bash
+    # Create the migration
+    $ serverpod create-migration
+
+    # Start the database container
+    $ docker compose up --build --detach
+
+    # Apply the migration
+    $ dart run bin/main.dart --role maintenance --apply-migrations
+    ```
+
+    :::info
+    If this is the first time creating migrations after adding the module, besides the provider tables, all auth module tables will also be created. More detailed migration instructions can be found in the [migration guide](../database/migrations).
+    :::
+
+### Storing Secrets
+
+Secrets like peppers and private keys should be stored securely. The example above uses `pod.getPassword()` which reads from your `config/passwords.yaml` file or environment variables in the format `SERVERPOD_PASSWORD_<key>='value'`.
+
+Add secrets to `config/passwords.yaml`:
+
+```yaml
+development:
+  serverSideSessionKeyHashPepper: 'your-session-pepper-here'
+  jwtRefreshTokenHashPepper: 'your-refresh-token-pepper-here'
+  jwtHmacSha512PrivateKey: 'your-private-key-here'
+  emailSecretHashPepper: 'your-email-pepper-here'
+  googleClientSecret: '{"type":"service_account",...}'
+  # ... other secrets
+```
+
+Or use environment variables in the expected format:
+
+```bash
+export SERVERPOD_PASSWORD_serverSideSessionKeyHashPepper='your-session-pepper-here'
+export SERVERPOD_PASSWORD_jwtRefreshTokenHashPepper='your-refresh-token-pepper-here'
+export SERVERPOD_PASSWORD_jwtHmacSha512PrivateKey='your-private-key-here'
+export SERVERPOD_PASSWORD_emailSecretHashPepper='your-email-pepper-here'
+export SERVERPOD_PASSWORD_googleClientSecret='{"type":"service_account",...}'
+# ... other secrets
+```
+
+:::info
+When using the `config/passwords.yaml` file or environment variables, you can use a convenience version of token manager and identity provider builders that already load secrets using `pod.getPassword()` while still allowing you to pass additional configuration options.
+
+```dart
+final jwtConfig = JwtConfigFromPasswords();
+final serverSideSessionsConfig = ServerSideSessionsConfigFromPasswords();
+final emailIdpConfig = EmailIdpConfigFromPasswords();
+final googleIdpConfig = GoogleIdpConfigFromPasswords();
+final appleIdpConfig = AppleIdpConfigFromPasswords();
+final passkeyIdpConfig = PasskeyIdpConfigFromPasswords();
+```
+:::
+
+:::warning
+Never commit `config/passwords.yaml` to version control. Be sure to add it to your `.gitignore` file. Prefer environment variables or secure secret management in production.
+:::
+
+## Client setup
+
+Add the `serverpod_auth_idp_client` package to your client project's `pubspec.yaml`. Make sure to use the same version numbers as for Serverpod itself for all dependencies.
+
+```yaml
+dependencies:
+  ...
+  serverpod_auth_idp_client: 3.x.x
 ```
 
 ## App setup
@@ -138,131 +189,96 @@ First, add dependencies to your app's `pubspec.yaml` file for the methods of sig
 dependencies:
   flutter:
     sdk: flutter
-  serverpod_flutter: ^1.x.x
-  auth_example_client:
-    path: ../auth_example_client
-  
-  serverpod_auth_shared_flutter: ^1.x.x
+  serverpod_auth_idp_flutter: 3.x.x
+  serverpod_flutter: 3.x.x
+  your_client:
+    path: ../your_client
 ```
 
-Next, you need to set up a `SessionManager`, which keeps track of the user's state. It will also handle the authentication keys passed to the client from the server, upload user profile images, etc.
+Next, you need to set up a `FlutterAuthSessionManager`, which keeps track of the user's authentication state. It handles authentication tokens, token storage and refresh, and user session management.
 
 ```dart
-late SessionManager sessionManager;
+import 'package:flutter/material.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:your_client/your_client.dart';
+
 late Client client;
 
 void main() async {
-  // Need to call this as we are using Flutter bindings before runApp is called.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // The android emulator does not have access to the localhost of the machine.
-  // const ipAddress = '10.0.2.2'; // Android emulator ip for the host
+  const serverUrl = 'http://localhost:8080/';
 
-  // On a real device replace the ipAddress with the IP address of your computer.
-  const ipAddress = 'localhost';
+  // Create the client with the auth session manager
+  client = Client(serverUrl)
+    ..connectivityMonitor = FlutterConnectivityMonitor()
+    ..authSessionManager = FlutterAuthSessionManager();
 
-  // Sets up a singleton client object that can be used to talk to the server from
-  // anywhere in our app. The client is generated from your server code.
-  // The client is set up to connect to a Serverpod running on a local server on
-  // the default port. You will need to modify this to connect to staging or
-  // production servers.
-  client = Client(
-    'http://$ipAddress:8080/',
-    authenticationKeyManager: FlutterAuthenticationKeyManager(),
-  )..connectivityMonitor = FlutterConnectivityMonitor();
-
-  // The session manager keeps track of the signed-in state of the user. You
-  // can query it to see if the user is currently signed in and get information
-  // about the user.
-  sessionManager = SessionManager(
-    caller: client.modules.auth,
-  );
-  await sessionManager.initialize();
+  // Initialize authentication (restores session from storage and validates)
+  await client.auth.initialize();
 
   runApp(MyApp());
 }
 ```
 
-The `SessionManager` has useful methods for viewing and monitoring the user's current state.
+The `FlutterAuthSessionManager` provides useful properties and methods for managing authentication state.
 
-#### Check authentication state
+:::tip
+In case you have an endpoint called `AuthEndpoint` - that will generate the `auth` getter on the client -, you can also get the `FlutterAuthSessionManager` from the client using the `client.authSessionManager` property. On the above example, you would replace the `client.auth.initialize()` call with `client.authSessionManager.initialize()`.
+:::
 
-To check if the user is signed in:
+### Initialize authentication
+
+The `initialize()` method restores any existing session from storage and validates it with the server. It should be called when your app starts:
 
 ```dart
-sessionManager.isSignedIn;
+await client.auth.initialize();
 ```
 
-Returns `true` if the user is signed in, or `false` otherwise.
+This is equivalent to calling `restore()` followed by `validateAuthentication()`. If the authentication is no longer valid, the user is automatically signed out.
 
-#### Access current user
+See [Client-side authentication](./basics#client-side-authentication) for more details on how to interact with the authentication state from the client.
 
-To retrieve information about the current user:
+### Present the authentication UI
 
-```dart
-sessionManager.signedInUser;
-```
-
-Returns a `UserInfo` object if the user is currently signed in, or `null` if the user is not.
-
-#### Register authentication
-
-To register a signed in user in the session manager:
+The `serverpod_auth_idp_flutter` package provides a `SignInWidget` that automatically detects enabled authentication providers and displays the appropriate sign-in options.
 
 ```dart
-await sessionManager.registerSignedInUser(
-  userInfo,
-  keyId,
-  authKey,
-);
-```
+import 'package:flutter/material.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:your_client/your_client.dart';
 
-This will persist the user information and refresh any open streaming connection, see [Custom Providers - Client Setup](providers/custom-providers#client-setup) for more details.
+class SignInPage extends StatelessWidget {
+  final Client client;
 
-#### Monitor authentication changes
+  const SignInPage({required this.client, super.key});
 
-To add a listener that tracks changes in the user's authentication state, useful for updating the UI:
-
-```dart
-@override
-void initState() {
-  super.initState();
-  
-  // Rebuild the page if authentication state changes.
-  sessionManager.addListener(() {
-    setState(() {});
-  });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SignInWidget(
+        client: client,
+        onAuthenticated: () {
+          // Navigate to home screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => HomePage()),
+          );
+        },
+        onError: (error) {
+          // Handle errors
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $error')),
+          );
+        },
+      ),
+    );
+  }
 }
 ```
 
-The listener is triggered whenever the user's sign-in state changes.
+This widget is a convenient way to use identity providers out-of-the-box, but you can also fully customize it or replace it with your own implementation. See the [UI Components](./ui-components) documentation for more details.
 
-#### Sign out current device
+#### Updating the UI based on authentication state
 
-To sign the user out on from the current device:
-
-```dart
-await sessionManager.signOutDevice();
-```
-
-Returns `true` if the sign-out is successful, or `false` if it fails.
-
-#### Sign out all devices
-
-To sign the user out across all devices:
-
-```dart
-await sessionManager.signOutAllDevices();
-```
-
-Returns `true` if the user is successfully signed out from all devices, or `false` if it fails.
-
-:::info
-
-The `signOut` method is deprecated. This method calls the deprecated `signOut` status endpoint. For additional details, see the [deprecated signout endpoint](basics#sign-out-all-devices) section. Use `signOutDevice` or `signOutAllDevices` instead.
-
-```dart
-await sessionManager.signOut();  // Deprecated
-```
-
-:::
+Instead of navigating to the home screen using the `onAuthenticated` callback, you can listen to authentication state changes and update the UI accordingly. See the [Client-side authentication](./basics#monitor-authentication-changes) section for more details.
