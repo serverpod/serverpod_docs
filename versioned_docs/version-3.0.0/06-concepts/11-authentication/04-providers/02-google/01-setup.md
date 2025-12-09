@@ -30,13 +30,13 @@ The setup for the OAuth consent screen can be found [here](https://console.cloud
 
 3. Add your email to the test users so that you can test your integration in development mode.
 
-![Scopes](../../../../../static/img/authentication/providers/google/1-scopes.png)
+![Scopes](/img/authentication/providers/google/1-scopes.png)
 
 ## Server-side configuration
 
 Create the server credentials in the Google Cloud Console. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as a _**Web application**_. If you have a domain add it to the `Authorized JavaScript origins` and `Authorized redirect URIs`. For development purposes we can add `http://localhost:8082` to both fields, this is the address to the web server.
 
-![Google credentials](../../../../../static/img/6-google-credentials.jpg)
+![Google credentials](/img/6-google-credentials.jpg)
 
 Download the JSON file for your web application OAuth client. This file contains both the client id and the client secret. You will need to supply the contents of the file to the `clientSecret` property of the `GoogleIdpConfig` object.
 
