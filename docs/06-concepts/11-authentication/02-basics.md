@@ -187,7 +187,7 @@ To register a signed in user, call:
 await client.auth.updateSignedInUser(authInfo);
 ```
 
-This will persist the authentication information and refresh any open streaming connection. This is the method used by identity providers to register a signed in user. For more details on providers, see [Custom Providers - Client Setup](providers/custom-providers#client-setup).
+This will persist the authentication information and refresh any open streaming connection. This is the method used by identity providers to register a signed in user. For more details on providers, see [Custom Providers](providers/custom-providers).
 
 ### Monitor authentication changes
 
@@ -225,7 +225,7 @@ The `FlutterAuthSessionManager` provides methods for handling user sign-outs, wh
 :::info
 The below methods use the `StatusEndpoint` methods under the hood, which are also directly accessible on the client using the `client.modules.auth.status` getter. In addition to these methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
 
-For more detailed information on managing and revoking authentication keys, please refer to the [Revoking authentication keys](providers/custom-providers#revoking-authentication-keys) section.
+For more detailed information on managing and revoking authentication keys, please refer to the [Managing tokens](./token-managers/managing-tokens#revoking-tokens) section.
 :::
 
 #### Sign out current device

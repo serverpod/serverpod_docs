@@ -2,7 +2,7 @@
 
 Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth_idp` module. The module makes it easy to authenticate with email, social sign-ins and more.
 
-The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-provider-configuration) section for details on all available providers.
+The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-providers-configuration) section for details on all available providers.
 
 ![Sign-in with Serverpod](../../../static/img/authentication/sign-in-widget.png)
 
