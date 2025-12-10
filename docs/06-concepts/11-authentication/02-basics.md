@@ -191,7 +191,7 @@ This will persist the authentication information and refresh any open streaming 
 
 ### Monitor authentication changes
 
-The `FlutterAuthSessionManager` exposes an `authInfoNotifier` that is a `ValueListenable<AuthSuccess?>` to be used for listening to changes. This is useful for updating the UI when the authentication state changes:
+The `FlutterAuthSessionManager` exposes an `authInfoListenable` that is a `ValueListenable<AuthSuccess?>` to be used for listening to changes. This is useful for updating the UI when the authentication state changes:
 
 ```dart
 @override
@@ -199,13 +199,13 @@ void initState() {
   super.initState();
 
   // Listen to authentication state changes.
-  client.auth.authInfoNotifier.addListener(_onAuthStateChanged);
+  client.auth.authInfoListenable.addListener(_onAuthStateChanged);
 }
 
 // Don't forget to remove the listener when the widget is disposed.
 @override
 void dispose() {
-  client.auth.authInfoNotifier.removeListener(_onAuthStateChanged);
+  client.auth.authInfoListenable.removeListener(_onAuthStateChanged);
   super.dispose();
 }
 

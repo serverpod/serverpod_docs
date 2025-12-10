@@ -25,7 +25,7 @@ For the full list of operations, see the [AuthUsers](https://pub.dev/documentati
 By default, all authenticated users have a `UserProfile` object that contains information about the signed-in user. To access the `UserProfile` object, you can use the `userProfile` extension on the `AuthenticationInfo` object.
 
 ```dart
-var userProfile = session.authenticated.userProfile(session);
+var userProfile = await session.authenticated?.userProfile(session);
 ```
 
 The `UserProfile` contains a basic set of information about the user, such as their full name, email address, and profile picture.

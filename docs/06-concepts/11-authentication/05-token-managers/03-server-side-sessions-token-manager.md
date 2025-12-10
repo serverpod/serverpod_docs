@@ -14,7 +14,7 @@ This token manager is created by passing a `ServerSideSessionsConfig` object to 
 ```dart
 pod.initializeAuthServices(
   tokenManagerBuilders: [
-    ServerSideSessionsConfigFromPasswords(
+    ServerSideSessionsConfig(
       // The pepper used to hash the session key.
       sessionKeyHashPepper: pod.getPassword('serverSideSessionKeyHashPepper')!,
     ),
