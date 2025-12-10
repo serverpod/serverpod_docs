@@ -40,6 +40,16 @@ Or the following environment variables:
     - `SERVERPOD_PASSWORD_jwtHmacSha512PrivateKey`
 :::
 
+Then, extend the abstract endpoint to expose it on the server:
+
+```dart
+import 'package:serverpod_auth_idp_server/core.dart' as core;
+
+class RefreshJwtTokensEndpoint extends core.RefreshJwtTokensEndpoint {}
+```
+
+Finally, run `serverpod generate` to generate the client code and expose the endpoint on the server.
+
 ### Basic configuration options
 
 - `algorithm`: Required. The algorithm to use for signing tokens (HMAC SHA-512 or ECDSA SHA-512).
