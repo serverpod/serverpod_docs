@@ -60,6 +60,14 @@ void run(List<String> args) async {
 }
 ```
 
+Then, extend the abstract endpoint for refreshing JWT tokens to expose it on the server:
+
+```dart
+import 'package:serverpod_auth_idp_server/core.dart' as core;
+
+class RefreshJwtTokensEndpoint extends core.RefreshJwtTokensEndpoint {}
+```
+
 ### Token Manager Configuration
 
 The authentication system uses token managers to handle authentication tokens. You need to configure at least one token manager to be used as the primary token manager. Additional token managers can be configured to be used for validation and management operations.
