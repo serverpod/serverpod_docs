@@ -50,7 +50,7 @@ class: MyDomainData
 table: my_domain_data
 fields:
   ### The [AuthUser] this profile belongs to
-  authUser: module:auth:AuthUser?, relation(onDelete=Cascade)
+  authUser: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
   additionalInfo: String
 
 indexes:
@@ -59,7 +59,7 @@ indexes:
     unique: true
 ```
 
-The model above creates a relation to the `AuthUser` table (using a nickname) and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
+The model above creates a relation to the `AuthUser` table and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
 
 This makes it easy to query the additional information later based on the user's `authId`.
 
