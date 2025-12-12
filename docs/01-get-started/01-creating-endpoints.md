@@ -41,17 +41,6 @@ $ cd magic_recipe/magic_recipe_server
 $ dart pub add dartantic_ai
 ```
 
-::::warning
-`dartantic_ai` recently introduced a breaking change. To avoid build errors, pin the versions in your server's `pubspec.yaml` using `dependency_overrides`:
-
-```yaml
-dependency_overrides:
-  dartantic_ai: 1.2.0
-  dartantic_interface: 1.1.0
-```
-
-::::
-
 ## Create a new endpoint
 
 Create a new file in `magic_recipe_server/lib/src/recipes/` called `recipe_endpoint.dart`. This is where you will define your endpoint and its methods. With Serverpod, you can choose any directory structure you want to use. E.g., you could also use `src/endpoints/` if you want to go layer first or `src/features/recipes/` if you have many features.
@@ -75,9 +64,8 @@ class RecipeEndpoint extends Endpoint {
     }
 
     // Configure the Dartantic AI agent for Gemini before sending the prompt.
-    Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(
-      Providers.google,
+      GoogleProvider(apiKey: geminiApiKey),
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
