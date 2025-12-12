@@ -16,7 +16,7 @@ pod.webServer.addRoute(
     webDir,
     fallback: File('web/app/index.html'),
   ),
-  '/**',
+  '/',
 );
 ```
 
@@ -49,7 +49,7 @@ pod.webServer.addRoute(
       maxAge: const Duration(minutes: 5),
     ),
   ),
-  '/**',
+  '/',
 );
 ```
 
@@ -76,7 +76,7 @@ pod.webServer.addRoute(
       maxAge: const Duration(minutes: 5),
     ),
   ),
-  '/**',
+  '/',
 );
 ```
 
@@ -95,10 +95,9 @@ pod.webServer.addMiddleware(
     fallback: StaticRoute.file(indexFile),
     on: (response) => response.statusCode == 404,
   ),
-  '/**',
 );
 
-pod.webServer.addRoute(StaticRoute.directory(webDir), '/**');
+pod.webServer.addRoute(StaticRoute.directory(webDir), '/');
 ```
 
 This gives you flexibility to customize the fallback condition. For example, you could fall back on any 4xx error:
