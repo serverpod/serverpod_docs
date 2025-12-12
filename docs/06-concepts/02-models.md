@@ -157,7 +157,7 @@ fields:
 
 indexes:
   created_at_index:
-    fields: createdAt  # Index on inherited field
+    fields: createdAt # Index on inherited field
 ```
 
 **ServerOnly Inheritance**: If a parent class is marked as `serverOnly`, all child classes must also be marked as `serverOnly`. A non-serverOnly class cannot extend a serverOnly class, but a serverOnly child can extend a non-serverOnly parent.
@@ -338,9 +338,9 @@ It is easy to add custom enums with serialization support by using the `enum` ke
 ```yaml
 enum: Animal
 values:
- - dog
- - cat
- - bird
+  - dog
+  - cat
+  - bird
 ```
 
 By default the serialization will convert the enum to an int representing the index of the value. Changing the order may therefore have unforeseen consequences when reusing old data (such as from a database). Changing the serialization to be based on the name instead of index is easy.
@@ -349,9 +349,9 @@ By default the serialization will convert the enum to an int representing the in
 enum: Animal
 serialized: byName
 values:
- - dog
- - cat
- - bird
+  - dog
+  - cat
+  - bird
 ```
 
 `serialized` has two valid values `byName` and `byIndex`. When using `byName` the string literal of the enum is used, when using `byIndex` the index value (0, 1, 2, etc) is used.
@@ -373,10 +373,10 @@ enum: Animal
 serialized: byName
 default: unknown
 values:
- - unknown
- - dog
- - cat
- - bird
+  - unknown
+  - dog
+  - cat
+  - bird
 ```
 
 In the example above, if the Enum `Animal` receives an unknown option such as `"fish"` it will be deserialized to `Animal.unknown`. This is useful for maintaining backward compatibility when changing the enum values.
@@ -689,34 +689,34 @@ fields:
 
 ## Keywords
 
-| **Keyword**                                                         | Note                                                                                                           | [class](#class) | [exception](#exception) | [enum](#enum) |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :-------------: | :---------------------: | :-----------: |
-| [**values**](#enum)                                                 | A special key for enums with a list of all enum values.                                                        |                 |                         |       ✅       |
-| [**serialized**](#enum)                                             | Sets the mode enums are serialized in                                                                          |                 |                         |       ✅       |
-| [**immutable**](#immutable-classes)                                 | Boolean flag to generate an immutable class with final fields, equals operator, and hashCode.                  |        ✅        |            ✅            |               |
-| [**serverOnly**](#limiting-visibility-of-a-generated-class)         | Boolean flag if code generator only should create the code for the server.                                     |        ✅        |            ✅            |       ✅       |
-| [**table**](database/models)                                        | A name for the database table, enables generation of database code.                                            |        ✅        |                         |               |
-| [**managedMigration**](database/migrations#opt-out-of-migrations)   | A boolean flag to opt out of the database migration system.                                                    |        ✅        |                         |               |
-| [**fields**](#class)                                                | All fields in the generated class should be listed here.                                                       |        ✅        |            ✅            |               |
-| [**type (fields)**](#class)                                         | Denotes the data type for a field.                                                                             |        ✅        |            ✅            |               |
-| [**required**](#required-fields)                                    | Makes the field as required. This keyword can only be used for **nullable** fields.                            |        ✅        |            ✅            |               |
-| [**scope**](#limiting-visibility-of-a-generated-class)              | Denotes the scope for a field.                                                                                 |        ✅        |                         |               |
-| [**persist**](database/models)                                      | A boolean flag if the data should be stored in the database or not can be negated with `!persist`              |        ✅        |                         |               |
-| [**relation**](database/relations/one-to-one)                       | Sets a relation between model files, requires a table name to be set.                                          |        ✅        |                         |               |
-| [**name**](database/relations/one-to-one#bidirectional-relations)   | Give a name to a relation to pair them.                                                                        |        ✅        |                         |               |
-| [**parent**](database/relations/one-to-one#with-an-id-field)        | Sets the parent table on a relation.                                                                           |        ✅        |                         |               |
-| [**field**](database/relations/one-to-one#custom-foreign-key-field) | A manual specified foreign key field.                                                                          |        ✅        |                         |               |
-| [**onUpdate**](database/relations/referential-actions)              | Set the referential actions when updating data in the database.                                                |        ✅        |                         |               |
-| [**onDelete**](database/relations/referential-actions)              | Set the referential actions when deleting data in the database.                                                |        ✅        |                         |               |
-| [**optional**](database/relations/one-to-one#optional-relation)     | A boolean flag to make a relation optional.                                                                    |        ✅        |                         |               |
-| [**indexes**](database/indexing)                                    | Create indexes on your fields / columns.                                                                       |        ✅        |                         |               |
-| [**fields (index)**](database/indexing)                             | List the fields to create the indexes on.                                                                      |        ✅        |                         |               |
-| [**type (index)**](database/indexing)                               | The type of index to create.                                                                                   |        ✅        |                         |               |
-| [**parameters (index)**](database/indexing#vector-indexes)          | Parameters for specialized index types like HNSW and IVFFLAT vector indexes.                                   |        ✅        |                         |               |
-| [**distanceFunction (index)**](database/indexing#vector-indexes)    | Distance function for vector indexes (l2, innerProduct, cosine, l1).                                           |        ✅        |                         |               |
-| [**unique**](database/indexing)                                     | Boolean flag to make the entries unique in the database.                                                       |        ✅        |                         |               |
-| [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.     |        ✅        |                         |               |
-| [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                      |        ✅        |                         |               |
-| [**defaultPersist**](#default-values)                               | Sets the default value for the database side.  This keyword cannot be used with **relation** and **!persist**. |        ✅        |                         |               |
-| [**extends**](#inheritance)                                         | Specifies a parent class to inherit from.                                                                      |        ✅        |            ✅            |               |
-| [**sealed**](#inheritance)                                          | Boolean flag to create a sealed class hierarchy, enabling exhaustive type checking.                            |        ✅        |                         |               |
+| **Keyword**                                                         | Note                                                                                                          | [class](#class) | [exception](#exception) | [enum](#enum) |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | :-------------: | :---------------------: | :-----------: |
+| [**values**](#enum)                                                 | A special key for enums with a list of all enum values.                                                       |                 |                         |      ✅       |
+| [**serialized**](#enum)                                             | Sets the mode enums are serialized in                                                                         |                 |                         |      ✅       |
+| [**immutable**](#immutable-classes)                                 | Boolean flag to generate an immutable class with final fields, equals operator, and hashCode.                 |       ✅        |           ✅            |               |
+| [**serverOnly**](#limiting-visibility-of-a-generated-class)         | Boolean flag if code generator only should create the code for the server.                                    |       ✅        |           ✅            |      ✅       |
+| [**table**](database/models)                                        | A name for the database table, enables generation of database code.                                           |       ✅        |                         |               |
+| [**managedMigration**](database/migrations#opt-out-of-migrations)   | A boolean flag to opt out of the database migration system.                                                   |       ✅        |                         |               |
+| [**fields**](#class)                                                | All fields in the generated class should be listed here.                                                      |       ✅        |           ✅            |               |
+| [**type (fields)**](#class)                                         | Denotes the data type for a field.                                                                            |       ✅        |           ✅            |               |
+| [**required**](#required-fields)                                    | Makes the field as required. This keyword can only be used for **nullable** fields.                           |       ✅        |           ✅            |               |
+| [**scope**](#limiting-visibility-of-a-generated-class)              | Denotes the scope for a field.                                                                                |       ✅        |                         |               |
+| [**persist**](database/models)                                      | A boolean flag if the data should be stored in the database or not can be negated with `!persist`             |       ✅        |                         |               |
+| [**relation**](database/relations/one-to-one)                       | Sets a relation between model files, requires a table name to be set.                                         |       ✅        |                         |               |
+| [**name**](database/relations/one-to-one#bidirectional-relations)   | Give a name to a relation to pair them.                                                                       |       ✅        |                         |               |
+| [**parent**](database/relations/one-to-one#with-an-id-field)        | Sets the parent table on a relation.                                                                          |       ✅        |                         |               |
+| [**field**](database/relations/one-to-one#custom-foreign-key-field) | A manual specified foreign key field.                                                                         |       ✅        |                         |               |
+| [**onUpdate**](database/relations/referential-actions)              | Set the referential actions when updating data in the database.                                               |       ✅        |                         |               |
+| [**onDelete**](database/relations/referential-actions)              | Set the referential actions when deleting data in the database.                                               |       ✅        |                         |               |
+| [**optional**](database/relations/one-to-one#optional-relation)     | A boolean flag to make a relation optional.                                                                   |       ✅        |                         |               |
+| [**indexes**](database/indexing)                                    | Create indexes on your fields / columns.                                                                      |       ✅        |                         |               |
+| [**fields (index)**](database/indexing)                             | List the fields to create the indexes on.                                                                     |       ✅        |                         |               |
+| [**type (index)**](database/indexing)                               | The type of index to create.                                                                                  |       ✅        |                         |               |
+| [**parameters (index)**](database/indexing#vector-indexes)          | Parameters for specialized index types like HNSW and IVFFLAT vector indexes.                                  |       ✅        |                         |               |
+| [**distanceFunction (index)**](database/indexing#vector-indexes)    | Distance function for vector indexes (l2, innerProduct, cosine, l1).                                          |       ✅        |                         |               |
+| [**unique**](database/indexing)                                     | Boolean flag to make the entries unique in the database.                                                      |       ✅        |                         |               |
+| [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.    |       ✅        |                         |               |
+| [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                     |       ✅        |                         |               |
+| [**defaultPersist**](#default-values)                               | Sets the default value for the database side. This keyword cannot be used with **relation** and **!persist**. |       ✅        |                         |               |
+| [**extends**](#inheritance)                                         | Specifies a parent class to inherit from.                                                                     |       ✅        |           ✅            |               |
+| [**sealed**](#inheritance)                                          | Boolean flag to create a sealed class hierarchy, enabling exhaustive type checking.                           |       ✅        |                         |               |

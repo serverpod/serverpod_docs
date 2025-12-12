@@ -9,9 +9,12 @@ Use `FlutterRoute` to serve your Flutter web build:
 ```dart
 pod.webServer.addRoute(
   FlutterRoute(Directory('web/app')),
-  '/**',
 );
 ```
+
+:::info
+The route path defaults to `'/'` (root). See [Serving from a sub-path](single-page-apps#serving-from-a-sub-path) to mount the app at a different location.
+:::
 
 This configuration:
 
@@ -69,14 +72,14 @@ Flutter WASM builds can use multi-threaded rendering for improved performance. T
 If you're using `SpaRoute` or custom routes instead of `FlutterRoute`, add the headers manually with `WasmHeadersMiddleware`:
 
 ```dart
-pod.webServer.addMiddleware(const WasmHeadersMiddleware(), '/**');
+pod.webServer.addMiddleware(const WasmHeadersMiddleware());
 
 pod.webServer.addRoute(
   SpaRoute(
     Directory('web/app'),
     fallback: File('web/app/index.html'),
   ),
-  '/**',
+  '/',
 );
 ```
 
@@ -92,7 +95,6 @@ pod.webServer.addRoute(
       maxAge: const Duration(minutes: 5),
     ),
   ),
-  '/**',
 );
 ```
 
@@ -118,7 +120,6 @@ pod.webServer.addRoute(
       maxAge: const Duration(minutes: 5),
     ),
   ),
-  '/**',
 );
 ```
 
@@ -145,7 +146,7 @@ void run(List<String> args) async {
     print('Warning: Flutter web app not found at ${flutterAppDir.path}');
     print('Build your Flutter app and copy it to web/app/');
   } else {
-    pod.webServer.addRoute(FlutterRoute(flutterAppDir), '/**');
+    pod.webServer.addRoute(FlutterRoute(flutterAppDir));
   }
 
   await pod.start();
