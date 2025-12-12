@@ -33,6 +33,111 @@ The current options you can pass are:
 | **Feature**     | Description                                                                         |
 | :-------------- | :---------------------------------------------------------------------------------- |
 | **all**         | Enables all available experimental features.                                        |
+| **columnOverride** | Allows overriding the column name for a field in the database.                      |
+
+## Column name override
+
+Serverpod allows you to specify the column name for a field in the database overriding the default use of the model property name as the column name.
+This can be useful when the column names in the database are not following the same naming convention as the model properties.
+
+### Usage
+
+To override the column name, use the `column` keyword in the `fields` configuration of your [model](database/models) file to specify the column name in the database.
+
+```yaml
+class: User
+table: users
+fields:
+  userName: String, column=user_name
+```
+
+### Restrictions
+
+- **ID Field**: The `id` field cannot have a column name override.
+- **Unique**: The column name must be unique within the model.
+- **Relations**: The `column` keyword is only allowed on the [foreign key field](database/relations/one-to-one#with-an-id-field) of a relation.
+
+### Relations
+
+You can use the `column` keyword to override the name of the foreign key field in a relation.
+
+```yaml
+# Employee
+class: Employee
+table: employee
+fields:
+  name: String
+  departmentId: int, relation(name=department_employees, parent=department), column=fk_employee_department_id
+
+# Department
+class: Department
+table: department
+fields:
+  name: String
+  employees: List<Employee>?, relation(name=department_employees)
+```
+
+This is also supported when the field is used in an index.
+
+```yaml
+# Contractor
+class: Contractor
+table: contractor
+fields:
+  name: String
+  serviceIdField: int?, column=fk_contractor_service_id
+  service: Service?, relation(field=serviceIdField)
+indexes:
+  contractor_service_unique_idx:
+    fields: serviceIdField
+    unique: true
+
+# Service
+class: Service
+table: service
+fields:
+  name: String
+  description: String?
+```
+
+### Inheritance
+
+The column name override is also supported when using [inheritance](models#inheritance) and will be applied to all child classes. This is especially useful when you have multiple database tables that share similar column names. This allows you to define a parent class as a regular [model](../get-started/models-and-data) and specify additional fields in the child classes defined as [table models](database/models).
+
+```yaml
+# Entity
+class: Entity
+fields:
+  name: String
+  createdAt: DateTime, default=now, column=created_at
+  updatedAt: DateTime, default=now, column=updated_at
+
+# Employee
+class: Employee
+extends: Entity
+table: employee
+fields:
+  departmentId: int, relation(name=department_employees, parent=department), column=fk_employee_department_id
+
+# Department
+class: Department
+extends: Entity
+table: department
+fields:
+  employees: List<Employee>?, relation(name=department_employees)
+
+# Contractor
+class: Contractor
+extends: Entity
+table: contractor
+fields:
+  serviceIdField: int?, column=fk_contractor_service_id
+  service: Service?, relation(field=serviceIdField)
+indexes:
+  contractor_service_unique_idx:
+    fields: serviceIdField
+    unique: true
+```
 
 ## Exception monitoring
 
