@@ -16,9 +16,12 @@ pod.webServer.addRoute(
     webDir,
     fallback: File('web/app/index.html'),
   ),
-  '/',
 );
 ```
+
+:::info
+The route path defaults to `'/'` (root). See [Serving from a sub-path](#serving-from-a-sub-path) to mount the SPA at a different location.
+:::
 
 This configuration:
 
@@ -49,7 +52,6 @@ pod.webServer.addRoute(
       maxAge: const Duration(minutes: 5),
     ),
   ),
-  '/',
 );
 ```
 
@@ -76,7 +78,6 @@ pod.webServer.addRoute(
       maxAge: const Duration(minutes: 5),
     ),
   ),
-  '/',
 );
 ```
 
@@ -108,6 +109,36 @@ FallbackMiddleware(
   on: (response) => response.statusCode >= 400 && response.statusCode < 500,
 )
 ```
+
+## Serving from a sub-path
+
+To serve your SPA from a sub-path instead of the root, pass the path as the second argument to `addRoute`:
+
+```dart
+final webDir = Directory('web/app');
+
+pod.webServer.addRoute(
+  SpaRoute(
+    webDir,
+    fallback: File('web/app/index.html'),
+  ),
+  '/app',
+);
+```
+
+This serves the SPA at `/app`, so users would access it at `http://localhost:8082/app`.
+
+:::note
+When using cache busting with a sub-path, update the `mountPrefix` to match:
+
+```dart
+final cacheBustingConfig = CacheBustingConfig(
+  mountPrefix: '/app',
+  fileSystemRoot: webDir,
+);
+```
+
+:::
 
 ## Serving Flutter web applications
 
