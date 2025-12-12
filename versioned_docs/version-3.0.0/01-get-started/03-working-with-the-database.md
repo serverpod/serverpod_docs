@@ -128,9 +128,8 @@ class RecipeEndpoint extends Endpoint {
     }
     
     // Configure the Dartantic AI agent for Gemini before sending the prompt.
-    Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(
-      Providers.google,
+      GoogleProvider(apiKey: geminiApiKey),
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
