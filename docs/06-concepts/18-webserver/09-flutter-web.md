@@ -13,7 +13,7 @@ pod.webServer.addRoute(
 ```
 
 :::info
-The route path defaults to `'/'` (root). See [Serving from a sub-path](#serving-from-a-sub-path) to mount the app at a different location.
+The route path defaults to `'/'` (root). See [Serving from a sub-path](single-page-apps#serving-from-a-sub-path) to mount the app at a different location.
 :::
 
 This configuration:
@@ -124,31 +124,6 @@ pod.webServer.addRoute(
 ```
 
 See [Static Files](static-files#static-file-cache-busting) for more on cache busting.
-
-## Serving from a sub-path
-
-To serve your Flutter app from a sub-path instead of the root, pass the path as the second argument to `addRoute`:
-
-```dart
-pod.webServer.addRoute(
-  FlutterRoute(Directory('web/app')),
-  '/app',
-);
-```
-
-This serves the Flutter app at `/app`, so users would access it at `http://localhost:8082/app`.
-
-:::note
-When using cache busting with a sub-path, update the `mountPrefix` to match:
-
-```dart
-final cacheBustingConfig = CacheBustingConfig(
-  mountPrefix: '/app',
-  fileSystemRoot: webDir,
-);
-```
-
-:::
 
 ## Complete example
 
