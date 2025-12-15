@@ -30,10 +30,10 @@ $ serverpod generate --experimental-features=all
 
 The current options you can pass are:
 
-| **Feature**     | Description                                                                         |
-| :-------------- | :---------------------------------------------------------------------------------- |
-| **all**         | Enables all available experimental features.                                        |
-| **columnOverride** | Allows overriding the column name for a field in the database.                      |
+| **Feature**        | Description                                                    |
+| :----------------- | :------------------------------------------------------------- |
+| **all**            | Enables all available experimental features.                   |
+| **columnOverride** | Allows overriding the column name for a field in the database. |
 
 ## Column name override
 
@@ -263,7 +263,7 @@ void main() {
 
 Serverpod provides support for registering **shutdown tasks**—asynchronous operations that are executed when the server is shutting down. This is useful for performing cleanup operations such as saving application state or releasing external resources.
 
-Shutdown tasks are executed *after* the server has stopped accepting new requests, but *before* the Redis and database connections are closed.
+Shutdown tasks are executed _after_ the server has stopped accepting new requests, but _before_ the Redis and database connections are closed.
 
 All registered shutdown tasks are executed concurrently, and the server waits for all tasks to complete before fully shutting down. If any task fails, the error is logged, but it does not prevent the server from shutting down.
 
