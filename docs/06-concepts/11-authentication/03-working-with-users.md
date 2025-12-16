@@ -1,6 +1,6 @@
 # Working with users
 
-The authentication module provides conventient ways to work with your authenticated users and their related profile data.
+The authentication module provides convenient ways to work with your authenticated users and their related profile data.
 
 ## Authenticated users
 
@@ -82,6 +82,11 @@ indexes:
     fields: authUserId
     unique: true
 ```
+
+:::tip
+When referencing module classes in your model files, you can use a nickname for the module instead of the full module name. See the [modules documentation](../modules) for more information.
+:::
+
 
 The model above creates a relation to the `AuthUser` table and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
 
