@@ -21,6 +21,7 @@ This configuration:
 - Serves all static files from the Flutter build
 - Falls back to `index.html` for client-side routing
 - Adds WASM multi-threading headers automatically
+- Applies smart caching: critical files are never cached, other files are cached for 1 day
 
 ## Building Flutter for web
 
@@ -85,18 +86,66 @@ pod.webServer.addRoute(
 
 ## Cache control
 
-Configure caching for Flutter's static assets:
+`FlutterRoute` automatically applies smart caching to prevent issues with stale app versions:
+
+### Default caching behavior
+
+By default, `FlutterRoute` uses different cache strategies for different file types:
+
+**Critical files (never cached):**
+
+- `index.html`
+- `flutter_service_worker.js`
+- `flutter_bootstrap.js`
+- `manifest.json`
+- `version.json`
+
+These files are served with `Cache-Control: private, no-cache, no-store` headers to ensure users always get the latest version after deployments.
+
+**All other files (cached for 1 day):**
+
+Static assets like JavaScript, WASM, images, and fonts are served with `Cache-Control: public, max-age=86400` headers, allowing browsers to cache them for better performance.
+
+### Invalidating cached assets
+
+When you deploy a new version of your Flutter app, cached assets need to be invalidated to ensure users get the latest version. To do this:
+
+1. Update the version in your Flutter app's `pubspec.yaml`:
+
+   ```yaml
+   version: 1.0.1+2  # Increment from previous version
+   ```
+
+1. Rebuild your Flutter web app:
+
+   ```bash
+   flutter build web --wasm
+   ```
+
+1. Deploy the new build to your server
+
+Flutter's build process includes the version in asset paths and metadata, which causes browsers to fetch the new assets instead of using cached versions.
+
+### Custom cache control
+
+Override the default behavior using `cacheControlFactory`:
 
 ```dart
 pod.webServer.addRoute(
   FlutterRoute(
     Directory('web/app'),
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(minutes: 5),
+      maxAge: const Duration(hours: 1),
     ),
   ),
 );
 ```
+
+:::warning
+
+Custom cache control applies to all files served from the directory, except for the fallback `index.html` which is always served with no-cache headers. Make sure your strategy prevents caching of service workers and manifests to avoid serving stale app versions.
+
+:::
 
 See [Static Files](static-files#cache-control) for more on cache control.
 
