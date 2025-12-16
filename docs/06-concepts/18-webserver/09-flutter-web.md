@@ -143,7 +143,7 @@ pod.webServer.addRoute(
 
 :::warning
 
-Custom cache control applies to **all** files, including critical ones. Make sure your strategy prevents caching of `index.html` and service workers to avoid serving stale app versions.
+Custom cache control applies to all files served from the directory, except for the fallback `index.html` which is always served with no-cache headers. Make sure your strategy prevents caching of service workers and manifests to avoid serving stale app versions.
 
 :::
 
