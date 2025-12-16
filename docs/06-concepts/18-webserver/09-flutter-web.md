@@ -21,6 +21,7 @@ This configuration:
 - Serves all static files from the Flutter build
 - Falls back to `index.html` for client-side routing
 - Adds WASM multi-threading headers automatically
+- Applies smart caching: critical files are never cached, other files are cached for 1 day
 
 ## Building Flutter for web
 
@@ -85,18 +86,46 @@ pod.webServer.addRoute(
 
 ## Cache control
 
-Configure caching for Flutter's static assets:
+`FlutterRoute` automatically applies smart caching to prevent issues with stale app versions:
+
+### Default caching behavior
+
+By default, `FlutterRoute` uses different cache strategies for different file types:
+
+**Critical files (never cached):**
+
+- `index.html`
+- `flutter_service_worker.js`
+- `flutter_bootstrap.js`
+- `manifest.json`
+- `version.json`
+
+These files are served with `Cache-Control: private, no-cache, no-store` headers to ensure users always get the latest version after deployments.
+
+**All other files (cached for 1 day):**
+
+Static assets like JavaScript, WASM, images, and fonts are served with `Cache-Control: public, max-age=86400` headers, allowing browsers to cache them for better performance.
+
+### Custom cache control
+
+Override the default behavior using `cacheControlFactory`:
 
 ```dart
 pod.webServer.addRoute(
   FlutterRoute(
     Directory('web/app'),
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(minutes: 5),
+      maxAge: const Duration(hours: 1),
     ),
   ),
 );
 ```
+
+:::warning
+
+Custom cache control applies to **all** files, including critical ones. Make sure your strategy prevents caching of `index.html` and service workers to avoid serving stale app versions.
+
+:::
 
 See [Static Files](static-files#cache-control) for more on cache control.
 
