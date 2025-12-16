@@ -106,6 +106,26 @@ These files are served with `Cache-Control: private, no-cache, no-store` headers
 
 Static assets like JavaScript, WASM, images, and fonts are served with `Cache-Control: public, max-age=86400` headers, allowing browsers to cache them for better performance.
 
+### Invalidating cached assets
+
+When you deploy a new version of your Flutter app, cached assets need to be invalidated to ensure users get the latest version. To do this:
+
+1. Update the version in your Flutter app's `pubspec.yaml`:
+
+   ```yaml
+   version: 1.0.1+2  # Increment from previous version
+   ```
+
+1. Rebuild your Flutter web app:
+
+   ```bash
+   flutter build web --wasm
+   ```
+
+1. Deploy the new build to your server
+
+Flutter's build process includes the version in asset paths and metadata, which causes browsers to fetch the new assets instead of using cached versions.
+
 ### Custom cache control
 
 Override the default behavior using `cacheControlFactory`:
