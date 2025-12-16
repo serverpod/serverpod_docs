@@ -4,7 +4,7 @@ Serverpod comes with built-in user management and authentication. It is possible
 
 The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-providers-configuration) section for details on all available providers.
 
-![Sign-in with Serverpod](/img/authentication/sign-in-widget.png)
+![Sign-in with Serverpod](/img/authentication/sign-in-widget-device.png)
 
 ## Installing the auth module
 
@@ -58,6 +58,14 @@ void run(List<String> args) async {
 
   await pod.start();
 }
+```
+
+Then, extend the abstract endpoint for refreshing JWT tokens to expose it on the server:
+
+```dart
+import 'package:serverpod_auth_idp_server/core.dart' as core;
+
+class RefreshJwtTokensEndpoint extends core.RefreshJwtTokensEndpoint {}
 ```
 
 ### Token Manager Configuration

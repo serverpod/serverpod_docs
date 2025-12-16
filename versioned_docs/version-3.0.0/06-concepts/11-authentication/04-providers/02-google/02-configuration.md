@@ -100,3 +100,25 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
   },
 );
 ```
+
+### Lightweight Sign-In on the Flutter app
+
+Lightweight sign-in is a feature that attempts to authenticate users previously logged in with Google automatically with minimal or no user interaction. When enabled, the Google authentication controller will try to sign in users seamlessly using platform-specific lightweight authentication methods. This feature is enabled by default, but can be disabled from the `GoogleSignInWidget` or `GoogleAuthController`.
+
+```dart
+GoogleSignInWidget(
+  client: client,
+  attemptLightweightSignIn: false, // Disable lightweight sign-in
+  onAuthenticated: () {
+    // User was automatically signed in
+  },
+)
+```
+
+:::info
+If lightweight sign-in fails (e.g., no previous session exists or the user dismisses the prompt), the user can still use the regular sign-in button to authenticate manually.
+:::
+
+:::note
+The lightweight sign-in attempt happens automatically when the controller is initialized, typically at app launch. If successful, users will be signed in without any additional interaction.
+:::
