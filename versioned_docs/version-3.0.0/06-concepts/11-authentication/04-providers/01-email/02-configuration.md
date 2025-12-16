@@ -67,6 +67,25 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
 Remember to configure the `verificationCodeConfig` parameter on the `EmailSignInWidget` to match the length of the verification code you generate. Otherwise, users will never be able to enter the verification code correctly. See the [customizing the UI section](./customizing-the-ui) for more details.
 :::
 
+#### Bypassing verification code in development
+
+To simplify testing, it is possible to bypass the verification code by using a custom verification code generator that always returns the same code. This can be configured only for the development run mode as below:
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    EmailIdpConfigFromPasswords(
+      registrationVerificationCodeGenerator: pod.runMode == 'development'
+          ? () => 'aaaaaaaa' // Be sure to match the length used in production.
+          : defaultVerificationCodeGenerator,
+    ),
+  ],
+);
+```
+
 ### Reacting to events
 
 Beyond the `sendRegistrationVerificationCode` and `sendPasswordResetVerificationCode` callbacks to send verification codes to the user, there are a few callbacks that can be used to react to events, such as `onAfterAccountCreated` and `onPasswordResetCompleted`. These can be useful for sending emails to the user to communicate the successful operation.

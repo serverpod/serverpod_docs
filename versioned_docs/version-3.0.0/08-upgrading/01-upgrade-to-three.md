@@ -241,6 +241,14 @@ class MyEndpoint extends Endpoint {
 
 Serverpod 3.0 includes several changes to the authentication system that improve type safety and performance.
 
+### Custom authentication handlers
+
+In the new authentication system, the default authentication header has changed from `Basic` to `Bearer` - which is now officially supported. This introduced a change for custom `AuthenticationHandler` implementations: the `token` parameter will now receive the token unwrapped from the `Bearer` prefix - just as it does for `Basic` tokens.
+
+If your application relies on the default `authenticationHandler` function, no change is required. Only custom implementations that previously implemented `Bearer` authentication will need to be updated to expect the unwrapped token.
+
+Another change when using custom authentication handlers is that tokens without scheme prefix are no longer supported by default to enforce HTTP header standards. The preferred fix is to wrap the token with the `Bearer` prefix, but this will invalidate existing tokens. If you are you are using a custom authentication handler in production and need to keep the old behavior, upgrade to version `^3.1.x` to use the `validateHeaders` parameter. See the latest migration guide for reference on how to use this parameter.
+
 ### AuthenticationInfo changes
 
 The `AuthenticationInfo` class has been updated:

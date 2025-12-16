@@ -1,6 +1,6 @@
 # Working with users
 
-The authentication module provides conventient ways to work with your authenticated users and their related profile data.
+The authentication module provides convenient ways to work with your authenticated users and their related profile data.
 
 ## Authenticated users
 
@@ -40,6 +40,30 @@ await AuthServices.instance.userProfiles.changeFullName(session, authUserId, 'my
 
 For the full list of operations, see the [UserProfiles](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/UserProfiles-class.html) class documentation.
 
+### Setting a default user image
+
+When logging in from some providers, the user image is automatically fetched and set as the user's profile picture - such as with Google Sign In. However, when an image is not found or the provider does not expose the picture, it is possible to set a default user image using the `UserProfileConfig` object.
+
+```dart
+  pod.initializeAuthServices(
+    userProfileConfig: UserProfileConfig(
+      // NOTE: The `userImageGenerator` parameter is optional and defaults to
+      // the value below - which generates Gmail-style images. You can change
+      // this parameter to generate any kind of placeholder image. The function
+      // will be called when invoking the `setDefaultUserImage` method.
+      userImageGenerator: defaultUserImageGenerator,
+      onAfterUserProfileCreated:
+          (session, userProfile, {required transaction}) async {
+            await AuthServices.instance.userProfiles.setDefaultUserImage(
+              session,
+              userProfile.authUserId,
+              transaction: transaction,
+            );
+          },
+    ),
+  ...
+  );
+```
 
 ## Attaching additional information
 
@@ -58,6 +82,11 @@ indexes:
     fields: authUserId
     unique: true
 ```
+
+:::tip
+When referencing module classes in your model files, you can use a nickname for the module instead of the full module name. See the [modules documentation](../modules) for more information.
+:::
+
 
 The model above creates a relation to the `AuthUser` table and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
 

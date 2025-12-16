@@ -2,7 +2,7 @@
 
 Serverpod is built around the concept of modules. A Serverpod module is similar to a Dart package but contains both server, client, and Flutter code. A module contains its own namespace for endpoints and methods to minimize the risk of conflicts.
 
-Examples of modules are the `serverpod_auth` module and the `serverpod_chat` module, which both are maintained by the Serverpod team.
+Examples of modules are the `serverpod_auth_core` and `serverpod_auth_idp` modules, which both are maintained by the Serverpod team.
 
 ## Adding a module to your project
 
@@ -10,24 +10,22 @@ Examples of modules are the `serverpod_auth` module and the `serverpod_chat` mod
 
 To add a module to your project, you must include the server and client/Flutter packages in your project's `pubspec.yaml` files.
 
-For example, to add the `serverpod_auth` module to your project, you need to add `serverpod_auth_server` to your server's `pubspec.yaml`:
+For example, to add the `serverpod_auth_idp` module to your project, you need to add `serverpod_auth_idp_server` to your server's `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  serverpod_auth_server: ^1.x.x
+  serverpod_auth_idp_server: ^3.x.x
 ```
 
 :::info
-
-Make sure to replace `1.x.x` with the Serverpod version you are using. Serverpod uses the same version number for all official packages. If you use the same version, you will be sure that everything works together.
-
+Make sure to replace `3.x.x` with the Serverpod version you are using. Serverpod uses the same version number for all official packages. If you use the same version, you will be sure that everything works together.
 :::
 
-In your `config/generator.yaml` you can optionally add the `serverpod_auth` module and give it a `nickname`. The nickname will determine how you reference the module from the client. If the module isn't added in the `generator.yaml`, the default nickname for the module will be used.
+In your `config/generator.yaml` you can optionally add the `serverpod_auth_idp` module and give it a `nickname`. The nickname will determine how you reference the module from the client. If the module isn't added in the `generator.yaml`, the default nickname for the module will be used.
 
 ```yaml
 modules:
-  serverpod_auth:
+  serverpod_auth_idp:
     nickname: auth
 ```
 
@@ -51,7 +49,7 @@ In your client's `pubspec.yaml`, you will need to add the generated client code 
 
 ```yaml
 dependencies:
-  serverpod_auth_client: ^1.x.x
+  serverpod_auth_idp_client: ^3.x.x
 ```
 
 ### Flutter app setup
@@ -60,19 +58,20 @@ In your Flutter app, add the corresponding dart or Flutter package(s) to your `p
 
 ```yaml
 dependencies:
-  serverpod_auth_shared_flutter: ^1.x.x
-  serverpod_auth_google_flutter: ^1.x.x
-  serverpod_auth_apple_flutter: ^1.x.x
+  serverpod_auth_idp_flutter: ^3.x.x
 ```
 
 ## Referencing a module
 
-It can be useful to reference serializable objects in other modules from the YAML-files in your models. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the auth package.
+It can be useful to reference serializable objects in other modules from the YAML-files in your models. You do this by adding the module prefix, followed by the nickname of the package. For instance, this is how you reference a serializable class in the `serverpod_auth_idp` package.
 
 ```yaml
 class: MyClass
 fields:
-  userInfo: module:auth:UserInfo
+  # Using the full module name
+  userInfo: module:serverpod_auth_idp:AuthUser
+  # Or using the nickname
+  userInfo: module:auth:AuthUser
 ```
 
 ## Creating custom modules
@@ -92,7 +91,5 @@ $ flutter create --template package my_module_flutter
 In your Flutter package, you most likely want to import the client libraries created by `serverpod create`.
 
 :::info
-
 Most modules will need a set of database tables to function. When naming the tables, you should use the module name as a prefix to the table name to avoid any conflicts. For instance, the Serverpod tables are prefixed with `serverpod_`.
-
 :::
