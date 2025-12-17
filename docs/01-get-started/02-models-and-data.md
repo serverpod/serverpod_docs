@@ -8,7 +8,7 @@ Serverpod ships with a powerful data modeling system that uses easy-to-read defi
 
 ## Create a new model
 
-Models files can be placed anywhere in the server's `lib` directory. We will create a new model file called `recipe.spy.yaml` in the `magic_recipe_server/lib/src/recipes/` directory. We like to use the extension `.spy.yaml` to indicate that this is a _serverpod YAML_ file.
+Models files can be placed anywhere in the server's `lib` directory. We will create a new model file called `recipe.spy.yaml` in the `magic_recipe_server/lib/src/recipes/` directory. Use the `.spy.yaml` extension to indicate that this is a _serverpod YAML_ file.
 
 <!--SNIPSTART 02-typed-endpoint-model-->
 ```yaml
@@ -33,7 +33,7 @@ You can use most primitive Dart types here or any other models you have specifie
 To generate the code for the model, run the `serverpod generate` command in your server directory:
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ serverpod generate
 ```
 
@@ -92,9 +92,8 @@ class RecipeEndpoint extends Endpoint {
     }
     
     // Configure the Dartantic AI agent for Gemini before sending the prompt.
-    Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(
-      Providers.google,
+      GoogleProvider(apiKey: geminiApiKey),
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
@@ -133,60 +132,27 @@ class RecipeEndpoint extends Endpoint {
 First, we need to update our generated client by running `serverpod generate`.
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ serverpod generate
 ```
 
-Now that we have created the `Recipe` model we can use it in the client. We will do this in the `magic_recipe/magic_recipe_flutter/lib/main.dart` file. Let's update our `RecipeWidget` so that it displays the author and year of the recipe in addition to the recipe itself.
+Now that we have created the `Recipe` model we can use it in the app. We will do this in the `_callGenerateRecipe` method of the `magic_recipe_flutter/lib/main.dart` file. Let's update our `RecipeWidget` so that it displays the author and year of the recipe in addition to the recipe itself.
 
-<!--SNIPSTART 02-typed-endpoint-flutter  {"selectedLines": ["1-5", "15-36", "38-40", "69-83"]}-->
+<!--SNIPSTART 02-typed-endpoint-flutter-->
 ```dart
-class MyHomePageState extends State<MyHomePage> {
-  // Rename _resultMessage to _recipe and change the type to Recipe.
+void _callGenerateRecipe() async {
+// ...
 
-  /// Holds the last result or null if no result exists yet.
-  Recipe? _recipe;
+    // Update the state with the recipe we got from the server.
+    setState(() {
+      _errorMessage = null;
+
+      // Here we read the properties from our new Recipe model.
+      _resultMessage = '${result.author} on ${result.date}:\n${result.text}';
+      _loading = false;
+    });
+
 // ...
-  void _callGenerateRecipe() async {
-    try {
-      setState(() {
-        _errorMessage = null;
-        _recipe = null;
-        _loading = true;
-      });
-      final result =
-          await client.recipe.generateRecipe(_textEditingController.text);
-      setState(() {
-        _errorMessage = null;
-        _recipe = result;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = '$e';
-        _recipe = null;
-        _loading = false;
-      });
-    }
-  }
-// ...
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-// ...
-                    // Change the ResultDisplay to use the Recipe object.
-                    ResultDisplay(
-                  resultMessage: _recipe != null
-                      ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
-                      : null,
-                  errorMessage: _errorMessage,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 ```
@@ -199,14 +165,70 @@ class MyHomePageState extends State<MyHomePage> {
 
 <!--SNIPSTART 02-typed-endpoint-flutter-->
 ```dart
+import 'package:magic_recipe_client/magic_recipe_client.dart';
+import 'package:flutter/material.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+
+/// Sets up a global client object that can be used to talk to the server from
+/// anywhere in our app. The client is generated from your server code
+/// and is set up to connect to a Serverpod running on a local server on
+/// the default port. You will need to modify this to connect to staging or
+/// production servers.
+/// In a larger app, you may want to use the dependency injection of your choice
+/// instead of using a global client object. This is just a simple example.
+late final Client client;
+
+late String serverUrl;
+
+void main() {
+  // When you are running the app on a physical device, you need to set the
+  // server URL to the IP address of your computer. You can find the IP
+  // address by running `ipconfig` on Windows or `ifconfig` on Mac/Linux.
+  // You can set the variable when running or building your app like this:
+  // E.g. `flutter run --dart-define=SERVER_URL=https://api.example.com/`
+  const serverUrlFromEnv = String.fromEnvironment('SERVER_URL');
+  final serverUrl = serverUrlFromEnv.isEmpty
+      ? 'http://$localhost:8080/'
+      : serverUrlFromEnv;
+
+  client = Client(serverUrl)
+    ..connectivityMonitor = FlutterConnectivityMonitor()
+    ..authSessionManager = FlutterAuthSessionManager();
+
+  client.auth.initialize();
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Serverpod Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const MyHomePage(title: 'Serverpod Example'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
 class MyHomePageState extends State<MyHomePage> {
-  // Rename _resultMessage to _recipe and change the type to Recipe.
-
   /// Holds the last result or null if no result exists yet.
-  Recipe? _recipe;
+  String? _resultMessage;
 
-  /// Holds the last error message that we've received from the server or null if no
-  /// error exists yet.
+  /// Holds the last error message that we've received from the server or null
+  /// if no error exists yet.
   String? _errorMessage;
 
   final _textEditingController = TextEditingController();
@@ -215,22 +237,29 @@ class MyHomePageState extends State<MyHomePage> {
 
   void _callGenerateRecipe() async {
     try {
+      // Reset the state.
       setState(() {
         _errorMessage = null;
-        _recipe = null;
+        _resultMessage = null;
         _loading = true;
       });
-      final result =
-          await client.recipe.generateRecipe(_textEditingController.text);
+
+      // Call our `generateRecipe` method on the server.
+      final result = await client.recipe.generateRecipe(
+        _textEditingController.text,
+      );
+
+      // Update the state with the recipe we got from the server.
       setState(() {
         _errorMessage = null;
-        _recipe = result;
+        _resultMessage = '${result.author} on ${result.date}:\n${result.text}';
         _loading = false;
       });
     } catch (e) {
+      // If something goes wrong, set an error message.
       setState(() {
         _errorMessage = '$e';
-        _recipe = null;
+        _resultMessage = null;
         _loading = false;
       });
     }
@@ -261,23 +290,134 @@ class MyHomePageState extends State<MyHomePage> {
                 onPressed: _loading ? null : _callGenerateRecipe,
                 child: _loading
                     ? const Text('Loading...')
-                    : const Text('Send to Server'),
+                    : const Text('Generate Recipe'),
               ),
             ),
             Expanded(
               child: SingleChildScrollView(
-                child:
-                    // Change the ResultDisplay to use the Recipe object.
-                    ResultDisplay(
-                  resultMessage: _recipe != null
-                      ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
-                      : null,
+                child: ResultDisplay(
+                  resultMessage: _resultMessage,
                   errorMessage: _errorMessage,
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SignInScreen extends StatelessWidget {
+  const SignInScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SignInWidget(
+        client: client,
+        onAuthenticated: () {},
+      ),
+    );
+  }
+}
+
+class ConnectedScreen extends StatefulWidget {
+  const ConnectedScreen({super.key});
+
+  @override
+  State<ConnectedScreen> createState() => _ConnectedScreenState();
+}
+
+class _ConnectedScreenState extends State<ConnectedScreen> {
+  /// Holds the last result or null if no result exists yet.
+  String? _resultMessage;
+
+  /// Holds the last error message that we've received from the server or null
+  /// if no error exists yet.
+  String? _errorMessage;
+
+  final _textEditingController = TextEditingController();
+
+  /// Calls the `hello` method of the `greeting` endpoint. Will set either the
+  /// `_resultMessage` or `_errorMessage` field, depending on if the call
+  /// is successful.
+  void _callHello() async {
+    try {
+      final result = await client.greeting.hello(_textEditingController.text);
+      setState(() {
+        _errorMessage = null;
+        _resultMessage = result.message;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = '$e';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          const Text('You are connected'),
+          ElevatedButton(
+            onPressed: () async {
+              await client.auth.signOutDevice();
+            },
+            child: const Text('Sign out'),
+          ),
+          const SizedBox(height: 32),
+          TextField(
+            controller: _textEditingController,
+            decoration: const InputDecoration(hintText: 'Enter your name'),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _callHello,
+            child: const Text('Send to Server'),
+          ),
+          const SizedBox(height: 16),
+          ResultDisplay(
+            resultMessage: _resultMessage,
+            errorMessage: _errorMessage,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ResultDisplays shows the result of the call. Either the returned result
+/// from the `example.greeting` endpoint method or an error message.
+class ResultDisplay extends StatelessWidget {
+  final String? resultMessage;
+  final String? errorMessage;
+
+  const ResultDisplay({super.key, this.resultMessage, this.errorMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    String text;
+    Color backgroundColor;
+    if (errorMessage != null) {
+      backgroundColor = Colors.red[300]!;
+      text = errorMessage!;
+    } else if (resultMessage != null) {
+      backgroundColor = Colors.green[300]!;
+      text = resultMessage!;
+    } else {
+      backgroundColor = Colors.grey[300]!;
+      text = 'No server response yet.';
+    }
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 50),
+      child: Container(
+        color: backgroundColor,
+        child: Center(child: Text(text)),
       ),
     );
   }
@@ -292,7 +432,7 @@ class MyHomePageState extends State<MyHomePage> {
 First, start the server:
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ docker compose up -d
 $ dart bin/main.dart
 ```
@@ -300,7 +440,7 @@ $ dart bin/main.dart
 Then, start the Flutter app:
 
 ```bash
-$ cd magic_recipe/magic_recipe_flutter
+$ cd magic_recipe_flutter
 $ flutter run -d chrome
 ```
 

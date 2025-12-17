@@ -41,7 +41,7 @@ To create a migration, follow these two steps in order:
 2. Run `serverpod create-migration` to create the necessary database migration.
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ serverpod generate
 $ serverpod create-migration
 ```
@@ -88,6 +88,8 @@ class RecipeEndpoint extends Endpoint {
   /// Pass in a string containing the ingredients and get a recipe back.
   Future<Recipe> generateRecipe(Session session, String ingredients) async {
 // ...
+  }
+
   /// This method returns all the generated recipes from the database.
   Future<List<Recipe>> getRecipes(Session session) async {
     // Get all the recipes from the database, sorted by date.
@@ -126,11 +128,10 @@ class RecipeEndpoint extends Endpoint {
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
     }
-    
+
     // Configure the Dartantic AI agent for Gemini before sending the prompt.
-    Agent.environment['GEMINI_API_KEY'] = geminiApiKey;
     final agent = Agent.forProvider(
-      Providers.google,
+      GoogleProvider(apiKey: geminiApiKey),
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
@@ -178,16 +179,17 @@ class RecipeEndpoint extends Endpoint {
 </details>
 
 :::info
-The when adding a `table` to the model class definition, the model will now give you access to the database, specifically to the `recipes` table through `Recipe.db` (e.g. `Recipe.db.find(session)`.
-The `insertRow` method is used to insert a new row in the database. The `find` method is used to query the database and get all the rows of a specific type. See [CRUD](../06-concepts/06-database/05-crud.md) and [relation queries](../06-concepts/06-database/07-relation-queries.md) for more information.
+The when adding a `table` to the model class definition, the model will now give you access to the database. In this case we find the database methods under `Recipe.db`.
+
+The `insertRow` method is used to insert a new row into the database. The `find` method is used to query the database and get all the rows of a specific type. See [CRUD](../06-concepts/06-database/05-crud.md) and [relation queries](../06-concepts/06-database/07-relation-queries.md) for more information.
 :::
 
 ## Generate the code
 
-Like before, when you change something that has an effect on the client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created a migration in the previous step and haven't done any changes that affect the database.
+Like before, when you change something that has an effect on your client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created a migration in the previous step and haven't done any changes that affect the database.
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ serverpod generate
 ```
 
@@ -210,8 +212,8 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 /// and is set up to connect to a Serverpod running on a local server on
 /// the default port. You will need to modify this to connect to staging or
 /// production servers.
-/// In a larger app, you may want to use the dependency injection of your choice instead of
-/// using a global client object. This is just a simple example.
+/// In a larger app, you may want to use the dependency injection of your choice
+/// instead of using a global client object. This is just a simple example.
 late final Client client;
 
 late String serverUrl;
@@ -262,8 +264,8 @@ class MyHomePageState extends State<MyHomePage> {
 
   List<Recipe> _recipeHistory = [];
 
-  /// Holds the last error message that we've received from the server or null if no
-  /// error exists yet.
+  /// Holds the last error message that we've received from the server or null
+  /// if no error exists yet.
   String? _errorMessage;
 
   final _textEditingController = TextEditingController();
@@ -366,7 +368,8 @@ class MyHomePageState extends State<MyHomePage> {
                           // Change the ResultDisplay to use the Recipe object
                           ResultDisplay(
                         resultMessage: _recipe != null
-                            ? '${_recipe?.author} on ${_recipe?.date}:\n${_recipe?.text}'
+                            ? '${_recipe?.author} on ${_recipe?.date}:\n'
+                              '${_recipe?.text}'
                             : null,
                         errorMessage: _errorMessage,
                       ),
@@ -430,7 +433,7 @@ To run the application with database support, follow these steps in order:
 First, start the database and apply migrations:
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ docker compose up -d                   # Start the database container
 $ dart bin/main.dart --apply-migrations  # Apply any pending migrations
 ```
@@ -442,7 +445,7 @@ The `--apply-migrations` flag is safe to use during development - if no migratio
 Next, launch the Flutter app:
 
 ```bash
-$ cd magic_recipe/magic_recipe_flutter
+$ cd magic_recipe_flutter
 $ flutter run -d chrome
 ```
 
@@ -454,7 +457,7 @@ You've now learned the fundamentals of Serverpod:
 - Storing data persistently in a database.
 - Using the generated client code in your Flutter app.
 
-We're excited to see what you'll build with Flutter and Serverpod! If you need help, don't hesitate to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). Both the Serverpod team and community members are active and ready to help.
+We're excited to see what you'll build with Flutter and Serverpod! If you need help, don't hesitate to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). Both the Serverpod team and community members are active and ready to help. To connect with other Serverpod users we also have a [Discord community](https://serverpod.dev/discord).
 
 :::tip
 Database operations are a broad topic, and Serverpod's ORM offers many powerful features. To learn more about advanced database operations, check out the [Database](../06-concepts/06-database/01-connection.md) section.
