@@ -37,7 +37,7 @@ development:
 Next, we add the Dartantic AI package as a dependency to our server. This package provides a convenient interface for working with different AI providers, including Google's Gemini API.
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ dart pub add dartantic_ai
 ```
 
@@ -56,8 +56,8 @@ import 'package:serverpod/serverpod.dart';
 class RecipeEndpoint extends Endpoint {
   /// Pass in a string containing the ingredients and get a recipe back.
   Future<String> generateRecipe(Session session, String ingredients) async {
-    // Serverpod automatically loads your passwords.yaml file and makes the passwords available
-    // in the session.passwords map.
+    // Serverpod automatically loads your passwords.yaml file and makes the
+    // passwords available in the session.passwords map.
     final geminiApiKey = session.passwords['geminiApiKey'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
@@ -69,12 +69,13 @@ class RecipeEndpoint extends Endpoint {
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
-    // A prompt to generate a recipe, the user will provide a free text input with the ingredients.
+    // A prompt to generate a recipe, the user will provide a free text input
+    // with the ingredients.
     final prompt =
         'Generate a recipe using the following ingredients: $ingredients. '
-        'Always put the title of the recipe in the first line, and then the instructions. '
-        'The recipe should be easy to follow and include all necessary steps. '
-        'Please provide a detailed recipe.';
+        'Always put the title of the recipe in the first line, followed by the '
+        'instructions. The recipe should be easy to follow and include all '
+        'necessary steps.';
 
     final response = await agent.send(prompt);
 
@@ -92,25 +93,25 @@ class RecipeEndpoint extends Endpoint {
 <!--SNIPEND-->
 
 :::info
-For methods to be generated, they need to return a typed `Future`, where the type should be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or  [serializable models](../06-concepts/02-models.md). The first parameter should be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, or `Set` as long as they are typed.
+For methods to be recognized by Serverpod, they need to return a typed `Future` or `Stream`, where the type must be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or a [serializable model](../06-concepts/02-models.md). The first parameter must be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed.
 :::
 
 Now, you need to generate the code for your new endpoint. You do this by running `serverpod generate` in the server directory of your project:
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ serverpod generate
 ```
 
 `serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
 
 :::note
-When writing server-side code, in most cases, you want it to be "stateless". This means you want to avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../06-concepts/14-scheduling.md), but you usually shouldn't keep the connection open for longer durations. The `Session` object contains all the information you need to access the database and other features of Serverpod. It is similar to the `BuildContext` in Flutter.
+When writing server-side code, in most cases, you want it to be _stateless_. This means you avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status messages to your client. If you want to run more complex computations, you can return a `Stream` to yield progress updates as your task progresses.
 :::
 
 ## Call the endpoint from the client
 
-Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Modify the `_callHello` method to call your new endpoint method and rename it to `_callGenerateRecipe`. It should look like this; feel free to just copy and paste:
+Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Rename the `_callHello` method to `_callGenerateRecipe` and modify it to do the following (feel free to just copy and paste):
 
 <!--SNIPSTART 01-getting-started-flutter-->
 ```dart
@@ -118,8 +119,8 @@ class MyHomePageState extends State<MyHomePage> {
   /// Holds the last result or null if no result exists yet.
   String? _resultMessage;
 
-  /// Holds the last error message that we've received from the server or null if no
-  /// error exists yet.
+  /// Holds the last error message that we've received from the server or null
+  /// if no error exists yet.
   String? _errorMessage;
 
   final _textEditingController = TextEditingController();
@@ -128,19 +129,26 @@ class MyHomePageState extends State<MyHomePage> {
 
   void _callGenerateRecipe() async {
     try {
+      // Reset the state.
       setState(() {
         _errorMessage = null;
         _resultMessage = null;
         _loading = true;
       });
-      final result =
-          await client.recipe.generateRecipe(_textEditingController.text);
+
+      // Call our `generateRecipe` method on the server.
+      final result = await client.recipe.generateRecipe(
+        _textEditingController.text,
+      );
+
+      // Update the state with the recipe we got from the server.
       setState(() {
         _errorMessage = null;
         _resultMessage = result;
         _loading = false;
       });
     } catch (e) {
+      // If something goes wrong, set an error message.
       setState(() {
         _errorMessage = '$e';
         _resultMessage = null;
@@ -203,7 +211,7 @@ Before you start your server, ensure no other Serverpod server is running. Also,
 Let's try our new recipe app! First, start the server:
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
+$ cd magic_recipe_server
 $ docker compose up -d
 $ dart bin/main.dart --apply-migrations
 ```
@@ -211,7 +219,7 @@ $ dart bin/main.dart --apply-migrations
 Now, you can start the Flutter app:
 
 ```bash
-$ cd magic_recipe/magic_recipe_flutter
+$ cd magic_recipe_flutter
 $ flutter run -d chrome
 ```
 
