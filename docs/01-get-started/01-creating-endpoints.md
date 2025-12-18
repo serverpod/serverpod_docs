@@ -111,10 +111,19 @@ When writing server-side code, in most cases, you want it to be _stateless_. Thi
 
 ## Call the endpoint from the client
 
-Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Rename the `_callHello` method to `_callGenerateRecipe` and modify it to do the following (feel free to just copy and paste):
+Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Since the generated template uses a StatelessWidget for `MyApp`, you will need to introduce a StatefulWidget called `MyHomePage` to manage the state of the app. Replace the `MyApp` widget with the following code (feel free to just copy and paste):
 
 <!--SNIPSTART 01-getting-started-flutter-->
 ```dart
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
 class MyHomePageState extends State<MyHomePage> {
   /// Holds the last result or null if no result exists yet.
   String? _resultMessage;
