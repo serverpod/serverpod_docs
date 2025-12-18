@@ -109,12 +109,16 @@ class MyEndpoint extends Endpoint {
 
 ### Managing scopes
 
-New users are created without any scopes. To update a user's scopes, use the `AuthUsers` class's `updateUserScopes` method. This method replaces all previously stored scopes.
+New users are created without any scopes. To update a user's scopes, use the `update` method from `AuthServices.instance.authUsers`. This method replaces all previously stored scopes.
 
 ```dart
 import 'package:serverpod_auth_idp_server/core.dart';
 
-await AuthUsers.update(session, authUserId: authUserId, scopes: {Scope.admin});
+await AuthServices.instance.authUsers.update(
+  session,
+  authUserId: authUserId,
+  scopes: {Scope.admin},
+);
 ```
 
 ### Custom scopes
