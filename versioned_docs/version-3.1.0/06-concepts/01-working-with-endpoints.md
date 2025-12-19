@@ -411,7 +411,7 @@ var advancedCalc = client.getEndpointOfType<EndpointCalculator>('advancedCalcula
 
 This pattern is particularly powerful for modules. A module can provide an abstract endpoint that defines an interface, and users of the module can extend it to expose the functionality on their server:
 
-**In a module (e.g., `serverpod_auth`):**
+**In a module (e.g., `serverpod_auth_idp`):**
 
 Declare an abstract endpoint with common methods on the server:
 
