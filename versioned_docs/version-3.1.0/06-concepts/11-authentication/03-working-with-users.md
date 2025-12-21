@@ -8,7 +8,7 @@ All authenticated users have an authentication identifier, that uniquely identif
 
 ```dart
 var userIdString = session.authenticated?.userIdentifier;
-// requires `import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart';`
+// requires `import 'package:serverpod_auth_idp_server/core.dart';`
 var userIdUuidValue = session.authenticated?.authUserId;
 ```
 
