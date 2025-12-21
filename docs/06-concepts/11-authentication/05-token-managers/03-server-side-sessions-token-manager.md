@@ -52,6 +52,6 @@ final serverSideSessionsConfig = ServerSideSessionsConfigFromPasswords(
 );
 ```
 
-## Client-side configuration
+## Flutter-side configuration
 
-When using the `ServerSideSessionsTokenManager` in the server, no extra configuration is needed on the client. It will automatically include the session token in requests to the server. In case the session expires or is revoked, the client will automatically sign the user out and redirect to the login page.
+When using the `ServerSideSessionsTokenManager` in the server, no extra configuration is needed on the Flutter. It will automatically include the session token in requests to the server. In case the session expires or is revoked, the client will automatically sign the user out and redirect to the login page.

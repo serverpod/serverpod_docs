@@ -84,7 +84,7 @@ There are three types of `RevokedAuthentication` messages that are used to speci
 
 Each message type provides a tailored approach to revoke authentication based on different needs.
 
-### Send token to client
+### Send token to Flutter app
 
 You are responsible for implementing the endpoints to authenticate/authorize the user. But as an example such an endpoint could look like the following.
 
