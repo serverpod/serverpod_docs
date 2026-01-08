@@ -30,10 +30,10 @@ class SignInPage extends StatelessWidget {
       body: SignInWidget(
         client: client,
         onAuthenticated: () {
-          // Navigate to home screen
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => HomePage()),
-          );
+          // Do something when the user is authenticated.
+          //
+          // NOTE: You should not navigate to the home screen here, otherwise
+          // the user will have to sign in again every time they open the app.
         },
         onError: (error) {
           // Handle errors
@@ -62,7 +62,10 @@ SignInWidget(
   disableGoogleSignInWidget: false,
   disableAppleSignInWidget: true, // Disable Apple sign-in
   onAuthenticated: () {
-    // Handle authentication
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
   },
 )
 ```
