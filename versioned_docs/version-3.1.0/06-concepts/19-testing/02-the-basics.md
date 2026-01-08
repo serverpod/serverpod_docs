@@ -33,7 +33,7 @@ To create an authenticated override, call `AuthenticationOverride.authentication
 
 ```dart
 static AuthenticationOverride authenticationInfo(
-  int userId,
+  String userIdentifier,
   Set<Scope> scopes, {
   String? authId,
 })
@@ -44,7 +44,7 @@ Pass these to `sessionBuilder.copyWith` to simulate different scenarios. Below f
 ```dart
 withServerpod('Given AuthenticatedExample endpoint', (sessionBuilder, endpoints) {
   // Corresponds to an actual user id
-  const int userId = 1234;
+  final userId = '550e8400-e29b-41d4-a716-446655440000';
 
   group('when authenticated', () {
     var authenticatedSessionBuilder = sessionBuilder.copyWith(
@@ -165,7 +165,7 @@ Future<void> concurrentTransactionCalls(
 ) async {
   await Future.wait([
     session.db.transaction((tx) => /*...*/),
-    // Will throw `InvalidConfigurationException` if `rollbackDatabase` 
+    // Will throw `InvalidConfigurationException` if `rollbackDatabase`
     // is not set to `RollbackDatabase.disabled` in `withServerpod`
     session.db.transaction((tx) => /*...*/),
   ]);
