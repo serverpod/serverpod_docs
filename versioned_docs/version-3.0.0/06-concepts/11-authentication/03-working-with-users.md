@@ -20,6 +20,34 @@ await AuthServices.instance.authUsers.delete(session, userIdUuidValue);
 
 For the full list of operations, see the [AuthUsers](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/AuthUsers-class.html) class documentation.
 
+## Blocking users
+
+You can block users to prevent them from signing in to your application. When a blocked user attempts to authenticate, an `AuthUserBlockedException` will be thrown, and the authentication will fail.
+
+### Blocking or unblocking a user
+
+To block/unblock a user, use the `update` method of the `AuthUsers` class:
+
+```dart
+await AuthServices.instance.authUsers.update(
+  session,
+  authUserId: authUserId,
+  blocked: true, // or false to unblock
+);
+```
+
+Users can also be created with the blocked status set from the start:
+```dart
+await AuthServices.instance.authUsers.create(
+  session,
+  blocked: true,
+);
+```
+
+:::note
+When a user is blocked, they will not be able to sign in until they are unblocked. However, blocking a user does not automatically revoke their existing sessions. Be sure to revoke existing sessions for a complete block operation. See [Revoking tokens](./token-managers/managing-tokens#revoking-tokens) for more details.
+:::
+
 ## User profiles
 
 By default, all authenticated users have a `UserProfile` object that contains information about the signed-in user. To access the `UserProfile` object, you can use the `userProfile` extension on the `AuthenticationInfo` object.
