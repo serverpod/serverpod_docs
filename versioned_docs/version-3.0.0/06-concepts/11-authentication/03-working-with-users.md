@@ -111,6 +111,17 @@ indexes:
     unique: true
 ```
 
+:::note
+Note that the `AuthUser` model is declared in the `serverpod_auth_core` module, which is automatically included in your project as a dependency of the `serverpod_auth_idp` module. If you are not ignoring the generated files in your `analysis_options.yaml`, you might need to explicitly add the `serverpod_auth_core` module to your project to prevent `depend_on_referenced_packages` lint errors. The general recommendation, however, is to ignore linting on generated files:
+
+```yaml
+# analysis_options.yaml
+analyzer:
+  exclude:
+    - lib/src/generated/**
+```
+:::
+
 :::tip
 When referencing module classes in your model files, you can use a nickname for the module instead of the full module name. See the [modules documentation](../modules) for more information.
 :::
