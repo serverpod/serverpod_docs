@@ -58,7 +58,10 @@ EmailSignInWidget(
     // Open privacy policy
   },
   onAuthenticated: () {
-    // Handle successful authentication
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
   },
   onError: (error) {
     // Handle errors
@@ -115,7 +118,10 @@ final controller = EmailAuthController(
   client: client,
   startScreen: EmailFlowScreen.login,
   onAuthenticated: () {
-    // Handle successful authentication
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
   },
   onError: (error) {
     // Handle errors

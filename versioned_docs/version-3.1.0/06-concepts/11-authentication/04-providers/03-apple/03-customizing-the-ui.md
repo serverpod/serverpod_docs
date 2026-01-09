@@ -42,7 +42,10 @@ AppleSignInWidget(
   ],
 
   onAuthenticated: () {
-    // Handle successful authentication
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
   },
   onError: (error) {
     // Handle errors
@@ -60,7 +63,10 @@ import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 final controller = AppleAuthController(
   client: client,
   onAuthenticated: () {
-    // Handle successful authentication
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
   },
   onError: (error) {
     // Handle errors

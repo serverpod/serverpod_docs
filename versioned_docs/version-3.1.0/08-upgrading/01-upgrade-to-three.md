@@ -241,6 +241,10 @@ class MyEndpoint extends Endpoint {
 
 Serverpod 3.0 includes several changes to the authentication system that improve type safety and performance.
 
+:::note
+Besides minor interface changes described in this section, the legacy authentication system is still supported and can be used alongside the new version. This allows to safely upgrade your project to Serverpod 3.0 while using the legacy authentication and gradually migrate to the new one.
+:::
+
 ### Custom authentication handlers
 
 In the new authentication system, the default authentication header has changed from `Basic` to `Bearer` - which is now officially supported. This introduced a change for custom `AuthenticationHandler` implementations: the `token` parameter will now receive the token unwrapped from the `Bearer` prefix - just as it does for `Basic` tokens.
@@ -303,6 +307,10 @@ Client(host)..authenticationKeyManager = myManager;
 ```dart
 Client(host)..authKeyProvider = myProvider;
 ```
+
+:::note
+To keep backwards compatibility with the old authentication system, the `FlutterAuthenticationKeyManager` from the legacy package now implements the `AuthKeyProvider` interface, so you can safely pass it to the client as the `authKeyProvider`.
+:::
 
 ## Enum serialization
 

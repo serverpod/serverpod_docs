@@ -268,10 +268,10 @@ class SignInPage extends StatelessWidget {
       body: SignInWidget(
         client: client,
         onAuthenticated: () {
-          // Navigate to home screen
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => HomePage()),
-          );
+          // Do something when the user is authenticated.
+          //
+          // NOTE: You should not navigate to the home screen here, otherwise
+          // the user will have to sign in again every time they open the app.
         },
         onError: (error) {
           // Handle errors
@@ -289,4 +289,8 @@ This widget is a convenient way to use identity providers out-of-the-box, but yo
 
 #### Updating the UI based on authentication state
 
-Instead of navigating to the home screen using the `onAuthenticated` callback, you can listen to authentication state changes and update the UI accordingly. See the [Client-side authentication](./basics#monitor-authentication-changes) section for more details.
+To update the UI based on authentication state, you must listen to authentication state changes using the `authInfoListenable` getter. See the [Client-side authentication](./basics#monitor-authentication-changes) section for more details.
+
+:::warning
+Do not navigate to the home screen using the `onAuthenticated` callback. This will cause the user to have to sign in again every time they open the app.
+:::
