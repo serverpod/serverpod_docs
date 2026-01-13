@@ -1,6 +1,6 @@
 # Setup
 
-To set up Sign in with Google, you will need a Google account for your organization and set up a new project. For the project, you need to set up _Credentials_ and _OAuth consent screen_. You will also need to add the `serverpod_auth_idp_flutter` package to your app and do some additional setup depending on each platform.
+To set up Sign in with Google, you will need a Google account for your organization and set up a new project. You will also need to add the `serverpod_auth_idp_flutter` package to your app and do some additional setup depending on each platform.
 
 :::note
 Right now, we have official support for iOS, Android, and Web for Google Sign In.
@@ -14,29 +14,35 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 To implement Google Sign In, you need a Google Cloud project. You can create one in the [Google Cloud Console](https://console.cloud.google.com/).
 
+### Enable Google Auth Platform
+
+If you haven't already, enable the Google Auth Platform for your project. Navigate to the [Google Auth Platform overview](https://console.cloud.google.com/auth/overview) and click _Get started_.
+
+![Google Auth Platform Overview](/img/authentication/providers/google/4-auth-platform-overview.png)
+
 ### Enable People API
 
 To be allowed to access user data and use the authentication method in Serverpod we have to enable the People API in our project.
 
 [Enable it here](https://console.cloud.google.com/apis/library/people.googleapis.com) or find it yourself by navigating to the _Library_ section under _APIs & Services_. Search for _Google People API_, select it, and click on _Enable_.
 
-### Setup OAuth consent screen
+### Configure Google Auth Platform
 
-The setup for the OAuth consent screen can be found [here](https://console.cloud.google.com/apis/credentials/consent) or under _APIs & Services_ > _OAuth consent screen_.
+Configure the following settings in the Google Auth Platform:
 
-1. Fill in all the required information, for production use you need a domain that adds under `Authorized` domains.
+1. **Branding**: Navigate to the [Branding](https://console.cloud.google.com/auth/branding) page to configure your app's branding information. For production use, you need to add your domain under _Authorized domains_.
 
-2. Add the scopes `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
-
-3. Add your email to the test users so that you can test your integration in development mode.
+2. **Data Access**: Navigate to the [Data Access](https://console.cloud.google.com/auth/scopes) page to add the required scopes. Add the scopes `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
 
 ![Scopes](/img/authentication/providers/google/1-scopes.png)
 
+3. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page to add test users. Add your email so you can test your integration in development mode.
+
 ## Server-side configuration
 
-Create the server credentials in the Google Cloud Console. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as a _**Web application**_. If you have a domain add it to the `Authorized JavaScript origins` and `Authorized redirect URIs`. For development purposes we can add `http://localhost:8082` to both fields, this is the address to the web server.
+Create the server credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as a _**Web application**_. If you have a domain add it to the `Authorized JavaScript origins` and `Authorized redirect URIs`. For development purposes, we can add `http://localhost:8082` to both fields, which is the address to the web server.
 
-![Google credentials](/img/6-google-credentials.jpg)
+![Google credentials](/img/authentication/providers/google/5-clients.png)
 
 Download the JSON file for your web application OAuth client. This file contains both the client id and the client secret. You will need to supply the contents of the file to the `clientSecret` property of the `GoogleIdpConfig` object.
 
@@ -103,7 +109,7 @@ For our client-side configurations, we have to first create client-side credenti
 
 ### iOS
 
-Create the client credentials. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as Application type _**iOS**_.
+Create the client credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as Application type _**iOS**_.
 
 Fill in all the required information, and create the credentials. Then download the `plist` file rename it to `GoogleService-Info.plist` and put it inside your ios project folder. Then drag and drop it into your XCode project to include the file in your build.
 
@@ -150,7 +156,7 @@ If you have any social logins in your app you also need to integrate "Sign in wi
 
 ### Android
 
-Create the client credentials. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as Application type _**Android**_.
+Create the client credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as Application type _**Android**_.
 
 Fill in all required information, you can get the debug SHA-1 hash by running `./gradlew signingReport` in your Android project directory. Create the credentials and download the JSON file.
 
@@ -166,9 +172,9 @@ $ keytool -list -v -keystore /path/to/keystore
 
 ### Web
 
-There is no need to create any client credentials for the web, since it uses the same client ID as the server. However, you have to modify the server credentials inside the Google Cloud Console.
+There is no need to create any client credentials for the web, since it uses the same client ID as the server. However, you have to modify the server credentials in the Google Auth Platform.
 
-Navigate to _Credentials_ under _APIs & Services_ and select the server credentials. Under `Authorized JavaScript origins` and `Authorized redirect URIs` add the domain for your Flutter app, for development, this is `http://localhost:<port>` where the port is the port you are using.
+Navigate to _Clients_ and select the server credentials (the one configured as a _**Web application**_). Under `Authorized JavaScript origins` and `Authorized redirect URIs` add the domain for your Flutter app, for development, this is `http://localhost:<port>` where the port is the port you are using.
 
 :::info
 Force flutter to run on a specific port by running.
