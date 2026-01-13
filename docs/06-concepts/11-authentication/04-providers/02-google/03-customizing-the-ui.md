@@ -43,7 +43,7 @@ GoogleSignInWidget(
   ],
 
   // Whether to attempt lightweight sign-in (One Tap, FedCM)
-  attemptLightweightSignIn: true,
+  attemptLightweightSignIn: false,
 
   onAuthenticated: () {
     // Do something when the user is authenticated.
@@ -75,7 +75,7 @@ final controller = GoogleAuthController(
   onError: (error) {
     // Handle errors
   },
-  attemptLightweightSignIn: true,
+  attemptLightweightSignIn: false,
   scopes: const [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
