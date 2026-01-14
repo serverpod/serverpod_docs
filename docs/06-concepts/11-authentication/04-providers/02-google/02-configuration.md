@@ -122,3 +122,30 @@ If lightweight sign-in fails (e.g., no previous session exists or the user dismi
 :::note
 The lightweight sign-in attempt happens automatically when the controller is initialized, typically at app launch. If successful, users will be signed in without any additional interaction.
 :::
+
+### Configuring Client IDs via Environment Variables
+
+Instead of hardcoding client IDs in platform-specific configuration files, you can pass them during build time using the `--dart-define` option. The Google Sign-In provider exposes the following environment variables:
+
+- `GOOGLE_CLIENT_ID`: The platform-specific OAuth client ID
+- `GOOGLE_SERVER_CLIENT_ID`: The server (web application) OAuth client ID
+
+If `clientId` and `serverClientId` values are not supplied when initializing the service, the provider will automatically fetch them from these environment variables.
+
+**Example usage:**
+
+```bash
+flutter run \
+  -d "<device>" \
+  --dart-define="GOOGLE_CLIENT_ID=<platform_client_id>.apps.googleusercontent.com" \
+  --dart-define="GOOGLE_SERVER_CLIENT_ID=<web_client_id>.apps.googleusercontent.com"
+```
+
+This approach is useful when you need to:
+- Manage separate client IDs for different platforms (Android, iOS, Web) in a centralized way
+- Avoid committing client IDs to version control
+- Configure different credentials for different build environments (development, staging, production)
+
+:::tip
+You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
+:::

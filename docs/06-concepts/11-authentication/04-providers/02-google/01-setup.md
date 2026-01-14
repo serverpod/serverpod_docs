@@ -14,12 +14,6 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 To implement Google Sign In, you need a Google Cloud project. You can create one in the [Google Cloud Console](https://console.cloud.google.com/).
 
-### Enable Google Auth Platform
-
-If you haven't already, enable the Google Auth Platform for your project. Navigate to the [Google Auth Platform overview](https://console.cloud.google.com/auth/overview) and click _Get started_.
-
-![Google Auth Platform Overview](/img/authentication/providers/google/4-auth-platform-overview.png)
-
 ### Enable People API
 
 To be allowed to access user data and use the authentication method in Serverpod we have to enable the People API in our project.
@@ -28,15 +22,21 @@ To be allowed to access user data and use the authentication method in Serverpod
 
 ### Configure Google Auth Platform
 
+If you haven't already, enable the Google Auth Platform for your project. Navigate to the [Google Auth Platform overview](https://console.cloud.google.com/auth/overview) and click _Get started_.
+
+![Google Auth Platform Overview](/img/authentication/providers/google/4-auth-platform-overview.png)
+
 Configure the following settings in the Google Auth Platform:
 
-1. **Branding**: Navigate to the [Branding](https://console.cloud.google.com/auth/branding) page to configure your app's branding information. For production use, you need to add your domain under _Authorized domains_.
-
-2. **Data Access**: Navigate to the [Data Access](https://console.cloud.google.com/auth/scopes) page to add the required scopes. Add the scopes `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
+1. **Data Access**: Navigate to the [Data Access](https://console.cloud.google.com/auth/scopes) page to add the required scopes. Add the scopes `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
 
 ![Scopes](/img/authentication/providers/google/1-scopes.png)
 
-3. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page to add test users. Add your email so you can test your integration in development mode.
+2. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page to add test users. Add your email so you can test your integration in development mode.
+
+:::tip
+For production apps, you can configure additional branding options on the [Branding](https://console.cloud.google.com/auth/branding) page. See the [Google Auth Platform documentation](https://developers.google.com/identity/protocols/oauth2) for more details.
+:::
 
 ## Server-side configuration
 
@@ -168,6 +168,10 @@ For a production app you need to get the SHA-1 key from your production keystore
 ```bash
 $ keytool -list -v -keystore /path/to/keystore
 ```
+:::
+
+:::tip
+If you encounter issues with Google Sign-In on Android, check the [official troubleshooting guide](https://pub.dev/packages/google_sign_in_android#troubleshooting) for common solutions.
 :::
 
 ### Web
