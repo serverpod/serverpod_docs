@@ -465,30 +465,6 @@ values:
 
 In this example, `low` will use the default description `'No description'`, while `medium` and `high` have explicit descriptions.
 
-#### Documentation on properties and values
-
-You can add documentation to properties and enum values using the `###` syntax:
-
-```yaml
-### Represents the status of an HTTP response.
-enum: HttpStatus
-serialized: byName
-properties:
-  ### The numeric HTTP status code.
-  code: int
-  ### A human-readable message describing the status.
-  message: String
-values:
-  ### Successful response.
-  - ok:
-      code: 200
-      message: 'OK'
-  ### Resource not found.
-  - notFound:
-      code: 404
-      message: 'Not Found'
-```
-
 ## Adding documentation
 
 Serverpod allows you to add documentation to your serializable objects in a similar way that you would add documentation to your Dart code. Use three hashes (###) to indicate that a comment should be considered documentation.
