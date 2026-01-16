@@ -385,6 +385,110 @@ In the example above, if the Enum `Animal` receives an unknown option such as `"
 If no default value is specified, deserialization of unknown values will throw an exception. Adding a default value prevents these exceptions, but may also hide real issues in your data. Use this feature with caution.
 :::
 
+### Enhanced enums with properties
+
+Serverpod supports enhanced enums that can have custom properties attached to each value. This is useful when you need to associate additional data with enum values, such as display names, codes, or configuration values.
+
+To define an enhanced enum, add a `properties` section that declares the property names and types, then specify property values for each enum value:
+
+```yaml
+enum: HttpStatus
+serialized: byName
+properties:
+  code: int
+  message: String
+values:
+  - ok:
+      code: 200
+      message: 'OK'
+  - notFound:
+      code: 404
+      message: 'Not Found'
+  - internalError:
+      code: 500
+      message: 'Internal Server Error'
+```
+
+This generates an enhanced Dart enum with the specified properties:
+
+```dart
+enum HttpStatus implements SerializableModel {
+  ok(200, 'OK'),
+  notFound(404, 'Not Found'),
+  internalError(500, 'Internal Server Error');
+
+  const HttpStatus(this.code, this.message);
+
+  final int code;
+  final String message;
+
+  // Serialization methods...
+}
+```
+
+You can then access the properties on any enum value:
+
+```dart
+var status = HttpStatus.ok;
+print(status.code);    // 200
+print(status.message); // OK
+```
+
+#### Supported property types
+
+Enhanced enum properties support the following types:
+
+- `int` and `int?`
+- `double` and `double?`
+- `bool` and `bool?`
+- `String` and `String?`
+
+#### Default property values
+
+Properties can have default values, making them optional when defining enum values:
+
+```yaml
+enum: Priority
+properties:
+  level: int
+  description: String, default='No description'
+values:
+  - low:
+      level: 1
+  - medium:
+      level: 2
+      description: 'Medium priority'
+  - high:
+      level: 3
+      description: 'High priority - handle first'
+```
+
+In this example, `low` will use the default description `'No description'`, while `medium` and `high` have explicit descriptions.
+
+#### Documentation on properties and values
+
+You can add documentation to properties and enum values using the `###` syntax:
+
+```yaml
+### Represents the status of an HTTP response.
+enum: HttpStatus
+serialized: byName
+properties:
+  ### The numeric HTTP status code.
+  code: int
+  ### A human-readable message describing the status.
+  message: String
+values:
+  ### Successful response.
+  - ok:
+      code: 200
+      message: 'OK'
+  ### Resource not found.
+  - notFound:
+      code: 404
+      message: 'Not Found'
+```
+
 ## Adding documentation
 
 Serverpod allows you to add documentation to your serializable objects in a similar way that you would add documentation to your Dart code. Use three hashes (###) to indicate that a comment should be considered documentation.
@@ -693,6 +797,7 @@ fields:
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | :-------------: | :---------------------: | :-----------: |
 | [**values**](#enum)                                                 | A special key for enums with a list of all enum values.                                                       |                 |                         |      ✅       |
 | [**serialized**](#enum)                                             | Sets the mode enums are serialized in                                                                         |                 |                         |      ✅       |
+| [**properties**](#enhanced-enums-with-properties)                   | Defines custom properties for enhanced enums.                                                                 |                 |                         |      ✅       |
 | [**immutable**](#immutable-classes)                                 | Boolean flag to generate an immutable class with final fields, equals operator, and hashCode.                 |       ✅        |           ✅            |               |
 | [**serverOnly**](#limiting-visibility-of-a-generated-class)         | Boolean flag if code generator only should create the code for the server.                                    |       ✅        |           ✅            |      ✅       |
 | [**table**](database/models)                                        | A name for the database table, enables generation of database code.                                           |       ✅        |                         |               |
