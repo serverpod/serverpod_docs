@@ -438,14 +438,14 @@ print(status.message); // OK
 
 Enhanced enum properties support the following types:
 
-- `int` and `int?`
-- `double` and `double?`
-- `bool` and `bool?`
-- `String` and `String?`
+- `int` / `int?`
+- `double` / `double?`
+- `bool` / `bool?`
+- `String` / `String?`
 
 #### Default property values
 
-Properties can have default values, making them optional when defining enum values:
+Properties can have default values, making them optional when defining enum values. The syntax follows the same pattern as [class field defaults](#default-values):
 
 ```yaml
 enum: Priority
