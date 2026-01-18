@@ -32,7 +32,11 @@ Configure the following settings in the Google Auth Platform:
 
 ![Scopes](/img/authentication/providers/google/1-scopes.png)
 
-2. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page to add test users. Add your email so you can test your integration in development mode.
+:::tip
+If you need access to additional Google APIs (e.g., Calendar, Drive), you can add more scopes here. See [Accessing Google APIs](./configuration#accessing-google-apis) for details on requesting additional scopes and using them with the `getExtraGoogleInfoCallback` on the server.
+:::
+
+1. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page to add test users. Add your email so you can test your integration in development mode.
 
 :::tip
 For production apps, you can configure additional branding options on the [Branding](https://console.cloud.google.com/auth/branding) page. See the [Google Auth Platform documentation](https://developers.google.com/identity/protocols/oauth2) for more details.
@@ -111,25 +115,25 @@ For our client-side configurations, we have to first create client-side credenti
 
 Create the client credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as Application type _**iOS**_.
 
-Fill in all the required information, and create the credentials. Then download the `plist` file rename it to `GoogleService-Info.plist` and put it inside your ios project folder. Then drag and drop it into your XCode project to include the file in your build.
+Fill in all the required information and create the credentials. Download the `plist` file - you'll need to extract values from it to configure your app.
 
-Open the `GoogleService-Info.plist` in your editor and add the SERVER_CLIENT_ID if it does not exist:
+Open your `ios/Runner/Info.plist` file and add the following keys:
 
 ```xml
 <dict>
   ...
-  <key>SERVER_CLIENT_ID</key>
+  <key>GIDClientID</key>
+  <string>your_ios_client_id</string>
+  <key>GIDServerClientID</key>
   <string>your_server_client_id</string>
 </dict>
 ```
 
-Replace `your_server_client_id` with the client id from the JSON file you put inside the config folder in the server.
+Replace `your_ios_client_id` with the `CLIENT_ID` value from the downloaded plist file, and `your_server_client_id` with the client ID from the server credentials JSON file.
 
 #### Add the URL scheme
 
-To allow us to navigate back to the app after the user has signed in we have to add the URL Scheme, the scheme is the reversed client ID of your iOS app. You can find it inside the `GoogleService-Info.plist` file.
-
-Open the `info.plist` file in your editor and add the following to register the URL Scheme.
+To allow navigation back to the app after sign-in, add the URL scheme to your `Info.plist`. The scheme is the reversed client ID of your iOS app (found as `REVERSED_CLIENT_ID` in the downloaded plist file).
 
 ```xml
 <dict>
@@ -141,14 +145,14 @@ Open the `info.plist` file in your editor and add the following to register the 
       <string>Editor</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>your_reversed_client_id</string>
+        <string>com.googleusercontent.apps.your_client_id</string>
       </array>
     </dict>
   </array>
 </dict>
 ```
 
-Replace `your_reversed_client_id` with your reversed client ID.
+Replace the URL scheme with your actual reversed client ID.
 
 :::info
 If you have any social logins in your app you also need to integrate "Sign in with Apple" to publish your app to the app store. ([Read more](https://developer.apple.com/sign-in-with-apple/get-started/)).

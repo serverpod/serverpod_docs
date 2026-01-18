@@ -67,7 +67,7 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
 
 The default setup allows access to basic user information, such as email, profile image, and name. You may require additional access scopes, such as accessing a user's calendar, contacts, or files. To do this, you will need to:
 
-- Add the required scopes to the OAuth consent screen.
+- Add the required scopes to the [Data Access](./setup#configure-google-auth-platform) page in the Google Auth Platform.
 - Request access to the scopes when signing in. Do this by setting the `scopes` parameter of the `GoogleSignInWidget` or `GoogleAuthController`.
 
 A full list of available scopes can be found [here](https://developers.google.com/identity/protocols/oauth2/scopes).
@@ -123,9 +123,26 @@ If lightweight sign-in fails (e.g., no previous session exists or the user dismi
 The lightweight sign-in attempt happens automatically when the controller is initialized, typically at app launch. If successful, users will be signed in without any additional interaction.
 :::
 
-### Configuring Client IDs via Environment Variables
+### Configuring Client IDs on the App
 
-Instead of hardcoding client IDs in platform-specific configuration files, you can pass them during build time using the `--dart-define` option. The Google Sign-In provider exposes the following environment variables:
+By default, if no client IDs are provided programmatically, the underlying `google_sign_in` package falls back to reading from platform-specific configuration files (e.g., `GoogleService-Info.plist` for iOS, `google-services.json` for Android). However, you can override this behavior by configuring them programmatically.
+
+#### Passing Client IDs in Code
+
+You can pass the client IDs directly when initializing the Google Sign-In service:
+
+```dart
+client.auth.initializeGoogleSignIn(
+  clientId: '<platform_client_id>.apps.googleusercontent.com',
+  serverClientId: '<web_client_id>.apps.googleusercontent.com',
+);
+```
+
+This approach is useful when you need different client IDs per platform and want to manage them in your Dart code.
+
+#### Using Environment Variables
+
+Alternatively, you can pass client IDs during build time using the `--dart-define` option. The Google Sign-In provider supports the following environment variables:
 
 - `GOOGLE_CLIENT_ID`: The platform-specific OAuth client ID
 - `GOOGLE_SERVER_CLIENT_ID`: The server (web application) OAuth client ID
@@ -142,6 +159,7 @@ flutter run \
 ```
 
 This approach is useful when you need to:
+
 - Manage separate client IDs for different platforms (Android, iOS, Web) in a centralized way
 - Avoid committing client IDs to version control
 - Configure different credentials for different build environments (development, staging, production)
