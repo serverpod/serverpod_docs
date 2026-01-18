@@ -8,22 +8,13 @@ This approach allows you to use any authentication method supported by Firebase 
 You need to install the auth module before you continue, see [Setup](../../setup).
 :::
 
-## Prerequisites
-
-Before setting up Firebase authentication, ensure you have:
-
-- A Firebase project (create one at [Firebase Console](https://console.firebase.google.com/))
-- Firebase CLI installed (`npm install -g firebase-tools`)
-- FlutterFire CLI installed (`dart pub global activate flutterfire_cli`)
-- At least one authentication method enabled in your Firebase project
-
 ## Create your credentials
 
 ### Generate Service Account Key
 
 The server needs service account credentials to verify Firebase ID tokens. To create a new key:
 
-1. Go to the [Firebase Console](https://console.firebase.google.com/)
+1. Go to the [Firebase Console](https://console.firebase.google.com/) (create a new project if you don't have one)
 2. Select your project
 3. Navigate to **Project settings** > **Service accounts**
 4. Click **Generate new private key**, then **Generate key**
@@ -123,21 +114,7 @@ class FirebaseIdpEndpoint extends FirebaseIdpBaseEndpoint {}
 
 ### Generate and Migrate
 
-Run the following commands to generate client code and create the database migration:
-
-```bash
-serverpod generate
-```
-
-Then create and apply the migration:
-
-```bash
-serverpod create-migration
-docker compose up --build --detach
-dart run bin/main.dart --role maintenance --apply-migrations
-```
-
-More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 
@@ -145,6 +122,8 @@ More detailed instructions can be found in the general [identity providers setup
 - `firebaseAccountDetailsValidation`: Optional. Validation function for Firebase account details. By default, this validates that the email is verified when present (phone-only authentication is allowed). See the [configuration section](./configuration#custom-account-validation) for customization options.
 
 ## Client-side configuration
+
+The client-side setup uses the official Firebase packages (`firebase_core`, `firebase_auth`, and optionally `firebase_ui_auth`) for authentication. The steps below follow standard Firebase usage - for troubleshooting, refer to the [official Firebase Flutter documentation](https://firebase.google.com/docs/flutter/setup).
 
 ### Install Required Packages
 
@@ -162,7 +141,14 @@ flutter pub add firebase_ui_auth
 
 ### Configure FlutterFire
 
-Run the FlutterFire CLI to configure Firebase for your Flutter project:
+If you haven't already, install the Firebase CLI and FlutterFire CLI:
+
+```bash
+npm install -g firebase-tools
+dart pub global activate flutterfire_cli
+```
+
+Then run the FlutterFire CLI to configure Firebase for your Flutter project:
 
 ```bash
 flutterfire configure
@@ -211,48 +197,83 @@ void main() async {
 
 Understanding the Firebase authentication flow helps when building custom integrations:
 
-1. **User initiates sign-in** with Firebase using `firebase_auth` or `firebase_ui_auth`
-2. **Firebase authenticates** the user and returns a `firebase_auth.User` object
-3. **Your app calls** `FirebaseAuthController.login(user)` with the Firebase user
-4. **The controller extracts** the Firebase ID token from the user
-5. **Token is sent** to your server's `firebaseIdp.login()` endpoint
-6. **Server validates** the JWT using the service account credentials
-7. **Server creates or updates** the user account and issues a Serverpod session token
-8. **Client session is updated** and the user is authenticated with Serverpod
+1. **User initiates sign-in** with Firebase using `firebase_auth` or `firebase_ui_auth`.
+2. **Firebase authenticates** the user and returns a `firebase_auth.User` object.
+3. **Your app calls** `FirebaseAuthController.login(user)` with the Firebase user.
+4. **The controller extracts** the Firebase ID token from the user.
+5. **Token is sent** to your server's `firebaseIdp.login()` endpoint.
+6. **Server validates** the JWT using the service account credentials.
+7. **Server creates or updates** the user account and issues a Serverpod session token.
+8. **Client session is updated** and the user is authenticated with Serverpod in the Flutter app.
 
 :::info
-The `initializeFirebaseSignIn()` call in the client setup automatically signs out from Firebase when the user signs out from Serverpod, keeping both systems in sync.
+The `initializeFirebaseSignIn()` call in the client setup will ensure that the user gets automatically signed out from Firebase when signing out from Serverpod to keep both systems in sync.
 :::
 
 ## Present the authentication UI
 
-### Using FirebaseAuthController
+### Using firebase_ui_auth
 
-The `FirebaseAuthController` handles syncing Firebase authentication state with your Serverpod backend. After a user signs in with Firebase, pass the Firebase user to the controller:
+The easiest way to add Firebase authentication is using the `firebase_ui_auth` package with its pre-built `SignInScreen`:
 
 ```dart
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_ui_auth/firebase_ui_auth.dart' as firebase_ui;
+import 'package:flutter/material.dart';
 import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
 
-// Create the controller
-final controller = FirebaseAuthController(
-  client: client,
-  onAuthenticated: () {
-    // User successfully synced with Serverpod
-    // NOTE: Do not navigate here - use client.auth.authInfoListenable instead
-  },
-  onError: (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $error')),
-    );
-  },
-);
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
-// After user signs in with Firebase
-final firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;
-if (firebaseUser != null) {
-  await controller.login(firebaseUser);
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  late final FirebaseAuthController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = FirebaseAuthController(
+      client: client,
+      onError: (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $error')),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return firebase_ui.SignInScreen(
+      providers: [
+        firebase_ui.EmailAuthProvider(),
+      ],
+      actions: [
+        firebase_ui.AuthStateChangeAction<firebase_ui.SignedIn>((context, state) async {
+          final user = firebase_auth.FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await controller.login(user);
+          }
+        }),
+        firebase_ui.AuthStateChangeAction<firebase_ui.UserCreated>((context, state) async {
+          final user = firebase_auth.FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await controller.login(user);
+          }
+        }),
+      ],
+    );
+  }
 }
 ```
 
-For details on building custom authentication UIs and integrating with `firebase_ui_auth`, see the [customizing the UI section](./customizing-the-ui).
+For details on using the `FirebaseAuthController` directly and building custom authentication UIs, see the [customizing the UI section](./customizing-the-ui).
