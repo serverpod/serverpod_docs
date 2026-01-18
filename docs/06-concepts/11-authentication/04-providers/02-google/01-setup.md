@@ -52,6 +52,22 @@ Download the JSON file for your web application OAuth client. This file contains
 
 This can be done by pasting the contents of the JSON file into the `googleClientSecret` key in the `config/passwords.yaml` file or setting as value of the `SERVERPOD_PASSWORD_googleClientSecret` environment variable. Alternatively, you can read the file contents directly using the `GoogleClientSecret.fromJsonFile()` method.
 
+```yaml
+development:
+  googleClientSecret: |
+    {
+      "web": {
+        "client_id": "your-client-id.apps.googleusercontent.com",
+        "project_id": "your-project-id",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "your-client-secret",
+        "redirect_uris": ["http://localhost:8082/googlesignin"]
+      }
+    }
+```
+
 In your main `server.dart` file, configure the Google identity provider:
 
 ```dart
