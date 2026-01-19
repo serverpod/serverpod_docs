@@ -188,10 +188,10 @@ import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 AppleSignInWidget(
   client: client,
   onAuthenticated: () {
-    // Navigate to home screen or update UI
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => HomePage()),
-    );
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
   },
   onError: (error) {
     // Handle errors

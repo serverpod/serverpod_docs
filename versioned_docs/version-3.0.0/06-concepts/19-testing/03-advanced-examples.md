@@ -80,8 +80,8 @@ Then a test to verify this behavior can be written as below. Note the call to th
 
 ```dart
 withServerpod('Given CommunicationExampleEndpoint', (sessionBuilder, endpoints) {
-  const int userId1 = 1;
-  const int userId2 = 2;
+  final userId1 = '550e8400-e29b-41d4-a716-446655440000';
+  final userId2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
   test(
       'when calling postNumberToSharedStream and listenForNumbersOnSharedStream '
@@ -102,9 +102,9 @@ withServerpod('Given CommunicationExampleEndpoint', (sessionBuilder, endpoints) 
 
     var stream =
         endpoints.testTools.listenForNumbersOnSharedStream(userSession1);
-    // Wait for `listenForNumbersOnSharedStream` to execute up to its 
+    // Wait for `listenForNumbersOnSharedStream` to execute up to its
     // `yield` statement before continuing
-    await flushEventQueue(); 
+    await flushEventQueue();
 
     await endpoints.testTools.postNumberToSharedStream(userSession2, 111);
     await endpoints.testTools.postNumberToSharedStream(userSession2, 222);
