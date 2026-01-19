@@ -1,14 +1,4 @@
-# Overview
-
-With Serverpod you can schedule future work with the `future call` feature. Future calls are calls that will be invoked at a later time. An example is if you want to send a drip-email campaign after a user signs up. You can schedule a future call for a day, a week, or a month. The calls are stored in the database, so they will persist even if the server is restarted.
-
-A future call is guaranteed to only execute once across all your instances that are running, but execution failures are not handled automatically. It is your responsibility to schedule a new future call if the work was not able to complete.
-
-:::info
-The future call feature is not enabled when running Serverpod in serverless mode.
-:::
-
-## Configuration
+# Configuration
 
 Future calls can be configured using options defined in the configuration files or environment variables. For a detailed list of configuration options, refer to the [Configuration](../configuration) page.
 

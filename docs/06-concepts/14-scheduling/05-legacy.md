@@ -1,5 +1,9 @@
 # Legacy
 
+:::warning
+This approach is error prone since it involves manually registering and scheduling future calls using string identifiers. The recommended way to interact with the future calls feature is through the [type-safe API](setup).
+:::
+
 Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](../sessions) object and the second being an optional SerializableModel ([See models](../models)).
 
 ```dart
