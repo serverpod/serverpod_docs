@@ -30,7 +30,7 @@ Future<bool> verifyUpload(Session session, String path) async {
 }
 ```
 
-### Client-side code
+### Flutter-side code
 
 To upload a file from the app side, first request the upload description. Next, upload the file. You can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the data must be held in RAM memory. Finally, you should verify the upload with the server.
 

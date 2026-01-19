@@ -189,7 +189,7 @@ $ cd magic_recipe/magic_recipe_server
 $ serverpod generate
 ```
 
-## Call the endpoint from the app
+## Call the endpoint from the Flutter app
 
 Now that we have updated the endpoint, we can call it from the app. We do this in the `magic_recipe_flutter/lib/main.dart` file. We will call the `getRecipes` method when the app starts and store the result in a list of `Recipe` objects. We will also update the UI to show the list of recipes.
 

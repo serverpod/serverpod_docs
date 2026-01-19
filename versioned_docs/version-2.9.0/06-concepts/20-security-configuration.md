@@ -33,9 +33,9 @@ Serverpod(
 );
 ```
 
-## Client Security Configuration
+## Flutter app Security Configuration
 
-When connecting to a **Serverpod server over HTTPS**, the client must be configured to trust the server's certificate.
+When connecting to a **Serverpod server over HTTPS**, the Flutter app must be configured to trust the server's certificate.
 
 ### Dart Configuration Example
 
