@@ -158,7 +158,7 @@ abstract class CalculatorEndpoint extends Endpoint {
 class MyCalculatorEndpoint extends CalculatorEndpoint {}
 ```
 
-Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. However, an abstract client class will be generated, which will be extended by the class generated from `MyCalculatorEndpoint`. The concrete client exposes the `add` method it inherited from `CalculatorEndpoint`. See [Client-side endpoint inheritance](#client-side-endpoint-inheritance) for more details on how abstract endpoints are represented on the client.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. However, an abstract client class will be generated, which will be extended by the class generated from `MyCalculatorEndpoint`. The concrete client exposes the `add` method it inherited from `CalculatorEndpoint`. See [Flutter-side endpoint inheritance](#flutter-side-endpoint-inheritance) for more details on how abstract endpoints are represented on the client.
 
 #### Extending an `abstract` `Endpoint` class
 
