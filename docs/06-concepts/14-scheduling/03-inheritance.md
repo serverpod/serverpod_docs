@@ -45,6 +45,10 @@ class MyGreeter extends Greeter {}
 
 Since `Greeter` is `abstract`, it will not be added to the server. However, `MyGreeter` will expose a single `hello` method.
 
+:::info
+Serverpod modules can expose future calls to users with `abstract` `FutureCall`. Code is only generated on the current project that extends the abstract future call.
+:::
+
 ### Extending an `abstract` `FutureCall` class
 
 In the above example, the `MyGreeter` only exposed the inherited `hello` method. It can be further extended with custom methods like this:

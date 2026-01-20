@@ -76,6 +76,10 @@ await pod.futureCalls
     .doOtherWork('2');
 ```
 
+:::info
+Scheduling a future call at a specific time/date will always resolve the `DateTime` to UTC.
+:::
+
 When scheduling a future call, it is also possible to give it an `identifier` so that it can be referenced later. The same identifier can be applied to multiple future calls.
 
 ```dart
