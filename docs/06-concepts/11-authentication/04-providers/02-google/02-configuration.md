@@ -125,7 +125,7 @@ The lightweight sign-in attempt happens automatically when the controller is ini
 
 ### Configuring Client IDs on the App
 
-By default, if no client IDs are provided programmatically, the underlying `google_sign_in` package falls back to reading from platform-specific configuration files (e.g., `GoogleService-Info.plist` for iOS, `google-services.json` for Android). However, you can override this behavior by configuring them programmatically.
+If no client IDs are provided programmatically, the underlying `google_sign_in` package falls back to reading from platform-specific configuration files (e.g., `GoogleService-Info.plist` for iOS, `google-services.json` for Android). To set them programmatically, you can use the following methods.
 
 #### Passing Client IDs in Code
 
