@@ -14,10 +14,10 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 The server needs service account credentials to verify Firebase ID tokens. To create a new key:
 
-1. Go to the [Firebase Console](https://console.firebase.google.com/) (create a new project if you don't have one)
-2. Select your project
-3. Navigate to **Project settings** > **Service accounts**
-4. Click **Generate new private key**, then **Generate key**
+1. Go to the [Firebase Console](https://console.firebase.google.com/) (create a new project if you don't have one).
+2. Select your project.
+3. Navigate to **Project settings** > **Service accounts**.
+4. Click **Generate new private key**, then **Generate key**.
 
 ![Service account](/img/authentication/providers/firebase/1-server-key.png)
 
@@ -27,9 +27,9 @@ This downloads a JSON file containing your service account credentials.
 
 In the Firebase Console, enable the authentication methods you want to support:
 
-1. Go to **Authentication** > **Sign-in method**
-2. Enable your desired providers (Email/Password, Phone, Google, Apple, etc.)
-3. Configure each provider according to Firebase's documentation
+1. Go to **Authentication** > **Sign-in method**.
+2. Enable your desired providers (Email/Password, Phone, Google, Apple, etc.).
+3. Configure each provider according to Firebase's documentation.
 
 ![Auth provider](/img/authentication/providers/firebase/2-auth-provider.png)
 

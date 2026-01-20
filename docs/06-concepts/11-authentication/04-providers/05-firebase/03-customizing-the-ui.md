@@ -79,6 +79,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
 The `SignInScreen` automatically handles the UI for all configured providers. You only need to connect the Firebase authentication result to Serverpod using the `FirebaseAuthController`.
 
+Refer to the [firebase_ui_auth documentation](https://pub.dev/packages/firebase_ui_auth) for configuration details and available providers.
+
 ## Using the FirebaseAuthController
 
 The `FirebaseAuthController` manages the synchronization between Firebase authentication state and Serverpod sessions.
@@ -159,28 +161,6 @@ For full control over the authentication UI, use the `firebase_auth` package dir
 4. Handle errors from both Firebase and the Serverpod sync.
 
 Refer to the [firebase_auth documentation](https://pub.dev/packages/firebase_auth) for available authentication methods.
-
-### Using firebase_ui_auth
-
-For a pre-built UI experience, use the `firebase_ui_auth` package. This provides ready-made screens for various authentication methods.
-
-1. Add the package: `flutter pub add firebase_ui_auth`.
-2. Use `firebase_ui.SignInScreen` with your desired providers.
-3. Add `AuthStateChangeAction` handlers for `SignedIn` and `UserCreated` events.
-4. In each handler, call `controller.login()` with the Firebase user.
-
-```dart
-actions: [
-  firebase_ui.AuthStateChangeAction<firebase_ui.SignedIn>((context, state) async {
-    final user = firebase_auth.FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await controller.login(user);
-    }
-  }),
-],
-```
-
-Refer to the [firebase_ui_auth documentation](https://pub.dev/packages/firebase_ui_auth) for configuration details and available providers.
 
 ### Listening to Firebase auth state changes
 
