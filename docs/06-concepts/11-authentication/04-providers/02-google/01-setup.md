@@ -63,7 +63,7 @@ development:
         "token_uri": "https://oauth2.googleapis.com/token",
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
         "client_secret": "your-client-secret",
-        "redirect_uris": ["http://localhost:8082/googlesignin"]
+        "redirect_uris": ["http://localhost:8082"]
       }
     }
 ```
@@ -208,11 +208,7 @@ $ flutter run -d chrome --web-port=49660
 ```
 :::
 
-Set up the actual redirect URI where the user will navigate after the sign-in. You can choose any path you want but it has to be the same in the credentials, your server, and Flutter configurations.
-
-For example, using the path `/googlesignin`.
-
-For development inside `Authorized redirect URIs` add `http://localhost:8082/googlesignin`, in production use `https://example.com/googlesignin`.
+Set up the redirect URI where the user will navigate after sign-in. For development, add `http://localhost:8082` inside `Authorized redirect URIs`. In production, use your server's domain (e.g., `https://example.com`).
 
 Then, on the `web/index.html` file, add the following to the `<head>` section:
 
