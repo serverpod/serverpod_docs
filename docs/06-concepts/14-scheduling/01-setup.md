@@ -24,35 +24,43 @@ class ExampleFutureCall extends FutureCall {
 For a method to be recognized by Serverpod as a future call, it must return a `Future<void>` and take at least two parameters. The first parameter must be a [`Session`](../sessions) object. You can pass any serializable types as other parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed. `Streaming` parameters are not supported.
 :::
 
+:::warning
+It is not valid to override the `invoke` method of the `FutureCall` class. This method is reserved for the execution of the future call.
+:::
+
 Next, you need to generate the code for your future calls:
 
 ```bash
 $ serverpod generate
 ```
 
-`serverpod generate` will create a type-safe interface for invoking the future calls in the server's `generated/future_calls.dart` file. This interface can be accessed from the Serverpod object.
+Calling `serverpod generate` will create a type-safe interface for invoking the future calls in the server's `generated/future_calls.dart` file. This interface can be accessed from the Serverpod object.
 
 The future calls you create are registered by `Serverpod` after the server starts.
 
 ```dart
- import 'package:serverpod/serverpod.dart'; 
- import 'package:serverpod_auth_idp_server/core.dart'; 
-  
- import 'src/generated/protocol.dart'; 
- import 'src/generated/endpoints.dart'; 
-  
- void run(List<String> args) async { 
-   final pod = Serverpod( 
-     args, 
-     Protocol(), 
-     Endpoints(), 
-   ); 
-  
-   await pod.start(); 
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_idp_server/core.dart';
+
+import 'src/generated/protocol.dart';
+import 'src/generated/endpoints.dart';
+
+void run(List<String> args) async {
+  final pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+  );
+
+  await pod.start();
 }
 ```
 
 You are now able to schedule future calls to be invoked in the future by calling either `callWithDelay` or `callAtTime` depending on your needs.
+
+:::note
+The `futureCalls` getter is only available if at least one future call has been defined.
+:::
 
 :::warning
 Scheduling a future call before the server starts will lead to exceptions.
