@@ -68,6 +68,72 @@ await AuthServices.instance.userProfiles.changeFullName(session, authUserId, 'my
 
 For the full list of operations, see the [UserProfiles](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/UserProfiles-class.html) class documentation.
 
+### Accessing user profiles from the app
+
+To access the user profile from your Flutter app, you can use the `userProfileInfo` endpoint that is included in the authentication module:
+
+```dart
+final userProfile = await client.modules.serverpod_auth_core.userProfileInfo.get();
+```
+
+This returns a `UserProfileModel` object containing the logged-in user's profile information such as their name, email, and profile picture.
+
+### Extending the user profile edit endpoint
+
+The authentication module provides a `UserProfileEditBaseEndpoint` abstract class that you can extend to expose user profile editing functionality to your app. This base endpoint includes methods for:
+
+- Removing user images
+- Setting user images
+- Changing user names
+- Changing full names
+
+To enable profile editing in your app, create a concrete endpoint class on your server by extending `UserProfileEditBaseEndpoint`:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_idp_server/core.dart';
+
+class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {}
+```
+
+This endpoint will have both `get` (same as `userProfileInfo`) and all profile editing methods. You can then call these methods from your Flutter app:
+
+```dart
+// Get the user's profile
+final profile = await client.userProfileEdit.get();
+
+// Change the user's full name
+final updatedProfile = await client.userProfileEdit.changeFullName('John Doe');
+
+// Change the user's username
+final updatedProfile = await client.userProfileEdit.changeUserName('johndoe');
+
+// Remove the user's profile image
+final updatedProfile = await client.userProfileEdit.removeUserImage();
+
+// Set a new profile image
+final ByteData imageData = // ... load image data
+final updatedProfile = await client.userProfileEdit.setUserImage(imageData);
+```
+
+:::note
+The `UserProfileEditBaseEndpoint` requires authentication and operates on the currently authenticated user's profile.
+:::
+
+You can also extend the endpoint class to add custom profile editing functionality:
+
+```dart
+class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {
+  Future<UserProfileModel> myCustomProfileEdit(Session session, String bio) async {
+    final userProfile = await session.authenticated?.userProfile(session);
+
+    // Your custom logic here...
+
+    return userProfile;
+  }
+}
+```
+
 ### Setting a default user image
 
 When logging in from some providers, the user image is automatically fetched and set as the user's profile picture - such as with Google Sign In. However, when an image is not found or the provider does not expose the picture, it is possible to set a default user image using the `UserProfileConfig` object.
