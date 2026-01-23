@@ -124,13 +124,12 @@ You can also extend the endpoint class to add custom profile editing functionali
 
 ```dart
 class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {
-  Future<UserProfileModel> updateBio(Session session, String bio) async {
-    final userId = session.authenticated!.authUserId;
+  Future<UserProfileModel> myCustomProfileEdit(Session session, String bio) async {
+    final userProfile = await session.authenticated?.userProfile(session);
 
-    // Your custom logic to update the bio
-    // ...
+    // Your custom logic here...
 
-    return userProfiles.findUserProfileByUserId(session, userId);
+    return userProfile;
   }
 }
 ```
