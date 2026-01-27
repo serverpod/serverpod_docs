@@ -1,7 +1,9 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-import { themes } from 'prism-react-renderer';
+import {
+  themes
+} from 'prism-react-renderer';
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 
@@ -62,8 +64,7 @@ const config = {
       },
       announcementBar: {
         id: 'serverpod_cloud',
-        content:
-          'Deployments with zero configuration coming soon. 🚀 Join the <strong>Serverpod Cloud</strong> <a href="https://forms.gle/JgFCqW3NY6WdDfct5" target="_blank">waiting list</a>.',
+        content: 'Deployments with zero configuration coming soon. 🚀 Join the <strong>Serverpod Cloud</strong> <a href="https://forms.gle/JgFCqW3NY6WdDfct5" target="_blank">waiting list</a>.',
         backgroundColor: '#ffec9e',
         textColor: '#000000',
         isCloseable: false,
@@ -76,8 +77,7 @@ const config = {
           srcDark: 'img/logo-horizontal-dark.svg',
           href: 'https://serverpod.dev',
         },
-        items: [
-          {
+        items: [{
             type: 'docsVersionDropdown',
             position: 'left',
           },
@@ -117,23 +117,19 @@ const config = {
         additionalLanguages: ['dart', 'bash'],
       },
     }),
-  scripts: [
-    {
-      src: 'https://widget.kapa.ai/kapa-widget.bundle.js',
-      'data-website-id': '9ae02024-c2cf-4f58-b2d9-7ca3961dc1ef',
-      'data-project-name': 'Serverpod',
-      'data-project-color': '#020F24',
-      'data-project-logo':
-        'https://avatars.githubusercontent.com/u/48181558?s=200&v=4',
-      async: true,
-    },
-  ],
+  scripts: [{
+    src: 'https://widget.kapa.ai/kapa-widget.bundle.js',
+    'data-website-id': '9ae02024-c2cf-4f58-b2d9-7ca3961dc1ef',
+    'data-project-name': 'Serverpod',
+    'data-project-color': '#020F24',
+    'data-project-logo': 'https://avatars.githubusercontent.com/u/48181558?s=200&v=4',
+    async: true,
+  }, ],
   plugins: [
     [
       'docusaurus-plugin-snipsync',
       {
-        origins: [
-          {
+        origins: [{
             files: {
               pattern: '../serverpod/examples/**/*.{dart,yaml}',
             },
@@ -165,8 +161,7 @@ const config = {
     [
       '@docusaurus/plugin-client-redirects',
       {
-        redirects: [
-          {
+        redirects: [{
             // Moved in version 1.1.1
             from: ['/concepts/authentication'],
             to: '/concepts/authentication/setup',
@@ -195,6 +190,11 @@ const config = {
             // Moved in version 2.7.0
             from: ['/get-started'],
             to: '/get-started/creating-endpoints',
+          },
+          {
+            // Moved when scheduling was reorganized from a single page to a directory
+            from: ['/concepts/scheduling'],
+            to: '/concepts/scheduling/setup',
           },
         ],
       },
