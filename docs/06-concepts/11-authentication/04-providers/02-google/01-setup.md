@@ -182,8 +182,8 @@ Fill in all required information, you can get the debug SHA-1 hash by running `.
 
 Put the file inside the `android/app/` directory and rename it to `google-services.json`.
 
-:::tip
-If your `google-services.json` does not include a web OAuth client entry, you may need to pass the `serverClientId` when [initializing the GoogleSignInService](#present-the-authentication-ui)
+:::info
+If your `google-services.json` does not include a web OAuth client entry, you may need to provide client IDs programmatically as described on the [configuration page](#configuring-client-ids-on-the-app).
 :::
 
 :::info
@@ -243,10 +243,6 @@ void main() {
   client.auth.initializeGoogleSignIn();
 }
 ```
-
-:::tip
-You may need to provide client IDs programmatically as described on the [configuration page](#configuring-client-ids-on-the-app)
-:::
 
 ### Using GoogleSignInWidget
 
