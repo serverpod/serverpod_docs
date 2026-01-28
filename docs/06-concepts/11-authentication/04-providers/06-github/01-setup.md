@@ -1,6 +1,6 @@
 # Setup
 
-To set up **Sign in with GitHub**, you must create OAuth2 credentials on [GitHub](https://github.com/settings/apps) and configure your Serverpod application accordingly. Since this provider is built on a generic OAuth2 utility, you can learn how to create a custom provider in the [Custom Providers](../10-custom-providers/02-oauth2-utility.md) section.
+To set up **Sign in with GitHub**, you must create OAuth2 credentials on [GitHub](https://github.com/settings/apps) and configure your Serverpod application accordingly.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
@@ -10,40 +10,48 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 GitHub offers two ways to obtain OAuth2 credentials:
 
-- **GitHub Apps** (Recommended):
-  - Supports multiple redirect URIs (up to 10).
-  - Allows custom URI schemes (essential for mobile apps).
-  - More flexible and secure for modern applications.
-- **OAuth Apps**:
-  - Only one redirect URI (must be HTTPS).
-  - No support for custom schemes (not ideal for mobile).
+- **GitHub Apps**: more suitable when building integrations or bots that belong to an organization or repository, operate with their own identity, continue functioning regardless of which users come and go, and only access the repositories and permissions explicitly granted. They provide fine‑grained control, short‑lived tokens, and are the modern, secure choice for most automation and service scenarios.
+- **OAuth Apps**: preferred when the primary need is authenticating users with "Sign in with GitHub" or performing actions strictly as the currently logged‑in user under broad OAuth scopes. Similar to other OAuth providers like Google or Apple, they allow access to a user’s GitHub resources within the scopes granted, but lack the flexibility and security of GitHub Apps.
 
 :::tip
-For most use cases, especially mobile, use [GitHub Apps](https://github.com/settings/apps).
+[GitHub Apps](https://github.com/settings/apps) are the preferred choice for most scenarios — especially mobile and modern integrations.
+See the official comparison here: [Differences between GitHub Apps and OAuth Apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps).
 :::
 
 ## Create your credentials
 
 1. Go to [GitHub Developer Settings](https://github.com/settings/apps).
 2. Click **New GitHub App** (recommended) or **New OAuth App**.
+
+   ![GitHub App Setup](/img/authentication/providers/github/1-register-app.png)
+
 3. Fill in the required fields:
    - **App name**
    - **Homepage URL**
    - **Callback URL(s)** (use your app's redirect URI, e.g., `myapp://auth` for mobile)
-   - **Permissions** as needed
-4. Save and generate the **Client ID** and **Client Secret**.
+   - **Permissions** (at minimum: account permission = profile; add others as needed)
+   - **Webhook URL** (disable if not required; serves to receive events like commits, pull requests, and repo changes)
 
-![GitHub App Setup](/img/authentication/providers/github/1-register-app.png)
-![GitHub App Setup](/img/authentication/providers/github/2-add-permission.png)
-![GitHub App Setup](/img/authentication/providers/github/3-add-permission.png)
-Copy the **Client ID** and **Client Secret** for later use.
-![GitHub App Setup](/img/authentication/providers/github/4-get-credentials.png)
+   ![GitHub App Setup](/img/authentication/providers/github/2-add-permission.png)
+
+   ![GitHub App Setup](/img/authentication/providers/github/3-add-permission.png)
+
+:::tip
+Webhooks let your GitHub App automatically receive notifications about repository activity.
+If your app doesn’t need to react to events (like commits or pull requests), it’s best to disable the webhook URL to reduce unnecessary traffic and complexity.
+:::
+
+4. Click **Create GitHub App** (for GitHub Apps) or **Register application** (for OAuth Apps). This will save your app and generate the **Client ID**.
+
+5. After the app is created, click **Generate a new client secret** to obtain the **Client Secret**. Copy both the **Client ID** and **Client Secret** for later use.
+
+   ![GitHub App Setup](/img/authentication/providers/github/4-get-credentials.png)
 
 ## Server-side Configuration
 
 ### Store the Credentials
 
-You can provide your credentials by setting the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables. Alternatively, you can add them to your `config/passwords.yaml` file:
+This can be done by adding your credentials to the `githubClientId` and `githubClientSecret` keys in the `config/passwords.yaml` file, or by setting them as the values of the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables.
 
 ```yaml
 development:
@@ -114,13 +122,23 @@ class GitHubIdpEndpoint extends GitHubIdpBaseEndpoint {}
 
 Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
+### Basic configuration options
+
+- `clientId`: Required. The Client ID of your GitHub App or OAuth App.
+- `clientSecret`: Required. The Client Secret generated for your GitHub App or OAuth App.
+
+For more details on configuration options, see the [configuration section](./configuration).
+
 ## Client-side configuration
 
 Add the `serverpod_auth_idp_flutter` package to your Flutter app. The GitHub provider uses [`flutter_web_auth_2`](https://pub.dev/packages/flutter_web_auth_2) to handle the OAuth2 flow, so any documentation there should also apply to this setup.
 
 ### iOS and MacOS
 
-There is no special configuration needed for iOS and MacOS for "normal" authentication flows. However, if you are using **Universal Links** (iOS) or **Associated Domains** (MacOS), you need to set them up accordingly. Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) documentation.
+There is no special configuration needed for iOS and MacOS for "normal" authentication flows.  
+However, if you are using **Universal Links** on iOS, you need to set them up accordingly.  
+On iOS, Universal Links require that redirect URIs use **https**.  
+Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) documentation.
 
 ### Android
 
@@ -175,8 +193,6 @@ On the web, you need a specific endpoint to capture the OAuth2 callback. To set 
 </script>
 ```
 
-Then, ensure that the redirect URI configured in your GitHub app points to this HTML file, e.g., `https://yourdomain.com/auth.html`.
-
 ## Present the authentication UI
 
 ### Initializing the `GitHubSignInService`
@@ -219,7 +235,7 @@ void main() async {
 
 ### Using GitHubSignInWidget
 
-If you have configured the `GitHubSignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the GitHub identity provider will be automatically detected and displayed in the sign-in widget.
+If you have configured the `GitHubSignInWidget` as described in the [setup section](#present-the-authentication-ui), the GitHub identity provider will be automatically detected and displayed in the sign-in widget.
 
 You can also use the `GitHubSignInWidget` to include the GitHub authentication flow in your own custom UI.
 
