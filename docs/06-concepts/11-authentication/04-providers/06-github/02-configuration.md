@@ -35,13 +35,14 @@ final githubIdpConfig = GitHubIdpConfig(
 
 ### Custom Account Validation
 
-You can provide custom validation logic for GitHub account details before allowing sign-in:
+You can customize the validation for GitHub account details before allowing sign-in. By default, the validation checks that the received account details contain a non-empty userIdentifier.
 
 ```dart
 final githubIdpConfig = GitHubIdpConfig(
-  // ...existing code...
+  // Optional: Custom validation for GitHub account details
   githubAccountDetailsValidation: (GitHubAccountDetails accountDetails) {
-    if (accountDetails.email == null || accountDetails.email!.isEmpty) {
+    // Throw an exception if account doesn't meet custom requirements
+    if (accountDetails.userIdentifier.isEmpty) {
       throw GitHubUserInfoMissingDataException();
     }
   },
@@ -49,8 +50,7 @@ final githubIdpConfig = GitHubIdpConfig(
 ```
 
 :::note
-GitHub users can keep their email private, so email may be null even for valid
-accounts.To avoid blocking real users with private profiles from signing in, adjust your validation function with care.
+GitHub users can keep their email private, so email may be null even for valid accounts. To avoid blocking real users with private profiles from signing in, adjust your validation function with care.
 :::
 
 ### GitHubAccountDetails
@@ -86,11 +86,9 @@ The properties available depend on user privacy settings and granted permissions
 
 ### Configuring Client IDs on the App
 
-The Flutter client uses the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) package to manage the OAuth2 flow. You can provide your GitHub credentials in two ways:
-
 #### Passing Client IDs in Code
 
-You can pass the `clientId` and `redirectUri` directly during initialization. This is useful for managing platform-specific IDs within your Dart code.
+You can pass the `clientId` and `redirectUri` directly during initialization the GitHub Sign-In service:
 
 ```dart
 await client.auth.initializeGitHubSignIn(

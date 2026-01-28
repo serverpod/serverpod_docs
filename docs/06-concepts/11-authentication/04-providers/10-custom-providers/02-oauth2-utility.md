@@ -4,11 +4,11 @@ The Serverpod Auth module provides generic OAuth2 utilities that simplify implem
 
 The OAuth2 utility consists of client-side and server-side components that work together to securely authenticate users:
 
-- **Client-side (`OAuth2PkceUtil`)**: Manages the authorization flow in your Flutter app, handling browser redirects and PKCE challenge generation
-- **Server-side (`OAuth2PkceUtil`)**: Exchanges authorization codes for access tokens on your backend
+- **Client-side (`OAuth2PkceUtil`)**: Manages the authorization flow in your Flutter app, handling browser redirects and PKCE challenge generation.
+- **Server-side (`OAuth2PkceUtil`)**: Exchanges authorization codes for access tokens on your backend.
 
 :::info
-The [GitHub](../06-github/01-setup.md) provider is built using these utilities, serving as a reference implementation for developers creating custom providers.
+The [GitHub](../github/setup) provider is built using these utilities, serving as a reference implementation for developers creating custom providers.
 :::
 
 ## Understanding OAuth2 with PKCE
@@ -192,6 +192,11 @@ Create an HTML callback page in your `./web` folder (e.g., `auth.html`):
 </script>
 ```
 
+:::note
+You only need a single callback file (e.g. `auth.html`) in your `./web` folder.
+This file is shared across all IDPs that use the OAuth2 utility, as long as your redirect URIs point to it.
+:::
+
 Configure your redirect URI to point to this file: `https://yourdomain.com/auth.html`
 
 ## Server-Side Implementation
@@ -215,23 +220,7 @@ final config = OAuth2PkceServerConfig(
 
   // Function to extract access token from provider response
   parseAccessToken: (data) {
-    // Handle provider errors
-    final error = data['error'] as String?;
-    if (error != null) {
-      throw OAuth2InvalidResponseException(
-        'Provider error: $error',
-      );
-    }
-
-    // Extract access token
-    final accessToken = data['access_token'] as String?;
-    if (accessToken == null) {
-      throw const OAuth2MissingAccessTokenException(
-        'No access token in response',
-      );
-    }
-
-    return accessToken;
+    // Your parse logic here
   },
 
   // Optional: Where to send credentials (default: header)
@@ -629,87 +618,6 @@ class _MyProviderSignInButtonState
 1. **Catch Specific Exceptions**: Handle each exception type appropriately rather than using generic catch-all handlers.
 2. **Log Securely**: Log errors for debugging but never log sensitive data like tokens or secrets.
 3. **User-Friendly Messages**: Show clear, actionable error messages to users without exposing technical details.
-
-### Performance
-
-1. **Reuse OAuth2PkceUtil Instances**: Create instances once and reuse them rather than recreating for each request.
-2. **Handle Token Expiration**: Implement token refresh logic if your provider supports refresh tokens.
-3. **Cache User Information**: Cache user profile data to reduce API calls to the provider.
-
-## Reference
-
-### Client-Side API
-
-#### OAuth2PkceProviderClientConfig
-
-Configuration for client-side OAuth2 flow.
-
-**Constructor Parameters:**
-
-- `authorizationEndpoint` (Uri): Provider's authorization endpoint
-- `clientId` (String): OAuth client ID
-- `redirectUri` (String): Callback URI
-- `callbackUrlScheme` (String): URL scheme for callback
-- `defaultScopes` (List\<String\>): Default permission scopes
-- `additionalAuthParams` (Map\<String, String\>): Extra authorization parameters
-- `scopeSeparator` (String): Scope joining separator (default: ' ')
-- `enableState` (bool): Enable state parameter (default: true)
-- `enablePKCE` (bool): Enable PKCE (default: true)
-
-#### OAuth2PkceUtil (Client)
-
-Manages client-side OAuth2 authorization flow.
-
-**Constructor:**
-
-```dart
-OAuth2PkceUtil({
-  required OAuth2PkceProviderClientConfig config,
-  bool? useWebview,
-})
-```
-
-**Methods:**
-
-- `authorize({List<String>? scopes, Map<String, String>? authCodeParams})`: Initiates authorization flow
-
-**Returns:** `OAuth2PkceResult` with `code` and `codeVerifier?`
-
-### Server-Side API
-
-#### OAuth2PkceServerConfig
-
-Configuration for server-side token exchange.
-
-**Constructor Parameters:**
-
-- `tokenEndpointUrl` (Uri): Provider's token endpoint
-- `clientId` (String): OAuth client ID
-- `clientSecret` (String): OAuth client secret
-- `parseAccessToken` (Function): Token parsing function
-- `clientIdKey` (String): Client ID parameter name (default: 'client_id')
-- `clientSecretKey` (String): Client secret parameter name (default: 'client_secret')
-- `credentialsLocation` (OAuth2CredentialsLocation): Where to send credentials (default: header)
-- `tokenRequestHeaders` (Map\<String, String\>): Request headers
-- `tokenRequestParams` (Map\<String, dynamic\>): Extra request parameters
-
-#### OAuth2PkceUtil (Server)
-
-Manages server-side token exchange.
-
-**Constructor:**
-
-```dart
-OAuth2PkceUtil({
-  required OAuth2PkceServerConfig config,
-})
-```
-
-**Methods:**
-
-- `exchangeCodeForToken({required String code, String? codeVerifier, required String redirectUri, http.Client? httpClient})`: Exchanges authorization code for access token
-
-**Returns:** `String` (access token)
 
 ## Additional Resources
 

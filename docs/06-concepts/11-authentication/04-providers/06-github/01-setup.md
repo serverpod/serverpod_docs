@@ -193,6 +193,11 @@ On the web, you need a specific endpoint to capture the OAuth2 callback. To set 
 </script>
 ```
 
+:::note
+You only need a single callback file (e.g. `auth.html`) in your `./web` folder.
+This file is shared across all IDPs that use the OAuth2 utility, as long as your redirect URIs point to it.
+:::
+
 ## Present the authentication UI
 
 ### Initializing the `GitHubSignInService`
