@@ -19,7 +19,7 @@ Future<UserData> getUserData(Session session, int userId) async {
     await session.caches.local.put(cacheKey, userData!, lifetime: Duration(minutes: 5));
   }
 
-  // Return the user data to the client
+  // Return the user data to the Flutter app
   return userData;
 }
 ```
@@ -50,7 +50,7 @@ Future<UserData> getUserData(Session session, int userId) async {
     ),
     );
 
-  // Return the user data to the client
+  // Return the user data to the Flutter app
   return userData;
 }
 ```

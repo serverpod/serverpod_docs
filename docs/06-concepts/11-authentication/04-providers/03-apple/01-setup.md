@@ -129,7 +129,7 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 
 For more details on configuration options, see the [configuration section](./configuration).
 
-## Client-side configuration
+## Flutter-side configuration
 
 The `serverpod_auth_idp_flutter` package implements the sign-in logic using [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple). The documentation for this package should in most cases also apply to the Serverpod integration.
 

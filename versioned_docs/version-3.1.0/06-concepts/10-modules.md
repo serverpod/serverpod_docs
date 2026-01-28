@@ -8,7 +8,7 @@ Examples of modules are the `serverpod_auth_core` and `serverpod_auth_idp` modul
 
 ### Server setup
 
-To add a module to your project, you must include the server and client/Flutter packages in your project's `pubspec.yaml` files.
+To add a module to your project, you must include the server, client and Flutter packages in your project's `pubspec.yaml` files.
 
 For example, to add the `serverpod_auth_idp` module to your project, you need to add `serverpod_auth_idp_server` to your server's `pubspec.yaml`:
 

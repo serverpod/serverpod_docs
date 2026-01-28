@@ -106,6 +106,6 @@ final jwtConfig = JwtConfigFromPasswords(
 );
 ```
 
-## Client-side configuration
+## Flutter-side configuration
 
-When using the `JwtTokenManager` in the server, no extra configuration is needed on the client. It will automatically include the access token in requests to the server and eagerly refresh the token when it is 30 seconds away from expiring. In case the refresh token expires, the client will automatically sign the user out and redirect to the login page.
+When using the `JwtTokenManager` in the server, no extra configuration is needed on the Flutter. It will automatically include the access token in requests to the server and eagerly refresh the token when it is 30 seconds away from expiring. In case the refresh token expires, the client will automatically sign the user out and redirect to the login page.

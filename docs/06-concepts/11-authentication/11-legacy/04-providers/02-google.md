@@ -50,9 +50,9 @@ The `google_client_secret.json` contains a private key and should not be version
 
 ![Google credentials](/img/6-google-credentials.jpg)
 
-## Client-side configuration
+## Flutter-side configuration
 
-For our client-side configurations, we have to first create client-side credentials and include the credentials files in our projects. The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, any documentation there should also apply to this setup.
+For our Flutter-side configurations, we have to first create Flutter-side credentials and include the credentials files in our projects. The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, any documentation there should also apply to this setup.
 
 :::info
 Rather than using the credentails file for iOS and Android, you can pass the `clientId` and the `serverClientId` to the `signInWithGoogle` method or the `SignInWithGoogleButton` widget. The `serverClientId` is the client ID from the server credentials.
@@ -60,7 +60,7 @@ Rather than using the credentails file for iOS and Android, you can pass the `cl
 
 ### iOS
 
-Create the client credentials. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as Application type _**iOS**_.
+Create the Flutter credentials. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as Application type _**iOS**_.
 
 Fill in all the required information, and create the credentials. Then download the `plist` file rename it to `GoogleService-Info.plist` and put it inside your ios project folder. Then drag and drop it into your XCode project to include the file in your build.
 
@@ -109,7 +109,7 @@ If you have any social logins in your app you also need to integrate "Sign in wi
 
 ### Android
 
-Create the client credentials. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as Application type _**Android**_.
+Create the Flutter credentials. Navigate to _Credentials_ under _APIs & Services_. Click _Create Credentials_ and select _OAuth client ID_. Configure the OAuth client as Application type _**Android**_.
 
 Fill in all required information, you can get the debug SHA-1 hash by running `./gradlew signingReport` in your Android project directory. Create the credentials and download the JSON file.
 
@@ -126,7 +126,7 @@ $ keytool -list -v -keystore /path/to/keystore
 
 ### Web
 
-There is no need to create any client credentials for the web we will simply pass the `serverClientId` to the sign-in button.
+There is no need to create any Flutter credentials for the web we will simply pass the `serverClientId` to the sign-in button.
 However, we have to modify the server credentials inside the google cloud console.
 
 Navigate to _Credentials_ under _APIs & Services_ and select the server credentials. Under `Authorized JavaScript origins` and `Authorized redirect URIs` add the domain for your Flutter app, for development, this is `http://localhost:port` where the port is the port you are using.
