@@ -64,6 +64,46 @@ fields:
 Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](database/models) section.
 :::
 
+### JSON key aliasing
+
+By default, fields are serialized to JSON using their Dart field name as the key. The `jsonKey` property allows you to specify a different key name for JSON serialization and deserialization, which is useful when integrating with external APIs that use different naming conventions.
+
+```yaml
+class: User
+fields:
+  displayName: String, jsonKey=display_name
+  emailAddress: String, jsonKey=email
+  createdAt: DateTime, jsonKey=created_at
+```
+
+This generates a class where the Dart field names remain camelCase, but the JSON representation uses the specified keys:
+
+```dart
+// Dart field names
+var user = User(
+  displayName: 'John Doe',
+  emailAddress: 'john@example.com',
+  createdAt: DateTime.now(),
+);
+
+// Serializes to JSON with custom keys
+// {
+//   "display_name": "John Doe",
+//   "email": "john@example.com",
+//   "created_at": "2024-01-15T10:30:00.000Z"
+// }
+```
+
+This is particularly helpful when:
+
+- Consuming external APIs that use snake_case or other naming conventions
+- Working with legacy systems that have specific JSON field requirements
+- Integrating with third-party services like MongoDB (e.g., mapping `id` to `_id`)
+
+:::info
+The `jsonKey` property only affects JSON serialization. It does not affect the database column name. To customize the database column name, use the `column` property instead (see [Database models](database/models)).
+:::
+
 ### Immutable classes
 
 By default, generated classes in Serverpod are mutable, meaning their fields can be changed after creation. However, you can make a class immutable by setting the `immutable` property to `true`. Immutable classes are especially useful when working with state management solutions or when you need value-based equality.
@@ -782,6 +822,7 @@ fields:
 | [**type (fields)**](#class)                                         | Denotes the data type for a field.                                                                            |       ✅        |           ✅            |               |
 | [**required**](#required-fields)                                    | Makes the field as required. This keyword can only be used for **nullable** fields.                           |       ✅        |           ✅            |               |
 | [**scope**](#limiting-visibility-of-a-generated-class)              | Denotes the scope for a field.                                                                                |       ✅        |                         |               |
+| [**jsonKey**](#json-key-aliasing)                                   | Sets a custom key name for JSON serialization and deserialization.                                            |       ✅        |                         |               |
 | [**persist**](database/models)                                      | A boolean flag if the data should be stored in the database or not can be negated with `!persist`             |       ✅        |                         |               |
 | [**relation**](database/relations/one-to-one)                       | Sets a relation between model files, requires a table name to be set.                                         |       ✅        |                         |               |
 | [**name**](database/relations/one-to-one#bidirectional-relations)   | Give a name to a relation to pair them.                                                                       |       ✅        |                         |               |
