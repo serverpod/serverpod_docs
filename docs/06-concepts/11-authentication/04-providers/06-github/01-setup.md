@@ -135,9 +135,8 @@ Add the `serverpod_auth_idp_flutter` package to your Flutter app. The GitHub pro
 
 ### iOS and MacOS
 
-There is no special configuration needed for iOS and MacOS for "normal" authentication flows.  
-However, if you are using **Universal Links** on iOS, you need to set them up accordingly.  
-On iOS, Universal Links require that redirect URIs use **https**.  
+There is no special configuration needed for iOS and MacOS for "normal" authentication flows.
+However, if you are using **Universal Links** on iOS, they require redirect URIs to use **https**.
 Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) documentation.
 
 ### Android
