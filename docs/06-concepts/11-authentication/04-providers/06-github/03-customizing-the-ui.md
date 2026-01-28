@@ -32,8 +32,8 @@ GitHubSignInWidget(
   type: GitHubButtonType.standard, // or icon
   style: GitHubButtonStyle.black, // or white
   size: GitHubButtonSize.large, // or medium
-  shape: GitHubButtonShape.pill, // or pill
-  logoAlignment: GitHubButtonLogoAlignment.left, // or rectangular, rounded
+  shape: GitHubButtonShape.pill, // or rectangular, rounded
+  logoAlignment: GitHubButtonLogoAlignment.left, // or center
   minimumWidth: 240, // or null for automatic width
 
   // Scopes to request from GitHub
