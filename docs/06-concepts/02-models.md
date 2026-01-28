@@ -83,7 +83,7 @@ This generates a class where the Dart field names remain camelCase, but the JSON
 var user = User(
   displayName: 'John Doe',
   emailAddress: 'john@example.com',
-  createdAt: DateTime.now(),
+  createdAt: DateTime.parse('2024-01-15T10:30:00.000Z'),
 );
 
 // Serializes to JSON with custom keys
@@ -101,7 +101,7 @@ This is particularly helpful when:
 - Integrating with third-party services like MongoDB (e.g., mapping `id` to `_id`)
 
 :::info
-The `jsonKey` property only affects JSON serialization. It does not affect the database column name. To customize the database column name, use the `column` property instead (see [Database models](database/models)).
+The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the `column` property instead. This is an experimental feature; see the [Experimental documentation](experimental#column-name-override) under *Column name override* for details.
 :::
 
 ### Immutable classes
