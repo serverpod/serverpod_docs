@@ -3,7 +3,7 @@
 Passkeys provide a passwordless authentication method using WebAuthn/FIDO2 standards. They offer a secure, phishing-resistant way for users to sign in using biometric authentication, security keys, or device PINs.
 
 :::caution
-This provider is currently experimental and implemented only on the server-side. Flutter client-side UI components are not yet available, but you can build custom UI using the generated client endpoints.
+This provider is currently experimental and implemented only on the server-side. Flutter-side UI components are not yet available, but you can build custom UI using the generated client endpoints.
 :::
 
 :::caution
@@ -71,10 +71,10 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 
 <!-- For more details on configuration options, see the [configuration section](./02-configuration). -->
 
-## Client-side implementation
+## Flutter-side implementation
 
 :::info
-Flutter UI components for passkeys are not yet available. You'll need to implement the client-side passkey flow using the WebAuthn API directly or use a Flutter package that supports WebAuthn/FIDO2.
+Flutter UI components for passkeys are not yet available. You'll need to implement the Flutter-side passkey flow using the WebAuthn API directly or use a Flutter package that supports WebAuthn/FIDO2.
 :::
 
 ### Using the generated endpoints

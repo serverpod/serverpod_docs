@@ -4,7 +4,7 @@ sidebar_label: 🧭 Overview
 
 # Overview
 
-Serverpod is an open-source backend framework for Flutter applications written in Dart. It aims to minimize boilerplate and integrate many common backend tasks out of the box. With Serverpod, Flutter developers can build secure, scalable server applications using the same language and tools as their client apps, benefiting from seamless code generation and a rich set of built-in capabilities.
+Serverpod is an open-source backend framework for Flutter applications written in Dart. It aims to minimize boilerplate and integrate many common backend tasks out of the box. With Serverpod, Flutter developers can build secure, scalable server applications using the same language and tools as their Flutter apps, benefiting from seamless code generation and a rich set of built-in capabilities.
 
 ## Key capabilities
 
@@ -59,7 +59,7 @@ fields:
   foundedDate: DateTime?
 ```
 
-This defines a `Company` class with two fields. When you run `serverpod generate`, Serverpod creates a Dart class named `Company` (with a `name` and `foundedDate` property) that can be used in your endpoint methods and in the client code.
+This defines a `Company` class with two fields. When you run `serverpod generate`, Serverpod creates a Dart class named `Company` (with a `name` and `foundedDate` property) that can be used in your endpoint methods and in the Flutter app code.
 
 By default, model classes are plain data holders that can be sent over the network. Serverpod supports most basic types, including `bool`, `int`, `double`, `String`, `Duration`, `DateTime`, `ByteData`, `UuidValue`, `Uri`, and `BigInt`. You can also use `List`, `Map`, `Set`, and other custom serializable objects. Null safety is supported, and the models can be nested with each other as needed.
 

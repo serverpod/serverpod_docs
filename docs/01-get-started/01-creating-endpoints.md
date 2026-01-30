@@ -103,13 +103,13 @@ $ cd magic_recipe_server
 $ serverpod generate
 ```
 
-`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
+`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required Flutter app code so that you can call your new `generateRecipe` method from your app.
 
 :::note
-When writing server-side code, in most cases, you want it to be _stateless_. This means you avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status messages to your client. If you want to run more complex computations, you can return a `Stream` to yield progress updates as your task progresses.
+When writing server-side code, in most cases, you want it to be _stateless_. This means you avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status messages to your Flutter app. If you want to run more complex computations, you can return a `Stream` to yield progress updates as your task progresses.
 :::
 
-## Call the endpoint from the client
+## Call the endpoint from the Flutter app
 
 Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Since the generated template uses a StatelessWidget for `MyApp`, you will need to introduce a StatefulWidget called `MyHomePage` to manage the state of the app. Replace the `MyApp` widget with the following code (feel free to just copy and paste):
 
@@ -240,4 +240,4 @@ Try out the app by clicking the button to get a new recipe. The app will call th
 
 ## Next steps
 
-For now, you are just returning a `String` to the client. In the next section, you will create a custom data model to return structured data. Serverpod makes it easy by handling all the serialization and deserialization for you.
+For now, you are just returning a `String` to the app. In the next section, you will create a custom data model to return structured data. Serverpod makes it easy by handling all the serialization and deserialization for you.

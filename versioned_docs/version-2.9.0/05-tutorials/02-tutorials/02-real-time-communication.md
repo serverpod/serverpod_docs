@@ -34,7 +34,7 @@ We begin by creating a new project with the `serverpod create` command. Since we
 serverpod create pixorama --mini
 ```
 
-Now, let's open the project in VS Code and explore the structure. The server code resides in the `pixorama_server` package. We'll start by creating models - classes that we can serialize and pass between the client and server. Our models will be placed in the `lib/src/models` directory.
+Now, let's open the project in VS Code and explore the structure. The server code resides in the `pixorama_server` package. We'll start by creating models - classes that we can serialize and pass between the Flutter app and server. Our models will be placed in the `lib/src/models` directory.
 
 ## Creating models
 
@@ -72,7 +72,7 @@ serverpod generate
 
 ## Building the server
 
-Next, we'll build the server. We need to create a new endpoint. An endpoint is a connection point for the client to interact with the server. In Serverpod, you create endpoints by extending the `Endpoint` class and placing it in the `lib/src/endpoints` directory. The endpoint will manage our pixel data and handle client updates.
+Next, we'll build the server. We need to create a new endpoint. An endpoint is a connection point for the Flutter app to interact with the server. In Serverpod, you create endpoints by extending the `Endpoint` class and placing it in the `lib/src/endpoints` directory. The endpoint will manage our pixel data and handle client updates.
 
 We will start by creating a `PixoramaEndpoint` class, which we place in a file called `pixorama_endpoint.dart` in the `lib/src/endpoints` directory.
 
