@@ -64,6 +64,9 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_REDIS_REQUIRE_SSL              | redis.requireSsl              | false     | Indicates if SSL is required for the Redis connection                                                                                                 |
 | SERVERPOD_MAX_REQUEST_SIZE               | maxRequestSize                | 524288    | The maximum size of requests allowed in bytes                                                                                                         |
 | SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED | sessionLogs.persistentEnabled | -         | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`.                          |
+| SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL   | sessionLogs.cleanupInterval   | 24h       | How often to run the log cleanup job. Duration string (e.g. `24h`, `2d`). Set to null to disable automated purging.                                   |
+| SERVERPOD_SESSION_LOG_RETENTION_PERIOD   | sessionLogs.retentionPeriod   | 90d       | How long to keep session log entries. Duration string (e.g. `30d`, `60d`). Set to null to disable time-based cleanup.                                 |
+| SERVERPOD_SESSION_LOG_RETENTION_COUNT    | sessionLogs.retentionCount    | 100000    | Maximum number of session log entries to keep. Set to null to disable count-based cleanup.                                                            |
 | SERVERPOD_SESSION_CONSOLE_LOG_ENABLED    | sessionLogs.consoleEnabled    | -         | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`.                          |
 | SERVERPOD_SESSION_CONSOLE_LOG_FORMAT     | sessionLogs.consoleLogFormat  | json      | The format for console logging of session data. Valid options are `text` and `json`. Defaults to `text` for run mode `development`, otherwise `json`. |
 | SERVERPOD_FUTURE_CALL_EXECUTION_ENABLED  | futureCallExecutionEnabled    | true      | Enables or disables the execution of future calls.                                                                                                    |
@@ -194,6 +197,9 @@ maxRequestSize: 524288
 
 sessionLogs:
   persistentEnabled: true
+  cleanupInterval: 24h
+  retentionPeriod: 90d
+  retentionCount: 100000
   consoleEnabled: true
   consoleLogFormat: json
 
