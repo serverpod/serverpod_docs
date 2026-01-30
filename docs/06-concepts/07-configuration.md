@@ -16,7 +16,7 @@ flowchart TB
     A --> B
     B --> C
 
-    %% Styles (optional – tweak to your theme)
+    %% Styles (optional - tweak to your theme)
   class A yaml
     class B env
     class C dart
@@ -69,6 +69,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_FUTURE_CALL_EXECUTION_ENABLED  | futureCallExecutionEnabled    | true      | Enables or disables the execution of future calls.                                                                                                    |
 | SERVERPOD_FUTURE_CALL_CONCURRENCY_LIMIT  | futureCall.concurrencyLimit   | 1         | The maximum number of concurrent future calls allowed. If the value is negative or null, no limit is applied.                                         |
 | SERVERPOD_FUTURE_CALL_SCAN_INTERVAL      | futureCall.scanInterval       | 5000      | The interval in milliseconds for scanning future calls                                                                                                |
+| SERVERPOD_WEBSOCKET_PING_INTERVAL        | websocketPingInterval         | 30        | The interval in seconds between WebSocket ping messages sent to keep streaming connections alive. Must be a positive integer.                         |
 
 ### Secrets
 
@@ -165,6 +166,7 @@ apiServer:
   publicHost: localhost
   publicPort: 8080
   publicScheme: http
+  websocketPingInterval: 30
 
 insightsServer:
   port: 8081
