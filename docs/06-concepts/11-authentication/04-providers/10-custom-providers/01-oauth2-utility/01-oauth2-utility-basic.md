@@ -34,7 +34,9 @@ PKCE ensures that even if an attacker intercepts the authorization code, they ca
 
 ### Configuration
 
-Create a server-side configuration for token exchange:
+### Configuration
+
+The OAuth2 utility requires a configuration object that defines how your server communicates with the OAuth2 provider's token endpoint. Create a server-side configuration for token exchange:
 
 ```dart
 import 'package:serverpod_auth_idp_server/core.dart';
@@ -84,7 +86,7 @@ The `credentialsLocation` parameter controls how your client credentials are sen
 
 ### Exchanging Tokens
 
-Use the `OAuth2PkceUtil` on your endpoint to exchange the authorization code:
+Using the previously created `config` object, create the `OAuth2PkceUtil` on your endpoint to exchange the authorization code:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -107,11 +109,18 @@ class MyProviderIdpEndpoint extends Endpoint {
         redirectUri: redirectUri,
       );
 
-      // Use access token to fetch user information
-      final userInfo = await _fetchUserInfo(accessToken);
+      // Fetch user information from provider using access token
+      final userInfo = await _fetchUserInfo(session, accessToken);
 
-      // Authenticate or create user in your system
-      return await _authenticateUser(session, userInfo);
+      // Authenticate (find existing account or create new user)
+      final account = await _authenticate(session, userInfo);
+
+      // Issue authentication token to client
+      return await _issueToken(
+        session,
+        authUserId: account.authUserId,
+        scopes: account.scopes,
+      );
     } on OAuth2InvalidResponseException catch (e) {
       session.log('Invalid token response: ${e.message}');
       throw Exception('Authentication failed');
@@ -123,8 +132,30 @@ class MyProviderIdpEndpoint extends Endpoint {
       throw Exception('Network error during authentication');
     }
   }
+
+  Future<Map<String, dynamic>> _fetchUserInfo(
+    Session session,
+    String accessToken,
+  ) async {
+    // Fetch user data from provider's API using the access token
+  }
+
+  Future<AccountResult> _authenticate(
+    Session session,
+    Map<String, dynamic> userInfo,
+  ) async {
+    // Find existing provider account or create new user based on provider user info
+    // Returns provider account (e.g., GoogleAccount, GitHubAccount) with authUserId linked to AuthUser
+  }
+
+  Future<AuthSuccess> _issueToken(
+    Session session, {
+    required int authUserId,
+    required Set<Scope> scopes,
+  }) async {
+    // Issue Serverpod authentication token for the authenticated user
+  }
 }
-```
 
 ### Exception Handling
 
@@ -141,7 +172,7 @@ The server-side utility throws these exceptions:
 
 ### Configuration
 
-Creating a client-side configuration that defines your provider's OAuth2 endpoints and parameters:
+The client-side OAuth2 utility also requires a configuration object that defines your provider's OAuth2 endpoints and authorization parameters. Create a client-side configuration:
 
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
@@ -180,7 +211,7 @@ final config = OAuth2PkceProviderClientConfig(
 
 ### Initiating Authorization
 
-Use the `OAuth2PkceUtil` to start the authorization flow:
+Using the previously created `config` object, create an `OAuth2PkceUtil` instance to start the authorization flow:
 
 ```dart
 final oauth2Util = OAuth2PkceUtil(config: config);
