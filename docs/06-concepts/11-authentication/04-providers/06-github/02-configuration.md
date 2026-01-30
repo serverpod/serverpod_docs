@@ -6,30 +6,14 @@ This page covers configuration options for the GitHub identity provider beyond t
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GitHubIdpConfig` in-code documentation.
 
-### Loading GitHub Credentials
+### Providing GitHub OAuth Credentials
 
-You can load GitHub OAuth credentials in several ways:
-
-**From JSON map (recommended for production):**
+GitHub OAuth credentials are provided directly through the GitHubIdpConfig constructor by passing the `clientId` and `clientSecret`.
 
 ```dart
 final githubIdpConfig = GitHubIdpConfig(
-  oauthCredentials: GitHubOAuthCredentials.fromJson({
-    'clientId': pod.getPassword('githubClientId')!,
-    'clientSecret': pod.getPassword('githubClientSecret')!,
-  }),
-);
-```
-
-**From JSON file:**
-
-```dart
-import 'dart:io';
-
-final githubIdpConfig = GitHubIdpConfig(
-  oauthCredentials: GitHubOAuthCredentials.fromJsonFile(
-    File('config/github_oauth_credentials.json'),
-  ),
+  clientId: pod.getPassword('githubClientId')!,
+  clientSecret: pod.getPassword('githubClientSecret')!,
 );
 ```
 

@@ -85,10 +85,8 @@ void run(List<String> args) async {
     ],
     identityProviderBuilders: [
       GitHubIdpConfig(
-        oauthCredentials: GitHubOAuthCredentials.fromJson({
-          'clientId': pod.getPassword('githubClientId')!,
-          'clientSecret': pod.getPassword('githubClientSecret')!,
-        }),
+        clientId: pod.getPassword('githubClientId')!,
+        clientSecret: pod.getPassword('githubClientSecret')!,
       ),
     ],
   );
@@ -137,7 +135,7 @@ Add the `serverpod_auth_idp_flutter` package to your Flutter app. The GitHub pro
 
 There is no special configuration needed for iOS and MacOS for "normal" authentication flows.
 However, if you are using **Universal Links** on iOS, they require redirect URIs to use **https**.
-Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) documentation.
+Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2#ios) documentation.
 
 ### Android
 

@@ -1,4 +1,4 @@
-# OAuth2 Utility Basic
+# Setup
 
 The Serverpod Auth module provides generic OAuth2 utilities that simplify implementing custom identity providers. These utilities handle the complex OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange), allowing you to integrate any OAuth2-compliant provider without dealing with low-level protocol details.
 
@@ -8,7 +8,7 @@ The OAuth2 utility consists of client-side and server-side components that work 
 - **Server-side (`OAuth2PkceUtil`)**: Exchanges authorization codes for access tokens on your backend.
 
 :::info
-The [GitHub provider](../github/setup) is built using these utilities, serving as a reference implementation for developers creating custom providers.
+The [GitHub IDP](../github/setup) is built using these utilities, serving as a reference implementation for developers creating custom providers.
 :::
 
 ## Understanding OAuth2 with PKCE
@@ -75,7 +75,7 @@ final config = OAuth2PkceServerConfig(
 ```
 
 :::info
-`credentialsLocation` controls how your client credentials are sent to the OAuth2 provider:
+The `credentialsLocation` parameter controls how your client credentials are sent to the OAuth2 provider:
 
 - **Header mode (recommended):** Credentials are placed in the `Authorization` header using HTTP Basic authentication. This follows RFC 6749 and is generally more secure, since sensitive values don't appear in the request body or logs.
 - **Body mode:** Credentials are sent as form parameters in the request body.Use this only if your provider doesn't support header-based authentication.
@@ -241,7 +241,7 @@ The OAuth2 utility uses the [flutter_web_auth_2](https://pub.dev/packages/flutte
 
 There is no special configuration needed for iOS and MacOS for "normal" authentication flows.
 However, if you are using **Universal Links** on iOS, they require redirect URIs to use **https**.
-Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) documentation.
+Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2#ios) documentation.
 
 #### Android
 
