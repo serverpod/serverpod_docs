@@ -41,6 +41,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_API_SERVER_PUBLIC_HOST         | apiServer.publicHost          | localhost | The public host address of the API server                                                                                                             |
 | SERVERPOD_API_SERVER_PUBLIC_PORT         | apiServer.publicPort          | 8080      | The public port number for the API server                                                                                                             |
 | SERVERPOD_API_SERVER_PUBLIC_SCHEME       | apiServer.publicScheme        | http      | The public scheme (http/https) for the API server                                                                                                     |
+| SERVERPOD_API_SERVER_WEBSOCKET_PING_INTERVAL        | apiServer.websocketPingInterval          | 30        | The interval in seconds between WebSocket ping messages sent to keep streaming connections alive. Must be a positive integer.                          |
 | SERVERPOD_INSIGHTS_SERVER_PORT           | insightsServer.port           | -         | The port number for the Insights server                                                                                                               |
 | SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST    | insightsServer.publicHost     | -         | The public host address of the Insights server                                                                                                        |
 | SERVERPOD_INSIGHTS_SERVER_PUBLIC_PORT    | insightsServer.publicPort     | -         | The public port number for the Insights server                                                                                                        |
@@ -165,6 +166,7 @@ apiServer:
   publicHost: localhost
   publicPort: 8080
   publicScheme: http
+  websocketPingInterval: 30
 
 insightsServer:
   port: 8081
