@@ -8,7 +8,7 @@ The OAuth2 utility consists of client-side and server-side components that work 
 - **Server-side (`OAuth2PkceUtil`)**: Exchanges authorization codes for access tokens on your backend.
 
 :::info
-The [GitHub IDP](../github/setup) is built using these utilities, serving as a reference implementation for developers creating custom providers.
+The [GitHub IDP](../../github/setup) is built using these utilities, serving as a reference implementation for developers creating custom providers.
 :::
 
 ## Understanding OAuth2 with PKCE
