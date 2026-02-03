@@ -23,6 +23,8 @@ Log entries are stored in the following tables of the database: `serverpod_log` 
 
 You can control whether session logs are written to the database, the console, both, or neither, using environment variables or configuration files. **Environment variables take priority** over configuration file settings if both are provided.
 
+For the default values when environment variables are not set, see the [default behavior for session logs](#default-behavior-for-session-logs).
+
 #### Environment Variables
 
 - `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED`: Controls whether session logs are written to the database.
