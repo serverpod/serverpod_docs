@@ -336,7 +336,7 @@ Make sure your redirect URI points to the callback file, e.g. `https://yourdomai
 
 ## Complete Example of a Custom Provider
 
-For a full end‑to‑end implementation of a custom OAuth2 provider — including server configuration, client setup and integration of all components — see the [Complete Example](./complete-example) page.
+For a full end‑to‑end implementation of a custom OAuth2 provider — including server configuration, client setup and integration of all components — see the [Complete Example](./creating-an-oauth2-based-identity-provider) page.
 
 ## Best Practices
 
