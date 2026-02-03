@@ -6,17 +6,6 @@ This page covers configuration options for the GitHub identity provider beyond t
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GitHubIdpConfig` in-code documentation.
 
-### Providing GitHub OAuth Credentials
-
-GitHub OAuth credentials are provided directly through the GitHubIdpConfig constructor by passing the `clientId` and `clientSecret`.
-
-```dart
-final githubIdpConfig = GitHubIdpConfig(
-  clientId: pod.getPassword('githubClientId')!,
-  clientSecret: pod.getPassword('githubClientSecret')!,
-);
-```
-
 ### Custom Account Validation
 
 You can customize the validation for GitHub account details before allowing sign-in. By default, the validation checks that the received account details contain a non-empty userIdentifier.
