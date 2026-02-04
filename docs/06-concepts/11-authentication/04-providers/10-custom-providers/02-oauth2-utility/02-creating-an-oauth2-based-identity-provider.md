@@ -63,10 +63,10 @@ class MyProviderIdpConfig extends IdentityProviderBuilder<MyProviderIdp> {
           clientId: clientId,
           clientSecret: clientSecret,
           credentialsLocation: OAuth2CredentialsLocation.header,
-          parseAccessToken: parseAccessToken,
+          parseTokenResponse: parseTokenResponse,
         );
 
-  static String parseAccessToken(Map<String, dynamic> response) {
+  static OAuth2PkceTokenResponse parseTokenResponse(Map<String, dynamic> response) {
     final error = response['error'] as String?;
     if (error != null) {
       final description = response['error_description'] as String?;
@@ -78,7 +78,7 @@ class MyProviderIdpConfig extends IdentityProviderBuilder<MyProviderIdp> {
     if (token == null) {
       throw const OAuth2MissingAccessTokenException('No access token in response');
     }
-    return token;
+    return OAuth2PkceTokenResponse(accessToken: token);
   }
 
   @override
@@ -142,15 +142,15 @@ class MyProviderIdp {
       session.db,
       null,
       (transaction) async {
-        // 1. Exchange authorization code for access token
-        final accessToken = await _oauth2Util.exchangeCodeForToken(
+        // 1. Exchange authorization code for token response
+        final tokenResponse = await _oauth2Util.exchangeCodeForToken(
           code: code,
           codeVerifier: codeVerifier,
           redirectUri: redirectUri,
         );
 
         // 2. Fetch user information
-        final userInfo = await _fetchUserInfo(session, accessToken);
+        final userInfo = await _fetchUserInfo(session, tokenResponse.accessToken);
 
         // 3. Authenticate (find or create user)
         final account = await _authenticate(session, userInfo, transaction);

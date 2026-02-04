@@ -51,8 +51,8 @@ final config = OAuth2PkceServerConfig(
   // OAuth client secret (keep secure!)
   clientSecret: pod.getPassword('myProviderClientSecret')!,
 
-  // Function to extract access token from provider response
-  parseAccessToken: (data) {
+  // Function to parse token response from provider
+  parseTokenResponse: (data) {
     // Your parse logic here
   },
 
@@ -102,15 +102,15 @@ class MyProviderIdpEndpoint extends Endpoint {
     required String redirectUri,
   }) async {
     try {
-      // Exchange authorization code for access token
-      final accessToken = await oauth2Util.exchangeCodeForToken(
+      // Exchange authorization code for token response
+      final tokenResponse = await oauth2Util.exchangeCodeForToken(
         code: code,
         codeVerifier: codeVerifier,
         redirectUri: redirectUri,
       );
 
       // Fetch user information from provider using access token
-      final userInfo = await _fetchUserInfo(session, accessToken);
+      final userInfo = await _fetchUserInfo(session, tokenResponse.accessToken);
 
       // Authenticate (find existing account or create new user)
       final account = await _authenticate(session, userInfo);
