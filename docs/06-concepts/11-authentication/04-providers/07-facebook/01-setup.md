@@ -24,12 +24,16 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 After creating your app, click the **Customize** button next to **"Authenticate and request data from users with Facebook Login"** on the **Dashboard** or **Use cases** page. This opens the customization page with the following menu options:
 
+![Use Case Customize](/img/authentication/providers/facebook/1-use-case-customize.png)
+
 #### 1. Permissions and features
 
 Configure the permissions your application will request:
 
 - `public_profile` - Added by default, allows access to basic profile information
 - `email` - Recommended. Allows to read a person's primary email address
+
+![Permissions and Features](/img/authentication/providers/facebook/2-permissions.png)
 
 #### 2. Settings
 
@@ -38,6 +42,8 @@ Configure the authentication settings:
 - In **Allowed Domains for the JavaScript SDK**, add:
   - `https://www.facebook.com` (required to avoid CORS issues)
   - Your own domain if you plan to support web authentication (e.g., `https://yourdomain.com`)
+
+  ![Allowed Domains](/img/authentication/providers/facebook/3-allowed-domains.png)
 
 #### 3. Quickstart
 
@@ -52,14 +58,14 @@ Save your changes after completing the configuration.
 
 ### Get App Credentials
 
-1. Go to **Settings** > **Basic** in your Facebook App Dashboard to retrieve:
+1. Go to **App settings** > **Basic** in your Facebook App Dashboard to retrieve:
    - **App ID**
-   - **App Secret**
-2. Go to **Settings** > **Advanced** to retrieve:
-   - **Client Token**
+   - **App secret**
+2. Go to **App settings** > **Advanced** to retrieve:
+   - **Client token**
 
 :::tip
-The **App Secret** is sensitive. Keep it confidential and never commit it to version control. The **Client Token** is required for some platforms (especially mobile and web).
+The **App secret** is sensitive. Keep it confidential and never commit it to version control. The **Client token** is required for some platforms (especially mobile and web).
 :::
 
 ## Server-side Configuration
@@ -75,7 +81,7 @@ development:
 ```
 
 :::warning
-Keep your App Secret confidential. Never commit this value to version control. Store it securely using environment variables or secret management.
+Keep your App secret confidential. Never commit this value to version control. Store it securely using environment variables or secret management.
 :::
 
 ### Configure the Facebook Identity Provider
@@ -138,7 +144,7 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 ### Basic configuration options
 
 - `appId`: Required. The App ID of your Facebook App.
-- `appSecret`: Required. The App Secret of your Facebook App.
+- `appSecret`: Required. The App secret of your Facebook App.
 
 For more details on configuration options, see the [configuration section](./configuration).
 
@@ -171,7 +177,7 @@ defaultConfig {
 </resources>
 ```
 
-Replace `YOUR_FACEBOOK_APP_ID` with your App ID and `YOUR_CLIENT_TOKEN` with your Client Token (found in **Settings** > **Advanced** > **Client Token** in the Facebook App Dashboard).
+Replace `YOUR_FACEBOOK_APP_ID` with your App ID and `YOUR_CLIENT_TOKEN` with your Client token (found in **Settings** > **Advanced** > **Client token** in the Facebook App Dashboard).
 
 1. Open `/android/app/src/main/AndroidManifest.xml` and add the following:
 
@@ -211,7 +217,11 @@ For Android 11 and above, add the following inside the `<manifest>` element:
 
 #### Configure Android Platform in Facebook
 
-In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **Android** tab. Follow these steps:
+In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **Android** tab.
+
+![Quickstart Android](/img/authentication/providers/facebook/4-quickstart-android.png)
+
+Follow these steps:
 
 **Step 3: Tell Us about Your Android Project**
 
@@ -219,6 +229,8 @@ Fill in your Android app details:
 
 - **Package Name**: Your app's package identifier (found in `android/app/build.gradle` as `applicationId` or in `AndroidManifest.xml` as `package`).
 - **Class Name**: Your main activity class name (typically `MainActivity`).
+
+![Package Name](/img/authentication/providers/facebook/5-package-name.png)
 
 **Step 4: Add Your Development and Release Key Hashes**
 
@@ -246,8 +258,10 @@ keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PAT
 
 Paste the generated key hashes into the Facebook console and save.
 
+![Add Key Hashes](/img/authentication/providers/facebook/6-save-key-hashes.png)
+
 :::note
-You can skip the remaining steps (1, 2, 5, 6+) as they are not required for Flutter apps or have already been covered in the previous configuration steps.
+You can skip the remaining steps (1, 2, 5, 6+) as they are not required for Flutter apps or have already been covered.
 :::
 
 
@@ -265,23 +279,19 @@ Also set the deployment target to 12.0 in Xcode (**Runner** > **General** > **De
 
 #### Configure iOS Platform in Facebook
 
-In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **iOS** tab. Follow these steps:
+In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **iOS** tab.
+
+![Quickstart iOS](/img/authentication/providers/facebook/7-quickstart-ios.png)
+
+Follow these steps:
 
 **Step 2: Add your Bundle Identifier**
 
 Enter your iOS app's Bundle Identifier (found in Xcode under **Runner** > **General** > **Identity** or in your `Info.plist`).
 
-- Example: `com.example.testAuth`
+![iOS Bundle ID](/img/authentication/providers/facebook/8-ios-bundle-id.png)
 
 **Step 4: Configure Your info.plist**
-
-This step describes the configuration covered in the next section. Additionally, ensure that the **Keychain Sharing** capability is enabled for your target in Xcode (**Runner** > **Signing & Capabilities** > **+ Capability** > **Keychain Sharing**).
-
-:::note
-You can skip the remaining steps (1, 3, 5-9) as they are not required for Flutter apps or have already been covered in the configuration steps.
-:::
-
-#### Configure Info.plist
 
 Open `ios/Runner/Info.plist` and add the following configuration (replace placeholders with your actual values):
 
@@ -308,14 +318,16 @@ Open `ios/Runner/Info.plist` and add the following configuration (replace placeh
 </array>
 ```
 
-Replace:
-
-- `YOUR_APP_ID` with your Facebook App ID
-- `YOUR_CLIENT_TOKEN` with your Client Token
-- `YOUR_APP_NAME` with your app's name
+Replace `YOUR_APP_ID` with your Facebook App ID, `YOUR_CLIENT_TOKEN` with your Client token, and `YOUR_APP_NAME` with your app's name.
 
 :::tip
 If you have other providers (like Google) implemented, merge the values for `CFBundleURLTypes` and `LSApplicationQueriesSchemes` instead of creating duplicate keys.
+:::
+
+Additionally, ensure that the **Keychain Sharing** capability is enabled for your target in Xcode (**Runner** > **Signing & Capabilities** > **+ Capability** > **Keychain Sharing**).
+
+:::note
+You can skip the remaining steps (1, 3, 5-9) as they are not required for Flutter apps or have already been covered.
 :::
 
 #### iOS App Tracking Transparency (ATT)
@@ -342,26 +354,25 @@ For more detailed iOS setup instructions, refer to the [flutter_facebook_auth iO
 For web platforms, you must initialize the FacebookSignInService with your App ID:
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-
-Future<void> main() async {
-  await client.auth.initializeFacebookSignIn(
-    appId: 'YOUR_FACEBOOK_APP_ID',
-  );
-  runApp(MyApp());
-}
+await client.auth.initializeFacebookSignIn(
+  appId: 'YOUR_FACEBOOK_APP_ID',
+);
 ```
 
 #### Configure Web Platform in Facebook
 
-**1. Add Site URL in Quickstart**
+In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **Web** tab.
 
-In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **Web** tab:
+![Quickstart Web](/img/authentication/providers/facebook/9-quickstart-web.png)
+
+Follow these steps:
+
+**1. Add Site URL in Quickstart**
 
 Enter your website's Site URL (e.g., `https://yourdomain.com`) and save your changes.
 
 :::note
-No other Quickstart steps are required for Flutter web apps.
+You can skip the remaining steps (2-5) as they are not required for Flutter apps or have already been covered.
 :::
 
 **2. Configure Allowed Domains in Settings (Important)**
@@ -372,6 +383,8 @@ Go to **Use cases** > **Customize** > **Settings** and find **Allowed Domains fo
 - Add your production domain: `https://yourdomain.com`.
 
 This configuration enables Facebook authentication to work on these domains. Without this, Facebook Sign In will fail due to CORS restrictions.
+
+![Allowed Domains](/img/authentication/providers/facebook/3-allowed-domains.png)
 
 :::warning
 The facebook javascript SDK is only allowed to use with `https` but you can test the plugin in your localhost with an error message in your web console.
@@ -401,14 +414,9 @@ macOS uses `flutter_secure_storage` to securely store session data. Add the **Ke
 For macOS, you must initialize the FacebookSignInService with your App ID:
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-
-Future<void> main() async {
-  await client.auth.initializeFacebookSignIn(
-    appId: 'YOUR_FACEBOOK_APP_ID',
-  );
-  runApp(MyApp());
-}
+await client.auth.initializeFacebookSignIn(
+  appId: 'YOUR_FACEBOOK_APP_ID',
+);
 ```
 
 #### Configure macOS Platform in Facebook
@@ -421,4 +429,71 @@ Go to **Use cases** > **Customize** > **Settings** and configure the following:
 - Enable **Login with the JavaScript SDK** under **Client OAuth settings**.
 - In **Allowed Domains for the JavaScript SDK**, add `https://www.facebook.com` to avoid CORS issues.
 
+![Use cases Settings](/img/authentication/providers/facebook/10-settings.png)
+
 For more detailed macOS setup instructions, refer to the [flutter_facebook_auth macOS documentation](https://facebook.meedu.app/docs/7.x.x/macos).
+
+## Present the authentication UI
+
+### Initializing the `FacebookSignInService`
+
+To use the FacebookSignInService, you need to initialize it in your main function. The initialization is done from the `initializeFacebookSignIn()` extension method on the `FlutterAuthSessionManager`.
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:your_client/your_client.dart';
+
+final client = Client('http://localhost:8080/')
+  ..authSessionManager = FlutterAuthSessionManager();
+
+void main() {
+  client.auth.initialize();
+  client.auth.initializeFacebookSignIn();
+}
+```
+
+:::note
+For web and macOS platforms, you must provide your Facebook App ID during initialization:
+
+```dart
+client.auth.initializeFacebookSignIn(
+  appId: 'YOUR_FACEBOOK_APP_ID',
+);
+```
+
+For iOS and Android, the App ID is not required as the SDK reads credentials from native configuration.
+:::
+
+### Using FacebookSignInWidget
+
+If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Facebook identity provider will be automatically detected and displayed in the sign-in widget.
+
+You can also use the `FacebookSignInWidget` to include the Facebook authentication flow in your own custom UI:
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+
+FacebookSignInWidget(
+  client: client,
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $error')),
+    );
+  },
+)
+```
+
+The widget automatically handles:
+
+- Facebook Sign-In flow for iOS, Android, Web, and macOS.
+- Token management.
+- Underlying Facebook Sign-In package error handling.
+
+For details on how to customize the Facebook Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).

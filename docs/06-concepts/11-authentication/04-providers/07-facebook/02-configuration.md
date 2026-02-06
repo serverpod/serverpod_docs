@@ -75,7 +75,7 @@ await client.auth.initializeFacebookSignIn(
 );
 ```
 
-This approach is useful for different configurations per platform or build environment.
+If the `appId` value is not supplied when initializing the service, the provider will automatically fetch it from the `FACEBOOK_APP_ID` environment variable. This approach is useful for different configurations per platform or build environment.
 
 #### Using Environment Variables
 
@@ -98,19 +98,4 @@ This approach is useful when you need to:
 
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
-:::
-
-If the `appId` value is not supplied when initializing the service, the provider will automatically fetch it from the `FACEBOOK_APP_ID` environment variable.
-
-### Customizing Permissions
-
-By default, the Facebook Sign-In flow requests the following permissions:
-
-- `email`: Access to the user's email address
-- `public_profile`: Access to the user's ID, name, and profile picture
-
-You can request additional permissions when using the `FacebookSignInWidget` or `FacebookAuthController` by setting the `permissions` parameter. See the [Facebook Permissions Reference](https://developers.facebook.com/docs/permissions/reference) for a full list of available permissions.
-
-:::warning
-Requesting additional permissions beyond `email` and `public_profile` may require your app to go through Facebook's App Review process before these permissions can be used with users who are not app administrators, developers, or testers.
 :::
