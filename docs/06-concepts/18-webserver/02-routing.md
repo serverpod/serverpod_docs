@@ -207,6 +207,95 @@ explicit parameters).
 
 :::
 
+## Virtual host routing
+
+Virtual host routing allows you to serve different content based on the `Host` header of incoming requests. This is useful for multi-tenant applications or serving different front-ends from distinct subdomains using a single server instance - like an API on `api.example.com`, a web app on `www.example.com`, and an admin panel on `admin.example.com`.
+
+### How it works
+
+By default, routes match requests from any host.
+
+```dart
+// Route that responds to any host (default behavior)
+class PublicRoute extends Route {
+  PublicRoute() : super(); // host defaults to null
+
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    return Response.ok(
+      body: Body.fromString('Public endpoint'),
+    );
+  }
+}
+```
+
+You can restrict a route to a specific host by providing the `host` parameter when creating the route:
+
+```dart
+// Route that only responds to api.example.com
+class ApiRoute extends Route {
+  ApiRoute() : super(host: 'api.example.com');
+
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    return Response.ok(
+      body: Body.fromString(
+        jsonEncode({'message': 'API endpoint'}),
+        mimeType: MimeType.json,
+      ),
+    );
+  }
+}
+```
+
+### Registering host-specific routes
+
+Register routes with host restrictions just like regular routes:
+
+```dart
+// Route that only responds to api.example.com
+pod.webServer.addRoute(ApiRoute(), '/v1');
+
+// Route that only responds to www.example.com
+pod.webServer.addRoute(
+  SpaRoute(webDir, fallback: index, host: 'www.example.com'),
+  '/',
+);
+
+// Route that responds to any host (default behavior)
+pod.webServer.addRoute(HealthRoute(), '/health');
+```
+
+### Supported route types
+
+All route types support virtual host routing:
+
+- **Custom routes** - Pass `host` to the `Route` constructor
+- **StaticRoute** - Use `host` parameter in `StaticRoute.directory()` or `StaticRoute.file()`
+- **SpaRoute** - Use `host` parameter in the `SpaRoute` constructor
+- **FlutterRoute** - Use `host` parameter in the `FlutterRoute` constructor
+
+```dart
+// Static files for a specific host
+pod.webServer.addRoute(
+  StaticRoute.directory(
+    Directory('web/admin'),
+    host: 'admin.example.com',
+  ),
+  '/static/**',
+);
+
+// SPA for a specific host
+pod.webServer.addRoute(
+  SpaRoute(
+    Directory('web/app'),
+    fallback: File('web/app/index.html'),
+    host: 'app.example.com',
+  ),
+  '/',
+);
+```
+
 ## Next steps
 
 - **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
