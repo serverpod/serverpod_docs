@@ -20,6 +20,24 @@ Use the `addMiddleware` method to apply middleware to specific path prefixes:
 pod.webServer.addMiddleware(myMiddleware, '/path');
 ```
 
+### Host-specific middleware
+
+You can restrict middleware to a specific virtual host by providing the optional `host` parameter:
+
+```dart
+// Middleware for a specific host
+pod.webServer.addMiddleware(
+  apiKeyMiddleware,
+  '/api',
+  host: 'api.example.com',
+);
+
+// Middleware for all hosts (default behavior)
+pod.webServer.addMiddleware(loggingMiddleware, '/');
+```
+
+When `host` is `null` (the default), the middleware applies to all hosts. When set, the middleware only applies to requests with a matching `Host` header.
+
 ## Creating custom middleware
 
 Middleware is a function that takes a `Handler` and returns a new `Handler`.
