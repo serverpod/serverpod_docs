@@ -122,6 +122,21 @@ $ serverpod create my_project
 The name of the project must be a valid Dart package name. It should start with a lowercase letter and can only contain lowercase letters, numbers, and underscores. For example, `my_project` is a valid name, but `MyCounter` is not.
 :::
 
+After running the command, the following structure will be created:
+
+```text
+my_project/
+├── my_project_server/   # Contains your server-side code.
+├── my_project_client/   # Code needed for the app to communicate with the server.
+└── my_project_flutter/  # Flutter app, pre-configured to connect to your local server.
+```
+
+The root-level `pubspec.yaml` file includes support for [Dart pub workspaces](https://dart.dev/tools/pub/workspaces) by default, which allows fetching dependencies at once by calling `dart pub get` from the project root.
+
+:::info
+During project creation, dependencies are automatically fetched.
+:::
+
 To run your new project you must first start the database from the Docker file that is included with the project. Do this by running the `docker compose up` command in the server directory:
 
 ```bash
