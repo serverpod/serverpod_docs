@@ -48,6 +48,45 @@ await AuthServices.instance.authUsers.create(
 When a user is blocked, they will not be able to sign in until they are unblocked. However, blocking a user does not automatically revoke their existing sessions. Be sure to revoke existing sessions for a complete block operation. See [Revoking tokens](./token-managers/managing-tokens#revoking-tokens) for more details.
 :::
 
+## User creation callbacks
+
+You can react when an auth user is created and control their initial scopes and blocked status by using the `AuthUsersConfig` callbacks. Configure them when initializing auth services on the `pod` object.
+
+:::warning
+Both callbacks receive a `transaction` parameter that should be used on all operations performed inside the callback. Failing to pass the transaction to database operations might lead to entries not being found or changes not being rolled back together.
+:::
+
+### Reacting to the user created event
+
+Use the `onAfterAuthUserCreated` callback to run logic after a new auth user has been created (for example, to create related domain data or send a welcome notification). The callback receives the current session, the newly created auth user, and the ongoing transaction.
+
+```dart
+pod.initializeAuthServices(
+  ...
+  authUsersConfig: AuthUsersConfig(
+    onAfterAuthUserCreated: (session, authUser, {required transaction}) {
+      // Do something with the new auth user (e.g. create related data)
+    },
+  ),
+);
+```
+
+### Setting default scopes and blocked status
+
+Use the `onBeforeAuthUserCreated` callback to set default scopes or blocked status for new auth users. The callback receives the session, the scopes and blocked value that would be used by default, and the transaction. Return a record with the `scopes` and `blocked` values you want to apply; you can add or remove scopes or force the user to be blocked.
+
+```dart
+pod.initializeAuthServices(
+  ...
+  authUsersConfig: AuthUsersConfig(
+    onBeforeAuthUserCreated: (session, scopes, blocked, {required transaction}) {
+      // Set default scopes (e.g. add Scope.admin) and optionally block the user
+      return (scopes: {...scopes, Scope.admin}, blocked: blocked);
+    },
+  ),
+);
+```
+
 ## User profiles
 
 By default, all authenticated users have a `UserProfile` object that contains information about the signed-in user. To access the `UserProfile` object, you can use the `userProfile` extension on the `AuthenticationInfo` object.
@@ -67,6 +106,72 @@ await AuthServices.instance.userProfiles.changeFullName(session, authUserId, 'my
 ```
 
 For the full list of operations, see the [UserProfiles](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/UserProfiles-class.html) class documentation.
+
+### Accessing user profiles from the app
+
+To access the user profile from your Flutter app, you can use the `userProfileInfo` endpoint that is included in the authentication module:
+
+```dart
+final userProfile = await client.modules.serverpod_auth_core.userProfileInfo.get();
+```
+
+This returns a `UserProfileModel` object containing the logged-in user's profile information such as their name, email, and profile picture.
+
+### Extending the user profile edit endpoint
+
+The authentication module provides a `UserProfileEditBaseEndpoint` abstract class that you can extend to expose user profile editing functionality to your app. This base endpoint includes methods for:
+
+- Removing user images
+- Setting user images
+- Changing user names
+- Changing full names
+
+To enable profile editing in your app, create a concrete endpoint class on your server by extending `UserProfileEditBaseEndpoint`:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_idp_server/core.dart';
+
+class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {}
+```
+
+This endpoint will have both `get` (same as `userProfileInfo`) and all profile editing methods. You can then call these methods from your Flutter app:
+
+```dart
+// Get the user's profile
+final profile = await client.userProfileEdit.get();
+
+// Change the user's full name
+final updatedProfile = await client.userProfileEdit.changeFullName('John Doe');
+
+// Change the user's username
+final updatedProfile = await client.userProfileEdit.changeUserName('johndoe');
+
+// Remove the user's profile image
+final updatedProfile = await client.userProfileEdit.removeUserImage();
+
+// Set a new profile image
+final ByteData imageData = // ... load image data
+final updatedProfile = await client.userProfileEdit.setUserImage(imageData);
+```
+
+:::note
+The `UserProfileEditBaseEndpoint` requires authentication and operates on the currently authenticated user's profile.
+:::
+
+You can also extend the endpoint class to add custom profile editing functionality:
+
+```dart
+class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {
+  Future<UserProfileModel> myCustomProfileEdit(Session session, String bio) async {
+    final userProfile = await session.authenticated?.userProfile(session);
+
+    // Your custom logic here...
+
+    return userProfile;
+  }
+}
+```
 
 ### Setting a default user image
 

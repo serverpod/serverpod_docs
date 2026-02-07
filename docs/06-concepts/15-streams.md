@@ -79,6 +79,12 @@ Authentication is validated when the stream is first established, utilizing the 
 
 For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#handling-revoked-authentication).
 
+### WebSocket ping interval
+
+The server sends periodic ping messages on open streaming connections to keep them alive. The interval between pings is configurable and defaults to 30 seconds.
+
+If you deploy behind a load balancer or proxy with a shorter idle timeout (for example, 15-20 seconds), you may need to lower the ping interval so connections are not closed. Set the `SERVERPOD_WEBSOCKET_PING_INTERVAL` environment variable to the desired interval in seconds, or configure `websocketPingInterval` in your [configuration](./configuration) file.
+
 ### Error handling
 
 Error handling works just like in regular endpoint methods in Serverpod. If an exception is thrown on a stream, the stream is closed with an exception. If the exception thrown is a serializable exception, the exception is first serialized and passed over the stream before it is closed.

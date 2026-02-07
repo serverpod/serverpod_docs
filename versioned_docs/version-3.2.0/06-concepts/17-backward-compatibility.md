@@ -6,7 +6,9 @@ Following a simple set of rules, your server will stay compatible with older app
 
 1. __Avoid changing parameter names in endpoint methods.__ In the REST API Serverpod generates, the parameters are passed by name. This means that changing the parameter names of the endpoint methods will break backward compatibility.
 2. __Do not delete endpoint methods or change their signature.__ Instead, add new methods if you must pass another set of parameters. Technically, you can add new named parameters if they are not required, but creating a new method may still feel cleaner.
-3. __Avoid changing or removing fields and types in the serialized classes.__ However, you are free to add new fields as long as they are nullable.
+3. __Avoid changing or removing fields and types in the serialized classes.__ However, you are free to add new fields as long as they are nullable or have a default value.
+4. __Avoid changing parameter names in future call methods.__ Changing the parameter names of the future call methods will break backward compatibility since parameters are passed by name.
+5. __Do not delete future call methods or change their signature.__ Instead, add new methods if you must pass another set of parameters.
 
 ## Managing breaking changes with endpoint inheritance
 
@@ -22,7 +24,7 @@ class TeamEndpoint extends Endpoint {
   Future<TeamInfo> join(Session session) async {
     // …
   }
-  
+
   // many more methods, like `leave`, etc.
 }
 
