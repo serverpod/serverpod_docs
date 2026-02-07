@@ -1,6 +1,6 @@
 # Streams
 
-For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
+For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the Flutter app or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
 
 Serverpod supports streaming data through [streaming methods](#streaming-methods), which imitate how `Streams` work in Dart and offer a simple interface that automatically handles the connection with the server.
 
@@ -59,21 +59,21 @@ Note that we can mix different types in the stream. This stream is defined as dy
 
 ### Lifecycle of a streaming method
 
-Each time the client calls a streaming method, a new `Session` is created, and a call with that `Session` is made to the method endpoint on the server. The `Session` is automatically closed when the streaming method call is over.
+Each time the Flutter app calls a streaming method, a new `Session` is created, and a call with that `Session` is made to the method endpoint on the server. The `Session` is automatically closed when the streaming method call is over.
 
-If the web socket connection is lost, all streaming methods are closed on the server and the client.
+If the web socket connection is lost, all streaming methods are closed on the server and the Flutter app.
 
-When the streaming method is defined with a returning `Stream`, the method is kept alive until the stream subscription is canceled on the client or the method returns.
+When the streaming method is defined with a returning `Stream`, the method is kept alive until the stream subscription is canceled on the Flutter app or the method returns.
 
 When the streaming method returns a `Future`, the method is kept alive until the method returns.
 
-Streams in parameters are closed when the stream is closed. This can be done by either closing the stream on the client or canceling the subscription on the server.
+Streams in parameters are closed when the stream is closed. This can be done by either closing the stream on the Flutter app or canceling the subscription on the server.
 
 All streams in parameters are closed when the method call is over.
 
 ### Authentication
 
-Authentication is seamlessly integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
+Authentication is seamlessly integrated into streaming method calls. When a Flutter app initiates a streaming method, the server automatically authenticates the session.
 
 Authentication is validated when the stream is first established, utilizing the authentication data stored in the `Session` object. If a user's authentication is subsequently revoked—requiring denial of access to the stream—the stream will be promptly closed, and an exception will be thrown.
 
@@ -83,7 +83,7 @@ For more details on handling revoked authentication, refer to the section on [ha
 
 Error handling works just like in regular endpoint methods in Serverpod. If an exception is thrown on a stream, the stream is closed with an exception. If the exception thrown is a serializable exception, the exception is first serialized and passed over the stream before it is closed.
 
-This is supported in both directions; stream parameters can pass exceptions to the server, and return streams can pass exceptions to the client.
+This is supported in both directions; stream parameters can pass exceptions to the server, and return streams can pass exceptions to the Flutter app.
 
 ```dart
 class ExampleEndpoint extends Endpoint {
@@ -104,17 +104,17 @@ var outStream = client.example.echoStream(inStream.stream);
 outStream.listen((message) {
   // Do nothing
 }, onError: (error) {
-  print('Client received error: $error');
+  print('Flutter app received error: $error');
 });
 
-inStream.addError(SerializableException('Error from client'));
+inStream.addError(SerializableException('Error from Flutter app'));
 
 // This will print
-// Server received error: Error from client 
-// Client received error: Error from server 
+// Server received error: Error from Flutter app 
+// Flutter app received error: Error from server 
 ```
 
-In the example above, the client sends an error to the server, which then throws an exception back to the client. And since the exception is serializable, it is passed over the stream before the stream is closed.
+In the example above, the Flutter app sends an error to the server, which then throws an exception back to the Flutter app. And since the exception is serializable, it is passed over the stream before the stream is closed.
 
 Read more about serializable exceptions here: [Serializable exceptions](exceptions).
 
@@ -132,9 +132,9 @@ The Endpoint class has three methods you override to work with streams.
 
 - `streamOpened` is called when a user connects to a stream on the Endpoint.
 - `streamClosed` is called when a user disconnects from a stream on the Endpoint.
-- `handleStreamMessage` is called when a serialized message is received from a client.
+- `handleStreamMessage` is called when a serialized message is received from a Flutter app.
 
-To send a message to a client, call the `sendStreamMessage` method. You will need to include the session associated with the user.
+To send a message to a Flutter app, call the `sendStreamMessage` method. You will need to include the session associated with the user.
 
 #### The user object
 
@@ -150,7 +150,7 @@ You can access the user object at any time by calling the `getUserObject` method
 
 ### Handling streams in your app
 
-Before you can access streams in your client, you need to connect to the server's web socket. You do this by calling connectWebSocket on your client.
+Before you can access streams in your Flutter app, you need to connect to the server's web socket. You do this by calling connectWebSocket on your client.
 
 ```dart
 await client.openStreamingConnection();

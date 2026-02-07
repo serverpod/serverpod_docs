@@ -189,7 +189,7 @@ dependencies:
   serverpod_auth_idp_client: 3.x.x
 ```
 
-## App setup
+## Flutter setup
 
 First, add dependencies to your app's `pubspec.yaml` file for the methods of signing in that you want to support.
 

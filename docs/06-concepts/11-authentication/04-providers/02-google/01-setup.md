@@ -125,7 +125,7 @@ The `google_client_secret.json` contains a private key and should not be version
 
 ## Client-side configuration
 
-For our client-side configurations, we have to first create client-side credentials and include the credentials files in our projects. The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, so any documentation there should also apply to this setup.
+For our Flutter-side configurations, we have to first create Flutter-side credentials and include the credentials files in our projects. The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, so any documentation there should also apply to this setup.
 
 ### iOS
 

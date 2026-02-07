@@ -16,7 +16,7 @@ For non-Docker deployments, you'll need to [compile the Dart code](https://dart.
 
 By default Serverpod is active on three ports:
 
-- **8080**: The main port for the server - this is where the generated client will connect to.
+- **8080**: The main port for the server - this is where the generated Flutter app will connect to.
 - **8081**: The port for connecting with the [Serverpod Insights](../09-tools/01-insights.md) tooling. You may want to restrict which IP addresses can connect to this port.
 - **8082**: The built in webserver is running on this port.
 

@@ -189,9 +189,9 @@ dependencies:
   serverpod_auth_idp_client: 3.x.x
 ```
 
-## App setup
+## Flutter setup
 
-First, add dependencies to your app's `pubspec.yaml` file for the methods of signing in that you want to support.
+First, add dependencies to your flutter app's `pubspec.yaml` file for the methods of signing in that you want to support.
 
 ```yaml
 dependencies:
@@ -238,7 +238,7 @@ In case you have an endpoint called `AuthEndpoint` - that will generate the `aut
 
 ### Initialize authentication
 
-The `initialize()` method restores any existing session from storage and validates it with the server. It should be called when your app starts:
+The `initialize()` method restores any existing session from storage and validates it with the server. It should be called when your flutter app starts:
 
 ```dart
 await client.auth.initialize();
