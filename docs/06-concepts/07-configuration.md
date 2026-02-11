@@ -90,20 +90,10 @@ The following table shows the built-in secrets that Serverpod uses for its core 
 
 #### Secrets for First Party Packages
 
-The following secrets are used by official Serverpod packages:
+For secrets related to first-party Serverpod packages, see their respective documentation:
 
-- [serverpod_cloud_storage_gcp](https://pub.dev/packages/serverpod_cloud_storage_gcp): Google Cloud Storage
-- [serverpod_cloud_storage_s3](https://pub.dev/packages/serverpod_cloud_storage_s3): Amazon S3
-- [serverpod_auth_server](https://pub.dev/packages/serverpod_auth_server): Serverpod Auth Server
-
-| Environment variable                                        | Passwords file                           | Default | Description                                                                   |
-| ----------------------------------------------------------- | ---------------------------------------- | ------- | ----------------------------------------------------------------------------- |
-| SERVERPOD_PASSWORD_HMACAccessKeyId                          | HMACAccessKeyId                          | -       | The access key ID for HMAC authentication for serverpod_cloud_storage_gcp     |
-| SERVERPOD_PASSWORD_HMACSecretKey                            | HMACSecretKey                            | -       | The secret key for HMAC authentication for serverpod_cloud_storage_gcp        |
-| SERVERPOD_PASSWORD_AWSAccessKeyId                           | AWSAccessKeyId                           | -       | The access key ID for AWS authentication for serverpod_cloud_storage_s3       |
-| SERVERPOD_PASSWORD_AWSSecretKey                             | AWSSecretKey                             | -       | The secret key for AWS authentication for serverpod_cloud_storage_s3          |
-| SERVERPOD_PASSWORD_serverpod_auth_googleClientSecret        | serverpod_auth_googleClientSecret        | -       | The client secret for Google authentication for serverpod_auth_server         |
-| SERVERPOD_PASSWORD_serverpod_auth_firebaseServiceAccountKey | serverpod_auth_firebaseServiceAccountKey | -       | The service account key for Firebase authentication for serverpod_auth_server |
+- **Cloud storage (GCP/S3)**: [Uploading files](file-uploads)
+- **Authentication**: [Authentication Setup](authentication/setup#storing-secrets)
 
 #### Custom Secrets
 
@@ -337,13 +327,13 @@ Declare module dependencies and optionally assign nicknames for easier reference
 
 ```yaml
 modules:
-  serverpod_auth:
+  serverpod_auth_idp:
     nickname: auth
   my_custom_module:
     nickname: custom
 ```
 
-This allows you to reference module classes as `module:auth:UserInfo` in your model files. See the [modules documentation](modules) for more information.
+This allows you to reference module classes as `module:auth:AuthUser` in your model files. See the [modules documentation](modules) for more information.
 
 ### Custom serializable classes
 
