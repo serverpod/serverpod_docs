@@ -418,7 +418,7 @@ Declare an abstract endpoint with common methods on the server:
 ```dart
 abstract class AuthSessionEndpoint extends Endpoint {
   Future<bool> isAuthenticated(Session session) async {
-    return await session.isUserSignedIn;
+    return session.isUserSignedIn;
   }
 
   Future<bool> logout(Session session, {required bool allSessions}) async {
