@@ -6,7 +6,7 @@ The `Session` object provides information about the current user. A unique `user
 
 ```dart
 Future<void> myMethod(Session session) async {
-  final authenticationInfo = await session.authenticated;
+  final authenticationInfo = session.authenticated;
   final userIdentifier = authenticationInfo?.userIdentifier;
   ...
 }
@@ -16,7 +16,7 @@ You can also use the Session object to check if a user is authenticated:
 
 ```dart
 Future<void> myMethod(Session session) async {
-  var isSignedIn = await session.isUserSignedIn;
+  var isSignedIn = session.isUserSignedIn;
   ...
 }
 ```
@@ -62,7 +62,7 @@ You can use this annotation in two ways:
       }
 
       Stream<bool> someStream(Session session) async* {
-        yield await session.isUserSignedIn; // Will always return false
+        yield session.isUserSignedIn; // Will always return false
       }
     }
     ```
