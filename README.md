@@ -4,6 +4,8 @@ This is the code for Serverpod's official documentation. If you are contributing
 
 We have a Makefile with all the common commands, but you can also work with npm directly.
 
+Before contributing to our documentation, please read our [style guide](STYLE_GUIDE.md).
+
 ### Using the Makefile
 
 The project includes a Makefile that provides shortcuts for common tasks. You can see all available commands by running:
