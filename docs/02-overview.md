@@ -10,7 +10,7 @@ Serverpod is an open-source backend framework for Flutter applications written i
 
 - **Automatic code generation:** Serverpod analyzes your server code and automatically generates the client-side Dart API and data classes. Calling a remote endpoint becomes as simple as calling a local method.
 - **World-class logging:** Built-in logging and monitoring tools allow you to pinpoint exceptions and slow database queries through an easy-to-use interface.
-- **Built-in caching:** High-performance, distributed caching is included. Any serializable model can be cached in memory on the server or distributed using Redis.
+- **Built-in caching:** High-performance, distributed caching is included. Any object can be cached (primitives, lists, maps, and serializable models) in memory on the server or distributed using Redis.
 - **Easy-to-use ORM:** Serverpod provides an ORM that uses native Dart types and null-safety for database queries. You write Dart code instead of SQL, and Serverpod builds your PostgreSQL queries under the hood. The ORM has an intuitive Dart-first API for relations and joins.
 - **Database migrations:** A built-in migration system helps keep your database schema in sync as your project evolves. You can version schema changes and apply them easily during deployment.
 - **File uploads:** First-class support for file uploads to cloud storage or the database. Files can be stored in Amazon S3, Google Cloud Storage, or even in your PostgreSQL database.
