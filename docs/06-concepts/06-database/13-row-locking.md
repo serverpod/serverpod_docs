@@ -2,7 +2,9 @@
 
 Row-level locking allows you to lock specific rows in the database to prevent other transactions from modifying them while you work. This is essential for safely handling concurrent updates, such as processing payments, managing inventory, or any scenario where two transactions might conflict.
 
-All row locking operations require a [transaction](transactions).
+:::warning
+All row locking operations require a [transaction](transactions). An exception will be thrown if you attempt to acquire a lock without one.
+:::
 
 For the following examples we will use this model:
 
@@ -34,7 +36,9 @@ await session.db.transaction((transaction) async {
 });
 ```
 
-The `findFirstRow` and `findById` methods also support locking:
+When a row is locked, other transactions that attempt to acquire a conflicting lock on the same rows will wait until the lock is released. Regular reads without a `lockMode` are not affected and can still read the rows freely. If waiting is not desired, you can configure the [lock behavior](#lock-behavior) to either throw an exception immediately or skip locked rows.
+
+The `findFirstRow` and `findById` methods also support locking. Here's an example using `findById`:
 
 ```dart
 await session.db.transaction((transaction) async {
@@ -107,7 +111,5 @@ await session.db.transaction((transaction) async {
 ```
 
 :::info
-
 `LockBehavior.skipLocked` is particularly useful for implementing job queues or work distribution, where multiple workers can each grab unlocked rows without waiting on each other.
-
 :::
