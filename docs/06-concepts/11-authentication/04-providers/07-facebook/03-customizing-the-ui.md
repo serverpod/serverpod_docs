@@ -3,19 +3,7 @@
 When using the Facebook identity provider, you can customize the UI to your liking. You can use the `FacebookSignInWidget` to display the Facebook Sign-In flow in your own custom UI, or you can use the `FacebookAuthController` to build a completely custom authentication interface.
 
 :::info
-The `SignInWidget` uses the `FacebookSignInWidget` internally to display the Facebook Sign-In flow. You can also supply a custom `FacebookSignInWidget` to the `SignInWidget` to override the default behavior.
-
-```dart
-SignInWidget(
-  client: client,
-  facebookSignInWidget: FacebookSignInWidget(
-    client: client,
-    // Customize the widget
-    style: FacebookButtonStyle.blue,
-  ),
-)
-```
-
+The `SignInWidget` automatically detects and displays the Facebook sign-in flow when the `serverpod_auth_idp_flutter_facebook` package is installed and initialized. The Facebook provider registers itself dynamically with the sign-in widget.
 :::
 
 ## Using the `FacebookSignInWidget`
@@ -25,6 +13,8 @@ The `FacebookSignInWidget` handles the complete Facebook Sign-In flow for iOS, A
 You can customize the widget's appearance and behavior:
 
 ```dart
+import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
+
 FacebookSignInWidget(
   client: client,
   // Button customization
@@ -51,12 +41,12 @@ FacebookSignInWidget(
 )
 ```
 
-## Building a custom UI with the `FacebookAuthController`
+## Using the FacebookAuthController
 
 For more control over the UI, you can use the `FacebookAuthController` class, which provides all the authentication logic without any UI components. This allows you to build a completely custom authentication interface.
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
 
 final controller = FacebookAuthController(
   client: client,
@@ -93,6 +83,9 @@ final isAuthenticated = controller.isAuthenticated;
 // Get error message
 final errorMessage = controller.errorMessage;
 
+// Get error object
+final error = controller.error;
+
 // Listen to state changes
 controller.addListener(() {
   setState(() {
@@ -101,7 +94,7 @@ controller.addListener(() {
 });
 ```
 
-#### FacebookAuthController States
+### FacebookAuthController States
 
 - `FacebookAuthState.initializing` - Controller is initializing.
 - `FacebookAuthState.idle` - Ready for user interaction.

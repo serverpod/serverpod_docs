@@ -10,6 +10,20 @@ Below is a non-exhaustive list of some of the most common configuration options.
 
 You can customize the validation for Facebook account details before allowing sign-in. By default, the validation checks that the received account details contain a non-empty userIdentifier.
 
+The default validation logic:
+
+```dart
+static void validateFacebookAccountDetails(
+  final FacebookAccountDetails accountDetails,
+) {
+  if (accountDetails.userIdentifier.isEmpty) {
+    throw FacebookUserInfoMissingDataException();
+  }
+}
+```
+
+To customize validation, provide your own `facebookAccountDetailsValidation` function:
+
 ```dart
 final facebookIdpConfig = FacebookIdpConfig(
   appId: pod.getPassword('facebookAppId')!,
@@ -37,7 +51,7 @@ Users may choose not to share their email or other information during the Facebo
 The `facebookAccountDetailsValidation` callback receives a `FacebookAccountDetails` record with the following properties:
 
 | Property | Type | Description |
-| ---------- | ------ | ------------- |
+| -------- | ---- | ----------- |
 | `userIdentifier` | `String` | The Facebook user's unique identifier (UID) |
 | `email` | `String?` | The user's email address (may be null) |
 | `name` | `String?` | The user's display name from Facebook |
@@ -64,6 +78,8 @@ The properties available depend on the permissions requested and what the user c
 :::
 
 ### Configuring Facebook Sign-In on the App
+
+When using the external `serverpod_auth_idp_flutter_facebook` package, you can configure the App ID in your Flutter application.
 
 #### Passing Configuration in Code
 

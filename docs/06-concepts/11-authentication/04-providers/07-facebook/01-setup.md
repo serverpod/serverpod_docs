@@ -1,5 +1,7 @@
 # Setup
 
+Facebook authentication in Serverpod is provided through an external package that handles the complete sign-in flow on iOS, Android, Web, and macOS. Unlike other providers built into the core auth module, Facebook Sign-In requires an additional package installation.
+
 To set up **Sign in with Facebook**, you must create an App with use case **Authenticate with Facebook Login** on [Facebook for Developers](https://developers.facebook.com/) and configure your Serverpod application accordingly.
 
 :::note
@@ -150,7 +152,19 @@ For more details on configuration options, see the [configuration section](./con
 
 ## Client-side configuration
 
-Add the `serverpod_auth_idp_flutter` package to your Flutter app. The Facebook provider uses [`flutter_facebook_auth`](https://pub.dev/packages/flutter_facebook_auth) to handle the authentication flow. The documentation for this package should in most cases also apply to this setup.
+### Install Required Packages
+
+Add the `serverpod_auth_idp_flutter_facebook` package to your Flutter project:
+
+```bash
+flutter pub add serverpod_auth_idp_flutter_facebook
+```
+
+This package uses [`flutter_facebook_auth`](https://pub.dev/packages/flutter_facebook_auth) to handle the authentication flow. The documentation for that package should in most cases also apply to this setup.
+
+:::info
+Unlike providers such as Google or Apple that are built into the core `serverpod_auth_idp_flutter` package, Facebook authentication is provided as a separate external package. This keeps the core package lightweight while allowing you to opt-in to Facebook authentication when needed.
+:::
 
 ### Android
 
@@ -435,12 +449,12 @@ For more detailed macOS setup instructions, refer to the [flutter_facebook_auth 
 
 ## Present the authentication UI
 
-### Initializing the `FacebookSignInService`
+### Initializing the FacebookSignInService
 
 To use the FacebookSignInService, you need to initialize it in your main function. The initialization is done from the `initializeFacebookSignIn()` extension method on the `FlutterAuthSessionManager`.
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
 import 'package:your_client/your_client.dart';
 
 final client = Client('http://localhost:8080/')
@@ -466,12 +480,12 @@ For iOS and Android, the App ID is not required as the SDK reads credentials fro
 
 ### Using FacebookSignInWidget
 
-If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Facebook identity provider will be automatically detected and displayed in the sign-in widget.
+If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Facebook identity provider will be automatically detected and displayed in the sign-in widget (provided you've installed the `serverpod_auth_idp_flutter_facebook` package and initialized the service).
 
 You can also use the `FacebookSignInWidget` to include the Facebook authentication flow in your own custom UI:
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
 
 FacebookSignInWidget(
   client: client,
