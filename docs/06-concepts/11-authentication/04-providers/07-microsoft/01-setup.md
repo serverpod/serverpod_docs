@@ -18,27 +18,27 @@ You need to install the auth module before you continue, see [Setup](../../setup
    ![New App Registration](/img/authentication/providers/microsoft/2-register-new-app.png)
 
 4. Fill in the required fields:
-   - **Name**: Enter a name for your application (e.g., "MyApp Authentication")
+   - **Name**: Enter a name for your application (e.g., "MyApp Authentication").
    - **Supported account types**: Choose one of the following:
      - Single tenant only - Default Directory
      - Multiple Entra ID tenants
      - Any Entra ID Tenant + Personal Microsoft accounts
      - Personal accounts only
-   - **Redirect URI (optional)**: Leave this blank for now; we'll add platform-specific URIs later
+   - **Redirect URI (optional)**: Leave this blank for now. We'll add platform-specific URIs later.
 
    ![Microsoft App Setup](/img/authentication/providers/microsoft/3-ms.png)
 
 5. Click **Register** to create your app.
 
-## Get App Credentials
+## Get app credentials
 
-### Get the Client ID
+### Get the client ID
 
 After registration, you'll be redirected to the app overview page where you can find your **Application (client) ID**. Copy this value - you'll need it for server configuration.
 
 ![Client ID](/img/authentication/providers/microsoft/4-client-id.png)
 
-### Create a Client Secret
+### Create a client secret
 
 1. In your app's menu, navigate to **Certificates & secrets**.
 2. Under **Client secrets**, click **New client secret**.
@@ -52,15 +52,15 @@ After registration, you'll be redirected to the app overview page where you can 
 The client secret value is only shown once. Store it securely immediately after creation. Never commit this value to version control.
 :::
 
-### Get the Tenant ID (Optional)
+### Get the tenant ID (Optional)
 
 If you're restricting authentication to a specific tenant, you'll need your **Directory (tenant) ID**, which is also shown on the app overview page. For most applications, you can use one of these common values:
 
-- `common` - Allows both personal Microsoft accounts and work/school accounts (default)
-- `organizations` - Allows only work/school accounts
-- `consumers` - Allows only personal Microsoft accounts
+- `common`: Allows both personal Microsoft accounts and work/school accounts (default).
+- `organizations`: Allows only work/school accounts.
+- `consumers`: Allows only personal Microsoft accounts.
 
-## Configure Redirect URIs
+### Configure redirect URIs
 
 You need to configure redirect URIs for each platform you want to support.
 
@@ -69,7 +69,7 @@ You need to configure redirect URIs for each platform you want to support.
 
    ![Authentication Redirect](/img/authentication/providers/microsoft/6-authentication-redirect-uri.png)
 
-### Web
+#### Web
 
 1. Select **Web** as the platform.
 2. Add your redirect URI, typically in the format: `https://yourdomain.com/auth.html`
@@ -78,7 +78,7 @@ You need to configure redirect URIs for each platform you want to support.
 
 3. Click **Configure**.
 
-### iOS and macOS
+#### iOS and macOS
 
 1. Select **iOS / macOS** as the platform.
 2. For the Bundle ID, enter your app's bundle identifier (e.g., `com.yourcompany.yourapp`).
@@ -91,7 +91,7 @@ You need to configure redirect URIs for each platform you want to support.
 For iOS/macOS, Microsoft will automatically generate the redirect URI based on your bundle ID. You can also add custom redirect URIs as needed.
 :::
 
-### Android
+#### Android
 
 1. Select **Android** as the platform.
 2. Enter your Package name (e.g., `com.yourcompany.yourapp`).
@@ -109,9 +109,9 @@ For iOS/macOS, Microsoft will automatically generate the redirect URI based on y
 For development, use your debug keystore signature hash. For production builds, use your release keystore signature hash. You can add both to Microsoft Entra ID during setup.
 :::
 
-## Server-side Configuration
+## Server-side configuration
 
-### Store the Credentials
+### Store the credentials
 
 Add your Microsoft credentials to the `config/passwords.yaml` file, or set them as environment variables `SERVERPOD_PASSWORD_microsoftClientId`, `SERVERPOD_PASSWORD_microsoftClientSecret`, and `SERVERPOD_PASSWORD_microsoftTenant`.
 
@@ -170,7 +170,7 @@ identityProviderBuilders: [
 
 :::
 
-### Expose the Endpoint
+### Expose the endpoint
 
 Create an endpoint that extends `MicrosoftIdpBaseEndpoint` to expose the Microsoft authentication API:
 
@@ -180,7 +180,7 @@ import 'package:serverpod_auth_idp_server/providers/microsoft.dart';
 class MicrosoftIdpEndpoint extends MicrosoftIdpBaseEndpoint {}
 ```
 
-### Generate and Migrate
+### Generate and migrate
 
 Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 

@@ -89,7 +89,7 @@ final controller = MicrosoftAuthController(
 await controller.signIn();
 ```
 
-### MicrosoftAuthController State Management
+### MicrosoftAuthController state management
 
 Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
 
@@ -114,7 +114,7 @@ controller.addListener(() {
 });
 ```
 
-#### MicrosoftAuthController States
+#### MicrosoftAuthController states
 
 - `MicrosoftAuthState.idle` - Ready for user interaction.
 - `MicrosoftAuthState.loading` - Processing a sign-in request.
