@@ -319,7 +319,7 @@ import 'package:serverpod_auth_idp_server/core.dart';
 
 import 'my_provider_idp.dart';
 
-class MyProviderIdpEndpoint extends Endpoint {
+class MyProviderIdpEndpoint extends IdpBaseEndpoint {
   MyProviderIdp get myProviderIdp =>
       AuthServices.getIdentityProvider<MyProviderIdp>();
 
