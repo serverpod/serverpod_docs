@@ -92,7 +92,7 @@ Using the previously created `config` object, create the `OAuth2PkceUtil` on you
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 
-class MyProviderIdpEndpoint extends Endpoint {
+class MyProviderIdpEndpoint extends IdpBaseEndpoint {
   final oauth2Util = OAuth2PkceUtil(config: config);
 
   Future<AuthSuccess> authenticate(
