@@ -90,7 +90,7 @@ For more details on configuration options, such as customizing password requirem
 If you are using the `config/passwords.yaml` file or environment variables, you can use the `EmailIdpConfigFromPasswords` constructor to automatically load the secret pepper. It will expect the `emailSecretHashPepper` key or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable to be set with the secret pepper value.
 :::
 
-## Client-side configuration
+## Flutter-side configuration
 
 If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Email identity provider will be automatically detected and displayed in the sign-in widget.
 

@@ -61,7 +61,7 @@ Cursor-based pagination is an alternative method to the traditional limit-offset
 
 ### How it works
 
-In cursor-based pagination, the client provides a cursor as a reference point, and the server returns data relative to that cursor. This cursor is usually an `id`.
+In cursor-based pagination, the Flutter app provides a cursor as a reference point, and the server returns data relative to that cursor. This cursor is usually an `id`.
 
 ### Implementing cursor-based pagination
 
@@ -82,7 +82,7 @@ In cursor-based pagination, the client provides a cursor as a reference point, a
     For the subsequent requests, use the cursor (for example, the last `id` from the previous result) to fetch the next set of records:
 
     ```dart
-    int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the client
+    int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the Flutter app
 
     var companies = await Company.db.find(
     session,
@@ -93,7 +93,7 @@ In cursor-based pagination, the client provides a cursor as a reference point, a
     ```
 
 3. **Returning the cursor**:
-    When returning data to the client, also return the cursor, so it can be used to compute the starting point for the next page.
+    When returning data to the Flutter app, also return the cursor, so it can be used to compute the starting point for the next page.
 
     ```dart
     return {

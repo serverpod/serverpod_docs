@@ -46,7 +46,7 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
 ```
 
 :::tip
-This is useful to ensure password policies on the server-side. It is a best practice to pair it with a configuration on the client-side to provide a better UX when creating a new password. The `EmailSignInWidget` and `EmailAuthController` have a `passwordRequirements` parameter that can be used to configure the password requirements.
+This is useful to ensure password policies on the server-side. It is a best practice to pair it with a configuration on the Flutter-side to provide a better UX when creating a new password. The `EmailSignInWidget` and `EmailAuthController` have a `passwordRequirements` parameter that can be used to configure the password requirements.
 :::
 
 ### Custom Verification Code Generation

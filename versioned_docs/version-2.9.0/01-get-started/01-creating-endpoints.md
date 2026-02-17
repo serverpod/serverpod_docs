@@ -101,13 +101,13 @@ $ cd magic_recipe/magic_recipe_server
 $ serverpod generate
 ```
 
-`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
+`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required Flutter app code so that you can call your new `generateRecipe` method from your app.
 
 :::note
-When writing server-side code, in most cases, you want it to be "stateless". This means you want to avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status message to your client. If you want to run more complex computations, you can schedule a [future call](../06-concepts/14-scheduling.md), but you usually shouldn't keep the connection open for longer durations. The `Session` object contains all the information you need to access the database and other features of Serverpod. It is similar to the `BuildContext` in Flutter.
+When writing server-side code, in most cases, you want it to be "stateless". This means you want to avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status message to your Flutter app. If you want to run more complex computations, you can schedule a [future call](../06-concepts/14-scheduling.md), but you usually shouldn't keep the connection open for longer durations. The `Session` object contains all the information you need to access the database and other features of Serverpod. It is similar to the `BuildContext` in Flutter.
 :::
 
-## Call the endpoint from the client
+## Call the endpoint from the Flutter app
 
 Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Modify the `_callHello` method to call your new endpoint method and rename it to `_callGenerateRecipe`. It should look like this; feel free to just copy and paste:
 
@@ -222,4 +222,4 @@ Try out the app by clicking the button to get a new recipe. The app will call th
 
 ## Next steps
 
-For now, you are just returning a `String` to the client. In the next section, you will create a custom data model to return structured data. Serverpod makes it easy by handling all the serialization and deserialization for you.
+For now, you are just returning a `String` to the app. In the next section, you will create a custom data model to return structured data. Serverpod makes it easy by handling all the serialization and deserialization for you.
