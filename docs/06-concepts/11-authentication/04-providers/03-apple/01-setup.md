@@ -37,6 +37,8 @@ development:
     -----BEGIN PRIVATE KEY-----
     MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
     -----END PRIVATE KEY-----
+  # Optional: Required only if you want Apple Sign In to work on Android.
+  appleAndroidPackageIdentifier: 'com.example.app'
 ```
 
 :::warning
@@ -72,6 +74,8 @@ void run(List<String> args) async {
         teamId: pod.getPassword('appleTeamId')!,
         keyId: pod.getPassword('appleKeyId')!,
         key: pod.getPassword('appleKey')!,
+        // Optional: Required only for Android support.
+        androidPackageIdentifier: pod.getPassword('appleAndroidPackageIdentifier'),
       ),
     ],
   );
@@ -97,6 +101,7 @@ You can use the `AppleIdpConfigFromPasswords` constructor in replacement of the 
    - `appleTeamId`
    - `appleKeyId`
    - `appleKey`
+   - `appleAndroidPackageIdentifier` (optional, for Android support)
 
 Or the following environment variables:
 
@@ -106,6 +111,7 @@ Or the following environment variables:
    - `SERVERPOD_PASSWORD_appleTeamId`
    - `SERVERPOD_PASSWORD_appleKeyId`
    - `SERVERPOD_PASSWORD_appleKey`
+   - `SERVERPOD_PASSWORD_appleAndroidPackageIdentifier` (optional, for Android support)
 :::
 
 Then, extend the abstract endpoint to expose it on the server:
@@ -126,6 +132,7 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 - `teamId`: Required. The team identifier of the parent Apple Developer account.
 - `keyId`: Required. The ID of the key associated with the Sign in with Apple service.
 - `key`: Required. The secret contents of the private key file received from Apple.
+- `androidPackageIdentifier`: Optional. The Android package identifier for the app. Required for Apple Sign In to work on Android. When configured, the callback route automatically redirects Android clients back to the app using an intent URI.
 
 For more details on configuration options, see the [configuration section](./configuration).
 
@@ -151,7 +158,14 @@ Enable the Sign in with Apple capability in your Xcode project:
 
 ### Android
 
-For Android, you need to configure the redirect URI in your app. The redirect URI should match what you configured in Apple Developer Portal and your server.
+Apple Sign In on Android works through a web-based OAuth flow. When the user completes authentication, Apple redirects to your server's callback route, which then redirects back to your app using an Android intent URI with the `signinwithapple` scheme.
+
+To enable this:
+
+1. Add the `androidPackageIdentifier` to your `AppleIdpConfig` (or the `appleAndroidPackageIdentifier` key in `passwords.yaml`). This must match your app's Android package name (e.g., `com.example.app`).
+2. Configure the redirect URI in your Apple Developer Portal to point to your server's callback route (e.g., `https://example.com/auth/callback`).
+
+No additional client-side Android configuration is needed beyond what the [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple) package requires.
 
 ### Web
 
