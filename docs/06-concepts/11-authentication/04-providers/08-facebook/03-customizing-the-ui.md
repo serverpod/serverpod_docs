@@ -41,7 +41,7 @@ FacebookSignInWidget(
 )
 ```
 
-## Using the FacebookAuthController
+## Building a custom UI with the `FacebookAuthController`
 
 For more control over the UI, you can use the `FacebookAuthController` class, which provides all the authentication logic without any UI components. This allows you to build a completely custom authentication interface.
 
@@ -66,7 +66,7 @@ final controller = FacebookAuthController(
 await controller.signIn();
 ```
 
-### FacebookAuthController State Management
+### FacebookAuthController state management
 
 Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
 
@@ -94,7 +94,7 @@ controller.addListener(() {
 });
 ```
 
-### FacebookAuthController States
+### FacebookAuthController states
 
 - `FacebookAuthState.initializing` - Controller is initializing.
 - `FacebookAuthState.idle` - Ready for user interaction.

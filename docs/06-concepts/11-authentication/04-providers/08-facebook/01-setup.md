@@ -32,8 +32,8 @@ After creating your app, click the **Customize** button next to **"Authenticate 
 
 Configure the permissions your application will request:
 
-- `public_profile` - Added by default, allows access to basic profile information
-- `email` - Recommended. Allows to read a person's primary email address
+- `public_profile`: Added by default, allows access to basic profile information.
+- `email`: Recommended. Allows to read a person's primary email address.
 
 ![Permissions and Features](/img/authentication/providers/facebook/2-permissions.png)
 
@@ -58,7 +58,7 @@ Set up your platforms by selecting and configuring:
 
 Save your changes after completing the configuration.
 
-### Get App Credentials
+### Get app credentials
 
 1. Go to **App settings** > **Basic** in your Facebook App Dashboard to retrieve:
    - **App ID**
@@ -70,9 +70,9 @@ Save your changes after completing the configuration.
 The **App secret** is sensitive. Keep it confidential and never commit it to version control. The **Client token** is required for some platforms (especially mobile and web).
 :::
 
-## Server-side Configuration
+## Server-side configuration
 
-### Store the Credentials
+### Store the credentials
 
 Add your Facebook credentials to the `config/passwords.yaml` file, or set them as environment variables `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret`.
 
@@ -86,7 +86,7 @@ development:
 Keep your App secret confidential. Never commit this value to version control. Store it securely using environment variables or secret management.
 :::
 
-### Configure the Facebook Identity Provider
+### Configure the Facebook identity provider
 
 In your main `server.dart` file, configure the Facebook identity provider:
 
@@ -129,7 +129,7 @@ identityProviderBuilders: [
 
 :::
 
-### Expose the Endpoint
+### Expose the endpoint
 
 Create an endpoint that extends `FacebookIdpBaseEndpoint` to expose the Facebook authentication API:
 
@@ -139,7 +139,7 @@ import 'package:serverpod_auth_idp_server/providers/facebook.dart';
 class FacebookIdpEndpoint extends FacebookIdpBaseEndpoint {}
 ```
 
-### Generate and Migrate
+### Generate and migrate
 
 Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
@@ -152,7 +152,7 @@ For more details on configuration options, see the [configuration section](./con
 
 ## Client-side configuration
 
-### Install Required Packages
+### Install required packages
 
 Add the `serverpod_auth_idp_flutter_facebook` package to your Flutter project:
 
@@ -178,7 +178,7 @@ defaultConfig {
 }
 ```
 
-#### Add Facebook SDK Configuration
+#### Add Facebook SDK configuration
 
 1. Open or create `/android/app/src/main/res/values/strings.xml`:
 
@@ -229,7 +229,7 @@ For Android 11 and above, add the following inside the `<manifest>` element:
 </manifest>
 ```
 
-#### Configure Android Platform in Facebook
+#### Configure Android platform in Facebook
 
 In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **Android** tab.
 
@@ -291,7 +291,7 @@ platform :ios, '12.0'
 
 Also set the deployment target to 12.0 in Xcode (**Runner** > **General** > **Deployment Info**).
 
-#### Configure iOS Platform in Facebook
+#### Configure iOS platform in Facebook
 
 In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **iOS** tab.
 
@@ -373,7 +373,7 @@ await client.auth.initializeFacebookSignIn(
 );
 ```
 
-#### Configure Web Platform in Facebook
+#### Configure Web platform in Facebook
 
 In the Facebook App Dashboard, go to **Use cases** > **Customize** > **Quickstart** and select the **Web** tab.
 
@@ -433,9 +433,9 @@ await client.auth.initializeFacebookSignIn(
 );
 ```
 
-#### Configure macOS Platform in Facebook
+#### Configure macOS platform in Facebook
 
-**1. Configure Settings**
+**1. Configure settings**
 
 Go to **Use cases** > **Customize** > **Settings** and configure the following:
 
@@ -449,7 +449,7 @@ For more detailed macOS setup instructions, refer to the [flutter_facebook_auth 
 
 ## Present the authentication UI
 
-### Initializing the FacebookSignInService
+### Initializing the `FacebookSignInService`
 
 To use the FacebookSignInService, you need to initialize it in your main function. The initialization is done from the `initializeFacebookSignIn()` extension method on the `FlutterAuthSessionManager`.
 
@@ -478,7 +478,7 @@ client.auth.initializeFacebookSignIn(
 For iOS and Android, the App ID is not required as the SDK reads credentials from native configuration.
 :::
 
-### Using FacebookSignInWidget
+### Using the `FacebookSignInWidget`
 
 If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Facebook identity provider will be automatically detected and displayed in the sign-in widget (provided you've installed the `serverpod_auth_idp_flutter_facebook` package and initialized the service).
 
