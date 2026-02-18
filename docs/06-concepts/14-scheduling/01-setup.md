@@ -10,7 +10,7 @@ To create future calls, extend the `FutureCall` class and define the methods you
 import 'package:serverpod/serverpod.dart';
 
 class ExampleFutureCall extends FutureCall {
-  Future<void> doWork(Session session, String data) async {
+  Future<void> doWork(Session session) async {
     // Do something interesting in the future here.
   }
 
@@ -21,7 +21,7 @@ class ExampleFutureCall extends FutureCall {
 ```
 
 :::info
-For a method to be recognized by Serverpod as a future call, it must return a `Future<void>` and take at least two parameters. The first parameter must be a [`Session`](../sessions) object. You can pass any serializable types as other parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed. `Streaming` parameters are not supported.
+For a method to be recognized by Serverpod as a future call, it must return a `Future<void>` and have at least one positional parameter which must be a [`Session`](../sessions) object. You can pass any serializable types as other parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed. `Streaming` parameters are not supported.
 :::
 
 :::warning
@@ -72,7 +72,7 @@ Invoke a future call 1 hour from now by calling `callWithDelay`.
 await pod.futureCalls
     .callWithDelay(const Duration(hours: 1))
     .example
-    .doWork('1');
+    .doWork();
 ```
 
 Invoke a future call at a specific time and/or date in the future by calling `callAtTime`.
@@ -81,7 +81,7 @@ Invoke a future call at a specific time and/or date in the future by calling `ca
 await pod.futureCalls
     .callAtTime(DateTime(2026, 1, 1))
     .example
-    .doOtherWork('2');
+    .doOtherWork('1');
 ```
 
 :::info
@@ -97,7 +97,7 @@ await pod.futureCalls
       identifier: 'an-identifying-string',
     )
     .example
-    .doWork('1');
+    .doWork();
 ```
 
 This identifier can then be used to cancel all future calls scheduled with said identifier.
