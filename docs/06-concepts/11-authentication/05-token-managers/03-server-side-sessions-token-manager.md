@@ -52,6 +52,105 @@ final serverSideSessionsConfig = ServerSideSessionsConfigFromPasswords(
 );
 ```
 
+### Attaching custom metadata to sessions
+
+You can attach custom metadata to each server-side session by providing an `onSessionCreated` callback. This is useful for storing device information, IP address, user agent, or any other data you need to query or display later (for example, in a "sessions" or "devices" list). The callback runs when a session is created, within the same transaction as the session insert.
+
+Define a server-only table that relates to `ServerSideSession` and store your metadata there. Example schema:
+
+```yaml
+class: SessionMetadata
+serverOnly: true
+table: session_metadata
+fields:
+  ### The [ServerSideSession] this metadata belongs to
+  serverSideSession: module:serverpod_auth_core:ServerSideSession?, relation(onDelete=Cascade)
+
+  ### The name of the token
+  name: String?
+
+  ### Device information for the session
+  deviceName: String?
+
+  ### IP address from which the session was created
+  ipAddress: String?
+
+  ### User agent string
+  userAgent: String?
+
+indexes:
+  server_side_session_id_unique_idx:
+    fields: serverSideSessionId
+    unique: true
+```
+
+Then configure the callback in your server-side sessions config:
+
+```dart
+ServerSideSessionsConfigFromPasswords(
+  onSessionCreated:
+      (
+        final session, {
+        required final authUserId,
+        required final serverSideSessionId,
+        required final transaction,
+      }) async {
+        await SessionMetadata.db.insertRow(
+          session,
+          SessionMetadata(
+            serverSideSessionId: serverSideSessionId,
+            name: 'general-session',
+            ipAddress: session.request?.connectionInfo.remote.address.toString(),
+            userAgent: session.request?.headers.userAgent,
+          ),
+          transaction: transaction,
+        );
+      },
+),
+```
+
+To revoke tokens based on your custom metadata, query the metadata table for the session IDs you want to revoke and call `revokeToken` for each:
+
+```dart
+final tokenMetadata = await SessionMetadata.db.find(
+  session,
+  where: (final row) => row.deviceName.equals('Old Device'),
+);
+
+for (final row in tokenMetadata) {
+  await AuthServices.instance.tokenManager.revokeToken(
+    session,
+    tokenId: row.serverSideSessionId.toString(),
+  );
+}
+```
+
+#### Attaching metadata when issuing tokens from an endpoint
+
+The `onSessionCreated` callback is global and runs for every new session (including those created by identity providers). When you create a token from an endpoint—for example, a personal access token (PAT) or CLI token—you often have endpoint-specific parameters (e.g. a token name or label) that the callback cannot see. In that case, issue the token with `AuthServices.instance.tokenManager.issueToken`, then use the returned `AuthSuccess.serverSideSessionId` to insert your metadata with the endpoint's parameters:
+
+```dart
+final authSuccess = await AuthServices.instance.tokenManager.issueToken(
+  session,
+  authUserId: userId,
+  method: 'pat',
+  scopes: {Scope.admin},
+);
+
+await SessionMetadata.db.insertRow(
+  session,
+  SessionMetadata(
+    serverSideSessionId: authSuccess.serverSideSessionId,
+    name: tokenName, // from your endpoint parameter
+    deviceName: deviceName, // from your endpoint parameter
+    ipAddress: session.request?.connectionInfo.remote.address.toString(),
+    userAgent: session.request?.headers.userAgent,
+  ),
+);
+```
+
+See [Issuing Tokens](./managing-tokens#issuing-tokens) in Managing tokens for more context.
+
 ## Client-side configuration
 
 When using the `ServerSideSessionsTokenManager` in the server, no extra configuration is needed on the client. It will automatically include the session token in requests to the server. In case the session expires or is revoked, the client will automatically sign the user out and redirect to the login page.

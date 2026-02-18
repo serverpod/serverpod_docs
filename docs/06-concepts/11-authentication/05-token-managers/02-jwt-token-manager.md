@@ -106,6 +106,103 @@ final jwtConfig = JwtConfigFromPasswords(
 );
 ```
 
+### Attaching custom metadata to tokens
+
+You can attach custom metadata to each JWT refresh token by providing an `onRefreshTokenCreated` callback. This is useful for storing device information, IP address, user agent, or any other data you need to query or use later (for example, to list or revoke tokens by device). The callback runs when a refresh token is created, within the same transaction as the token insert.
+
+Define a server-only table that relates to `RefreshToken` and store your metadata there. Example schema:
+
+```yaml
+class: TokenMetadata
+serverOnly: true
+table: token_metadata
+fields:
+  ### The [RefreshToken] this metadata belongs to
+  refreshToken: module:serverpod_auth_core:RefreshToken?, relation(onDelete=Cascade)
+
+  ### The name of the token
+  name: String?
+
+  ### Device information for the token
+  deviceName: String?
+
+  ### IP address from which the token was created
+  ipAddress: String?
+
+  ### User agent string
+  userAgent: String?
+
+indexes:
+  refresh_token_id_unique_idx:
+    fields: refreshTokenId
+    unique: true
+```
+
+Then configure the callback in your JWT config:
+
+```dart
+JwtConfigFromPasswords(
+  onRefreshTokenCreated:
+      (
+        final session, {
+        required final authUserId,
+        required final refreshTokenId,
+        required final transaction,
+      }) async {
+        await TokenMetadata.db.insertRow(
+          session,
+          TokenMetadata(
+            refreshTokenId: refreshTokenId,
+            name: 'general-token',
+            ipAddress: session.request?.connectionInfo.remote.address.toString(),
+            userAgent: session.request?.headers.userAgent,
+          ),
+          transaction: transaction,
+        );
+      },
+),
+```
+
+To revoke tokens based on your custom metadata, query the metadata table for the token IDs you want to revoke and call `revokeToken` for each:
+
+```dart
+final tokenMetadata = await TokenMetadata.db.find(
+  session,
+  where: (final row) => row.deviceName.equals('Old Device'),
+);
+
+for (final row in tokenMetadata) {
+  await AuthServices.instance.tokenManager.revokeToken(
+    session,
+    tokenId: row.refreshTokenId.toString(),
+  );
+}
+```
+
+#### Attaching metadata when issuing tokens from an endpoint
+
+The `onRefreshTokenCreated` callback is global and runs for every new refresh token (including those created by identity providers). When you create a token from an endpoint—for example, a personal access token (PAT) or CLI token—you often have endpoint-specific parameters (e.g. a token name or label) that the callback cannot see. In that case, issue the token with `AuthServices.instance.tokenManager.issueToken`, then use the returned `AuthSuccess.jwtRefreshTokenId` to insert your metadata with the endpoint's parameters:
+
+```dart
+final authSuccess = await AuthServices.instance.tokenManager.issueToken(
+  session,
+  authUserId: userId,
+  method: 'pat',
+  scopes: {Scope.admin},
+);
+
+await TokenMetadata.db.insertRow(
+  session,
+  TokenMetadata(
+    refreshTokenId: authSuccess.jwtRefreshTokenId,
+    name: tokenName, // from your endpoint parameter
+    deviceName: deviceName, // from your endpoint parameter
+    ipAddress: session.request?.connectionInfo.remote.address.toString(),
+    userAgent: session.request?.headers.userAgent,
+  ),
+);
+```
+
 ## Client-side configuration
 
 When using the `JwtTokenManager` in the server, no extra configuration is needed on the client. It will automatically include the access token in requests to the server and eagerly refresh the token when it is 30 seconds away from expiring. In case the refresh token expires, the client will automatically sign the user out and redirect to the login page.
