@@ -39,5 +39,5 @@ Install the extension from the VS Code Marketplace: __[Serverpod extension](http
 
 __[Serverpod Insights](tools/insights)__ is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 
-![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
+![Serverpod Insights](/img/serverpod-insights.webp)
 
