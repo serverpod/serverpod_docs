@@ -30,7 +30,7 @@ If everything is correctly configured, the help for the `serverpod` command is n
 ### Serverpod Insights
 Serverpod Insights is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is currently in beta and only available for Mac, but we will be adding support for more platforms in the future.
 
-![Serverpod Insights](https://serverpod.dev/assets/img/serverpod-screenshot.webp)
+![Serverpod Insights](/img/serverpod-insights.webp)
 
 :::info
 
