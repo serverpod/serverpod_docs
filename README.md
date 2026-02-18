@@ -44,6 +44,8 @@ This command starts a local development server and opens up a browser window. Mo
 
 ### Add version
 
+Note: Patch releases do not require adding a new docs version.
+
 Make sure that the documentation is all up-to-date then run:
 
 ```bash
