@@ -18,31 +18,36 @@ For other platforms, see the [Carapace installation guide](https://carapace-sh.g
 
 #### Bash
 
-Install the completion spec and enable Carapace in your shell:
+Install the completion spec:
 
 ```bash
 serverpod completion install --tool carapace
-source <(carapace serverpod)
 ```
 
-To make this permanent, add `source <(carapace _carapace)` to your `~/.bashrc`.
+Then add the following to your `~/.bashrc` to enable Carapace:
+
+```bash
+source <(carapace _carapace)
+```
+
+Restart your shell or run `source ~/.bashrc` to apply.
 
 #### Zsh
 
-Install the completion spec and enable Carapace in your shell:
+Install the completion spec:
 
 ```bash
 serverpod completion install --tool carapace
-zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-source <(carapace serverpod)
 ```
 
-To make this permanent, add the following to your `~/.zshrc`:
+Then add the following to your `~/.zshrc` to enable Carapace:
 
 ```bash
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 source <(carapace _carapace)
 ```
+
+Restart your shell or run `source ~/.zshrc` to apply.
 
 #### Other shells
 
