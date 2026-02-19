@@ -1,4 +1,4 @@
-# Command Line Completion
+# Command line completion
 
 As a `serverpod` user, you can enable command line completion in most shells. The Serverpod CLI supports completion through [Carapace](https://carapace.sh/), which provides tab-completion for commands, options, and their values in bash, zsh, fish, PowerShell, and more.
 
