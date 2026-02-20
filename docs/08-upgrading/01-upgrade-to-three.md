@@ -182,7 +182,7 @@ pod.webServer.addRoute(
 ```dart
 pod.webServer.addRoute(
   StaticRoute.directory(Directory('web/static')),
-  '/static/**',
+  '/static/',
 );
 ```
 
@@ -194,7 +194,7 @@ pod.webServer.addRoute(
     Directory('web/static'),
     cacheControlFactory: StaticRoute.publicImmutable(maxAge: 3600),
   ),
-  '/static/**',
+  '/static/',
 );
 ```
 
@@ -217,7 +217,7 @@ pod.webServer.addRoute(
       immutable: true,
     ),
   ),
-  '/static/**',
+  '/static/',
 );
 ```
 

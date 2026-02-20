@@ -282,7 +282,7 @@ pod.webServer.addRoute(
     Directory('web/admin'),
     host: 'admin.example.com',
   ),
-  '/static/**',
+  '/static/',
 );
 
 // SPA for a specific host

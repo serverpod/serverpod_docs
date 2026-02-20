@@ -13,7 +13,7 @@ final staticDir = Directory('web/static');
 
 pod.webServer.addRoute(
   StaticRoute.directory(staticDir),
-  '/static/**',
+  '/static/',
 );
 ```
 
@@ -22,9 +22,8 @@ For example, `web/static/logo.png` becomes accessible at `/static/logo.png`.
 
 :::info
 
-The `/**` tail-match wildcard is required for serving directories. It matches all
-paths under the prefix, allowing `StaticRoute` to map URLs to file system paths.
-See [Routing](routing#wildcards) for more on wildcards.
+`StaticRoute.directory()` automatically handles tail matching, so you don't need
+to add `**` to the path. The route will serve all files under the given prefix.
 
 :::
 
@@ -39,7 +38,7 @@ pod.webServer.addRoute(
     staticDir,
     cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(minutes: 5)),
   ),
-  '/static/**',
+  '/static/',
 );
 ```
 
@@ -67,7 +66,7 @@ pod.webServer.addRoute(
     cacheBustingConfig: cacheBustingConfig,
     cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(minutes: 5)),
   ),
-  '/static/**',
+  '/static/',
 );
 ```
 
