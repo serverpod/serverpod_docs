@@ -54,6 +54,10 @@ final authSuccess = await AuthServices.instance.tokenManager.issueToken(
 );
 ```
 
+#### Attaching metadata to tokens
+
+It is possible to attach metadata to tokens using either global callbacks configured on each token manager or by inserting a metadata row right after issuing the token. For more details, see the specific configuration sections for [Server-Side Sessions](./server-side-sessions-token-manager#attaching-custom-metadata-to-sessions) and [JWT](./jwt-token-manager#attaching-custom-metadata-to-tokens).
+
 ### Validating Tokens
 
 Tokens are validated automatically by the authentication handler. You can also validate tokens manually:
@@ -74,7 +78,7 @@ if (authInfo != null) {
 
 ### Revoking Tokens
 
-Revoke specific tokens:
+Revoke specific tokens by token ID:
 
 ```dart
 await AuthServices.instance.tokenManager.revokeToken(
@@ -82,6 +86,8 @@ await AuthServices.instance.tokenManager.revokeToken(
   tokenId: 'token-id-here',
 );
 ```
+
+When using custom metadata on [Server-Side Sessions](./server-side-sessions-token-manager#attaching-custom-metadata-to-sessions) or [JWT](./jwt-token-manager#attaching-custom-metadata-to-tokens), you can obtain token IDs from your metadata tables (for example, by device or user agent) and pass them to `revokeToken` to revoke by that criteria.
 
 Revoke all tokens for a user:
 
