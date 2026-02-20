@@ -80,7 +80,7 @@ Routes are added with a path pattern:
 pod.webServer.addRoute(UserRoute(), '/api/users');
 
 // Path with wildcard
-pod.webServer.addRoute(StaticRoute.directory(Directory('web')), '/static/**');
+pod.webServer.addRoute(StaticRoute.directory(Directory('web')), '/static/');
 ```
 
 Routes are matched in the order they were added.
@@ -115,7 +115,7 @@ For serving CSS, JavaScript, images, or other static assets:
 ```dart
 pod.webServer.addRoute(
   StaticRoute.directory(Directory('web/static')),
-  '/static/**',
+  '/static/',
 );
 ```
 
