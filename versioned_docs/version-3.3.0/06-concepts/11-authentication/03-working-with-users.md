@@ -107,6 +107,34 @@ await AuthServices.instance.userProfiles.changeFullName(session, authUserId, 'my
 
 For the full list of operations, see the [UserProfiles](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/UserProfiles-class.html) class documentation.
 
+### User profile callbacks
+
+You can react when a user profile is created or updated by using the `UserProfileConfig` callbacks. Configure them when initializing auth services on the `pod` object via the `userProfileConfig` parameter.
+
+:::warning
+All callbacks receive a `transaction` parameter that should be used on all database operations performed inside the callback. Failing to pass the transaction might lead to entries not being found or changes not being rolled back together.
+:::
+
+| Callback | When | Purpose |
+| -------- | ---- | ------- |
+| `onBeforeUserProfileCreated` | Before a profile is created | Receive and return `UserProfileData` to modify defaults (user name, full name, email). |
+| `onAfterUserProfileCreated` | After a profile is created | Run logic that depends on the new profile (e.g. related data, default image). |
+| `onBeforeUserProfileUpdated` | Before a profile is updated (name, full name, or picture) | Receive and return `UserProfileData` to enforce rules or transform values. |
+| `onAfterUserProfileUpdated` | After a profile is updated | Sync related data or trigger side effects. |
+
+Example using `onAfterUserProfileCreated`:
+
+```dart
+pod.initializeAuthServices(
+  ...
+  userProfileConfig: UserProfileConfig(
+    onAfterUserProfileCreated: (session, userProfile, {required transaction}) async {
+      // Do something with the new profile (e.g. create related data, set default image)
+    },
+  ),
+);
+```
+
 ### Accessing user profiles from the app
 
 To access the user profile from your Flutter app, you can use the `userProfileInfo` endpoint that is included in the authentication module:
@@ -175,7 +203,7 @@ class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {
 
 ### Setting a default user image
 
-When logging in from some providers, the user image is automatically fetched and set as the user's profile picture - such as with Google Sign In. However, when an image is not found or the provider does not expose the picture, it is possible to set a default user image using the `UserProfileConfig` object.
+When logging in from some providers, the user image is automatically fetched and set as the user's profile picture - such as with Google Sign In. However, when an image is not found or the provider does not expose the picture, you can set a default user image using the `onAfterUserProfileCreated` callback in `UserProfileConfig` (see [User profile callbacks](#user-profile-callbacks) for the full set of callbacks).
 
 ```dart
   pod.initializeAuthServices(
