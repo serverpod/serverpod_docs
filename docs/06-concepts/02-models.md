@@ -204,10 +204,10 @@ indexes:
 
 **Additional Restrictions**:
 
-- You can only extend classes from your own project, not from modules.
+- You can only extend classes from your own project or from [shared packages](shared-packages), not from modules.
 - Child classes cannot redefine fields that exist in parent classes.
 
-Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes.
+Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes. To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](shared-packages).
 
 ### Sealed Classes
 
