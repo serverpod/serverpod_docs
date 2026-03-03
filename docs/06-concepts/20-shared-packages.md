@@ -6,7 +6,13 @@ Models and the protocol file are generated in the shared package's own directory
 
 ## Setup
 
-### 1. Create the shared package
+To create a shared package, follow the steps below.
+
+:::info
+Currently, the setup of shared packages is manual. In the future, a command will be added to the Serverpod CLI to allow an easy setup.
+:::
+
+### Create the shared package
 
 Create a new Dart package (e.g., `my_shared_package`) with a minimal `pubspec.yaml`:
 
@@ -27,7 +33,7 @@ dependencies:
 Use the same Serverpod version as your project. Replace `SERVERPOD_VERSION` with your Serverpod version (e.g., `3.4.0`).
 :::
 
-### 2. Add model files
+### Add model files
 
 Place your `.spy.yaml` model files anywhere under the package's `lib` directory:
 
@@ -53,7 +59,7 @@ fields:
   createdAt: DateTime, default=now
 ```
 
-### 3. Configure the server project
+### Configure the server project
 
 Add the shared package to your server's `config/generator.yaml`:
 
@@ -64,7 +70,7 @@ shared_packages:
 
 Paths are relative to the server project directory. You can list multiple shared packages.
 
-### 4. Generate code
+### Generate the code
 
 Run `serverpod generate` from your server directory.
 
@@ -94,7 +100,7 @@ Then, add the export for the `protocol.dart` file to the shared package's `lib/m
 export 'src/generated/protocol.dart';
 ```
 
-### 5. Add the dependency
+### Add the dependency to the server and client
 
 Add the shared package to both your server and client (or Flutter app) `pubspec.yaml`:
 
@@ -105,11 +111,15 @@ dependencies:
     path: ../my_shared_package
 ```
 
+Now you are ready to use the shared package in your server and client code!
+
 ## Using shared models
 
-### In server and client code
+The shared package is nothing more than a regular Dart package that contains the models and the protocol file.
 
-Import the shared package and use the generated classes:
+### Importing the package
+
+You can import it in your server and client code just like any other package and use the generated classes:
 
 ```dart
 import 'package:my_shared_package/my_shared_package.dart';
