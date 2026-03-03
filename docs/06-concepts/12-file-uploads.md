@@ -143,14 +143,16 @@ import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
 After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your GCP bucket to be accessible on a custom domain through a load balancer. You should add the cloud storage before starting your pod. The `bucket` parameter refers to the GCP bucket name (you can find it in the console) and the `publicHost` is the domain name used to access the bucket via https.
 
 ```dart
-  pod.addCloudStorage(gcp.GoogleCloudStorage(
+pod.addCloudStorage(
+  gcp.GoogleCloudStorage(
     serverpod: pod,
     storageId: 'public',
     public: true,
     region: 'auto',
     bucket: 'my-bucket-name',
     publicHost: 'storage.myapp.com',
-  ));
+  ),
+);
 ```
 
 ## Add a configuration for GCP (native)
@@ -167,13 +169,15 @@ import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
 Since the factory constructors are asynchronous, create the storage before starting the pod:
 
 ```dart
-pod.addCloudStorage(await gcp.NativeGoogleCloudStorage.create(
-  serverpod: pod,
-  storageId: 'public',
-  public: true,
-  bucket: 'my-bucket-name',
-  publicHost: 'storage.myapp.com',
-));
+pod.addCloudStorage(
+  await gcp.NativeGoogleCloudStorage.create(
+    serverpod: pod,
+    storageId: 'public',
+    public: true,
+    bucket: 'my-bucket-name',
+    publicHost: 'storage.myapp.com',
+  ),
+);
 ```
 
 The `create` factory loads the service account JSON from `passwords.yaml` (key: `gcpServiceAccount`) or the environment variable `SERVERPOD_PASSWORD_gcpServiceAccount`. Add the service account JSON to your `passwords.yaml`:
@@ -186,23 +190,26 @@ shared:
 If you prefer to pass the JSON directly, use `fromServiceAccountJson`:
 
 ```dart
-pod.addCloudStorage(await gcp.NativeGoogleCloudStorage.fromServiceAccountJson(
-  storageId: 'public',
-  public: true,
-  bucket: 'my-bucket-name',
-  serviceAccountJson: myServiceAccountJson,
-));
+pod.addCloudStorage(
+  await gcp.NativeGoogleCloudStorage.fromServiceAccountJson(
+    storageId: 'public',
+    public: true,
+    bucket: 'my-bucket-name',
+    serviceAccountJson: myServiceAccountJson,
+  ),
+);
 ```
 
 For environments that support Application Default Credentials (e.g. Google Compute Engine, Cloud Run), use `fromApplicationDefaultCredentials`:
 
 ```dart
 pod.addCloudStorage(
-    await gcp.NativeGoogleCloudStorage.fromApplicationDefaultCredentials(
-  storageId: 'public',
-  public: true,
-  bucket: 'my-bucket-name',
-));
+  await gcp.NativeGoogleCloudStorage.fromApplicationDefaultCredentials(
+    storageId: 'public',
+    public: true,
+    bucket: 'my-bucket-name',
+  ),
+);
 ```
 
 :::info
@@ -229,14 +236,16 @@ import 'package:serverpod_cloud_storage_s3/serverpod_cloud_storage_s3.dart'
 After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your S3 bucket to be accessible on a custom domain through CloudFront. You should add the cloud storage before starting your pod.
 
 ```dart
-pod.addCloudStorage(s3.S3CloudStorage(
-  serverpod: pod,
-  storageId: 'public',
-  public: true,
-  region: 'us-west-2',
-  bucket: 'my-bucket-name',
-  publicHost: 'storage.myapp.com',
-));
+pod.addCloudStorage(
+  s3.S3CloudStorage(
+    serverpod: pod,
+    storageId: 'public',
+    public: true,
+    region: 'us-west-2',
+    bucket: 'my-bucket-name',
+    publicHost: 'storage.myapp.com',
+  ),
+);
 ```
 
 For your S3 configuration to work, you will also need to add your AWS credentials to the `passwords.yaml` file. You create the access keys from your AWS console when signed in as the root user.
@@ -265,14 +274,16 @@ import 'package:serverpod_cloud_storage_r2/serverpod_cloud_storage_r2.dart'
 Configure the storage with your Cloudflare account ID and bucket name:
 
 ```dart
-pod.addCloudStorage(r2.R2CloudStorage(
-  serverpod: pod,
-  storageId: 'public',
-  public: true,
-  bucket: 'my-bucket-name',
-  accountId: 'your-cloudflare-account-id',
-  publicHost: 'storage.myapp.com',
-));
+pod.addCloudStorage(
+  r2.R2CloudStorage(
+    serverpod: pod,
+    storageId: 'public',
+    public: true,
+    bucket: 'my-bucket-name',
+    accountId: 'your-cloudflare-account-id',
+    publicHost: 'storage.myapp.com',
+  ),
+);
 ```
 
 Add your R2 API credentials to the `passwords.yaml` file. You can create access keys from the Cloudflare dashboard under _R2_ > _Manage R2 API Tokens_.
