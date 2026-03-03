@@ -19,6 +19,29 @@ Future<String?> getUploadDescription(Session session, String path) async {
 }
 ```
 
+The `createDirectFileUploadDescription` method also accepts optional parameters to control the upload:
+
+- **`expirationDuration`** - How long the upload URL is valid. Defaults to 10 minutes.
+- **`maxFileSize`** - Maximum allowed file size in bytes. Defaults to 10 MB.
+- **`contentLength`** - The exact file size in bytes. When provided, the storage provider validates the upload size against `maxFileSize` and may enforce the exact size server-side (e.g. via signed URLs).
+- **`preventOverwrite`** - When `true`, the upload will fail if a file already exists at the given path. Defaults to `false`.
+
+```dart
+Future<String?> getUploadDescription(
+  Session session,
+  String path,
+  int fileSize,
+) async {
+  return await session.storage.createDirectFileUploadDescription(
+    storageId: 'public',
+    path: path,
+    maxFileSize: 50 * 1024 * 1024, // 50 MB
+    contentLength: fileSize,
+    preventOverwrite: true,
+  );
+}
+```
+
 After the file is uploaded, you should verify that the upload has been completed. If you are uploading a file to a third-party service, such as S3 or Google Cloud Storage, there is no other way of knowing if the file was uploaded or if the upload was canceled.
 
 ```dart
@@ -84,9 +107,20 @@ var myByteData = await session.storage.retrieveFile(
 );
 ```
 
-## Add a configuration for GCP
+To store a file directly from the server, use the `storeFile` method. You can set `preventOverwrite` to `true` to ensure the upload fails if a file already exists at the given path.
 
-Serverpod uses Google Cloud Storage's HMAC interoperability to handle file uploads to Google Cloud. To make file uploads work, you must make a few custom configurations in your Google Cloud console:
+```dart
+await session.storage.storeFile(
+  storageId: 'public',
+  path: 'my/file/path',
+  byteData: myByteData,
+  preventOverwrite: true,
+);
+```
+
+## Add a configuration for GCP (HMAC)
+
+Serverpod can use Google Cloud Storage's HMAC interoperability (S3-compatible) to handle file uploads to Google Cloud. To make file uploads work, you must make a few custom configurations in your Google Cloud console:
 
 1. Create a service account with the _Storage Admin_ role.
 2. Under _Cloud Storage_ > _Settings_ > _Interoperability_, create a new HMAC key for your newly created service account.
@@ -118,6 +152,64 @@ After creating your Serverpod, you add a storage configuration. If you want to r
     publicHost: 'storage.myapp.com',
   ));
 ```
+
+## Add a configuration for GCP (native)
+
+As an alternative to the HMAC approach, you can use Google Cloud Storage's native JSON API with service account credentials. This provides full GCP feature support including `preventOverwrite`.
+
+The native implementation is available from the same `serverpod_cloud_storage_gcp` package:
+
+```dart
+import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
+    as gcp;
+```
+
+Since the factory constructors are asynchronous, create the storage before starting the pod:
+
+```dart
+pod.addCloudStorage(await gcp.NativeGoogleCloudStorage.create(
+  serverpod: pod,
+  storageId: 'public',
+  public: true,
+  bucket: 'my-bucket-name',
+  publicHost: 'storage.myapp.com',
+));
+```
+
+The `create` factory loads the service account JSON from `passwords.yaml` (key: `gcpServiceAccount`) or the environment variable `SERVERPOD_PASSWORD_gcpServiceAccount`. Add the service account JSON to your `passwords.yaml`:
+
+```yaml
+shared:
+  gcpServiceAccount: '{"type":"service_account","project_id":"...","private_key":"...",...}'
+```
+
+If you prefer to pass the JSON directly, use `fromServiceAccountJson`:
+
+```dart
+pod.addCloudStorage(await gcp.NativeGoogleCloudStorage.fromServiceAccountJson(
+  storageId: 'public',
+  public: true,
+  bucket: 'my-bucket-name',
+  serviceAccountJson: myServiceAccountJson,
+));
+```
+
+For environments that support Application Default Credentials (e.g. Google Compute Engine, Cloud Run), use `fromApplicationDefaultCredentials`:
+
+```dart
+pod.addCloudStorage(
+    await gcp.NativeGoogleCloudStorage.fromApplicationDefaultCredentials(
+  storageId: 'public',
+  public: true,
+  bucket: 'my-bucket-name',
+));
+```
+
+:::info
+
+When using Application Default Credentials, the service account must have the `iam.serviceAccounts.signBlob` IAM permission to generate signed URLs.
+
+:::
 
 ## Add a configuration for AWS S3
 
@@ -154,6 +246,44 @@ shared:
   AWSAccessKeyId: 'XXXXXXXXXXXXXX'
   AWSSecretKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
 ```
+
+## Add a configuration for Cloudflare R2
+
+Serverpod supports Cloudflare R2 as a cloud storage provider. R2 is S3-compatible and uses presigned PUT uploads.
+
+Add the R2 package to your `pubspec.yaml` file and import it in your `server.dart` file.
+
+```bash
+$ dart pub add serverpod_cloud_storage_r2
+```
+
+```dart
+import 'package:serverpod_cloud_storage_r2/serverpod_cloud_storage_r2.dart'
+    as r2;
+```
+
+Configure the storage with your Cloudflare account ID and bucket name:
+
+```dart
+pod.addCloudStorage(r2.R2CloudStorage(
+  serverpod: pod,
+  storageId: 'public',
+  public: true,
+  bucket: 'my-bucket-name',
+  accountId: 'your-cloudflare-account-id',
+  publicHost: 'storage.myapp.com',
+));
+```
+
+Add your R2 API credentials to the `passwords.yaml` file. You can create access keys from the Cloudflare dashboard under _R2_ > _Manage R2 API Tokens_.
+
+```yaml
+shared:
+  R2AccessKeyId: 'XXXXXXXXXXXXXX'
+  R2SecretKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
+```
+
+You can also pass credentials via environment variables: `SERVERPOD_R2_ACCESS_KEY_ID` and `SERVERPOD_R2_SECRET_KEY`.
 
 :::info
 
