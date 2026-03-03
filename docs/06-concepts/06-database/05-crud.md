@@ -45,7 +45,7 @@ In previous versions of Serverpod the `insert` method mutated the input object b
 
 ### Ignoring conflicts
 
-When inserting rows that might violate a unique constraint, you can set `ignoreConflicts` to `true` on the `insert` method. This silently skips any rows that would cause a conflict and only inserts the rest.
+When inserting rows that might violate a unique or exclusion constraint, you can set `ignoreConflicts` to `true` on the `insert` method. Rows that would cause a unique constraint violation are silently skipped, and only the non-conflicting rows are inserted.
 
 ```dart
 var rows = [Company(name: 'Serverpod'), Company(name: 'Google')];
@@ -57,7 +57,7 @@ The method returns only the rows that were successfully inserted. If all rows co
 This is useful for idempotent operations where you want to insert data without failing on duplicates.
 
 :::note
-Under the hood, this uses PostgreSQL's `ON CONFLICT DO NOTHING`. It works with any unique constraint defined on the table, including [indexes](indexing).
+Under the hood, this uses PostgreSQL's `ON CONFLICT DO NOTHING`. Only unique and exclusion constraint violations are ignored — other errors such as `NOT NULL`, `CHECK`, or foreign key violations will still throw an exception.
 :::
 
 ## Read
