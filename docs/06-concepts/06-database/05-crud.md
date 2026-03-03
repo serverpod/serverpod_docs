@@ -60,6 +60,10 @@ This is useful for idempotent operations where you want to insert data without f
 Under the hood, this uses PostgreSQL's `ON CONFLICT DO NOTHING`. Only unique and exclusion constraint violations are ignored — other errors such as `NOT NULL`, `CHECK`, or foreign key violations will still throw an exception.
 :::
 
+:::warning
+When using `ignoreConflicts` with models that have non-persistent fields, each row is inserted individually instead of in a single batch. This is necessary because the database cannot report which rows were skipped in a batch insert, making it impossible to correctly match non-persistent field values back to inserted rows. For large numbers of rows, this can cause performance issues. Consider removing non-persistent fields from the model or inserting in smaller batches.
+:::
+
 ## Read
 
 There are three different read operations available.
