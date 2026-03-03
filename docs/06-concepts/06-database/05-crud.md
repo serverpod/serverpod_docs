@@ -43,6 +43,23 @@ var companies = await Company.db.insert(session, rows);
 In previous versions of Serverpod the `insert` method mutated the input object by setting the `id` field. In the example above the input variable remains unmodified after the `insert`/`insertRow` call.
 :::
 
+### Ignoring conflicts
+
+When inserting rows that might violate a unique or exclusion constraint, you can set `ignoreConflicts` to `true` on the `insert` method. Rows that would cause a unique constraint violation are silently skipped, and only the non-conflicting rows are inserted.
+
+```dart
+var rows = [Company(name: 'Serverpod'), Company(name: 'Google')];
+var inserted = await Company.db.insert(session, rows, ignoreConflicts: true);
+```
+
+The method returns only the rows that were successfully inserted. If all rows conflict, an empty list is returned.
+
+This is useful for idempotent operations where you want to insert data without failing on duplicates.
+
+:::note
+Under the hood, this uses PostgreSQL's `ON CONFLICT DO NOTHING`. Only unique and exclusion constraint violations are ignored — other errors such as `NOT NULL`, `CHECK`, or foreign key violations will still throw an exception.
+:::
+
 ## Read
 
 There are three different read operations available.
