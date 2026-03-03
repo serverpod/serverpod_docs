@@ -292,6 +292,7 @@ While the above configurations control how your server runs, Serverpod also uses
 | nickname               | string | -                           | For modules only. Defines how the module is referenced in code.                    |
 | client_package_path    | string | ../[name]\_client           | Path to the client package relative to the server.                                 |
 | server_test_tools_path | string | test/integration/test_tools | Path where test tools are generated. Remove this to disable test tools generation. |
+| shared_packages        | list   | -                           | Paths to shared packages containing models usable by both server and client.       |
 | modules                | map    | -                           | Module dependencies with optional nicknames.                                       |
 | extraClasses           | list   | -                           | List of custom serializable classes to include in code generation.                 |
 | features               | map    | \{database: true\}          | Feature flags. Currently only `database` is supported.                             |
@@ -344,6 +345,18 @@ modules:
 ```
 
 This allows you to reference module classes as `module:auth:UserInfo` in your model files. See the [modules documentation](modules) for more information.
+
+### Shared packages
+
+Shared packages let you define models that can be imported by both server and client code. They depend only on `serverpod_serialization` and are safe to use across your full stack. Configure them in `generator.yaml`:
+
+```yaml
+shared_packages:
+  - ../my_shared_package
+  - ../another_shared_package
+```
+
+Models and the protocol file are generated in each shared package's own directory when you run `serverpod generate` from your server project. See the [shared packages documentation](shared-packages) for setup, usage, and restrictions.
 
 ### Custom serializable classes
 
