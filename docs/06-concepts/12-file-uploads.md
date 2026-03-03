@@ -118,7 +118,15 @@ await session.storage.storeFile(
 );
 ```
 
-## Add a configuration for GCP (HMAC)
+## Configuring a storage provider
+
+By default, Serverpod uses the database for file storage. This works well for testing but is not recommended for production. Instead, you should configure a cloud storage provider. Serverpod supports Google Cloud Storage, AWS S3, and Cloudflare R2.
+
+Each storage is identified by a `storageId`. Serverpod comes with two default storages, `public` and `private`. You can replace these with a cloud-backed implementation, or add additional storages with custom IDs. Register your cloud storage with `pod.addCloudStorage()` before starting the server.
+
+The sections below give short descriptions on how to set up each provider. Consult the documentation of each cloud provider for more details on bucket creation, access policies, and credential management.
+
+### GCP (HMAC)
 
 Serverpod can use Google Cloud Storage's HMAC interoperability (S3-compatible) to handle file uploads to Google Cloud. To make file uploads work, you must make a few custom configurations in your Google Cloud console:
 
@@ -155,7 +163,7 @@ pod.addCloudStorage(
 );
 ```
 
-## Add a configuration for GCP (native)
+### GCP (native)
 
 As an alternative to the HMAC approach, you can use Google Cloud Storage's native JSON API with service account credentials. This provides full GCP feature support including `preventOverwrite`.
 
@@ -218,7 +226,7 @@ When using Application Default Credentials, the service account must have the `i
 
 :::
 
-## Add a configuration for AWS S3
+### AWS S3
 
 This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file (`AWSAccessKeyId` and `AWSAccessKey`) or pass them in as environment variables (`SERVERPOD_AWS_ACCESS_KEY_ID` and `SERVERPOD_AWS_ACCESS_KEY`).
 
@@ -256,7 +264,7 @@ shared:
   AWSSecretKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
 ```
 
-## Add a configuration for Cloudflare R2
+### Cloudflare R2
 
 Serverpod supports Cloudflare R2 as a cloud storage provider. R2 is S3-compatible and uses presigned PUT uploads.
 
