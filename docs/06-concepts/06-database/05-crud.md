@@ -45,14 +45,14 @@ In previous versions of Serverpod the `insert` method mutated the input object b
 
 ### Ignoring conflicts
 
-When inserting rows that might violate a unique or exclusion constraint, you can set `ignoreConflicts` to `true` on the `insert` method. Rows that would cause a unique constraint violation are silently skipped, and only the non-conflicting rows are inserted.
+When inserting rows that might violate a unique or exclusion constraint, you can set `ignoreConflicts` to `true` on the `insert` method. Rows that would cause a unique or exclusion constraint violation are silently skipped, and only the non-conflicting rows are inserted.
 
 ```dart
 var rows = [Company(name: 'Serverpod'), Company(name: 'Google')];
 var inserted = await Company.db.insert(session, rows, ignoreConflicts: true);
 ```
 
-The method returns only the rows that were successfully inserted. If all rows conflict, an empty list is returned.
+The method returns only the rows that were successfully inserted. If all rows conflict, an empty list is returned. Unlike a regular `insert`, which fails entirely if any row violates a constraint, `ignoreConflicts` allows partial inserts where only the non-conflicting rows are written.
 
 This is useful for idempotent operations where you want to insert data without failing on duplicates.
 
@@ -61,7 +61,7 @@ Under the hood, this uses PostgreSQL's `ON CONFLICT DO NOTHING`. Only unique and
 :::
 
 :::warning
-When using `ignoreConflicts` with models that have non-persistent fields, each row is inserted individually instead of in a single batch. This is necessary because the database cannot report which rows were skipped in a batch insert, making it impossible to correctly match non-persistent field values back to inserted rows. For large numbers of rows, this can cause performance issues. Consider removing non-persistent fields from the model or inserting in smaller batches.
+When using `ignoreConflicts` with models that have [non-persistent fields](models#non-persistent-fields), each row is inserted individually instead of in a single batch. This is necessary because the database cannot report which rows were skipped in a batch insert, making it impossible to correctly match non-persistent field values back to inserted rows. For large numbers of rows, this can cause performance issues. Consider removing non-persistent fields from the model or inserting in smaller batches.
 :::
 
 ## Read
