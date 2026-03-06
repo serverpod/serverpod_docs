@@ -31,6 +31,7 @@ development:
   appleServiceIdentifier: 'com.example.service'
   appleBundleIdentifier: 'com.example.app'
   appleRedirectUri: 'https://example.com/auth/callback'
+  appleWebRedirectUri: 'https://example.com/auth/apple-complete'
   appleTeamId: 'ABC123DEF4'
   appleKeyId: 'XYZ789ABC0'
   appleKey: |
@@ -71,6 +72,7 @@ void run(List<String> args) async {
         serviceIdentifier: pod.getPassword('appleServiceIdentifier')!,
         bundleIdentifier: pod.getPassword('appleBundleIdentifier')!,
         redirectUri: pod.getPassword('appleRedirectUri')!,
+        webRedirectUri: pod.getPassword('appleWebRedirectUri'),
         teamId: pod.getPassword('appleTeamId')!,
         keyId: pod.getPassword('appleKeyId')!,
         key: pod.getPassword('appleKey')!,
@@ -98,6 +100,7 @@ You can use the `AppleIdpConfigFromPasswords` constructor in replacement of the 
    - `appleServiceIdentifier`
    - `appleBundleIdentifier`
    - `appleRedirectUri`
+   - `appleWebRedirectUri` (optional, for Web support when using server callback route)
    - `appleTeamId`
    - `appleKeyId`
    - `appleKey`
@@ -108,6 +111,7 @@ Or the following environment variables:
    - `SERVERPOD_PASSWORD_appleServiceIdentifier`
    - `SERVERPOD_PASSWORD_appleBundleIdentifier`
    - `SERVERPOD_PASSWORD_appleRedirectUri`
+   - `SERVERPOD_PASSWORD_appleWebRedirectUri` (optional, for Web support when using server callback route)
    - `SERVERPOD_PASSWORD_appleTeamId`
    - `SERVERPOD_PASSWORD_appleKeyId`
    - `SERVERPOD_PASSWORD_appleKey`
@@ -129,6 +133,7 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 - `serviceIdentifier`: Required. The service identifier for the Sign in with Apple project.
 - `bundleIdentifier`: Required. The bundle ID of the Apple-native app using Sign in with Apple.
 - `redirectUri`: Required. The redirect URL used for 3rd party platforms (e.g., Android, Web).
+- `webRedirectUri`: Optional. The URL where the browser is redirected after the server receives Apple's callback on Web. Required for Web support when using the server callback route.
 - `teamId`: Required. The team identifier of the parent Apple Developer account.
 - `keyId`: Required. The ID of the key associated with the Sign in with Apple service.
 - `key`: Required. The secret contents of the private key file received from Apple.
@@ -169,7 +174,14 @@ No additional client-side Android configuration is needed beyond what the [sign_
 
 ### Web
 
-For web, configure the redirect URI in your Apple Developer Portal to match your server's callback route (e.g., `https://example.com/auth/callback`).
+Apple Sign In on Web uses a server callback first, then redirects the browser to your web app.
+
+To enable this:
+
+1. Configure the redirect URI in your Apple Developer Portal to match your server's callback route (e.g., `https://example.com/auth/callback`).
+2. Set `webRedirectUri` in `AppleIdpConfig` (or `appleWebRedirectUri` in `passwords.yaml`) to the Web URL that should receive the callback parameters (e.g., `https://example.com/auth/apple-complete`).
+
+If `webRedirectUri` is not configured, Web callbacks to the server route will fail.
 
 ## Present the authentication UI
 
