@@ -48,24 +48,24 @@ futureCall:
 
 ## Managing broken future calls
 
-A future call is considered broken if it is scheduled but is not registered or its stored data cannot be deserialized. Running these future calls may cause runtime errors. Serverpod provides configurations that allow you to check for these broken future calls and optionally delete them on startup.
+A future call is considered broken if it is scheduled but is not registered or its stored data can not be deserialized. Running these future calls may cause runtime errors. Serverpod provides configurations that allow you to check for these broken future calls and optionally delete them on startup.
 
-### Check broken future calls
+### Check broken calls
 
 This option allows you to enable or disable the checking for broken future calls on startup. By default, it is set to `null`. When it is set to `null` and there are less than 1000 future calls in the database, the server will perform a default check and log broken future calls. Set this value to `false` to opt out of the default scan.
 
 Example configuration:
 
 ```yaml
-checkBrokenFutureCalls: false
+checkBrokenCalls: false
 ```
 
-### Delete broken future calls
+### Delete broken calls
 
 This option allows you to enable or disable the deletion of broken future calls on startup. By default, it is set to `false`.
 
 Example configuration:
 
 ```yaml
-deleteBrokenFutureCalls: false
+deleteBrokenCalls: false
 ```
