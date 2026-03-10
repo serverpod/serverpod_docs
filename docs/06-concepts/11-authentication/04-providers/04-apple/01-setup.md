@@ -37,6 +37,8 @@ development:
     -----BEGIN PRIVATE KEY-----
     MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
     -----END PRIVATE KEY-----
+  # Optional: Required only for Web support when using server callback route.
+  appleWebRedirectUri: 'https://example.com/auth/apple-complete'
   # Optional: Required only if you want Apple Sign In to work on Android.
   appleAndroidPackageIdentifier: 'com.example.app'
 ```
@@ -74,6 +76,8 @@ void run(List<String> args) async {
         teamId: pod.getPassword('appleTeamId')!,
         keyId: pod.getPassword('appleKeyId')!,
         key: pod.getPassword('appleKey')!,
+        // Optional: Required only for Web support when using server callback route.
+        webRedirectUri: pod.getPassword('appleWebRedirectUri'),
         // Optional: Required only for Android support.
         androidPackageIdentifier: pod.getPassword('appleAndroidPackageIdentifier'),
       ),
@@ -101,6 +105,7 @@ You can use the `AppleIdpConfigFromPasswords` constructor in replacement of the 
    - `appleTeamId`
    - `appleKeyId`
    - `appleKey`
+   - `appleWebRedirectUri` (optional, for Web support when using server callback route)
    - `appleAndroidPackageIdentifier` (optional, for Android support)
 
 Or the following environment variables:
@@ -111,6 +116,7 @@ Or the following environment variables:
    - `SERVERPOD_PASSWORD_appleTeamId`
    - `SERVERPOD_PASSWORD_appleKeyId`
    - `SERVERPOD_PASSWORD_appleKey`
+   - `SERVERPOD_PASSWORD_appleWebRedirectUri` (optional, for Web support when using server callback route)
    - `SERVERPOD_PASSWORD_appleAndroidPackageIdentifier` (optional, for Android support)
 :::
 
@@ -132,7 +138,11 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 - `teamId`: Required. The team identifier of the parent Apple Developer account.
 - `keyId`: Required. The ID of the key associated with the Sign in with Apple service.
 - `key`: Required. The secret contents of the private key file received from Apple.
-- `androidPackageIdentifier`: Optional. The Android package identifier for the app. Required for Apple Sign In to work on Android. When configured, the callback route automatically redirects Android clients back to the app using an intent URI.
+
+When using Web or Android, you can also configure the following optional parameters:
+
+- `webRedirectUri`: The URL where the browser is redirected after the server receives Apple's callback on Web. Required for Web support when using the server callback route.
+- `androidPackageIdentifier`: The Android package identifier for the app. Required for Apple Sign In to work on Android. When configured, the callback route automatically redirects Android clients back to the app using an intent URI.
 
 For more details on configuration options, see the [configuration section](./configuration).
 
@@ -169,7 +179,14 @@ No additional client-side Android configuration is needed beyond what the [sign_
 
 ### Web
 
-For web, configure the redirect URI in your Apple Developer Portal to match your server's callback route (e.g., `https://example.com/auth/callback`).
+Apple Sign In on Web uses a server callback first, then redirects the browser to your web app.
+
+To enable this:
+
+1. Configure the redirect URI in your Apple Developer Portal to match your server's callback route (e.g., `https://example.com/auth/callback`).
+2. Set `webRedirectUri` in `AppleIdpConfig` (or `appleWebRedirectUri` in `passwords.yaml`) to the Web URL that should receive the callback parameters (e.g., `https://example.com/auth/apple-complete`).
+
+If `webRedirectUri` is not configured, Web callbacks to the server route will fail.
 
 ## Present the authentication UI
 
