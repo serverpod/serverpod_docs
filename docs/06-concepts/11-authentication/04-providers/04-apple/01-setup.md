@@ -31,13 +31,14 @@ development:
   appleServiceIdentifier: 'com.example.service'
   appleBundleIdentifier: 'com.example.app'
   appleRedirectUri: 'https://example.com/auth/callback'
-  appleWebRedirectUri: 'https://example.com/auth/apple-complete'
   appleTeamId: 'ABC123DEF4'
   appleKeyId: 'XYZ789ABC0'
   appleKey: |
     -----BEGIN PRIVATE KEY-----
     MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
     -----END PRIVATE KEY-----
+  # Optional: Required only for Web support when using server callback route.
+  appleWebRedirectUri: 'https://example.com/auth/apple-complete'
   # Optional: Required only if you want Apple Sign In to work on Android.
   appleAndroidPackageIdentifier: 'com.example.app'
 ```
