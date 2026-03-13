@@ -1,7 +1,7 @@
 # Upgrade to 3.0
 
 :::note
-The new authentication module has separate migration documentation. This guide covers only core framework changes.
+The new authentication module has separate migration documentation. See [Migrate from legacy auth](./migrate-from-legacy-auth/overview) for a step-by-step guide. This page covers only core framework changes.
 :::
 
 ## Requirements
