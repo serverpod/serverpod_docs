@@ -18,7 +18,7 @@ Serverpod is an open-source backend framework for Flutter applications written i
 - **Real-time data streaming:** Support for real-time communications via Dart streams. You push serialized objects over secure WebSocket connections, enabling live updates (e.g., for chats and games).
 - **Task scheduling:** Serverpod's future calls replace complicated cron jobs. Call a method anytime in the future or after a specified delay. The calls persist even if the server is restarted.
 - **Deployment automation:** Serverpod Cloud (currently in private beta) allows you to deploy your server with zero configuration. There are also community-supported Terraform scripts for deployment on Google Cloud Platform and AWS, making it quick to provision infrastructure and deploy your server. Your Serverpod project comes with a Docker container for flexible deployment options.
-- **Built-in web server:** Besides serving remote method calls, Serverpod comes with a traditional web server called Relic. It can serve web pages or act as a webhook/REST endpoint server. Relic is still experimental, but we're actively working on getting a stable release out in the next few months.
+- **Built-in web server:** Serverpod comes with a modern, high-performance web server called [Relic](https://docs.dartrelic.dev/). It is built to meet the demanding requirements of modern web applications and provides a robust, type-safe, and efficient foundation for building scalable web services, such as REST APIs, webhooks, and web pages.
 
 ## Defining Endpoints
 
