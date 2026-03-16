@@ -48,11 +48,23 @@ futureCall:
 
 ## Managing broken future calls
 
-A future call is considered broken if it is scheduled but is not registered or its stored data can not be deserialized. Running these future calls may cause runtime errors. Serverpod provides configurations that allow you to check for these broken future calls and optionally delete them on startup.
+A future call is considered broken if it is scheduled but is not registered or its stored data can not be deserialized. Running these future calls may cause runtime errors.
+
+Scheduled future calls can become broken if, before they run, the server is restarted and:
+
+- The method of a future call spec class is removed, leading to the removal of the previous generated future call execution class.
+- The signature of a future call method is changed in a way that will lead to a generated model that fails to deserialize the stored JSON.
+- The model that is used as a parameter to a future call method is changed in a way that will lead to failure in the stored JSON deserialization.
+
+Although ensuring backwards compatibility is the responsibility of the developer, Serverpod provides configurations to facilitate checking that stored future calls are still valid before starting the server and optionally deleting them.
 
 ### Check broken calls
 
-This option allows you to enable or disable the checking for broken future calls on startup. By default, it is set to `null`. When it is set to `null` and there are less than 1000 future calls in the database, the server will perform a default check and log broken future calls. Set this value to `false` to opt out of the default scan.
+This option allows the server to perform a check for broken future calls on startup.
+
+By default, the configuration is set to `null`. When it is set to `null` and there are less than 1000 future calls in the database, the server will perform an automatic check.
+
+Set this value to `true` to force the check regardless of the number of calls, or `false` to opt out of the scan.
 
 Example configuration:
 
@@ -62,7 +74,9 @@ checkBrokenCalls: false
 
 ### Delete broken calls
 
-This option allows you to enable or disable the deletion of broken future calls on startup. By default, it is set to `false`.
+This option allows you to enable or disable the deletion of broken future calls when running the check on startup. By default, it is set to `false`.
+
+This configuration is only valid if the check is executed (either automatically or through explicitly enabling `checkBrokenCalls`).
 
 Example configuration:
 
