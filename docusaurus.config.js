@@ -95,6 +95,13 @@ const config = {
           },
         ],
       },
+      algolia: {
+        // Algolia DocSearch configuration. `apiKey` is safe to commit.
+        appId: '6LZRX3JBXY',
+        indexName: 'Serverpod docs',
+        apiKey: '2f0125e1ff6fe9469eac332ea47423d6',
+        contextualSearch: true,
+      },
       footer: {
         style: 'dark',
         copyright: `Copyright © ${new Date().getFullYear()} Serverpod authors.`,

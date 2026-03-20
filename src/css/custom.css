@@ -145,6 +145,28 @@ samp {
   flex: 0 0 1rem;
 }
 
+/* Hide right-side topbar links on narrow screens.
+   We keep the built-in search button (configured via `type: 'search'`)
+   but drop the text+icons links that don't fit nicely on mobile. */
+@media (max-width: 576px) {
+  /* Hide the mobile docs sidebar "Back to main menu" button. */
+  button.navbar-sidebar__back {
+    display: none !important;
+  }
+
+  a.navbar__link[href="https://pub.dev/documentation/serverpod/latest/"] {
+    display: none !important;
+  }
+
+  a.navbar__link[href="https://careers.serverpod.dev/"] {
+    display: none !important;
+  }
+
+  a.navbar__link[href="https://github.com/serverpod/serverpod"] {
+    display: none !important;
+  }
+}
+
 /* Sidebar/nav menu link sizing. */
 .menu__link {
   line-height: 1.3;
