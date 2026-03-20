@@ -4,6 +4,9 @@
  * work well for content-centric websites.
  */
 
+/* Code font: use JetBrains Mono for both inline and block code. */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap');
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #0950c3;
@@ -13,7 +16,59 @@
   --ifm-color-primary-light: #0a58d6;
   --ifm-color-primary-lighter: #0a5ce0;
   --ifm-color-primary-lightest: #156af4;
-  --ifm-code-font-size: 95%;
+  /* Keep the requested font stack, but match Stripe-like typography scale. */
+  --ifm-font-family-base: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --ifm-code-font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Base text. */
+  --ifm-font-size-base: 1rem; /* 16px */
+  --ifm-line-height-base: 1.6;
+
+  /* Headings. */
+  --ifm-heading-color: #32325d;
+  --ifm-heading-font-weight: 700;
+  --ifm-heading-line-height: 1.2;
+  --ifm-heading-margin-bottom: 0.75rem;
+  --ifm-h1-font-size: 1.85rem;
+  --ifm-h2-font-size: 1.3rem;
+  --ifm-h3-font-size: 1.2rem;
+  --ifm-h4-font-size: 1.1rem;
+  --ifm-h5-font-size: 1rem;
+  --ifm-h6-font-size: 0.93rem;
+
+  /* Body text colors. */
+  --ifm-color-content: #32325d;
+  --ifm-color-content-secondary: #5b6474;
+
+  /* Code blocks. */
+  --ifm-code-font-size: 0.85rem;
+  --ifm-code-background: rgb(246, 247, 248);
+  --ifm-pre-padding: 0.75rem;
+  --ifm-pre-line-height: 1.4;
+
+  /* Shared styling so inline code + code blocks match. */
+  --docs-code-border-color: color-mix(
+    in srgb,
+    var(--ifm-alert-border-color, var(--ifm-color-primary)) 20%,
+    transparent
+  );
+
+  /* Navbar sizing/spacing. */
+  --ifm-navbar-height: 3.25rem;
+  --ifm-navbar-item-padding-vertical: 0.2rem;
+  --ifm-navbar-item-padding-horizontal: 0.65rem;
+
+  /* Top bar background (Stripe-like light gray). */
+  --ifm-navbar-background-color: #f7f7fb;
+
+  /* Sidebar (left nav) typography. */
+  --ifm-menu-color: #5b6474;
+  --ifm-menu-color-active: #0950c3;
+  /* Never highlight expanded/selected sections in the left menu. */
+  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: transparent;
+  --ifm-menu-link-padding-vertical: 0.35rem;
+  --ifm-menu-link-padding-horizontal: 0.65rem;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -25,6 +80,201 @@
   --ifm-color-primary-light: #c2d9ff;
   --ifm-color-primary-lighter: #d6e6ff;
   --ifm-color-primary-lightest: #ffffff;;
+  --ifm-heading-color: #dfe3f0;
+  --ifm-color-content: #dfe3f0;
+  --ifm-color-content-secondary: #b8bfce;
+  --ifm-heading-font-weight: 600;
+  --ifm-menu-color: rgba(255, 255, 255, 0.72);
+  --ifm-menu-color-active: #99c0ff;
+  /* Keep “no highlight” behavior in dark mode too. */
+  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: transparent;
+
+  /* Dark navbar background. */
+  --ifm-navbar-background-color: #242526;
+}
+
+/* Ensure the requested font stack is used consistently across the docs. */
+body {
+  font-family: var(--ifm-font-family-base);
+}
+
+/* Ensure all code elements (inline + blocks) use JetBrains Mono. */
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--ifm-code-font-family);
+  font-weight: 500;
+}
+
+/* Navbar-specific tightening (search input). */
+.navbar__search-input {
+  font-size: 0.875rem;
+  height: 1.75rem;
+}
+
+/* Make top bar links match left sidebar typography. */
+.navbar__link {
+  font-size: 0.875rem !important;
+  line-height: 1.3 !important;
+  font-weight: 500 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.navbar__link--active {
+  font-weight: 500 !important;
+}
+
+/* Top bar icons (render at 1rem). */
+.serverpod-nav-icon-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.serverpod-nav-text {
+  display: inline-block;
+}
+
+.navbar__link svg.serverpod-nav-icon {
+  width: 1rem !important;
+  height: 1rem !important;
+  flex: 0 0 1rem;
+}
+
+/* Sidebar/nav menu link sizing. */
+.menu__link {
+  line-height: 1.3;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.menu__link--active {
+  font-weight: 500;
+}
+
+/* Remove hover highlight from left navigation entries. */
+.menu__link:hover {
+  background: none !important;
+  text-decoration: none !important;
+}
+
+.menu__link--active:hover {
+  background: none !important;
+  color: var(--ifm-menu-color-active) !important;
+}
+
+/* Expandable entries use a container hover background. */
+.menu__list-item-collapsible:hover {
+  background: none !important;
+}
+
+.menu__list-item-collapsible--active {
+  background: none !important;
+}
+
+/* Remove selected-row background highlight. */
+.menu__link--active {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background-color: transparent !important;
+  background: none !important;
+}
+
+/* Extra safety: remove any remaining blue "selected section" background
+   applied to sidebar elements/containers by Infima/Docusaurus. */
+.navbar-sidebar .menu__list-item-collapsible,
+.navbar-sidebar .menu__link,
+.navbar-sidebar .menu__caret,
+.navbar-sidebar .menu__link--active {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.navbar-sidebar .menu__list-item-collapsible:hover,
+.navbar-sidebar .menu__link:hover,
+.navbar-sidebar .menu__caret:hover,
+.navbar-sidebar .menu__list-item-collapsible--active {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.navbar-sidebar .menu__link--active:not(.menu__link--sublist),
+.navbar-sidebar .menu__link--active:not(.menu__link--sublist):hover {
+  color: var(--ifm-menu-color-active) !important;
+}
+
+/* Left-nav expandable chevron: half size. */
+.menu__list-item-collapsible .menu__link--sublist-caret:after {
+  min-width: 0.625rem !important;
+  width: 0.625rem !important;
+  height: 0.625rem !important;
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1rem 1rem !important;
+}
+
+/* Same icon, rendered through the caret element in some menu structures. */
+.menu__list-item-collapsible .menu__caret:before {
+  width: 0.625rem !important;
+  height: 0.625rem !important;
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1rem 1rem !important;
+}
+
+/* Docusaurus overrides heading font-sizes inside the markdown container.
+   We re-apply our values so editing --ifm-h*-font-size works as expected. */
+.markdown h1:first-child {
+  --ifm-h1-font-size: 1.85rem !important;
+  /* The version tag sits above; add breathing room to the first H1. */
+  margin-top: 0.75rem !important;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 1.3rem !important;
+}
+
+.markdown > h3 {
+  --ifm-h3-font-size: 1.2rem !important;
+}
+
+@media (max-width:576px) {
+  .markdown h1:first-child {
+    --ifm-h1-font-size: 1.85rem !important;
+    /* Match the desktop spacing on small screens. */
+    margin-top: 0.75rem !important;
+  }
+
+  .markdown > h2 {
+    --ifm-h2-font-size: 1.3rem !important;
+  }
+
+  .markdown > h3 {
+    --ifm-h3-font-size: 1.2rem !important;
+  }
+}
+
+/* Hide the "(opens in new tab)" external-link icon in the navbar header links.
+   Docusaurus renders this icon via a CSS-module class, so we target stable
+   attributes instead. */
+a.navbar__link svg[aria-label*="opens in new tab"] {
+  display: none !important;
+}
+
+a.navbar__link svg use[href="#theme-svg-external-link"] {
+  display: none !important;
+}
+
+/* Hide the external-link arrow in the left sidebar (e.g. Changelog). */
+.theme-doc-sidebar-menu a.menu__link svg[aria-label*="opens in new tab"] {
+  display: none !important;
+}
+
+.theme-doc-sidebar-menu a.menu__link svg use[href="#theme-svg-external-link"] {
+  display: none !important;
 }
 
 .docusaurus-highlight-code-line {
@@ -37,3 +287,151 @@
 [data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+/* Left sidebar item icons.
+   - Every left-nav item gets a fixed icon slot via `::before` (alignment).
+   - Icons are applied by setting CSS variables (`--sidebar-icon-mask` + `--sidebar-icon-color`)
+     on the sidebar `li` through `sidebar_class_name` (docs) or `_category_.json` `className` (categories). */
+.theme-doc-sidebar-menu .menu__link {
+  --sidebar-icon-size: 1.0rem;
+  --sidebar-icon-gap: 0.6rem;
+
+  /* Default: no icon. This prevents icons set on a parent <li> from
+     inheriting into nested sub-pages. */
+  --sidebar-icon-mask: none;
+  --sidebar-icon-color: transparent;
+
+  display: flex;
+  align-items: center;
+  gap: var(--sidebar-icon-gap);
+}
+
+.theme-doc-sidebar-menu .menu__link::before {
+  content: '';
+  width: var(--sidebar-icon-size);
+  height: var(--sidebar-icon-size);
+  flex: 0 0 var(--sidebar-icon-size);
+
+  background-color: var(--sidebar-icon-color, transparent);
+
+  -webkit-mask-image: var(--sidebar-icon-mask, none);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-image: var(--sidebar-icon-mask, none);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+/* Icon mappings (top-level only).
+   We set the icon variables on the top-level <a.menu__link> elements
+   so nested sub-pages don't inherit them. */
+.theme-doc-sidebar-menu .sidebar-installation-icon .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-package.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-overview .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-compass.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-support .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-message-circle-question-mark.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-serverpod-mini .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-tree-palm.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-getting-started > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-sprout.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-learn > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-graduation-cap.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-reference > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-book-marked.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-deploying > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-rocket.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-upgrading > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-repeat-2.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-tools > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-hammer.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-roadmap .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-map.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+/* Changelog is a sidebar "link" item (external href). Docusaurus doesn't
+   consistently attach `className` to the DOM for these, so we match by href. */
+.theme-doc-sidebar-menu .menu__link[href="https://pub.dev/packages/serverpod/changelog"] {
+  --sidebar-icon-mask: url('/img/sidebar-icon-changelog.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+/* Admonition icons (:::note/:::tip/:::info/:::warning/:::danger)
+   Docusaurus theme styles enforce `fill` on the icon <svg>.
+   Our Lucide icons are stroke-only, so we ensure they stay unfilled. */
+.alert span[class*='admonitionIcon'] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: var(--ifm-alert-foreground-color) !important;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+/* Make admonition title text (info/tip/note/warning/danger) smaller */
+.alert [class*='admonitionHeading'] {
+  font-size: 0.7rem !important;
+  opacity: 0.85 !important;
+}
+
+/* Make the left accent border half as wide */
+.alert {
+  --ifm-alert-border-left-width: 1px !important;
+  --ifm-alert-border-width: 1px !important;
+  box-shadow: none !important;
+  border-color: color-mix(in srgb, var(--ifm-alert-border-color) 30%, transparent) !important;
+}
+
+/* Code blocks (Docusaurus/Infima) */
+.theme-doc-markdown .theme-code-block,
+.theme-doc-markdown pre[class*='language-'] {
+  box-shadow: none !important;
+}
+
+.theme-doc-markdown .theme-code-block {
+  border: none !important;
+  outline: 1px solid var(--docs-code-border-color) !important;
+  /* Keep the outline aligned with the element edge. */
+  outline-offset: -1px;
+}
+
+/* Inline code: align border color + thickness with code blocks. */
+.theme-doc-markdown code:not([class*='language-']) {
+  box-shadow: none !important;
+  border: 1px solid var(--docs-code-border-color) !important;
+  border-width: 1px !important;
+}
+

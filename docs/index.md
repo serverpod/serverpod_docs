@@ -1,6 +1,7 @@
 ---
 sidebar_position: -1
-sidebar_label: 📦 Installation
+sidebar_label: Installation
+sidebar_class_name: sidebar-installation-icon
 ---
 
 # Installation
