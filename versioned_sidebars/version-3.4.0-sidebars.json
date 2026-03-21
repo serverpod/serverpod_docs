@@ -6,8 +6,9 @@
     },
     {
       "type": "link",
-      "label": "📝 Changelog",
-      "href": "https://pub.dev/packages/serverpod/changelog"
+      "label": "Changelog",
+      "href": "https://pub.dev/packages/serverpod/changelog",
+      "className": "sidebar-icon-changelog"
     }
   ]
 }

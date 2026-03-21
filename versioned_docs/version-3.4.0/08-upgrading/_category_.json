@@ -1,4 +1,4 @@
 {
-    "label": "🔄 Upgrading"
-  }
-  
+  "label": "Upgrading",
+  "className": "sidebar-icon-upgrading"
+}

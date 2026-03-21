@@ -1,5 +1,6 @@
 ---
-sidebar_label: 🐣 Serverpod Mini
+sidebar_label: Serverpod Mini
+sidebar_class_name: sidebar-icon-serverpod-mini
 ---
 
 # Serverpod Mini
