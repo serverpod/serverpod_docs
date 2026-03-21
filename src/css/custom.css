@@ -122,14 +122,25 @@ samp {
   height: 1.75rem;
 }
 
-/* Match top bar links to sidebar weight/size */
+/*
+ * Match top bar links to sidebar weight/size.
+ * Do not set display (or use !important on it) below 997px: Infima hides
+ * `.navbar__item` there, but our custom links use `navbar__item navbar__link`
+ * on the same element, so a global `display: flex` would override `display: none`
+ * and collide with DocSearch’s absolutely positioned search (≤996px).
+ */
 .navbar__link {
   font-size: 0.875rem !important;
   line-height: 1.3 !important;
   font-weight: 500 !important;
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
+}
+
+@media (min-width: 997px) {
+  .navbar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
 }
 
 .navbar__link--active {
@@ -164,6 +175,18 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 /*------------------------------------------------------------------------------
  * Navbar — narrow screens
  *----------------------------------------------------------------------------*/
+
+/*
+ * Docusaurus theme-search-algolia: `.navbarSearchContainer` is `position: absolute`
+ * for max-width 996px. Keep search in normal flow so nothing stacks under it if
+ * extra navbar items are visible in this range.
+ */
+@media (max-width: 996px) {
+  .navbar__items--right [class*='navbarSearchContainer'] {
+    position: static !important;
+    right: auto !important;
+  }
+}
 
 @media (max-width: 576px) {
   /* Hide mobile sidebar “back to main menu” */
