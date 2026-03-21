@@ -380,7 +380,17 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   --sidebar-icon-color: currentColor;
 }
 
-/* Getting started tutorial steps (numbered sidebar icons; step 5 reserved). */
+/* Getting started tutorial steps (numbered sidebar icons; step 5 reserved).
+   Smaller slot than default; number SVGs use a heavier stroke so lines stay clear
+   when scaled (stroke inside mask URLs cannot be changed from CSS). */
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-1 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-2 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-3 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-4 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link {
+  --sidebar-icon-size: 0.85rem;
+}
+
 .theme-doc-sidebar-menu .sidebar-icon-get-started-step-1 .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-number-1.svg');
   --sidebar-icon-color: currentColor;
