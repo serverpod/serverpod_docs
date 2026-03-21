@@ -186,14 +186,25 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
     position: static !important;
     right: auto !important;
   }
+
+  /* Mobile sidebar toggle: Docusaurus IconMenu default is 30×30px */
+  .navbar__toggle svg {
+    width: 22.5px !important;
+    height: 22.5px !important;
+  }
+
+  /* Infima default gap toggle → brand is 0.5rem */
+  .navbar__toggle {
+    margin-right: 1rem !important;
+  }
+
+  /* Hide “← Back to main menu” in the mobile drawer. */
+  .navbar-sidebar .navbar-sidebar__back {
+    display: none !important;
+  }
 }
 
 @media (max-width: 576px) {
-  /* Hide mobile sidebar “back to main menu” */
-  button.navbar-sidebar__back {
-    display: none !important;
-  }
-
   /* Drop top-bar text links that do not fit; search button stays (theme config) */
   a.navbar__link[href="https://pub.dev/documentation/serverpod/latest/"] {
     display: none !important;
@@ -317,6 +328,22 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 
   .markdown > h3 {
     --ifm-h3-font-size: 1.2rem !important;
+  }
+}
+
+/*------------------------------------------------------------------------------
+ * Docs — table of contents (mobile inline vs desktop column)
+ *----------------------------------------------------------------------------*/
+
+/*
+ * Collapsible “On this page” above the article: `theme-doc-toc-mobile` (stable
+ * ThemeClassNames.docs.docTocMobile). The right-column TOC is
+ * `theme-doc-toc-desktop` only — leave that visible. Breakpoint matches
+ * Docusaurus/Infima doc layout (997px desktop TOC column).
+ */
+@media (max-width: 996px) {
+  .theme-doc-toc-mobile {
+    display: none !important;
   }
 }
 
