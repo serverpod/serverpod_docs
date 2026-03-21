@@ -232,19 +232,19 @@ samp {
   color: var(--ifm-menu-color-active) !important;
 }
 
-/* Left-nav expandable chevron: half size. */
+/* Left-nav expandable chevron: ~65% of default. */
 .menu__list-item-collapsible .menu__link--sublist-caret:after {
-  min-width: 0.625rem !important;
-  width: 0.625rem !important;
-  height: 0.625rem !important;
-  background: var(--ifm-menu-link-sublist-icon) 50% / 1rem 1rem !important;
+  min-width: 0.8125rem !important;
+  width: 0.8125rem !important;
+  height: 0.8125rem !important;
+  margin-inline-end: 6px !important;
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.3rem 1.3rem !important;
 }
 
-/* Same icon, rendered through the caret element in some menu structures. */
 .menu__list-item-collapsible .menu__caret:before {
-  width: 0.625rem !important;
-  height: 0.625rem !important;
-  background: var(--ifm-menu-link-sublist-icon) 50% / 1rem 1rem !important;
+  width: 0.8125rem !important;
+  height: 0.8125rem !important;
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.3rem 1.3rem !important;
 }
 
 /* Docusaurus overrides heading font-sizes inside the markdown container.
