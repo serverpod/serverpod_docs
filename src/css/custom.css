@@ -355,6 +355,11 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   --sidebar-icon-color: currentColor;
 }
 
+.theme-doc-sidebar-menu .sidebar-introduction-icon .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-introduction.svg');
+  --sidebar-icon-color: currentColor;
+}
+
 .theme-doc-sidebar-menu .sidebar-icon-overview .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-compass.svg');
   --sidebar-icon-color: currentColor;
