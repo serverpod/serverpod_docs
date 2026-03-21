@@ -347,9 +347,9 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   mask-size: contain;
 }
 
-/* Icon mappings (top-level only).
-   We set the icon variables on the top-level <a.menu__link> elements
-   so nested sub-pages don't inherit them. */
+/* Icon mappings.
+   Most icons target top-level <a.menu__link> so nested sub-pages don't inherit.
+   Getting started steps use per-doc `sidebar_class_name` on their <li>. */
 .theme-doc-sidebar-menu .sidebar-installation-icon .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-package.svg');
   --sidebar-icon-color: currentColor;
@@ -377,6 +377,32 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 
 .theme-doc-sidebar-menu .sidebar-icon-getting-started > div.menu__list-item-collapsible > a.menu__link--sublist {
   --sidebar-icon-mask: url('/img/sidebar-icon-sprout.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+/* Getting started tutorial steps (numbered sidebar icons; step 5 reserved). */
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-1 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-1.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-2 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-2.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-3 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-3.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-4 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-4.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-5.svg');
   --sidebar-icon-color: currentColor;
 }
 

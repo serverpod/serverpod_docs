@@ -1,5 +1,6 @@
 ---
 sidebar_label: Models and data
+sidebar_class_name: sidebar-icon-get-started-step-2
 ---
 
 # Models and data
