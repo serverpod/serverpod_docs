@@ -1,5 +1,6 @@
 ---
-sidebar_label: 3️⃣ Working with the database
+sidebar_label: Working with the database
+sidebar_class_name: sidebar-icon-get-started-step-3
 ---
 
 # Working with the database

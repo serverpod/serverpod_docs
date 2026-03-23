@@ -1,5 +1,6 @@
 ---
-sidebar_label: 4️⃣ Deploying Serverpod
+sidebar_label: Deploying Serverpod
+sidebar_class_name: sidebar-icon-get-started-step-4
 ---
 
 # Deploying Serverpod

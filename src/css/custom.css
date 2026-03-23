@@ -1,10 +1,17 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
+/*------------------------------------------------------------------------------
+ * Serverpod docs — global styles (Docusaurus + Infima).
+ *----------------------------------------------------------------------------*/
 
-/* You can override the default Infima variables here. */
+/*------------------------------------------------------------------------------
+ * Fonts
+ *----------------------------------------------------------------------------*/
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap');
+
+/*------------------------------------------------------------------------------
+ * Design tokens — light theme
+ *----------------------------------------------------------------------------*/
+
 :root {
   --ifm-color-primary: #0950c3;
   --ifm-color-primary-dark: #0848af;
@@ -13,10 +20,64 @@
   --ifm-color-primary-light: #0a58d6;
   --ifm-color-primary-lighter: #0a5ce0;
   --ifm-color-primary-lightest: #156af4;
-  --ifm-code-font-size: 95%;
+
+  /* Base font stack; typography scale aligned with Stripe-like docs. */
+  --ifm-font-family-base: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --ifm-code-font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Body text */
+  --ifm-font-size-base: 1rem; /* 16px */
+  --ifm-line-height-base: 1.6;
+
+  /* Headings */
+  --ifm-heading-color: #32325d;
+  --ifm-heading-font-weight: 700;
+  --ifm-heading-line-height: 1.2;
+  --ifm-heading-margin-bottom: 0.75rem;
+  --ifm-h1-font-size: 1.85rem;
+  --ifm-h2-font-size: 1.3rem;
+  --ifm-h3-font-size: 1.2rem;
+  --ifm-h4-font-size: 1.1rem;
+  --ifm-h5-font-size: 1rem;
+  --ifm-h6-font-size: 0.93rem;
+
+  /* Body colors */
+  --ifm-color-content: #32325d;
+  --ifm-color-content-secondary: #5b6474;
+
+  /* Code blocks */
+  --ifm-code-font-size: 0.85rem;
+  --ifm-code-background: rgb(246, 247, 248);
+  --ifm-pre-padding: 0.75rem;
+  --ifm-pre-line-height: 1.4;
+
+  /* Shared border for inline code and fenced blocks */
+  --docs-code-border-color: color-mix(
+    in srgb,
+    var(--ifm-alert-border-color, var(--ifm-color-primary)) 20%,
+    transparent
+  );
+
+  /* Navbar */
+  --ifm-navbar-height: 3.25rem;
+  --ifm-navbar-item-padding-vertical: 0.2rem;
+  --ifm-navbar-item-padding-horizontal: 0.65rem;
+  --ifm-navbar-background-color: #f7f7fb;
+
+  /* Sidebar (left nav) */
+  --ifm-menu-color: #5b6474;
+  --ifm-menu-color-active: #0950c3;
+  /* Do not highlight expanded/selected section rows */
+  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: transparent;
+  --ifm-menu-link-padding-vertical: 0.35rem;
+  --ifm-menu-link-padding-horizontal: 0.65rem;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/*------------------------------------------------------------------------------
+ * Design tokens — dark theme
+ *----------------------------------------------------------------------------*/
+
 [data-theme='dark'] {
   --ifm-color-primary: #99c0ff;
   --ifm-color-primary-dark: #70a7ff;
@@ -24,8 +85,271 @@
   --ifm-color-primary-darkest: #1f74ff;
   --ifm-color-primary-light: #c2d9ff;
   --ifm-color-primary-lighter: #d6e6ff;
-  --ifm-color-primary-lightest: #ffffff;;
+  --ifm-color-primary-lightest: #ffffff;
+  --ifm-heading-color: #dfe3f0;
+  --ifm-color-content: #dfe3f0;
+  --ifm-color-content-secondary: #b8bfce;
+  --ifm-heading-font-weight: 600;
+  --ifm-menu-color: rgba(255, 255, 255, 0.72);
+  --ifm-menu-color-active: #99c0ff;
+  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: transparent;
+  --ifm-navbar-background-color: #242526;
 }
+
+/*------------------------------------------------------------------------------
+ * Base typography
+ *----------------------------------------------------------------------------*/
+
+body {
+  font-family: var(--ifm-font-family-base);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--ifm-code-font-family);
+  font-weight: 500;
+}
+
+/*------------------------------------------------------------------------------
+ * Navbar
+ *----------------------------------------------------------------------------*/
+
+.navbar__search-input {
+  font-size: 0.875rem;
+  height: 1.75rem;
+}
+
+/*
+ * Match top bar links to sidebar weight/size.
+ * Do not set display (or use !important on it) below 997px: Infima hides
+ * `.navbar__item` there, but our custom links use `navbar__item navbar__link`
+ * on the same element, so a global `display: flex` would override `display: none`
+ * and collide with DocSearch’s absolutely positioned search (≤996px).
+ */
+.navbar__link {
+  font-size: 0.875rem !important;
+  line-height: 1.3 !important;
+  font-weight: 500 !important;
+}
+
+@media (min-width: 997px) {
+  .navbar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+}
+
+.navbar__link--active {
+  font-weight: 500 !important;
+}
+
+.serverpod-nav-icon-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.serverpod-nav-text {
+  display: inline-block;
+}
+
+.navbar__link svg.serverpod-nav-icon {
+  width: 1rem !important;
+  height: 1rem !important;
+  flex: 0 0 1rem;
+}
+
+/* Hide “opens in new tab” icon in navbar (stable attribute selectors; class is CSS-module hashed) */
+a.navbar__link svg[aria-label*="opens in new tab"] {
+  display: none !important;
+}
+
+a.navbar__link svg use[href="#theme-svg-external-link"] {
+  display: none !important;
+}
+
+/*------------------------------------------------------------------------------
+ * Navbar — narrow screens
+ *----------------------------------------------------------------------------*/
+
+/*
+ * Docusaurus theme-search-algolia: `.navbarSearchContainer` is `position: absolute`
+ * for max-width 996px. Keep search in normal flow so nothing stacks under it if
+ * extra navbar items are visible in this range.
+ */
+@media (max-width: 996px) {
+  .navbar__items--right [class*='navbarSearchContainer'] {
+    position: static !important;
+    right: auto !important;
+  }
+
+  /* Mobile sidebar toggle: Docusaurus IconMenu default is 30×30px */
+  .navbar__toggle svg {
+    width: 22.5px !important;
+    height: 22.5px !important;
+  }
+
+  /* Infima default gap toggle → brand is 0.5rem */
+  .navbar__toggle {
+    margin-right: 1rem !important;
+  }
+
+  /* Hide “← Back to main menu” in the mobile drawer. */
+  .navbar-sidebar .navbar-sidebar__back {
+    display: none !important;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Drop top-bar text links that do not fit; search button stays (theme config) */
+  a.navbar__link[href="https://pub.dev/documentation/serverpod/latest/"] {
+    display: none !important;
+  }
+
+  a.navbar__link[href="https://careers.serverpod.dev/"] {
+    display: none !important;
+  }
+
+  a.navbar__link[href="https://github.com/serverpod/serverpod"] {
+    display: none !important;
+  }
+}
+
+/*------------------------------------------------------------------------------
+ * Sidebar — link sizing, hover, active, collapsible
+ *----------------------------------------------------------------------------*/
+
+.menu__link {
+  line-height: 1.3;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.menu__link--active {
+  font-weight: 500;
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.menu__link:hover {
+  background: none !important;
+  text-decoration: none !important;
+}
+
+.menu__link--active:hover {
+  background: none !important;
+  color: var(--ifm-menu-color-active) !important;
+}
+
+.menu__list-item-collapsible:hover {
+  background: none !important;
+}
+
+.menu__list-item-collapsible--active {
+  background: none !important;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background-color: transparent !important;
+  background: none !important;
+}
+
+/* Remove Infima/Docusaurus blue “selected section” backgrounds in mobile drawer */
+.navbar-sidebar .menu__list-item-collapsible,
+.navbar-sidebar .menu__link,
+.navbar-sidebar .menu__caret,
+.navbar-sidebar .menu__link--active {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.navbar-sidebar .menu__list-item-collapsible:hover,
+.navbar-sidebar .menu__link:hover,
+.navbar-sidebar .menu__caret:hover,
+.navbar-sidebar .menu__list-item-collapsible--active {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.navbar-sidebar .menu__link--active:not(.menu__link--sublist),
+.navbar-sidebar .menu__link--active:not(.menu__link--sublist):hover {
+  color: var(--ifm-menu-color-active) !important;
+}
+
+/*------------------------------------------------------------------------------
+ * Sidebar — expandable chevron (~65% of default)
+ *----------------------------------------------------------------------------*/
+
+.menu__list-item-collapsible .menu__link--sublist-caret:after {
+  min-width: 0.8125rem !important;
+  width: 0.8125rem !important;
+  height: 0.8125rem !important;
+  margin-inline-end: 6px !important;
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.3rem 1.3rem !important;
+}
+
+.menu__list-item-collapsible .menu__caret:before {
+  width: 0.8125rem !important;
+  height: 0.8125rem !important;
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.3rem 1.3rem !important;
+}
+
+/*------------------------------------------------------------------------------
+ * Markdown — heading sizes (override theme so :root --ifm-h* vars apply)
+ *----------------------------------------------------------------------------*/
+
+.markdown h1:first-child {
+  --ifm-h1-font-size: 1.85rem !important;
+  /* Version tag above first H1 */
+  margin-top: 0.75rem !important;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 1.3rem !important;
+}
+
+.markdown > h3 {
+  --ifm-h3-font-size: 1.2rem !important;
+}
+
+@media (max-width: 576px) {
+  .markdown h1:first-child {
+    --ifm-h1-font-size: 1.85rem !important;
+    margin-top: 0.75rem !important;
+  }
+
+  .markdown > h2 {
+    --ifm-h2-font-size: 1.3rem !important;
+  }
+
+  .markdown > h3 {
+    --ifm-h3-font-size: 1.2rem !important;
+  }
+}
+
+/*------------------------------------------------------------------------------
+ * Docs — table of contents (mobile inline vs desktop column)
+ *----------------------------------------------------------------------------*/
+
+/*
+ * Collapsible “On this page” above the article: `theme-doc-toc-mobile` (stable
+ * ThemeClassNames.docs.docTocMobile). The right-column TOC is
+ * `theme-doc-toc-desktop` only — leave that visible. Breakpoint matches
+ * Docusaurus/Infima doc layout (997px desktop TOC column).
+ */
+@media (max-width: 996px) {
+  .theme-doc-toc-mobile {
+    display: none !important;
+  }
+}
+
+/*------------------------------------------------------------------------------
+ * Code — line highlight (Docusaurus)
+ *----------------------------------------------------------------------------*/
 
 .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.1);
@@ -36,4 +360,201 @@
 
 [data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+/*------------------------------------------------------------------------------
+ * Sidebar — icon slot (::before) and variables
+ *
+ * Set --sidebar-icon-mask and --sidebar-icon-color on the sidebar <li> via
+ * sidebar_class_name (docs) or _category_.json className (categories).
+ *----------------------------------------------------------------------------*/
+
+.theme-doc-sidebar-menu .menu__link {
+  --sidebar-icon-size: 1.0rem;
+  --sidebar-icon-gap: 0.6rem;
+  /* Default: no icon (stops parent <li> icons leaking into nested items) */
+  --sidebar-icon-mask: none;
+  --sidebar-icon-color: transparent;
+
+  display: flex;
+  align-items: center;
+  gap: var(--sidebar-icon-gap);
+}
+
+.theme-doc-sidebar-menu .menu__link::before {
+  content: '';
+  width: var(--sidebar-icon-size);
+  height: var(--sidebar-icon-size);
+  flex: 0 0 var(--sidebar-icon-size);
+
+  background-color: var(--sidebar-icon-color, transparent);
+
+  -webkit-mask-image: var(--sidebar-icon-mask, none);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-image: var(--sidebar-icon-mask, none);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+/* Hide external-link icon in sidebar (e.g. Changelog) */
+.theme-doc-sidebar-menu a.menu__link svg[aria-label*="opens in new tab"] {
+  display: none !important;
+}
+
+.theme-doc-sidebar-menu a.menu__link svg use[href="#theme-svg-external-link"] {
+  display: none !important;
+}
+
+/*------------------------------------------------------------------------------
+ * Sidebar — per-item icon masks
+ *----------------------------------------------------------------------------*/
+
+.theme-doc-sidebar-menu .sidebar-installation-icon .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-package.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-introduction-icon .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-introduction.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-overview .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-compass.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-support .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-message-circle-question-mark.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-serverpod-mini .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-tree-palm.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-getting-started > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-sprout.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+/* Getting started steps: smaller slot; number SVGs use heavier stroke */
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-1 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-2 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-3 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-4 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link {
+  --sidebar-icon-size: 0.85rem;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-1 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-1.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-2 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-2.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-3 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-3.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-4 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-4.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-5.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-learn > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-graduation-cap.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-reference > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-book-marked.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-deploying > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-rocket.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-upgrading > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-repeat-2.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-tools > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-hammer.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-roadmap .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-map.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+/* External Changelog link: className not always on DOM; match href */
+.theme-doc-sidebar-menu .menu__link[href="https://pub.dev/packages/serverpod/changelog"] {
+  --sidebar-icon-mask: url('/img/sidebar-icon-changelog.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+/*------------------------------------------------------------------------------
+ * Admonitions (:::note, :::tip, …)
+ *----------------------------------------------------------------------------*/
+
+/* Lucide stroke icons: theme sets fill on SVG */
+.alert span[class*='admonitionIcon'] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: var(--ifm-alert-foreground-color) !important;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+.alert [class*='admonitionHeading'] {
+  font-size: 0.7rem !important;
+  opacity: 0.85 !important;
+}
+
+.alert {
+  --ifm-alert-border-left-width: 1px !important;
+  --ifm-alert-border-width: 1px !important;
+  box-shadow: none !important;
+  border-color: color-mix(in srgb, var(--ifm-alert-border-color) 30%, transparent) !important;
+}
+
+/*------------------------------------------------------------------------------
+ * Markdown — fenced blocks and inline code
+ *----------------------------------------------------------------------------*/
+
+.theme-doc-markdown .theme-code-block,
+.theme-doc-markdown pre[class*='language-'] {
+  box-shadow: none !important;
+}
+
+.theme-doc-markdown .theme-code-block {
+  border: none !important;
+  outline: 1px solid var(--docs-code-border-color) !important;
+  outline-offset: -1px;
+}
+
+.theme-doc-markdown code:not([class*='language-']) {
+  box-shadow: none !important;
+  border: 1px solid var(--docs-code-border-color) !important;
+  border-width: 1px !important;
 }

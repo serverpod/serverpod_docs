@@ -1,5 +1,6 @@
 ---
-sidebar_label: 💬 Support & community
+sidebar_label: Support & community
+sidebar_class_name: sidebar-icon-support
 ---
 
 # Support & community

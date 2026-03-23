@@ -1,5 +1,6 @@
 ---
-sidebar_label: 1️⃣ Creating endpoint methods
+sidebar_label: Creating endpoint methods
+sidebar_class_name: sidebar-icon-get-started-step-1
 ---
 
 # Creating endpoint methods

@@ -1,5 +1,6 @@
 ---
-sidebar_label: 🛣️ Roadmap & contributions
+sidebar_label: Roadmap & contributions
+sidebar_class_name: sidebar-icon-roadmap
 ---
 
 # Roadmap & contributions

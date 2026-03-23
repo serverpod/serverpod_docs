@@ -1,5 +1,5 @@
 ---
-sidebar_label: 🏫 Serverpod Academy
+sidebar_label: Serverpod Academy
 ---
 
 # Serverpod Academy
