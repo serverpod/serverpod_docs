@@ -130,6 +130,33 @@ final microsoftIdpConfig = MicrosoftIdpConfigFromPasswords(
 );
 ```
 
+## Reacting to account creation
+
+You can use the `onAfterMicrosoftAccountCreated` callback to run logic after a new Microsoft account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
+
+This is particularly useful for performing side effects like analytics, sending a welcome email, or storing additional data. The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` callbacks in the core auth module do not have access to provider-specific data, so this callback fills that gap.
+
+```dart
+final microsoftIdpConfig = MicrosoftIdpConfigFromPasswords(
+  onAfterMicrosoftAccountCreated: (
+    session,
+    authUser,
+    microsoftAccount, {
+    required transaction,
+  }) async {
+    // e.g. store additional data, send a welcome email, or log for analytics
+  },
+);
+```
+
+:::info
+This callback runs inside the same database transaction as the account creation.
+:::
+
+:::caution
+If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraMicrosoftInfoCallback` to fetch and store the data you need before the auth user is created.
+:::
+
 ## Configuring client IDs on the app
 
 ### Passing client IDs in code

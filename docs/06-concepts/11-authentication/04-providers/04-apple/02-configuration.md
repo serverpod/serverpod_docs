@@ -6,6 +6,34 @@ This page covers configuration options for the Apple identity provider beyond th
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `AppleIdpConfig` in-code documentation. -->
 
+## Reacting to account creation
+
+You can use the `onAfterAppleAccountCreated` callback to run logic after a new Apple account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
+
+This is particularly useful for performing side effects like analytics, sending a welcome email, or storing additional data. The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` callbacks in the core auth module do not have access to provider-specific data, so this callback fills that gap.
+
+```dart
+final appleIdpConfig = AppleIdpConfig(
+  // ... required parameters ...
+  onAfterAppleAccountCreated: (
+    session,
+    authUser,
+    appleAccount, {
+    required transaction,
+  }) async {
+    // e.g. store additional data, send a welcome email, or log for analytics
+  },
+);
+```
+
+:::info
+This callback runs inside the same database transaction as the account creation.
+:::
+
+:::caution
+If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` to set scopes based on data collected earlier in the flow.
+:::
+
 ## Web Routes Configuration
 
 Apple Sign-In requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server.
