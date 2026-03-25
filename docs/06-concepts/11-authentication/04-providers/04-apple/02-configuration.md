@@ -2,11 +2,11 @@
 
 This page covers configuration options for the Apple identity provider beyond the basic setup.
 
-<!-- ## Configuration options
+## Configuration options
 
-Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `AppleIdpConfig` in-code documentation. -->
+Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `AppleIdpConfig` in-code documentation.
 
-## Reacting to account creation
+### Reacting to account creation
 
 You can use the `onAfterAppleAccountCreated` callback to run logic after a new Apple account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
