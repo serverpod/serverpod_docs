@@ -1,8 +1,8 @@
 # Reactive Future Calls
 
-Reactive future calls let you react to database changes in real-time. When a row is inserted, updated, or deleted, Serverpod can automatically invoke your code with the changed data. This is useful for scenarios like sending notifications when an order is confirmed, syncing data to external systems, or triggering workflows based on state changes.
+Reactive future calls let you react to database changes in near real-time. When a row is inserted, updated, or deleted, Serverpod can automatically and asynchronously invoke your code with the changed data. This is useful for scenarios like sending notifications when an order is confirmed, syncing data to external systems, or triggering workflows based on state changes.
 
-Under the hood, reactive future calls use PostgreSQL triggers and an outbox pattern. A database trigger fires within the same transaction as the data change, writing an entry to an outbox table. Serverpod polls the outbox and dispatches matching entries to your handler. Because the trigger runs in the same transaction, rolled-back changes never produce events.
+Under the hood, reactive future calls use PostgreSQL triggers and an outbox pattern. A database trigger fires within the same transaction as the data change, writing an entry to an outbox table. Serverpod periodically polls the outbox on a configurable scan interval and dispatches matching entries to your handler. Because the trigger runs in the same transaction, rolled-back changes never produce events.
 
 ## Creating a reactive future call
 
@@ -97,7 +97,7 @@ When data changes in a watched table:
 5. Processed entries are deleted from the outbox.
 
 :::info
-The outbox scanner uses the same scan interval as regular future calls, configured via `FutureCallConfig.scanInterval`.
+The outbox scanner uses the same scan interval as regular future calls, configured via the `futureCall.scanInterval` setting in your YAML configuration.
 :::
 
 ## Transaction safety
