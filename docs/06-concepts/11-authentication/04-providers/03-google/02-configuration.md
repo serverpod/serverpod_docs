@@ -105,7 +105,7 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
 
 You can use the `onAfterGoogleAccountCreated` callback to run logic after a new Google account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
-This is particularly useful for performing side effects like analytics, sending a welcome email, or storing additional data. The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` callbacks in the core auth module do not have access to provider-specific data, so this callback fills that gap.
+This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
 
 ```dart
 final googleIdpConfig = GoogleIdpConfigFromPasswords(
@@ -121,7 +121,7 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
 ```
 
 :::info
-This callback runs inside the same database transaction as the account creation.
+This callback runs inside the same database transaction as the account creation. Throwing an exception inside this callback will abort the process. If you perform external side-effects, make sure to safeguard them with a try/catch to prevent unwanted failures.
 :::
 
 :::caution
