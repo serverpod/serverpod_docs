@@ -101,6 +101,33 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
 );
 ```
 
+### Reacting to account creation
+
+You can use the `onAfterGoogleAccountCreated` callback to run logic after a new Google account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
+
+This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+
+```dart
+final googleIdpConfig = GoogleIdpConfigFromPasswords(
+  onAfterGoogleAccountCreated: (
+    session,
+    authUser,
+    googleAccount, {
+    required transaction,
+  }) async {
+    // e.g. store additional data, send a welcome email, or log for analytics
+  },
+);
+```
+
+:::info
+This callback runs inside the same database transaction as the account creation. Throwing an exception inside this callback will abort the process. If you perform external side-effects, make sure to safeguard them with a try/catch to prevent unwanted failures.
+:::
+
+:::caution
+If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraGoogleInfoCallback` to fetch and store the data you need before the auth user is created.
+:::
+
 ### Lightweight Sign-In on the Flutter app
 
 Lightweight sign-in is a feature that attempts to authenticate users previously logged in with Google automatically with minimal or no user interaction. When enabled, the Google authentication controller will try to sign in users seamlessly using platform-specific lightweight authentication methods. This feature is disabled by default, but can be enabled from the `GoogleSignInWidget` or `GoogleAuthController`.
