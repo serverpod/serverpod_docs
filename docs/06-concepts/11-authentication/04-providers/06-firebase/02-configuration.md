@@ -128,7 +128,7 @@ The properties available depend on the Firebase authentication method used. For 
 
 You can use the `onAfterFirebaseAccountCreated` callback to run logic after a new Firebase account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
-This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
 
 ```dart
 final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(

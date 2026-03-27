@@ -61,7 +61,7 @@ The properties available depend on user privacy settings and granted permissions
 
 You can use the `onAfterGitHubAccountCreated` callback to run logic after a new GitHub account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
-This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
 
 ```dart
 final githubIdpConfig = GitHubIdpConfigFromPasswords(
