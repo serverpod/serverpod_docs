@@ -6,12 +6,6 @@ sidebar_label: 🏫 Serverpod Academy
 
 Welcome to Serverpod Academy. This is your gateway to mastering Serverpod through structured, hands-on learning experiences.
 
-:::warning
-
-We are updating Serverpod Academy for Serverpod 3. The academy currently covers version 2, and there have been some changes to how authentication is implemented.
-
-:::
-
 ## Serverpod Ground Training
 
 Our flagship course, **Serverpod Ground Training**, is a comprehensive 4-hour class that takes you through all the fundamentals of building applications with Serverpod. In this course, you'll:
