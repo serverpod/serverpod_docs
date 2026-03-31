@@ -6,9 +6,9 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
 
     ```dart
     Map<String, dynamic> toJson() {
-    return {
+      return {
         name: 'John Doe',
-    };
+      };
     }
     ```
 
@@ -16,11 +16,11 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
 
     ```dart
     factory ClassName.fromJson(
-    Map<String, dynamic> json,
+      Map<String, dynamic> json,
     ) {
-    return ClassName(
+      return ClassName(
         name: json['name'] as String,
-    );
+      );
     }
     ```
 
