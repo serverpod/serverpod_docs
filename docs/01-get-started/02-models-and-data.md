@@ -34,8 +34,8 @@ You can use most primitive Dart types here or any other models you have specifie
 To generate the code for the model, run the `serverpod generate` command in your server directory:
 
 ```bash
-$ cd magic_recipe_server
-$ serverpod generate
+cd magic_recipe_server
+serverpod generate
 ```
 
 This will generate the code for the model and create a new file called `recipe.dart` in the `lib/src/generated` directory. It will also update the client code in `magic_recipe/magic_recipe_client` so you can use it in your Flutter app.
@@ -133,8 +133,8 @@ class RecipeEndpoint extends Endpoint {
 First, we need to update our generated client by running `serverpod generate`.
 
 ```bash
-$ cd magic_recipe_server
-$ serverpod generate
+cd magic_recipe_server
+serverpod generate
 ```
 
 Now that we have created the `Recipe` model we can use it in the app. We will do this in the `_callGenerateRecipe` method of the `magic_recipe_flutter/lib/main.dart` file. Let's update our `RecipeWidget` so that it displays the author and year of the recipe in addition to the recipe itself.
@@ -433,16 +433,16 @@ class ResultDisplay extends StatelessWidget {
 First, start the server:
 
 ```bash
-$ cd magic_recipe_server
-$ docker compose up -d
-$ dart bin/main.dart
+cd magic_recipe_server
+docker compose up -d
+dart bin/main.dart
 ```
 
 Then, start the Flutter app:
 
 ```bash
-$ cd magic_recipe_flutter
-$ flutter run -d chrome
+cd magic_recipe_flutter
+flutter run -d chrome
 ```
 
 This will start the Flutter app in your browser. It should look something like this:
