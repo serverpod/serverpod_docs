@@ -231,26 +231,35 @@ The input object needs to have the `id` field set. The `deleteRow` method return
 
 ### Delete several rows
 
-To batch delete several rows, use the `delete` method.
+To batch delete several rows, use the `delete` method. This method also supports [ordering](sort) the returned deleted results.
 
 ```dart
-var companiesDeleted = await Company.db.delete(session, companies);
+var companiesDeleted = await Company.db.delete(
+  session, 
+  companies, 
+  orderBy: (t) => t.id,
+  orderDescending: false,
+);
 ```
 
-This is an atomic operation, meaning no entries will be deleted if any entry fails to be deleted. The `delete` method returns a `List` of the models deleted.
+This is an atomic operation, meaning no entries will be deleted if any entry fails to be deleted. The `delete` method returns a `List` of the models deleted, ordered as specified by the orderBy.
 
 ### Delete by filter
 
-You can also do a [filtered](filter) delete and delete all entries matching a `where` query, by using the `deleteWhere` method.
+You can also do a [filtered](filter) delete and delete all entries matching a `where` query, by using the `deleteWhere` method. This method also supports [ordering](sort) of the returned deleted results.
 
 ```dart
 var companiesDeleted = await Company.db.deleteWhere(
   session,
   where: (t) => t.name.like('%Ltd'),
+  orderByList: (t) => [
+    Order(column: t.name, orderDescending: true),
+    Order(column: t.id),
+  ],
 );
 ```
 
-The above example will delete any row that ends in _Ltd_. The `deleteWhere` method returns a `List` of the models deleted.
+The above example will delete any row where the `name` ends in _Ltd_. The `deleteWhere` method returns a `List` of the models deleted, ordered by name in descending order, followed by id in ascending order.
 
 ## Count
 
