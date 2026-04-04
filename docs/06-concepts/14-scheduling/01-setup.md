@@ -31,7 +31,7 @@ It is not valid to override the `invoke` method of the `FutureCall` class. This 
 Next, you need to generate the code for your future calls:
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 Calling `serverpod generate` will create a type-safe interface for invoking the future calls in the server's `generated/future_calls.dart` file. This interface can be accessed from the Serverpod object.

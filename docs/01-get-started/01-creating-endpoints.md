@@ -38,8 +38,8 @@ development:
 Next, we add the Dartantic AI package as a dependency to our server. This package provides a convenient interface for working with different AI providers, including Google's Gemini API.
 
 ```bash
-$ cd magic_recipe_server
-$ dart pub add dartantic_ai
+cd magic_recipe_server
+dart pub add dartantic_ai
 ```
 
 ## Create a new endpoint
@@ -100,8 +100,8 @@ For methods to be recognized by Serverpod, they need to return a typed `Future` 
 Now, you need to generate the code for your new endpoint. You do this by running `serverpod generate` in the server directory of your project:
 
 ```bash
-$ cd magic_recipe_server
-$ serverpod generate
+cd magic_recipe_server
+serverpod generate
 ```
 
 `serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
@@ -221,16 +221,16 @@ Before you start your server, ensure no other Serverpod server is running. Also,
 Let's try our new recipe app! First, start the server:
 
 ```bash
-$ cd magic_recipe_server
-$ docker compose up -d
-$ dart bin/main.dart --apply-migrations
+cd magic_recipe_server
+docker compose up -d
+dart bin/main.dart --apply-migrations
 ```
 
 Now, you can start the Flutter app:
 
 ```bash
-$ cd magic_recipe_flutter
-$ flutter run -d chrome
+cd magic_recipe_flutter
+flutter run -d chrome
 ```
 
 This will start the Flutter app in your browser:
