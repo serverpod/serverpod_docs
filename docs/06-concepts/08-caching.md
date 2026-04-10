@@ -87,7 +87,7 @@ Future<UserData> getUserData(Session session, int userId) async {
       () async => UserData.db.findById(session, userId),
       lifetime: Duration(minutes: 5),
     ),
-    );
+  );
 
   // Return the user data to the client
   return userData;
