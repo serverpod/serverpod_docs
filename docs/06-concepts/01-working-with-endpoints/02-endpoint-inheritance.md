@@ -1,125 +1,11 @@
-# Working with endpoints
-
-Endpoints are the connection points to the server from the client. With Serverpod, you add methods to your endpoint, and your client code will be generated to make the method call. For the code to be generated, you need to place the endpoint file anywhere under the `lib` directory of your server. Your endpoint should extend the `Endpoint` class. For methods to be generated, they need to return a typed `Future`, and its first argument should be a `Session` object. The `Session` object holds information about the call being made and provides access to the database.
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class ExampleEndpoint extends Endpoint {
-  Future<String> hello(Session session, String name) async {
-    return 'Hello $name';
-  }
-}
-```
-
-The above code will create an endpoint called `example` (the Endpoint suffix will be removed) with the single `hello` method. To generate the client-side code run `serverpod generate` in the home directory of the server.
-
-On the client side, you can now call the method by calling:
-
-```dart
-var result = await client.example.hello('World');
-```
-
-The client is initialized like this:
-
-```dart
-// Sets up a singleton client object that can be used to talk to the server from
-// anywhere in our app. The client is generated from your server code.
-// The client is set up to connect to a Serverpod running on a local server on
-// the default port. You will need to modify this to connect to staging or
-// production servers.
-var client = Client('http://$localhost:8080/')
-  ..connectivityMonitor = FlutterConnectivityMonitor();
-```
-
-If you run the app in an Android emulator, the `localhost` parameter points to `10.0.2.2`, rather than `127.0.0.1` as this is the IP address of the host machine. To access the server from a different device on the same network (such as a physical phone) replace `localhost` with the local ip address. You can find the local ip by running `ifconfig` (Linux/MacOS) or `ipconfig` (Windows).
-
-Make sure to also update the `publicHost` in the development config to make sure the server always serves the client with the correct path to assets etc.
-
-```yaml
-# your_project_server/config/development.yaml
-
-apiServer:
-  port: 8080
-  publicHost: localhost # Change this line
-  publicPort: 8080
-  publicScheme: http
-```
-
-:::info
-
-You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code whenever your source files are updated. This is useful during the development of your server.
-
-:::
-
-## Passing parameters
-
-There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
-
-You can also pass `List`, `Map`, `Record` and `Set` as parameters, but they need to be strictly typed with one of the types mentioned above.
-
-:::warning
-
-While it's possible to pass binary data through a method call and `ByteData`, it is not the most efficient way to transfer large files. See our [file upload](file-uploads) interface. The size of a call is by default limited to 512 kB. It's possible to change by adding the `maxRequestSize` to your config files. E.g., this will double the request size to 1 MB:
-
-```yaml
-maxRequestSize: 1048576
-```
-
-:::
-
-## Return types
-
-The return type must be a typed Future. Supported return types are the same as for parameters.
-
-## Ignore endpoint definition
-
-### Ignore an entire `Endpoint` class
-
-If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@doNotGenerate`. This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-@doNotGenerate
-class ExampleEndpoint extends Endpoint {
-  Future<String> hello(Session session, String name) async {
-    return 'Hello $name';
-  }
-}
-```
-
-The above code will not generate any server or client bindings for the example endpoint.
-
-### Ignore individual `Endpoint` methods
-
-Alternatively, you can disable single methods by annotation them with `@doNotGenerate`.
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-class ExampleEndpoint extends Endpoint {
-  Future<String> hello(Session session, String name) async {
-    return 'Hello $name';
-  }
-
-  @doNotGenerate
-  Future<String> goodbye(Session session, String name) async {
-    return 'Bye $name';
-  }
-}
-```
-
-In this case the `ExampleEndpoint` will only expose the `hello` method, whereas the `goodbye` method will not be accessible externally.
-
-## Endpoint method inheritance
+# Endpoint inheritance
 
 Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
 Inheritance gives you the possibility to modify the behavior of `Endpoint` classes defined in other Serverpod modules.
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
 
-### Inheriting from an `Endpoint` class
+## Inheriting from an `Endpoint` class
 
 Given an existing `Endpoint` class, it is possible to extend or modify its behavior while retaining the already exposed methods.
 
@@ -142,7 +28,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 The generated client code will now be able to access both `CalculatorEndpoint` and `MyCalculatorEndpoint`.
 Whereas the `CalculatorEndpoint` only exposes the original `add` method, `MyCalculatorEndpoint` now exposes both the inherited `add` and its own `subtract` methods.
 
-### Inheriting from an `Endpoint` class marked `abstract`
+## Inheriting from an `Endpoint` class marked `abstract`
 
 Endpoints marked as `abstract` are not added to the server. But if they are subclassed, their methods will be exposed through the subclass.
 
@@ -160,7 +46,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {}
 
 Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. However, an abstract client class will be generated, which will be extended by the class generated from `MyCalculatorEndpoint`. The concrete client exposes the `add` method it inherited from `CalculatorEndpoint`. See [Client-side endpoint inheritance](#client-side-endpoint-inheritance) for more details on how abstract endpoints are represented on the client.
 
-#### Extending an `abstract` `Endpoint` class
+### Extending an `abstract` `Endpoint` class
 
 In the above example, the `MyCalculatorEndpoint` only exposed the inherited `add` method. It can be further extended with custom methods like this:
 
@@ -176,7 +62,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 
 In this case, it will expose both an `add` and a `subtract` method.
 
-### Inheriting from an `Endpoint` class annotated with `@doNotGenerate`
+## Inheriting from an `Endpoint` class annotated with `@doNotGenerate`
 
 Suppose you had an `Endpoint` class marked with `@doNotGenerate` and a subclass that extends it:
 
@@ -195,7 +81,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {}
 
 Since `CalculatorEndpoint` is marked as `@doNotGenerate`, it will not be exposed on the server and no client class will be generated for it. Only `MyCalculatorEndpoint` will be accessible from the client, which provides the inherited `add` methods from its parent class. Unlike abstract endpoints, when a parent is marked with `@doNotGenerate`, the generated client class will implement the base endpoint class directly rather than extending a generated abstract parent class.
 
-### Overriding endpoint methods
+## Overriding endpoint methods
 
 It is possible to override methods of the superclass. This can be useful when you want to modify the behavior of specific methods but preserve the rest.
 
@@ -220,7 +106,7 @@ Since `GreeterBaseEndpoint` is `abstract`, it will not be exposed on the server.
 
 This way, you can modify the behavior of endpoint methods while still sharing the implementation through calls to `super`. Be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
 
-### Hiding endpoint methods with `@doNotGenerate`
+## Hiding endpoint methods with `@doNotGenerate`
 
 In case you want to hide methods from an endpoint use `@doNotGenerate` in the child class like so:
 
@@ -250,7 +136,7 @@ Don't worry about the exception in the `subtract` implementation. That is only a
 
 Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@doNotGenerate`. Otherwise, the method that should be hidden on the child would still be accessible via the parent class.
 
-### Unhiding endpoint methods annotated with `@doNotGenerate` in the super class
+## Unhiding endpoint methods annotated with `@doNotGenerate` in the super class
 
 The reverse of the previous example would be a base endpoint that has a method marked with `@doNotGenerate`, which you now want to expose on the subclass.
 
@@ -279,7 +165,7 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 
 Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overridden and thus lost the `@doNotGenerate` annotation.
 
-### Building base endpoints for behavior
+## Building base endpoints for behavior
 
 Endpoint subclassing is not just useful to inherit (or hide) methods, it can also be used to pre-configure any other property of the `Endpoint` class.
 
@@ -469,110 +355,3 @@ class SessionEndpoint extends AuthSessionEndpoint {}
 ```
 
 This approach allows module developers to provide reusable endpoint logic while giving application developers full control over which endpoints are exposed on their server.
-
-## Middleware
-
-Serverpod provides a middleware system that allows you to intercept and process HTTP requests before they reach your endpoints, and modify responses before they're sent to clients. This enables cross-cutting concerns like caching and rate limiting.
-
-### Overview
-
-Middleware in serverpod are based on [relic middleware](https://docs.dartrelic.dev/reference/middleware).
-
-### Adding middleware to your server
-
-Add middleware to your server in the `run` function before starting the server:
-
-```dart
-import 'package:serverpod/serverpod.dart';
-
-void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
-
-  // Add middleware before starting
-  pod.server.addMiddleware(myCustomMiddleware());
-
-  await pod.start();
-}
-```
-
-### Creating custom middleware
-
-#### Middleware signature
-
-A middleware is a function with this signature:
-
-```dart
-typedef Middleware = Handler Function(Handler innerHandler);
-typedef Handler = Future<Response> Function(Request request);
-```
-
-#### Simple middleware example
-
-Here's a basic middleware that adds a custom header to all responses:
-
-```dart
-Middleware customHeaderMiddleware() {
-  return (Handler innerHandler) {
-    return (Request req) async {
-      // Inspect or modify `req` here if needed
-
-      // Call the inner handler to process the request
-      final result = await innerHandler(req);
-
-      // Modify the response
-      if (result is Response) {
-        return result.copyWith(
-          headers: result.headers.transform((h) {
-            h['X-Custom-Header'] = ['my-value'];
-          }),
-        );
-      }
-
-      return result;
-    };
-  };
-}
-```
-
-### Error handling
-
-Middleware can catch and handle errors:
-
-```dart
-Middleware errorHandlingMiddleware() {
-  return (Handler innerHandler) {
-    return (Request req) async {
-      try {
-        return await innerHandler(req);
-      } catch (e, stackTrace) {
-        // Log the error
-        print('Error processing request: $e');
-        print('Stack trace: $stackTrace');
-
-        // Re-throw to let Serverpod handle it
-        rethrow;
-      }
-    };
-  };
-}
-```
-
-### Best practices
-
-1. **Order matters**: Add middleware in the order you want it to execute.
-
-2. **Keep middleware focused**: Each middleware should have a single, well-defined responsibility.
-
-3. **Handle errors gracefully**: Always consider error cases and decide whether to handle or rethrow.
-
-4. **Performance considerations**: Middleware executes on every request, so keep it efficient.
-
-5. **Test your middleware**: Write tests to verify middleware behavior in isolation and when composed.
-
-6. **Document configuration**: If middleware accepts parameters, document them clearly.
-
-7. **Avoid side effects**: Be cautious with middleware that modifies global state or external systems.
