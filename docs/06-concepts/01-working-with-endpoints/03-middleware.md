@@ -4,7 +4,7 @@ Serverpod provides a middleware system that allows you to intercept and process 
 
 ## Overview
 
-Middleware in serverpod are based on [relic middleware](https://docs.dartrelic.dev/reference/middleware).
+Middleware in Serverpod are based on [Relic middleware](https://docs.dartrelic.dev/reference/middleware).
 
 ## Adding middleware to your server
 

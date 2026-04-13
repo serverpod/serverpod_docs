@@ -4,7 +4,17 @@ slug: /concepts/working-with-endpoints
 
 # Working with endpoints
 
-Endpoints are the connection points to the server from the client. With Serverpod, you add methods to your endpoint, and your client code will be generated to make the method call. For the code to be generated, you need to place the endpoint file anywhere under the `lib` directory of your server. Your endpoint should extend the `Endpoint` class. For methods to be generated, they need to return a typed `Future`, and its first argument should be a `Session` object. The `Session` object holds information about the call being made and provides access to the database.
+Endpoints define the server methods that the client can call. With Serverpod, you add methods to your endpoint, and your client code will be generated to make the method call.
+
+For the client code to be generated:
+
+- Place the endpoint file anywhere under the `lib` directory of your server.
+- Create a class that extends `Endpoint`.
+- Define methods that return a typed `Future` and take a `Session` object as their first argument.
+
+The `Session` object holds information about the call being made and provides access to the database.
+
+## Creating an endpoint
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -17,6 +27,14 @@ class ExampleEndpoint extends Endpoint {
 ```
 
 The above code will create an endpoint called `example` (the Endpoint suffix will be removed) with the single `hello` method. To generate the client-side code run `serverpod generate` in the home directory of the server.
+
+:::info
+
+You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code whenever your source files are updated. This is useful during the development of your server.
+
+:::
+
+## Calling an endpoint
 
 On the client side, you can now call the method by calling:
 
@@ -50,17 +68,11 @@ apiServer:
   publicScheme: http
 ```
 
-:::info
-
-You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code whenever your source files are updated. This is useful during the development of your server.
-
-:::
-
 ## Passing parameters
 
 There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
 
-You can also pass `List`, `Map`, `Record` and `Set` as parameters, but they need to be strictly typed with one of the types mentioned above.
+You can also pass `List`, `Map`, `Record`, and `Set` as parameters, but they need to be strictly typed with one of the types mentioned above.
 
 :::warning
 
@@ -76,11 +88,13 @@ maxRequestSize: 1048576
 
 The return type must be a typed Future. Supported return types are the same as for parameters.
 
-## Ignore endpoint definition
-
-### Ignore an entire `Endpoint` class
+## Excluding endpoints from code generation
 
 If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@doNotGenerate`. This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
+
+### Exclude an entire `Endpoint` class
+
+Annotate the class with `@doNotGenerate` to exclude it entirely:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -95,9 +109,9 @@ class ExampleEndpoint extends Endpoint {
 
 The above code will not generate any server or client bindings for the example endpoint.
 
-### Ignore individual `Endpoint` methods
+### Exclude individual `Endpoint` methods
 
-Alternatively, you can disable single methods by annotation them with `@doNotGenerate`.
+Alternatively, you can exclude individual methods by annotating them with `@doNotGenerate`.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
