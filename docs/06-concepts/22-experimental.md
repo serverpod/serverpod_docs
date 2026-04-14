@@ -102,7 +102,7 @@ fields:
 
 ### Inheritance
 
-The column name override is also supported when using [inheritance](models#inheritance) and will be applied to all child classes. This is especially useful when you have multiple database tables that share similar column names. This allows you to define a parent class as a regular [model](../get-started/models-and-data) and specify additional fields in the child classes defined as [table models](database/models).
+The column name override is also supported when using [inheritance](models/inheritance-and-polymorphism#inheritance) and will be applied to all child classes. This is especially useful when you have multiple database tables that share similar column names. This allows you to define a parent class as a regular [model](../get-started/models-and-data) and specify additional fields in the child classes defined as [table models](database/models).
 
 ```yaml
 # Entity
