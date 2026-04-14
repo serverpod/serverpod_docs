@@ -2,10 +2,6 @@
 
 This page covers configuration options for the Apple identity provider beyond the basic setup.
 
-<!-- ## Configuration options
-
-Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `AppleIdpConfig` in-code documentation. -->
-
 ## Web Routes Configuration
 
 Apple Sign-In requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server.
@@ -13,6 +9,7 @@ Apple Sign-In requires web routes for handling callbacks and notifications. Thes
 The `revokedNotificationRoutePath` is the path that Apple will call when a user revokes their authorization. The `webAuthenticationCallbackRoutePath` is the path that Apple will call when a user completes the sign-in process.
 
 These routes are configured in the `pod.configureAppleIdpRoutes()` method:
+
 ```dart
 pod.configureAppleIdpRoutes(
   revokedNotificationRoutePath: '/hooks/apple-notification',
@@ -20,11 +17,18 @@ pod.configureAppleIdpRoutes(
 );
 ```
 
-### Configuring Apple Sign-In on the App
+- `revokedNotificationRoutePath` (default: `'/hooks/apple-notification'`): The path Apple calls when a user revokes authorization. Register this URL in your Apple Developer Portal for server-to-server notifications.
+- `webAuthenticationCallbackRoutePath` (default: `'/auth/callback'`): The path Apple redirects to after the user completes web-based sign-in. Must match the return URL registered on your Service ID.
 
-Apple Sign-In requires additional configuration for web and Android platforms. On native Apple platforms (iOS/macOS), the configuration is automatically handled by the underlying `sign_in_with_apple` package through Xcode capabilities.
+:::note
+When a user revokes access from their Apple ID settings, Apple sends a notification to `revokedNotificationRoutePath`. Serverpod receives this notification automatically. You are responsible for invalidating any active sessions for that user in your own application logic.
+:::
 
-#### Passing Configuration in Code
+## Configuring Apple Sign-In on the app
+
+Apple Sign-In requires additional configuration for web and Android platforms. On native Apple platforms (iOS/macOS), the configuration is handled automatically by the underlying `sign_in_with_apple` package through Xcode capabilities.
+
+### Passing configuration in code
 
 You can pass the configuration directly when initializing the Apple Sign-In service:
 
@@ -37,18 +41,23 @@ client.auth.initializeAppleSignIn(
 
 The `serviceIdentifier` is your Apple Services ID (configured in Apple Developer Portal), and the `redirectUri` is the callback URL that Apple will redirect to after authentication (must match the URL configured on the server).
 
+Both parameters are optional. If not supplied, the provider falls back to the corresponding `--dart-define` build variable:
+
+- `serviceIdentifier` → `APPLE_SERVICE_IDENTIFIER`
+- `redirectUri` → `APPLE_REDIRECT_URI`
+
 :::note
-These parameters are only required for web and Android platforms. On native Apple platforms (iOS/macOS), they are ignored and the configuration from Xcode capabilities is used instead.
+These parameters are only required for web and Android platforms. On native Apple platforms (iOS/macOS), they are ignored, and the configuration from Xcode capabilities is used instead.
 :::
 
-#### Using Environment Variables
+### Using Environment Variables
 
-Alternatively, you can pass configuration during build time using the `--dart-define` option. The Apple Sign-In provider supports the following environment variables:
+Alternatively, you can pass configuration during build time using the `--dart-define` option:
 
 - `APPLE_SERVICE_IDENTIFIER`: The Apple Services ID.
 - `APPLE_REDIRECT_URI`: The redirect URI for authentication callbacks.
 
-If `serviceIdentifier` and `redirectUri` values are not supplied when initializing the service, the provider will automatically fetch them from these environment variables.
+If you do not supply `serviceIdentifier` and `redirectUri` values when initializing the service, the provider will automatically fetch them from these environment variables.
 
 **Example usage:**
 
@@ -63,8 +72,34 @@ This approach is useful when you need to:
 
 - Manage configuration separately for different platforms (Android, Web) in a centralized way.
 - Avoid committing sensitive configuration to version control.
-- Configure different credentials for different build environments (development, staging, production).
+- Configure different credentials for different build environments, like development, staging, and production.
 
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
+
+## `AppleIdpConfig` parameter reference
+
+| Parameter | Type | Required | `passwords.yaml` key | Description |
+| --- | --- | --- | --- | --- |
+| `serviceIdentifier` | `String` | Yes (Android/Web) | `appleServiceIdentifier` | The Services ID identifier (e.g. `com.example.service`). Used as the OAuth client ID for Android and Web. Not required for iOS/macOS-only setups. |
+| `bundleIdentifier` | `String` | Yes | `appleBundleIdentifier` | The App ID bundle identifier (e.g. `com.example.app`). Used as the client ID for native Apple platform sign-in. |
+| `redirectUri` | `String` | Yes (Android/Web) | `appleRedirectUri` | The server callback route Apple redirects to after sign-in (e.g. `https://example.com/auth/callback`). Must be HTTPS and match the return URL registered on your Service ID. |
+| `teamId` | `String` | Yes | `appleTeamId` | The 10-character Team ID from your Apple Developer account (e.g. `ABC123DEF4`). Used to sign the client secret JWT. |
+| `keyId` | `String` | Yes | `appleKeyId` | The Key ID of the Sign in with Apple private key (e.g. `XYZ789ABC0`). |
+| `key` | `String` | Yes | `appleKey` | The raw contents of the `.p8` private key file, including the `-----BEGIN PRIVATE KEY-----` header and footer. Serverpod uses this to generate a short-lived client secret JWT on each request. Do not pre-generate the JWT yourself. |
+| `webRedirectUri` | `String?` | Web only | `appleWebRedirectUri` | The web app URL that the browser is redirected to after the server receives Apple's callback. This is required when using the server callback route for Web. |
+| `androidPackageIdentifier` | `String?` | Android only | `appleAndroidPackageIdentifier` | The Android package name (e.g. `com.example.app`). When set, the callback route redirects Android clients back to the app via an intent URI using the `signinwithapple` scheme. |
+
+### Environment Variable equivalents
+
+All `passwords.yaml` keys can be set as environment variables by prefixing with `SERVERPOD_PASSWORD_`:
+
+- `appleServiceIdentifier` → `SERVERPOD_PASSWORD_appleServiceIdentifier`
+- `appleBundleIdentifier` → `SERVERPOD_PASSWORD_appleBundleIdentifier`
+- `appleRedirectUri` → `SERVERPOD_PASSWORD_appleRedirectUri`
+- `appleTeamId` → `SERVERPOD_PASSWORD_appleTeamId`
+- `appleKeyId` → `SERVERPOD_PASSWORD_appleKeyId`
+- `appleKey` → `SERVERPOD_PASSWORD_appleKey`
+- `appleWebRedirectUri` → `SERVERPOD_PASSWORD_appleWebRedirectUri`
+- `appleAndroidPackageIdentifier` → `SERVERPOD_PASSWORD_appleAndroidPackageIdentifier`
