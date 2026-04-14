@@ -32,7 +32,7 @@ appleKey: |
   END PRIVATE KEY
 ```
 
-Alternatively, set `appleKey` as an environment variable to avoid YAML indentation entirely. See [Environment Variable equivalents](./02-configuration#environment-variable-equivalents) in the configuration page.
+Alternatively, set `appleKey` as an environment variable to avoid YAML indentation entirely. See [Environment Variable equivalents](./configuration#environment-variable-equivalents) in the configuration page.
 
 ## Sign-in starts failing with `invalid_client` after months of success
 
