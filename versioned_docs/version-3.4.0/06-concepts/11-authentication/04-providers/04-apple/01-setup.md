@@ -282,7 +282,7 @@ To enable this:
 If `webRedirectUri` is not configured, Web callbacks to the server route will fail.
 
 :::warning
-All redirect URIs must use **HTTPS**. Apple rejects HTTP URLs, including `localhost`. For local development, expose your server over HTTPS using a tunnelling service.
+All redirect URIs must use **HTTPS**. Apple rejects HTTP URLs, including `localhost`. For local development, expose your server over HTTPS using a tunnelling service, like ngrok or Cloudflare Tunnel.
 :::
 
 ## Present the authentication UI
