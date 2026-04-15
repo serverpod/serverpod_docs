@@ -23,13 +23,13 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Cause:** The `appleKey` value in `passwords.yaml` is not indented correctly. The key gets corrupted during parsing. The server starts without error, but Apple sees an invalid signature.
 
-**Resolution:** Paste the raw `.p8` key under `appleKey` with consistent indentation. All lines of the key must line up with the one that starts `BEGIN PRIVATE KEY`. For example:
+**Resolution:** Paste the raw `.p8` key under `appleKey` with consistent indentation. All lines of the key must line up with the one that starts `-----BEGIN PRIVATE KEY-----`. For example:
 
 ```yaml
 appleKey: |
-  BEGIN PRIVATE KEY
+  -----BEGIN PRIVATE KEY-----
   MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
-  END PRIVATE KEY
+  -----END PRIVATE KEY-----
 ```
 
 Alternatively, set `appleKey` as an environment variable to avoid YAML indentation entirely. See [Environment Variable equivalents](./configuration#environment-variable-equivalents) in the configuration page.
