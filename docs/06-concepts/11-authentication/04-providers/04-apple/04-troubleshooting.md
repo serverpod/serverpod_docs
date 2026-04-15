@@ -1,6 +1,6 @@
 # Troubleshooting
 
-This page helps you identify common Sign in with Apple failures, describe why they occur, and shows how to resolve them. For Apple's full list of OAuth error codes, see [TN3107: Resolving Sign in with Apple response errors](https://developer.apple.com/documentation/technotes/tn3107-resolving-sign-in-with-apple-response-errors).
+This page helps you identify common Sign in with Apple failures, explains why they occur, and shows how to resolve them. For Apple's full list of OAuth error codes, see [TN3107: Resolving Sign in with Apple response errors](https://developer.apple.com/documentation/technotes/tn3107-resolving-sign-in-with-apple-response-errors).
 
 ## Setup checklist
 
