@@ -13,7 +13,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Make sure **`appleKey`** in your config holds the raw `.p8` file contents (not a pre-generated JWT).
 * [ ] Double-check the **`.p8` key** is indented consistently under `appleKey: |` in `passwords.yaml`.
 * [ ] Run **`serverpod generate`** after adding the Apple provider, and apply migrations using `--apply-migrations`.
-* [ ] Call **`configureAppleIdpRoutes()`** on the server before the pod starts.
+* [ ] Call **`pod.configureAppleIdpRoutes(...)`** on the server before the pod starts.
 * [ ] Add the **`signinwithapple`** intent filter to `AndroidManifest.xml` (*Android only*).
 * [ ] Add **Apple's mail servers** to your SPF record if you email users who might use Hide My Email.
 
