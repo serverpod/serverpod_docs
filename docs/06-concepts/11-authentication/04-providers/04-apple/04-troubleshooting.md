@@ -96,7 +96,7 @@ dart run bin/main.dart --apply-migrations
 
 **Problem:** The user's email is missing or `null` after sign in, or it's present on first sign-in but missing after that.
 
-**Cause:** Apple sends the email address and name only once, during initial authorisation. After that, only the `sub` claim is provided. If you didn't save the email the first time, you can't get it again unless the user disconnects and reconnects your app.
+**Cause:** Apple sends the email address and name only once, during initial authorization. After that, only the `sub` claim is provided. If you didn't save the email the first time, you can't get it again unless the user disconnects and reconnects your app.
 
 **Resolution:** Make sure your server stores the user's email on their first sign-in. Use `sub` as the main user identifier, not email (which can change if the user updates Hide My Email). See [Authenticating users with Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple/authenticating-users-with-sign-in-with-apple).
 
