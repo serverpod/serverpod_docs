@@ -48,23 +48,19 @@ futureCall:
 
 ## Managing broken future calls
 
-A future call is considered broken if it is scheduled but is not registered or its stored data can not be deserialized. Running these future calls may cause runtime errors.
-
 Scheduled future calls can become broken if, before they run, the server is restarted and:
 
 - The method of a future call spec class is removed, leading to the removal of the previous generated future call execution class.
 - The signature of a future call method is changed in a way that will lead to a generated model that fails to deserialize the stored JSON.
 - The model that is used as a parameter to a future call method is changed in a way that will lead to failure in the stored JSON deserialization.
 
-Although ensuring backwards compatibility is the responsibility of the developer, Serverpod provides configurations to facilitate checking that stored future calls are still valid before starting the server and optionally deleting them.
+The above cases will lead to runtime errors when trying to execute the future call. Although ensuring backwards compatibility is the responsibility of the developer, Serverpod exposes tools to prevent or remove broken future calls.
 
 ### Check broken calls
 
-This option allows the server to perform a check for broken future calls on startup.
+By default, the server will perform a check for broken future calls on startup if there are less than 1000 future calls scheduled in the database.
 
-By default, the configuration is set to `null`. When it is set to `null` and there are less than 1000 future calls in the database, the server will perform an automatic check.
-
-Set this value to `true` to force the check regardless of the number of calls, or `false` to opt out of the scan.
+This check can be controlled using the `checkBrokenCalls` configuration option. If it is set to `true`, the server will perform a check for broken future calls on startup regardless of the number of calls. If it is set to `false`, the server will not perform a check for broken future calls on startup.
 
 Example configuration:
 
@@ -72,9 +68,17 @@ Example configuration:
 checkBrokenCalls: false
 ```
 
+:::tip
+The future calls check can be used with the maintenance role to programmatically validate that the server can be restarted without breaking future calls. The process will exit normally, but logs can be inspected to verify that no broken future calls were found.
+
+```bash
+$ dart run bin/main.dart --role maintenance
+```
+:::
+
 ### Delete broken calls
 
-This option allows you to enable or disable the deletion of broken future calls when running the check on startup. By default, it is set to `false`.
+When detecting broken future calls, the server will log a warning, but will not delete them by default. This behavior can be changed by setting the `deleteBrokenCalls` configuration option to `true` (default is `false`).
 
 This configuration is only valid if the check is executed (either automatically or through explicitly enabling `checkBrokenCalls`).
 
