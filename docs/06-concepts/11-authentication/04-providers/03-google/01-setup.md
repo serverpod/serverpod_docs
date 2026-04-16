@@ -190,7 +190,7 @@ If your `google-services.json` does not include a web OAuth client entry, you ma
 For a production app you need to get the SHA-1 key from your production keystore! This can be done by running this command: ([Read more](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid)).
 
 ```bash
-$ keytool -list -v -keystore /path/to/keystore
+keytool -list -v -keystore /path/to/keystore
 ```
 :::
 
@@ -208,7 +208,7 @@ Navigate to _Clients_ and select the server credentials (the one configured as a
 Force flutter to run on a specific port by running.
 
 ```bash
-$ flutter run -d chrome --web-port=49660
+flutter run -d chrome --web-port=49660
 ```
 :::
 

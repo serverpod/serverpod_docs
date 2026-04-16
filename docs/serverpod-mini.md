@@ -40,7 +40,7 @@ Serverpod Mini is a lightweight version of Serverpod that is perfect for small p
 Create a mini project by running:
 
 ```bash
-$ serverpod create myminipod --mini
+serverpod create myminipod --mini
 ```
 
 Serverpod will create a new project for you. It contains three Dart packages, but you only need to pay attention to the `myminipod_server` and `myminipod_flutter` directories. The server directory contains your server files, and the flutter directory contains your app. The third package (`myminipod_client`) contains generated code that is used by the Flutter app to communicate with the server.
@@ -48,15 +48,15 @@ Serverpod will create a new project for you. It contains three Dart packages, bu
 Start your server by changing directory into your server directory, and run the `bin/main.dart` file:
 
 ```bash
-$ cd myminipod/myminipod_server
-$ dart bin/main.dart
+cd myminipod/myminipod_server
+dart bin/main.dart
 ```
 
 Your default project comes with a sample Flutter app, all hooked up to talk with your server. Run it with the `flutter` command:
 
 ```bash
-$ cd myminipod/myminipod_flutter
-$ flutter run -d chrome
+cd myminipod/myminipod_flutter
+flutter run -d chrome
 ```
 
 Easy as that. 🥳
@@ -84,8 +84,8 @@ For types, you can use most basic Dart types, such as `String`, `double`, `int`,
 Whenever you add or edit a model file, run `serverpod generate` in your server directory. Then, Serverpod will generate all the updated Dart classes:
 
 ```bash
-$ cd myminipod/myminipod_server
-$ serverpod generate
+cd myminipod/myminipod_server
+serverpod generate
 ```
 
 ## Adding methods to your server
@@ -121,8 +121,8 @@ class CompanyEndpoint extends Endpoint {
 After adding or modifying endpoints and endpoint methods, you must run `serverpod generate` to keep your Flutter app up-to-date.
 
 ```bash
-$ cd myminipod/myminipod_server
-$ serverpod generate
+cd myminipod/myminipod_server
+serverpod generate
 ```
 
 ## Calling the server methods from the app
