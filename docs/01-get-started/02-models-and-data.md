@@ -27,7 +27,7 @@ fields:
 ```
 <!--SNIPEND-->
 
-You can use most primitive Dart types here or any other models you have specified in other YAML files. You can also use typed `List`, `Map`, or `Set`. For detailed information, see [Working with models](../06-concepts/02-models.md)
+You can use most primitive Dart types here or any other models you have specified in other YAML files. You can also use typed `List`, `Map`, or `Set`. For detailed information, see [Working with models](../06-concepts/02-models/01-models.md)
 
 ## Generate the code
 
