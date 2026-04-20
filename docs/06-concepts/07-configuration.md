@@ -288,17 +288,18 @@ While the above configurations control how your server runs, Serverpod also uses
 
 ### Generator configuration options
 
-| Option                 | Type   | Default                     | Description                                                                        |
-| ---------------------- | ------ | --------------------------- | ---------------------------------------------------------------------------------- |
-| type                   | string | server                      | The package type. Valid options are `server`, `module`, or `internal`.             |
-| nickname               | string | -                           | For modules only. Defines how the module is referenced in code.                    |
-| client_package_path    | string | ../[name]\_client           | Path to the client package relative to the server.                                 |
-| server_test_tools_path | string | test/integration/test_tools | Path where test tools are generated. Remove this to disable test tools generation. |
-| shared_packages        | list   | -                           | Paths to shared packages containing models usable by both server and client.       |
-| modules                | map    | -                           | Module dependencies with optional nicknames.                                       |
-| extraClasses           | list   | -                           | List of custom serializable classes to include in code generation.                 |
-| features               | map    | \{database: true\}          | Feature flags. Currently only `database` is supported.                             |
-| experimental_features  | map    | -                           | Experimental features. Available keys: `all`, `inheritance`.                       |
+| Option                        | Type   | Default                     | Description                                                                        |
+| ----------------------------- | ------ | --------------------------- | ---------------------------------------------------------------------------------- |
+| type                          | string | server                      | The package type. Valid options are `server`, `module`, or `internal`.             |
+| nickname                      | string | -                           | For modules only. Defines how the module is referenced in code.                    |
+| client_package_path           | string | ../[name]\_client           | Path to the client package relative to the server.                                 |
+| server_test_tools_path        | string | test/integration/test_tools | Path where test tools are generated. Remove this to disable test tools generation. |
+| shared_packages               | list   | -                           | Paths to shared packages containing models usable by both server and client.       |
+| modules                       | map    | -                           | Module dependencies with optional nicknames.                                       |
+| extraClasses                  | list   | -                           | List of custom serializable classes to include in code generation.                 |
+| serialize_as_jsonb_by_default | bool   | false                       | When true, all serializable fields default to `jsonb` storage instead of `json`.   |
+| features                      | map    | \{database: true\}          | Feature flags. Currently only `database` is supported.                             |
+| experimental_features         | map    | -                           | Experimental features. Available keys: `all`, `inheritance`.                       |
 
 ### Package types
 
