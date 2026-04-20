@@ -47,7 +47,7 @@ sessionLogs:
   consoleEnabled: true      # Logs are output to the console
 ```
 
-Duration strings for the cleanup interval and retention period use the same format as in [models](./models#duration): e.g. `30d`, `6h`, `1d 2h 30min`.
+Duration strings for the cleanup interval and retention period use the same format as in [models](./models#supported-default-values): e.g. `30d`, `6h`, `1d 2h 30min`.
 
 ### Default Behavior for Session Logs
 

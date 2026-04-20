@@ -94,7 +94,7 @@ class RecipeEndpoint extends Endpoint {
 <!--SNIPEND-->
 
 :::info
-For methods to be recognized by Serverpod, they need to return a typed `Future` or `Stream`, where the type must be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or a [serializable model](../06-concepts/02-models.md). The first parameter must be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed.
+For methods to be recognized by Serverpod, they need to return a typed `Future` or `Stream`, where the type must be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or a [serializable model](../06-concepts/02-models/01-models.md). The first parameter must be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed.
 :::
 
 Now, you need to generate the code for your new endpoint. You do this by running `serverpod generate` in the server directory of your project:

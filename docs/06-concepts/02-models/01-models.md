@@ -1,3 +1,7 @@
+---
+slug: /concepts/models
+---
+
 # Working with models
 
 Models are Yaml files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server.
@@ -18,7 +22,7 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](#vector), [HalfVector](#halfvector), [SparseVector](#sparsevector), [Bit](#bit) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](./models/vector-fields#vector), [HalfVector](./models/vector-fields#halfvector), [SparseVector](./models/vector-fields#sparsevector), [Bit](./models/vector-fields#bit) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Required fields
 
@@ -140,225 +144,6 @@ var user3 = user1.copyWith(name: 'Bob');
 print(user3.name); // Bob
 print(user3.email); // alice@example.com
 ```
-
-## Inheritance
-
-Serverpod models support inheritance, which allows you to define class hierarchies that share fields between parent and child classes. This simplifies class structures and promotes consistency by avoiding duplicate field definitions. Generated classes will maintain the same type hierarchy as the model files.
-
-:::warning
-Adding a new subtype to a class hierarchy may introduce breaking changes for older clients. Ensure client compatibility when expanding class hierarchies to avoid deserialization issues.
-:::
-
-### Extending a Class
-
-To inherit from a class, use the `extends` keyword in your model files, as shown below:
-
-```yaml
-class: ParentClass
-fields:
-  name: String
-```
-
-```yaml
-class: ChildClass
-extends: ParentClass
-fields:
-  age: int
-```
-
-This will generate a class with both `name` and `age` fields.
-
-#### Inheritance on table models
-
-Inheritance can also be used with table models. However, **only one class** in an inheritance hierarchy can have a `table` property defined. The table can be placed at any level in the inheritance chain (top, middle or bottom).
-
-:::info
-This is a current limitation due to the parent class implementing the `table` getter and other table-related fields, so classes that `extends` the parent cannot override such properties with different types. This might be lifted with a future implementation of `interface` support for table models.
-:::
-
-When a class in the hierarchy has a table, all inherited fields are stored as columns in that table. The `id` field is automatically added to table classes and inherited by child classes. You can customize the `id` type in a parent class, and children will inherit it.
-
-A common use case for inheritance on table models is to have a base class that defines a custom `id` type, audit fields and other common properties that must be present on several table models. Below is an example:
-
-```yaml
-class: BaseClass
-fields:
-  id: UuidValue?, defaultPersist=random_v7
-  createdAt: DateTime, default=now
-  updatedAt: DateTime, default=now
-```
-
-```yaml
-class: ChildClass
-extends: BaseClass
-table: child_table
-fields:
-  name: String
-
-indexes:
-  created_at_index:
-    fields: createdAt # Index on inherited field
-```
-
-**ServerOnly Inheritance**: If a parent class is marked as `serverOnly`, all child classes must also be marked as `serverOnly`. A non-serverOnly class cannot extend a serverOnly class, but a serverOnly child can extend a non-serverOnly parent.
-
-**Additional Restrictions**:
-
-- You can only extend classes from your own project or from [shared packages](shared-packages), not from modules.
-- Child classes cannot redefine fields that exist in parent classes.
-
-Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes. To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](shared-packages).
-
-### Sealed Classes
-
-In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies, enabling exhaustive type checking. With sealed classes, the compiler knows all subclasses, ensuring that every possible case is handled when working with the model.
-
-:::info
-If a class is sealed, it cannot have a table property. This is because a sealed class is abstract and cannot be instantiated, so it cannot represent a table row.
-:::
-
-```yaml
-class: ParentClass
-sealed: true
-fields:
-  name: String
-```
-
-```yaml
-class: ChildClass
-extends: ParentClass
-fields:
-  age: int
-```
-
-This will generate the following classes:
-
-```dart
-sealed class ParentClass {
-  String name;
-}
-
-class ChildClass extends ParentClass {
-  String name;
-  int age;
-}
-```
-
-## Polymorphism Support
-
-Serverpod supports polymorphism for models that use inheritance. When you define a class hierarchy you can use parent types as parameters and return types in your endpoints, and Serverpod will automatically serialize and deserialize the correct subtype based on the runtime type.
-
-Below is an example of a polymorphic model hierarchy. The `EmailNotification` and `SMSNotification` classes extend the `Notification` sealed class. Each notification type has its own table and specific fields for delivery. Note that it is not possible to define relations towards the `Notification` class, since it does not have a table.
-
-```yaml
-class: Notification
-sealed: true
-fields:
-  title: String
-  message: String
-  createdAt: DateTime, default=now
-  sentAt: DateTime?
-```
-
-```yaml
-class: EmailNotification
-extends: Notification
-table: email_notification
-fields:
-  recipientEmail: String
-  subject: String
-```
-
-```yaml
-class: SMSNotification
-extends: Notification
-table: sms_notification
-fields:
-  phoneNumber: String
-  provider: String?
-```
-
-### Using Polymorphic Types in Endpoints
-
-Polymorphic types can be used as parameters and return types in endpoint methods and streaming endpoints. The runtime type is preserved through serialization and deserialization:
-
-```dart
-class NotificationEndpoint extends Endpoint {
-  Future<Notification> sendNotification(
-    Session session, {
-    required Notification notification,
-  }) async {
-    final sentNotification = switch (notification) {
-      EmailNotification email => await _sendEmail(session, email),
-      SMSNotification sms => await _sendSMS(session, sms),
-    };
-
-    return sentNotification.copyWith(sentAt: DateTime.now());
-  }
-
-  /// Save to database and send email
-  Future<EmailNotification> _sendEmail(
-    Session session,
-    EmailNotification notification,
-  ) async {
-    final saved = await EmailNotification.db.insertRow(session, notification);
-    // ... email sending logic
-    return saved;
-  }
-
-  /// Save to database and send SMS
-  Future<SMSNotification> _sendSMS(
-    Session session,
-    SMSNotification notification,
-  ) async {
-    final saved = await SMSNotification.db.insertRow(session, notification);
-    // ... SMS sending logic
-    return saved;
-  }
-}
-```
-
-Polymorphic types also work seamlessly in Lists, Maps, Sets, Records, and nullable contexts.
-
-### Handling Unknown Class Names
-
-When deserializing polymorphic types, Serverpod uses the class name encoded in the serialized data to determine which concrete subtype to instantiate. However, there are situations where the class name in the incoming data may not correspond to any known class on the server or client:
-
-- An older client is sending data with a class that no longer exists on the server.
-- An older client is receiving data from a class that was added lately on the server.
-- A newer client is sending data with a class that hasn't been deployed to the server yet.
-
-If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking backward compatibility.
-
-:::info
-This will only work for non-streaming endpoints. Streaming endpoints will always throw an exception if the class name is not known.
-:::
-
-#### Example Scenario
-
-Consider a notification system where you initially had the following type:
-
-```yaml
-# Notification class that was not originally inherited.
-class: Notification
-fields:
-  title: String
-  message: String
-```
-
-If you later add another notification type to the server, older clients will deserialize it as the base `Notification` class instead of throwing an exception.
-
-```yaml
-# New class that is not yet available on some older clients.
-class: EmailNotification
-extends: Notification
-fields:
-  recipientEmail: String
-```
-
-:::warning
-Note that this behavior does not apply if the base class is a `sealed` class, since it is not possible to instantiate a `sealed` class. In this case, an exception will be thrown.
-:::
 
 ## Exception
 
@@ -521,81 +306,6 @@ fields:
 
   ### A list of people currently employed at the company.
   employees: List<Employee>
-```
-
-## Vector fields
-
-Vector types are used for storing high-dimensional vectors, which are especially useful for similarity search operations.
-
-When specifying vector types, the dimension is required between parentheses (e.g., `Vector(1536)`). Common dimensions include:
-
-- 1536 (OpenAI embeddings)
-- 768 (many sentence transformers)
-- 384 (smaller models)
-
-All vector types support specialized distance operations for similarity search and filtering. See the [Vector distance operators](database/filter#vector-distance-operators) section for details.
-
-To ensure optimal performance with vector similarity searches, consider creating specialized vector indexes on your vector fields. See the [Vector indexes](database/indexing#vector-indexes) section for more details.
-
-:::info
-The usage of Vector fields requires the pgvector PostgreSQL extension to be installed, which comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrading to pgvector support](../upgrading/upgrade-to-pgvector) guide.
-:::
-
-### Vector
-
-The `Vector` type stores full-precision floating-point vectors for general-purpose embeddings.
-
-```yaml
-class: Document
-table: document
-fields:
-  ### The category of the document (e.g., article, tutorial).
-  category: String
-
-  ### The contents of the document.
-  content: String
-
-  ### A vector field for storing document embeddings
-  embedding: Vector(1536)
-```
-
-### HalfVector
-
-The `HalfVector` type uses half-precision (16-bit) floating-point numbers, providing memory savings with acceptable precision loss for several applications.
-
-```yaml
-class: Document
-table: document
-fields:
-  content: String
-  ### Half-precision embedding for memory efficiency
-  embedding: HalfVector(1536)
-```
-
-### SparseVector
-
-The `SparseVector` type efficiently stores sparse vectors where most values are zero, which is ideal for high-dimensional data with few non-zero elements.
-
-```yaml
-class: Document
-table: document
-fields:
-  content: String
-  ### Sparse vector for keyword-based embeddings
-  keywords: SparseVector(10000)
-```
-
-### Bit
-
-The `Bit` type stores binary vectors where each element is 0 or 1, offering maximum memory efficiency for binary embeddings.
-
-```yaml
-class: Document
-table: document
-fields:
-  content: String
-  ### Binary vector for semantic hashing
-  hash: Bit(256)
 ```
 
 ## Generated code
@@ -840,5 +550,5 @@ fields:
 | [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.    |       ✅        |                         |               |
 | [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                     |       ✅        |                         |               |
 | [**defaultPersist**](#default-values)                               | Sets the default value for the database side. This keyword cannot be used with **relation** and **!persist**. |       ✅        |                         |               |
-| [**extends**](#inheritance)                                         | Specifies a parent class to inherit from.                                                                     |       ✅        |           ✅            |               |
-| [**sealed**](#inheritance)                                          | Boolean flag to create a sealed class hierarchy, enabling exhaustive type checking.                           |       ✅        |                         |               |
+| [**extends**](./models/inheritance-and-polymorphism#extending-a-class)       | Specifies a parent class to inherit from.                                                                     |       ✅        |           ✅            |               |
+| [**sealed**](./models/inheritance-and-polymorphism#sealed-classes)            | Boolean flag to create a sealed class hierarchy, enabling exhaustive type checking.                           |       ✅        |                         |               |
