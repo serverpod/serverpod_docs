@@ -70,7 +70,7 @@ The default setup allows access to basic user information, such as email, profil
 - Add the required scopes to the [Data Access](./setup#configure-google-auth-platform) page in the Google Auth Platform.
 - Request access to the scopes when signing in. Do this by setting the `scopes` parameter of the `GoogleSignInWidget` or `GoogleAuthController`.
 
-A full list of available scopes can be found [here](https://developers.google.com/identity/protocols/oauth2/scopes).
+For a full list of available scopes, see the [Google OAuth 2.0 Scopes reference](https://developers.google.com/identity/protocols/oauth2/scopes).
 
 :::info
 Adding additional scopes may require approval by Google. On the OAuth consent screen, you can see which of your scopes are considered sensitive.
@@ -194,3 +194,19 @@ This approach is useful when you need to:
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
+
+## `GoogleIdpConfig` parameter reference
+
+| Parameter | Type | Required | `passwords.yaml` key | Description |
+| --- | --- | --- | --- | --- |
+| `clientSecret` | `GoogleClientSecret` | Yes | `googleClientSecret` | The Google OAuth client secret loaded from JSON. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
+| `googleAccountDetailsValidation` | `Function?` | No | — | Custom validation callback for Google account details before allowing sign-in. Throws an exception to reject the account. |
+| `getExtraGoogleInfoCallback` | `Function?` | No | — | Callback that receives the access token after sign-in, allowing you to call additional Google APIs and store extra user data. |
+| `onAfterGoogleAccountCreated` | `Function?` | No | — | Callback invoked after a new Google account is created and linked to an auth user. Only called for new accounts, not returning users. |
+| `onBeforeAuthUserCreated` | `Function?` | No | — | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
+
+### Environment variable equivalents
+
+All the `passwords.yaml` keys listed above can be set as environment variables by prefixing with `SERVERPOD_PASSWORD_`:
+
+- `googleClientSecret` → `SERVERPOD_PASSWORD_googleClientSecret`
