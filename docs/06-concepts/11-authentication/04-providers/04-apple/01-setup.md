@@ -2,7 +2,6 @@
 
 Sign-in with Apple requires that you have a subscription to the [Apple Developer Program](https://developer.apple.com/programs/), even if you only want to test the feature in development mode.
 
-
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
 :::
@@ -198,6 +197,7 @@ Run `serverpod generate` to generate the client code, then create and apply a da
 
 ```bash
 serverpod generate
+serverpod create-migration
 dart run bin/main.dart --apply-migrations
 ```
 
