@@ -1,41 +1,44 @@
-# Admin Operations
+# Admin operations
 
-The Firebase identity provider provides admin operations through `FirebaseIdpAdmin` for managing Firebase-authenticated accounts. These operations are useful for administrative tasks and account management.
+The Firebase identity provider provides admin operations through `FirebaseIdpAdmin` for managing Firebase-authenticated accounts on the server. Common use cases include linking an existing Serverpod user to a Firebase account, looking up accounts for support tools, and cleaning up orphaned accounts.
+
+:::warning
+Admin operations should only be called from secure server-side code. Do not expose these methods directly through client endpoints without proper authorization checks.
+:::
 
 ## Accessing the FirebaseIdpAdmin
 
-You can access the admin operations through the `AuthServices.instance.firebaseIdp` property:
+You can access the admin operations through the `AuthServices.instance.firebaseIdp` property. This requires that the Firebase identity provider is already configured (see [setup](./setup#add-the-firebase-identity-provider)).
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/firebase.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 
-// Get the FirebaseIdp instance
 final firebaseIdp = AuthServices.instance.firebaseIdp;
-
-// Access admin operations
 final admin = firebaseIdp.admin;
 ```
 
-## Account Management
+## Finding accounts
 
-The admin API provides methods for managing Firebase-authenticated accounts.
-
-### Finding Accounts
+Each finder method targets a different identifier depending on what you have available:
 
 ```dart
 // Find an account by email
-final account = await admin.findAccountByEmail(
+final accountByEmail = await admin.findAccountByEmail(
   session,
   email: 'user@example.com',
 );
+```
 
+```dart
 // Find an account by Serverpod auth user ID
-final account = await admin.findAccountByAuthUserId(
+final accountByAuthUser = await admin.findAccountByAuthUserId(
   session,
   authUserId: authUserId,
 );
+```
 
+```dart
 // Find the Serverpod user ID by Firebase UID
 final userId = await admin.findUserByFirebaseUserId(
   session,
@@ -43,20 +46,11 @@ final userId = await admin.findUserByFirebaseUserId(
 );
 ```
 
-### Linking Firebase Authentication
+## Linking Firebase authentication
 
-Link an existing Serverpod user to a Firebase account:
+Link an existing Serverpod user to a Firebase account. This is useful when migrating users from another auth provider to Firebase, or when manually linking accounts in an admin tool.
 
-```dart
-// Link a Firebase account to an existing user
-final firebaseAccount = await admin.linkFirebaseAuthentication(
-  session,
-  authUserId: authUserId,
-  accountDetails: accountDetails,
-);
-```
-
-The `accountDetails` parameter is a `FirebaseAccountDetails` record containing the Firebase user information. You can obtain this from a Firebase ID token using the `fetchAccountDetails` method:
+First, obtain the account details from a Firebase ID token, then link them to an existing user:
 
 ```dart
 // Fetch account details from a Firebase ID token
@@ -65,7 +59,7 @@ final accountDetails = await admin.fetchAccountDetails(
   idToken: firebaseIdToken,
 );
 
-// Then link the account
+// Link the account to an existing user
 await admin.linkFirebaseAuthentication(
   session,
   authUserId: existingUserId,
@@ -73,17 +67,19 @@ await admin.linkFirebaseAuthentication(
 );
 ```
 
-### Deleting Accounts
+## Deleting accounts
 
 ```dart
 // Delete a Firebase account by Firebase UID
-final deletedAccount = await admin.deleteFirebaseAccount(
+final deletedByUid = await admin.deleteFirebaseAccount(
   session,
   userIdentifier: 'firebase-uid',
 );
+```
 
+```dart
 // Delete all Firebase accounts for a Serverpod user
-final deletedAccount = await admin.deleteFirebaseAccountByAuthUserId(
+final deletedByAuthUser = await admin.deleteFirebaseAccountByAuthUserId(
   session,
   authUserId: authUserId,
 );
@@ -95,20 +91,14 @@ Deleting a Firebase account only removes the link between the Firebase authentic
 
 ## FirebaseIdpUtils
 
-The `FirebaseIdpUtils` class provides utility functions for working with Firebase authentication:
+The `FirebaseIdpUtils` class provides a lower-level `authenticate` method for when you need to verify a Firebase ID token and create or update the associated Serverpod user in custom endpoint logic (outside the normal sign-in flow):
 
 ```dart
 final utils = firebaseIdp.utils;
 
-// Authenticate a user with a Firebase ID token
-// This creates the account if it doesn't exist
 final authSuccess = await utils.authenticate(
   session,
   idToken: firebaseIdToken,
-  transaction: transaction, // optional
+  transaction: transaction,
 );
 ```
-
-:::warning
-Admin operations should only be called from secure server-side code. Do not expose these methods directly through client endpoints without proper authorization checks.
-:::

@@ -1,42 +1,64 @@
 # Setup
 
-Firebase authentication works differently from other identity providers in Serverpod. Instead of handling authentication directly, Serverpod's Firebase integration acts as a bridge between Firebase Authentication and your Serverpod backend. Firebase handles the actual sign-in process through its own SDKs and UI components, while Serverpod syncs the authenticated user and manages the server-side session.
-
-This approach allows you to use any authentication method supported by Firebase (email/password, phone, Google, Apple, Facebook, etc.) while maintaining a unified user system in your Serverpod backend. If your project was scaffolded with Serverpod 3.4 or later, the auth module is already included. For older projects, follow the [auth module setup](../../setup) first.
+Firebase authentication lets you use any Firebase sign-in method (email/password, phone, Google, Apple, Facebook, etc.) with your Serverpod backend. Firebase handles the sign-in flow through its own SDKs, while Serverpod syncs the authenticated user and manages the server-side session.
 
 ## Get your credentials
 
-### Generate Service Account Key
+### Create a Firebase project
 
-The server needs service account credentials to verify Firebase ID tokens. To create a new key:
+1. Go to the [Firebase Console](https://console.firebase.google.com/) and click **Create a project** (or **Add project** if you already have projects).
 
-1. Go to the [Firebase Console](https://console.firebase.google.com/) (create a new project if you don't have one).
-2. Select your project.
-3. Navigate to **Project settings** > **Service accounts**.
-4. Click **Generate new private key**, then **Generate key**.
+2. Enter a project name, accept the terms, and click **Continue**.
 
-![Service account](/img/authentication/providers/firebase/1-server-key.png)
+   ![Enter project name](/img/authentication/providers/firebase/2-project-name.png)
 
-This downloads a JSON file containing your service account credentials.
+3. Follow the remaining prompts (Google Analytics is optional) and click **Create project**.
 
-### Enable Authentication Methods
+### Generate a service account key
 
-In the Firebase Console, enable the authentication methods you want to support:
+The server needs service account credentials to verify Firebase ID tokens.
 
-1. Go to **Authentication** > **Sign-in method**.
-2. Enable your desired providers (Email/Password, Phone, Google, Apple, etc.).
-3. Configure each provider according to Firebase's documentation.
+1. In the Firebase Console, navigate to **Project settings** > **Service accounts**.
 
-![Auth provider](/img/authentication/providers/firebase/2-auth-provider.png)
+   ![Service accounts page](/img/authentication/providers/firebase/4-service-accounts.png)
 
-## Server-side configuration
+2. Click **Generate new private key**.
 
-### Store the Service Account Key
+   ![Generate new private key button](/img/authentication/providers/firebase/5-generate-key.png)
 
-This can be done by pasting the contents of the JSON file into the `firebaseServiceAccountKey` key in the `config/passwords.yaml` file or setting as value of the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable. Alternatively, you can read the file contents directly using the `FirebaseServiceAccountCredentials.fromJsonFile()` method.
+3. In the confirmation dialog, click **Generate key**.
+
+   ![Generate key confirmation dialog](/img/authentication/providers/firebase/6-generate-key-confirm.png)
+
+4. A JSON file downloads to your machine. This file contains your service account credentials. You will need it in the next step.
+
+### Enable authentication methods
+
+1. In the Firebase Console sidebar, navigate to **Product categories** > **Security** > **Authentication**.
+
+   ![Navigate to Authentication](/img/authentication/providers/firebase/7-navigate-auth.png)
+
+2. If this is your first time, click **Get started** to enable the Authentication service.
+
+   ![Enable Authentication](/img/authentication/providers/firebase/8-enable-auth.png)
+
+3. Select the **Sign-in method** tab.
+
+4. Click on the provider you want to enable (e.g., **Email/Password**) and toggle it on. Click **Save**.
+
+   ![Enable a sign-in provider](/img/authentication/providers/firebase/9-enable-provider.png)
+
+5. Repeat for each provider you want to support (Phone, Google, Apple, etc.). Configure each provider according to the instructions shown in the Firebase Console.
+
+   ![Sign-in providers list](/img/authentication/providers/firebase/10-sign-in-methods.png)
+
+### Store the service account key
+
+Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add the `firebaseServiceAccountKey` key to the `development:` section using the contents of the JSON file you downloaded:
 
 ```yaml
 development:
+  # ... existing keys (database, redis, serviceSecret, etc.) ...
   firebaseServiceAccountKey: |
     {
       "type": "service_account",
@@ -50,59 +72,49 @@ development:
     }
 ```
 
-:::warning
-**Never commit your service account key to version control.** It gives admin access to your Firebase project. Use environment variables or a secrets manager in production.
+For production, add the same `firebaseServiceAccountKey` entry to the `production:` section of `passwords.yaml`, or set the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable on your production server.
 
+:::warning
+**Never commit `config/passwords.yaml` to version control.** It contains your service account key, which gives admin access to your Firebase project. Use environment variables or a secrets manager in production.
+:::
+
+:::note
 **Carefully maintain correct indentation for YAML block scalars.** The `firebaseServiceAccountKey` block uses a `|`; any indentation error will silently break the JSON, resulting in authentication failures.
 :::
 
-### Configure the Firebase Identity Provider
+## Server-side configuration
 
-In your main `server.dart` file, configure the Firebase identity provider:
+### Add the Firebase identity provider
+
+Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+
+Add the Firebase import and `FirebaseIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/firebase.dart';
-
-void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
-
-  pod.initializeAuthServices(
-    tokenManagerBuilders: [
-      JwtConfigFromPasswords(),
-    ],
-    identityProviderBuilders: [
-      FirebaseIdpConfig(
-        credentials: FirebaseServiceAccountCredentials.fromJsonString(
-          pod.getPassword('firebaseServiceAccountKey')!,
-        ),
-      ),
-    ],
-  );
-
-  await pod.start();
-}
 ```
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    // ... any existing providers (e.g., EmailIdpConfigFromPasswords) ...
+    FirebaseIdpConfigFromPasswords(),
+  ],
+);
+```
+
+`FirebaseIdpConfigFromPasswords()` automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable).
 
 :::tip
-You can use `FirebaseIdpConfigFromPasswords()` to automatically load credentials from `config/passwords.yaml` or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable:
-
-```dart
-identityProviderBuilders: [
-  FirebaseIdpConfigFromPasswords(),
-],
-```
-
+If you need more control over how the credentials are loaded, you can use `FirebaseIdpConfig(credentials: FirebaseServiceAccountCredentials.fromJsonString(...))` instead. See the [configuration](./configuration) page for details.
 :::
 
-### Expose the Endpoint
+### Create the endpoint
 
-Create an endpoint that extends `FirebaseIdpBaseEndpoint` to expose the Firebase authentication API:
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/firebase_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/firebase.dart';
@@ -110,9 +122,9 @@ import 'package:serverpod_auth_idp_server/providers/firebase.dart';
 class FirebaseIdpEndpoint extends FirebaseIdpBaseEndpoint {}
 ```
 
-### Generate and migrate
+### Generate code and apply migrations
 
-Run `serverpod generate` to generate the client code, then create and apply a database migration to initialize the provider's tables:
+Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
 
 ```bash
 serverpod generate
@@ -124,16 +136,9 @@ dart run bin/main.dart --apply-migrations
 Skipping the migration will cause the server to crash at runtime when the Firebase provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 :::
 
-### Basic configuration options
-
-- `credentials`: Required. Firebase service account credentials for verifying ID tokens. See the [configuration section](./configuration) for different ways to load credentials.
-- `firebaseAccountDetailsValidation`: Optional. Validation function for Firebase account details. By default, this validates that the email is verified when present (phone-only authentication is allowed). See the [configuration section](./configuration#custom-account-validation) for customization options.
-
 ## Client-side configuration
 
-The client-side setup uses the official Firebase packages (`firebase_core`, `firebase_auth`, and optionally `firebase_ui_auth`) for authentication. The steps below follow standard Firebase usage - for troubleshooting, refer to the [official Firebase Flutter documentation](https://firebase.google.com/docs/flutter/setup).
-
-### Install Required Packages
+### Install required packages
 
 Add the Firebase and Serverpod authentication packages to your Flutter project:
 
@@ -162,11 +167,15 @@ Then run the FlutterFire CLI to configure Firebase for your Flutter project:
 flutterfire configure
 ```
 
+Select your Firebase project when prompted, and choose the platforms you want to support.
+
+![FlutterFire configure terminal output](/img/authentication/providers/firebase/11-flutterfire-configure.png)
+
 This generates a `firebase_options.dart` file with your platform-specific Firebase configuration.
 
 ### Initialize Firebase and Serverpod
 
-In your `main.dart`, initialize both Firebase and the Serverpod client:
+In your Flutter app's `main.dart` file (e.g., `my_project_flutter/lib/main.dart`), the template already sets up the `Client`. Initialize both Firebase and the Serverpod auth services:
 
 ```dart
 import 'package:firebase_core/firebase_core.dart';
@@ -181,48 +190,34 @@ late Client client;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Create the Serverpod client
   client = Client('http://localhost:8080/')
     ..connectivityMonitor = FlutterConnectivityMonitor()
     ..authSessionManager = FlutterAuthSessionManager();
 
-  // Initialize Serverpod auth
   await client.auth.initialize();
 
-  // Initialize Firebase sign-in service (enables automatic sign-out sync)
   client.auth.initializeFirebaseSignIn();
 
   runApp(const MyApp());
 }
 ```
 
-## The authentication flow
-
-Understanding the Firebase authentication flow helps when building custom integrations:
-
-1. **User initiates sign-in** with Firebase using `firebase_auth` or `firebase_ui_auth`.
-2. **Firebase authenticates** the user and returns a `firebase_auth.User` object.
-3. **Your app calls** `FirebaseAuthController.login(user)` with the Firebase user.
-4. **The controller extracts** the Firebase ID token from the user.
-5. **Token is sent** to your server's `firebaseIdp.login()` endpoint.
-6. **Server validates** the JWT using the service account credentials.
-7. **Server creates or updates** the user account and issues a Serverpod session token.
-8. **Client session is updated** and the user is authenticated with Serverpod in the Flutter app.
-
 :::info
-The `initializeFirebaseSignIn()` call in the client setup will ensure that the user gets automatically signed out from Firebase when signing out from Serverpod to keep both systems in sync.
+The `initializeFirebaseSignIn()` call ensures that the user gets automatically signed out from Firebase when signing out from Serverpod, keeping both systems in sync.
 :::
 
 ## Present the authentication UI
 
 ### Using firebase_ui_auth
 
-The easiest way to add Firebase authentication is using the `firebase_ui_auth` package with its pre-built `SignInScreen`:
+The easiest way to add Firebase authentication is using the `firebase_ui_auth` package with its pre-built `SignInScreen`. The key integration points are:
+
+- **Two action handlers** for `SignedIn` (returning users) and `UserCreated` (new accounts). Both call `controller.login(user)` to sync the Firebase user with Serverpod.
+- **`FirebaseAuthController`** manages the sync between Firebase and Serverpod. The `client` variable is the global Serverpod `Client` instance created in `main.dart`.
 
 ```dart
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -286,6 +281,40 @@ class _SignInPageState extends State<SignInPage> {
 
 For details on using the `FirebaseAuthController` directly and building custom authentication UIs, see the [customizing the UI section](./customizing-the-ui).
 
-:::warning
+:::tip
 If you run into issues, see the [troubleshooting guide](./troubleshooting).
 :::
+
+## Publishing to production
+
+Before going live, complete the following steps:
+
+### 1. Store the production credentials
+
+Add the `firebaseServiceAccountKey` entry to the `production:` section of `config/passwords.yaml`:
+
+```yaml
+production:
+  # ... existing keys ...
+  firebaseServiceAccountKey: |
+    {
+      "type": "service_account",
+      "project_id": "your-project-id",
+      "private_key_id": "...",
+      "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+      "client_email": "firebase-adminsdk-xxxxx@your-project-id.iam.gserviceaccount.com",
+      "client_id": "...",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://oauth2.googleapis.com/token"
+    }
+```
+
+Alternatively, set the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable on your production server with the same JSON value.
+
+### 2. Update Firebase project settings
+
+Ensure your Firebase project's authorized domains include your production domain. In the Firebase Console, navigate to **Authentication** > **Settings** > **Authorized domains** and add your production domain (e.g., `my-awesome-project.serverpod.space`).
+
+### 3. Review authentication providers
+
+Verify that all sign-in providers you plan to use in production are enabled and properly configured in the Firebase Console under **Authentication** > **Sign-in method**. Some providers (e.g., Google, Apple) require additional configuration for production domains.

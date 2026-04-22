@@ -1,14 +1,25 @@
 # Configuration
 
-This page covers configuration options for the Firebase identity provider beyond the basic setup.
+This page covers credential loading, custom validation, and account creation callbacks for the Firebase identity provider.
 
 ## Configuration options
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `FirebaseIdpConfig` in-code documentation.
 
-### Loading Firebase Credentials
+The Firebase identity provider can be configured using one of two classes:
 
-You can load Firebase service account credentials in several ways:
+- **`FirebaseIdpConfigFromPasswords`**: Automatically loads the service account key from the `firebaseServiceAccountKey` key in `passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). This is the class used in the [setup guide](./setup) and is recommended for most projects.
+- **`FirebaseIdpConfig`**: Requires you to pass a `FirebaseServiceAccountCredentials` object directly. Use this when you need to load credentials from a custom source, such as a JSON file, a secrets manager, or a programmatically constructed map.
+
+`FirebaseIdpConfigFromPasswords` is a convenience wrapper around `FirebaseIdpConfig` that handles credential loading for you.
+
+Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `FirebaseIdpConfigFromPasswords` unless the section specifically demonstrates manual credential loading.
+
+### Load credentials using FirebaseIdpConfig
+
+When using `FirebaseIdpConfig`, you must provide the credentials explicitly.
+
+You can load the credentials in several ways:
 
 **From JSON string (recommended for production):**
 
@@ -49,31 +60,14 @@ final firebaseIdpConfig = FirebaseIdpConfig(
 );
 ```
 
-### Custom Account Validation
+### Custom account validation
 
-You can customize the validation for Firebase account details before allowing sign-in. By default, the validation requires the email to be verified when present (phone-only authentication is allowed).
-
-The default validation logic:
-
-```dart
-static void validateFirebaseAccountDetails(
-  final FirebaseAccountDetails accountDetails,
-) {
-  // Firebase accounts may not have email if using phone auth
-  // Only validate verifiedEmail if email is present
-  if (accountDetails.email != null && accountDetails.verifiedEmail != true) {
-    throw FirebaseUserInfoMissingDataException();
-  }
-}
-```
+You can customize the validation for Firebase account details before allowing sign-in. By default, the validation requires the email to be verified when present (phone-only authentication is allowed without an email).
 
 To customize validation, provide your own `firebaseAccountDetailsValidation` function:
 
 ```dart
-final firebaseIdpConfig = FirebaseIdpConfig(
-  credentials: FirebaseServiceAccountCredentials.fromJsonString(
-    pod.getPassword('firebaseServiceAccountKey')!,
-  ),
+final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(
   firebaseAccountDetailsValidation: (accountDetails) {
     // Require verified email (even for phone auth)
     if (accountDetails.verifiedEmail != true) {
@@ -93,30 +87,14 @@ final firebaseIdpConfig = FirebaseIdpConfig(
 
 The `firebaseAccountDetailsValidation` callback receives a `FirebaseAccountDetails` record with the following properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `userIdentifier` | `String` | The Firebase user's unique identifier (UID) |
-| `email` | `String?` | The user's email address (null for phone-only auth) |
-| `fullName` | `String?` | The user's display name from Firebase |
-| `image` | `Uri?` | URL to the user's profile image |
-| `verifiedEmail` | `bool?` | Whether the email is verified |
-| `phone` | `String?` | The user's phone number (for phone auth) |
-
-Example of accessing these properties:
-
 ```dart
 firebaseAccountDetailsValidation: (accountDetails) {
-  print('Firebase UID: ${accountDetails.userIdentifier}');
-  print('Email: ${accountDetails.email}');
-  print('Email verified: ${accountDetails.verifiedEmail}');
-  print('Display name: ${accountDetails.fullName}');
-  print('Profile image: ${accountDetails.image}');
-  print('Phone: ${accountDetails.phone}');
-
-  // Custom validation logic
-  if (accountDetails.email == null && accountDetails.phone == null) {
-    throw Exception('Either email or phone is required');
-  }
+  accountDetails.userIdentifier; // String -- Firebase UID
+  accountDetails.email;          // String? -- null for phone-only auth
+  accountDetails.fullName;       // String? -- display name from Firebase
+  accountDetails.image;          // Uri? -- profile image URL
+  accountDetails.verifiedEmail;  // bool? -- whether the email is verified
+  accountDetails.phone;          // String? -- phone number (phone auth only)
 },
 ```
 
@@ -124,44 +102,50 @@ firebaseAccountDetailsValidation: (accountDetails) {
 The properties available depend on the Firebase authentication method used. For example, `phone` is only populated for phone authentication, and `email` may be null if the user signed in with phone only.
 :::
 
-### Reacting to account creation
+### Reacting to auth user creation
 
-You can use the `onAfterFirebaseAccountCreated` callback to run logic after a new Firebase account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
+The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to Firebase -- they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
 
-This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+`onBeforeAuthUserCreated` receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
 
 ```dart
-final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(
-  onAfterFirebaseAccountCreated: (
-    session,
-    authUser,
-    firebaseAccount, {
-    required transaction,
-  }) async {
-    // e.g. store additional data, send a welcome email, or log for analytics
-  },
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    FirebaseIdpConfigFromPasswords(),
+  ],
+  authUsersConfig: AuthUsersConfig(
+    onBeforeAuthUserCreated: (
+      session,
+      scopes,
+      blocked, {
+      required transaction,
+    }) {
+      return (
+        scopes: {...scopes, Scope('user')},
+        blocked: blocked,
+      );
+    },
+    onAfterAuthUserCreated: (
+      session,
+      authUser, {
+      required transaction,
+    }) async {
+      // e.g. send a welcome email, log for analytics
+    },
+  ),
 );
 ```
 
 :::info
-This callback runs inside the same database transaction as the account creation. Throwing an exception inside this callback will abort the process. If you perform external side-effects, make sure to safeguard them with a try/catch to prevent unwanted failures.
+Both callbacks run inside the same database transaction as the account creation. Throwing an exception inside either callback will abort the process. If you perform external side-effects, safeguard them with a try/catch to prevent unwanted failures.
 :::
 
-:::caution
-If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` to set scopes based on data collected earlier in the flow.
-:::
+## FirebaseIdpConfig parameter reference
 
-## `FirebaseIdpConfig` parameter reference
-
-| Parameter | Type | Required | `passwords.yaml` key | Description |
-| --- | --- | --- | --- | --- |
-| `credentials` | `FirebaseServiceAccountCredentials` | Yes | `firebaseServiceAccountKey` | Firebase service account credentials for verifying ID tokens. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
-| `firebaseAccountDetailsValidation` | `Function?` | No | — | Custom validation callback for Firebase account details before allowing sign-in. By default, validates that email is verified when present (phone-only auth is allowed). |
-| `onAfterFirebaseAccountCreated` | `Function?` | No | — | Callback invoked after a new Firebase account is created and linked to an auth user. Only called for new accounts, not returning users. |
-| `onBeforeAuthUserCreated` | `Function?` | No | — | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
-
-### Environment variable equivalents
-
-All `passwords.yaml` keys can be set as environment variables by prefixing with `SERVERPOD_PASSWORD_`:
-
-- `firebaseServiceAccountKey` → `SERVERPOD_PASSWORD_firebaseServiceAccountKey`
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `credentials` | `FirebaseServiceAccountCredentials` | Yes | Firebase service account credentials for verifying ID tokens. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. When using `FirebaseIdpConfigFromPasswords`, this is loaded automatically from the `firebaseServiceAccountKey` key in `passwords.yaml` or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable. |
+| `firebaseAccountDetailsValidation` | `FirebaseAccountDetailsValidation?` | No | Custom validation callback for Firebase account details before allowing sign-in. By default, validates that email is verified when present (phone-only auth is allowed). |
