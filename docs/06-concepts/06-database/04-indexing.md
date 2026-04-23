@@ -111,7 +111,7 @@ If you only need containment queries (`@>`), use `jsonbPathOps` — it produces 
 :::
 
 :::info
-GIN indexes are only supported on PostgreSQL. If your project targets SQLite, a validation error will be reported at generation time.
+GIN indexes are a PostgreSQL feature. On SQLite, GIN index definitions are silently skipped during migration generation.
 :::
 
 For details on configuring JSONB storage on your model fields, see [Storing fields as JSONB](models#storing-fields-as-jsonb).

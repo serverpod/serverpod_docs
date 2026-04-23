@@ -299,7 +299,7 @@ While the above configurations control how your server runs, Serverpod also uses
 | extraClasses                  | list   | -                           | List of custom serializable classes to include in code generation.                 |
 | serialize_as_jsonb_by_default | bool   | false                       | When true, all serializable fields default to `jsonb` storage instead of `json`.   |
 | features                      | map    | \{database: true\}          | Feature flags. Currently only `database` is supported.                             |
-| experimental_features         | map    | -                           | Experimental features. Available keys: `all`, `inheritance`.                       |
+| experimental_features         | map    | -                           | Experimental features. No experimental features are currently available.           |
 
 ### Package types
 
