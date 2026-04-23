@@ -114,7 +114,7 @@ If you only need containment queries (`@>`), use `jsonbPathOps` — it produces 
 GIN indexes are a PostgreSQL feature. On SQLite, GIN index definitions are silently skipped during migration generation.
 :::
 
-For details on configuring JSONB storage on your model fields, see [Storing fields as JSONB](models#storing-fields-as-jsonb).
+For details on configuring JSONB storage on your model fields, see [Storing serializable fields as JSONB](models#storing-serializable-fields-as-jsonb).
 
 ## Vector indexes
 
