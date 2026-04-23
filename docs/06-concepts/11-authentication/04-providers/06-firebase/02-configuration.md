@@ -150,3 +150,18 @@ This callback runs inside the same database transaction as the account creation.
 :::caution
 If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` to set scopes based on data collected earlier in the flow.
 :::
+
+## `FirebaseIdpConfig` parameter reference
+
+| Parameter | Type | Required | `passwords.yaml` key | Description |
+| --- | --- | --- | --- | --- |
+| `credentials` | `FirebaseServiceAccountCredentials` | Yes | `firebaseServiceAccountKey` | Firebase service account credentials for verifying ID tokens. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
+| `firebaseAccountDetailsValidation` | `Function?` | No | — | Custom validation callback for Firebase account details before allowing sign-in. By default, validates that email is verified when present (phone-only auth is allowed). |
+| `onAfterFirebaseAccountCreated` | `Function?` | No | — | Callback invoked after a new Firebase account is created and linked to an auth user. Only called for new accounts, not returning users. |
+| `onBeforeAuthUserCreated` | `Function?` | No | — | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
+
+### Environment variable equivalents
+
+All `passwords.yaml` keys can be set as environment variables by prefixing with `SERVERPOD_PASSWORD_`:
+
+- `firebaseServiceAccountKey` → `SERVERPOD_PASSWORD_firebaseServiceAccountKey`
