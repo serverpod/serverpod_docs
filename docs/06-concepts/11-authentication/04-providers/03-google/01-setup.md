@@ -1,56 +1,76 @@
 # Setup
 
-To set up Sign in with Google, you will need a Google account for your organization and set up a new project. You will also need to add the `serverpod_auth_idp_flutter` package to your app and do some additional setup depending on each platform.
-
-:::note
-Right now, we have official support for iOS, Android, and Web for Google Sign In.
-:::
+Sign in with Google requires a Google Cloud project linked to your organization's Google account. You also need platform-specific OAuth credentials depending on which platforms you target.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
 :::
 
-## Create your credentials
+## Get your credentials
 
-To implement Google Sign In, you need a Google Cloud project. You can create one in the [Google Cloud Console](https://console.cloud.google.com/).
+All platforms require a Web application OAuth client (used by the server). iOS and Android additionally require their own platform-specific OAuth clients.
+
+| Platform | Web OAuth client (server) | iOS OAuth client | Android OAuth client |
+| --- | --- | --- | --- |
+| iOS | Required | Required | Not needed |
+| Android | Required | Not needed | Required |
+| Web | Required | Not needed | Not needed |
+
+### Create a Google Cloud project
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+
+2. Create a new project (or select an existing one).
 
 ### Enable People API
 
-To be allowed to access user data and use the authentication method in Serverpod we have to enable the People API in our project.
+The People API is required for Serverpod to access basic user profile data during sign-in.
 
-[Enable it here](https://console.cloud.google.com/apis/library/people.googleapis.com) or find it yourself by navigating to the _Library_ section under _APIs & Services_. Search for _Google People API_, select it, and click on _Enable_.
+1. Navigate to the [People API page](https://console.cloud.google.com/apis/library/people.googleapis.com) in your project.
+
+2. Click **Enable**.
+
+![Enable People API](/img/authentication/providers/google/6-people-api.png)
 
 ### Configure Google Auth Platform
 
-If you haven't already, enable the Google Auth Platform for your project. Navigate to the [Google Auth Platform overview](https://console.cloud.google.com/auth/overview) and click _Get started_.
+1. Navigate to the [Google Auth Platform overview](https://console.cloud.google.com/auth/overview) and click **Get started** if you haven't enabled it yet.
 
-![Google Auth Platform Overview](/img/authentication/providers/google/4-auth-platform-overview.png)
+   ![Google Auth Platform overview](/img/authentication/providers/google/4-auth-platform-overview.png)
 
-Configure the following settings in the Google Auth Platform:
+2. **Data access**: Navigate to the [Data Access](https://console.cloud.google.com/auth/scopes) page and add the required scopes: `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
 
-1. **Data Access**: Navigate to the [Data Access](https://console.cloud.google.com/auth/scopes) page to add the required scopes. Add the scopes `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
+   ![Scopes configuration](/img/authentication/providers/google/1-scopes.png)
 
-![Scopes](/img/authentication/providers/google/1-scopes.png)
+   :::tip
+   If you need access to additional Google APIs (e.g., Calendar, Drive), you can add more scopes here. See [Accessing Google APIs](./configuration#accessing-google-apis) for details on requesting additional scopes and using them with the `getExtraGoogleInfoCallback` on the server.
+   :::
+
+3. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page and add your email as a test user so you can test the integration in development mode.
+
+   ![Audience and test users](/img/authentication/providers/google/7-audience.png)
 
 :::tip
-If you need access to additional Google APIs (e.g., Calendar, Drive), you can add more scopes here. See [Accessing Google APIs](./configuration#accessing-google-apis) for details on requesting additional scopes and using them with the `getExtraGoogleInfoCallback` on the server.
+For production apps, configure additional branding options on the [Branding](https://console.cloud.google.com/auth/branding) page. See the [Google Auth Platform documentation](https://developers.google.com/identity/protocols/oauth2) for more details.
 :::
 
-1. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page to add test users. Add your email so you can test your integration in development mode.
+### Create the server OAuth client (Web application)
 
-:::tip
-For production apps, you can configure additional branding options on the [Branding](https://console.cloud.google.com/auth/branding) page. See the [Google Auth Platform documentation](https://developers.google.com/identity/protocols/oauth2) for more details.
-:::
+1. In the Google Auth Platform, navigate to **Clients** and click **Create Client**.
 
-## Server-side configuration
+2. Select **Web application** as the application type.
 
-Create the server credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as a _**Web application**_. If you have a domain add it to the `Authorized JavaScript origins` and `Authorized redirect URIs`. For development purposes, we can add `http://localhost:8082` to both fields, which is the address to the web server.
+3. Add `http://localhost:8082` to both **Authorized JavaScript origins** and **Authorized redirect URIs** for development. In production, use your server's domain.
 
-![Google credentials](/img/authentication/providers/google/5-clients.png)
+   ![Clients configuration](/img/authentication/providers/google/5-clients.png)
 
-Download the JSON file for your web application OAuth client. This file contains both the client id and the client secret. You will need to supply the contents of the file to the `clientSecret` property of the `GoogleIdpConfig` object.
+4. Click **Create**.
 
-This can be done by pasting the contents of the JSON file into the `googleClientSecret` key in the `config/passwords.yaml` file or setting as value of the `SERVERPOD_PASSWORD_googleClientSecret` environment variable. Alternatively, you can read the file contents directly using the `GoogleClientSecret.fromJsonFile()` method.
+5. Download the JSON file for this client. It contains both the `client_id` and `client_secret` that the server needs.
+
+### Store your credentials
+
+Paste the contents of the downloaded JSON file into the `googleClientSecret` key in `config/passwords.yaml`:
 
 ```yaml
 development:
@@ -68,7 +88,15 @@ development:
     }
 ```
 
-In your main `server.dart` file, configure the Google identity provider:
+:::warning
+**Never commit your `google_client_secret.json` to version control.** It contains your OAuth client secret. Use environment variables or a secrets manager in production.
+
+**Carefully maintain correct indentation for YAML block scalars.** The `googleClientSecret` block uses a `|`; any indentation error will silently break the JSON, resulting in authentication failures.
+:::
+
+## Server-side configuration
+
+After storing your credentials, configure the Google identity provider in your main `server.dart` file by setting the `GoogleIdpConfig` as an `identityProviderBuilders` entry in your `pod.initializeAuthServices()` configuration:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -111,7 +139,17 @@ import 'package:serverpod_auth_idp_server/providers/google.dart';
 class GoogleIdpEndpoint extends GoogleIdpBaseEndpoint {}
 ```
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Run `serverpod generate` to generate the client code, then create and apply a database migration to initialize the provider's tables:
+
+```bash
+serverpod generate
+serverpod create-migration
+dart run bin/main.dart --apply-migrations
+```
+
+:::note
+Skipping the migration will cause the server to crash at runtime when the Google provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+:::
 
 ### Basic configuration options
 
@@ -119,33 +157,35 @@ Finally, run `serverpod generate` to generate the client code and create a migra
 
 For more details on configuration options, such as customizing account validation, accessing Google APIs, and more, see the [configuration section](./configuration).
 
-:::warning
-The `google_client_secret.json` contains a private key and should not be version controlled. Store it securely using environment variables or secret management.
-:::
-
 ## Client-side configuration
 
-For our client-side configurations, we have to first create client-side credentials and include the credentials files in our projects. The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, so any documentation there should also apply to this setup.
+The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, so any documentation there should also apply to this setup.
 
 ### iOS
 
-Create the client credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as Application type _**iOS**_.
+1. In the Google Auth Platform, navigate to **Clients** and click **Create Client**.
 
-Fill in all the required information and create the credentials. Download the `plist` file - you'll need to extract values from it to configure your app.
+2. Select **iOS** as the application type.
 
-Open your `ios/Runner/Info.plist` file and add the following keys:
+3. Fill in your app's **Bundle ID** and any other required information.
 
-```xml
-<dict>
-  ...
-  <key>GIDClientID</key>
-  <string>your_ios_client_id</string>
-  <key>GIDServerClientID</key>
-  <string>your_server_client_id</string>
-</dict>
-```
+4. Click **Create** and download the `.plist` file.
 
-Replace `your_ios_client_id` with the `CLIENT_ID` value from the downloaded plist file, and `your_server_client_id` with the client ID from the server credentials JSON file.
+   ![Create iOS OAuth client](/img/authentication/providers/google/8-ios-client-create.png)
+
+5. Open your `ios/Runner/Info.plist` file and add the following keys:
+
+   ```xml
+   <dict>
+     ...
+     <key>GIDClientID</key>
+     <string>your_ios_client_id</string>
+     <key>GIDServerClientID</key>
+     <string>your_server_client_id</string>
+   </dict>
+   ```
+
+   Replace `your_ios_client_id` with the `CLIENT_ID` value from the downloaded plist file, and `your_server_client_id` with the client ID from the server credentials JSON file.
 
 #### Add the URL scheme
 
@@ -170,60 +210,81 @@ To allow navigation back to the app after sign-in, add the URL scheme to your `I
 
 Replace the URL scheme with your actual reversed client ID.
 
+:::warning
+Without the URL scheme, the OAuth callback never returns to your app and sign-in silently hangs.
+:::
+
 :::info
-If you have any social logins in your app you also need to integrate "Sign in with Apple" to publish your app to the app store. ([Read more](https://developer.apple.com/sign-in-with-apple/get-started/)).
+If you have any social logins in your app, you also need to integrate Sign in with Apple to publish your app to the App Store. ([Read more](https://developer.apple.com/sign-in-with-apple/get-started/)).
 :::
 
 ### Android
 
-Create the client credentials in the Google Auth Platform. Navigate to _Clients_ and click _Create Client_. Configure the OAuth client as Application type _**Android**_.
+1. In the Google Auth Platform, navigate to **Clients** and click **Create Client**.
 
-Fill in all required information, you can get the debug SHA-1 hash by running `./gradlew signingReport` in your Android project directory. Create the credentials and download the JSON file.
+2. Select **Android** as the application type.
 
-Put the file inside the `android/app/` directory and rename it to `google-services.json`.
+3. Fill in your app's **Package name** and **SHA-1 certificate fingerprint**. You can get the debug SHA-1 hash by running:
+
+   ```bash
+   ./gradlew signingReport
+   ```
+
+4. Click **Create** and download the JSON file.
+
+   ![Create Android OAuth client](/img/authentication/providers/google/9-android-client-create.png)
+
+5. Place the file inside the `android/app/` directory and rename it to `google-services.json`.
 
 :::info
 If your `google-services.json` does not include a web OAuth client entry, you may need to provide client IDs programmatically as described on the [configuration page](./configuration#configuring-client-ids-on-the-app).
 :::
 
-:::info
-For a production app you need to get the SHA-1 key from your production keystore! This can be done by running this command: ([Read more](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid)).
+:::warning
+For a production app, you need the SHA-1 key from your production keystore, not the debug one. Get it by running:
 
 ```bash
-$ keytool -list -v -keystore /path/to/keystore
+keytool -list -v -keystore /path/to/keystore
 ```
+
+See the [Google Cloud documentation](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid) for more details.
 :::
 
 :::tip
-If you encounter issues with Google Sign-In on Android, check the [official troubleshooting guide](https://pub.dev/packages/google_sign_in_android#troubleshooting) for common solutions.
+If you encounter issues with Google Sign-In on Android, check the [official troubleshooting guide](https://pub.dev/packages/google_sign_in_android#troubleshooting) for common solutions, or see the [troubleshooting page](./troubleshooting).
 :::
 
 ### Web
 
-There is no need to create any client credentials for the web, since it uses the same client ID as the server. However, you have to modify the server credentials in the Google Auth Platform.
+Web uses the same OAuth client as the server, so you don't need to create a new one. However, you need to update the server client's authorized origins to include your Flutter app's domain.
 
-Navigate to _Clients_ and select the server credentials (the one configured as a _**Web application**_). Under `Authorized JavaScript origins` and `Authorized redirect URIs` add the domain for your Flutter app, for development, this is `http://localhost:<port>` where the port is the port you are using.
+1. In the Google Auth Platform, navigate to **Clients** and select the server credentials (the one configured as **Web application**).
 
-:::info
-Force flutter to run on a specific port by running.
+2. Under **Authorized JavaScript origins**, add the domain for your Flutter app. For development, this is `http://localhost:<port>`.
 
-```bash
-$ flutter run -d chrome --web-port=49660
-```
-:::
+3. Under **Authorized redirect URIs**, add `http://localhost:8082` for development. In production, use your server's domain (e.g., `https://example.com`).
 
-Set up the redirect URI where the user will navigate after sign-in. For development, add `http://localhost:8082` inside `Authorized redirect URIs`. In production, use your server's domain (e.g., `https://example.com`).
+   ![Web credentials configuration](/img/authentication/providers/google/2-credentials.png)
 
-Then, on the `web/index.html` file, add the following to the `<head>` section:
+   :::info
+   Force Flutter to run on a specific port by running:
 
-```html
-<head>
-  ...
-  <meta name="google-signin-client_id" content="your_server_client_id">
-</head>
-```
+   ```bash
+   flutter run -d chrome --web-hostname localhost --web-port=49660
+   ```
 
-![Google credentials](/img/authentication/providers/google/2-credentials.png)
+   :::
+
+4. In your `web/index.html` file, add the following to the `<head>` section:
+
+   ```html
+   <head>
+     ...
+     <meta name="google-signin-client_id" content="your_server_client_id">
+   </head>
+   ```
+
+   Replace `your_server_client_id` with the client ID from your server OAuth client JSON file.
 
 ## Present the authentication UI
 
@@ -270,10 +331,19 @@ GoogleSignInWidget(
 )
 ```
 
+This renders a Google sign-in button like this:
+
+![Google sign-in button](/img/authentication/providers/google/3-button.png)
+
 The widget automatically handles:
+
 - Google Sign-In flow for iOS, Android, and Web.
 - Lightweight sign-in (One Tap, FedCM) support.
 - Token management.
 - Underlying Google Sign-In package error handling.
 
 For details on how to customize the Google Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
+
+:::warning
+If you run into issues, see the [troubleshooting guide](./troubleshooting).
+:::
