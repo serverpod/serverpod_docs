@@ -17,7 +17,7 @@ When you add a `table` to a serializable class, Serverpod will automatically add
 
 :::
 
-### Non persistent fields
+## Non persistent fields
 
 You can opt out of creating a column in the database for a specific field by using the `!persist` keyword.
 
@@ -25,14 +25,14 @@ You can opt out of creating a column in the database for a specific field by usi
 class: Company
 table: company
 fields:
-  name: String, !persist 
+  name: String, !persist
 ```
 
 All fields are persisted by default and have an implicit `persist` set on each field.
 
-### Data representation
+## Data representation
 
-Storing a field with a primitive / core dart type will be handled as its respective type. However, if you use a complex type, such as another model, a `List`, or a `Map`, these will be stored as a `json` object in the database.
+Storing a field with a primitive / core dart type will be handled as its respective type. However, if you use a complex type, such as another model, a `List`, or a `Map`, these will be stored as a `json` column in the database by default.
 
 ```yaml
 class: Company
@@ -53,6 +53,57 @@ fields:
 ```
 
 For a complete guide on how to work with relations see the [relation section](relations/one-to-one).
+
+### Storing serializable fields as JSONB
+
+By default, complex types are stored as `json` in PostgreSQL. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes).
+
+:::info
+The `serializationDataType` keyword is only valid on serializable field types (models, Lists, Maps). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
+:::
+
+You can set `serializationDataType` at three levels, each overriding the one above it:
+
+#### Field level
+
+Applies to a single field:
+
+```yaml
+class: Product
+table: product
+fields:
+  tags: List<String>, serializationDataType=jsonb
+  metadata: Map<String, String>, serializationDataType=jsonb
+```
+
+#### Class level
+
+Applies to all serializable fields in the class. Can be overridden by field-level setting.
+
+```yaml
+class: Product
+table: product
+serializationDataType: jsonb
+fields:
+  tags: List<String> # Stored as jsonb
+  metadata: Map<String, String> # Stored as jsonb
+  name: String
+  history: List<String>, serializationDataType=json  # Stored as json (override)
+```
+
+#### Project level
+
+Applies to all models in the project. Add this to your `config/generator.yaml`:
+
+```yaml
+serialize_as_jsonb_by_default: true
+```
+
+When enabled, all serializable fields across all models default to `jsonb` unless overridden at the class or field level.
+
+#### Migrating between json and jsonb
+
+If you change the `serializationDataType` between `json` and `jsonb` at any level, the migration system will convert existing columns automatically with no data loss.
 
 ## Change ID type
 
