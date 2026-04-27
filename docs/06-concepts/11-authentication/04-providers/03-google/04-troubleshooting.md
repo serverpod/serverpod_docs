@@ -10,22 +10,82 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Enable the **People API** in your project.
 * [ ] Configure the **Google Auth Platform** with the required scopes (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
 * [ ] Add your email as a **test user** on the [Audience](https://console.cloud.google.com/auth/audience) page.
-* [ ] Create a **Web application** OAuth client and download its JSON file.
-* [ ] Paste the JSON contents into `googleClientSecret` in `config/passwords.yaml`.
+* [ ] Create a **Web application** OAuth client and copy the **Client ID** and **Client secret**.
+* [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and redirect URI.
+* [ ] Add `GoogleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
+* [ ] Create a `GoogleIdpEndpoint` file in `lib/src/auth/`.
 * [ ] Run **`serverpod generate`**, then **`serverpod create-migration`**, then apply migrations using `--apply-migrations`.
+* [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
 * [ ] Create an **iOS** OAuth client and configure `Info.plist` with `GIDClientID`, `GIDServerClientID`, and the URL scheme (*iOS only*).
 * [ ] Create an **Android** OAuth client with the correct SHA-1 fingerprint and place `google-services.json` in `android/app/` (*Android only*).
 * [ ] Add the `google-signin-client_id` **meta tag** to `web/index.html` (*Web only*).
 
-## Sign-in fails with `redirect_uri_mismatch`
+## Sign-in fails with redirect_uri_mismatch
 
 **Problem:** The OAuth flow fails with a `redirect_uri_mismatch` error from Google.
 
 **Cause:** The redirect URI in your OAuth client configuration does not match the URI your app is actually using. Google requires an exact match.
 
-**Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match your server's address exactly. For development, both should include `http://localhost:8082`. Trailing slashes, port differences, and `http` vs `https` all count as mismatches.
+**Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match your server's address exactly. For local development, both should be `http://localhost:8082` (the Serverpod **web server** port, not the API server port 8080). Trailing slashes, port differences, and `http` vs `https` all count as mismatches.
 
-## Sign-in fails on Android with `PlatformException(sign_in_failed)` or `clientConfigurationError`
+Common mistakes:
+
+* Using port `8080` (the API server) instead of `8082` (the web server). Check `config/development.yaml` under `webServer` for the correct port.
+* Adding a trailing slash (e.g., `http://localhost:8082/` instead of `http://localhost:8082`).
+* For Web apps: not adding the Flutter web app's origin (e.g., `http://localhost:49660`) to **Authorized JavaScript origins**. This is separate from the Serverpod web server address. See the [Web setup section](./setup#web) for details.
+
+## Sign-in works for you but not for other users
+
+**Problem:** Sign-in works for your Google account but other users get an error screen from Google saying the app is not verified or access is denied.
+
+**Cause:** Your Google Auth Platform app is still in **Testing** mode. Only users explicitly added as test users can sign in (up to 100).
+
+**Resolution:** Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
+
+## Production redirect URIs rejected by Google
+
+**Problem:** When adding your production domain to Authorized redirect URIs, Google rejects it with an error about unauthorized domains.
+
+**Cause:** Your production domain is not listed under **Authorized domains** on the Branding page.
+
+**Resolution:** Navigate to the [Branding](https://console.cloud.google.com/auth/branding) page and add your production domain (e.g., `my-awesome-project.serverpod.space`) to **Authorized domains**. Google requires redirect URIs to use domains listed here.
+
+## Flutter web sign-in fails with origin mismatch
+
+**Problem:** Google Sign-In on Flutter web fails with an origin mismatch error, even though you added `http://localhost:8082` to the OAuth client.
+
+**Cause:** The Flutter web app runs on a different port than the Serverpod web server. The sign-in request originates from the Flutter app's port (e.g., `http://localhost:49660`), which also needs to be listed in **Authorized JavaScript origins**. Flutter also picks a random port by default, so the origin changes on every run.
+
+**Resolution:** Run Flutter on a fixed port and add that origin to your OAuth client:
+
+```bash
+flutter run -d chrome --web-hostname localhost --web-port=49660
+```
+
+Then add `http://localhost:49660` to **Authorized JavaScript origins** in the Google Auth Platform.
+
+## Server fails to parse googleClientSecret from passwords.yaml
+
+**Problem:** The server crashes on startup with a JSON parsing error related to `googleClientSecret`.
+
+**Cause:** The YAML block scalar indentation is incorrect. The `googleClientSecret` key uses `|` (literal block scalar), which requires every line of the JSON to be indented at the same level relative to the key.
+
+**Resolution:** Make sure the JSON block is indented consistently under the `|`:
+
+```yaml
+development:
+  googleClientSecret: |
+    {
+      "web": {
+        "client_id": "...",
+        "client_secret": "..."
+      }
+    }
+```
+
+Every line of the JSON must be indented by at least one level more than `googleClientSecret:`. Mixing tabs and spaces can also cause issues.
+
+## Sign-in fails on Android with PlatformException(sign_in_failed) or clientConfigurationError
 
 **Problem:** Google Sign-In throws a `PlatformException(sign_in_failed, ...)` or a `GoogleSignInException` with `clientConfigurationError` on Android but works on other platforms.
 
@@ -57,13 +117,13 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Resolution:** Register the SHA-1 fingerprint from your release keystore as an additional fingerprint in the Google Auth Platform. You can add multiple SHA-1 fingerprints to the same Android OAuth client, or create separate clients for debug and release.
 
-## `google-services.json` missing web client entry
+## Missing web client entry in google-services.json
 
 **Problem:** Sign-in fails on Android with an error about a missing server client ID, or `serverClientId` is null.
 
 **Cause:** The `google-services.json` file does not contain a web OAuth client entry. This happens when no Web application OAuth client exists in the same Google Cloud project.
 
-**Resolution:** Make sure you have created a Web application OAuth client in the same project as your Android OAuth client. Re-download `google-services.json` after creating the Web client. Alternatively, provide client IDs programmatically as described on the [configuration page](./configuration#configuring-client-ids-on-the-app).
+**Resolution:** Make sure you have created a Web application OAuth client in the same project as your Android OAuth client. Re-download `google-services.json` after creating the Web client. Alternatively, provide client IDs programmatically as described on the [customizations page](./customizations#configuring-client-ids-on-the-app).
 
 ## People API not enabled
 
