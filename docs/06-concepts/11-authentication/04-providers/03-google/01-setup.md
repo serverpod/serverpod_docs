@@ -298,7 +298,7 @@ Web uses the same server OAuth client you created earlier, so you don't need a s
    </head>
    ```
 
-   Replace `your_server_client_id` with the client ID from your server OAuth client JSON file.
+   Replace `your_server_client_id` with the client ID from your Web application OAuth client.
 
 ## Present the authentication UI
 
