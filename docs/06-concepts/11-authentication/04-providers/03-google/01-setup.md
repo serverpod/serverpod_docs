@@ -10,12 +10,6 @@ The Serverpod project template (`serverpod create`) includes the auth module and
 
 All platforms require a Web application OAuth client (used by the server). iOS and Android additionally require their own platform-specific OAuth clients.
 
-| Platform | Web OAuth client (server) | iOS OAuth client | Android OAuth client |
-| --- | --- | --- | --- |
-| iOS | Required | Required | Not needed |
-| Android | Required | Not needed | Required |
-| Web | Required | Not needed | Not needed |
-
 ### Create a Google Cloud project
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
@@ -60,10 +54,8 @@ The People API is required for Serverpod to access basic user profile data durin
 
    ![Audience and test users](/img/authentication/providers/google/7-audience.png)
 
-   When you are ready to launch, click **Publish App** on this page to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
-
-   :::warning
-   Until you publish the app, only the test users listed on this page can sign in. All other users will see an error.
+   :::tip
+   Leave the app in **Testing** mode for now. You can [publish it](#publishing-to-production) after verifying that sign-in works end to end.
    :::
 
 ### Create the server OAuth client (Web application)
@@ -357,3 +349,9 @@ For details on how to customize the Google Sign-In UI in your Flutter app, see t
 :::warning
 If you run into issues, see the [troubleshooting guide](./troubleshooting).
 :::
+
+## Publishing to production
+
+While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page can sign in. All other users will see an error.
+
+When you are ready to launch, navigate to the **Audience** page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
