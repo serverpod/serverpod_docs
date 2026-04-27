@@ -38,11 +38,15 @@ The People API is required for Serverpod to access basic user profile data durin
 
    ![Google Auth Platform overview](/img/authentication/providers/google/4-auth-platform-overview.png)
 
-2. **App information**: You will be prompted to fill in your app's name and a user support email. Complete this step to continue.
+2. **Project configuration**: Complete the setup wizard by filling in the required fields across each step (App Information, Audience, Contact Information) and click **Create**.
 
-3. **Branding**: Navigate to the [Branding](https://console.cloud.google.com/auth/branding) page and fill in the remaining fields: app logo, app homepage link, privacy policy link, terms of service link, developer contact email, and **authorized domains**. These details appear on the OAuth consent screen shown to users during sign-in.
+   ![Project configuration wizard](/img/authentication/providers/google/4-auth-platform-overview.png)
+
+3. **Branding**: After completing the wizard, navigate to the [Branding](https://console.cloud.google.com/auth/branding) page from the sidebar. Fill in the remaining fields: app logo, app homepage link, privacy policy link, terms of service link, developer contact email, and **authorized domains**. These details appear on the OAuth consent screen shown to users during sign-in.
 
    Add any domains you will use in production (e.g., `my-awesome-project.serverpod.space`) to **Authorized domains**. Google will reject redirect URIs that use domains not listed here.
+
+   ![Branding configuration](/img/authentication/providers/google/10-branding.png)
 
 4. **Data access**: Navigate to the [Data Access](https://console.cloud.google.com/auth/scopes) page and add the required scopes: `.../auth/userinfo.email` and `.../auth/userinfo.profile`.
 
