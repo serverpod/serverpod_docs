@@ -146,10 +146,10 @@ pod.configureAppleIdpRoutes(
 );
 ```
 
-The paths shown above are the defaults. See the [configuration](./customizations) page for details on web routes.
+The paths shown above are the defaults. See the [customizations](./customizations) page for details on web routes.
 
 :::tip
-If you need more control over how the credentials are loaded, you can use `AppleIdpConfig(...)` with manual `pod.getPassword()` calls instead. See the [configuration](./customizations) page for details.
+If you need more control over how the credentials are loaded, you can use `AppleIdpConfig(...)` with manual `pod.getPassword()` calls instead. See the [customizations](./customizations) page for details.
 :::
 
 Then, create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/apple_idp_endpoint.dart`) alongside the existing auth endpoints and extend the abstract endpoint to expose it:
@@ -186,7 +186,7 @@ When using Web or Android, you can also configure the following optional paramet
 - `webRedirectUri`: The URL where the browser is redirected after the server receives Apple's callback on Web. Required for Web support when using the server callback route.
 - `androidPackageIdentifier`: The Android package identifier for the app. Required for Apple Sign In to work on Android. When configured, the callback route automatically redirects Android clients back to the app using an intent URI.
 
-For more details on configuration options, see the [configuration](./customizations) page.
+For more details on configuration options, see the [customizations](./customizations) page.
 
 ## Client-side configuration
 
@@ -214,11 +214,7 @@ Enable the Sign in with Apple capability in your Xcode project:
 
 Apple Sign In on Android works through a web-based OAuth flow. When the user completes authentication, Apple redirects to your server's callback route, which then redirects back to your app using an Android intent URI with the `signinwithapple` scheme.
 
-To enable this:
-
-1. Add the `androidPackageIdentifier` to your `AppleIdpConfig` (or the `appleAndroidPackageIdentifier` key in `passwords.yaml`). This must match your app's Android package name (e.g., `com.example.app`).
-2. Configure the redirect URI in your Apple Developer Portal to point to your server's callback route (e.g., `https://example.com/auth/callback`).
-3. Register the `signinwithapple` URI scheme in your `AndroidManifest.xml`:
+The redirect URI and `appleAndroidPackageIdentifier` were already configured in the [Store your credentials](#store-your-credentials) and [Service ID](#create-a-service-id-android-and-web-only) steps. The only remaining step is to register the `signinwithapple` URI scheme in your `AndroidManifest.xml`:
 
 ```xml
 <activity
@@ -239,14 +235,7 @@ This intent filter is required. Without it, the OAuth callback never returns to 
 
 ### Web
 
-Apple Sign In on Web uses a server callback first, then redirects the browser to your web app.
-
-To enable this:
-
-1. Configure the redirect URI in your Apple Developer Portal to match your server's callback route (e.g., `https://example.com/auth/callback`).
-2. Set `webRedirectUri` in `AppleIdpConfig` (or `appleWebRedirectUri` in `passwords.yaml`) to the Web URL that should receive the callback parameters (e.g., `https://example.com/auth/apple-complete`).
-
-If `webRedirectUri` is not configured, Web callbacks to the server route will fail.
+Apple Sign In on Web uses a server callback first, then redirects the browser to your web app. The redirect URI and `appleWebRedirectUri` were already configured in the [Store your credentials](#store-your-credentials) and [Service ID](#create-a-service-id-android-and-web-only) steps, so no additional setup is needed.
 
 :::warning
 All redirect URIs must use **HTTPS**. Apple rejects HTTP URLs, including `localhost`. For local development, expose your server over HTTPS using a tunnelling service, like ngrok or Cloudflare Tunnel.
