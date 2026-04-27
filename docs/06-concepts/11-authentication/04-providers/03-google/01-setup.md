@@ -2,10 +2,6 @@
 
 Sign in with Google requires a Google Cloud project. You also need platform-specific OAuth credentials depending on which platforms you target.
 
-:::info
-The Serverpod project template (`serverpod create`) includes the auth module and JWT configuration out of the box. If you set up your project without the template, see [Setup](../../setup) first.
-:::
-
 ## Get your credentials
 
 All platforms require a Web application OAuth client (used by the server). iOS and Android additionally require their own platform-specific OAuth clients.
@@ -109,13 +105,19 @@ For production, add the same `googleClientSecret` entry to the `production:` sec
 
 :::warning
 **Never commit `config/passwords.yaml` to version control.** It contains your OAuth client secret. Use environment variables or a secrets manager in production.
+:::
 
+:::note
 **Carefully maintain correct indentation for YAML block scalars.** The `googleClientSecret` block uses a `|`; any indentation error will silently break the JSON, resulting in authentication failures.
 :::
 
 ## Server-side configuration
 
-Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) already contains a `pod.initializeAuthServices()` call from the project template. Add the Google import and `GoogleIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
+### Add the Google identity provider
+
+Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+
+Add the Google import and `GoogleIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/google.dart';
@@ -139,13 +141,17 @@ pod.initializeAuthServices(
 If you need more control over how the client secret is loaded, you can use `GoogleIdpConfig(clientSecret: GoogleClientSecret.fromJsonString(...))` instead. See the [customizations](./customizations) page for details.
 :::
 
-Then, create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/google_idp_endpoint.dart`) alongside the existing auth endpoints and extend the abstract endpoint to expose it:
+### Create the endpoint
+
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/google_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/google.dart';
 
 class GoogleIdpEndpoint extends GoogleIdpBaseEndpoint {}
 ```
+
+### Generate code and apply migrations
 
 Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
 
