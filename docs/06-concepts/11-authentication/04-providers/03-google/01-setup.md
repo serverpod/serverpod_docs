@@ -244,10 +244,6 @@ Without the URL scheme, the OAuth callback never returns to your app and sign-in
 The downloaded `google-services.json` may not include a web OAuth client entry, which is required for Google Sign-In to resolve the server client ID. If sign-in fails, provide the client IDs programmatically as described on the [customizations](./customizations#configuring-client-ids-on-the-app) page.
 :::
 
-:::warning
-For a production app, you need the SHA-1 key from your production keystore, not the debug one. See the [Google Cloud documentation](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid) for details.
-:::
-
 ### Web
 
 Web uses the same server OAuth client you created earlier, so you don't need a separate client. However, for web, the sign-in request originates from the Flutter app running in the browser, not from the Serverpod web server. Google requires this origin to be listed as well.
