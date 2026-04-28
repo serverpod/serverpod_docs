@@ -30,7 +30,7 @@ The People API is required for Serverpod to access basic user profile data durin
 
 2. **Project configuration**: Complete the setup wizard by filling in the required fields across each step (App Information, Audience, Contact Information) and click **Create**.
 
-   ![Project configuration wizard](/img/authentication/providers/google/4-auth-platform-overview.png)
+   ![Project configuration wizard](/img/authentication/providers/google/4b-project-configuration.png)
 
 3. **Branding**: After completing the wizard, navigate to the [Branding](https://console.cloud.google.com/auth/branding) page from the sidebar. Fill in the remaining fields: app logo, app homepage link, privacy policy link, terms of service link, developer contact email, and **authorized domains**. These details appear on the OAuth consent screen shown to users during sign-in.
 
