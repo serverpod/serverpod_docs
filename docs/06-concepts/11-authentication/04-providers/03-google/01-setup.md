@@ -240,8 +240,8 @@ Without the URL scheme, the OAuth callback never returns to your app and sign-in
 
 5. Place the file inside your Flutter project's `android/app/` directory (e.g., `my_project_flutter/android/app/`) and rename it to `google-services.json`.
 
-:::info
-If your `google-services.json` does not include a web OAuth client entry, you may need to provide client IDs programmatically as described on the [customizations](./customizations#configuring-client-ids-on-the-app) page.
+:::warning
+The downloaded `google-services.json` may not include a web OAuth client entry, which is required for Google Sign-In to resolve the server client ID. If sign-in fails, provide the client IDs programmatically as described on the [customizations](./customizations#configuring-client-ids-on-the-app) page.
 :::
 
 :::warning
