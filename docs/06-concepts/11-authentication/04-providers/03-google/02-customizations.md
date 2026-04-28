@@ -6,9 +6,16 @@ This page covers additional configuration options for the Google identity provid
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GoogleIdpConfig` in-code documentation.
 
+Serverpod provides two configuration classes:
+
+- **`GoogleIdpConfigFromPasswords`** -- Loads the client secret from `passwords.yaml` or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable. This is the class used in the [setup guide](./01-setup.md) and is recommended for most projects.
+- **`GoogleIdpConfig`** -- The base class that requires you to provide the client secret explicitly. Use this when you need custom control over how credentials are loaded.
+
+Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GoogleIdpConfigFromPasswords` unless the section specifically demonstrates manual client secret loading.
+
 ### Loading Google Client Secret
 
-You can load the Google client secret in several ways:
+If you use `GoogleIdpConfig` instead of `GoogleIdpConfigFromPasswords`, you must provide the client secret explicitly. You can load it in several ways:
 
 **From JSON string (recommended for production):**
 
@@ -204,9 +211,3 @@ You can also set these environment variables in your IDE's run configuration or 
 | `getExtraGoogleInfoCallback` | `Function?` | No | Callback that receives the access token after sign-in, allowing you to call additional Google APIs and store extra user data. |
 | `onAfterGoogleAccountCreated` | `Function?` | No | Callback invoked after a new Google account is created and linked to an auth user. Only called for new accounts, not returning users. |
 | `onBeforeAuthUserCreated` | `Function?` | No | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
-
-### Environment variable equivalents
-
-All the `passwords.yaml` keys listed above can be set as environment variables by prefixing with `SERVERPOD_PASSWORD_`:
-
-- `googleClientSecret` → `SERVERPOD_PASSWORD_googleClientSecret`

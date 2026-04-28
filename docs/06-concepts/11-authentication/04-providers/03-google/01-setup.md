@@ -222,10 +222,6 @@ Replace the URL scheme with your actual reversed client ID.
 Without the URL scheme, the OAuth callback never returns to your app and sign-in silently hangs.
 :::
 
-:::info
-If you have any social logins in your app, you also need to integrate Sign in with Apple to publish your app to the App Store. ([Read more](https://developer.apple.com/sign-in-with-apple/get-started/)).
-:::
-
 ### Android
 
 1. In the Google Auth Platform, navigate to **Clients** and click **Create Client**.
@@ -249,17 +245,7 @@ If your `google-services.json` does not include a web OAuth client entry, you ma
 :::
 
 :::warning
-For a production app, you need the SHA-1 key from your production keystore, not the debug one. Get it by running:
-
-```bash
-keytool -list -v -keystore /path/to/keystore
-```
-
-See the [Google Cloud documentation](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid) for more details.
-:::
-
-:::tip
-If you encounter issues with Google Sign-In on Android, check the [official troubleshooting guide](https://pub.dev/packages/google_sign_in_android#troubleshooting) for common solutions, or see the [troubleshooting page](./troubleshooting).
+For a production app, you need the SHA-1 key from your production keystore, not the debug one. See the [Google Cloud documentation](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid) for details.
 :::
 
 ### Web
@@ -346,7 +332,7 @@ The widget automatically handles:
 
 For details on how to customize the Google Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
 
-:::warning
+:::tip
 If you run into issues, see the [troubleshooting guide](./troubleshooting).
 :::
 
