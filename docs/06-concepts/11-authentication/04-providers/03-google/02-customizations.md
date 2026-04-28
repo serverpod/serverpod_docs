@@ -195,15 +195,15 @@ This approach is useful when you need to:
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
 
-## `GoogleIdpConfig` parameter reference
+## GoogleIdpConfig parameter reference
 
-| Parameter | Type | Required | `passwords.yaml` key | Description |
-| --- | --- | --- | --- | --- |
-| `clientSecret` | `GoogleClientSecret` | Yes | `googleClientSecret` | The Google OAuth client secret loaded from JSON. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
-| `googleAccountDetailsValidation` | `Function?` | No | — | Custom validation callback for Google account details before allowing sign-in. Throws an exception to reject the account. |
-| `getExtraGoogleInfoCallback` | `Function?` | No | — | Callback that receives the access token after sign-in, allowing you to call additional Google APIs and store extra user data. |
-| `onAfterGoogleAccountCreated` | `Function?` | No | — | Callback invoked after a new Google account is created and linked to an auth user. Only called for new accounts, not returning users. |
-| `onBeforeAuthUserCreated` | `Function?` | No | — | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `clientSecret` | `GoogleClientSecret` | Yes | The Google OAuth client secret loaded from JSON. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
+| `googleAccountDetailsValidation` | `Function?` | No | Custom validation callback for Google account details before allowing sign-in. Throws an exception to reject the account. |
+| `getExtraGoogleInfoCallback` | `Function?` | No | Callback that receives the access token after sign-in, allowing you to call additional Google APIs and store extra user data. |
+| `onAfterGoogleAccountCreated` | `Function?` | No | Callback invoked after a new Google account is created and linked to an auth user. Only called for new accounts, not returning users. |
+| `onBeforeAuthUserCreated` | `Function?` | No | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
 
 ### Environment variable equivalents
 
