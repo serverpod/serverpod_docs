@@ -165,12 +165,6 @@ dart run bin/main.dart --apply-migrations
 Skipping the migration will cause the server to crash at runtime when the Google provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 :::
 
-### Basic configuration options
-
-- `clientSecret`: Required. Google OAuth client secret loaded from JSON. See the [customizations](./customizations) page for details on different ways to load the client secret.
-
-For more details on options such as customizing account validation, accessing Google APIs, and more, see the [customizations](./customizations) page.
-
 ## Client-side configuration
 
 The Android and iOS integrations use the [google_sign_in](https://pub.dev/packages/google_sign_in) package under the hood, so any documentation there should also apply to this setup.
