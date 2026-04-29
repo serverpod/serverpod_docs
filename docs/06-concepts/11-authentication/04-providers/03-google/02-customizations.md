@@ -13,7 +13,7 @@ Serverpod provides two configuration classes:
 
 Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GoogleIdpConfigFromPasswords` unless the section specifically demonstrates manual client secret loading.
 
-### Loading Google Client Secret
+### Load the client secret using GoogleIdpConfig
 
 If you use `GoogleIdpConfig` instead of `GoogleIdpConfigFromPasswords`, you must provide the client secret explicitly. You can load it in several ways:
 
