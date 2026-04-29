@@ -11,6 +11,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Create a **Google Cloud project** in the [Google Cloud Console](https://console.cloud.google.com/).
 * [ ] Enable the **People API** in your project.
 * [ ] Configure the **Google Auth Platform** with the required scopes (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
+* [ ] Configure **Branding** with your app details and add your production domain to **Authorized domains**.
 * [ ] Add your email as a **test user** on the [Audience](https://console.cloud.google.com/auth/audience) page.
 * [ ] Create a **Web application** OAuth client and copy the **Client ID** and **Client secret**.
 * [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and redirect URI.
@@ -27,6 +28,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Create an **iOS** OAuth client and configure `Info.plist` with `GIDClientID`, `GIDServerClientID`, and the URL scheme (*iOS only*).
 * [ ] Create an **Android** OAuth client with the correct SHA-1 fingerprint and place `google-services.json` in `android/app/` (*Android only*).
 * [ ] Add the `google-signin-client_id` **meta tag** to `web/index.html` (*Web only*).
+* [ ] Add the Flutter web app's origin to **Authorized JavaScript origins** on the server OAuth client (*Web only*).
 
 ## Sign-in fails with redirect_uri_mismatch
 

@@ -6,10 +6,12 @@ This page covers additional configuration options for the Google identity provid
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GoogleIdpConfig` in-code documentation.
 
-Serverpod provides two configuration classes:
+The Google identity provider can be configured using one of two classes:
 
-- **`GoogleIdpConfigFromPasswords`** -- Loads the client secret from `passwords.yaml` or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable. This is the class used in the [setup guide](./01-setup.md) and is recommended for most projects.
-- **`GoogleIdpConfig`** -- The base class that requires you to provide the client secret explicitly. Use this when you need custom control over how credentials are loaded.
+- **`GoogleIdpConfigFromPasswords`**: Automatically loads the client secret from the `googleClientSecret` key in `passwords.yaml` (or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable). This is the class used in the [setup guide](./setup) and is recommended for most projects.
+- **`GoogleIdpConfig`**: Requires you to pass a `GoogleClientSecret` object directly. Use this when you need to load credentials from a custom source, such as a JSON file, a secrets manager, or a programmatically constructed map.
+
+`GoogleIdpConfigFromPasswords` is a convenience wrapper around `GoogleIdpConfig` that handles credential loading for you.
 
 Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GoogleIdpConfigFromPasswords` unless the section specifically demonstrates manual client secret loading.
 
