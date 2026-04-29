@@ -6,14 +6,28 @@ This page helps you identify common Sign in with Apple failures, explains why th
 
 Go through this before investigating a specific error. Most problems come from a missed step.
 
+#### Apple Developer Portal
+
 * [ ] Enable **Sign in with Apple** on your App ID at [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list).
-* [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
 * [ ] Create a **Service ID** and link it to your App ID (*Android and Web only*).
 * [ ] Confirm the **return URL** on the Service ID uses `https://` (not `http://` or `localhost`).
-* [ ] Make sure **`appleKey`** in your config holds the raw `.p8` file contents (not a pre-generated JWT).
-* [ ] Double-check the **`.p8` key** is indented consistently under `appleKey: |` in `passwords.yaml`.
-* [ ] Run **`serverpod generate`** after adding the Apple provider, and apply migrations using `--apply-migrations`.
+* [ ] Create a **Sign in with Apple key** and download the `.p8` file.
+
+#### Server
+
+* [ ] Add the Apple credentials to `config/passwords.yaml` with the raw `.p8` file contents (not a pre-generated JWT).
+* [ ] Double-check the **`.p8` key** is indented consistently under `appleKey: |`.
+* [ ] Add `AppleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 * [ ] Call **`pod.configureAppleIdpRoutes(...)`** on the server before the pod starts.
+* [ ] Create an `AppleIdpEndpoint` file in `lib/src/auth/`.
+* [ ] Run **`serverpod generate`**, then apply migrations using `--apply-migrations`.
+
+#### Client
+
+* [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+* [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
+* [ ] Add the **Apple JS SDK** script to `web/index.html` (*Web only*).
+* [ ] Pass **`APPLE_SERVICE_IDENTIFIER`** and **`APPLE_REDIRECT_URI`** via `--dart-define` (*Web and Android only*).
 * [ ] Add the **`signinwithapple`** intent filter to `AndroidManifest.xml` (*Android only*).
 * [ ] Add **Apple's mail servers** to your SPF record if you email users who might use Hide My Email.
 
@@ -32,7 +46,7 @@ appleKey: |
   -----END PRIVATE KEY-----
 ```
 
-Alternatively, set `appleKey` as an environment variable to avoid YAML indentation entirely. See [Environment Variable equivalents](./customizations#environment-variable-equivalents) in the customizations page.
+Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment variable to avoid YAML indentation entirely.
 
 ## Sign-in starts failing with `invalid_client` after months of success
 
@@ -119,6 +133,28 @@ dart run bin/main.dart --apply-migrations
 **Cause:** Some Simulator versions do not fully support the native Sign in with Apple flow. This is a known Simulator limitation, not a code or configuration issue.
 
 **Resolution:** Test on a physical device to confirm the problem is Simulator-specific. If sign-in works on a real device, no changes are needed.
+
+## Web sign-in fails with `TypeError: type ... is not a subtype of type 'JSObject'`
+
+**Problem:** Clicking the Apple button on Web throws a `TypeError` mentioning `JSObject` or a minified type like `minified:CM`.
+
+**Cause:** The Apple JS SDK is not loaded. The `sign_in_with_apple` package calls `AppleID.auth.init()` on the page, but that function only exists after Apple's script is loaded in the HTML.
+
+**Resolution:** Add the Apple JS SDK to your Flutter app's `web/index.html` inside the `<head>` tag:
+
+```html
+<script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" crossorigin="anonymous"></script>
+```
+
+The `crossorigin="anonymous"` attribute is needed because Flutter's service worker sets a strict Cross-Origin Embedder Policy that blocks scripts without it.
+
+## macOS sign-in shows "Sign Up Not Completed"
+
+**Problem:** The native Sign in with Apple sheet appears on macOS, but immediately shows "Sign Up Not Completed" without completing authentication.
+
+**Cause:** The macOS app sandbox entitlement conflicts with `ASAuthorizationController`. When `com.apple.security.app-sandbox` is enabled alongside `com.apple.developer.applesignin`, the authorization flow fails silently.
+
+**Resolution:** In your macOS entitlements file (e.g., `macos/Runner/DebugProfile.entitlements`), remove the app sandbox entitlement or ensure it does not block the Sign in with Apple flow. Test without the sandbox first to confirm it is the cause, then re-add only the sandbox entitlements you need.
 
 ## User stays signed in after removing Apple access
 
