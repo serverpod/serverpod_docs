@@ -2,7 +2,7 @@
 
 Sign in with Google requires a Google Cloud project. You also need platform-specific OAuth credentials depending on which platforms you target.
 
-## Get your credentials
+## Get your Google credentials
 
 All platforms require a Web application OAuth client (used by the server). iOS and Android additionally require their own platform-specific OAuth clients.
 
@@ -12,7 +12,7 @@ All platforms require a Web application OAuth client (used by the server). iOS a
 
 2. Enter a **Project name** (e.g. `My Serverpod App`) and click **Create**.
 
-2. Create a new project (or select an existing one).
+3. Create a new project (or select an existing one).
 
 ### Enable People API
 
@@ -195,7 +195,7 @@ The Android and iOS integrations use the [google_sign_in](https://pub.dev/packag
    </dict>
    ```
 
-   Replace `your_ios_client_id` with the `CLIENT_ID` value from the downloaded plist file, and `your_server_client_id` with the client ID from the server credentials JSON file.
+   Replace `your_ios_client_id` with the `CLIENT_ID` value from the downloaded plist file, and `your_server_client_id` with the client ID from the [Web application OAuth client](#create-the-server-oauth-client-web-application) you created earlier.
 
 #### Add the URL scheme
 
@@ -336,6 +336,38 @@ If you run into issues, see the [troubleshooting guide](./troubleshooting).
 
 ## Publishing to production
 
+Before going live, complete the following steps:
+
+### 1. Update the OAuth redirect URIs
+
+Go back to the [server OAuth client](#create-the-server-oauth-client-web-application) in the Google Auth Platform and add your production server's public URL to both **Authorized JavaScript origins** and **Authorized redirect URIs**:
+
+- **Authorized JavaScript origins**: `https://your-domain.serverpod.space`
+- **Authorized redirect URIs**: `https://your-domain.serverpod.space`
+
+Replace the URL with your actual production web server address.
+
+### 2. Store the production credentials
+
+Add the `googleClientSecret` entry to the `production:` section of `config/passwords.yaml`, using the production redirect URI:
+
+```yaml
+production:
+  # ... existing keys ...
+  googleClientSecret: |
+    {
+      "web": {
+        "client_id": "your-client-id.apps.googleusercontent.com",
+        "client_secret": "your-client-secret",
+        "redirect_uris": ["https://your-domain.serverpod.space"]
+      }
+    }
+```
+
+Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` environment variable on your production server with the same JSON value.
+
+### 3. Publish the OAuth consent screen
+
 While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page can sign in. All other users will see an error.
 
-When you are ready to launch, navigate to the **Audience** page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
+Navigate to the **Audience** page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
