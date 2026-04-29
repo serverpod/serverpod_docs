@@ -8,7 +8,9 @@ All platforms require a Web application OAuth client (used by the server). iOS a
 
 ### Create a Google Cloud project
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+1. Go to [Create a project](https://console.cloud.google.com/projectcreate).
+
+2. Enter a **Project name** (e.g. `My Serverpod App`) and click **Create**.
 
 2. Create a new project (or select an existing one).
 
