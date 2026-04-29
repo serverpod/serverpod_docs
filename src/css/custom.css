@@ -280,6 +280,21 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   color: var(--ifm-menu-color-active) !important;
 }
 
+.theme-doc-sidebar-menu .sidebar-mobile-product-switch {
+  display: none;
+}
+
+@media (max-width: 996px) {
+  .navbar-sidebar .theme-doc-sidebar-menu .sidebar-mobile-product-switch {
+    display: block;
+    border-top: 1px solid var(--ifm-toc-border-color);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    position: sticky;
+    bottom: 0;
+  }
+}
+
 /*------------------------------------------------------------------------------
  * Sidebar — expandable chevron (~65% of default)
  *----------------------------------------------------------------------------*/
@@ -489,6 +504,24 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 
 .theme-doc-sidebar-menu .sidebar-icon-deploying > div.menu__list-item-collapsible > a.menu__link--sublist {
   --sidebar-icon-mask: url('/img/sidebar-icon-rocket.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-deploying > .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-rocket.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-mobile-product-switch.sidebar-icon-serverpod-cloud,
+.theme-doc-sidebar-menu .sidebar-mobile-product-switch.sidebar-icon-serverpod-cloud .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-cloud-sun.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-mobile-product-switch.sidebar-icon-serverpod-framework,
+.theme-doc-sidebar-menu .menu__link.sidebar-mobile-product-switch.sidebar-icon-serverpod-framework,
+.theme-doc-sidebar-menu .sidebar-mobile-product-switch.sidebar-icon-serverpod-framework .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-layers.svg');
   --sidebar-icon-color: currentColor;
 }
 
