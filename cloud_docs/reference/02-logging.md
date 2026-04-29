@@ -39,7 +39,6 @@ scloud log 7d
 scloud log --since 1h --until 10m
 ```
 
-
 #### Using ISO date strings
 
 You can filter logs using ISO 8601 timestamp format:
@@ -199,12 +198,13 @@ scloud log --since "2023-07-10T13:45:00Z" --until "2023-07-10T14:15:00Z"
 ## Session logs configuration
 
 By default, the session logs settings are configured as follows:
+
 - `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED`: `true`
 - `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED`: `false`
 
 If your application needs different log handling, please adjust these
 parameters using the `scloud variable create` command to set them
-as [environment variables](../../guides/passwords#set-an-environment-variable).
+as [environment variables](/cloud/guides/passwords#set-an-environment-variable).
 
 ## Troubleshooting
 

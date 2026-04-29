@@ -22,6 +22,7 @@ The `pre_deploy` hook runs:
 3. Before the project is uploaded to Serverpod Cloud
 
 This is the ideal place for:
+
 - Building Flutter applications
 - Running code generation
 - Compiling assets
@@ -37,6 +38,7 @@ The `post_deploy` hook runs:
 3. Before the deployment process completes
 
 This is the ideal place for:
+
 - Sending deployment notifications
 - Triggering external services
 - Running post-deployment validation
@@ -190,4 +192,4 @@ project:
 ## Related documentation
 
 - [Deploying Your Application](./01-deploying-your-application.md) - Learn about the deployment process
-- [Configuration Overview](../../guides/passwords) - Overview of secrets, variables, and passwords
+- [Configuration Overview](/cloud/guides/passwords) - Overview of secrets, variables, and passwords

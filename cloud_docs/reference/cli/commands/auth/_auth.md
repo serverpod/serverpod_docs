@@ -2,10 +2,9 @@
 
 Handle user authentication.
 
-See also the [personal access tokens (PAT) guide](../../personal-access-tokens)
+See also the [personal access tokens (PAT) guide](/cloud/reference/personal-access-tokens)
 on how to prepare and use personal access tokens for CI pipelines, scripts, or
 headless environments where you cannot run `scloud auth login`.
-
 
 ## `auth login`
 
@@ -19,7 +18,7 @@ Log out from Serverpod Cloud and remove stored credentials.
 
 After running `auth login`, your authentication token is stored locally at:
 
-```
+```text
 ~/.serverpod/cloud/serverpod_cloud_auth.json
 ```
 
