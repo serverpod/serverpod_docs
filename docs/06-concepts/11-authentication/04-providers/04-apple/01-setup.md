@@ -1,20 +1,10 @@
 # Setup
 
-Sign-in with Apple requires that you have a subscription to the [Apple Developer Program](https://developer.apple.com/programs/), even if you only want to test the feature in development mode.
-
-:::caution
-You need to install the auth module before you continue, see [Setup](../../setup).
-:::
+Sign in with Apple requires a subscription to the [Apple Developer Program](https://developer.apple.com/programs/), even for development and testing.
 
 ## Get your credentials
 
-All platforms require an App ID. Android and Web additionally require a Service ID.
-
-| Platform | App ID | Service ID | Xcode capability | Android intent filter |
-| --- | --- | --- | --- | --- |
-| iOS / macOS | Required | Not needed | Required | — |
-| Android | Required | Required | — | Required |
-| Web | Required | Required | — | — |
+All platforms require an App ID and a Sign in with Apple key. Android and Web additionally require a Service ID.
 
 ### Register your App ID
 
@@ -85,10 +75,11 @@ Each primary App ID can have a maximum of two private keys. If you reach the lim
 
 ### Store your credentials
 
-Add the credentials to `config/passwords.yaml`:
+Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add the Apple credentials to the `development:` section:
 
 ```yaml
 development:
+  # ... existing keys (database, redis, serviceSecret, etc.) ...
   appleServiceIdentifier: 'com.example.service'
   appleBundleIdentifier: 'com.example.app'
   appleRedirectUri: 'https://example.com/auth/callback'
@@ -104,88 +95,58 @@ development:
   appleAndroidPackageIdentifier: 'com.example.app'
 ```
 
-:::warning
-**Never commit your `.p8` key to version control.** Use environment variables or a secrets manager in production.
+For production, add the same keys to the `production:` section of `passwords.yaml`, or set the corresponding `SERVERPOD_PASSWORD_` environment variables on your production server.
 
-**Paste the raw `.p8` key contents** — the full text including `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`. Do not pre-generate a JWT from it. Serverpod generates the client secret JWT internally on every request.
-
-**Carefully maintain correct indentation for YAML block scalars.** The `appleKey` block uses a `|`; any indentation error will silently break the key, resulting in authentication failures without helpful error messages.
+:::tip
+Paste the raw `.p8` file contents as-is. Do not pre-generate a JWT -- Serverpod handles that internally. If sign-in fails, see the [troubleshooting guide](./troubleshooting).
+:::
 
 ## Server-side configuration
 
-After creating your credentials, you need to configure the Apple identity provider on your main `server.dart` file by setting the `AppleIdpConfig` as a `identityProviderBuilders` in your `pod.initializeAuthServices()` configuration:
+### Add the Apple identity provider
+
+Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+
+Add the Apple import and `AppleIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/apple.dart';
-
-void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
-
-  // Configure Apple identity provider
-  pod.initializeAuthServices(
-    tokenManagerBuilders: [
-      JwtConfigFromPasswords(),
-    ],
-    identityProviderBuilders: [
-      AppleIdpConfig(
-        serviceIdentifier: pod.getPassword('appleServiceIdentifier')!,
-        bundleIdentifier: pod.getPassword('appleBundleIdentifier')!,
-        redirectUri: pod.getPassword('appleRedirectUri')!,
-        teamId: pod.getPassword('appleTeamId')!,
-        keyId: pod.getPassword('appleKeyId')!,
-        key: pod.getPassword('appleKey')!,
-        // Optional: Required only for Web support when using server callback route.
-        webRedirectUri: pod.getPassword('appleWebRedirectUri'),
-        // Optional: Required only for Android support.
-        androidPackageIdentifier: pod.getPassword('appleAndroidPackageIdentifier'),
-      ),
-    ],
-  );
-
-  // Configure web routes for Apple Sign-In
-  // Paths must match paths configured on Apple's developer portal.
-  // The method's parameters are optional and defaults to the values below.
-  pod.configureAppleIdpRoutes(
-    revokedNotificationRoutePath: '/hooks/apple-notification',
-    webAuthenticationCallbackRoutePath: '/auth/callback',
-  );
-
-  await pod.start();
-}
 ```
 
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    // ... any existing providers (e.g., EmailIdpConfigFromPasswords) ...
+    AppleIdpConfigFromPasswords(),
+  ],
+);
+```
+
+`AppleIdpConfigFromPasswords()` automatically loads the credentials from the Apple keys in `config/passwords.yaml` (or the corresponding `SERVERPOD_PASSWORD_` environment variables).
+
+### Configure web routes
+
+Apple Sign-In requires web routes for handling callbacks and revocation notifications. Add this call before `pod.start()`:
+
+```dart
+pod.configureAppleIdpRoutes(
+  revokedNotificationRoutePath: '/hooks/apple-notification',
+  webAuthenticationCallbackRoutePath: '/auth/callback',
+);
+```
+
+The `webAuthenticationCallbackRoutePath` must match the **Return URL** you registered on your Service ID. The `revokedNotificationRoutePath` is called by Apple when a user revokes access from their Apple ID settings.
+
 :::tip
-You can use the `AppleIdpConfigFromPasswords` constructor in replacement of the `AppleIdpConfig` above to automatically load the credentials from the `config/passwords.yaml` file or environment variables. It will expect either the following keys on the file:
-
-- `appleServiceIdentifier`
-- `appleBundleIdentifier`
-- `appleRedirectUri`
-- `appleTeamId`
-- `appleKeyId`
-- `appleKey`
-- `appleWebRedirectUri` (optional, for Web support when using server callback route)
-- `appleAndroidPackageIdentifier` (optional, for Android support)
-
-Or the following environment variables:
-
-- `SERVERPOD_PASSWORD_appleServiceIdentifier`
-- `SERVERPOD_PASSWORD_appleBundleIdentifier`
-- `SERVERPOD_PASSWORD_appleRedirectUri`
-- `SERVERPOD_PASSWORD_appleTeamId`
-- `SERVERPOD_PASSWORD_appleKeyId`
-- `SERVERPOD_PASSWORD_appleKey`
-- `SERVERPOD_PASSWORD_appleWebRedirectUri` (optional, for Web support when using server callback route)
-- `SERVERPOD_PASSWORD_appleAndroidPackageIdentifier` (optional, for Android support)
-
+If you need more control over how the credentials are loaded, you can use `AppleIdpConfig(...)` with manual `pod.getPassword()` calls instead. See the [customizations](./customizations) page for details.
 :::
 
-Then, extend the abstract endpoint to expose it on the server:
+### Create the endpoint
+
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/apple_idp_endpoint.dart`). Extending the base class registers the sign-in methods with your server so the Flutter client can call them:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/apple.dart';
@@ -193,7 +154,9 @@ import 'package:serverpod_auth_idp_server/providers/apple.dart';
 class AppleIdpEndpoint extends AppleIdpBaseEndpoint {}
 ```
 
-Run `serverpod generate` to generate the client code, then create and apply a database migration to initialize the provider's tables:
+### Generate code and apply migrations
+
+Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
 
 ```bash
 serverpod generate
@@ -205,25 +168,9 @@ dart run bin/main.dart --apply-migrations
 Skipping the migration will cause the server to crash at runtime when the Apple provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 :::
 
-### Basic configuration options
-
-- `serviceIdentifier`: Required. The service identifier for the Sign in with Apple project.
-- `bundleIdentifier`: Required. The bundle ID of the Apple-native app using Sign in with Apple.
-- `redirectUri`: Required. The redirect URL used for 3rd party platforms (e.g., Android, Web).
-- `teamId`: Required. The team identifier of the parent Apple Developer account.
-- `keyId`: Required. The ID of the key associated with the Sign in with Apple service.
-- `key`: Required. The secret contents of the private key file received from Apple.
-
-When using Web or Android, you can also configure the following optional parameters:
-
-- `webRedirectUri`: The URL where the browser is redirected after the server receives Apple's callback on Web. Required for Web support when using the server callback route.
-- `androidPackageIdentifier`: The Android package identifier for the app. Required for Apple Sign In to work on Android. When configured, the callback route automatically redirects Android clients back to the app using an intent URI.
-
-For more details on configuration options, see the [configuration section](./configuration).
-
 ## Client-side configuration
 
-The `serverpod_auth_idp_flutter` package implements the sign-in logic using [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple). The documentation for this package should in most cases also apply to the Serverpod integration.
+The `serverpod_auth_idp_flutter` package uses [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple) under the hood for platform-specific sign-in flows.
 
 :::note
 Sign in with Apple may not work correctly on all Simulator versions. If you run into issues during development, test on a physical device to confirm whether the problem is Simulator-specific.
@@ -247,11 +194,7 @@ Enable the Sign in with Apple capability in your Xcode project:
 
 Apple Sign In on Android works through a web-based OAuth flow. When the user completes authentication, Apple redirects to your server's callback route, which then redirects back to your app using an Android intent URI with the `signinwithapple` scheme.
 
-To enable this:
-
-1. Add the `androidPackageIdentifier` to your `AppleIdpConfig` (or the `appleAndroidPackageIdentifier` key in `passwords.yaml`). This must match your app's Android package name (e.g., `com.example.app`).
-2. Configure the redirect URI in your Apple Developer Portal to point to your server's callback route (e.g., `https://example.com/auth/callback`).
-3. Register the `signinwithapple` URI scheme in your `AndroidManifest.xml`:
+The redirect URI and `appleAndroidPackageIdentifier` were already configured in the [Store your credentials](#store-your-credentials) and [Service ID](#create-a-service-id-android-and-web-only) steps. The only remaining step is to register the `signinwithapple` URI scheme in your `AndroidManifest.xml`:
 
 ```xml
 <activity
@@ -272,14 +215,13 @@ This intent filter is required. Without it, the OAuth callback never returns to 
 
 ### Web
 
-Apple Sign In on Web uses a server callback first, then redirects the browser to your web app.
+Apple Sign In on Web requires the Apple JS SDK. Add the following script to your Flutter app's `web/index.html` inside the `<head>` tag:
 
-To enable this:
+```html
+<script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" crossorigin="anonymous"></script>
+```
 
-1. Configure the redirect URI in your Apple Developer Portal to match your server's callback route (e.g., `https://example.com/auth/callback`).
-2. Set `webRedirectUri` in `AppleIdpConfig` (or `appleWebRedirectUri` in `passwords.yaml`) to the Web URL that should receive the callback parameters (e.g., `https://example.com/auth/apple-complete`).
-
-If `webRedirectUri` is not configured, Web callbacks to the server route will fail.
+The redirect URI and `appleWebRedirectUri` were already configured in the [Store your credentials](#store-your-credentials) and [Service ID](#create-a-service-id-android-and-web-only) steps.
 
 :::warning
 All redirect URIs must use **HTTPS**. Apple rejects HTTP URLs, including `localhost`. For local development, expose your server over HTTPS using a tunnelling service, like ngrok or Cloudflare Tunnel.
@@ -287,28 +229,33 @@ All redirect URIs must use **HTTPS**. Apple rejects HTTP URLs, including `localh
 
 ## Present the authentication UI
 
-### Initializing the `AppleSignInService`
+### Initialize the Apple sign-in service
 
-To use the AppleSignInService, you need to initialize it in your main function. The initialization is done from the `initializeAppleSignIn()` extension method on the `FlutterAuthSessionManager`.
+In your Flutter app's `main.dart` file (e.g., `my_project_flutter/lib/main.dart`), the template already sets up the `Client` and calls `client.auth.initialize()`. Add `client.auth.initializeAppleSignIn()` right after it:
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-import 'package:your_client/your_client.dart';
-
-final client = Client('http://localhost:8080/')
-  ..authSessionManager = FlutterAuthSessionManager();
-
-void main() {
-  client.auth.initialize();
-  client.auth.initializeAppleSignIn();
-}
+client.auth.initialize();
+client.auth.initializeAppleSignIn();
 ```
 
-### Using AppleSignInWidget
+On **Web and Android**, the sign-in service needs your Service ID and redirect URI. Pass them as build-time environment variables using `--dart-define`:
+
+```bash
+flutter run \
+  -d "<device>" \
+  --dart-define="APPLE_SERVICE_IDENTIFIER=com.example.service" \
+  --dart-define="APPLE_REDIRECT_URI=https://example.com/auth/callback"
+```
+
+Use the same values you configured in the [Service ID](#create-a-service-id-android-and-web-only) and [Store your credentials](#store-your-credentials) steps.
+
+You can also pass the values directly as parameters instead. See the [customizations page](./customizations#configuring-apple-sign-in-on-the-app) for details.
+
+### Add the sign-in widget
 
 If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Apple identity provider will be automatically detected and displayed in the sign-in widget.
 
-You can also use the `AppleSignInWidget` to include the Apple authentication flow in your own custom UI.
+You can also use the `AppleSignInWidget` directly in your widget tree to include the Apple authentication flow in your own custom UI:
 
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
@@ -343,10 +290,9 @@ The widget automatically handles:
 For details on how to customize the Apple Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
 
 :::warning
-**Apple sends the user's email address and full name only on the first sign-in.** On all subsequent sign-ins, neither is included in the response. If your server does not persist them during that first authentication, they cannot be retrieved later.
+Apple sends the user's email and name only on the **first sign-in**. If your server does not persist them during that first authentication, they cannot be retrieved later.
+:::
 
-Use the `sub` claim (the stable user identifier) to identify users. Do not use the email address, as it may change when a user updates their "Hide My Email" settings. For more information, see [Authenticating users with Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple/authenticating-users-with-sign-in-with-apple).
-
----
-
+:::tip
 If you run into issues, see the [troubleshooting guide](./troubleshooting).
+:::
