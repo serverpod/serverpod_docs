@@ -6,19 +6,20 @@ This page covers additional configuration options for the Apple identity provide
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `AppleIdpConfig` in-code documentation.
 
-Serverpod provides two configuration classes:
+### Loading Apple credentials
 
-- **`AppleIdpConfigFromPasswords`** -- Loads all credentials from `passwords.yaml` or their `SERVERPOD_PASSWORD_` environment variable equivalents. This is the class used in the [setup guide](./01-setup.md) and is recommended for most projects.
-- **`AppleIdpConfig`** -- The base class that requires you to provide each credential explicitly. Use this when you need custom control over how credentials are loaded.
+You can initialize the Apple identity provider in several ways:
 
-Both classes accept the same optional callbacks shown in the sections below.
-
-### Loading credentials manually
-
-If you use `AppleIdpConfig` instead of `AppleIdpConfigFromPasswords`, you must provide each credential explicitly:
+**From passwords.yaml (recommended):**
 
 ```dart
-AppleIdpConfig(
+final appleIdpConfig = AppleIdpConfigFromPasswords();
+```
+
+**Manually, providing each credential explicitly:**
+
+```dart
+final appleIdpConfig = AppleIdpConfig(
   serviceIdentifier: pod.getPassword('appleServiceIdentifier')!,
   bundleIdentifier: pod.getPassword('appleBundleIdentifier')!,
   redirectUri: pod.getPassword('appleRedirectUri')!,
@@ -27,7 +28,7 @@ AppleIdpConfig(
   key: pod.getPassword('appleKey')!,
   webRedirectUri: pod.getPassword('appleWebRedirectUri'),
   androidPackageIdentifier: pod.getPassword('appleAndroidPackageIdentifier'),
-)
+);
 ```
 
 ### Reacting to account creation
@@ -57,7 +58,7 @@ This callback runs inside the same database transaction as the account creation.
 If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` to set scopes based on data collected earlier in the flow.
 :::
 
-## Web Routes Configuration
+### Web Routes Configuration
 
 Apple Sign-In requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server.
 
@@ -79,11 +80,11 @@ pod.configureAppleIdpRoutes(
 When a user revokes access from their Apple ID settings, Apple sends a notification to `revokedNotificationRoutePath`. You are responsible for invalidating any active sessions for that user in your own application logic.
 :::
 
-## Configuring Apple Sign-In on the app
+### Configuring Apple Sign-In on the App
 
-Apple Sign-In requires additional configuration for web and Android platforms. On native Apple platforms (iOS/macOS), the configuration is handled through Xcode capabilities.
+On web and Android platforms, you must supply a service identifier and redirect URI. If no values are provided programmatically, the provider falls back to reading from `--dart-define` build variables. To set them programmatically, you can use the following methods.
 
-### Passing configuration in code
+#### Passing Configuration in Code
 
 You can pass the configuration directly when initializing the Apple Sign-In service:
 
@@ -96,18 +97,22 @@ client.auth.initializeAppleSignIn(
 
 The `serviceIdentifier` is your Apple Services ID, and the `redirectUri` is the callback URL that Apple redirects to after authentication (must match the URL configured on the server).
 
-Both parameters are optional. If not supplied, the provider falls back to the corresponding `--dart-define` build variable:
-
-- `serviceIdentifier` → `APPLE_SERVICE_IDENTIFIER`
-- `redirectUri` → `APPLE_REDIRECT_URI`
+This approach is useful when you need to manage configuration for different platforms in your Dart code.
 
 :::note
 These parameters are only required for web and Android platforms. On native Apple platforms (iOS/macOS), they are ignored.
 :::
 
-### Using Environment Variables
+#### Using Environment Variables
 
-Alternatively, you can pass configuration during build time using the `--dart-define` option:
+Alternatively, you can pass configuration during build time using the `--dart-define` option. The Apple Sign-In provider supports the following build-time variables:
+
+- `APPLE_SERVICE_IDENTIFIER`: The Services ID used as OAuth client ID on Android and Web
+- `APPLE_REDIRECT_URI`: The callback URL Apple redirects to after authentication
+
+If `serviceIdentifier` and `redirectUri` are not supplied when initializing the service, the provider will automatically read them from these variables.
+
+**Example usage:**
 
 ```bash
 flutter run \

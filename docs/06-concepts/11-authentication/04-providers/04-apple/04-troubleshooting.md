@@ -56,6 +56,40 @@ Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment 
 
 **Resolution:** Replace any JWT in `appleKey` with the raw `.p8` private key (include the full header and footer). Serverpod will create fresh short-lived JWTs automatically. No need to handle JWTs yourself. See [Creating a client secret](https://developer.apple.com/documentation/accountorganizationaldatasharing/creating-a-client-secret).
 
+## Sign-in fails with `invalid_grant`
+
+**Problem:** Authentication fails with an `invalid_grant` error from Apple.
+
+**Cause:** Apple's authorization codes are single-use and expire after approximately 10 minutes. This error occurs when:
+
+* The authorization code was already exchanged (e.g. the request was retried after a network failure).
+* The server clock is significantly out of sync, causing the client secret JWT to appear expired before Apple processes it.
+* The identity token nonce does not match what the server expects.
+
+**Resolution:**
+
+* Do not retry requests that carry an Apple authorization code. If the flow fails, restart it from the beginning.
+* Ensure your server's system clock is synchronized via NTP. A drift of more than a few seconds will cause JWT validation to fail on Apple's side.
+* If the nonce mismatch is the cause, verify that the nonce generated on the client matches what the server uses during token validation.
+
+## Wrong identifier passed for web or Android sign-in
+
+**Problem:** Sign-in on Android or Web fails immediately, or Apple returns `invalid_client` / `invalid_request` even though credentials look correct.
+
+**Cause:** There are two separate identifiers in Apple's system and they are easy to mix up:
+
+* **App ID** (`bundleIdentifier`) -- the bundle identifier of your iOS/macOS app (e.g. `com.example.app`). Used for native Apple platform sign-in only.
+* **Services ID** (`serviceIdentifier`) -- a separate identifier you create in the Apple Developer Portal specifically for web and Android OAuth (e.g. `com.example.service`). This acts as the OAuth client ID.
+
+Passing the App ID bundle identifier where the Services ID is expected will cause Apple to reject the request.
+
+**Resolution:** Check `passwords.yaml` and confirm:
+
+* `appleServiceIdentifier` is set to your **Services ID** (the one created under Identifiers → Services IDs).
+* `appleBundleIdentifier` is set to your **App ID** bundle identifier.
+
+If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services ID, not the bundle ID.
+
 ## Sign-in hangs on Android
 
 **Problem:** The OAuth flow opens a browser, but never returns to the app. Sign-in seems to finish but the app doesn't get the callback.
