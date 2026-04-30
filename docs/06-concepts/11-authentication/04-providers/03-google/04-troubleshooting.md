@@ -8,27 +8,29 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Google Cloud
 
-* [ ] Create a **Google Cloud project** in the [Google Cloud Console](https://console.cloud.google.com/).
-* [ ] Enable the **People API** in your project.
-* [ ] Configure the **Google Auth Platform** with the required scopes (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
-* [ ] Configure **Branding** with your app details and add your production domain to **Authorized domains**.
-* [ ] Add your email as a **test user** on the [Audience](https://console.cloud.google.com/auth/audience) page.
-* [ ] Create a **Web application** OAuth client and copy the **Client ID** and **Client secret**.
-* [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and redirect URI.
+- [ ] Create a **Google Cloud project** in the [Google Cloud Console](https://console.cloud.google.com/).
+- [ ] Enable the **People API** in your project.
+- [ ] In **Google Auth Platform**, complete the initial setup (wizard) and add the required scopes on **Data Access** (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
+- [ ] On **Branding** ([Branding](https://console.cloud.google.com/auth/branding)), complete the OAuth consent screen (logo, homepage, privacy policy, terms of service, and developer contact) and add every hostname you will use under **Authorized domains** (redirect URIs must use a listed domain).
+- [ ] Add **test users** on **Audience** while in **Testing** mode ([Audience](https://console.cloud.google.com/auth/audience)), or **Publish app** when everyone should be able to sign in.
+- [ ] Create a **Web application** OAuth client with **Authorized JavaScript origins** and **Authorized redirect URIs** set to your Serverpod **web server** (`http://localhost:8082` locally, not port `8080`). Copy the **Client ID** and **Client secret**.
+- [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and matching `redirect_uris`. For production, use the live web server URL in Google Cloud and in `production:` (or env vars) as in [Publishing to production](./setup#publishing-to-production).
 
 #### Server
 
-* [ ] Add `GoogleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
-* [ ] Create a `GoogleIdpEndpoint` file in `lib/src/auth/`.
-* [ ] Run `serverpod generate`, then `serverpod create-migration`, then apply migrations using `--apply-migrations`.
+- [ ] For new or customized servers, confirm auth services and JWT are configured per [Authentication setup](../../setup#identity-providers-configuration) before adding Google.
+- [ ] Add `GoogleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
+- [ ] Create a `GoogleIdpEndpoint` file in `lib/src/auth/`.
+- [ ] Run `serverpod generate`, then `serverpod create-migration`, then apply migrations using `--apply-migrations`.
 
 #### Client
 
-* [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
-* [ ] Create an **iOS** OAuth client and configure `Info.plist` with `GIDClientID`, `GIDServerClientID`, and the URL scheme (*iOS only*).
-* [ ] Create an **Android** OAuth client with the correct SHA-1 fingerprint and place `google-services.json` in `android/app/` (*Android only*).
-* [ ] Add the `google-signin-client_id` **meta tag** to `web/index.html` (*Web only*).
-* [ ] Add the Flutter web app's origin to **Authorized JavaScript origins** on the server OAuth client (*Web only*).
+- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+- [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
+- [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app; set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
+- [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run; place `google-services.json` in `android/app/` (*Android only*).
+- [ ] Add the `google-signin-client_id` **meta tag** to `web/index.html` (*Web only*).
+- [ ] On **Web**, list **both** the Serverpod web server origin (e.g., `http://localhost:8082`) and your Flutter app origin under **Authorized JavaScript origins** on the Web OAuth client; use a **fixed** `--web-port` for Flutter so that second origin does not change every run (see [Web setup](./setup#web)).
 
 ## Sign-in fails with redirect_uri_mismatch
 
