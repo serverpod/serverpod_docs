@@ -2,13 +2,9 @@
 
 Firebase authentication works differently from other identity providers in Serverpod. Instead of handling authentication directly, Serverpod's Firebase integration acts as a bridge between Firebase Authentication and your Serverpod backend. Firebase handles the actual sign-in process through its own SDKs and UI components, while Serverpod syncs the authenticated user and manages the server-side session.
 
-This approach allows you to use any authentication method supported by Firebase (email/password, phone, Google, Apple, Facebook, etc.) while maintaining a unified user system in your Serverpod backend.
+This approach allows you to use any authentication method supported by Firebase (email/password, phone, Google, Apple, Facebook, etc.) while maintaining a unified user system in your Serverpod backend. If your project was scaffolded with Serverpod 3.4 or later, the auth module is already included. For older projects, follow the [auth module setup](../../setup) first.
 
-:::caution
-You need to install the auth module before you continue, see [Setup](../../setup).
-:::
-
-## Create your credentials
+## Get your credentials
 
 ### Generate Service Account Key
 
@@ -55,7 +51,9 @@ development:
 ```
 
 :::warning
-The service account key gives admin access to your Firebase project and should not be version controlled. Store it securely using environment variables or secret management.
+**Never commit your service account key to version control.** It gives admin access to your Firebase project. Use environment variables or a secrets manager in production.
+
+**Carefully maintain correct indentation for YAML block scalars.** The `firebaseServiceAccountKey` block uses a `|`; any indentation error will silently break the JSON, resulting in authentication failures.
 :::
 
 ### Configure the Firebase Identity Provider
@@ -112,9 +110,19 @@ import 'package:serverpod_auth_idp_server/providers/firebase.dart';
 class FirebaseIdpEndpoint extends FirebaseIdpBaseEndpoint {}
 ```
 
-### Generate and Migrate
+### Generate and migrate
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Run `serverpod generate` to generate the client code, then create and apply a database migration to initialize the provider's tables:
+
+```bash
+serverpod generate
+serverpod create-migration
+dart run bin/main.dart --apply-migrations
+```
+
+:::note
+Skipping the migration will cause the server to crash at runtime when the Firebase provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+:::
 
 ### Basic configuration options
 
@@ -277,3 +285,7 @@ class _SignInPageState extends State<SignInPage> {
 ```
 
 For details on using the `FirebaseAuthController` directly and building custom authentication UIs, see the [customizing the UI section](./customizing-the-ui).
+
+:::warning
+If you run into issues, see the [troubleshooting guide](./troubleshooting).
+:::
