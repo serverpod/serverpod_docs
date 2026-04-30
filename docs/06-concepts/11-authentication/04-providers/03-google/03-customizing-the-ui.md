@@ -15,6 +15,7 @@ SignInWidget(
   ),
 )
 ```
+
 :::
 
 ## Using the `GoogleSignInWidget`

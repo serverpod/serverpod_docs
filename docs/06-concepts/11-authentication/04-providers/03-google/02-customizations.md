@@ -1,14 +1,25 @@
-# Configuration
+# Customizations
 
-This page covers configuration options for the Google identity provider beyond the basic setup.
+This page covers additional configuration options for the Google identity provider beyond the basic setup.
 
 ## Configuration options
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GoogleIdpConfig` in-code documentation.
 
-### Loading Google Client Secret
+The Google identity provider can be configured using one of two classes:
 
-You can load the Google client secret in several ways:
+- **`GoogleIdpConfigFromPasswords`**: Automatically loads the client secret from the `googleClientSecret` key in `passwords.yaml` (or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable). This is the class used in the [setup guide](./setup) and is recommended for most projects.
+- **`GoogleIdpConfig`**: Requires you to pass a `GoogleClientSecret` object directly. Use this when you need to load credentials from a custom source, such as a JSON file, a secrets manager, or a programmatically constructed map.
+
+`GoogleIdpConfigFromPasswords` is a convenience wrapper around `GoogleIdpConfig` that handles credential loading for you.
+
+Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GoogleIdpConfigFromPasswords` unless the section specifically demonstrates manual client secret loading.
+
+### Load the client secret using GoogleIdpConfig
+
+When using `GoogleIdpConfig`, you must provide the client secret explicitly. 
+
+You can load the secret in several ways:
 
 **From JSON string (recommended for production):**
 
@@ -39,7 +50,7 @@ final googleIdpConfig = GoogleIdpConfig(
       'client_id': 'your-client-id.apps.googleusercontent.com',
       'client_secret': 'your-client-secret',
       'redirect_uris': [
-        'http://localhost:8080/auth/google/callback',
+        'http://localhost:8082',
       ],
     },
   }),
@@ -70,7 +81,7 @@ The default setup allows access to basic user information, such as email, profil
 - Add the required scopes to the [Data Access](./setup#configure-google-auth-platform) page in the Google Auth Platform.
 - Request access to the scopes when signing in. Do this by setting the `scopes` parameter of the `GoogleSignInWidget` or `GoogleAuthController`.
 
-A full list of available scopes can be found [here](https://developers.google.com/identity/protocols/oauth2/scopes).
+For a full list of available scopes, see the [Google OAuth 2.0 Scopes reference](https://developers.google.com/identity/protocols/oauth2/scopes).
 
 :::info
 Adding additional scopes may require approval by Google. On the OAuth consent screen, you can see which of your scopes are considered sensitive.
@@ -194,3 +205,13 @@ This approach is useful when you need to:
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
+
+## GoogleIdpConfig parameter reference
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `clientSecret` | `GoogleClientSecret` | Yes | The Google OAuth client secret loaded from JSON. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
+| `googleAccountDetailsValidation` | `Function?` | No | Custom validation callback for Google account details before allowing sign-in. Throws an exception to reject the account. |
+| `getExtraGoogleInfoCallback` | `Function?` | No | Callback that receives the access token after sign-in, allowing you to call additional Google APIs and store extra user data. |
+| `onAfterGoogleAccountCreated` | `Function?` | No | Callback invoked after a new Google account is created and linked to an auth user. Only called for new accounts, not returning users. |
+| `onBeforeAuthUserCreated` | `Function?` | No | Callback invoked before the auth user is created. Use this to set scopes or other data based on provider account info. |
