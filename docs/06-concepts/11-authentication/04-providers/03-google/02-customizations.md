@@ -17,7 +17,9 @@ Both classes accept the same optional callbacks shown in the sections below. The
 
 ### Load the client secret using GoogleIdpConfig
 
-If you use `GoogleIdpConfig` instead of `GoogleIdpConfigFromPasswords`, you must provide the client secret explicitly. You can load it in several ways:
+When using `GoogleIdpConfig`, you must provide the client secret explicitly. 
+
+You can load the secret in several ways:
 
 **From JSON string (recommended for production):**
 
