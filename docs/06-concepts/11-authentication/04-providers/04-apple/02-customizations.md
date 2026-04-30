@@ -8,7 +8,7 @@ Below is a non-exhaustive list of some of the most common configuration options.
 
 ### Loading Apple credentials
 
-You can initialize the Apple identity provider in several ways:
+You can initialize the Apple identity provider in two ways:
 
 **From passwords.yaml (recommended):**
 
