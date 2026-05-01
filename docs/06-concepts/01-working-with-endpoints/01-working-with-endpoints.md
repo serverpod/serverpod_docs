@@ -1,5 +1,6 @@
 ---
 slug: /concepts/working-with-endpoints
+sidebar_label: Working with endpoints
 ---
 
 # Working with endpoints
