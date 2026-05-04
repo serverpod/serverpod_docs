@@ -6,14 +6,28 @@ This page helps you identify common Sign in with Apple failures, explains why th
 
 Go through this before investigating a specific error. Most problems come from a missed step.
 
+#### Apple Developer Portal
+
 * [ ] Enable **Sign in with Apple** on your App ID at [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list).
-* [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
 * [ ] Create a **Service ID** and link it to your App ID (*Android and Web only*).
 * [ ] Confirm the **return URL** on the Service ID uses `https://` (not `http://` or `localhost`).
-* [ ] Make sure **`appleKey`** in your config holds the raw `.p8` file contents (not a pre-generated JWT).
-* [ ] Double-check the **`.p8` key** is indented consistently under `appleKey: |` in `passwords.yaml`.
-* [ ] Run **`serverpod generate`** after adding the Apple provider, and apply migrations using `--apply-migrations`.
+* [ ] Create a **Sign in with Apple key** and download the `.p8` file.
+
+#### Server
+
+* [ ] Add the Apple credentials to `config/passwords.yaml` with the raw `.p8` file contents (not a pre-generated JWT).
+* [ ] Double-check the **`.p8` key** is indented consistently under `appleKey: |`.
+* [ ] Add `AppleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 * [ ] Call **`pod.configureAppleIdpRoutes(...)`** on the server before the pod starts.
+* [ ] Create an `AppleIdpEndpoint` file in `lib/src/auth/`.
+* [ ] Run **`serverpod generate`**, then apply migrations using `--apply-migrations`.
+
+#### Client
+
+* [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+* [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
+* [ ] Add the **Apple JS SDK** script to `web/index.html` (*Web only*).
+* [ ] Pass **`APPLE_SERVICE_IDENTIFIER`** and **`APPLE_REDIRECT_URI`** via `--dart-define` (*Web and Android only*).
 * [ ] Add the **`signinwithapple`** intent filter to `AndroidManifest.xml` (*Android only*).
 * [ ] Add **Apple's mail servers** to your SPF record if you email users who might use Hide My Email.
 
@@ -32,7 +46,7 @@ appleKey: |
   -----END PRIVATE KEY-----
 ```
 
-Alternatively, set `appleKey` as an environment variable to avoid YAML indentation entirely. See [Environment Variable equivalents](./configuration#environment-variable-equivalents) in the configuration page.
+Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment variable to avoid YAML indentation entirely.
 
 ## Sign-in starts failing with `invalid_client` after months of success
 
@@ -41,6 +55,40 @@ Alternatively, set `appleKey` as an environment variable to avoid YAML indentati
 **Cause:** `appleKey` has a pre-generated client secret JWT, not the raw `.p8` key. Apple makes JWTs expire after six months. When it expires, all sign-ins fail.
 
 **Resolution:** Replace any JWT in `appleKey` with the raw `.p8` private key (include the full header and footer). Serverpod will create fresh short-lived JWTs automatically. No need to handle JWTs yourself. See [Creating a client secret](https://developer.apple.com/documentation/accountorganizationaldatasharing/creating-a-client-secret).
+
+## Sign-in fails with `invalid_grant`
+
+**Problem:** Authentication fails with an `invalid_grant` error from Apple.
+
+**Cause:** Apple's authorization codes are single-use and expire after approximately 10 minutes. This error occurs when:
+
+* The authorization code was already exchanged (e.g. the request was retried after a network failure).
+* The server clock is significantly out of sync, causing the client secret JWT to appear expired before Apple processes it.
+* The identity token nonce does not match what the server expects.
+
+**Resolution:**
+
+* Do not retry requests that carry an Apple authorization code. If the flow fails, restart it from the beginning.
+* Ensure your server's system clock is synchronized via NTP. A drift of more than a few seconds will cause JWT validation to fail on Apple's side.
+* If the nonce mismatch is the cause, verify that the nonce generated on the client matches what the server uses during token validation.
+
+## Wrong identifier passed for web or Android sign-in
+
+**Problem:** Sign-in on Android or Web fails immediately, or Apple returns `invalid_client` / `invalid_request` even though credentials look correct.
+
+**Cause:** There are two separate identifiers in Apple's system and they are easy to mix up:
+
+* **App ID** (`bundleIdentifier`) -- the bundle identifier of your iOS/macOS app (e.g. `com.example.app`). Used for native Apple platform sign-in only.
+* **Services ID** (`serviceIdentifier`) -- a separate identifier you create in the Apple Developer Portal specifically for web and Android OAuth (e.g. `com.example.service`). This acts as the OAuth client ID.
+
+Passing the App ID bundle identifier where the Services ID is expected will cause Apple to reject the request.
+
+**Resolution:** Check `passwords.yaml` and confirm:
+
+* `appleServiceIdentifier` is set to your **Services ID** (the one created under Identifiers → Services IDs).
+* `appleBundleIdentifier` is set to your **App ID** bundle identifier.
+
+If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services ID, not the bundle ID.
 
 ## Sign-in hangs on Android
 
@@ -119,6 +167,28 @@ dart run bin/main.dart --apply-migrations
 **Cause:** Some Simulator versions do not fully support the native Sign in with Apple flow. This is a known Simulator limitation, not a code or configuration issue.
 
 **Resolution:** Test on a physical device to confirm the problem is Simulator-specific. If sign-in works on a real device, no changes are needed.
+
+## Web sign-in fails with `TypeError: type ... is not a subtype of type 'JSObject'`
+
+**Problem:** Clicking the Apple button on Web throws a `TypeError` mentioning `JSObject` or a minified type like `minified:CM`.
+
+**Cause:** The Apple JS SDK is not loaded. The `sign_in_with_apple` package calls `AppleID.auth.init()` on the page, but that function only exists after Apple's script is loaded in the HTML.
+
+**Resolution:** Add the Apple JS SDK to your Flutter app's `web/index.html` inside the `<head>` tag:
+
+```html
+<script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" crossorigin="anonymous"></script>
+```
+
+The `crossorigin="anonymous"` attribute is needed because Flutter's service worker sets a strict Cross-Origin Embedder Policy that blocks scripts without it.
+
+## macOS sign-in shows "Sign Up Not Completed"
+
+**Problem:** The native Sign in with Apple sheet appears on macOS, but immediately shows "Sign Up Not Completed" without completing authentication.
+
+**Cause:** The macOS app sandbox entitlement conflicts with `ASAuthorizationController`. When `com.apple.security.app-sandbox` is enabled alongside `com.apple.developer.applesignin`, the authorization flow fails silently.
+
+**Resolution:** In your macOS entitlements file (e.g., `macos/Runner/DebugProfile.entitlements`), remove the app sandbox entitlement or ensure it does not block the Sign in with Apple flow. Test without the sandbox first to confirm it is the cause, then re-add only the sandbox entitlements you need.
 
 ## User stays signed in after removing Apple access
 
