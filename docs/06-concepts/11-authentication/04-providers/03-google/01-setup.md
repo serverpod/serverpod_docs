@@ -368,6 +368,6 @@ Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` environment varia
 
 ### 3. Publish the OAuth consent screen
 
-While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page can sign in. All other users will see an error.
+While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page, in the Google Auth Platform,  can sign in. All other users will see an error.
 
 Navigate to the **Audience** page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
