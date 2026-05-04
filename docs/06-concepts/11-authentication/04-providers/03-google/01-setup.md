@@ -364,9 +364,27 @@ production:
     }
 ```
 
-Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` environment variable on your production server with the same JSON value.
+Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` [environment variable](../../../07-configuration.md#2-via-environment-variables) on your production server with the same JSON value.
 
-### 3. Publish the OAuth consent screen
+### 3. Update the Android OAuth client with the release SHA-1 (Android only)
+
+The Android OAuth client you created during setup uses your debug SHA-1 fingerprint. Release builds are signed with a different key, so you need to add the release SHA-1 as well.
+
+If you use Google Play App Signing (the default for new apps), get the SHA-1 from the Play Console: **Setup** > **App integrity** > **App signing key certificate**. Make sure to use the **app signing key** SHA-1, not the upload key SHA-1.
+
+If you manage your own release keystore, get the SHA-1 from it directly:
+
+```bash
+keytool -list -v -keystore your-release-key.jks -alias your-key-alias
+```
+
+Once you have the SHA-1, go back to your Android OAuth client in the Google Auth Platform and add it under **SHA-1 certificate fingerprint**.
+
+:::warning
+Forgetting this step is one of the most common reasons Google Sign-In works in debug builds but silently fails after publishing to the Play Store.
+:::
+
+### 4. Publish the OAuth consent screen
 
 While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page, in the Google Auth Platform,  can sign in. All other users will see an error.
 
