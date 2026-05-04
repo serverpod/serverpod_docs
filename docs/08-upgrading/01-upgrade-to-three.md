@@ -1,7 +1,7 @@
 # Upgrade to 3.0
 
 :::note
-The new authentication module has separate migration documentation. This guide covers only core framework changes.
+The new authentication module has separate [migration from legacy `serverpod_auth`](./migrating-from-serverpod-auth) documentation. This guide covers only core framework changes.
 :::
 
 ## Requirements
