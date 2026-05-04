@@ -105,7 +105,7 @@ Paste the raw `.p8` file contents as-is. Do not pre-generate a JWT -- Serverpod 
 
 ### Add the Apple identity provider
 
-Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, verify that `serverpod_auth_idp_server` is in your server's `pubspec.yaml` and see [Setup](../../setup) to configure the auth module and JWT settings.
 
 Add the Apple import and `AppleIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 

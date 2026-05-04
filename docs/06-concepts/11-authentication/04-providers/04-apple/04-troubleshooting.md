@@ -10,6 +10,7 @@ Go through this before investigating a specific error. Most problems come from a
 
 * [ ] Enable **Sign in with Apple** on your App ID at [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list).
 * [ ] Create a **Service ID** and link it to your App ID (*Android and Web only*).
+* [ ] Add your **Domains and Subdomains** (e.g. `example.com`) and **Return URLs** on the Service ID.
 * [ ] Confirm the **return URL** on the Service ID uses `https://` (not `http://` or `localhost`).
 * [ ] Create a **Sign in with Apple key** and download the `.p8` file.
 
