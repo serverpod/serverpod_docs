@@ -1,5 +1,6 @@
 ---
 slug: /concepts/models
+sidebar_label: Working with models
 ---
 
 # Working with models
