@@ -63,6 +63,10 @@ indexes:
 
 If no type is specified the default is `btree`. All [PostgreSQL index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
 
+:::info
+Index types are only supported for PostgreSQL. On SQLite3, only `btree` indexes are supported. Indexes declared with different types on the models will be skipped when creating a migration and a warning will be logged.
+:::
+
 ## GIN indexes
 
 GIN (Generalized Inverted Index) indexes are designed for efficiently querying composite values such as JSONB data. When all fields in an index are stored as `jsonb`, Serverpod automatically defaults the index type to `gin`:
@@ -108,10 +112,6 @@ indexes:
 
 :::tip
 If you only need containment queries (`@>`), use `jsonbPathOps` — it produces a smaller and faster index than the default `jsonbOps`.
-:::
-
-:::info
-GIN indexes are a PostgreSQL feature. On SQLite, GIN index definitions are silently skipped during migration generation.
 :::
 
 For details on configuring JSONB storage on your model fields, see [Storing serializable fields as JSONB](models#storing-serializable-fields-as-jsonb).

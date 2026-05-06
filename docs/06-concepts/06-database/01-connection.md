@@ -1,15 +1,15 @@
 # Connection
 
-In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the Postgres instance by using these configuration details when you start the server.
+In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
 
-The easiest way to get started is to use a Docker container to run your local Postgres server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run Postgres locally yourself.
+If using PostgreSQL, the easiest way to get started is to use a Docker container to run your local PostgreSQL server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run PostgreSQL locally yourself.
 
 ### Connection details
 
 Each environment configuration contains a `database` keyword that specifies the connection details.
 For your development build you can find the connection details in the `config/development.yaml` file.
 
-This is an example:
+Below is an example for PostgreSQL:
 
 ```yaml
 ...
@@ -24,14 +24,23 @@ database:
 The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, and `user` is the username that is used to connect to the database.
 
 :::caution
-
 By default, Postgres is listening for connections on port 5432. However, the Docker container shipped with Serverpod uses port 8090 to avoid conflicts. If you host your own instance, double-check that the correct port is specified in your configuration files.
-
 :::
+
+Serverpod also supports SQLite as a database backend:
+
+```yaml
+...
+database:
+  filePath: server.db
+...
+```
+
+Note that the same database backend must be used for all run modes. For more information, see the [configuration documentation](../configuration#database-backends).
 
 #### Configure search paths
 
-You can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
+If using PostgreSQL, you can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
 
 To override this, use the optional `searchPaths` setting in your configuration:
 
@@ -46,7 +55,7 @@ database:
 ...
 ```
 
-In this example, Postgres will look for tables in the `custom` schema first, and then fall back to `public` if needed. This gives you more control over where your data lives and how it’s accessed.
+In this example, Postgres will look for tables in the `custom` schema first, and then fall back to `public` if needed. This gives you more control over where your data lives and how it's accessed.
 
 :::tip
 It is also possible to set the search paths using [runtime parameters](runtime-parameters) directly on the server startup (or on a specific transaction). If the paths are set on both the configuration file and as runtime parameters, the runtime parameters will take precedence.
@@ -82,6 +91,8 @@ database:
 
 You can also configure this setting via the environment variable `SERVERPOD_DATABASE_MAX_CONNECTION_COUNT`.
 
+On SQLite, this configuration will set the number of read-only transactions that can be executed concurrently - only one write transaction can be executed at a time.
+
 ### Database password
 
 The database password is stored in a separate file called `passwords.yaml` in the same `config` directory. The password for each environment is stored under the `database` keyword in the file.
@@ -95,9 +106,11 @@ development:
 ...
 ```
 
+No database password is required when using SQLite.
+
 ## Development database
 
-A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. Run the following command from the root of the `server` package to start the database:
+A newly created Serverpod project has a preconfigured Docker instance with a PostgreSQL database set up. Run the following command from the root of the `server` package to start the database:
 
 ```bash
 $ docker compose up --build --detach
@@ -144,9 +157,7 @@ You can connect to a Google Cloud SQL Postgres instance in two ways:
 The next step is to update the database password in `passwords.yaml` and the connection details for the desired environment in the `config` folder.
 
 :::info
-
 If you are using the `isUnixSocket` don't forget to add __"/.s.PGSQL.5432"__ to the end of the `host` IP address. Otherwise, your Google Cloud Run instance will not be able to connect to the database.
-
 :::
 
 ### Connecting to AWS RDS

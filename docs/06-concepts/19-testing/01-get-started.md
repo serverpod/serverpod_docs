@@ -3,14 +3,12 @@
 Serverpod provides simple but feature rich test tools to make testing your backend a breeze.
 
 :::info
-
 For Serverpod Mini projects, everything related to the database in this guide can be ignored.
-
 :::
 
 <!-- markdownlint-disable MD029 -->
 <details>
-<summary> Have an existing project? Follow these steps first!</summary>
+<summary> Have an existing project from before Serverpod 3.0? Follow these steps first!</summary>
 <p>
 For existing non-Mini projects, a few extra things need to be done:
 1. Add the `server_test_tools_path` key with the value `test/integration/test_tools` to `config/generator.yaml`:
@@ -21,12 +19,12 @@ server_test_tools_path: test/integration/test_tools
 
  Without this key, the test tools file is not generated. With the above config the location of the test tools file is `test/integration/test_tools/serverpod_test_tools.dart`, but this can be set to any folder (though should be outside of `lib` as per Dart's test conventions).
 
-2. New projects now come with a test postgres and redis instance in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
+2. New projects come with a test PostgreSQL and Redis instance in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
 
 ```yaml
 # Add to the existing services
 postgres_test:
-  image: postgres:16.3
+  image: pgvector/pgvector:pg16
   ports:
     - '9090:5432'
   environment:
@@ -55,7 +53,7 @@ volumes:
 services:
   # Development services
   postgres:
-    image: postgres:16.3
+    image: pgvector/pgvector:pg16
     ports:
       - '8090:5432'
     environment:
@@ -74,7 +72,7 @@ services:
 
   # Test services
   postgres_test:
-    image: postgres:16.3
+    image: pgvector/pgvector:pg16
     ports:
       - '9090:5432'
     environment:
@@ -210,7 +208,7 @@ The location of the test tools can be changed by changing the  `server_test_tool
 
 :::
 
-Before the test can be run the Postgres and Redis also have to be started:
+If using PostgreSQL, before the test can be run the PostgreSQL and Redis also have to be started:
 
 ```bash
 docker compose up --build --detach

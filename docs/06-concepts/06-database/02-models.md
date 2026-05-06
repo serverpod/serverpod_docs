@@ -56,7 +56,7 @@ For a complete guide on how to work with relations see the [relation section](re
 
 ### Storing serializable fields as JSONB
 
-By default, complex types are stored as `json` in PostgreSQL. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes).
+By default, complex types are stored as `json` in the database. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes) for PostgreSQL.
 
 :::info
 The `serializationDataType` keyword is only valid on serializable field types (models, Lists, Maps). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
