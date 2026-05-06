@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Quickstart
 
-In this tutorial we will walk through creating a full-stack app with Flutter and Serverpod and deploying it to the cloud as a web app. **You will have an app up and hosted witin 10-15 minutes.**
+In this tutorial we will walk through creating a full-stack app with Flutter and Serverpod and deploying it to the cloud as a web app. **You will have an app up and hosted within 10–15 minutes.**
 
 :::info
 
@@ -18,13 +18,13 @@ Before we start, make sure that you have [Serverpod installed](./installation). 
 
 ## Create the project
 
-Use Serverpod's `create` command to create a new project. The `create` command is interactive and will guide you through the setup process. Create the project all the default settings. (Just press Enter).
+Use Serverpod's `create` command to create a new project. The `create` command is interactive and will guide you through the setup process. Create the project with all the default settings. (Just press Enter.)
 
 ```bash
 serverpod create my_project
 ```
 
-Next, open your newly created project with your favorite AI agent. (Open the root folder, e.g., `my_project` of the full project, which includes the server, client, and Flutter app.) We have tested the default setup with Anitgravity, Cursor, and Claude Code.
+Next, open your newly created project with your favorite AI agent. (Open the root folder of the full project—for example, `my_project`—which includes the server, client, and Flutter app.) We have tested the default setup with Antigravity, Cursor, and Claude Code.
 
 If required by your editor, enable the MCP servers for Serverpod and Dart.
 
@@ -38,7 +38,7 @@ serverpod start
 
 When the server is running, start the Flutter app. Select _Chrome_ as the Flutter target (it's located at the bottom-right corner of the window). Open the `main.dart` file in the `my_project_flutter/lib/` directory. Click the _Run_ button above the `main` method.
 
-After your app has finished building, it will open up on a new window on your screen. Try it out by entering your name and click the send button.
+After your app has finished building, it will open in a new window. Try it out by entering your name and clicking the send button.
 
 
 ## Build your app
@@ -67,7 +67,7 @@ Instruct the agent to build your app. Here are a few simple prompts that you can
 
 The server will automatically hot reload any changes made by the AI agent. However, if the agent modifies the database, you may need to create and apply the migrations. You can do this in the server's console by hitting the `M` key (Create Migration), followed by the `A` key (Apply Migration).
 
-To reload the app hit the 🔄 hot restart button in the editor.
+To reload the app, hit the 🔄 hot restart button in the editor.
 
 ## Deploy the app to the cloud
 
@@ -79,7 +79,7 @@ With the Serverpod Cloud project set up, you can deploy your backend and web app
 scloud launch
 ```
 
-After the project has been uploaded for the first time, use the `deploy` command after you do any changes to your project:
+After the project has been uploaded for the first time, use the `deploy` command whenever you make changes to your project:
 
 ```bash
 scloud deploy
@@ -87,6 +87,6 @@ scloud deploy
 
 :::tip
 
-In the Serverpod Cloud console, you can access Serverpod Insights were you can view the server logs, CPU usage, and other information.
+In the Serverpod Cloud console, open Serverpod Insights to view server logs, CPU usage, and other information.
 
 :::
