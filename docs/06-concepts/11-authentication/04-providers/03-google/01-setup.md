@@ -366,6 +366,14 @@ production:
 
 Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` [environment variable](../../../07-configuration.md#2-via-environment-variables) on your production server with the same JSON value.
 
+If you're deploying to Serverpod Cloud, set the password with the `scloud` CLI instead. Save the JSON to a file and run:
+
+```bash
+scloud password set googleClientSecret --from-file path/to/google-client-secret.json
+```
+
+See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for more details.
+
 ### 3. Update the Android OAuth client with the release SHA-1 (Android only)
 
 The Android OAuth client you created during setup uses your debug SHA-1 fingerprint. Release builds are signed with a different key, so you need to add the release SHA-1 as well.
