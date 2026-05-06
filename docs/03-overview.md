@@ -21,6 +21,81 @@ Serverpod is an open-source backend framework for Flutter applications written i
 - **Deployment automation:** Serverpod Cloud (currently in private beta) allows you to deploy your server with zero configuration. There are also community-supported Terraform scripts for deployment on Google Cloud Platform and AWS, making it quick to provision infrastructure and deploy your server. Your Serverpod project comes with a Docker container for flexible deployment options.
 - **Built-in web server:** Serverpod comes with a modern, high-performance web server called [Relic](https://docs.dartrelic.dev/). It is built to meet the demanding requirements of modern web applications and provides a robust, type-safe, and efficient foundation for building scalable web services, such as REST APIs, webhooks, and web pages.
 
+## Creating a new project
+
+To create a new Serverpod project, use the `serverpod create` command. It will set up a new project with a server, a client, and a Flutter app.
+The project will be created in a new directory with the name you specify. For example, to create a new project called `my_project`, run the following command:
+
+```bash
+$ serverpod create my_project
+```
+
+::::tip
+The name of the project must be a valid Dart package name. It should start with a lowercase letter and can only contain lowercase letters, numbers, and underscores. For example, `my_project` is a valid name, but `MyCounter` is not.
+::::
+
+After running the command, the following structure will be created:
+
+```text
+my_project/
+├── my_project_server/   # Contains your server-side code.
+├── my_project_client/   # Code needed for the app to communicate with the server.
+└── my_project_flutter/  # Flutter app, pre-configured to connect to your local server.
+```
+
+The root-level `pubspec.yaml` file includes support for [Dart pub workspaces](https://dart.dev/tools/pub/workspaces) by default, which allows fetching dependencies at once by calling `dart pub get` from the project root.
+
+::::info
+During project creation, dependencies are automatically fetched.
+::::
+
+If your project uses **SQLite** for local development, you do not need Docker here; skip straight to starting the server in the next step.
+
+If your project uses **PostgreSQL** locally, start the database from the `docker-compose.yaml` in the server directory:
+
+```bash
+$ cd my_project/my_project_server
+$ docker compose up
+```
+
+This will start the PostgreSQL database. You can stop the database server by pressing `Ctrl+C` in the terminal. If you want to run the servers in the background, you can use the `-d` flag:
+
+```bash
+$ docker compose up -d
+```
+
+This will start the database server in detached mode, meaning it will run in the background and you can safely close the terminal window without stopping it. Stop the database container by running the following command from the server directory:
+
+```bash
+$ docker compose down
+```
+
+::::tip
+If you are using Docker Desktop, you can see and manage all your installed Docker containers from there. It's easy to start and stop containers, and to remove the ones you are no longer using.
+::::
+
+When the database is ready (or while using SQLite), start the Serverpod server. Because we are running the project for the first time, we need to create the database tables used by Serverpod. This is done through a [database migration](./06-concepts/06-database/11-migrations.md). An initial migration is already created for us, so all we need to do is pass the `--apply-migrations` flag when starting the server:
+
+```bash
+$ cd my_project/my_project_server
+$ dart run bin/main.dart --apply-migrations
+```
+
+This will start the server and set up the initial database tables. You can now access the server at `http://localhost:8080` and the web server is available at `http://localhost:8082`. It should look like this:
+
+![Serverpod web](/img/getting-started/serverpod-web.png)
+
+Now let's run our Flutter app. You can do this by running `flutter run -d chrome` in the flutter directory:
+
+```bash
+$ cd my_project/my_project_flutter
+$ flutter run -d chrome
+```
+
+This will start the Flutter app in your browser. It should look like this:
+
+![Example Flutter App](/img/getting-started/flutter-example-web.png)
+
 ## Defining Endpoints
 
 In Serverpod, endpoints are the entry points that clients call to execute server-side logic. An endpoint is defined by creating a class that extends the Endpoint class and adding asynchronous methods to it. Each endpoint method must return a `Future<Type>` and take a `Session` object as its first parameter. The `Session` provides context about the call and gives access to server resources like the database or cache.
@@ -99,4 +174,4 @@ Serverpod's migration system further simplifies database work by allowing you to
 
 ## Conclusion
 
-Serverpod provides a robust, full-stack solution for Flutter backend development. Its high-level architecture (endpoints for RPC, YAML-defined serializable models, and an integrated PostgreSQL-backed ORM) allows teams to move quickly and safely when building out server features. Many auxiliary concerns – from caching and authentication to logging and deployment – are handled by Serverpod's built-in modules, reducing the need for additional services and glue code. This concise overview covered the basics; as a next step, you can explore the in-depth documentation on specific topics such as endpoints, database usage, or advanced features like streams and authentication to evaluate how Serverpod fits your project's needs. A great way to learn Serverpod is also to go through our [Get started guide](./01-get-started/01-creating-endpoints.md).
+Serverpod provides a robust, full-stack solution for Flutter backend development. Its high-level architecture (endpoints for RPC, YAML-defined serializable models, and an integrated PostgreSQL-backed ORM) allows teams to move quickly and safely when building out server features. Many auxiliary concerns – from caching and authentication to logging and deployment – are handled by Serverpod's built-in modules, reducing the need for additional services and glue code. This concise overview covered the basics; as a next step, you can explore the in-depth documentation on specific topics such as endpoints, database usage, or advanced features like streams and authentication to evaluate how Serverpod fits your project's needs. A great way to learn Serverpod is also to go through our [Get started guide](./04-get-started/01-creating-endpoints.md).
