@@ -18,7 +18,7 @@ For non-Docker deployments, you'll need to [compile the Dart code](https://dart.
 By default Serverpod is active on three ports:
 
 - **8080**: The main port for the server - this is where the generated client will connect to.
-- **8081**: The port for connecting with the [Serverpod Insights](../09-tools/01-insights.md) tooling. You may want to restrict which IP addresses can connect to this port.
+- **8081**: The port for connecting with the [Serverpod Insights](../tools/insights) tooling. You may want to restrict which IP addresses can connect to this port.
 - **8082**: The built in webserver is running on this port.
 
 You will also need to configure the database connection in the `config/production.yaml` file and **securely** provide the `config/passwords.yaml` file to the server.
@@ -35,4 +35,4 @@ Serverpod Cloud is currently in private beta. Request access by [filling out thi
 
 ## Other deployment options
 
-Check out [choosing a deployment strategy](../07-deployments/01-deployment-strategy.md) for more information on how to deploy your Serverpod application to other platforms.
+Check out [choosing a deployment strategy](../deployments/deployment-strategy) for more information on how to deploy your Serverpod application to other platforms.

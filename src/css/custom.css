@@ -366,6 +366,29 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
  * Code — line highlight (Docusaurus)
  *----------------------------------------------------------------------------*/
 
+.serverpod-prompt-code-block {
+  background: var(--prism-background-color, var(--ifm-code-background));
+  border-radius: var(--ifm-code-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  color: var(--prism-color, var(--ifm-color-content));
+  font-size: var(--ifm-code-font-size);
+  line-height: var(--ifm-pre-line-height);
+  margin-bottom: var(--ifm-leading);
+  overflow: visible;
+  padding: var(--ifm-pre-padding);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.serverpod-prompt-code-block code {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: inherit;
+  padding: 0;
+  white-space: inherit;
+}
+
 .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.1);
   display: block;
@@ -430,6 +453,11 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 
 .theme-doc-sidebar-menu .sidebar-installation-icon .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-package.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-quickstart .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-zap.svg');
   --sidebar-icon-color: currentColor;
 }
 
