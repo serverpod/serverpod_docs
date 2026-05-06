@@ -73,15 +73,21 @@ To reload the app, hit the 🔄 hot restart button in the editor.
 
 To deploy your app to Serverpod Cloud, you will need to create an account and set up a new project in Serverpod Cloud. Head to the **[Serverpod Cloud Console](https://console.serverpod.cloud/)** and follow the instructions there. You get a 1-month free trial. No credit card required.
 
-With the Serverpod Cloud project set up, you can deploy your backend and web app using the `scloud launch` command:
+Install the Serverpod Cloud command line tools:
 
-```bash
+```txt
+dart install serverpod_cloud_cli
+```
+
+With the Serverpod Cloud project set up and the CLI tools installed, you can deploy your backend and web app using the `scloud launch` command:
+
+```txt
 scloud launch
 ```
 
 After the project has been uploaded for the first time, use the `deploy` command whenever you make changes to your project:
 
-```bash
+```txt
 scloud deploy
 ```
 

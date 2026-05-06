@@ -40,7 +40,7 @@ If you are using Docker Desktop and you get an error, make sure that Docker is r
 
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
 
-```bash
+```txt
 $ dart install serverpod_cli 3.5.0-beta.6
 ```
 
@@ -52,6 +52,16 @@ $ serverpod
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
 
+:::warning
+
+If the Serverpod CLI is already installed globally, deactivate it before installing or upgrading:
+
+```txt
+$ dart pub global deactivate serverpod_cli
+```
+
+:::
+
 ### Install the VS Code extension (recommended)
 
 The Serverpod VS Code extension makes it easy to work with your Serverpod projects. It provides real-time diagnostics and syntax highlighting for model files in your project.
@@ -59,7 +69,7 @@ The Serverpod VS Code extension makes it easy to work with your Serverpod projec
 
 You can **[install the extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod)** from the VS Code Marketplace or search for _Serverpod_ from inside VS Code.
 
-### Install Serverpod Insights (recommended)
+### Install Serverpod Insights (optional)
 
 **[Serverpod Insights](./10-tools/01-insights.md)** is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 ![Serverpod Insights](/img/serverpod-insights.webp)
