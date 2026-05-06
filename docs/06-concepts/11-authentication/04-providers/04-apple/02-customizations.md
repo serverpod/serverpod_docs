@@ -8,15 +8,13 @@ Below is a non-exhaustive list of some of the most common configuration options.
 
 ### Loading Apple credentials
 
-You can initialize the Apple identity provider in two ways:
-
-**From passwords.yaml (recommended):**
+`AppleIdpConfigFromPasswords()` reads the eight `apple*` keys from `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_` environment variables) for you. This is the path used in the [setup guide](./setup#add-the-apple-identity-provider) and is the recommended default:
 
 ```dart
 final appleIdpConfig = AppleIdpConfigFromPasswords();
 ```
 
-**Manually, providing each credential explicitly:**
+Use `AppleIdpConfig(...)` directly when you need to pull credentials from a custom source, transform them at startup, or omit `passwords.yaml` entirely. You are responsible for resolving each value:
 
 ```dart
 final appleIdpConfig = AppleIdpConfig(
@@ -33,34 +31,33 @@ final appleIdpConfig = AppleIdpConfig(
 
 ### Reacting to account creation
 
-You can use the `onAfterAppleAccountCreated` callback to run logic after a new Apple account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
-
-This callback is complimentary to the core [`onAfterAuthUserCreated`](../../working-with-users#reacting-to-the-user-created-event) callback to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+The Apple provider does not expose its own account-creation callback. To run logic after a user signs in with Apple for the first time, use the user-level [`onAfterAuthUserCreated`](../../working-with-users#reacting-to-the-user-created-event) callback on `AuthUsersConfig`. It fires the first time any provider creates an auth user, including Apple.
 
 ```dart
-final appleIdpConfig = AppleIdpConfigFromPasswords(
-  onAfterAppleAccountCreated: (
-    session,
-    authUser,
-    appleAccount, {
-    required transaction,
-  }) async {
-    // e.g. store additional data, send a welcome email, or log for analytics
-  },
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    AppleIdpConfigFromPasswords(),
+  ],
+  authUsersConfig: AuthUsersConfig(
+    onAfterAuthUserCreated: (session, authUser, {required transaction}) async {
+      // authUser.id is the new user's UUID — use it to create any
+      // app-specific records that must exist before the user's first request.
+      await UserData.db.insertRow(
+        session,
+        UserData(authUserId: authUser.id, createdAt: authUser.createdAt),
+        transaction: transaction,
+      );
+    },
+  ),
 );
 ```
 
-:::info
-This callback runs inside the same database transaction as the account creation. Throwing an exception inside this callback will abort the process. If you perform external side-effects, make sure to safeguard them with a try/catch to prevent unwanted failures.
-:::
+### Web routes configuration
 
-:::caution
-If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` to set scopes based on data collected earlier in the flow.
-:::
-
-### Web Routes Configuration
-
-Apple Sign-In requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server.
+Sign in with Apple requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server.
 
 The `revokedNotificationRoutePath` is the path that Apple will call when a user revokes their authorization. The `webAuthenticationCallbackRoutePath` is the path that Apple will call when a user completes the sign-in process.
 
@@ -80,44 +77,35 @@ pod.configureAppleIdpRoutes(
 When a user revokes access from their Apple ID settings, Apple sends a notification to `revokedNotificationRoutePath`. You are responsible for invalidating any active sessions for that user in your own application logic.
 :::
 
-### Configuring Apple Sign-In on the App
+### Configuring Sign in with Apple on the app
 
-On web and Android platforms, you must supply a service identifier and redirect URI. If no values are provided programmatically, the provider falls back to reading from `--dart-define` build variables. To set them programmatically, you can use the following methods.
-
-#### Passing Configuration in Code
-
-You can pass the configuration directly when initializing the Apple Sign-In service:
+On web and Android, the Flutter client needs the Service ID and the server callback URL. The setup guide passes them via `--dart-define`. If you would rather hardcode them or resolve them at runtime, pass them directly to `initializeAppleSignIn()` instead:
 
 ```dart
 client.auth.initializeAppleSignIn(
-  serviceIdentifier: 'com.example.app',
+  serviceIdentifier: 'com.example.service',
   redirectUri: 'https://example.com/auth/callback',
 );
 ```
 
-The `serviceIdentifier` is your Apple Services ID, and the `redirectUri` is the callback URL that Apple redirects to after authentication (must match the URL configured on the server).
-
-This approach is useful when you need to manage configuration for different platforms in your Dart code.
+When both are passed, they take precedence over the `APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` build variables. The `redirectUri` must match the **Return URL** registered on your Apple Service ID and the value used by `pod.configureAppleIdpRoutes()`.
 
 :::note
-These parameters are only required for web and Android platforms. On native Apple platforms (iOS/macOS), they are ignored.
+These parameters are only used on web and Android. On native Apple platforms (iOS/macOS), the values come from your Xcode capability and are ignored here.
 :::
 
-#### Using Environment Variables
+#### Using environment variables
 
-Alternatively, you can pass configuration during build time using the `--dart-define` option. The Apple Sign-In provider supports the following build-time variables:
+`APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` are the two build variables read by `initializeAppleSignIn()` on web and Android:
 
-- `APPLE_SERVICE_IDENTIFIER`: The Services ID used as OAuth client ID on Android and Web
-- `APPLE_REDIRECT_URI`: The callback URL Apple redirects to after authentication
+- `APPLE_SERVICE_IDENTIFIER`: your Services ID identifier (e.g. `com.example.service`)
+- `APPLE_REDIRECT_URI`: the server callback URL (e.g. `https://example.com/auth/callback`)
 
-If `serviceIdentifier` and `redirectUri` are not supplied when initializing the service, the provider will automatically read them from these variables.
-
-**Example usage:**
+Pass them at build time with `--dart-define`:
 
 ```bash
 flutter run \
-  -d "<device>" \
-  --dart-define="APPLE_SERVICE_IDENTIFIER=com.example.app" \
+  --dart-define="APPLE_SERVICE_IDENTIFIER=com.example.service" \
   --dart-define="APPLE_REDIRECT_URI=https://example.com/auth/callback"
 ```
 
@@ -128,7 +116,7 @@ This approach is useful when you need to:
 - Configure different credentials for different build environments (development, staging, production)
 
 :::tip
-You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
+You can set `--dart-define` values in your IDE run configuration or CI/CD pipeline instead of passing them on every `flutter run` command.
 :::
 
 ## AppleIdpConfig parameters

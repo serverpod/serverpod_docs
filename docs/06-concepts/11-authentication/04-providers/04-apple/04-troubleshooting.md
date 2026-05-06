@@ -9,13 +9,15 @@ Go through this before investigating a specific error. Most problems come from a
 #### Apple Developer Portal
 
 * [ ] Enable **Sign in with Apple** on your App ID at [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list).
-* [ ] Create a **Service ID** and link it to your App ID (*Android and Web only*).
+* [ ] Create a **Service ID** for OAuth (*Android and Web only*).
+* [ ] On the Service ID, check **Sign in with Apple**, click **Configure**, and select your **Primary App ID** (*Android and Web only*).
 * [ ] Add your **Domains and Subdomains** (e.g. `example.com`) and **Return URLs** on the Service ID.
 * [ ] Confirm the **return URL** on the Service ID uses `https://` (not `http://` or `localhost`).
 * [ ] Create a **Sign in with Apple key** and download the `.p8` file.
 
 #### Server
 
+* [ ] Add `serverpod_auth_idp_server` to your server's `pubspec.yaml`.
 * [ ] Add the Apple credentials to `config/passwords.yaml` with the raw `.p8` file contents (not a pre-generated JWT).
 * [ ] Double-check the **`.p8` key** is indented consistently under `appleKey: |`.
 * [ ] Add `AppleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
@@ -25,6 +27,7 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Client
 
+* [ ] Add `serverpod_auth_idp_flutter` to your Flutter app's `pubspec.yaml`.
 * [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
 * [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
 * [ ] Add the **Apple JS SDK** script to `web/index.html` (*Web only*).
@@ -79,8 +82,8 @@ Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment 
 
 **Cause:** There are two separate identifiers in Apple's system and they are easy to mix up:
 
-* **App ID** (`bundleIdentifier`) -- the bundle identifier of your iOS/macOS app (e.g. `com.example.app`). Used for native Apple platform sign-in only.
-* **Services ID** (`serviceIdentifier`) -- a separate identifier you create in the Apple Developer Portal specifically for web and Android OAuth (e.g. `com.example.service`). This acts as the OAuth client ID.
+* **App ID** (`bundleIdentifier`): the bundle identifier of your iOS/macOS app (e.g. `com.example.app`). Used for native Apple platform sign-in only.
+* **Services ID** (`serviceIdentifier`): a separate identifier you create in the Apple Developer Portal specifically for web and Android OAuth (e.g. `com.example.service`). This acts as the OAuth client ID.
 
 Passing the App ID bundle identifier where the Services ID is expected will cause Apple to reject the request.
 
@@ -122,6 +125,7 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 
 ```bash
 serverpod generate
+serverpod create-migration
 dart run bin/main.dart --apply-migrations
 ```
 
@@ -187,9 +191,14 @@ The `crossorigin="anonymous"` attribute is needed because Flutter's service work
 
 **Problem:** The native Sign in with Apple sheet appears on macOS, but immediately shows "Sign Up Not Completed" without completing authentication.
 
-**Cause:** The macOS app sandbox entitlement conflicts with `ASAuthorizationController`. When `com.apple.security.app-sandbox` is enabled alongside `com.apple.developer.applesignin`, the authorization flow fails silently.
+**Cause:** This is almost always a signing or entitlements mismatch on the macOS target. Sign in with Apple needs the bundle ID, Team ID, and entitlements to line up with an App ID that has the capability enabled.
 
-**Resolution:** In your macOS entitlements file (e.g., `macos/Runner/DebugProfile.entitlements`), remove the app sandbox entitlement or ensure it does not block the Sign in with Apple flow. Test without the sandbox first to confirm it is the cause, then re-add only the sandbox entitlements you need.
+**Resolution:** Check, in this order:
+
+1. In Xcode, open the macOS target's **Signing & Capabilities** tab and confirm that **Sign in with Apple** is listed. If not, click **+ Capability** to add it.
+2. Confirm the macOS bundle ID matches the App ID that has Sign in with Apple enabled in the Apple Developer Portal, and that the signing **Team** matches the same Apple Developer account.
+3. If your macOS app is sandboxed, make sure the sandbox entitlements include `com.apple.security.network.client`. Without outbound network access, the request to Apple's servers fails silently.
+4. Regenerate or re-download the provisioning profile after any of the above changes so the new entitlements are picked up.
 
 ## User stays signed in after removing Apple access
 
