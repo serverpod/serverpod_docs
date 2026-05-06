@@ -1,27 +1,14 @@
 # Configuration
 
-This page covers credential loading, custom validation, and account creation callbacks for the Firebase identity provider.
+This page covers configuration options for the Firebase identity provider beyond the basic setup.
 
-## Configuration options
+## Loading credentials with FirebaseIdpConfig
 
-Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `FirebaseIdpConfig` in-code documentation.
+The [setup guide](./setup) uses `FirebaseIdpConfigFromPasswords`, which loads the service account key from `passwords.yaml` for you. When you need to load credentials from a different source (a file path, a secrets manager, or just a project ID), use `FirebaseIdpConfig` directly and pass a `FirebaseServiceAccountCredentials` instance.
 
-The Firebase identity provider can be configured using one of two classes:
+`FirebaseServiceAccountCredentials` provides four constructors. These are the only supported ways to construct it:
 
-- **`FirebaseIdpConfigFromPasswords`**: Automatically loads the service account key from the `firebaseServiceAccountKey` key in `passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). This is the class used in the [setup guide](./setup) and is recommended for most projects.
-- **`FirebaseIdpConfig`**: Requires you to pass a `FirebaseServiceAccountCredentials` object directly. Use this when you need to load credentials from a custom source, such as a JSON file, a secrets manager, or a programmatically constructed map.
-
-`FirebaseIdpConfigFromPasswords` is a convenience wrapper around `FirebaseIdpConfig` that handles credential loading for you.
-
-Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `FirebaseIdpConfigFromPasswords` unless the section specifically demonstrates manual credential loading.
-
-### Load credentials using FirebaseIdpConfig
-
-When using `FirebaseIdpConfig`, you must provide the credentials explicitly.
-
-You can load the credentials in several ways:
-
-**From JSON string (recommended for production):**
+**From a JSON string** (use this when reading the JSON from a secrets manager or environment variable):
 
 ```dart
 final firebaseIdpConfig = FirebaseIdpConfig(
@@ -31,7 +18,7 @@ final firebaseIdpConfig = FirebaseIdpConfig(
 );
 ```
 
-**From JSON file:**
+**From a JSON file** (useful for local development or when secrets are mounted as files):
 
 ```dart
 import 'dart:io';
@@ -43,7 +30,7 @@ final firebaseIdpConfig = FirebaseIdpConfig(
 );
 ```
 
-**From JSON map:**
+**From a JSON map** (useful when credentials are assembled programmatically):
 
 ```dart
 final firebaseIdpConfig = FirebaseIdpConfig(
@@ -60,7 +47,21 @@ final firebaseIdpConfig = FirebaseIdpConfig(
 );
 ```
 
-### Custom account validation
+**Project ID only** (only token verification, no admin operations like deleting Firebase accounts):
+
+```dart
+final firebaseIdpConfig = FirebaseIdpConfig(
+  credentials: const FirebaseServiceAccountCredentials(
+    projectId: 'your-project-id',
+  ),
+);
+```
+
+:::note
+Only `projectId` is required to verify Firebase ID tokens. The full service account JSON is only needed if you also use the [admin operations](./admin-operations) on the server.
+:::
+
+## Custom account validation
 
 You can customize the validation for Firebase account details before allowing sign-in. By default, the validation requires the email to be verified when present (phone-only authentication is allowed without an email).
 
@@ -83,30 +84,24 @@ final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(
 );
 ```
 
-### FirebaseAccountDetails
+### FirebaseAccountDetails properties
 
 The `firebaseAccountDetailsValidation` callback receives a `FirebaseAccountDetails` record with the following properties:
 
-```dart
-firebaseAccountDetailsValidation: (accountDetails) {
-  accountDetails.userIdentifier; // String -- Firebase UID
-  accountDetails.email;          // String? -- null for phone-only auth
-  accountDetails.fullName;       // String? -- display name from Firebase
-  accountDetails.image;          // Uri? -- profile image URL
-  accountDetails.verifiedEmail;  // bool? -- whether the email is verified
-  accountDetails.phone;          // String? -- phone number (phone auth only)
-},
-```
+- `userIdentifier` (`String`): Firebase UID.
+- `email` (`String?`): Email address, or `null` for phone-only sign-in.
+- `fullName` (`String?`): Display name from Firebase.
+- `image` (`Uri?`): Profile image URL.
+- `verifiedEmail` (`bool?`): Whether the email is verified.
+- `phone` (`String?`): Phone number, only populated for phone authentication.
 
-:::info
-The properties available depend on the Firebase authentication method used. For example, `phone` is only populated for phone authentication, and `email` may be null if the user signed in with phone only.
-:::
+Which properties are populated depends on the Firebase sign-in method the user chose. For example, `phone` is only populated for phone authentication, and `email` may be `null` if the user signed in with phone only.
 
-### Reacting to auth user creation
+## Reacting to auth user creation
 
-The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to Firebase -- they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
+[`onBeforeAuthUserCreated`](https://pub.dev/documentation/serverpod_auth_idp_server/latest/core/AuthUsersConfig/onBeforeAuthUserCreated.html) and [`onAfterAuthUserCreated`](https://pub.dev/documentation/serverpod_auth_idp_server/latest/core/AuthUsersConfig/onAfterAuthUserCreated.html) are global callbacks on `AuthUsersConfig`. They fire for every identity provider, not just Firebase. See [Working with users](../../working-with-users#reacting-to-the-user-created-event) for full details.
 
-`onBeforeAuthUserCreated` receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
+The example below uses Firebase phone numbers as the trigger for assigning a `phone-verified` scope at sign-up, and persists the Firebase UID for later admin lookups:
 
 ```dart
 pod.initializeAuthServices(
@@ -139,8 +134,8 @@ pod.initializeAuthServices(
 );
 ```
 
-:::info
-Both callbacks run inside the same database transaction as the account creation. Throwing an exception inside either callback will abort the process. If you perform external side-effects, safeguard them with a try/catch to prevent unwanted failures.
+:::warning
+Both callbacks run inside the same database transaction as the account creation. Throwing an exception inside either callback aborts the sign-up. Wrap external side-effects (email sending, analytics) in `try`/`catch` so a third-party outage does not block new sign-ups.
 :::
 
 ## FirebaseIdpConfig parameter reference

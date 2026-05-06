@@ -8,7 +8,7 @@ Admin operations should only be called from secure server-side code. Do not expo
 
 ## Accessing the FirebaseIdpAdmin
 
-You can access the admin operations through the `AuthServices.instance.firebaseIdp` property. This requires that the Firebase identity provider is already configured (see [setup](./setup#add-the-firebase-identity-provider)).
+You can access the admin operations through the `AuthServices.instance.firebaseIdp` property. This requires that the Firebase identity provider is already configured (see [setup](./setup#1-add-the-firebase-identity-provider)).
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/firebase.dart';
@@ -20,26 +20,23 @@ final admin = firebaseIdp.admin;
 
 ## Finding accounts
 
-Each finder method targets a different identifier depending on what you have available:
+Pick the finder that matches the identifier you have on hand:
+
+- `findAccountByEmail` when you have the user's email (e.g., from a support ticket).
+- `findAccountByAuthUserId` when you have a Serverpod auth user ID and want the linked Firebase account.
+- `findUserByFirebaseUserId` when you have a Firebase UID and want the Serverpod user it is linked to.
 
 ```dart
-// Find an account by email
 final accountByEmail = await admin.findAccountByEmail(
   session,
   email: 'user@example.com',
 );
-```
 
-```dart
-// Find an account by Serverpod auth user ID
 final accountByAuthUser = await admin.findAccountByAuthUserId(
   session,
   authUserId: authUserId,
 );
-```
 
-```dart
-// Find the Serverpod user ID by Firebase UID
 final userId = await admin.findUserByFirebaseUserId(
   session,
   userIdentifier: 'firebase-uid',
@@ -69,24 +66,22 @@ await admin.linkFirebaseAuthentication(
 
 ## Deleting accounts
 
+Use `deleteFirebaseAccount` when you have a Firebase UID, or `deleteFirebaseAccountByAuthUserId` to remove every Firebase link attached to a single Serverpod user:
+
 ```dart
-// Delete a Firebase account by Firebase UID
 final deletedByUid = await admin.deleteFirebaseAccount(
   session,
   userIdentifier: 'firebase-uid',
 );
-```
 
-```dart
-// Delete all Firebase accounts for a Serverpod user
 final deletedByAuthUser = await admin.deleteFirebaseAccountByAuthUserId(
   session,
   authUserId: authUserId,
 );
 ```
 
-:::info
-Deleting a Firebase account only removes the link between the Firebase authentication and the Serverpod user. It does not delete the user from your Serverpod database or from Firebase itself.
+:::warning
+Deleting a Firebase account only removes the link between Firebase authentication and the Serverpod user. The Serverpod user stays in your database, and the Firebase user stays in your Firebase project. You must delete those separately if that is what you want.
 :::
 
 ## FirebaseIdpUtils

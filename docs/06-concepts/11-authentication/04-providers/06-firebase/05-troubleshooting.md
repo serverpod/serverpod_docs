@@ -9,12 +9,16 @@ Go through this before investigating a specific error. Most problems come from a
 #### Firebase Console
 
 - [ ] Create a **Firebase project** in the [Firebase Console](https://console.firebase.google.com/).
-- [ ] Generate a **service account key** from Project settings > Service accounts.
-- [ ] Enable the **authentication methods** you want to use in Firebase Console > Authentication > Sign-in method.
+- [ ] Add an app for **every platform you support** (iOS, Android, Web) inside the Firebase project. Each platform needs its own registration.
+- [ ] Generate a **service account key** from **Project settings** > **Service accounts**.
+- [ ] Enable the **authentication methods** you want to use under **Authentication** > **Sign-in method**.
+- [ ] Confirm **Firebase App Check** is **disabled** (enable it later only after the client integration is in place).
+- [ ] In **Authentication** > **Settings** > **Authorized domains**, the list includes `localhost` for development and your production domain when you ship.
 
 #### Server
 
 - [ ] Paste the service account JSON into `firebaseServiceAccountKey` in `config/passwords.yaml`. See [Store the service account key](./setup#store-the-service-account-key).
+- [ ] Confirm the `project_id` inside `firebaseServiceAccountKey` matches the Firebase project the client is using.
 - [ ] Add `FirebaseIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `FirebaseIdpEndpoint` file in `lib/src/auth/` extending `FirebaseIdpBaseEndpoint`.
 - [ ] Run **`serverpod generate`**, then **`serverpod create-migration`**, then apply migrations with `dart run bin/main.dart --apply-migrations`.
@@ -22,8 +26,9 @@ Go through this before investigating a specific error. Most problems come from a
 #### Client
 
 - [ ] Install **`firebase_core`**, **`firebase_auth`**, and **`serverpod_auth_idp_flutter_firebase`** in your Flutter project.
-- [ ] Run **`flutterfire configure`** to generate `firebase_options.dart`.
-- [ ] Call **`Firebase.initializeApp()`** before creating the Serverpod client.
+- [ ] Run **`flutterfire configure`** so `firebase_options.dart` is generated.
+- [ ] Verify the platform config files are in place: `GoogleService-Info.plist` (iOS, in the Runner target) and `google-services.json` (Android, in `android/app/`).
+- [ ] Import `firebase_options.dart` and call **`Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)`** before creating the Serverpod client.
 - [ ] Call **`client.auth.initializeFirebaseSignIn()`** after `client.auth.initialize()` in your Flutter app's `main.dart`.
 - [ ] Call **`controller.login(user)`** after Firebase authentication completes.
 
@@ -100,12 +105,13 @@ If you haven't run `flutterfire configure`, do so to generate the `firebase_opti
 
 **Problem:** The user authenticates with Firebase (the Firebase UI shows success), but the Serverpod session is never created. The `onError` callback on `FirebaseAuthController` fires.
 
-**Cause:** The Firebase ID token could not be verified by the server. The most likely causes, in order:
+**Cause:** The Firebase ID token could not be verified by the server. Check the server logs first, the error message will narrow this down to one of the following causes:
 
-1. **Missing service account key:** The `firebaseServiceAccountKey` is not present in `passwords.yaml`, or the JSON is invalid. Check the server logs for the specific error.
+1. **Missing service account key:** The `firebaseServiceAccountKey` is not present in `passwords.yaml`, or the JSON is invalid.
 2. **Missing endpoint:** You did not create the endpoint class extending `FirebaseIdpBaseEndpoint`. Without it, the client has no endpoint to call.
 3. **Missing migration:** The provider's database tables don't exist yet. Apply migrations with `dart run bin/main.dart --apply-migrations`.
-4. **Project mismatch:** The service account key belongs to a different Firebase project than the one configured in your Flutter app.
+4. **Project mismatch:** The service account key belongs to a different Firebase project than the one configured in your Flutter app. Compare `project_id` in `firebaseServiceAccountKey` against the project in `firebase_options.dart`.
+5. **App Check enabled prematurely:** If you enabled Firebase App Check before the client integration is in place, every request will be rejected with an App Check assertion error. Disable App Check until the client is wired up.
 
 ## Email validation rejects phone-only users
 
@@ -157,7 +163,7 @@ See the [FlutterFire CLI documentation](https://firebase.flutter.dev/docs/cli/) 
 
 **Cause:** The action types don't match the authentication state changes from the providers you configured. For example, using `EmailAuthProvider` but only listening for one of the two states.
 
-**Resolution:** Make sure you have actions for both `SignedIn` (returning users) and `UserCreated` (new users). See the [customizing the UI page](./customizing-the-ui#using-firebase_ui_auth-signinscreen) for the complete code example.
+**Resolution:** Make sure you have actions for both `SignedIn` (returning users) and `UserCreated` (new users). See the [Customizing the UI](./customizing-the-ui#anatomy-of-the-gate-widget) page for the complete code example.
 
 ## Platform-specific Firebase SDK configuration issues
 
