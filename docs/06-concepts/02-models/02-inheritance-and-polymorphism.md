@@ -8,7 +8,7 @@ Serverpod models support inheritance, which allows you to define class hierarchi
 Adding a new subtype to a class hierarchy may introduce breaking changes for older clients. Ensure client compatibility when expanding class hierarchies to avoid deserialization issues.
 :::
 
-### Extending a Class
+### Extending a class
 
 To inherit from a class, use the `extends` keyword in your model files, as shown below:
 
@@ -68,7 +68,7 @@ indexes:
 
 Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes. To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](../shared-packages).
 
-### Sealed Classes
+### Sealed classes
 
 In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies, enabling exhaustive type checking. With sealed classes, the compiler knows all subclasses, ensuring that every possible case is handled when working with the model.
 
@@ -98,7 +98,6 @@ sealed class ParentClass {
 }
 
 class ChildClass extends ParentClass {
-  String name;
   int age;
 }
 ```
