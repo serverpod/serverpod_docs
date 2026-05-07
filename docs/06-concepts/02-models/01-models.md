@@ -169,22 +169,22 @@ values:
   - bird
 ```
 
-By default the serialization will convert the enum to an int representing the index of the value. Changing the order may therefore have unforeseen consequences when reusing old data (such as from a database). Changing the serialization to be based on the name instead of index is easy.
+By default the enum is serialized by name. You can also opt into index-based serialization by setting `serialized: byIndex`.
 
 ```yaml
 enum: Animal
-serialized: byName
+serialized: byIndex
 values:
   - dog
   - cat
   - bird
 ```
 
-`serialized` has two valid values `byName` and `byIndex`. When using `byName` the string literal of the enum is used, when using `byIndex` the index value (0, 1, 2, etc) is used.
+`serialized` has two valid values: `byName` (the default) and `byIndex`. When using `byName` the string literal of the enum is used; when using `byIndex` the index value (0, 1, 2, etc.) is used.
 
-:::info
+:::warning
 
-It's recommended to always set `serialized` to `byName` in any new Enum models, as this is less fragile and will be changed to the default setting in version 3 of Serverpod.
+`byIndex` is fragile: adding, removing, or reordering enum values silently changes the serialized form, which can corrupt persisted data. Only use `byIndex` when you need to maintain compatibility with existing data already serialized that way.
 
 :::
 
@@ -340,7 +340,7 @@ extension MyExtension on MyClass {
 }
 ```
 
-## Default Values
+## Default values
 
 Serverpod supports defining default values for fields in your models. These default values can be specified using three different keywords that determine how and where the defaults are applied:
 
@@ -546,7 +546,7 @@ fields:
 | [**fields (index)**](database/indexing)                             | List the fields to create the indexes on.                                                                     |       ✅        |                         |               |
 | [**type (index)**](database/indexing)                               | The type of index to create.                                                                                  |       ✅        |                         |               |
 | [**parameters (index)**](database/indexing#vector-indexes)          | Parameters for specialized index types like HNSW and IVFFLAT vector indexes.                                  |       ✅        |                         |               |
-| [**distanceFunction (index)**](database/indexing#vector-indexes)    | Distance function for vector indexes (l2, innerProduct, cosine, l1).                                          |       ✅        |                         |               |
+| [**distanceFunction (index)**](database/indexing#vector-indexes)    | Distance function for vector indexes. Allowed values depend on the field's vector type and index type — see [vector indexes](database/indexing#vector-indexes). |       ✅        |                         |               |
 | [**unique**](database/indexing)                                     | Boolean flag to make the entries unique in the database.                                                      |       ✅        |                         |               |
 | [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.    |       ✅        |                         |               |
 | [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                     |       ✅        |                         |               |
