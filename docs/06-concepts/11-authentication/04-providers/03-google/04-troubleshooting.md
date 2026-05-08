@@ -11,7 +11,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Create a **Google Cloud project** in the [Google Cloud Console](https://console.cloud.google.com/).
 - [ ] Enable the **People API** in your project.
 - [ ] In **Google Auth Platform**, complete the initial setup (wizard) and add the required scopes on **Data Access** (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
-- [ ] On **Branding** ([Branding](https://console.cloud.google.com/auth/branding)), complete the OAuth consent screen (logo, homepage, privacy policy, terms of service, and developer contact) and add every hostname you will use under **Authorized domains** (redirect URIs must use a listed domain).
+- [ ] On **Branding** ([Branding](https://console.cloud.google.com/auth/branding)), complete the OAuth consent screen (logo, homepage, privacy policy, terms of service, and developer contact) and add the **root domain** (top private domain) under **Authorized domains**. Google stores only the root, so a single verified entry covers all of its subdomains. See [Verify your authorized domain](./setup#1-verify-your-authorized-domain).
 - [ ] Add **test users** on **Audience** while in **Testing** mode ([Audience](https://console.cloud.google.com/auth/audience)), or **Publish app** when everyone should be able to sign in.
 - [ ] Create a **Web application** OAuth client with **Authorized JavaScript origins** and **Authorized redirect URIs** set to your Serverpod **web server** (`http://localhost:8082` locally, not port `8080`). Copy the **Client ID** and **Client secret**.
 - [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and matching `redirect_uris`. For production, use the live web server URL in Google Cloud and in `production:` (or env vars) as in [Publishing to production](./setup#publishing-to-production).
@@ -42,9 +42,9 @@ Go through this before investigating a specific error. Most problems come from a
 
 Common mistakes:
 
-* Using port `8080` (the API server) instead of `8082` (the web server). Check `config/development.yaml` under `webServer` for the correct port.
-* Adding a trailing slash (e.g., `http://localhost:8082/` instead of `http://localhost:8082`).
-* For Web apps: not adding the Flutter web app's origin (e.g., `http://localhost:49660`) to **Authorized JavaScript origins**. This is separate from the Serverpod web server address. See the [Web setup section](./setup#web) for details.
+- Using port `8080` (the API server) instead of `8082` (the web server). Check `config/development.yaml` under `webServer` for the correct port.
+- Adding a trailing slash (e.g., `http://localhost:8082/` instead of `http://localhost:8082`).
+- For Web apps: not adding the Flutter web app's origin (e.g., `http://localhost:49660`) to **Authorized JavaScript origins**. This is separate from the Serverpod web server address. See the [Web setup section](./setup#web) for details.
 
 ## Sign-in works for you but not for other users
 
@@ -53,14 +53,6 @@ Common mistakes:
 **Cause:** Your Google Auth Platform app is still in **Testing** mode. Only users explicitly added as test users can sign in (up to 100).
 
 **Resolution:** Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
-
-## Production redirect URIs rejected by Google
-
-**Problem:** When adding your production domain to Authorized redirect URIs, Google rejects it with an error about unauthorized domains.
-
-**Cause:** Your production domain is not listed under **Authorized domains** on the Branding page.
-
-**Resolution:** Navigate to the [Branding](https://console.cloud.google.com/auth/branding) page and add your production domain (e.g., `my-awesome-project.serverpod.space`) to **Authorized domains**. Google requires redirect URIs to use domains listed here.
 
 ## Flutter web sign-in fails with origin mismatch
 
