@@ -43,7 +43,7 @@ pod.initializeAuthServices(
   ],
   authUsersConfig: AuthUsersConfig(
     onAfterAuthUserCreated: (session, authUser, {required transaction}) async {
-      // authUser.id is the new user's UUID — use it to create any
+      // authUser.id is the new user's UUID, use it to create any
       // app-specific records that must exist before the user's first request.
       await UserData.db.insertRow(
         session,
@@ -54,6 +54,10 @@ pod.initializeAuthServices(
   ),
 );
 ```
+
+:::info
+This callback runs inside the same database transaction as the auth user creation. Throwing an exception inside it will abort the entire process and the user will not be created. If you perform external side-effects (e.g. analytics, sending emails), wrap them in a try/catch so an unrelated failure does not block sign-in.
+:::
 
 ### Web routes configuration
 

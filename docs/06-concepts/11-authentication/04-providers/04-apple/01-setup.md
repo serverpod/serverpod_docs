@@ -4,7 +4,7 @@
 
 Before you start, make sure you have:
 
-- A Flutter project created with `serverpod create` (so the auth module and project template are in place).
+- A Serverpod project with the new auth module installed. New projects created with `serverpod create` (Serverpod 3.4 and later) include it by default. If you are upgrading an older project, follow the [auth module setup guide](../../setup) first.
 - An active subscription to the [Apple Developer Program](https://developer.apple.com/programs/). Sign in with Apple requires this even for local development.
 - Xcode installed if you target iOS or macOS.
 
@@ -55,6 +55,10 @@ Skip this section if you are building for iOS or macOS only.
 
 :::warning
 All return URLs must use **HTTPS**. Apple rejects HTTP URLs, including `localhost`. For local development, expose your server over HTTPS using a tunnelling service, like ngrok or Cloudflare Tunnel.
+:::
+
+:::note
+If you plan to support web sign-in, also register the value you will use for `appleWebRedirectUri` (e.g. `https://example.com/auth/apple-complete`) under **Return URLs**. Without it, the web flow will fail when Apple validates the redirect.
 :::
 
 ### Create a Sign in with Apple key
@@ -111,13 +115,13 @@ When you are ready to ship, see [Going to production](#going-to-production) for 
 
 ### Add the Apple identity provider
 
-In your server project directory, add the auth IDP server package:
+The auth module ships with the core authentication services, but each identity provider lives in its own package. Add the IDP server package, which contains the Apple provider, in your server project directory:
 
 ```bash
 dart pub add serverpod_auth_idp_server
 ```
 
-`AppleIdpConfigFromPasswords()` reads the eight `apple*` keys from `config/passwords.yaml` (or the corresponding `SERVERPOD_PASSWORD_` environment variables), so you do not have to wire up each credential manually. In your server's `server.dart`, import it and add it to the existing `identityProviderBuilders` list on `pod.initializeAuthServices()`:
+In your server's `server.dart`, import the Apple provider and add it to the existing `identityProviderBuilders` list on `pod.initializeAuthServices()`:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/apple.dart';
@@ -135,6 +139,12 @@ pod.initializeAuthServices(
 );
 ```
 
+`AppleIdpConfigFromPasswords()` reads the eight `apple*` keys from `config/passwords.yaml` (or the corresponding `SERVERPOD_PASSWORD_` environment variables), so you do not have to wire up each credential manually.
+
+:::tip
+If you need more control over how the credentials are loaded, you can use `AppleIdpConfig(...)` with manual `pod.getPassword()` calls instead. See the [customizations](./customizations) page for details.
+:::
+
 ### Configure web routes
 
 Sign in with Apple requires web routes for handling callbacks and revocation notifications. Add this call before `pod.start()`:
@@ -147,10 +157,6 @@ pod.configureAppleIdpRoutes(
 ```
 
 The `webAuthenticationCallbackRoutePath` must match the **Return URL** you registered on your Service ID. The `revokedNotificationRoutePath` is called by Apple when a user revokes access from their Apple ID settings.
-
-:::tip
-If you need more control over how the credentials are loaded, you can use `AppleIdpConfig(...)` with manual `pod.getPassword()` calls instead. See the [customizations](./customizations) page for details.
-:::
 
 ### Create the endpoint
 
@@ -178,7 +184,7 @@ Skipping the migration will cause the server to crash at runtime when the Apple 
 
 ## Client-side configuration
 
-In your Flutter app's directory, add the auth IDP Flutter package:
+The auth module gives you the base sign-in widget, but each identity provider lives in its own client package. In your Flutter app's directory, add the IDP Flutter package, which contains the Apple widget:
 
 ```bash
 flutter pub add serverpod_auth_idp_flutter
@@ -317,7 +323,11 @@ Add your production domain and callback URL to the Service ID. The development t
 
 ### Set production credentials
 
-Switch from the `development:` values you used during setup to production ones. Pick the path that matches your deployment:
+Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones, both stay in place and Serverpod picks the right set based on the run mode.
+
+Most credentials, like the Team ID, Key ID, and `.p8` private key, can be reused from development. The values that typically differ are the URLs (`appleRedirectUri` and `appleWebRedirectUri`), which should point at your production domain rather than your development tunnel. If you use a different App ID or Service ID for production, register them in the [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list) first and use those identifiers below.
+
+Pick the path that matches your deployment:
 
 #### Self-hosted
 
