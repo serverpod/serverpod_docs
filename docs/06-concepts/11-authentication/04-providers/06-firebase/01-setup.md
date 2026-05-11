@@ -6,7 +6,7 @@ Firebase authentication lets you use any Firebase sign-in method (email/password
 
 Before you start, make sure you have:
 
-- A Flutter project created with `serverpod create` (so the auth module and project template are in place).
+- A Serverpod project with the new auth module installed. New projects created with `serverpod create` (Serverpod 3.4 and later) include it by default. If you are upgrading an older project, follow the [auth module setup guide](../../setup) first.
 - A Google account with access to the [Firebase Console](https://console.firebase.google.com/).
 - The Firebase CLI installed (`npm install -g firebase-tools`) and the FlutterFire CLI activated (`dart pub global activate flutterfire_cli`). You will use both later in the guide.
 
@@ -66,7 +66,7 @@ While enabling providers, you may see a **Firebase App Check** option in the sid
 
 ### Store the service account key
 
-Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add the `firebaseServiceAccountKey` key to the `development:` section using the contents of the JSON file you downloaded:
+Open `config/passwords.yaml` in your server project. Projects created with `serverpod create` already have `development:`, `staging:`, and `production:` sections; if yours doesn't, add a `development:` section. Then add the `firebaseServiceAccountKey` key under `development:` using the contents of the JSON file you downloaded:
 
 ```yaml
 development:
@@ -84,7 +84,7 @@ development:
     }
 ```
 
-Production credentials are covered in [Publishing to Production](#publishing-to-production) below.
+Production credentials are covered in [Publishing to production](#publishing-to-production) below.
 
 :::warning
 **Never commit `config/passwords.yaml` to version control.** It contains your service account key, which gives admin access to your Firebase project. Use environment variables or a secrets manager in production.
@@ -321,28 +321,44 @@ If you run into issues, see the [Troubleshooting](./troubleshooting) guide.
 
 Before going live, complete every step below. Skipping any of these is the most common cause of "works in dev, fails in prod" reports.
 
-### 1. Store the production service account key
+### 1. Decide which Firebase project production should use
 
-On Serverpod Cloud (and most production servers), the recommended approach is to set the service account JSON as an environment variable rather than committing it. Set `SERVERPOD_PASSWORD_firebaseServiceAccountKey` to the full JSON string. See the Cloud guide on [passwords vs secrets vs variables](https://docs.serverpod.dev/cloud/guides/passwords#passwords-vs-secrets-vs-variables) for how to wire that up.
+Most teams keep a separate Firebase project for production so dev experiments do not affect real users. If that is your setup, create the production Firebase project now and generate a fresh service account key from it (same steps as in [Generate a service account key](#generate-a-service-account-key) above). You can also reuse your dev Firebase project in production; in that case the service account key carries over and you can skip straight to step 2.
 
-If you do prefer to keep credentials in `config/passwords.yaml`, add the `firebaseServiceAccountKey` entry to the `production:` section using the same `|` block scalar shown earlier. Make sure that file stays out of version control.
+### 2. Add the production service account key
 
-### 2. Authorize your production domain
+Production credentials are added alongside your `development:` ones, not swapped in. Dev keeps using the `development:` key when you run locally, and production uses whatever you wire up below. Pick the path that matches your deployment:
+
+#### Self-hosted
+
+Add `firebaseServiceAccountKey` to the `production:` section of `config/passwords.yaml` using the same `|` block scalar shown earlier, or set it as the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable on the production server. The env var path avoids committing the JSON to disk on the server. Whichever path you pick, keep `passwords.yaml` out of version control.
+
+#### Serverpod Cloud
+
+Use `scloud password set` and pass the JSON file with `--from-file`:
+
+```bash
+scloud password set firebaseServiceAccountKey --from-file ./firebase-service-account.json
+```
+
+Run this from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and the [passwords vs secrets vs variables](https://docs.serverpod.dev/cloud/guides/passwords#passwords-vs-secrets-vs-variables) note for when to use each.
+
+### 3. Authorize your production domain
 
 In the Firebase Console, go to **Authentication** > **Settings** > **Authorized domains** and add the domain your app runs on (e.g., `my-awesome-project.serverpod.space`). Without this entry, OAuth-based sign-in (Google, Apple, etc.) will fail with a redirect URI mismatch in production.
 
-### 3. Configure each platform app for production
+### 4. Configure each platform app for production
 
 Depending on which sign-in methods and platforms you support, complete the steps that apply:
 
 - **Android (Google sign-in via Firebase):** Add your release SHA-1 fingerprint to the Android app in your Firebase project. If you use **Google Play App Signing** (the default for new apps), get the SHA-1 from the Play Console: **Setup** > **App integrity** > **App signing key certificate**. Use the **app signing key** SHA-1, not the upload key SHA-1. If you manage your own release keystore, run `keytool -list -v -keystore your-release-key.jks -alias your-key-alias`. Then re-run `flutterfire configure` so `google-services.json` is updated.
 - **iOS (phone or Apple sign-in):** Verify your bundle identifier is registered with the Firebase iOS app, and that `GoogleService-Info.plist` is included in the Xcode project's Runner target. Phone authentication also requires you to upload an APNs authentication key in **Project settings** > **Cloud Messaging**.
-- **Web:** Add every domain that will host your app (including custom domains and preview URLs) to the **Authorized domains** list from [step 2](#2-authorize-your-production-domain).
+- **Web:** Add every domain that will host your app (including custom domains and preview URLs) to the **Authorized domains** list from [step 3](#3-authorize-your-production-domain).
 
 :::warning
 Forgetting the release SHA-1 is the single most common reason Google sign-in works in debug builds but silently fails after publishing to the Play Store.
 :::
 
-### 4. Re-verify Firebase App Check
+### 5. Re-verify Firebase App Check
 
 If you disabled App Check for development, decide now whether to enable it. Enabling App Check requires extra integration on the client (attest tokens via Play Integrity, App Attest, or reCAPTCHA). Do not enable it without that integration in place, otherwise every authenticated request will be rejected.
