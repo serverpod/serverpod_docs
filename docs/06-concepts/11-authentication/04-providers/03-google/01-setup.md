@@ -313,11 +313,11 @@ void main() async {
 }
 ```
 
-`initializeGoogleSignIn()` registers Google as an available identity provider on the client. Without it, the sign-in widget renders without a Google button and `GoogleSignInWidget` does nothing.
+`initializeGoogleSignIn()` initializes the underlying `google_sign_in` SDK (loading the client IDs you configured) and registers a sign-out hook so signing out of Serverpod also signs the user out of their Google session. `SignInWidget` can lazily initialize Google on first use, but calling this at startup wires the sign-out hook early and avoids a delay on the first tap.
 
 ### Show the Google sign-in button
 
-The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects every initialized provider, so once `initializeGoogleSignIn()` has run the Google button appears inside it.
+The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and `serverpod generate` has run, the Google button appears inside it.
 
 ```dart
 import 'package:flutter/material.dart';
