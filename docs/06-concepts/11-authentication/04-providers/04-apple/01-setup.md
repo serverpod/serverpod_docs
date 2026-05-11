@@ -115,7 +115,7 @@ When you are ready to ship, see [Going to production](#going-to-production) for 
 
 ### Add the Apple identity provider
 
-The auth module ships with the core authentication services, but each identity provider lives in its own package. Add the IDP server package, which contains the Apple provider, in your server project directory:
+Projects created with `serverpod create` already have `serverpod_auth_idp_server` in `pubspec.yaml`. If your project doesn't (e.g. you're upgrading an older project), add it:
 
 ```bash
 dart pub add serverpod_auth_idp_server
@@ -184,7 +184,7 @@ Skipping the migration will cause the server to crash at runtime when the Apple 
 
 ## Client-side configuration
 
-The auth module gives you the base sign-in widget, but each identity provider lives in its own client package. In your Flutter app's directory, add the IDP Flutter package, which contains the Apple widget:
+The Flutter app created with `serverpod create` already has `serverpod_auth_idp_flutter` in `pubspec.yaml`. If your app doesn't, add it:
 
 ```bash
 flutter pub add serverpod_auth_idp_flutter
