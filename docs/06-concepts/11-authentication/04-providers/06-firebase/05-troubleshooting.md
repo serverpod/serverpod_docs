@@ -177,3 +177,22 @@ See the [FlutterFire CLI documentation](https://firebase.flutter.dev/docs/cli/) 
 2. For **iOS**: Verify that `GoogleService-Info.plist` is included in the Xcode project's Runner target.
 3. For **Android**: Verify that `google-services.json` is in `android/app/`.
 4. For **Web**: Verify that the Firebase config is loaded in `web/index.html` or via `firebase_options.dart`.
+
+## `Firebase.initializeApp()` throws `channel-error` on web in production
+
+**Problem:** A Flutter web app works fine in `flutter run -d chrome` (debug), but the production build throws `channel-error` from `FirebaseCoreHostApi.initializeCore` as soon as `Firebase.initializeApp()` runs. The browser console shows obfuscated frames like `aJs.$2` and `JX.fI` in `main.dart.js` with no clear message.
+
+**Cause:** Flutter's incremental build cache under `.dart_tool/flutter_build/` can silently drop `firebase_core_web`'s plugin registration. The on-disk plugin registrant file still lists `FirebaseCoreWeb.registerWith(registrar)`, but stale kernel `.dill` artifacts mean `dart2js` compiles `main.dart.js` without the wiring. `FirebasePlatform.instance` then stays as the default `MethodChannelFirebase`, and `Firebase.initializeApp()` goes through a pigeon channel with no handler. The error sounds native, but it is purely a Flutter web build-cache issue. Debug mode (DDC) does not tree-shake or cache the same way as `dart2js` (release), so it hides the bug entirely.
+
+**Resolution:** Run `flutter clean` before building so the registration is included:
+
+```bash
+flutter clean
+flutter build web
+```
+
+For Serverpod Cloud projects, add `flutter clean` ahead of `flutter build web` in your `flutter_build` script (or whatever `scripts.pre_deploy` runs).
+
+:::tip
+To make minified stack traces readable while you debug an issue like this, build **locally** with `flutter build web --source-maps` and load that build (or the resulting `.map` file) in your browser's dev tools. Do **not** deploy the `.map` file to a public-facing host: it contains your full Dart source. If you need readable production stack traces continuously, upload source maps to an error-monitoring service (Sentry, Datadog) rather than serving them next to `main.dart.js`.
+:::
