@@ -1,51 +1,54 @@
 # Custom serialization
 
-For most purposes, you will want to use Serverpod's native serialization. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to three simple rules:
+For most purposes, you will want to use Serverpod's native serialization. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to the following rules:
 
 1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
 
-    ```dart
-    Map<String, dynamic> toJson() {
-    return {
-        name: 'John Doe',
-    };
-    }
-    ```
+   ```dart
+   Map<String, dynamic> toJson() {
+     return {
+       'name': 'John Doe',
+     };
+   }
+   ```
 
 2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization as parameters.
 
-    ```dart
-    factory ClassName.fromJson(
-    Map<String, dynamic> json,
-    ) {
-    return ClassName(
-        name: json['name'] as String,
-    );
-    }
-    ```
+   ```dart
+   factory ClassName.fromJson(
+     Map<String, dynamic> json,
+   ) {
+     return ClassName(
+       name: json['name'] as String,
+     );
+   }
+   ```
 
-3. There must be a method called `copyWith()`, which returns a new instance of the object with the specified fields replaced.
-    :::tip
-    In the framework, `copyWith()` is implemented as a deep copy to ensure immutability. We recommend following this approach when implementing it for custom classes to avoid unintentional side effects caused by shared mutable references.
-    :::
+3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
-    ```dart
-    ClassName copyWith({
-      String? name,
-    }) {
-      return ClassName(
-        name: name ?? this.name,
-      );
-    }
-    ```
+   ```yaml
+   ...
+   extraClasses:
+     - package:my_project_shared/my_project_shared.dart:ClassName
+   ```
 
-4. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
+## Using a custom class as a model field
 
-    ```yaml
-    ...
-    extraClasses:
-    - package:my_project_shared/my_project_shared.dart:ClassName
-    ```
+If your custom class will be used as a field inside a generated `.spy.yaml` model, also implement a `copyWith()` method. The parent model's generated `copyWith` calls `.copyWith()` on each field to produce a deep copy. `copyWith()` is not needed when the class is only used as an endpoint parameter or return type.
+
+```dart
+ClassName copyWith({
+  String? name,
+}) {
+  return ClassName(
+    name: name ?? this.name,
+  );
+}
+```
+
+:::tip
+In the framework, `copyWith()` is implemented as a deep copy to ensure immutability. We recommend following this approach when implementing it for custom classes to avoid unintentional side effects caused by shared mutable references.
+:::
 
 ## Setup example
 
@@ -77,7 +80,7 @@ class ClassName {
   String name;
   ClassName(this.name);
 
-  toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'name': name,
     };
@@ -146,7 +149,7 @@ extraClasses:
 
 If you need certain fields to be omitted when transmitting to the client-side, your server-side custom class should implement the `ProtocolSerialization` interface. This requires adding a method named `toJsonForProtocol()`. Serverpod will then use this method to serialize your object for protocol communication. If the class does not implement `ProtocolSerialization`, Serverpod defaults to using the `toJson()` method.
 
-### Implementation Example
+### Implementation example
 
 Here’s how you can implement it:
 
