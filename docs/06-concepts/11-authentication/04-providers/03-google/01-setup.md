@@ -44,7 +44,9 @@ The People API is required for Serverpod to access basic user profile data durin
 
 3. **Branding**: After completing the wizard, navigate to the [Branding](https://console.cloud.google.com/auth/branding) page from the sidebar. Fill in the remaining fields: app logo, app homepage link, privacy policy link, terms of service link, developer contact email, and **authorized domains**. These details appear on the OAuth consent screen shown to users during sign-in.
 
-   Add the **root domain** you will deploy under (e.g., `serverpod.space`) to **Authorized domains**. Google stores only the top private domain, so a single root entry covers every subdomain you deploy under it. The root must be verified before Google accepts redirect URIs that use it. See [Verify your authorized domain](#1-verify-your-authorized-domain) for how to verify it.
+   Add the **root domain** you will deploy under to **Authorized domains**. Google stores only the top private domain, so a single root entry covers every subdomain you deploy under it.
+
+   If you deploy on Serverpod Cloud, add `serverpod.space`. It is already verified by Serverpod, so you only need to add it here, no DNS verification is required on your end. For custom domains, see [Verify your authorized domain](#1-verify-your-authorized-domain).
 
    ![Branding configuration](/img/authentication/providers/google/10-branding.png)
 
@@ -61,7 +63,7 @@ The People API is required for Serverpod to access basic user profile data durin
    ![Audience and test users](/img/authentication/providers/google/7-audience.png)
 
    :::tip
-   Leave the app in **Testing** mode for now. You can [publish it](#publishing-to-production) after verifying that sign-in works end to end.
+   Leave the app in **Testing** mode for now. You can [publish it](#5-publish-the-oauth-consent-screen) after verifying that sign-in works end to end.
    :::
 
 ### Create the server OAuth client (Web application)
@@ -405,7 +407,9 @@ Before going live, complete the following steps:
 
 Google's **Authorized domains** field on the [Branding](https://console.cloud.google.com/auth/branding) page accepts only the **top private domain** (the root). Once the root is verified, every subdomain under it is automatically authorized, and you do not need to add each project subdomain separately.
 
-Verify ownership of your root domain (e.g., `example.com`) at [Google Search Console](https://search.google.com/search-console) by adding the DNS TXT record Google provides. After verification completes, add the root to **Authorized domains** in the Google Auth Platform.
+If you deploy on Serverpod Cloud under a `*.serverpod.space` subdomain, `serverpod.space` is already verified by Serverpod. Just add `serverpod.space` to **Authorized domains** in the Google Auth Platform, no DNS verification is required on your end.
+
+For a custom domain, verify ownership of your root domain (e.g., `example.com`) at [Google Search Console](https://search.google.com/search-console) by adding the DNS TXT record Google provides. After verification completes, add the root to **Authorized domains** in the Google Auth Platform.
 
 :::tip
 A single verified root authorizes all of its subdomains. If Google rejects a domain you add, you are likely entering a full subdomain instead of the root.
@@ -418,11 +422,19 @@ Go back to the [server OAuth client](#create-the-server-oauth-client-web-applica
 - **Authorized JavaScript origins**: `https://my-awesome-project.serverpod.space`
 - **Authorized redirect URIs**: `https://my-awesome-project.serverpod.space`
 
-Replace the URL with your actual production web server address.
+Replace the URL with your actual production web server address. On Serverpod Cloud, your project is served from `https://<project-id>.serverpod.space`.
 
-### 3. Store the production credentials
+### 3. Set production credentials
 
-Add the `googleClientSecret` entry to the `production:` section of `config/passwords.yaml`, using the production redirect URI:
+Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones, both stay in place and Serverpod picks the right set based on the run mode.
+
+The production `googleClientSecret` reuses the same web client ID and secret from setup, but lists your production redirect URI rather than the development one. If you use a different OAuth client for production, [create another web client](#create-the-server-oauth-client-web-application) first and use its values below.
+
+Pick the path that matches your deployment:
+
+#### Self-hosted
+
+Add `googleClientSecret` to the `production:` section of `passwords.yaml` with the production redirect URI:
 
 ```yaml
 production:
@@ -439,15 +451,17 @@ production:
 
 Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` [environment variable](../../../07-configuration.md#2-via-environment-variables) on your production server with the same JSON value.
 
-If you're deploying to Serverpod Cloud, set the password with the `scloud` CLI instead. Save the JSON to a file and run:
+#### Serverpod Cloud
+
+Use `https://<project-id>.serverpod.space` as the redirect URI in the JSON. Save it to a file and use `scloud password set` with `--from-file`:
 
 ```bash
-scloud password set googleClientSecret --project my-awesome-project --from-file path/to/google-client-secret.json
+scloud password set googleClientSecret --from-file path/to/google-client-secret.json
 ```
 
-Replace `my-awesome-project` with your Cloud project ID. You can omit `--project` if you have already linked the project locally with `scloud project link`. See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for more details.
+Run this from your linked server project directory, or pass `--project <project-id>` on the call. See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and other options.
 
-### 4. Update the Android OAuth client with the release SHA-1 (Android only)
+### 4. Update the Android OAuth client with the release SHA-1
 
 The Android OAuth client you created during setup uses your debug SHA-1 fingerprint. Release builds are signed with a different key, so you need to add the release SHA-1 as well.
 
@@ -467,6 +481,6 @@ Forgetting this step is one of the most common reasons Google Sign-In works in d
 
 ### 5. Publish the OAuth consent screen
 
-While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page, in the Google Auth Platform,  can sign in. All other users will see an error.
+While the app is in **Testing** mode, only the test users you added on the [Audience](https://console.cloud.google.com/auth/audience) page, in the Google Auth Platform, can sign in. All other users will see an error.
 
 Navigate to the **Audience** page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
