@@ -29,8 +29,10 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
 - [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app; set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
 - [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run; place `google-services.json` in `android/app/` (*Android only*).
-- [ ] Add the `google-signin-client_id` **meta tag** to `web/index.html` (*Web only*).
-- [ ] On **Web**, list **both** the Serverpod web server origin (e.g., `http://localhost:8082`) and your Flutter app origin under **Authorized JavaScript origins** on the Web OAuth client; use a **fixed** `--web-port` for Flutter so that second origin does not change every run (see [Web setup](./setup#web)).
+- [ ] On **Web**, make sure **Authorized JavaScript origins** includes the browser origin where your Flutter web app runs.
+- [ ] If you use the optional redirect-based web flow, create `web/auth.html` exactly as shown in the [setup guide](./setup#web).
+- [ ] If you use the optional redirect-based web flow, register the full callback URL (for example `http://localhost:8082/auth.html`) under **Authorized redirect URIs** on the Web OAuth client.
+- [ ] If you use the optional redirect-based web flow, call `client.auth.initializeGoogleSignIn(..., redirectUri: ...)` with the same Web application client ID and redirect URI you configured in Google Cloud.
 
 ## Sign-in fails with redirect_uri_mismatch
 
@@ -38,13 +40,14 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Cause:** The redirect URI in your OAuth client configuration does not match the URI your app is actually using. Google requires an exact match.
 
-**Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match your server's address exactly. For local development, both should be `http://localhost:8082` (the Serverpod **web server** port, not the API server port 8080). Trailing slashes, port differences, and `http` vs `https` all count as mismatches.
+**Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match what your app actually uses. This error is mainly relevant when you use the optional redirect-based web flow. For local development with that flow, a common value is `http://localhost:8082/auth.html` for the redirect URI. Trailing slashes, port differences, path differences, and `http` vs `https` all count as mismatches.
 
 Common mistakes:
 
-* Using port `8080` (the API server) instead of `8082` (the web server). Check `config/development.yaml` under `webServer` for the correct port.
-* Adding a trailing slash (e.g., `http://localhost:8082/` instead of `http://localhost:8082`).
-* For Web apps: not adding the Flutter web app's origin (e.g., `http://localhost:49660`) to **Authorized JavaScript origins**. This is separate from the Serverpod web server address. See the [Web setup section](./setup#web) for details.
+* Using port `8080` (the API server) instead of the configured web callback host and port.
+* Registering `http://localhost:8082` instead of `http://localhost:8082/auth.html`.
+* Adding a trailing slash or using the wrong scheme.
+* Not adding the actual Flutter web app origin to **Authorized JavaScript origins** when the app runs on a different host or port.
 
 ## Sign-in works for you but not for other users
 
@@ -64,17 +67,23 @@ Common mistakes:
 
 ## Flutter web sign-in fails with origin mismatch
 
-**Problem:** Google Sign-In on Flutter web fails with an origin mismatch error, even though you added `http://localhost:8082` to the OAuth client.
+**Problem:** Google Sign-In on Flutter web fails with an origin mismatch error, even though the redirect URI looks correct.
 
-**Cause:** The Flutter web app runs on a different port than the Serverpod web server. The sign-in request originates from the Flutter app's port (e.g., `http://localhost:49660`), which also needs to be listed in **Authorized JavaScript origins**. Flutter also picks a random port by default, so the origin changes on every run.
+**Cause:** The sign-in request starts from the browser origin where your Flutter web app is running. If that origin is not listed under **Authorized JavaScript origins**, Google rejects the request.
 
-**Resolution:** Run Flutter on a fixed port and add that origin to your OAuth client:
+**Resolution:** Add the exact browser origin of your Flutter web app to **Authorized JavaScript origins** in the Google Auth Platform. If your local workflow changes ports often, pick a stable local origin for development so your Google OAuth configuration stays predictable.
 
-```bash
-flutter run -d chrome --web-hostname localhost --web-port=49660
-```
+For example, if your app runs from `http://localhost:3000`, add `http://localhost:3000` as an authorized JavaScript origin.
 
-Then add `http://localhost:49660` to **Authorized JavaScript origins** in the Google Auth Platform.
+The redirect URI is a separate setting and, if you use redirect mode, should still point to your callback page, for example `http://localhost:8082/auth.html`.
+
+## Web callback page is missing or not returning control to the app
+
+**Problem:** Google opens the sign-in page, but after authentication the app does not complete sign-in, or the browser shows a blank callback page.
+
+**Cause:** The `auth.html` callback page is missing, does not contain the expected `flutter_web_auth_2` script, or the registered redirect URI points somewhere else.
+
+**Resolution:** This only applies to the optional redirect-based web flow. Create `web/auth.html` exactly as shown in the [setup guide](./setup#web), then make sure the same full URL is registered under **Authorized redirect URIs** and passed to `client.auth.initializeGoogleSignIn(..., redirectUri: ...)`.
 
 ## Server fails to parse googleClientSecret from passwords.yaml
 
@@ -163,9 +172,9 @@ dart run bin/main.dart --apply-migrations
 
 **Problem:** You enabled `attemptLightweightSignIn: true` but the One Tap prompt never appears on Web, or the silent sign-in doesn't trigger on mobile.
 
-**Cause:** Lightweight sign-in requires the user to have previously signed in with Google on this device or browser. It also depends on platform-specific conditions: on Web, FedCM or One Tap must be supported by the browser; on mobile, the user must have a Google account configured on the device.
+**Cause:** Lightweight sign-in requires the user to have previously signed in with Google on the device and depends on platform-specific behavior from the native Google Sign-In package.
 
-**Resolution:** This is expected behavior for first-time users. The lightweight sign-in prompt only appears for returning users. If the user dismisses One Tap multiple times, Google may suppress it temporarily. The regular sign-in button remains available as a fallback.
+**Resolution:** This is expected behavior for first-time users. The lightweight sign-in prompt only appears for returning users where the platform supports it. The regular sign-in button remains available as a fallback. On web, this applies to the default popup / iFrame flow. If you opt into redirect mode, the interaction model is different and does not center on lightweight sign-in.
 
 ## iOS sign-in prompt doesn't show
 
@@ -181,25 +190,20 @@ dart run bin/main.dart --apply-migrations
 
 ## Web sign-in button doesn't render
 
-**Problem:** The Google Sign-In button doesn't appear on Web, or the page shows a JavaScript error related to Google Identity Services.
+**Problem:** The Google Sign-In button doesn't appear on Web, or tapping it does nothing useful.
 
-**Cause:** The `google-signin-client_id` meta tag is missing from `web/index.html`, or its value doesn't match the server's Web application client ID.
+**Cause:** The underlying cause depends on which web mode you use. In the default popup / iFrame flow, check that the Google web setup is complete and the browser origin is authorized. In the optional redirect flow, common causes are missing initialization with `redirectUri`, a bad redirect URI, or a missing `auth.html` callback page.
 
-**Resolution:** Add or verify the meta tag in `web/index.html`:
+**Resolution:** Verify the web setup end to end:
 
-```html
-<head>
-  ...
-  <meta name="google-signin-client_id" content="your_server_client_id">
-</head>
-```
-
-Replace `your_server_client_id` with the `client_id` from your Web application OAuth client JSON file.
+1. Call `client.auth.initializeGoogleSignIn(...)` during app startup.
+2. If you use redirect mode, make sure `web/auth.html` exists and matches the documented contents.
+3. If you use redirect mode, make sure the registered redirect URI exactly matches the URL passed as `redirectUri`.
 
 ## Google API calls fail after one hour on Web
 
 **Problem:** Your app calls Google APIs (e.g., Calendar, Drive) using the access token from sign-in, but requests start returning `401 Unauthorized` after about an hour. This only affects the Web platform.
 
-**Cause:** On Web, the `accessToken` returned by the `google_sign_in` package expires after 3,600 seconds (one hour) and is not automatically refreshed.
+**Cause:** On Web, access tokens obtained through the OAuth2 flow are short-lived. If your app keeps using the same token for Google API calls after it expires, Google returns `401 Unauthorized`.
 
-**Resolution:** When making Google API calls on Web, check the token age and prompt the user to re-authenticate if the token has expired. On mobile platforms, the token is refreshed automatically and this is not an issue. See the [google_sign_in_web documentation](https://pub.dev/packages/google_sign_in_web) for details on token lifecycle.
+**Resolution:** When making Google API calls on Web, treat the access token as time-limited and prompt the user to authenticate again when it expires. If your app depends heavily on long-lived access to Google APIs, design that flow explicitly instead of assuming the initial sign-in token remains valid indefinitely.

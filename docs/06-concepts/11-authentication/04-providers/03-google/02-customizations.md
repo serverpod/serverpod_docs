@@ -169,6 +169,8 @@ If lightweight sign-in fails (e.g., no previous session exists or the user dismi
 
 :::note
 The lightweight sign-in attempt happens automatically when the controller is initialized, typically at app launch. If successful, users will be signed in without any additional interaction.
+
+On web, lightweight sign-in behavior depends on which mode you use. The default web popup / iFrame flow continues to rely on `google_sign_in_web`, while the redirect-based OAuth2 flow is opt-in and does not use lightweight sign-in as its primary interaction model.
 :::
 
 ### Configuring Client IDs on the App
@@ -187,6 +189,19 @@ client.auth.initializeGoogleSignIn(
 ```
 
 This approach is useful when you need different client IDs per platform and want to manage them in your Dart code.
+
+To opt into the redirect-based web flow, pass `redirectUri` to the same initializer:
+
+```dart
+await client.auth.initializeGoogleSignIn(
+  clientId: '<web_client_id>.apps.googleusercontent.com',
+  redirectUri: 'https://your-domain.com/auth.html',
+);
+```
+
+If you omit `redirectUri` on web, Serverpod keeps using the default popup / iFrame flow.
+
+Use the same Web application client ID and redirect URI you configured in Google Cloud.
 
 #### Using Environment Variables
 

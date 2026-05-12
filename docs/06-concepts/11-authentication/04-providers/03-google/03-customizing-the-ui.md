@@ -43,7 +43,7 @@ GoogleSignInWidget(
     'https://www.googleapis.com/auth/userinfo.profile',
   ],
 
-  // Whether to attempt lightweight sign-in (One Tap, FedCM)
+  // Whether to attempt lightweight sign-in on supported platforms
   attemptLightweightSignIn: false,
 
   onAuthenticated: () {
@@ -87,8 +87,13 @@ final controller = GoogleAuthController(
 await controller.signIn();
 ```
 
-:::warning
-When using Google Sign-In on web, be mindful that the button will be rendered by the underlying `google_sign_in` package, so customizing the button might not work as expected. The included `GoogleSignInWidget` is a wrapper around the original widgets that already applies some customizations to make its design compatible between all platforms.
+:::note
+On web, the rendered button depends on how you initialize sign-in:
+
+- If you call `initializeGoogleSignIn()` without `redirectUri`, the widget uses the Google-hosted web button from the default popup / iFrame flow.
+- If you call `initializeGoogleSignIn(..., redirectUri: ...)`, the widget switches to the Flutter-rendered button and starts the redirect-based OAuth2 flow.
+
+This means button customization on web is most consistent when you opt into redirect mode.
 :::
 
 ### GoogleAuthController State Management
