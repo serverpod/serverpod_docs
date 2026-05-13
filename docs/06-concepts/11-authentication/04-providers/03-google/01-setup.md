@@ -74,17 +74,7 @@ All platforms (iOS, Android, and Web) require a **Web application** OAuth client
 
 2. Select **Web application** as the application type.
 
-3. Add the following URIs. These are only used when your app targets **web**; if you only target iOS or Android, you can leave them empty for now and come back later.
-
-   - **Authorized JavaScript origins**: the origin where your Flutter web app is served.
-   - **Authorized redirect URIs**: the full URL of the `auth.html` callback page in your Flutter web app. Google redirects the browser here after sign-in.
-
-   | Environment | Authorized JavaScript origins | Authorized redirect URIs |
-   | --- | --- | --- |
-   | Local development | `http://localhost:49660` | `http://localhost:49660/auth.html` |
-   | Production | Your Flutter web app's public URL (e.g., `https://my-awesome-project.serverpod.space`) | The same URL with `/auth.html` appended (e.g., `https://my-awesome-project.serverpod.space/auth.html`) |
-
-   The port `49660` is a placeholder. Pick any free port for `--web-port` when running `flutter run`, then use the same value here. See [Web](#web) below for how this all fits together.
+3. Leave **Authorized JavaScript origins** and **Authorized redirect URIs** empty for now if you only target iOS or Android. If you target web, you will fill them in under [Web](#web) below, where the exact values depend on the port you choose for `flutter run`.
 
    ![Clients configuration](/img/authentication/providers/google/5-clients.png)
 
@@ -318,14 +308,7 @@ void main() async {
 `initializeGoogleSignIn()` registers a sign-out hook so signing out of Serverpod also signs the user out of their Google session, and (on iOS/Android) initializes the underlying `google_sign_in` SDK with the client IDs you configured in `Info.plist` / `google-services.json`. On web, passing `redirectUri` switches sign-in into OAuth2 redirect mode and routes the callback through `auth.html`. `SignInWidget` can lazily initialize Google on first use, but calling this at startup wires the sign-out hook early and avoids a delay on the first tap.
 
 :::tip
-The `clientId` and `redirectUri` values are environment-specific. A common pattern is to read them from `--dart-define` so the same `main.dart` works in local development and production:
-
-```dart
-const _googleWebClientId = String.fromEnvironment('GOOGLE_CLIENT_ID');
-const _googleWebRedirectUri = String.fromEnvironment('GOOGLE_WEB_REDIRECT_URI');
-```
-
-Then pass `--dart-define=GOOGLE_CLIENT_ID=... --dart-define=GOOGLE_WEB_REDIRECT_URI=...` to `flutter run` and `flutter build web`. The package also reads `GOOGLE_CLIENT_ID` from `--dart-define` automatically if you do not pass `clientId` explicitly.
+To keep these values out of `main.dart` and vary them per build, read them from `--dart-define`. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
 :::
 
 ### Show the Google sign-in button
@@ -433,9 +416,13 @@ A single verified root authorizes all of its subdomains. If Google rejects a dom
 Go back to the [server OAuth client](#create-the-server-oauth-client-web-application) in the Google Auth Platform and add your production URLs:
 
 - **Authorized JavaScript origins**: your production Flutter web app's origin (e.g., `https://my-awesome-project.serverpod.space`).
-- **Authorized redirect URIs**: the full URL of the production `auth.html` callback. If you deploy with the standard Serverpod template's `flutter_build` script, the Flutter web app is served under `/app/`, so the callback is `https://my-awesome-project.serverpod.space/app/auth.html`. If you serve the Flutter web app at the domain root, use `https://my-awesome-project.serverpod.space/auth.html`.
+- **Authorized redirect URIs**: the full URL of the production `auth.html` callback. With the standard Serverpod template, the Flutter web app is served under `/app/` by the `flutter_build` script, so the callback is `https://my-awesome-project.serverpod.space/app/auth.html`.
 
 Replace the URLs with your actual production address. On Serverpod Cloud, your project is served from `https://<project-id>.serverpod.space`.
+
+:::note
+If you host the Flutter web build at the domain root instead of under `/app/` (for example, when you deploy it to a separate static host rather than alongside the Serverpod server), use `https://my-awesome-project.serverpod.space/auth.html` instead.
+:::
 
 ### 3. Set production credentials
 
