@@ -50,7 +50,7 @@ final googleIdpConfig = GoogleIdpConfig(
       'client_id': 'your-client-id.apps.googleusercontent.com',
       'client_secret': 'your-client-secret',
       'redirect_uris': [
-        'http://localhost:8082',
+        'http://localhost:49660/auth.html',
       ],
     },
   }),
@@ -215,6 +215,31 @@ This approach is useful when you need to:
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
+
+### Configuring the Web redirect URI
+
+On web, `initializeGoogleSignIn` accepts a `redirectUri` argument that switches sign-in into the OAuth2 redirect flow described in [Web setup](./setup#web). When `redirectUri` is null on web, the package falls back to Google's built-in popup/iframe button rendered by `google_sign_in_web`.
+
+The same `--dart-define` pattern recommended for client IDs works for the redirect URI, so the same `main.dart` builds correctly for local development and production:
+
+```dart
+const _googleClientId = String.fromEnvironment('GOOGLE_CLIENT_ID');
+const _googleRedirectUri = String.fromEnvironment('GOOGLE_WEB_REDIRECT_URI');
+
+client.auth.initializeGoogleSignIn(
+  clientId: kIsWeb ? _googleClientId : null,
+  redirectUri: kIsWeb ? _googleRedirectUri : null,
+);
+```
+
+```bash
+flutter run \
+  -d chrome --web-port=49660 \
+  --dart-define="GOOGLE_CLIENT_ID=<web_client_id>.apps.googleusercontent.com" \
+  --dart-define="GOOGLE_WEB_REDIRECT_URI=http://localhost:49660/auth.html"
+```
+
+`GOOGLE_CLIENT_ID` is also read automatically by the package if `clientId` is null, so you can omit the explicit `clientId:` argument and rely on the environment variable. There is no equivalent automatic env var for `redirectUri` because it is purely a web concern.
 
 ## GoogleIdpConfig parameter reference
 

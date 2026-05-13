@@ -248,6 +248,50 @@ This is equivalent to calling `restore()` followed by `validateAuthentication()`
 
 See [Client-side authentication](./basics#client-side-authentication) for more details on how to interact with the authentication state from the client.
 
+### Web callback page (`auth.html`)
+
+:::note
+You only need this if your app targets the **web** platform and uses an identity provider that signs the user in through an OAuth2 redirect. That includes **GitHub** and **Google** (when configured for redirect-based web sign-in). Skip this section if your app does not target web, or if it only uses email, passkey, or anonymous sign-in.
+:::
+
+When the user finishes signing in at the provider's page (for example, `accounts.google.com`), the provider redirects the browser to a URL on your site with the sign-in result attached. Your Flutter app cannot receive that redirect directly because the browser navigates fully away from it. `auth.html` is a small static page that catches the redirect, reads the result, and hands it back to your running Flutter app through `postMessage` (or `localStorage`, depending on how the sign-in was launched).
+
+You create one `auth.html` and share it across every identity provider that needs it.
+
+In your Flutter project's `web/` folder, add a file named `auth.html` with this content:
+
+```html
+<!DOCTYPE html>
+<title>Authentication complete</title>
+<p>Authentication is complete. If this does not happen automatically, please close the window.</p>
+<script>
+  function postAuthenticationMessage() {
+    const message = {
+      'flutter-web-auth-2': window.location.href
+    };
+
+    if (window.opener) {
+      window.opener.postMessage(message, window.location.origin);
+      window.close();
+    } else if (window.parent && window.parent !== window) {
+      window.parent.postMessage(message, window.location.origin);
+    } else {
+      localStorage.setItem('flutter-web-auth-2', window.location.href);
+      window.close();
+    }
+  }
+
+  postAuthenticationMessage();
+</script>
+```
+
+When you set up a provider that uses this callback, you will register the full URL of `auth.html` in **two** places, and they must match exactly:
+
+- **In the provider's OAuth client configuration** for example, **Authorized redirect URIs** in Google Cloud Console, or **Authorization callback URL** in a GitHub OAuth app.
+- **In the Flutter sign-in initializer**, via the `redirectUri` argument (e.g., `client.auth.initializeGoogleSignIn(..., redirectUri: ...)`).
+
+The URL is your Flutter web app's origin plus `/auth.html`. For example, `http://localhost:49660/auth.html` during local development or `https://yourdomain.com/auth.html` in production. The provider's setup page walks through the exact values for that provider.
+
 ### Present the authentication UI
 
 The `serverpod_auth_idp_flutter` package provides a `SignInWidget` that automatically detects enabled authentication providers and displays the appropriate sign-in options.

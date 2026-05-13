@@ -13,8 +13,8 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] In **Google Auth Platform**, complete the initial setup (wizard) and add the required scopes on **Data Access** (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
 - [ ] On **Branding** ([Branding](https://console.cloud.google.com/auth/branding)), complete the OAuth consent screen (logo, homepage, privacy policy, terms of service, and developer contact) and add the **root domain** (top private domain) under **Authorized domains**. Google stores only the root, so a single verified entry covers all of its subdomains. On Serverpod Cloud, add `serverpod.space` (already verified by Serverpod, no DNS setup needed). For custom domains, see [Verify your authorized domain](./setup#1-verify-your-authorized-domain).
 - [ ] Add **test users** on **Audience** while in **Testing** mode ([Audience](https://console.cloud.google.com/auth/audience)), or **Publish app** when everyone should be able to sign in.
-- [ ] Create a **Web application** OAuth client with **Authorized JavaScript origins** and **Authorized redirect URIs** set to your Serverpod **web server** (`http://localhost:8082` locally, not port `8080`). Copy the **Client ID** and **Client secret**.
-- [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and matching `redirect_uris`. For production, use the live web server URL in Google Cloud and in `production:` (or env vars) as in [Publishing to production](./setup#publishing-to-production).
+- [ ] Create a **Web application** OAuth client. For web sign-in, set **Authorized JavaScript origins** to your Flutter web app's origin (e.g., `http://localhost:49660`) and **Authorized redirect URIs** to the full URL of the `auth.html` callback page (e.g., `http://localhost:49660/auth.html`). Copy the **Client ID** and **Client secret**.
+- [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and matching `redirect_uris` (the same `auth.html` URL as above). For production, use the live `auth.html` URL in Google Cloud and in `production:` (or env vars) as in [Publishing to production](./setup#publishing-to-production).
 
 #### Server
 
@@ -25,26 +25,35 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Client
 
-- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`. On web, pass `clientId` and `redirectUri` (the full `auth.html` URL).
 - [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
 - [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app; set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
 - [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run; place `google-services.json` in `android/app/` (*Android only*).
-- [ ] Add the `google-signin-client_id` **meta tag** to `web/index.html` (*Web only*).
-- [ ] On **Web**, list **both** the Serverpod web server origin (e.g., `http://localhost:8082`) and your Flutter app origin under **Authorized JavaScript origins** on the Web OAuth client; use a **fixed** `--web-port` for Flutter so that second origin does not change every run (see [Web setup](./setup#web)).
+- [ ] Create `web/auth.html` in your Flutter project as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) (*Web only*). The same file is shared with other identity providers that use OAuth2 redirects.
+- [ ] Run Flutter on a **fixed** `--web-port` so the origin does not change every run (see [Web setup](./setup#web)). The port must match both the **Authorized JavaScript origins** entry on the OAuth client and the `redirectUri` passed to `initializeGoogleSignIn`.
 
 ## Sign-in fails with redirect_uri_mismatch
 
 **Problem:** The OAuth flow fails with a `redirect_uri_mismatch` error from Google.
 
-**Cause:** The redirect URI in your OAuth client configuration does not match the URI your app is actually using. Google requires an exact match.
+**Cause:** The redirect URI sent during sign-in does not exactly match one of the URIs registered on the Web OAuth client. Google requires an exact match (scheme, host, port, path, and casing).
 
-**Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match your server's address exactly. For local development, both should be `http://localhost:8082` (the Serverpod **web server** port, not the API server port 8080). Trailing slashes, port differences, and `http` vs `https` all count as mismatches.
+**Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match what your app actually uses:
+
+- **Authorized JavaScript origins** must contain your Flutter web app's origin (e.g., `http://localhost:49660` locally, `https://my-awesome-project.serverpod.space` in production).
+- **Authorized redirect URIs** must contain the full `auth.html` URL (e.g., `http://localhost:49660/auth.html` locally, `https://my-awesome-project.serverpod.space/app/auth.html` in production if you deploy with the standard template).
+
+The same `auth.html` URL must also appear:
+
+- In `config/passwords.yaml` under `googleClientSecret.web.redirect_uris`.
+- In `client.auth.initializeGoogleSignIn(..., redirectUri: ...)` in your Flutter app.
 
 Common mistakes:
 
-- Using port `8080` (the API server) instead of `8082` (the web server). Check `config/development.yaml` under `webServer` for the correct port.
-- Adding a trailing slash (e.g., `http://localhost:8082/` instead of `http://localhost:8082`).
-- For Web apps: not adding the Flutter web app's origin (e.g., `http://localhost:49660`) to **Authorized JavaScript origins**. This is separate from the Serverpod web server address. See the [Web setup section](./setup#web) for details.
+- Trailing slashes (`http://localhost:49660/auth.html/`), port differences, or `http` vs `https`.
+- Forgetting the `/auth.html` path on the redirect URI; the bare origin is not enough.
+- Forgetting the `/app/` segment in production when the Flutter web build is served under `/app/` by the standard Serverpod template.
+- Flutter web app running on a random port. Always pass `--web-port=<port>` to `flutter run` so the origin is stable.
 
 ## Production redirect URIs rejected by Google
 
@@ -62,19 +71,17 @@ Common mistakes:
 
 **Resolution:** Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
 
-## Flutter web sign-in fails with origin mismatch
+## Sign-in callback never returns to the Flutter app
 
-**Problem:** Google Sign-In on Flutter web fails with an origin mismatch error, even though you added `http://localhost:8082` to the OAuth client.
+**Problem:** The Google sign-in window completes successfully, but the Flutter app never receives the result. The browser sits on a blank page, or `signIn()` hangs.
 
-**Cause:** The Flutter web app runs on a different port than the Serverpod web server. The sign-in request originates from the Flutter app's port (e.g., `http://localhost:49660`), which also needs to be listed in **Authorized JavaScript origins**. Flutter also picks a random port by default, so the origin changes on every run.
+**Cause:** The browser was redirected to a URL that does not load the `auth.html` callback page, or the page is loaded but cannot post the result back to the Flutter app.
 
-**Resolution:** Run Flutter on a fixed port and add that origin to your OAuth client:
+**Resolution:**
 
-```bash
-flutter run -d chrome --web-hostname localhost --web-port=49660
-```
-
-Then add `http://localhost:49660` to **Authorized JavaScript origins** in the Google Auth Platform.
+1. Confirm `web/auth.html` exists in your Flutter project and contains the script described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml). If the file is missing, the redirect URL returns a 404 and the flow cannot complete.
+2. Confirm the `redirectUri` passed to `initializeGoogleSignIn` exactly matches the URL where `auth.html` is actually served. Open the URL directly in a browser tab; you should see the "Authentication complete" page.
+3. If you deploy through the standard Serverpod template, the Flutter web build is mounted under `/app/`, so the production URL is `https://your-domain.com/app/auth.html`, not `https://your-domain.com/auth.html`.
 
 ## Server fails to parse googleClientSecret from passwords.yaml
 
@@ -179,27 +186,35 @@ dart run bin/main.dart --apply-migrations
 2. Verify the URL scheme (`CFBundleURLSchemes`) contains the reversed client ID from the iOS plist (the `REVERSED_CLIENT_ID` value).
 3. Clean the build and run again.
 
-## Web sign-in button doesn't render
+## clientId is required when initializing Google Sign-In on web with a redirect URI
 
-**Problem:** The Google Sign-In button doesn't appear on Web, or the page shows a JavaScript error related to Google Identity Services.
+**Problem:** The Flutter app throws an `ArgumentError` at startup saying `clientId is required when initializing Google Sign-In on web with a redirect URI`.
 
-**Cause:** The `google-signin-client_id` meta tag is missing from `web/index.html`, or its value doesn't match the server's Web application client ID.
+**Cause:** You passed `redirectUri` to `initializeGoogleSignIn` on web but did not pass `clientId` and did not set the `GOOGLE_CLIENT_ID` `--dart-define`. In redirect mode the package needs the Web OAuth client ID explicitly; it cannot derive it from anywhere else on web.
 
-**Resolution:** Add or verify the meta tag in `web/index.html`:
+**Resolution:** Either pass `clientId` directly, or pass it via `--dart-define`:
 
-```html
-<head>
-  ...
-  <meta name="google-signin-client_id" content="your_server_client_id">
-</head>
+```dart
+client.auth.initializeGoogleSignIn(
+  clientId: kIsWeb
+      ? 'your-web-client-id.apps.googleusercontent.com'
+      : null,
+  redirectUri: kIsWeb
+      ? 'http://localhost:49660/auth.html'
+      : null,
+);
 ```
 
-Replace `your_server_client_id` with the `client_id` from your Web application OAuth client JSON file.
+Or:
+
+```bash
+flutter run --dart-define=GOOGLE_CLIENT_ID=your-web-client-id.apps.googleusercontent.com ...
+```
 
 ## Google API calls fail after one hour on Web
 
 **Problem:** Your app calls Google APIs (e.g., Calendar, Drive) using the access token from sign-in, but requests start returning `401 Unauthorized` after about an hour. This only affects the Web platform.
 
-**Cause:** On Web, the `accessToken` returned by the `google_sign_in` package expires after 3,600 seconds (one hour) and is not automatically refreshed.
+**Cause:** On Web, the `accessToken` returned by the underlying sign-in library expires after 3,600 seconds (one hour) and is not automatically refreshed.
 
-**Resolution:** When making Google API calls on Web, check the token age and prompt the user to re-authenticate if the token has expired. On mobile platforms, the token is refreshed automatically and this is not an issue. See the [google_sign_in_web documentation](https://pub.dev/packages/google_sign_in_web) for details on token lifecycle.
+**Resolution:** When making Google API calls on Web, check the token age and prompt the user to re-authenticate if the token has expired. On mobile platforms, the token is refreshed automatically and this is not an issue.
