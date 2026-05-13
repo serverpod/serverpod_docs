@@ -271,17 +271,28 @@ On web, Google signs the user in through an OAuth2 redirect: the browser is sent
    On the standard Serverpod project template, the Flutter web build is copied into the Serverpod web server's `web/app/` folder when you run the `flutter_build` script. If you deploy that way, the production callback lives at `https://your-domain.com/app/auth.html`, not at the domain root. Register that exact URL in **Authorized redirect URIs**.
    :::
 
+4. **Pass the web client ID and redirect URI to `initializeGoogleSignIn`.** When you initialize Google sign-in in your Flutter app's `main.dart` (covered under [Initialize the Google sign-in service](#initialize-the-google-sign-in-service) below), pass these two arguments so sign-in uses the redirect flow:
+
+   ```dart
+   client.auth.initializeGoogleSignIn(
+     clientId: 'your-web-client-id.apps.googleusercontent.com',
+     redirectUri: 'http://localhost:49660/auth.html',
+   );
+   ```
+
+   Use the same `clientId` and `auth.html` URL you registered above. iOS and Android do not need these arguments because they read their client IDs from `Info.plist` and `google-services.json`.
+
+   :::tip
+   To keep these values out of `main.dart` and vary them per build, read them from `--dart-define`. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
+   :::
+
 ## Present the authentication UI
 
 ### Initialize the Google sign-in service
 
-Open your Flutter app's `main.dart` (e.g., `my_project_flutter/lib/main.dart`). The Serverpod template already creates the `Client` and calls `client.auth.initialize()` inside `main()`. Add `client.auth.initializeGoogleSignIn()` on the line immediately after it.
-
-If your app targets web, pass the `clientId` (your Web application OAuth client) and the `redirectUri` (the full URL of the `auth.html` callback page you created). Guard them with `kIsWeb` so iOS and Android continue to use their platform-specific clients:
+Open your Flutter app's `main.dart` (e.g., `my_project_flutter/lib/main.dart`). The Serverpod template already creates the `Client` and calls `client.auth.initialize()` inside `main()`. Add `client.auth.initializeGoogleSignIn()` on the line immediately after it:
 
 ```dart
-import 'package:flutter/foundation.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -292,24 +303,15 @@ void main() async {
     ..authSessionManager = FlutterAuthSessionManager();
 
   client.auth.initialize();
-  client.auth.initializeGoogleSignIn(
-    clientId: kIsWeb
-        ? 'your-web-client-id.apps.googleusercontent.com'
-        : null,
-    redirectUri: kIsWeb
-        ? 'http://localhost:49660/auth.html'
-        : null,
-  );
+  client.auth.initializeGoogleSignIn(); // add this line
 
   runApp(const MyApp());
 }
 ```
 
-`initializeGoogleSignIn()` registers a sign-out hook so signing out of Serverpod also signs the user out of their Google session, and (on iOS/Android) initializes the underlying `google_sign_in` SDK with the client IDs you configured in `Info.plist` / `google-services.json`. On web, passing `redirectUri` switches sign-in into OAuth2 redirect mode and routes the callback through `auth.html`. `SignInWidget` can lazily initialize Google on first use, but calling this at startup wires the sign-out hook early and avoids a delay on the first tap.
+`initializeGoogleSignIn()` registers a sign-out hook so signing out of Serverpod also signs the user out of their Google session, and initializes the underlying sign-in SDK with the client IDs you configured (`Info.plist` on iOS, `google-services.json` on Android). `SignInWidget` can lazily initialize Google on first use, but calling this at startup wires the sign-out hook early and avoids a delay on the first tap.
 
-:::tip
-To keep these values out of `main.dart` and vary them per build, read them from `--dart-define`. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
-:::
+If you target **web**, pass the `clientId` and `redirectUri` arguments described in step 4 of the [Web](#web) section above.
 
 ### Show the Google sign-in button
 
