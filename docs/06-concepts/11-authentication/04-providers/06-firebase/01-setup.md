@@ -16,7 +16,7 @@ Before you start, make sure you have:
 
 1. Go to the [Firebase Console](https://console.firebase.google.com/) and click **Create a project** (or **Add project** if you already have projects).
 
-2. Enter a project name, accept the terms, and click **Continue**.
+2. Enter a project name, accept the terms, select a parent resource if needed, and click **Continue**.
 
    ![Enter project name](/img/authentication/providers/firebase/2-project-name.png)
 
