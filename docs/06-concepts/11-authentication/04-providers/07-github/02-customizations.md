@@ -1,19 +1,47 @@
 # Customizations
 
-This page covers configuration options for the GitHub identity provider beyond the basic setup.
+This page covers additional configuration options for the GitHub identity provider beyond the basic setup.
 
 ## Configuration options
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GitHubIdpConfig` in-code documentation.
 
-### Custom account validation
+The GitHub identity provider can be configured using one of two classes:
 
-You can customize the validation for GitHub account details before allowing sign-in. By default, the validation checks that the received account details contain a non-empty userIdentifier.
+- **`GitHubIdpConfigFromPasswords`**: Automatically loads the client ID and secret from the `githubClientId` and `githubClientSecret` keys in `passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables). This is the class used in the [setup guide](./setup) and is recommended for most projects.
+- **`GitHubIdpConfig`**: Requires you to pass the client ID and secret directly. Use this when you load credentials from a custom source, such as a secrets manager or a programmatically constructed config.
+
+`GitHubIdpConfigFromPasswords` is a convenience wrapper around `GitHubIdpConfig` that handles credential loading for you.
+
+Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GitHubIdpConfigFromPasswords` unless the section specifically demonstrates manual credential loading.
+
+### Load credentials using GitHubIdpConfig
+
+When using `GitHubIdpConfig`, you must provide the client ID and secret explicitly. Read them from any source you want:
 
 ```dart
 final githubIdpConfig = GitHubIdpConfig(
-  // Optional: Custom validation for GitHub account details
-  githubAccountDetailsValidation: (GitHubAccountDetails accountDetails) {
+  clientId: pod.getPassword('githubClientId')!,
+  clientSecret: pod.getPassword('githubClientSecret')!,
+);
+```
+
+Or from a secrets manager, hard-coded values for tests, or a custom loader:
+
+```dart
+final githubIdpConfig = GitHubIdpConfig(
+  clientId: await mySecretsManager.fetch('github-client-id'),
+  clientSecret: await mySecretsManager.fetch('github-client-secret'),
+);
+```
+
+### Custom account validation
+
+You can customize the validation for GitHub account details before allowing sign-in. By default, the validation only checks that the received account details contain a non-empty `userIdentifier`.
+
+```dart
+final githubIdpConfig = GitHubIdpConfigFromPasswords(
+  githubAccountDetailsValidation: (accountDetails) {
     // Throw an exception if account doesn't meet custom requirements
     if (accountDetails.userIdentifier.isEmpty) {
       throw GitHubUserInfoMissingDataException();
@@ -23,17 +51,17 @@ final githubIdpConfig = GitHubIdpConfig(
 ```
 
 :::note
-GitHub users can keep their email private, so email may be null even for valid accounts. To avoid blocking real users with private profiles from signing in, adjust your validation function with care.
+GitHub users can keep their email private, so `email` may be `null` even for valid accounts. Similarly, `name` is optional on GitHub profiles. To avoid blocking real users with private profiles from signing in, adjust your validation function with care.
 :::
 
-### GitHubAccountDetails
+#### GitHubAccountDetails
 
 The `githubAccountDetailsValidation` callback receives a `GitHubAccountDetails` record with the following properties:
 
 | Property | Type | Description |
-| ---------- | ------ | ------------- |
+| --- | --- | --- |
 | `userIdentifier` | `String` | The GitHub user's unique identifier (UID) |
-| `email` | `String?` | The user's email address (may be null if private) |
+| `email` | `String?` | The user's email address (may be `null` if private) |
 | `name` | `String?` | The user's display name from GitHub |
 | `image` | `Uri?` | URL to the user's profile image |
 
@@ -53,15 +81,45 @@ githubAccountDetailsValidation: (accountDetails) {
 },
 ```
 
-:::info
-The properties available depend on user privacy settings and granted permissions.
+### Accessing GitHub APIs on the server
+
+On the server side, you can call GitHub's REST API using the access token returned by sign-in. The `getExtraGitHubInfoCallback` on `GitHubIdpConfig` receives the access token on every authentication attempt and can be used to fetch and store additional user data:
+
+```dart
+import 'package:http/http.dart' as http;
+
+final githubIdpConfig = GitHubIdpConfigFromPasswords(
+  getExtraGitHubInfoCallback: (session, {
+    required accountDetails,
+    required accessToken,
+    required transaction,
+  }) async {
+    final response = await http.get(
+      Uri.https('api.github.com', '/user/orgs'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Accept': 'application/vnd.github+json',
+      },
+    );
+    // Parse response and store organization membership in your own table,
+    // linked by accountDetails.userIdentifier.
+  },
+);
+```
+
+:::warning
+**Do not create `GitHubAccount`, `UserProfile`, or `AuthUser` models inside this callback.** The authentication flow already creates them. Creating them here breaks new-account detection and skips critical setup steps. Store any extra data in your own custom tables, linked by `accountDetails.userIdentifier`.
 :::
 
-### Reacting to account creation
+:::info
+This callback runs on **every** sign-in, not just the first. Keep operations lightweight or guard expensive work behind a check for whether the data already exists.
+:::
 
-You can use the `onAfterGitHubAccountCreated` callback to run logic after a new GitHub account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
+### Reacting to GitHub account creation
 
-This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+Use the `onAfterGitHubAccountCreated` callback to run logic after a new GitHub account has been created and linked to an auth user. This callback only fires for new accounts, not returning users.
+
+This callback is complementary to the global [`onAfterAuthUserCreated`](#reacting-to-auth-user-creation) hook and is for side-effects specific to a GitHub sign-in, like storing GitHub-specific analytics or sending a GitHub-themed welcome email.
 
 ```dart
 final githubIdpConfig = GitHubIdpConfigFromPasswords(
@@ -77,49 +135,98 @@ final githubIdpConfig = GitHubIdpConfigFromPasswords(
 ```
 
 :::info
-This callback runs inside the same database transaction as the account creation. Throwing an exception inside this callback will abort the process. If you perform external side-effects, make sure to safeguard them with a try/catch to prevent unwanted failures.
+This callback runs inside the same database transaction as the account creation. Throwing an exception inside this callback aborts the process. If you perform external side-effects, guard them with `try`/`catch` to prevent unwanted failures.
 :::
 
 :::caution
-If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraGitHubInfoCallback` to fetch and store the data you need before the auth user is created.
+If you need to assign Serverpod scopes based on provider account data, updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. Token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well. For scope assignment at creation time, use [`onBeforeAuthUserCreated`](#reacting-to-auth-user-creation) in combination with `getExtraGitHubInfoCallback` to fetch and store the data you need before the auth user is created.
 :::
 
-### Configuring client IDs on the app
+### Reacting to auth user creation
 
-#### Passing Client IDs in Code
+The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to GitHub; they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
 
-You can pass the `clientId` and `redirectUri` directly during initialization the GitHub Sign-In service:
+`onBeforeAuthUserCreated` receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
 
 ```dart
-await client.auth.initializeGitHubSignIn(
-  clientId: 'YOUR_GITHUB_CLIENT_ID',
-  redirectUri: 'test-app://github/auth',
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    GitHubIdpConfigFromPasswords(),
+  ],
+  authUsersConfig: AuthUsersConfig(
+    onBeforeAuthUserCreated: (
+      session,
+      scopes,
+      blocked, {
+      required transaction,
+    }) {
+      return (
+        scopes: {...scopes, Scope('user')},
+        blocked: blocked,
+      );
+    },
+    onAfterAuthUserCreated: (
+      session,
+      authUser, {
+      required transaction,
+    }) async {
+      // e.g. send a welcome email, log for analytics
+    },
+  ),
 );
 ```
 
-This approach is useful when you need different client IDs per platform and want to manage them in your Dart code.
+### Configuring client IDs on the app
 
-#### Using Environment Variables
+#### Passing client IDs in code
 
-Alternatively, you can pass client IDs during build time using the `--dart-define` option. The GitHub Sign-In provider supports the following environment variables:
+You can pass the `clientId` and `redirectUri` directly when initializing the GitHub Sign-In service:
+
+```dart
+await client.auth.initializeGitHubSignIn(
+  clientId: 'your-github-client-id',
+  redirectUri: Uri.parse('com.example.yourapp://auth'),
+);
+```
+
+This approach is useful when you need different `redirectUri` values per platform and want to keep them in your Dart code.
+
+#### Using environment variables
+
+Alternatively, pass them at build time using `--dart-define`. The GitHub Sign-In provider supports the following environment variables:
 
 - `GITHUB_CLIENT_ID`: Your GitHub OAuth client ID.
 - `GITHUB_REDIRECT_URI`: The callback URI.
+
+If `clientId` and `redirectUri` are not supplied when initializing the service, the provider automatically falls back to these environment variables.
 
 **Example usage:**
 
 ```bash
 flutter run -d <device> \
-  --dart-define="GITHUB_CLIENT_ID=your_id" \
-  --dart-define="GITHUB_REDIRECT_URI=test-app://github/auth"
+  --dart-define="GITHUB_CLIENT_ID=your-github-client-id" \
+  --dart-define="GITHUB_REDIRECT_URI=com.example.yourapp://auth"
 ```
 
 This approach is useful when you need to:
 
-- Manage separate client IDs for different platforms (Android, iOS, Web) in a centralized way
-- Avoid committing client IDs to version control
-- Configure different credentials for different build environments (development, staging, production)
+- Configure different credentials for different build environments (development, staging, production).
+- Avoid committing client IDs to version control.
+- Inject platform-specific redirect URIs from your CI/CD pipeline.
 
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
+
+## GitHubIdpConfig parameter reference
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `clientId` | `String` | Yes | The Client ID from your GitHub App or OAuth App. |
+| `clientSecret` | `String` | Yes | The Client Secret generated for your GitHub App or OAuth App. |
+| `githubAccountDetailsValidation` | `GitHubAccountDetailsValidation` | No | Custom validation callback for GitHub account details before allowing sign-in. Throws an exception to reject the account. Defaults to validating only that `userIdentifier` is non-empty. |
+| `getExtraGitHubInfoCallback` | `GetExtraGitHubInfoCallback?` | No | Callback that receives the access token after sign-in, allowing you to call additional GitHub APIs and store extra user data. Runs on every sign-in. |
+| `onAfterGitHubAccountCreated` | `AfterGitHubAccountCreatedFunction?` | No | Callback invoked after a new GitHub account is created and linked to an auth user. Fires only for new accounts. |

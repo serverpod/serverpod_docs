@@ -8,10 +8,11 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### GitHub Developer Settings
 
-- [ ] Created a **GitHub App** (preferred) or **OAuth App** at [Developer Settings](https://github.com/settings/apps).
-- [ ] Registered every redirect URI you actually use under **Callback URL**: custom schemes for mobile (e.g., `myapp://auth`), full HTTPS URL for web (e.g., `http://localhost:49660/auth.html` locally, your production `auth.html` URL in prod). GitHub Apps accept up to 10 entries; OAuth Apps accept only one.
+- [ ] Created a **GitHub App** at [Developer Settings](https://github.com/settings/apps) (or an **OAuth App** if you specifically need one; OAuth Apps allow only a single Callback URL).
+- [ ] Registered every redirect URI you actually use under **Callback URL**: reverse-DNS custom schemes for mobile (e.g., `com.example.yourapp://auth`), full HTTPS URL for web (e.g., `http://localhost:49660/auth.html` locally, your production `auth.html` URL in prod). GitHub Apps accept up to 10 entries; OAuth Apps accept only one.
 - [ ] Set **Account permissions > Email addresses** to **Read-only** if you need the user's email.
 - [ ] Disabled **Active** under the Webhook section, unless you actually use webhooks for non-auth reasons.
+- [ ] Set **Where can this GitHub App be installed?** to **Any account** if users outside your account need to sign in.
 - [ ] Generated a **Client secret** and stored it (GitHub only shows it once).
 
 #### Server
@@ -26,7 +27,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Added `client.auth.initializeGitHubSignIn(clientId: ..., redirectUri: ...)` after `client.auth.initialize()` in your Flutter app's `main.dart`.
 - [ ] Both `clientId` and `redirectUri` match values registered on the GitHub App.
 - [ ] On **Android**, added the `flutter_web_auth_2` `CallbackActivity` to `AndroidManifest.xml` with the **exact** scheme used in your callback URL.
-- [ ] On **Web**, created `web/auth.html` as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml).
+- [ ] On **Web**, created `web/auth.html` in your Flutter project (see [Web](./setup#web) in the setup guide).
 - [ ] On **Web**, ran Flutter on a fixed `--web-port` matching the port registered in the GitHub App's callback URL.
 
 ## Sign-in fails with redirect_uri_mismatch
@@ -52,7 +53,7 @@ Common mistakes:
 
 **Resolution:**
 
-- **Web**: Confirm `web/auth.html` exists in your Flutter project and contains the script described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml). Open the redirect URL directly in a browser tab; you should see the "Authentication complete" page.
+- **Web**: Confirm `web/auth.html` exists in your Flutter project and contains the script shown in [Web](./setup#web) in the setup guide. Open the redirect URL directly in a browser tab; you should see the "Authentication complete" page.
 - **Android**: Verify the `<data android:scheme="..."/>` value in `AndroidManifest.xml` matches the scheme in your callback URL exactly.
 - **iOS / macOS**: Universal Links require HTTPS callback URLs and associated-domain entitlements. Standard custom-scheme callbacks work without extra configuration.
 
@@ -103,6 +104,54 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 1. Open your GitHub App's settings and confirm the production callback URL is listed under **Callback URL** alongside the development one. Both should remain registered so dev and prod work simultaneously.
 2. Confirm your production Flutter build is initialized with the production `redirectUri`. The simplest way is to read it from `--dart-define` and pass the production value in your CI/CD or `flutter_build` step. See [Publishing to production](./setup#publishing-to-production).
+
+## Sign-in works for you but not for other users
+
+**Problem:** Sign-in works for your own GitHub account but other users get an error from GitHub when they try to authorize the app.
+
+**Cause:** Your GitHub App's **Where can this GitHub App be installed?** is set to **Only on this account**. Users outside your account cannot install or authorize the app.
+
+**Resolution:** Open your GitHub App's settings and change **Where can this GitHub App be installed?** to **Any account**. The change takes effect immediately.
+
+## Organization blocks the OAuth authorization
+
+**Problem:** A user tries to sign in but sees a GitHub message about the organization restricting access to third-party applications, or the sign-in flow returns with no authorization.
+
+**Cause:** The user's GitHub organization has **OAuth App access restrictions** enabled, and your app has not been approved for that organization. This is independent of your app's own settings; the org controls it.
+
+**Resolution:** The user (or an organization owner) needs to request approval for your GitHub App in the organization's **Settings > Third-party Access** page on GitHub. There is nothing you can do server-side to bypass this. Surface a clear error message to the user explaining the org policy.
+
+## Sign-in fails with bad_verification_code
+
+**Problem:** GitHub returns `bad_verification_code` when your server exchanges the authorization code for a token.
+
+**Cause:** The authorization code is single-use and short-lived (10 minutes). This error usually means the same code was sent twice (e.g., page refresh during the callback) or the code expired before the server received it.
+
+**Resolution:**
+
+- Make sure the OAuth callback fires only once. Refreshing the `auth.html` page or navigating back to it after authorization re-sends the now-spent code.
+- If the user genuinely took too long to complete sign-in, the code expired. Have them start the flow again from your sign-in button.
+- This is a transient error if it only happens occasionally. Investigate the client only if it reproduces consistently.
+
+## GitHub API calls from getExtraGitHubInfoCallback fail or rate-limit
+
+**Problem:** Calls made inside `getExtraGitHubInfoCallback` start returning `401`, `403`, or `X-RateLimit-Remaining: 0`.
+
+**Cause:** Either the access token has been revoked (the user revoked the app's authorization, or **Expire user authorization tokens** caused it to expire), or you are exceeding GitHub's per-user rate limit (5,000 authenticated requests per hour by default).
+
+**Resolution:**
+
+- Cache the data you fetch instead of calling the API on every sign-in. `getExtraGitHubInfoCallback` runs on **every** authentication attempt; if you fetch the same data every time, you will burn through rate limits quickly.
+- For long-lived background work, store the access token (encrypted) and refresh it on demand rather than re-running expensive fetches on every sign-in.
+- If a single user triggers many sign-ins (e.g., dev iteration), expect to hit the per-user limit; wait an hour or test with a different account.
+
+## Permission changes on the GitHub App do not take effect
+
+**Problem:** You changed permissions on your GitHub App (for example, added **Email addresses** read access), but existing users still see the old behavior or get errors about missing scopes.
+
+**Cause:** GitHub does not silently re-grant new permissions to users who authorized the app before the change. Each user must re-authorize the app for the new permissions to apply.
+
+**Resolution:** Have affected users sign out and sign in again. GitHub will prompt them to approve the updated permissions. For users who never signed in before the change, the new permissions apply immediately.
 
 ## Server fails to parse githubClientSecret from passwords.yaml
 

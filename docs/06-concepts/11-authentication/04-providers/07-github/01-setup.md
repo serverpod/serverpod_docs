@@ -1,6 +1,6 @@
 # Setup
 
-Sign in with GitHub uses OAuth2 credentials from a **GitHub App** (recommended) or an **OAuth App** registered on GitHub.
+Sign in with GitHub uses OAuth2 credentials from a **GitHub App** registered on GitHub.
 
 ## Prerequisites
 
@@ -10,14 +10,9 @@ Before following this guide, make sure you have:
 - A running Serverpod project (server, client, and Flutter app packages from `serverpod create`).
 - The Serverpod auth module installed and configured per the [authentication setup](../../setup). If your project was generated with an older Serverpod version, follow that guide first to add `serverpod_auth_idp_server` and `serverpod_auth_idp_flutter` and to configure `pod.initializeAuthServices()` before continuing.
 
-## Choose between GitHub App and OAuth App
-
-GitHub offers two credential types for OAuth2 sign-in.
-
-- **GitHub App** acts with its own identity, can be installed on multiple accounts, supports short-lived tokens, and can hold up to 10 callback URLs. Recommended for almost all sign-in use cases, especially mobile and modern web flows.
-- **OAuth App** acts strictly on behalf of the signed-in user and is limited to a **single** callback URL. Use this only if you have a specific reason to act as the user across arbitrary OAuth scopes.
-
-The rest of this guide assumes you are creating a GitHub App. The OAuth App flow is the same except for the single-callback-URL constraint. See GitHub's [Differences between GitHub Apps and OAuth Apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps) for the full comparison.
+:::note
+If you specifically need an **OAuth App** instead of a GitHub App, the setup flow below is the same except OAuth Apps allow only a single Callback URL (GitHub Apps allow up to 10). See GitHub's [Differences between GitHub Apps and OAuth Apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps).
+:::
 
 ## Get your GitHub credentials
 
@@ -31,7 +26,7 @@ The rest of this guide assumes you are creating a GitHub App. The OAuth App flow
    - **Homepage URL** (required).
    - **Description** (optional, shown to users during install).
 
-   ![GitHub App basics](/img/authentication/providers/github/1-app-basics.png)
+![GitHub App basics](/img/authentication/providers/github/1-app-basics.png)
 
 ### Configure the callback URL
 
@@ -59,15 +54,11 @@ The callback URL is where GitHub redirects the user after they authorize your ap
 
 ### Disable webhooks
 
-The Webhook section is enabled by default but is unnecessary for sign-in. Webhooks are for receiving GitHub events (pushes, pull requests, etc.) and add complexity if you do not need them.
+Webhooks let your GitHub App receive events like pushes, pull requests, and issue activity. They are unrelated to sign-in and add complexity if you do not need them, so turn the section off for now. You can re-enable webhooks later without affecting the auth flow.
 
-1. Uncheck **Active** under **Webhook** to turn the whole section off.
+Under **Webhook**, uncheck **Active** to disable the whole section.
 
-   ![Disable webhook](/img/authentication/providers/github/3-webhook-disable.png)
-
-:::tip
-If you later need webhooks for non-auth use cases, re-enable them on the same GitHub App. Disabling here is only about the auth setup.
-:::
+![Disable webhook](/img/authentication/providers/github/3-webhook-disable.png)
 
 ### Set permissions
 
@@ -78,10 +69,6 @@ GitHub Apps use fine-grained **permissions** instead of OAuth **scopes**. For si
 2. Leave all other permissions at **No access** unless your app needs them for non-auth reasons.
 
    ![Account permissions](/img/authentication/providers/github/4-permissions.png)
-
-:::note
-The `scopes` argument shown on [GitHubSignInWidget](./customizing-the-ui) and `GitHubAuthController` applies to **OAuth Apps**. For a **GitHub App**, the App's Permissions configured here are what control access; the `scopes` argument is ignored. Set the permissions you actually need here.
-:::
 
 :::note
 GitHub users can keep their email private. Even with the **Email addresses** permission, the `email` field on the account may be `null`. See [Custom account validation](./customizations#custom-account-validation) for how to handle this without blocking sign-in.
@@ -175,7 +162,7 @@ serverpod create-migration
 dart run bin/main.dart --apply-migrations
 ```
 
-:::note
+:::warning
 Skipping the migration will cause the server to crash at runtime when the GitHub provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 :::
 
@@ -219,9 +206,36 @@ The scheme in `AndroidManifest.xml` must exactly match the scheme in your GitHub
 
 ### Web
 
-On web, GitHub sign-in completes by redirecting the browser to a callback page that hands the result back to your Flutter app. That page is `web/auth.html`, and it is shared across every identity provider that uses an OAuth2 redirect.
+On web, GitHub sign-in completes by redirecting the browser to a callback page that hands the result back to your Flutter app. That page is `web/auth.html`, and a single copy is shared across every identity provider that uses an OAuth2 redirect.
 
-1. Create the callback page if you have not already. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
+1. Create a file named `auth.html` in your Flutter project's `web/` folder with this content:
+
+   ```html
+   <!DOCTYPE html>
+   <title>Authentication complete</title>
+   <p>Authentication is complete. If this does not happen automatically, please close the window.</p>
+   <script>
+     function postAuthenticationMessage() {
+       const message = {
+         'flutter-web-auth-2': window.location.href
+       };
+
+       if (window.opener) {
+         window.opener.postMessage(message, window.location.origin);
+         window.close();
+       } else if (window.parent && window.parent !== window) {
+         window.parent.postMessage(message, window.location.origin);
+       } else {
+         localStorage.setItem('flutter-web-auth-2', window.location.href);
+         window.close();
+       }
+     }
+
+     postAuthenticationMessage();
+   </script>
+   ```
+
+   The page catches the OAuth redirect, reads the result, and hands it back to your Flutter app via `postMessage` or `localStorage`. If you already created this file for another identity provider (Google, etc.), reuse it as-is; you only need one.
 
 2. Register the full `auth.html` URL (for example, `http://localhost:49660/auth.html` for local development) as a **Callback URL** on your GitHub App. GitHub Apps accept up to 10 entries, so you can keep mobile schemes registered alongside the web URL.
 
@@ -300,10 +314,10 @@ Alternatively, set the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWO
 
 #### Serverpod Cloud
 
-Save each value to a file and use `scloud password set` with `--from-file`. Reading from a file avoids leaking secrets through your shell history:
+Use `scloud password set` to upload each value. The Client ID is public, so pass it as a positional argument. The Client Secret is sensitive, so read it from a file with `--from-file` to keep it out of your shell history:
 
 ```bash
-scloud password set githubClientId --from-file path/to/github-client-id.txt
+scloud password set githubClientId your-github-client-id
 scloud password set githubClientSecret --from-file path/to/github-client-secret.txt
 ```
 
