@@ -520,7 +520,8 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   --sidebar-icon-color: currentColor;
 }
 
-.theme-doc-sidebar-menu .sidebar-icon-learn > div.menu__list-item-collapsible > a.menu__link--sublist {
+.theme-doc-sidebar-menu .sidebar-icon-learn > div.menu__list-item-collapsible > a.menu__link--sublist,
+.theme-doc-sidebar-menu .sidebar-icon-academy .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-graduation-cap.svg');
   --sidebar-icon-color: currentColor;
 }
