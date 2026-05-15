@@ -1,4 +1,4 @@
-# Configuration
+# Customizations
 
 This page covers configuration options for the GitHub identity provider beyond the basic setup.
 
@@ -6,7 +6,7 @@ This page covers configuration options for the GitHub identity provider beyond t
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GitHubIdpConfig` in-code documentation.
 
-### Custom Account Validation
+### Custom account validation
 
 You can customize the validation for GitHub account details before allowing sign-in. By default, the validation checks that the received account details contain a non-empty userIdentifier.
 
@@ -84,7 +84,7 @@ This callback runs inside the same database transaction as the account creation.
 If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraGitHubInfoCallback` to fetch and store the data you need before the auth user is created.
 :::
 
-### Configuring Client IDs on the App
+### Configuring client IDs on the app
 
 #### Passing Client IDs in Code
 

@@ -1,114 +1,163 @@
 # Setup
 
-To set up **Sign in with GitHub**, you must create OAuth2 credentials on [GitHub](https://github.com/settings/apps) and configure your Serverpod application accordingly.
+Sign in with GitHub uses OAuth2 credentials from a **GitHub App** (recommended) or an **OAuth App** registered on GitHub.
 
-:::caution
-You need to install the auth module before you continue, see [Setup](../../setup).
-:::
+## Prerequisites
 
-## Choosing Your GitHub App Type
+Before following this guide, make sure you have:
 
-GitHub offers two ways to obtain OAuth2 credentials:
+- A GitHub account with access to [Developer Settings](https://github.com/settings/apps).
+- A running Serverpod project (server, client, and Flutter app packages from `serverpod create`).
+- The Serverpod auth module installed and configured per the [authentication setup](../../setup). If your project was generated with an older Serverpod version, follow that guide first to add `serverpod_auth_idp_server` and `serverpod_auth_idp_flutter` and to configure `pod.initializeAuthServices()` before continuing.
 
-- **GitHub Apps**: more suitable when building integrations or bots that belong to an organization or repository, operate with their own identity, continue functioning regardless of which users come and go, and only access the repositories and permissions explicitly granted. They provide fine‑grained control, short‑lived tokens, and are the modern, secure choice for most automation and service scenarios.
-- **OAuth Apps**: preferred when the primary need is authenticating users with "Sign in with GitHub" or performing actions strictly as the currently logged‑in user under broad OAuth scopes. Similar to other OAuth providers like Google or Apple, they allow access to a user’s GitHub resources within the scopes granted, but lack the flexibility and security of GitHub Apps.
+## Choose between GitHub App and OAuth App
+
+GitHub offers two credential types for OAuth2 sign-in.
+
+- **GitHub App** acts with its own identity, can be installed on multiple accounts, supports short-lived tokens, and can hold up to 10 callback URLs. Recommended for almost all sign-in use cases, especially mobile and modern web flows.
+- **OAuth App** acts strictly on behalf of the signed-in user and is limited to a **single** callback URL. Use this only if you have a specific reason to act as the user across arbitrary OAuth scopes.
+
+The rest of this guide assumes you are creating a GitHub App. The OAuth App flow is the same except for the single-callback-URL constraint. See GitHub's [Differences between GitHub Apps and OAuth Apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps) for the full comparison.
+
+## Get your GitHub credentials
+
+### Register a new GitHub App
+
+1. Go to [Register new GitHub App](https://github.com/settings/apps/new).
+
+2. Fill in the basics:
+
+   - **GitHub App name** (required, up to 34 characters, unique across GitHub).
+   - **Homepage URL** (required).
+   - **Description** (optional, shown to users during install).
+
+   ![GitHub App basics](/img/authentication/providers/github/1-app-basics.png)
+
+### Configure the callback URL
+
+The callback URL is where GitHub redirects the user after they authorize your app. For Serverpod sign-in, this must match the redirect URI you pass to `initializeGitHubSignIn` in your Flutter app, and the registered URL in the web callback page setup.
+
+1. In the **Callback URL** field, enter the redirect URI for your app. GitHub Apps accept up to 10 entries:
+
+   | Platform | Example value |
+   | --- | --- |
+   | iOS and Android | `com.example.yourapp://auth` (custom scheme registered in `AndroidManifest.xml` and `Info.plist`) |
+   | Web (local development) | `http://localhost:49660/auth.html` |
+   | Web (production) | `https://my-awesome-project.serverpod.space/app/auth.html` |
+
+   You can add multiple entries here if you target several platforms, one per line.
+
+   :::tip
+   For the mobile scheme, use a value unique to your app (reverse-DNS of your bundle ID is a good convention, for example `com.example.yourapp://auth`). Generic schemes like `myapp://auth` work but can collide with other apps installed on the device.
+   :::
+
+   ![Callback URL field](/img/authentication/providers/github/2-callback-url.png)
+
+2. Leave **Expire user authorization tokens** enabled (GitHub's default). Token expiration is recommended for sign-in flows so leaked tokens have a short useful lifetime. Serverpod handles the refresh flow automatically; you do not need to write any refresh logic.
+
+3. Leave **Request user authorization (OAuth) during installation** unchecked unless you need the installation to immediately trigger an OAuth sign-in.
+
+### Disable webhooks
+
+The Webhook section is enabled by default but is unnecessary for sign-in. Webhooks are for receiving GitHub events (pushes, pull requests, etc.) and add complexity if you do not need them.
+
+1. Uncheck **Active** under **Webhook** to turn the whole section off.
+
+   ![Disable webhook](/img/authentication/providers/github/3-webhook-disable.png)
 
 :::tip
-[GitHub Apps](https://github.com/settings/apps) are the preferred choice for most scenarios — especially mobile and modern integrations.
-See the official comparison here: [Differences between GitHub Apps and OAuth Apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps).
+If you later need webhooks for non-auth use cases, re-enable them on the same GitHub App. Disabling here is only about the auth setup.
 :::
 
-## Create your credentials
+### Set permissions
 
-1. Go to [GitHub Developer Settings](https://github.com/settings/apps).
-2. Click **New GitHub App** (recommended) or **New OAuth App**.
+GitHub Apps use fine-grained **permissions** instead of OAuth **scopes**. For sign-in you only need access to the user's profile.
 
-   ![GitHub App Setup](/img/authentication/providers/github/1-register-app.png)
+1. Under **Account permissions**, set **Email addresses** to **Read-only**. This lets your app read the user's primary verified email.
 
-3. Fill in the required fields:
-   - **App name**
-   - **Homepage URL**
-   - **Callback URL(s)** (use your app's redirect URI, e.g., `myapp://auth` for mobile)
-   - **Permissions** (at minimum: account permission = profile; add others as needed)
-   - **Webhook URL** (disable if not required; serves to receive events like commits, pull requests, and repo changes)
+2. Leave all other permissions at **No access** unless your app needs them for non-auth reasons.
 
-   ![GitHub App Setup](/img/authentication/providers/github/2-add-permission.png)
+   ![Account permissions](/img/authentication/providers/github/4-permissions.png)
 
-   ![GitHub App Setup](/img/authentication/providers/github/3-add-permission.png)
-
-:::tip
-Webhooks let your GitHub App automatically receive notifications about repository activity.
-If your app doesn’t need to react to events (like commits or pull requests), it’s best to disable the webhook URL to reduce unnecessary traffic and complexity.
+:::note
+The `scopes` argument shown on [GitHubSignInWidget](./customizing-the-ui) and `GitHubAuthController` applies to **OAuth Apps**. For a **GitHub App**, the App's Permissions configured here are what control access; the `scopes` argument is ignored. Set the permissions you actually need here.
 :::
 
-4. Click **Create GitHub App** (for GitHub Apps) or **Register application** (for OAuth Apps). This will save your app and generate the **Client ID**.
+:::note
+GitHub users can keep their email private. Even with the **Email addresses** permission, the `email` field on the account may be `null`. See [Custom account validation](./customizations#custom-account-validation) for how to handle this without blocking sign-in.
+:::
 
-5. After the app is created, click **Generate a new client secret** to obtain the **Client Secret**. Copy both the **Client ID** and **Client Secret** for later use.
+### Choose the installation scope
 
-   ![GitHub App Setup](/img/authentication/providers/github/4-get-credentials.png)
+1. Under **Where can this GitHub App be installed?**, choose:
 
-## Server-side Configuration
+   - **Only on this account** for development or internal-only apps.
+   - **Any account** for production apps that anyone can sign in to.
 
-### Store the Credentials
+### Create the app and copy credentials
 
-This can be done by adding your credentials to the `githubClientId` and `githubClientSecret` keys in the `config/passwords.yaml` file, or by setting them as the values of the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables.
+1. Click **Create GitHub App**. GitHub takes you to the new app's settings page.
+
+2. Copy the **Client ID** shown on that page.
+
+3. Click **Generate a new client secret**, then copy the secret immediately. GitHub only shows the secret once.
+
+   ![Client ID and Generate secret button](/img/authentication/providers/github/5-credentials.png)
+
+:::warning
+**Keep the Client Secret confidential.** Do not commit it to version control. Use `config/passwords.yaml` (excluded from git) or environment variables.
+:::
+
+## Server-side configuration
+
+### Store your credentials
+
+Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add `githubClientId` and `githubClientSecret` to the `development:` section using the values you just copied:
 
 ```yaml
 development:
-  githubClientId: 'YOUR_GITHUB_CLIENT_ID'
-  githubClientSecret: 'YOUR_GITHUB_CLIENT_SECRET'
+  # ... existing keys (database, redis, serviceSecret, etc.) ...
+  githubClientId: 'your-github-client-id'
+  githubClientSecret: 'your-github-client-secret'
 ```
+
+For production, add the same two keys to the `production:` section, or set the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables on your production server. See [Publishing to production](#publishing-to-production) below for the full prod walkthrough.
 
 :::warning
-Keep your Client Secret confidential. Never commit this value to version control. Store it securely using environment variables or secret management.
+**Never commit `config/passwords.yaml` to version control.** It contains your client secret. Use environment variables or a secrets manager in production.
 :::
 
-### Configure the GitHub Identity Provider
+### Add the GitHub identity provider
 
-In your main `server.dart` file, configure the GitHub identity provider:
+Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+
+Add the GitHub import and `GitHubIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/github.dart';
-
-void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
-
-  pod.initializeAuthServices(
-    tokenManagerBuilders: [
-      JwtConfigFromPasswords(),
-    ],
-    identityProviderBuilders: [
-      GitHubIdpConfig(
-        clientId: pod.getPassword('githubClientId')!,
-        clientSecret: pod.getPassword('githubClientSecret')!,
-      ),
-    ],
-  );
-
-  await pod.start();
-}
 ```
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    // ... any existing providers (e.g., EmailIdpConfigFromPasswords) ...
+    GitHubIdpConfigFromPasswords(),
+  ],
+);
+```
+
+`GitHubIdpConfigFromPasswords()` automatically loads the client ID and secret from the `githubClientId` and `githubClientSecret` keys in `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables).
 
 :::tip
-You can use `GitHubIdpConfigFromPasswords()` to automatically load credentials from `config/passwords.yaml` or the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables:
-
-```dart
-identityProviderBuilders: [
-  GitHubIdpConfigFromPasswords(),
-],
-```
-
+If you need more control over how the credentials are loaded, use `GitHubIdpConfig(clientId: ..., clientSecret: ...)` instead. See [Customizations](./customizations) for details.
 :::
 
-### Expose the Endpoint
+### Create the endpoint
 
-Create an endpoint that extends `GitHubIdpBaseEndpoint` to expose the GitHub authentication API:
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/github_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/github.dart';
@@ -116,30 +165,33 @@ import 'package:serverpod_auth_idp_server/providers/github.dart';
 class GitHubIdpEndpoint extends GitHubIdpBaseEndpoint {}
 ```
 
-### Generate and Migrate
+### Generate code and apply migrations
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
 
-### Basic configuration options
+```bash
+serverpod generate
+serverpod create-migration
+dart run bin/main.dart --apply-migrations
+```
 
-- `clientId`: Required. The Client ID of your GitHub App or OAuth App.
-- `clientSecret`: Required. The Client Secret generated for your GitHub App or OAuth App.
-
-For more details on configuration options, see the [configuration section](./configuration).
+:::note
+Skipping the migration will cause the server to crash at runtime when the GitHub provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+:::
 
 ## Client-side configuration
 
-Add the `serverpod_auth_idp_flutter` package to your Flutter app. The GitHub provider uses [`flutter_web_auth_2`](https://pub.dev/packages/flutter_web_auth_2) to handle the OAuth2 flow, so any documentation there should also apply to this setup.
+The GitHub identity provider uses [`flutter_web_auth_2`](https://pub.dev/packages/flutter_web_auth_2) under the hood to drive the OAuth2 redirect on every platform. The configuration differs slightly between platforms because each one has a different way of receiving the callback URL.
 
-### iOS and MacOS
+### iOS and macOS
 
-There is no special configuration needed for iOS and MacOS for "normal" authentication flows.
-However, if you are using **Universal Links** on iOS, they require redirect URIs to use **https**.
-Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2#ios) documentation.
+No special configuration is needed for a standard custom-scheme callback URL (e.g., `myapp://auth`). The `flutter_web_auth_2` package handles the redirect using `ASWebAuthenticationSession`.
+
+If you use **Universal Links** instead, your redirect URI must use `https` and you must follow the [flutter_web_auth_2 iOS setup](https://pub.dev/packages/flutter_web_auth_2#ios) to register the associated domain.
 
 ### Android
 
-In order to capture the callback url, the following activity needs to be added to your `AndroidManifest.xml`. Be sure to replace `YOUR_CALLBACK_URL_SCHEME_HERE` with your actual callback url scheme registered in your GitHub app.
+To capture the custom-scheme callback URL, add the following activity to your Flutter project's `android/app/src/main/AndroidManifest.xml`. Replace `your-callback-scheme` with the scheme you registered on your GitHub App (e.g., `myapp` for `myapp://auth`):
 
 ```xml
 <manifest>
@@ -153,7 +205,7 @@ In order to capture the callback url, the following activity needs to be added t
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="YOUR_CALLBACK_URL_SCHEME_HERE" />
+        <data android:scheme="your-callback-scheme" />
       </intent-filter>
     </activity>
 
@@ -161,86 +213,106 @@ In order to capture the callback url, the following activity needs to be added t
 </manifest>
 ```
 
+:::warning
+The scheme in `AndroidManifest.xml` must exactly match the scheme in your GitHub App's **Callback URL** and the `redirectUri` you pass to `initializeGitHubSignIn`. A mismatch causes the OAuth callback to never reach your app.
+:::
+
 ### Web
 
-On the web, GitHub sign-in completes by redirecting the browser to a callback page that hands the result back to your Flutter app. That page is `web/auth.html`, and it is shared across every identity provider that uses an OAuth2 redirect.
+On web, GitHub sign-in completes by redirecting the browser to a callback page that hands the result back to your Flutter app. That page is `web/auth.html`, and it is shared across every identity provider that uses an OAuth2 redirect.
 
 1. Create the callback page if you have not already. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
 
-2. Register the full `auth.html` URL (for example, `http://localhost:49660/auth.html`) as the **Authorization callback URL** on your GitHub OAuth app.
+2. Register the full `auth.html` URL (for example, `http://localhost:49660/auth.html` for local development) as a **Callback URL** on your GitHub App. GitHub Apps accept up to 10 entries, so you can keep mobile schemes registered alongside the web URL.
 
-3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client.
+3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client (covered in [Present the authentication UI](#present-the-authentication-ui) below).
 
 ## Present the authentication UI
 
-### Initializing the `GitHubSignInService`
+### Initialize the GitHub sign-in service
 
-To use the GitHubSignInService, you need to initialize it in your main function. The initialization is done from the `initializeGitHubSignIn()` extension method on the `FlutterAuthSessionManager`.
+Open your Flutter app's `main.dart` (e.g., `my_project_flutter/lib/main.dart`). The Serverpod template already creates the `Client` and calls `client.auth.initialize()` inside `main()`. Add `client.auth.initializeGitHubSignIn(...)` on the line immediately after it.
+
+The GitHub provider requires `clientId` and `redirectUri` on every platform because GitHub does not have native platform-specific clients (unlike Google or Apple):
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
-import 'package:your_client/your_client.dart';
-
-late Client client;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Create the Serverpod client
-  client = Client('http://localhost:8080/')
+  final serverUrl = await getServerUrl();
+
+  client = Client(serverUrl)
     ..connectivityMonitor = FlutterConnectivityMonitor()
     ..authSessionManager = FlutterAuthSessionManager();
 
-  // Initialize Serverpod auth
   await client.auth.initialize();
-
-  // Initialize GitHub Sign-In
-  // Note: For Web, ensure the redirectUri matches your auth.html location.
   await client.auth.initializeGitHubSignIn(
-    clientId: 'YOUR_GITHUB_CLIENT_ID',
-    redirectUri: Uri.parse('https://example.com/auth.html'),
+    clientId: 'your-github-client-id',
+    redirectUri: Uri.parse('myapp://auth'),
   );
 
   runApp(const MyApp());
 }
 ```
 
-:::info
-**Important**: Ensure the redirect URIs used in your code are also explicitly listed in your **GitHub App Dashboard** under "Callback URLs". For Android, you must also register this scheme in your `AndroidManifest.xml`.
+Replace `your-github-client-id` with the **Client ID** from your GitHub App, and `redirectUri` with the matching callback URL you registered (a custom scheme for mobile, or your `auth.html` URL for web).
+
+:::tip
+To keep these values out of `main.dart` and vary them per build, read them from `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app) for the pattern.
 :::
 
-### Using GitHubSignInWidget
+### Show the GitHub sign-in button
 
-If you have configured the `GitHubSignInWidget` as described in the [setup section](#present-the-authentication-ui), the GitHub identity provider will be automatically detected and displayed in the sign-in widget.
+The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GitHubIdpEndpoint` is exposed and `serverpod generate` has run, the GitHub button appears inside it.
 
-You can also use the `GitHubSignInWidget` to include the GitHub authentication flow in your own custom UI.
+To customize the GitHub button or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
 
-```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+## Publishing to production
 
-GitHubSignInWidget(
-  client: client,
-  onAuthenticated: () {
-    // Do something when the user is authenticated.
-    //
-    // NOTE: You should not navigate to the home screen here, otherwise
-    // the user will have to sign in again every time they open the app.
-  },
-  onError: (error) {
-    // Handle errors
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $error')),
-    );
-  },
-)
+Before going live, complete the following steps:
+
+### 1. Add the production callback URL
+
+Go back to your GitHub App's settings and add your production callback URL to **Callback URL** alongside the development one. Both should remain registered so dev and prod work simultaneously.
+
+- For Serverpod-hosted Flutter web under the standard template, the production callback is `https://my-awesome-project.serverpod.space/app/auth.html` (the Flutter build is mounted under `/app/`).
+- For separately hosted Flutter web, use `https://my-awesome-project.serverpod.space/auth.html`.
+- For mobile custom schemes (`myapp://auth`), no change is needed between dev and prod.
+
+### 2. Set production credentials
+
+Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones, both stay in place and Serverpod picks the right set based on the run mode.
+
+If you use the same GitHub App for development and production, you can reuse the same `githubClientId` and `githubClientSecret`. For separate environments, [register a second GitHub App](https://github.com/settings/apps/new) first and use its values.
+
+#### Self-hosted
+
+Add `githubClientId` and `githubClientSecret` to the `production:` section of `passwords.yaml`:
+
+```yaml
+production:
+  # ... existing keys ...
+  githubClientId: 'your-github-client-id'
+  githubClientSecret: 'your-github-client-secret'
 ```
 
-The widget automatically handles:
+Alternatively, set the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` [environment variables](../../../07-configuration.md#2-via-environment-variables) on your production server with the same values.
 
-- GitHub Sign-In flow for iOS, macOS, Android, and Web.
-- Token management.
-- Underlying GitHub Sign-In package error handling.
+#### Serverpod Cloud
 
-For details on how to customize the GitHub Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
+Save each value to a file and use `scloud password set` with `--from-file`. Reading from a file avoids leaking secrets through your shell history:
+
+```bash
+scloud password set githubClientId --from-file path/to/github-client-id.txt
+scloud password set githubClientSecret --from-file path/to/github-client-secret.txt
+```
+
+Run these from your linked server project directory, or pass `--project <project-id>` on each call (the flag is required unless the project is linked). See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and other options.
+
+### 3. Verify the redirect URI in the Flutter build
+
+The production build of your Flutter app must initialize `GitHubSignInService` with the production `redirectUri`. The cleanest pattern is to read it from `--dart-define` so a single `main.dart` works in dev and prod. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app).
+
+:::tip
+If you run into issues, see the [troubleshooting guide](./troubleshooting).
+:::
