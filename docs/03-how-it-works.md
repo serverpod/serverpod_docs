@@ -2,12 +2,12 @@
 title: How Serverpod works
 sidebar_label: How it works
 sidebar_class_name: sidebar-icon-overview
-description: Serverpod's architecture, how project structure, code generation, and request lifecycle provide full-stack type safety
+description: "Understand Serverpod's architecture: the three-package layout, the code generator, and the request lifecycle that gives you full-stack type safety."
 ---
 
 # How Serverpod works
 
-This page explains Serverpod's architecture: how the project structure, code generation, and request lifecycle work together to provide full-stack type safety.
+Serverpod is built around three Dart packages and a code generator, which bridges the gap between your server-side logic, your database, and your Flutter app. Together, they give you full-stack type safety from your database to your Flutter app.
 
 ## Project structure
 
@@ -22,11 +22,11 @@ my_project/
 
 The `_server` package holds your backend code, while the `_client` package acts as a bridge, providing the Flutter app with a typed API to call the server.
 
-Because the `_client` package is auto-generated from the `_server` code, it stays in sync by construction. You do not write serialization code, HTTP calls, or API contracts by hand.
+Because the client package is auto-generated from the server code, there is no need to write serialization code, HTTP calls, or API contracts.
 
 ## Code generation
 
-The purpose of code generation is to eliminate boilerplate and provide type-safety. Serverpod continuously watches for changes in your `_server` package and the generator automatically creates the necessary code.
+Code generation cuts boilerplate and keeps types in sync between server and app. Serverpod watches your `_server` package as you edit and runs the generator automatically.
 
 The generator reads two kinds of source files:
 - **Model files (`.spy.yaml`)** defining your data classes.
@@ -41,7 +41,7 @@ From these files, Serverpod generates:
 Thanks to the generated client, calling a server endpoint from your Flutter app feels like a local method call. You do not need to write any networking or serialization code.
 
 ```dart
-var result = await client.greeting.hello('World');
+final result = await client.greeting.hello('World');
 ```
 
 This example calls the `hello` method on the `greeting` endpoint. The generated client handles the JSON serialization, HTTP request, and response deserialization automatically.
@@ -73,10 +73,10 @@ Regular endpoint methods follow the request/response lifecycle above. For real-t
 
 ### Session
 
-The `Session` parameter that every endpoint method receives is Serverpod's request context. It gives the method access to the database, cache, authenticated user information, and logging, all of which are scoped to the lifetime of that single request. It is not a singleton; each call gets its own `Session` instance.
+The `Session` parameter that every endpoint method receives is the context for that single request. It gives access to the database, cache, signed-in user, and logging, all available only while the request runs. Each call gets its own `Session`.
 
 ## Type safety across the stack
 
-Type safety across the entire stack, from the database to your Flutter app, is guaranteed because Serverpod's model files (`.spy.yaml`) are the single source of truth. When code is generated, the same Dart class is used for database queries, server-side logic, and the client-side app.
+Type safety across the entire stack, from the database to your Flutter app, is guaranteed because Serverpod's model files (`.spy.yaml`) are the single source of truth. When code is generated, the same Dart class is used in database queries, server logic, and your Flutter app.
 
 This eliminates a whole category of bugs common in traditional client-server development, such as mismatched field names, incorrect types, or forgotten null checks after an API change. If you rename a field in a model file and regenerate, the Dart compiler immediately tells you every place in both the server and the app that needs updating.
