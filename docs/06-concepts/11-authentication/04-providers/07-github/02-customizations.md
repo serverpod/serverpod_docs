@@ -199,16 +199,22 @@ This approach is useful when you need different `redirectUri` values per platfor
 Alternatively, pass them at build time using `--dart-define`. The GitHub Sign-In provider supports the following environment variables:
 
 - `GITHUB_CLIENT_ID`: Your GitHub OAuth client ID.
-- `GITHUB_REDIRECT_URI`: The callback URI.
+- `GITHUB_REDIRECT_URI`: The callback URI. Use the value matching the platform you build for: a reverse-DNS scheme for mobile, `https://your-domain.com/auth/callback` for Serverpod-hosted Flutter web, or the full `auth.html` URL for separately-hosted Flutter web.
 
 If `clientId` and `redirectUri` are not supplied when initializing the service, the provider automatically falls back to these environment variables.
 
 **Example usage:**
 
 ```bash
-flutter run -d <device> \
+flutter run -d chrome --web-port=49660 \
   --dart-define="GITHUB_CLIENT_ID=your-github-client-id" \
-  --dart-define="GITHUB_REDIRECT_URI=com.example.yourapp://auth"
+  --dart-define="GITHUB_REDIRECT_URI=http://localhost:49660/auth.html"
+```
+
+```bash
+flutter build web \
+  --dart-define="GITHUB_CLIENT_ID=your-github-client-id" \
+  --dart-define="GITHUB_REDIRECT_URI=https://my-awesome-project.serverpod.space/auth/callback"
 ```
 
 This approach is useful when you need to:
