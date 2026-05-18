@@ -115,11 +115,9 @@ When you are ready to ship, see [Going to production](#going-to-production) for 
 
 ### Add the Apple identity provider
 
-Projects created with `serverpod create` already have `serverpod_auth_idp_server` in `pubspec.yaml`. If your project doesn't (e.g. you're upgrading an older project), add it:
-
-```bash
-dart pub add serverpod_auth_idp_server
-```
+:::caution
+If your project doesn't have the auth module installed yet (for example, you're upgrading an older project), follow the [auth module Setup](../../setup) guide first before continuing.
+:::
 
 In your server's `server.dart`, import the Apple provider and add it to the existing `identityProviderBuilders` list on `pod.initializeAuthServices()`:
 
