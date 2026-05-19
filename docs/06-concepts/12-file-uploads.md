@@ -140,7 +140,7 @@ You may also want to add the bucket as a backend for your load balancer to give 
 When you have set up your GCP bucket, you need to configure it in Serverpod. Add the GCP package to your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```bash
-$ dart pub add serverpod_cloud_storage_gcp
+dart pub add serverpod_cloud_storage_gcp
 ```
 
 ```dart
@@ -233,7 +233,7 @@ This section shows how to set up a storage using S3. Before you write your Dart 
 When you are all set with the AWS setup, include the S3 package in your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```bash
-$ dart pub add serverpod_cloud_storage_s3
+dart pub add serverpod_cloud_storage_s3
 ```
 
 ```dart
@@ -271,7 +271,7 @@ Serverpod supports Cloudflare R2 as a cloud storage provider. R2 is S3-compatibl
 Add the R2 package to your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```bash
-$ dart pub add serverpod_cloud_storage_r2
+dart pub add serverpod_cloud_storage_r2
 ```
 
 ```dart

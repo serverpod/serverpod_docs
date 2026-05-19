@@ -29,7 +29,7 @@ Demo of what we will build: ([Full code example](https://github.com/serverpod/no
 Create a new project using the Serverpod CLI. Run the following command in your terminal:
 
 ```bash
-$ serverpod create notes
+serverpod create notes
 ```
 
 To start the server:
@@ -64,7 +64,7 @@ Let's take a closer look at the content of the `notes.yaml` file:
 Use the code generator to generate the code for the `Note` class from the definition in `notes.yaml`. Run the following command from the root of your server project:
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 After the code generation process is complete, you can access the generated code for the `Note` class in `lib/src/generated/note.dart` inside your Serverpod project.
@@ -93,7 +93,7 @@ fields:
 Run the code generator again to generate the necessary code for the database table:
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 Take a look at the updated `lib/src/generated/note.dart` file. You will notice that the code generator has added new methods for interacting with the database. 
@@ -260,7 +260,7 @@ Congratulations! You have now created all the endpoints needed for the note app.
 Now run the code generator again to generate the client library for our endpoints. This needs to be run from the server directory `notes_server`.
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 You can find all the newly generated code in the client directory `notes_client`. You normally don't need to touch this package, but it's good to know where it is located.

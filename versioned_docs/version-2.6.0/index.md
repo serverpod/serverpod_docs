@@ -16,13 +16,13 @@ Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod
 Install Serverpod by running:
 
 ```bash
-$ dart pub global activate serverpod_cli
+dart pub global activate serverpod_cli
 ```
 
 Now test the installation by running:
 
 ```bash
-$ serverpod
+serverpod
 ```
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.

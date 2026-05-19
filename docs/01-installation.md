@@ -13,7 +13,7 @@ Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod
 Check your Flutter installation by running the following command in your terminal:
 
 ```bash
-$ flutter doctor
+flutter doctor
 ```
 
 ::::
@@ -29,7 +29,7 @@ If you want to use Postgres rather than SQLite on your machine, install **[Docke
 Check your Docker installation by running the following command in your terminal:
 
 ```bash
-$ docker info
+docker info
 ```
 
 If you are using Docker Desktop and you get an error, make sure that Docker is running. You can check this by looking for the Docker icon in your system tray or taskbar. If it's not running, start Docker Desktop and try again.
@@ -41,13 +41,13 @@ If you are using Docker Desktop and you get an error, make sure that Docker is r
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
 
 ```txt
-$ dart install serverpod_cli 3.5.0-beta.6
+dart install serverpod_cli 3.5.0-beta.6
 ```
 
 This command will install the Serverpod command-line interface (CLI) globally on your machine. You can verify the installation by running:
 
 ```bash
-$ serverpod
+serverpod
 ```
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
@@ -57,7 +57,7 @@ If everything is correctly configured, the help for the `serverpod` command is n
 If the Serverpod CLI is already installed globally, deactivate it before installing or upgrading:
 
 ```txt
-$ dart pub global deactivate serverpod_cli
+dart pub global deactivate serverpod_cli
 ```
 
 :::

@@ -64,8 +64,8 @@ Your folder structure should then look like this:
 Then you need to add the package `serverpod_serialization` to get access to the `SerializationManager` class.
 
 ```bash
-$ cd my_project_shared
-$ dart pub add serverpod_serialization
+cd my_project_shared
+dart pub add serverpod_serialization
 ```
 
 Then you need to update both your `my_project_server/pubspec.yaml` and `my_project_client/pubspec.yaml` and add the new package as a dependency.

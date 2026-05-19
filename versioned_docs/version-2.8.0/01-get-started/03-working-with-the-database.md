@@ -36,9 +36,9 @@ Check out the reference for [database models](../06-concepts/02-models.md#keywor
 With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server. Since we modified one of our models, make sure to also run `serverpod generate`, to update the generated code in our server.
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
-$ serverpod generate
-$ serverpod create-migration
+cd magic_recipe/magic_recipe_server
+serverpod generate
+serverpod create-migration
 ```
 
 You will notice that there will be a new entry in your _migrations_ folder - serverpod creates these migrations "step by step" - each time you have changes which are relevant to the database and run `serverpod create-migrations` a new migration file will be created. This is a good way to keep track of the changes you make to the database and to be able to roll back changes if needed.
@@ -180,8 +180,8 @@ The `insertRow` method is used to insert a new row in the database. The `find` m
 Like before, when you change something that has an effect on the client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created a migration in the previous step and haven't done any changes that affect the database.
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
-$ serverpod generate
+cd magic_recipe/magic_recipe_server
+serverpod generate
 ```
 
 ## Call the endpoint from the app
@@ -421,9 +421,9 @@ class ResultDisplay extends StatelessWidget {
 First, we need to start the server and apply the migrations by adding the `--apply-migrations` flag:
 
 ```bash
-$ cd magic_recipe/magic_recipe_server
-$ docker compose up -d
-$ dart bin/main.dart --apply-migrations
+cd magic_recipe/magic_recipe_server
+docker compose up -d
+dart bin/main.dart --apply-migrations
 ```
 
 :::tip
@@ -432,8 +432,8 @@ When developing your server, it's always safe to pass the `--apply-migrations` f
 Now, start the Flutter app:
 
 ```bash
-$ cd magic_recipe/magic_recipe_flutter
-$ flutter run -d chrome
+cd magic_recipe/magic_recipe_flutter
+flutter run -d chrome
 ```
 
 ## Summary

@@ -100,19 +100,19 @@ development:
 A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. Run the following command from the root of the `server` package to start the database:
 
 ```bash
-$ docker compose up --build --detach
+docker compose up --build --detach
 ```
 
 To stop the database run:
 
 ```bash
-$ docker compose stop
+docker compose stop
 ```
 
 To remove the database and __delete__ all associated data, run:
 
 ```bash
-$ docker compose down -v
+docker compose down -v
 ```
 
 ## Connecting to a custom Postgres instance

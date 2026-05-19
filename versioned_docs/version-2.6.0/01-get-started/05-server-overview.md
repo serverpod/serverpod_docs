@@ -15,6 +15,6 @@ Both the `endpoints` and `models` directories contain sample files that give a q
 Whenever you change your code in either the `endpoints` or `models` directory, you will need to regenerate the classes managed by Serverpod. Do this by running `serverpod generate`.
 
 ```bash
-$ cd mypod/mypod_server
-$ serverpod generate
+cd mypod/mypod_server
+serverpod generate
 ```

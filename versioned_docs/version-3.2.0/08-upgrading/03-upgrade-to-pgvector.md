@@ -64,8 +64,8 @@ fields:
 4. Generate and apply a migration:
 
 ```bash
-$ serverpod create-migration
-$ dart run bin/main.dart --apply-migrations
+serverpod create-migration
+dart run bin/main.dart --apply-migrations
 ```
 
 For more details on creating and applying migrations, see the [Migrations](../concepts/database/migrations) section.

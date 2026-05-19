@@ -28,15 +28,15 @@ development:
 With database migrations, Serverpod makes it easy to evolve your database schema. When you make changes to your project that should be reflected in your database, you need to create a migration. A migration is a set of SQL queries that are run to update the database. To create a migration, run `serverpod create-migration` in the home directory of the server.
 
 ```bash
-$ cd mypod/mypod_server
-$ serverpod create-migration
+cd mypod/mypod_server
+serverpod create-migration
 ```
 
 Migrations are then applied to the database as part of the server startup by adding the `--apply-migrations` flag.
 
 ```bash
-$ cd mypod/mypod_server
-$ dart bin/main.dart --apply-migrations
+cd mypod/mypod_server
+dart bin/main.dart --apply-migrations
 ```
 
 :::tip

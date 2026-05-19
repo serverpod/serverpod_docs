@@ -19,13 +19,13 @@ serverpod:
 To run a script:
 
 ```bash
-$ serverpod run start
+serverpod run start
 ```
 
 To list all available scripts, use the `--list` flag or omit the script name:
 
 ```bash
-$ serverpod run --list
+serverpod run --list
 ```
 
 Scripts run in a shell environment (`bash` on Linux/macOS, `cmd` on Windows), so you can use pipes, conditionals, and environment variables. The CLI forwards signals like `Ctrl+C` to the running script and propagates exit codes.

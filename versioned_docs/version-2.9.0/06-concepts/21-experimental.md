@@ -25,7 +25,7 @@ If possible, the experimental API will remain for some time as `@deprecated`, an
 Some of the experimental features are enabled by including the `--experimental-features` flag when running the serverpod command:
 
 ```bash
-$ serverpod generate --experimental-features=all
+serverpod generate --experimental-features=all
 ```
 
 The current options you can pass are:

@@ -61,7 +61,7 @@ Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod
 Check your Flutter installation by running the following command in your terminal:
 
 ```bash
-$ flutter doctor
+flutter doctor
 ```
 
 :::
@@ -72,7 +72,7 @@ To make use of Serverpod's database connectivity, you need to have access to a P
 Check your Docker installation by running the following command in your terminal:
 
 ```bash
-$ docker info
+docker info
 ```
 
 If you are using Docker Desktop and you are getting an error, make sure that Docker is running. You can check this by looking for the Docker icon in your system tray or taskbar. If it's not running, start Docker Desktop and try again.
@@ -83,13 +83,13 @@ If you are using Docker Desktop and you are getting an error, make sure that Doc
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
 
 ```bash
-$ dart pub global activate serverpod_cli
+dart pub global activate serverpod_cli
 ```
 
 This command will install the Serverpod command-line interface (CLI) globally on your machine. You can verify the installation by running:
 
 ```bash
-$ serverpod
+serverpod
 ```
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
@@ -112,7 +112,7 @@ To create a new Serverpod project, use the `serverpod create` command. It will s
 The project will be created in a new directory with the name you specify. For example, to create a new project called `my_project`, run the following command:
 
 ```bash
-$ serverpod create my_project
+serverpod create my_project
 ```
 
 :::tip
@@ -122,20 +122,20 @@ The name of the project must be a valid Dart package name. It should start with 
 To run your new project you must first start the database from the Docker file that is included with the project. Do this by running the `docker compose up` command in the server directory:
 
 ```bash
-$ cd my_project/my_project_server
-$ docker compose up
+cd my_project/my_project_server
+docker compose up
 ```
 
 This will start the PostgreSQL database. You can stop the database server by pressing `Ctrl+C` in the terminal. If you want to run the servers in the background, you can use the `-d` flag:
 
 ```bash
-$ docker compose up -d
+docker compose up -d
 ```
 
 This will start the database server in detached mode, meaning it will run in the background and you can safely close the terminal window without stopping it. Stop the database container by running the following command from the server directory:
 
 ```bash
-$ docker compose down
+docker compose down
 ```
 
 :::tip
@@ -145,8 +145,8 @@ If you are using Docker Desktop, you can see and manage all your installed Docke
 Now that the database is up and running we can start the Serverpod server. Because we are running the project for the first time, we need create the database tables used by Serverpod. This is done through a [database migration](./06-concepts/06-database/11-migrations.md). An initial migration is already created for us, so all we need to do is to pass the `--apply-migrations` flag to our server when we start it:
 
 ```bash
-$ cd my_project/my_project_server
-$ dart run bin/main.dart --apply-migrations
+cd my_project/my_project_server
+dart run bin/main.dart --apply-migrations
 ```
 
 This will start the server and set up the initial database tables. You can now access the server at `http://localhost:8080` and the web server is available at `http://localhost:8082`. It should look like this:
@@ -156,8 +156,8 @@ This will start the server and set up the initial database tables. You can now a
 Now let's run our Flutter app. You can do this by running `flutter run -d chrome` in the flutter directory:
 
 ```bash
-$ cd my_project/my_project_flutter
-$ flutter run -d chrome
+cd my_project/my_project_flutter
+flutter run -d chrome
 ```
 
 This will start the Flutter app in your browser. It should look like this:

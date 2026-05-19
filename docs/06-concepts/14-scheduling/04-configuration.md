@@ -72,7 +72,7 @@ checkBrokenCalls: false
 The future calls check can be used with the maintenance role to programmatically validate that the server can be restarted without breaking future calls. The process will exit normally, but logs can be inspected to verify that no broken future calls were found.
 
 ```bash
-$ dart run bin/main.dart --role maintenance
+dart run bin/main.dart --role maintenance
 ```
 :::
 

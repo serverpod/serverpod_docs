@@ -11,7 +11,7 @@ Before contributing to our documentation, please read our [style guide](STYLE_GU
 The project includes a Makefile that provides shortcuts for common tasks. You can see all available commands by running:
 
 ```bash
-$ make help
+make help
 ```
 
 This will display a list of all available commands and their descriptions. The Makefile includes commands for installation, starting the development server, creating versions, formatting markdown files, and cleaning build artifacts.
@@ -21,23 +21,23 @@ This will display a list of all available commands and their descriptions. The M
 Make sure that you have Node.js installed on your computer.
 
 ```bash
-$ cd serverpod_docs
+cd serverpod_docs
 
 # Using npm
-$ npm install
+npm install
 
 # Or if you have Make installed, use this make command
-$ make install
+make install
 ```
 
 ### Local Development
 
 ```bash
 # Using npm
-$ npm start
+npm start
 
 # Or if you have Make installed, use this make command
-$ make start
+make start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
@@ -50,10 +50,10 @@ Make sure that the documentation is all up-to-date then run:
 
 ```bash
 # Using npm
-$ npm run docusaurus docs:version X.X.X
+npm run docusaurus docs:version X.X.X
 
 # Or if you have Make installed, use this make command
-$ make version VERSION=X.X.X
+make version VERSION=X.X.X
 ```
 
 ### Amend the latest version
@@ -62,10 +62,10 @@ If you need to make changes to the latest version, you can do so by removing the
 
 ```bash
 # Using npm
-$ npm run docusaurus docs:version X.X.X
+npm run docusaurus docs:version X.X.X
 
 # Or if you have Make installed, use this make command
-$ make version VERSION=X.X.X
+make version VERSION=X.X.X
 ```
 
 ### Add redirects
@@ -84,20 +84,20 @@ Install the `markdownlint-cli` globally, by running the following command from y
 
 ```bash
 # Using npm
-$ npm install -g markdownlint-cli
+npm install -g markdownlint-cli
 
 # Or if you have Make installed, use this make command
-$ make install-linter
+make install-linter
 ```
 
 Formatting is only enforced in `/serverpod_docs/docs/` directory so therefore you only need to run the markdownlint-cli in this folder with:
 
 ```bash
 # Using npm
-$ markdownlint './docs/**/*.md'
+markdownlint './docs/**/*.md'
 
 # Or if you have Make installed, use this make command
-$ make format
+make format
 ```
 
 ### Manual build and deploy
@@ -105,5 +105,5 @@ $ make format
 To do this you need access to the Serverpod Github `serverpod.github.io` repository. Clone it next to the `serverpod_web` repo.
 
 ```bash
-$ util/deploy
+util/deploy
 ```

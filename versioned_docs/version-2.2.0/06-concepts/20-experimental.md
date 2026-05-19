@@ -9,7 +9,7 @@ Experimental features should not be used in production environments, as their st
 By default, experimental features are disabled. To opt into using them, include the `--experimental-features` flag when running the serverpod command:
 
 ```bash
-$ serverpod generate --experimental-features=all
+serverpod generate --experimental-features=all
 ```
 
 The current options you can pass are:

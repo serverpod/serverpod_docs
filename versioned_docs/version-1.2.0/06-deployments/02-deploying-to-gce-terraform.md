@@ -117,7 +117,7 @@ Depending on your domain name registrar, the process for setting up your domain 
 You can test that the domain points to the correct name servers by running `dig` on the command line. It will output the domain name servers.
 
 ```bash
-$ dig +short NS examplepod.com
+dig +short NS examplepod.com
 ```
 
 Should yield an output similar to this:
@@ -212,13 +212,13 @@ If you are deploying a staging server in addition to your production server, you
 Once you have configured Terraform and your Serverpod, you are ready to deploy your infrastructure. Make sure that you have `cd` into your `deploy/gcp/terraform_gce` directory. Now run:
 
 ```bash
-$ terraform init
+terraform init
 ```
 
 This will download the Serverpod module and initialize your Terraform configuration. Now, deploy your infrastructure by running:
 
 ```bash
-$ terraform apply
+terraform apply
 ```
 
 Terraform will ask you for the password to your production and staging database. You will find the passwords in your `config/passwords.yaml` file. If you are not deploying a staging server, you can leave the staging database password blank.

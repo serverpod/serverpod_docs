@@ -75,7 +75,7 @@ Paths are relative to the server project directory. You can list multiple shared
 Run `serverpod generate` from your server directory.
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 This generates the Dart classes and protocol in the shared package's `lib/src/generated/` directory. After generation, a typical shared package looks like:

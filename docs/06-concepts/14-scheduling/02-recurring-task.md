@@ -20,7 +20,7 @@ class ExampleFutureCall extends FutureCall {
 Next, generate the code for your future call:
 
 ```bash
-$ serverpod generate
+serverpod generate
 ```
 
 :::info

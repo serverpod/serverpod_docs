@@ -42,9 +42,9 @@ To create a migration, follow these two steps in order:
 2. Run `serverpod create-migration` to create the necessary database migration.
 
 ```bash
-$ cd magic_recipe_server
-$ serverpod generate
-$ serverpod create-migration
+cd magic_recipe_server
+serverpod generate
+serverpod create-migration
 ```
 
 Each time you run `serverpod create-migration`, a new migration file will be created in your _migrations_ folder. These step-by-step migrations provide a history of your database changes and allow you to roll back changes if needed.
@@ -190,8 +190,8 @@ The `insertRow` method is used to insert a new row into the database. The `find`
 Like before, when you change something that has an effect on your client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created a migration in the previous step and haven't done any changes that affect the database.
 
 ```bash
-$ cd magic_recipe_server
-$ serverpod generate
+cd magic_recipe_server
+serverpod generate
 ```
 
 ## Call the endpoint from the app
@@ -434,9 +434,9 @@ To run the application with database support, follow these steps in order:
 First, start the database and apply migrations:
 
 ```bash
-$ cd magic_recipe_server
-$ docker compose up -d                   # Start the database container
-$ dart bin/main.dart --apply-migrations  # Apply any pending migrations
+cd magic_recipe_server
+docker compose up -d                   # Start the database container
+dart bin/main.dart --apply-migrations  # Apply any pending migrations
 ```
 
 :::tip
@@ -446,8 +446,8 @@ The `--apply-migrations` flag is safe to use during development - if no migratio
 Next, launch the Flutter app:
 
 ```bash
-$ cd magic_recipe_flutter
-$ flutter run -d chrome
+cd magic_recipe_flutter
+flutter run -d chrome
 ```
 
 ## Summary

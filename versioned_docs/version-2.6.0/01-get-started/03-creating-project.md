@@ -5,7 +5,7 @@ The full version of Serverpod needs access to a Postgres database. The easiest w
 Create a new project by running `serverpod create`.
 
 ```bash
-$ serverpod create mypod
+serverpod create mypod
 ```
 
 :::info
@@ -25,9 +25,9 @@ This command will create a new directory called `mypod`, with three dart package
 Make sure that **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** is running, then start your Docker containers with `docker compose up --build --detach`. It will start Postgres and Redis. Then, run `dart bin/main.dart --apply-migrations` to start your server.
 
 ```bash
-$ cd mypod/mypod_server
-$ docker compose up --build --detach
-$ dart bin/main.dart --apply-migrations
+cd mypod/mypod_server
+docker compose up --build --detach
+dart bin/main.dart --apply-migrations
 ```
 
 If everything is working, you should see something like this on your terminal:
@@ -56,8 +56,8 @@ In your development environment it can be helpful to always start Serverpod with
 Start the default demo app by changing the directory into the Flutter package that was created and running `flutter run`.
 
 ```bash
-$ cd mypod/mypod_flutter
-$ flutter run -d chrome
+cd mypod/mypod_flutter
+flutter run -d chrome
 ```
 
 The flag `-d chrome` runs the app in Chrome, for other run options please see the Flutter documentation.
