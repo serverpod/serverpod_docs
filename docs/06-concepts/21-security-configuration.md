@@ -2,12 +2,12 @@
 
 :::info
 
-In a **production environment**, TLS termination is **normally handled by a load balancer** or **reverse proxy** (e.g., Nginx, AWS ALB, or Cloudflare).  
+In a **production environment**, TLS termination is **normally handled by a load balancer** or **reverse proxy** (e.g., Nginx, AWS ALB, or Cloudflare).
 However, Serverpod also supports setting up **TLS/SSL directly on the server**, allowing you to provide your own certificates if needed.
 
 :::
 
-Serverpod supports **TLS/SSL security configurations** through the **Dart configuration object**.  
+Serverpod supports **TLS/SSL security configurations** through the **Dart configuration object**.
 To enable SSL/TLS, you must pass a **`SecurityContextConfig`** to the `Serverpod` constructor.
 
 ## Server Security Configuration
@@ -52,3 +52,7 @@ final client = Client(
   ...
 );
 ```
+
+:::info
+Note that, if you use the [`httpClientOverride` parameter](./working-with-endpoints/calling-endpoints#http-client-override), you need to provide the security context through the client being passed to `httpClientOverride`. You cannot set `securityContext` and `httpClientOverride` on the same client.
+:::
