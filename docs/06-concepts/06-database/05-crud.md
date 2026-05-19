@@ -207,8 +207,7 @@ var updatedCompanies = await Company.db.updateWhere(
   session,
   columnValues: (t) => [t.name('Updated name'), t.address('New address')],
   where: (t) => t.id > 100,
-  orderBy: (t) => t.id,
-  orderDescending: false,
+  orderBy: (t) => t.id, // or t.id.asc()
   limit: 10,
   offset: 5,
 );
@@ -235,10 +234,9 @@ To batch delete several rows, use the `delete` method. This method also supports
 
 ```dart
 var companiesDeleted = await Company.db.delete(
-  session, 
-  companies, 
-  orderBy: (t) => t.id,
-  orderDescending: false,
+  session,
+  companies,
+  orderBy: (t) => t.id, // or t.id.asc()
 );
 ```
 
@@ -252,10 +250,7 @@ You can also do a [filtered](filter) delete and delete all entries matching a `w
 var companiesDeleted = await Company.db.deleteWhere(
   session,
   where: (t) => t.name.like('%Ltd'),
-  orderByList: (t) => [
-    Order(column: t.name, orderDescending: true),
-    Order(column: t.id),
-  ],
+  orderByList: (t) => [t.name.desc(), t.id.asc()],
 );
 ```
 
