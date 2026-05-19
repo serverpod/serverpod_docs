@@ -150,12 +150,28 @@ client.auth.initializeFirebaseSignIn();
 
 **Resolution:**
 
-1. Install the Firebase CLI: `npm install -g firebase-tools`
+1. [Install the Firebase CLI](https://firebase.google.com/docs/cli#install_the_firebase_cli).
 2. Log in: `firebase login`
 3. Install FlutterFire CLI: `dart pub global activate flutterfire_cli`
 4. Run `flutterfire configure` and select the correct project when prompted.
 
 See the [FlutterFire CLI documentation](https://firebase.flutter.dev/docs/cli/) for more details.
+
+## FlutterFire configure fails for iOS or macOS apps
+
+**Problem:** `flutterfire configure` registers the Android app successfully but fails when registering iOS or macOS apps, with an error about an invalid bundle identifier.
+
+**Cause:** When a platform app does not yet exist in your Firebase project, FlutterFire creates it and derives the default bundle ID from your Flutter project folder name. Apple bundle identifiers must be valid reverse-DNS strings, so any character that is not allowed in a DNS label (most commonly an underscore) breaks auto-registration.
+
+**Resolution:** Pass the bundle ID explicitly so FlutterFire does not derive it from the folder name:
+
+```bash
+flutterfire configure \
+  --ios-bundle-id="dev.serverpod.authproviders" \
+  --macos-bundle-id="dev.serverpod.authproviders"
+```
+
+Use a valid reverse-DNS identifier for your app. If you have already created the iOS and macOS apps manually in the Firebase Console, FlutterFire will reuse those entries instead of trying to create new ones.
 
 ## Firebase UI auth actions not firing
 

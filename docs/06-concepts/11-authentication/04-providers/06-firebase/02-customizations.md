@@ -1,6 +1,6 @@
-# Configuration
+# Customizations
 
-This page covers configuration options for the Firebase identity provider beyond the basic setup.
+This page covers additional configuration options for the Firebase identity provider beyond the basic setup.
 
 ## Loading credentials with FirebaseIdpConfig
 

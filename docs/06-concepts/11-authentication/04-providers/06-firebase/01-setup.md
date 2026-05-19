@@ -8,7 +8,7 @@ Before you start, make sure you have:
 
 - A Serverpod project with the new auth module installed. New projects created with `serverpod create` (Serverpod 3.4 and later) include it by default. If you are upgrading an older project, follow the [auth module setup guide](../../setup) first.
 - A Google account with access to the [Firebase Console](https://console.firebase.google.com/).
-- The Firebase CLI installed (`npm install -g firebase-tools`) and the FlutterFire CLI activated (`dart pub global activate flutterfire_cli`). You will use both later in the guide.
+- The [Firebase CLI installed](https://firebase.google.com/docs/cli#install_the_firebase_cli) and the FlutterFire CLI activated (`dart pub global activate flutterfire_cli`). You will use both later in the guide.
 
 ## Get your credentials
 
@@ -16,7 +16,7 @@ Before you start, make sure you have:
 
 1. Go to the [Firebase Console](https://console.firebase.google.com/) and click **Create a project** (or **Add project** if you already have projects).
 
-2. Enter a project name, accept the terms, and click **Continue**.
+2. Enter a project name, accept the terms, select a parent resource if needed, and click **Continue**.
 
    ![Enter project name](/img/authentication/providers/firebase/2-project-name.png)
 
@@ -122,7 +122,7 @@ pod.initializeAuthServices(
 );
 ```
 
-`FirebaseIdpConfigFromPasswords()` automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Configuration](./configuration) page.
+`FirebaseIdpConfigFromPasswords()` automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Customizations](./customizations) page.
 
 ### 2. Create the endpoint
 
@@ -152,21 +152,25 @@ Skipping the migration will cause the server to crash at runtime when the Fireba
 
 ### 1. Install required packages
 
-From your Flutter project directory (e.g., `my_project_flutter/`), add the Firebase and Serverpod authentication packages:
+From your Flutter project directory (e.g., `my_project_flutter/`), add the Firebase and Serverpod authentication packages along with [`firebase_ui_auth`](https://pub.dev/packages/firebase_ui_auth), which provides the pre-built sign-in screens this guide uses:
 
 ```bash
-flutter pub add firebase_core firebase_auth serverpod_auth_idp_flutter_firebase
+flutter pub add firebase_core firebase_auth firebase_ui_auth serverpod_auth_idp_flutter_firebase
 ```
 
-If you want to use Firebase's pre-built UI components, also add:
-
-```bash
-flutter pub add firebase_ui_auth
-```
+:::note
+`firebase_ui_auth` is the fastest path to a working sign-in screen. If you want to build a fully custom UI on top of `firebase_auth` directly, see [Using firebase_auth directly](./customizing-the-ui#using-firebase_auth-directly).
+:::
 
 ### 2. Configure FlutterFire
 
-Run the FlutterFire CLI from your Flutter project directory to configure Firebase for the platforms you support:
+First, log in to Firebase from your terminal:
+
+```bash
+firebase login
+```
+
+This opens a browser window so you can authenticate with the same Google account you used for the Firebase Console. Then run the FlutterFire CLI from your Flutter project directory to configure Firebase for the platforms you support:
 
 ```bash
 flutterfire configure
@@ -177,6 +181,10 @@ Select your Firebase project when prompted, and choose the platforms you want to
 ![FlutterFire configure terminal output](/img/authentication/providers/firebase/11-flutterfire-configure.png)
 
 This generates a `firebase_options.dart` file with your platform-specific Firebase configuration, and registers each platform app with your Firebase project.
+
+:::note
+If your Flutter project folder name contains an underscore (or any character that is not valid in a reverse-DNS bundle identifier), FlutterFire's auto-registration step will fail for iOS and macOS. Pass the bundle ID explicitly when this happens. See [FlutterFire configure fails for iOS or macOS apps](./troubleshooting#flutterfire-configure-fails-for-ios-or-macos-apps) in the troubleshooting guide.
+:::
 
 ### 3. Initialize Firebase and Serverpod
 
@@ -217,7 +225,7 @@ The `initializeFirebaseSignIn()` call ensures that the user gets automatically s
 
 ## Present the authentication UI
 
-The quickest way to get started is wrapping your app in a gate widget that uses [`firebase_ui_auth`](https://pub.dev/packages/firebase_ui_auth) together with [`FirebaseAuthController`](https://pub.dev/documentation/serverpod_auth_idp_flutter_firebase/latest/serverpod_auth_idp_flutter_firebase/FirebaseAuthController-class.html) to sync the Firebase user with Serverpod:
+New Serverpod Flutter projects ship with a `sign_in_screen.dart` file (typically under `lib/screens/sign_in_screen.dart`) that gates the app behind authentication. Replace its contents with the gate widget below, which uses [`firebase_ui_auth`](https://pub.dev/packages/firebase_ui_auth) together with [`FirebaseAuthController`](https://pub.dev/documentation/serverpod_auth_idp_flutter_firebase/latest/serverpod_auth_idp_flutter_firebase/FirebaseAuthController-class.html) to sync the Firebase user with Serverpod:
 
 ```dart
 import 'package:flutter/material.dart';
