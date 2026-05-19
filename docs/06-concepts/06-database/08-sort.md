@@ -16,22 +16,18 @@ By default the order is set to ascending, this can be changed to descending by s
 ```dart
 var companies = await Company.db.find(
   session,
-  orderBy: (t) => t.name,
-  orderDescending: true,
+  orderBy: (t) => t.name.desc(),
 );
 ```
 
 In the example we fetch all companies and sort them by their name in descending order.
 
-To order by several different columns use `orderByList`, note that this cannot be used in conjunction with `orderBy` and `orderDescending`.
+To order by several different columns use `orderByList`, note that this cannot be used in conjunction with `orderBy`.
 
 ```dart
 var companies = await Company.db.find(
   session,
-  orderByList: (t) => [
-    Order(column: t.name, orderDescending: true), 
-    Order(column: t.id),
-  ],
+  orderByList: (t) => [t.name.desc(), t.id.asc()],
 );
 ```
 

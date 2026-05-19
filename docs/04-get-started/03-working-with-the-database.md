@@ -96,8 +96,7 @@ class RecipeEndpoint extends Endpoint {
     // Get all the recipes from the database, sorted by date.
     return Recipe.db.find(
       session,
-      orderBy: (t) => t.date,
-      orderDescending: true,
+      orderBy: (t) => t.date.desc(),
     );
   }
 }
@@ -168,8 +167,7 @@ class RecipeEndpoint extends Endpoint {
     // Get all the recipes from the database, sorted by date.
     return Recipe.db.find(
       session,
-      orderBy: (t) => t.date,
-      orderDescending: true,
+      orderBy: (t) => t.date.desc(),
     );
   }
 }
