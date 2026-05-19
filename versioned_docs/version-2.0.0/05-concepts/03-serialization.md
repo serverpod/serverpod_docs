@@ -7,7 +7,7 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
     ```dart
     Map<String, dynamic> toJson() {
     return {
-        name: 'John Doe',
+        'name': 'John Doe',
     };
     }
     ```
