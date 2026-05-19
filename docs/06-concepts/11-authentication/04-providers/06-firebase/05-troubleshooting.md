@@ -11,7 +11,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Create a **Firebase project** in the [Firebase Console](https://console.firebase.google.com/).
 - [ ] Add an app for **every platform you support** (iOS, Android, Web) inside the Firebase project. Each platform needs its own registration.
 - [ ] Generate a **service account key** from **Project settings** > **Service accounts**.
-- [ ] Enable the **authentication methods** you want to use under **Authentication** > **Sign-in method**.
+- [ ] Enable the **authentication methods** you want to use under **Security** > **Authentication** > **Sign-in method**.
 - [ ] Confirm **Firebase App Check** is **disabled** (enable it later only after the client integration is in place).
 - [ ] In **Authentication** > **Settings** > **Authorized domains**, the list includes `localhost` for development and your production domain when you ship.
 
