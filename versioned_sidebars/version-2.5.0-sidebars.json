@@ -8,6 +8,12 @@
       "type": "link",
       "label": "Changelog",
       "href": "https://pub.dev/packages/serverpod/changelog"
+    },
+    {
+      "type": "link",
+      "label": "Serverpod Cloud",
+      "href": "/cloud",
+      "className": "sidebar-mobile-product-switch sidebar-icon-serverpod-cloud"
     }
   ]
 }

@@ -1,5 +1,6 @@
 ---
 slug: /concepts/working-with-endpoints
+sidebar_label: Working with endpoints
 ---
 
 # Working with endpoints
@@ -50,11 +51,11 @@ The client is initialized like this:
 // The client is set up to connect to a Serverpod running on a local server on
 // the default port. You will need to modify this to connect to staging or
 // production servers.
-var client = Client('http://$localhost:8080/')
+var client = Client('http://localhost:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
-If you run the app in an Android emulator, the `localhost` parameter points to `10.0.2.2`, rather than `127.0.0.1` as this is the IP address of the host machine. To access the server from a different device on the same network (such as a physical phone) replace `localhost` with the local ip address. You can find the local ip by running `ifconfig` (Linux/MacOS) or `ipconfig` (Windows).
+If you run the app in an Android emulator, use `10.0.2.2` instead of `localhost`, since `10.0.2.2` is the IP address of the host machine from inside the emulator. To access the server from a different device on the same network (such as a physical phone), replace `localhost` with the local IP address of your machine. You can find the local IP by running `ifconfig` (Linux/macOS) or `ipconfig` (Windows).
 
 Make sure to also update the `publicHost` in the development config to make sure the server always serves the client with the correct path to assets etc.
 
@@ -76,7 +77,7 @@ You can also pass `List`, `Map`, `Record`, and `Set` as parameters, but they nee
 
 :::warning
 
-While it's possible to pass binary data through a method call and `ByteData`, it is not the most efficient way to transfer large files. See our [file upload](./file-uploads) interface. The size of a call is by default limited to 512 kB. It's possible to change by adding the `maxRequestSize` to your config files. E.g., this will double the request size to 1 MB:
+While it's possible to pass binary data through a method call and `ByteData`, it is not the most efficient way to transfer large files. See our [file upload](./file-uploads) interface. The size of a call is by default limited to 524288 bytes (512 KiB). It's possible to change by adding the `maxRequestSize` to your config files. E.g., this will double the request size to 1 MiB:
 
 ```yaml
 maxRequestSize: 1048576

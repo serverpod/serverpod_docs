@@ -34,9 +34,11 @@ void run(List<String> args) async {
 A middleware is a function with this signature:
 
 ```dart
+typedef Handler = FutureOr<Result> Function(Request request);
 typedef Middleware = Handler Function(Handler innerHandler);
-typedef Handler = Future<Response> Function(Request request);
 ```
+
+`Result` is a sealed type with three subclasses: `Response`, `Hijack`, and `WebSocketUpgrade`. Middleware that modifies response-specific fields must first narrow to `Response` with an `is` check.
 
 ### Simple middleware example
 

@@ -71,9 +71,24 @@ const config = {
           href: 'https://serverpod.dev',
         },
         items: [{
-            type: 'docsVersionDropdown',
+            type: 'doc',
+            docId: 'index',
+            label: 'Framework',
             position: 'left',
           },
+          {
+            type: 'docsVersionDropdown',
+            docsPluginId: 'default',
+            position: 'left',
+          },
+          {
+            type: 'doc',
+            docId: 'index',
+            docsPluginId: 'cloud',
+            label: 'Serverpod Cloud',
+            position: 'left',
+          },
+          
           {
             href: 'https://pub.dev/documentation/serverpod/latest/',
             position: 'right',
@@ -121,6 +136,17 @@ const config = {
     async: true,
   }, ],
   plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'cloud',
+        path: 'cloud_docs',
+        routeBasePath: 'cloud',
+        sidebarPath: require.resolve('./sidebarsCloud.js'),
+        editUrl: 'https://github.com/serverpod/serverpod_cloud/tree/main/docs/docs/',
+        breadcrumbs: false,
+      },
+    ],
     [
       'docusaurus-plugin-snipsync',
       {

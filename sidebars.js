@@ -22,6 +22,12 @@ const sidebars = {
       href: 'https://pub.dev/packages/serverpod/changelog',
       className: 'sidebar-icon-changelog',
     },
+    {
+      type: 'link',
+      label: 'Serverpod Cloud',
+      href: '/cloud',
+      className: 'sidebar-mobile-product-switch sidebar-icon-serverpod-cloud',
+    },
   ],
 
   // But you can create a sidebar manually
