@@ -57,12 +57,20 @@ Finally, run `serverpod generate` to generate the client code and expose the end
 
 #### Token Algorithms
 
-There are two supported token algorithms:
+There are three supported token algorithms:
 
 - **HMAC SHA-512**: Use HMAC SHA-512 for symmetric key signing.
 
     ```dart
     algorithm: JwtAlgorithm.hmacSha512(
+      SecretKey(pod.getPassword('authenticationTokenPrivateKey')!),
+    ),
+    ```
+
+- **HMAC SHA-256**: Use HMAC SHA-256 for symmetric key signing.
+
+    ```dart
+    algorithm: JwtAlgorithm.hmacSha256(
       SecretKey(pod.getPassword('authenticationTokenPrivateKey')!),
     ),
     ```
