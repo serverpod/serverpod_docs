@@ -50,7 +50,7 @@ final googleIdpConfig = GoogleIdpConfig(
       'client_id': 'your-client-id.apps.googleusercontent.com',
       'client_secret': 'your-client-secret',
       'redirect_uris': [
-        'http://localhost:49660/auth.html',
+        'https://your-domain.com/auth/callback',
       ],
     },
   }),
@@ -236,10 +236,31 @@ client.auth.initializeGoogleSignIn(
 flutter run \
   -d chrome --web-port=49660 \
   --dart-define="GOOGLE_CLIENT_ID=<web_client_id>.apps.googleusercontent.com" \
-  --dart-define="GOOGLE_WEB_REDIRECT_URI=http://localhost:49660/auth.html"
+  --dart-define="GOOGLE_WEB_REDIRECT_URI=https://my-awesome-project.serverpod.space/auth/callback"
 ```
 
 `GOOGLE_CLIENT_ID` is also read automatically by the package if `clientId` is null, so you can omit the explicit `clientId:` argument and rely on the environment variable. There is no equivalent automatic env var for `redirectUri` because it is purely a web concern.
+
+### Separately-hosted Flutter web
+
+The [smooth path](./setup#web) assumes Serverpod hosts the Flutter web build (the default project template). If your Flutter web app is served on a different origin from Serverpod, the `postMessage` from `FlutterWebAuth2CallbackRoute` is blocked by the browser. This happens during local development when you run `flutter run -d chrome --web-port=49660` and Serverpod's web server is on `localhost:8082`, or in production if you host the Flutter web build on a CDN separate from your Serverpod API server.
+
+In that case, use the static `auth.html` flow instead of the route.
+
+1. Place a static `auth.html` file in your Flutter project's `web/` folder. A single copy is shared across every identity provider that uses an OAuth2 redirect, so create it once. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
+
+2. Choose a fixed port for your Flutter web app. Google OAuth requires exact URI matches, and Flutter picks a random port on each run by default. Run Flutter on a fixed port using `--web-port`:
+
+   ```bash
+   flutter run -d chrome --web-hostname localhost --web-port=49660
+   ```
+
+3. Update the [server OAuth client](./setup#create-the-server-oauth-client-web-application) and add the following:
+
+   - **Authorized JavaScript origins**: your Flutter web app's origin (e.g., `http://localhost:49660` locally, `https://app.example.com` in production).
+   - **Authorized redirect URIs**: the full URL where `auth.html` is served (e.g., `http://localhost:49660/auth.html` locally, `https://app.example.com/auth.html` in production).
+
+4. Pass the same URL to `initializeGoogleSignIn` via the `redirectUri` argument instead of the route URL.
 
 ## GoogleIdpConfig parameter reference
 
