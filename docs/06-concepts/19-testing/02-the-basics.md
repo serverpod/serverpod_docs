@@ -123,16 +123,20 @@ withServerpod(
 
 ## Configuration
 
-The following optional configuration options are available to pass as a second argument to `withServerpod`:
+The following optional configuration options are available to pass as named arguments to `withServerpod`:
 
 |Property|Description|Default|
 |:-----|:-----|:---:|
 |`applyMigrations`|Whether pending migrations should be applied when starting Serverpod.|`true`|
+|`configOverride`|A function that overrides values in the loaded Serverpod config before the test server starts.|`null`|
 |`enableSessionLogging`|Whether session logging should be enabled.|`false`|
+|`experimentalFeatures`|Optionally specify experimental features used by Serverpod.|`null`|
 |`rollbackDatabase`|Options for when to rollback the database during the test lifecycle (or disable it). See detailed description [here](#rollback-database-configuration).|`RollbackDatabase.afterEach`|
-|`runMode`|The run mode that Serverpod should be running in.|`ServerpodRunmode.test`|
+|`runMode`|The run mode that Serverpod should be running in.|`test`|
+|`runtimeParametersBuilder`|A callback for providing runtime parameters to Serverpod before startup.|`null`|
 |`serverpodLoggingMode`|The logging mode used when creating Serverpod.|`ServerpodLoggingMode.normal`|
 |`serverpodStartTimeout`|The timeout to use when starting Serverpod, which connects to the database among other things. Defaults to `Duration(seconds: 30)`.|`Duration(seconds: 30)`|
+|`testServerOutputMode`|Options for controlling test server output during test execution.|`TestServerOutputMode.normal`|
 |`testGroupTagsOverride`|By default Serverpod test tools tags the `withServerpod` test group with `"integration"`. This is to provide a simple way to only run unit or integration tests. This property allows this tag to be overridden to something else. Defaults to `['integration']`.|`['integration']`|
 
 ### `rollbackDatabase` {#rollback-database-configuration}
