@@ -106,7 +106,7 @@ This is particularly helpful when:
 - Integrating with third-party services like MongoDB (e.g., mapping `id` to `_id`)
 
 :::info
-The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the `column` property instead. This is an experimental feature; see the [Experimental documentation](experimental#column-name-override) under *Column name override* for details.
+The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the [`column` property](database/models#column-name-override) instead.
 :::
 
 ### Immutable classes
