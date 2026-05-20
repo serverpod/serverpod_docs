@@ -46,6 +46,15 @@ indexes:
 
 The `unique` keyword is a bool that can toggle the index to be unique, the default is set to false. If the `unique` keyword is applied to a multi-column index, the index will be unique for the combination of the fields.
 
+Alternatively, for single-column indexes, marking a column as unique can be simplified by using the `unique` keyword directly on the field definition:
+
+```yaml
+class: Company
+table: company
+fields:
+  name: String, unique
+```
+
 ## Specifying index type
 
 It is possible to add a type key to specify the index type.
