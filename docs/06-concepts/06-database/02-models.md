@@ -12,10 +12,26 @@ fields:
 When the `table` keyword is added to the model, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod create-migration` command that will generate the necessary [migrations](migrations) needed to update the database.
 
 :::info
-
 When you add a `table` to a serializable class, Serverpod will automatically add an `id` field of type `int?` to the class. You should not define this field yourself. The `id` is set when you interact with an object stored in the database.
-
 :::
+
+## Client-side database
+
+Models with the `table` keyword can also generate a client-side database with the `database` keyword:
+
+```yaml
+class: Company
+table: company
+database: client
+```
+
+| Value | Description |
+| ------- | ----------- |
+| `server` | Generates tables only on the server, and a non-table model on the client package (default). |
+| `client` | Generates tables only on the client, and a non-table model on the server package. |
+| `all` | Generates table models on both server and client. |
+
+For how to use the client-side database, see the [Client-side database](client-side-database) section.
 
 ## Non persistent fields
 
