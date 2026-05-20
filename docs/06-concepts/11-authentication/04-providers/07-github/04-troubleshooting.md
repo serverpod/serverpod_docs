@@ -27,7 +27,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Added `client.auth.initializeGitHubSignIn(clientId: ..., redirectUri: ...)` after `client.auth.initialize()` in your Flutter app's `main.dart`.
 - [ ] Both `clientId` and `redirectUri` match values registered on the GitHub App.
 - [ ] On **Android**, added the `flutter_web_auth_2` `CallbackActivity` to `AndroidManifest.xml` with the **exact** scheme used in your callback URL.
-- [ ] On **Web (Serverpod-hosted Flutter)**, called `pod.configureFlutterWebAuth2CallbackRoute(host: ...)` in `server.dart` before `pod.start()`. On **Web (separately-hosted Flutter)**, created `web/auth.html` in your Flutter project. See [Web](./setup#web) for both flows.
+- [ ] On **Web (Serverpod-hosted Flutter)**, registered `FlutterWebAuth2CallbackRoute` via `pod.webServer.addRoute(...)` in `server.dart` before `pod.start()`. On **Web (separately-hosted Flutter)**, created `web/auth.html` in your Flutter project. See [Web](./setup#web) for both flows.
 - [ ] On **Web**, ran Flutter on a fixed `--web-port` matching the port registered in the GitHub App's callback URL.
 
 ## Sign-in fails with redirect_uri_mismatch
@@ -42,7 +42,7 @@ Common mistakes:
 
 - Trailing slashes (`https://your-domain.com/auth/callback/`) or port differences.
 - Wrong scheme (`http` vs `https`, or mismatched custom scheme like `myapp:` vs `MyApp:`).
-- For Serverpod-hosted Flutter web, forgetting to call `pod.configureFlutterWebAuth2CallbackRoute(host: ...)` so the `/auth/callback` route is never registered. Hitting the URL returns 404.
+- For Serverpod-hosted Flutter web, forgetting to register `FlutterWebAuth2CallbackRoute` via `pod.webServer.addRoute(...)` so the `/auth/callback` route is never registered. Hitting the URL returns 404.
 - For separately-hosted Flutter web, missing the `auth.html` file in the Flutter project's `web/` folder.
 - Flutter dev server running on a random port. Pass `--web-port=<port>` to `flutter run` so the origin is stable across restarts.
 
@@ -54,7 +54,7 @@ Common mistakes:
 
 **Resolution:**
 
-- **Web (Serverpod-hosted Flutter)**: Confirm `pod.configureFlutterWebAuth2CallbackRoute(host: ...)` is called in `server.dart` and that `host` matches the domain serving your Flutter web app. Open `https://your-domain.com/auth/callback` directly in a browser tab; you should see the "Authentication complete" page. Also confirm Flutter web and the route share scheme + host + port (`postMessage` is blocked across origins).
+- **Web (Serverpod-hosted Flutter)**: Confirm `pod.webServer.addRoute(FlutterWebAuth2CallbackRoute(host: ...), '/auth/callback')` is called in `server.dart` and that `host` matches the domain serving your Flutter web app. Open `https://your-domain.com/auth/callback` directly in a browser tab; you should see the "Authentication complete" page. Also confirm Flutter web and the route share scheme + host + port (`postMessage` is blocked across origins).
 - **Web (separately-hosted Flutter)**: Confirm `web/auth.html` exists in your Flutter project and contains the script shown in [Web](./setup#web). Open the redirect URL directly in a browser tab; you should see the "Authentication complete" page.
 - **Android**: Verify the `<data android:scheme="..."/>` value in `AndroidManifest.xml` matches the scheme in your callback URL exactly.
 - **iOS / macOS**: Universal Links require HTTPS callback URLs and associated-domain entitlements. Standard custom-scheme callbacks work without extra configuration.

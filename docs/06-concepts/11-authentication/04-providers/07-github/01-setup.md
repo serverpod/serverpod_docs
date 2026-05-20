@@ -215,19 +215,26 @@ Serverpod can host this callback for you when the Flutter web app is served by t
 1. In `server.dart`, before `pod.start()`, register the callback route:
 
    ```dart
-   pod.configureFlutterWebAuth2CallbackRoute(
-     host: 'my-awesome-project.serverpod.space',
+   import 'package:serverpod_auth_idp_server/core.dart';
+
+   // ...
+
+   pod.webServer.addRoute(
+     FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'),
+     '/auth/callback',
    );
    ```
 
-   Set `host` to the domain that serves your Flutter web app so the route only responds to requests on that origin. The path defaults to `/auth/callback`; pass `path:` to override.
+   Set `host` to the domain that serves your Flutter web app so the route only responds to requests on that origin. The second argument to `addRoute` is the path; use any path you like, as long as it matches the callback URL registered on your GitHub App and the `redirectUri` you pass to `initializeGitHubSignIn`.
+
+   The route is provider-agnostic. Register it once and reuse the same callback URL across every OAuth2 PKCE provider (GitHub, Google, etc.).
 
 2. Register `https://my-awesome-project.serverpod.space/auth/callback` as a **Callback URL** on your GitHub App.
 
 3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client (covered in [Present the authentication UI](#present-the-authentication-ui) below).
 
 :::note
-`configureFlutterWebAuth2CallbackRoute` requires `serverpod_auth_idp_server` 3.5.0-beta.8 or later. On earlier versions, use the [Separately-hosted Flutter web](#separately-hosted-flutter-web-or-local-flutter-dev-server) flow instead.
+`FlutterWebAuth2CallbackRoute` requires `serverpod_auth_idp_server` 3.5.0-beta.8 or later. On earlier versions, use the [Separately-hosted Flutter web](#separately-hosted-flutter-web-or-local-flutter-dev-server) flow instead.
 :::
 
 #### Separately-hosted Flutter web (or local Flutter dev server)
@@ -311,7 +318,7 @@ Before going live, complete the following steps:
 
 Go back to your GitHub App's settings and add your production callback URL to **Callback URL** alongside the development one. Both should remain registered so dev and prod work simultaneously.
 
-- For Serverpod-hosted Flutter web (standard project template), the production callback is `https://my-awesome-project.serverpod.space/auth/callback`. Make sure `pod.configureFlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space')` is called in `server.dart` so the route is registered in production.
+- For Serverpod-hosted Flutter web (standard project template), the production callback is `https://my-awesome-project.serverpod.space/auth/callback`. Make sure `pod.webServer.addRoute(FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'), '/auth/callback')` is called in `server.dart` so the route is registered in production.
 - For separately-hosted Flutter web, use the production `auth.html` URL (for example, `https://app.example.com/auth.html`).
 - For mobile custom schemes (e.g., `com.example.yourapp://auth`), no change is needed between dev and prod.
 
