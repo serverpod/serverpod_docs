@@ -491,7 +491,9 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 .theme-doc-sidebar-menu .sidebar-icon-get-started-step-2 .menu__link,
 .theme-doc-sidebar-menu .sidebar-icon-get-started-step-3 .menu__link,
 .theme-doc-sidebar-menu .sidebar-icon-get-started-step-4 .menu__link,
-.theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link {
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-6 .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-7 .menu__link {
   --sidebar-icon-size: 0.85rem;
 }
 
@@ -517,6 +519,16 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 
 .theme-doc-sidebar-menu .sidebar-icon-get-started-step-5 .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-number-5.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-6 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-6.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-get-started-step-7 .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-number-7.svg');
   --sidebar-icon-color: currentColor;
 }
 

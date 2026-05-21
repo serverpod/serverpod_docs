@@ -1,4 +1,4 @@
-# Upgrading to pgvector support
+# Upgrade to pgvector
 
 New Serverpod projects automatically include pgvector support through the `pgvector/pgvector` PostgreSQL Docker image. However, existing projects need to be upgraded to use vector functionality.
 
@@ -12,7 +12,7 @@ If trying to use vector fields without upgrading, you will encounter an error wh
 
 ## For Docker-based environments
 
-1. Update your `docker-compose.yml` to use a PostgreSQL image with pgvector (e.g., `pgvector/pgvector:pg16`):
+1. Update your `docker-compose.yaml` to use a PostgreSQL image with pgvector (e.g., `pgvector/pgvector:pg16`):
 
 ```yaml
 services:

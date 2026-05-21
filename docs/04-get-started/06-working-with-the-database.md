@@ -1,9 +1,9 @@
 ---
-sidebar_label: Working with the database
-sidebar_class_name: sidebar-icon-get-started-step-3
+sidebar_label: Manage the database
+sidebar_class_name: sidebar-icon-get-started-step-6
 ---
 
-# Working with the database
+# Manage the database
 
 In this section, we will build upon the models we created in the previous section and add a database to store the recipes that users create in the app. This will allow our application to persist data between sessions.
 
@@ -96,8 +96,7 @@ class RecipeEndpoint extends Endpoint {
     // Get all the recipes from the database, sorted by date.
     return Recipe.db.find(
       session,
-      orderBy: (t) => t.date,
-      orderDescending: true,
+      orderBy: (t) => t.date.desc(),
     );
   }
 }
@@ -168,8 +167,7 @@ class RecipeEndpoint extends Endpoint {
     // Get all the recipes from the database, sorted by date.
     return Recipe.db.find(
       session,
-      orderBy: (t) => t.date,
-      orderDescending: true,
+      orderBy: (t) => t.date.desc(),
     );
   }
 }

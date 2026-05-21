@@ -1,9 +1,9 @@
 ---
-sidebar_label: Deploying Serverpod
-sidebar_class_name: sidebar-icon-get-started-step-4
+sidebar_label: Deploy your server
+sidebar_class_name: sidebar-icon-get-started-step-7
 ---
 
-# Deploying Serverpod
+# Deploy your server
 
 ## Server requirements
 
