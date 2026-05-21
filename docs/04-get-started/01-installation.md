@@ -1,6 +1,6 @@
 ---
 sidebar_label: Installation
-sidebar_class_name: sidebar-icon-get-started-step-1
+sidebar_class_name: sidebar-installation-icon
 slug: /installation
 ---
 

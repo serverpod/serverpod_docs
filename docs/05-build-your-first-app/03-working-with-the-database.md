@@ -1,6 +1,7 @@
 ---
 sidebar_label: Manage the database
-sidebar_class_name: sidebar-icon-get-started-step-6
+sidebar_class_name: sidebar-icon-get-started-step-3
+slug: /get-started/working-with-the-database
 ---
 
 # Manage the database
