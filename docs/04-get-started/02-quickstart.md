@@ -1,6 +1,6 @@
 ---
 sidebar_label: Quickstart
-sidebar_class_name: sidebar-icon-get-started-step-2
+sidebar_class_name: sidebar-icon-quickstart
 slug: /quickstart
 ---
 

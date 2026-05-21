@@ -1,6 +1,7 @@
 ---
 sidebar_label: Deploy your server
-sidebar_class_name: sidebar-icon-get-started-step-7
+sidebar_class_name: sidebar-icon-get-started-step-4
+slug: /get-started/deployment
 ---
 
 # Deploy your server
