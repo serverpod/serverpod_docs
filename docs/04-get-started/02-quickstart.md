@@ -24,7 +24,7 @@ Before we start, make sure that you have [Serverpod installed](./installation). 
 Use Serverpod's `create` command to create a new project. The `create` command is interactive and will guide you through the setup process.
 
 ```bash
-serverpod create my_project
+$ serverpod create my_project
 ```
 
 Create the project with all the default settings. Just select which editor/agent you are plannig to use. Hit the enter key to create the project.
@@ -42,7 +42,7 @@ If you are using Cursor, you will need to **enable the MCP server** in your proj
 Start the server and the Flutter app by opening up a terminal window and running the `serverpod start` command:
 
 ```bash
-serverpod start
+$ serverpod start
 ```
 
 After the server has started and your app has finished building, it will open in a new window. Try it out by entering your name and clicking the send button.
@@ -86,19 +86,19 @@ To deploy your app to Serverpod Cloud, you will need to create an account and se
 Install the Serverpod Cloud command line tools:
 
 ```txt
-dart install serverpod_cloud_cli
+$ dart install serverpod_cloud_cli
 ```
 
 With the Serverpod Cloud project set up and the CLI tools installed, you can deploy your backend and web app using the `scloud launch` command:
 
 ```txt
-scloud launch
+$ scloud launch
 ```
 
 After the project has been uploaded for the first time, use the `deploy` command whenever you make changes to your project:
 
 ```txt
-scloud deploy
+$ scloud deploy
 ```
 
 :::tip
