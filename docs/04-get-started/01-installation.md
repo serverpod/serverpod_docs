@@ -1,6 +1,6 @@
 ---
 sidebar_label: Installation
-sidebar_class_name: sidebar-icon-get-started-step-1
+sidebar_class_name: sidebar-installation-icon
 slug: /installation
 ---
 
@@ -25,7 +25,7 @@ Serverpod supports **SQLite** as a database, which means you can develop locally
 
 <summary>Using **Postgres** locally instead of SQLite</summary>
 
-If you want to use Postgres rather than SQLite on your machine, install **[Docker](https://docs.docker.com/get-docker/)** and use it to run PostgreSQL locally. Each Serverpod project ships with its own `docker-compose.yaml`, so you do not need to assemble custom containers. The **[Getting Started](./04-creating-endpoints.md)** guide walks you through the details.
+If you want to use Postgres rather than SQLite on your machine, install **[Docker](https://docs.docker.com/get-docker/)** and use it to run PostgreSQL locally. Each Serverpod project ships with its own `docker-compose.yaml`, so you do not need to assemble custom containers. The **[Getting Started](../05-build-your-first-app/01-creating-endpoints.md)** guide walks you through the details.
 
 Check your Docker installation by running the following command in your terminal:
 

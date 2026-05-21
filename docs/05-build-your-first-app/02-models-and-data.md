@@ -1,6 +1,7 @@
 ---
 sidebar_label: Create data models
-sidebar_class_name: sidebar-icon-get-started-step-5
+sidebar_class_name: sidebar-icon-get-started-step-2
+slug: /get-started/models-and-data
 ---
 
 # Create data models
