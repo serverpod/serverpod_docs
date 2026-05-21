@@ -1,7 +1,10 @@
 ---
 sidebar_label: Quickstart
-sidebar_class_name: sidebar-icon-quickstart
+sidebar_class_name: sidebar-icon-get-started-step-2
+slug: /quickstart
 ---
+
+<!-- markdownlint-disable MD041 -->
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -39,7 +42,6 @@ serverpod start
 When the server is running, start the Flutter app. Select _Chrome_ as the Flutter target (it's located at the bottom-right corner of the window). Open the `main.dart` file in the `my_project_flutter/lib/` directory. Click the _Run_ button above the `main` method.
 
 After your app has finished building, it will open in a new window. Try it out by entering your name and clicking the send button.
-
 
 ## Build your app
 
