@@ -1,6 +1,7 @@
 ---
 sidebar_label: Installation
-sidebar_class_name: sidebar-installation-icon
+sidebar_class_name: sidebar-icon-get-started-step-1
+slug: /installation
 ---
 
 # Installation
@@ -24,7 +25,7 @@ Serverpod supports **SQLite** as a database, which means you can develop locally
 
 <summary>Using **Postgres** locally instead of SQLite</summary>
 
-If you want to use Postgres rather than SQLite on your machine, install **[Docker](https://docs.docker.com/get-docker/)** and use it to run PostgreSQL locally. Each Serverpod project ships with its own `docker-compose.yaml`, so you do not need to assemble custom containers. The **[Getting Started](./04-get-started/01-creating-endpoints.md)** guide walks you through the details.
+If you want to use Postgres rather than SQLite on your machine, install **[Docker](https://docs.docker.com/get-docker/)** and use it to run PostgreSQL locally. Each Serverpod project ships with its own `docker-compose.yaml`, so you do not need to assemble custom containers. The **[Getting Started](./04-creating-endpoints.md)** guide walks you through the details.
 
 Check your Docker installation by running the following command in your terminal:
 
@@ -71,5 +72,5 @@ You can **[install the extension](https://marketplace.visualstudio.com/items?ite
 
 ### Install Serverpod Insights (optional)
 
-**[Serverpod Insights](./10-tools/01-insights.md)** is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
+**[Serverpod Insights](../10-tools/01-insights.md)** is a companion app bundled with Serverpod. It allows you to access your server's logs and health metrics. Insights is available for Mac and Windows, but we will be adding support for Linux in the future.
 ![Serverpod Insights](/img/serverpod-insights.webp)

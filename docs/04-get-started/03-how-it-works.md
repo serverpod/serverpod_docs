@@ -1,7 +1,7 @@
 ---
-title: How Serverpod works
 sidebar_label: How it works
-sidebar_class_name: sidebar-icon-overview
+sidebar_class_name: sidebar-icon-get-started-step-3
+slug: /how-it-works
 description: "Understand Serverpod's architecture: the three-package layout, the code generator, and the request lifecycle that gives you full-stack type safety."
 ---
 
@@ -29,10 +29,12 @@ Because the client package is auto-generated from the server code, there is no n
 Code generation cuts boilerplate and keeps types in sync between server and app. Serverpod watches your `_server` package as you edit and runs the generator automatically.
 
 The generator reads two kinds of source files:
+
 - **Model files (`.spy.yaml`)** defining your data classes.
 - **Endpoint classes** defining your server's API.
 
 From these files, Serverpod generates:
+
 - **A typed client** in the `_client` package, allowing your Flutter app to call the backend with full type-safety.
 - **Serialization and ORM classes** in the `_server` package, for database access and communication.
 
@@ -69,7 +71,7 @@ sequenceDiagram
 
 ### Real-time streaming
 
-Regular endpoint methods follow the request/response lifecycle above. For real-time use cases like live updates, collaborative features, and multiplayer, Serverpod also supports [streaming endpoints](./06-concepts/15-streams.md), which keep a WebSocket connection open and let server and client push data to each other continuously.
+Regular endpoint methods follow the request/response lifecycle above. For real-time use cases like live updates, collaborative features, and multiplayer, Serverpod also supports [streaming endpoints](../06-concepts/15-streams.md), which keep a WebSocket connection open and let server and client push data to each other continuously.
 
 ### Session
 
