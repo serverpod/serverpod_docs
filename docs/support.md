@@ -1,5 +1,6 @@
 ---
 sidebar_label: Support & community
+sidebar_position: 6.5
 sidebar_class_name: sidebar-icon-support
 ---
 
