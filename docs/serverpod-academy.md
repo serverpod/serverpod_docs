@@ -2,7 +2,7 @@
 title: Serverpod Academy
 sidebar_label: Serverpod Academy
 sidebar_class_name: sidebar-icon-academy
-sidebar_position: 4.5
+sidebar_position: 5.5
 description: Free video course on the Serverpod framework. Build a complete app end-to-end and earn a certificate on completion.
 ---
 
