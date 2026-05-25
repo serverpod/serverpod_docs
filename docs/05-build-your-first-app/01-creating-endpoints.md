@@ -1,6 +1,7 @@
 ---
 sidebar_label: Create your first endpoint
-sidebar_class_name: sidebar-icon-get-started-step-4
+sidebar_class_name: sidebar-icon-get-started-step-1
+slug: /get-started/creating-endpoints
 ---
 
 # Create your first endpoint

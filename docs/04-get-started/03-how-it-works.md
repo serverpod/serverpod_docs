@@ -1,6 +1,6 @@
 ---
 sidebar_label: How it works
-sidebar_class_name: sidebar-icon-get-started-step-3
+sidebar_class_name: sidebar-icon-overview
 slug: /how-it-works
 description: "Understand Serverpod's architecture: the three-package layout, the code generator, and the request lifecycle that gives you full-stack type safety."
 ---
