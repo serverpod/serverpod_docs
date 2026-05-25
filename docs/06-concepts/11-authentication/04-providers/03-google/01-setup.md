@@ -72,7 +72,7 @@ All platforms (iOS, Android, and Web) require a **Web application** OAuth client
 
 2. Select **Web application** as the application type.
 
-3. Leave **Authorized JavaScript origins** and **Authorized redirect URIs** empty for now if you only target iOS or Android. If you target web, you will fill them in under [Web](#web) below.
+3. If you only target iOS or Android, leave **Authorized JavaScript origins** and **Authorized redirect URIs** empty. If you target web, fill in both fields with the values from [Web](#web) below before you click **Create**.
 
    ![Clients configuration](/img/authentication/providers/google/5-clients.png)
 
@@ -97,7 +97,7 @@ development:
     }
 ```
 
-Replace `your-client-id` and `your-client-secret` with the values from the Google Auth Platform. The `redirect_uris` must match the **Authorized redirect URIs** you configured in the previous step. For web sign-in, this is the route URL from [Web setup](#web). If you run `flutter run -d chrome` locally, use the `auth.html` URL from the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback instead.
+Replace `your-client-id` and `your-client-secret` with the values from the Google Auth Platform. For iOS- or Android-only setups, you can leave `redirect_uris` as an empty array (`[]`); web sign-in requires the route URL from [Web setup](#web), which is the same value you add to **Authorized redirect URIs** on the OAuth client. If you run `flutter run -d chrome` locally, use the `auth.html` URL from the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback instead.
 
 For production, add the same `googleClientSecret` entry to the `production:` section of `passwords.yaml` (with your production redirect URI), or set the `SERVERPOD_PASSWORD_googleClientSecret` environment variable on your production server.
 
@@ -244,7 +244,9 @@ The downloaded `google-services.json` may not include a web OAuth client entry, 
 
 ### Web
 
-On web, Google signs the user in through an OAuth2 redirect: the browser is sent to `accounts.google.com`, the user signs in, and Google redirects back to a callback page that posts the result back to your Flutter app via `postMessage`. Serverpod hosts this callback for you when the Flutter web app is served by the same Serverpod server (the default project template, which copies the Flutter web build into Serverpod's `web/app/` directory via the `flutter_build` script).
+On web, Google signs the user in through an OAuth2 redirect: the browser is sent to `accounts.google.com`, the user signs in, and Google redirects back to a callback page that posts the result back to your Flutter app via `postMessage`.
+
+Serverpod can host this callback as the Flutter web app is served by it.
 
 1. In `server.dart`, before `pod.start()`, register the callback route:
 
