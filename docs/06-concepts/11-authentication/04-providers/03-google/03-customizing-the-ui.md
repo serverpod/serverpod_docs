@@ -87,8 +87,8 @@ final controller = GoogleAuthController(
 await controller.signIn();
 ```
 
-:::warning
-When using Google Sign-In on web, be mindful that the button will be rendered by the underlying `google_sign_in` package, so customizing the button might not work as expected. The included `GoogleSignInWidget` is a wrapper around the original widgets that already applies some customizations to make its design compatible between all platforms.
+:::note
+On web, the button you can customize depends on which web sign-in mode you use. If you pass `redirectUri` to `initializeGoogleSignIn`, sign-in runs through the OAuth2 redirect flow and your custom widget renders directly. If you do not pass `redirectUri`, the underlying `google_sign_in` package renders Google's built-in button instead and most visual customizations have no effect. Set up `redirectUri` as described in the [Web setup](./setup#web) to control the button yourself.
 :::
 
 ### GoogleAuthController State Management
