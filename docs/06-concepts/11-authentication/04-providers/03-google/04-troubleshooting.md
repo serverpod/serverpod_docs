@@ -25,12 +25,13 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Client
 
-- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`. On web, pass `clientId` and `redirectUri` (the full callback URL — either the route URL or the `auth.html` URL, depending on your [Web setup](./setup#web)).
+- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`. On web, pass `clientId` and `redirectUri` (the full callback URL, either the route URL or the `auth.html` URL, depending on your [Web setup](./setup#web)).
 - [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
 - [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app; set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
 - [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run; place `google-services.json` in `android/app/` (*Android only*).
-- [ ] Register `FlutterWebAuth2CallbackRoute` on `pod.webServer` in `server.dart` before `pod.start()` per [Web setup](./setup#web) (*Web only*).
-- [ ] If you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback, create `web/auth.html` in your Flutter project as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) and run Flutter on a **fixed** `--web-port` so the origin does not change every run (*Web only*).
+- [ ] Set up the web callback (*Web only*). Pick one:
+  - **Standard:** Register `FlutterWebAuth2CallbackRoute` on `pod.webServer` in `server.dart` before `pod.start()` per [Web setup](./setup#web).
+  - **Separately-hosted fallback:** Create `web/auth.html` in your Flutter project as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) and run Flutter on a **fixed** `--web-port` so the origin does not change every run. See [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web).
 
 ## Sign-in fails with redirect_uri_mismatch
 
@@ -69,6 +70,14 @@ Common mistakes:
 **Cause:** Your Google Auth Platform app is still in **Testing** mode. Only users explicitly added as test users can sign in (up to 100).
 
 **Resolution:** Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page and click **Publish App** to allow any Google account to sign in. If your app uses sensitive or restricted scopes, Google may require a verification review before publishing.
+
+## Sign-in callback fails locally with `flutter run -d chrome`
+
+**Problem:** You followed [Web setup](./setup#web) and registered `FlutterWebAuth2CallbackRoute`. Sign-in completes at Google, the browser redirects, but the Flutter app never receives the result. Only affects `flutter run -d chrome` local dev.
+
+**Cause:** The integrated route requires Serverpod and your Flutter web app to be on the **same origin** (same scheme, host, AND port). With `flutter run -d chrome`, Flutter runs on its own dev server port (e.g., `49660`) while Serverpod is on `8082` — different origins. The browser blocks the callback page's `postMessage` across origins.
+
+**Resolution:** Use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow for local dev — it serves `auth.html` from Flutter's own dev server, same-origin with your Flutter app. For production, the integrated route works once Serverpod serves your Flutter build (template default via `FlutterRoute` on `/app`).
 
 ## Sign-in callback never returns to the Flutter app
 

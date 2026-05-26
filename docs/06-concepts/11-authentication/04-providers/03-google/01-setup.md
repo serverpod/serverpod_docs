@@ -72,7 +72,7 @@ All platforms (iOS, Android, and Web) require a **Web application** OAuth client
 
 2. Select **Web application** as the application type.
 
-3. If you only target iOS or Android, leave **Authorized JavaScript origins** and **Authorized redirect URIs** empty. If you target web, fill in both fields with the values from [Web](#web) below before you click **Create**.
+3. Leave **Authorized JavaScript origins** and **Authorized redirect URIs** empty for now. [Web setup](#web) below fills them in if you target web.
 
    ![Clients configuration](/img/authentication/providers/google/5-clients.png)
 
@@ -92,18 +92,14 @@ development:
       "web": {
         "client_id": "your-client-id.apps.googleusercontent.com",
         "client_secret": "your-client-secret",
-        "redirect_uris": ["http://localhost:8082/auth/callback"]
+        "redirect_uris": []
       }
     }
 ```
 
-Replace `your-client-id` and `your-client-secret` with the values from the Google Auth Platform. For iOS- or Android-only setups, you can leave `redirect_uris` as an empty array (`[]`); web sign-in requires the route URL from [Web setup](#web), which is the same value you add to **Authorized redirect URIs** on the OAuth client. If you run `flutter run -d chrome` locally, use the `auth.html` URL from the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback instead.
+Replace `your-client-id` and `your-client-secret` with the values from the Google Auth Platform. If you target web, [Web setup](#web) below adds the callback URL to `redirect_uris`.
 
 For production, add the same `googleClientSecret` entry to the `production:` section of `passwords.yaml` (with your production redirect URI), or set the `SERVERPOD_PASSWORD_googleClientSecret` environment variable on your production server.
-
-:::warning
-**Never commit `config/passwords.yaml` to version control.** It contains your OAuth client secret. Use environment variables or a secrets manager in production.
-:::
 
 :::note
 **Carefully maintain correct indentation for YAML block scalars.** The `googleClientSecret` block uses a `|`; any indentation error will silently break the JSON, resulting in authentication failures.
@@ -244,11 +240,18 @@ The downloaded `google-services.json` may not include a web OAuth client entry, 
 
 ### Web
 
-On web, Google signs the user in through an OAuth2 redirect: the browser is sent to `accounts.google.com`, the user signs in, and Google redirects back to a callback page that posts the result back to your Flutter app via `postMessage`.
+On web, Google completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** as the callback route. To test locally, build your Flutter web app into Serverpod's `web/app/` directory:
 
-Serverpod can host this callback as the Flutter web app is served by it.
+```bash
+flutter build web --output ../my_project_server/web/app  # from your Flutter project
+dart run bin/main.dart                                   # from your server project
+```
 
-1. In `server.dart`, before `pod.start()`, register the callback route:
+Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod — for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+
+The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
+
+1. In your server project's `server.dart` file, before `pod.start()`, register the callback route:
 
    ```dart
    import 'package:serverpod_auth_idp_server/core.dart';
@@ -256,58 +259,57 @@ Serverpod can host this callback as the Flutter web app is served by it.
    // ...
 
    pod.webServer.addRoute(
-     FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'),
+     FlutterWebAuth2CallbackRoute(),
      '/auth/callback',
    );
    ```
 
-   Set `host` to the domain that serves your Flutter web app so the route only responds to requests on that origin. The second argument to `addRoute` is the path; use any path you like, as long as it matches the URI you register with Google and the `redirectUri` you pass to `initializeGoogleSignIn`.
+   Use `'localhost'` during development and your production domain (e.g., `'my-awesome-project.serverpod.space'`) in production. The path `/auth/callback` can be anything, as long as it matches the URL you register with Google in step 2 and pass to `initializeGoogleSignIn` later.
 
-   The route is provider-agnostic. Register it once and reuse the same callback URL across every OAuth2 PKCE provider (Google, GitHub, etc.).
+   :::tip
+   The same route works for every OAuth2 PKCE provider. Register it once and reuse the callback URL for Google, GitHub, and any future provider.
+   :::
 
 2. Update the server OAuth client you created in the [previous section](#create-the-server-oauth-client-web-application) and add the following:
 
-   - **Authorized JavaScript origins**: your Flutter web app's origin (e.g., `https://my-awesome-project.serverpod.space`).
-   - **Authorized redirect URIs**: the full URL of the route you registered (e.g., `https://my-awesome-project.serverpod.space/auth/callback`).
+   - **Authorized JavaScript origins**: your Flutter web app's origin (e.g., `http://localhost:8082` locally, `https://my-awesome-project.serverpod.space` in production).
+   - **Authorized redirect URIs**: the full URL of the route you registered (e.g., `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production).
+
+   Add the same URL to `redirect_uris` in the `googleClientSecret` entry of `passwords.yaml` from [Store your credentials](#store-your-credentials).
 
    ![Web credentials configuration](/img/authentication/providers/google/2-credentials.png)
 
 3. Pass the same URL to `initializeGoogleSignIn` via the `redirectUri` argument when you initialize the client (covered in [Initialize the Google sign-in service](#initialize-the-google-sign-in-service) below).
 
    :::tip
-   To keep this URL out of `main.dart` and vary it per build, read it from `--dart-define`. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
+   You can also pass the redirect URI via `--dart-define`. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
    :::
-
-:::note
-If you develop locally with `flutter run -d chrome` (Flutter dev server runs on a separate port from Serverpod) or host the Flutter web build on a CDN separate from Serverpod, the route can't reach your Flutter app and you need the static `auth.html` flow instead. See [Separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) for the fallback.
-:::
 
 ## Present the authentication UI
 
 ### Initialize the Google sign-in service
 
-Open your Flutter app's `main.dart` (e.g., `my_project_flutter/lib/main.dart`). The Serverpod template already creates the `Client` and calls `client.auth.initialize()` inside `main()`. Add `client.auth.initializeGoogleSignIn()` on the line immediately after it:
+In your Flutter app's `main.dart`, add `initializeGoogleSignIn()` right after the existing `client.auth.initialize()` call:
 
 ```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+client.auth.initialize();
+client.auth.initializeGoogleSignIn();
+```
 
-  final serverUrl = await getServerUrl();
+**On web**, the call needs `clientId` and `redirectUri` (matching the route from [Web](#web)). On mobile, leave them unset so the SDK reads its config from `Info.plist` / `google-services.json`:
 
-  client = Client(serverUrl)
-    ..connectivityMonitor = FlutterConnectivityMonitor()
-    ..authSessionManager = FlutterAuthSessionManager();
-
-  client.auth.initialize();
-  client.auth.initializeGoogleSignIn(); // add this line
-
-  runApp(const MyApp());
+```dart
+if (kIsWeb) {
+  client.auth.initializeGoogleSignIn(
+    clientId: '<web_client_id>.apps.googleusercontent.com',
+    redirectUri: 'http://localhost:8082/auth/callback',
+  );
+} else {
+  client.auth.initializeGoogleSignIn();
 }
 ```
 
-`initializeGoogleSignIn()` registers a sign-out hook so signing out of Serverpod also signs the user out of their Google session, and initializes the underlying sign-in SDK with the client IDs you configured (`Info.plist` on iOS, `google-services.json` on Android). `SignInWidget` can lazily initialize Google on first use, but calling this at startup wires the sign-out hook early and avoids a delay on the first tap.
-
-If you target **web**, pass the `clientId` and `redirectUri` arguments as described in the [Web](#web) section above.
+Swap the redirect URI for your production URL when deploying. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) to avoid hard-coding it per environment.
 
 ### Show the Google sign-in button
 
@@ -436,7 +438,7 @@ production:
   googleClientSecret: |
     {
       "web": {
-        "client_id": "your-client-id.apps.googleusercontent.com",
+        "client_id": "<web_client_id>.apps.googleusercontent.com",
         "client_secret": "your-client-secret",
         "redirect_uris": ["https://my-awesome-project.serverpod.space/auth/callback"]
       }

@@ -17,7 +17,7 @@ Both classes accept the same optional callbacks shown in the sections below. The
 
 ### Load the client secret using GoogleIdpConfig
 
-When using `GoogleIdpConfig`, you must provide the client secret explicitly. 
+When using `GoogleIdpConfig`, you must provide the client secret explicitly.
 
 You can load the secret in several ways:
 
@@ -163,12 +163,8 @@ GoogleSignInWidget(
 )
 ```
 
-:::info
-If lightweight sign-in fails (e.g., no previous session exists or the user dismisses the prompt), the user can still use the regular sign-in button to authenticate manually.
-:::
-
 :::note
-The lightweight sign-in attempt happens automatically when the controller is initialized, typically at app launch. If successful, users will be signed in without any additional interaction.
+Lightweight sign-in runs automatically when the controller is initialized (typically at app launch). If it fails — e.g., no previous session, or the user dismisses the prompt — the regular sign-in button remains available.
 :::
 
 ### Configuring Client IDs on the App
@@ -218,47 +214,43 @@ You can also set these environment variables in your IDE's run configuration or 
 
 ### Configuring the Web redirect URI
 
-On web, `initializeGoogleSignIn` accepts a `redirectUri` argument that switches sign-in into the OAuth2 redirect flow described in [Web setup](./setup#web). When `redirectUri` is null on web, the package falls back to Google's built-in popup/iframe button rendered by `google_sign_in_web`.
-
-The same `--dart-define` pattern recommended for client IDs works for the redirect URI, so the same `main.dart` builds correctly for local development and production:
+You can pass the web redirect URI to `initializeGoogleSignIn` via `--dart-define`. This is useful when building for different environments (development, staging, production) without changing `main.dart`:
 
 ```dart
-const _googleClientId = String.fromEnvironment('GOOGLE_CLIENT_ID');
-const _googleRedirectUri = String.fromEnvironment('GOOGLE_WEB_REDIRECT_URI');
-
-client.auth.initializeGoogleSignIn(
-  clientId: kIsWeb ? _googleClientId : null,
-  redirectUri: kIsWeb ? _googleRedirectUri : null,
-);
+if (kIsWeb) {
+  client.auth.initializeGoogleSignIn(
+    clientId: String.fromEnvironment('GOOGLE_CLIENT_ID'),
+    redirectUri: String.fromEnvironment('GOOGLE_WEB_REDIRECT_URI'),
+  );
+} else {
+  client.auth.initializeGoogleSignIn();
+}
 ```
 
 ```bash
-flutter run \
-  -d chrome --web-port=49660 \
+flutter run -d chrome \
   --dart-define="GOOGLE_CLIENT_ID=<web_client_id>.apps.googleusercontent.com" \
-  --dart-define="GOOGLE_WEB_REDIRECT_URI=https://my-awesome-project.serverpod.space/auth/callback"
+  --dart-define="GOOGLE_WEB_REDIRECT_URI=<your_redirect_uri>"
 ```
 
-`GOOGLE_CLIENT_ID` is also read automatically by the package if `clientId` is null, so you can omit the explicit `clientId:` argument and rely on the environment variable. There is no equivalent automatic env var for `redirectUri` because it is purely a web concern.
+Use the redirect URI that matches the environment you are building for (e.g., `http://localhost:8082/auth/callback` for local development with the integrated route, or `https://my-awesome-project.serverpod.space/auth/callback` for production).
 
 ### Separately-hosted Flutter web
 
-The [smooth path](./setup#web) assumes Serverpod hosts the Flutter web build (the default project template). If your Flutter web app is served on a different origin from Serverpod, the `postMessage` from `FlutterWebAuth2CallbackRoute` is blocked by the browser. This happens during local development when you run `flutter run -d chrome --web-port=49660` and Serverpod's web server is on `localhost:8082`, or in production if you host the Flutter web build on a CDN separate from your Serverpod API server.
-
-In that case, use the static `auth.html` flow instead of the route.
+Use this flow when your Flutter web app and Serverpod are on different origins. Common cases: `flutter run -d chrome` locally with Serverpod on a separate port, or a CDN-hosted Flutter build with a separate API server.
 
 1. Place a static `auth.html` file in your Flutter project's `web/` folder. A single copy is shared across every identity provider that uses an OAuth2 redirect, so create it once. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
 
-2. Choose a fixed port for your Flutter web app. Google OAuth requires exact URI matches, and Flutter picks a random port on each run by default. Run Flutter on a fixed port using `--web-port`:
+2. Run Flutter on a fixed port. The examples use `49660`, but any free port works — keep it consistent everywhere:
 
    ```bash
-   flutter run -d chrome --web-hostname localhost --web-port=49660
+   flutter run -d chrome --web-port=49660
    ```
 
-3. Update the [server OAuth client](./setup#create-the-server-oauth-client-web-application) and add the following:
+3. Update the [server OAuth client](./setup#create-the-server-oauth-client-web-application) with **Flutter's dev server origin** (not Serverpod's, since Flutter serves `auth.html`):
 
-   - **Authorized JavaScript origins**: your Flutter web app's origin (e.g., `http://localhost:49660` locally, `https://app.example.com` in production).
-   - **Authorized redirect URIs**: the full URL where `auth.html` is served (e.g., `http://localhost:49660/auth.html` locally, `https://app.example.com/auth.html` in production).
+   - **Authorized JavaScript origins**: `http://localhost:49660` locally, `https://app.example.com` in production.
+   - **Authorized redirect URIs**: `http://localhost:49660/auth.html` locally, `https://app.example.com/auth.html` in production.
 
 4. Pass the same URL to `initializeGoogleSignIn` via the `redirectUri` argument instead of the route URL.
 
