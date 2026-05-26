@@ -540,6 +540,16 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   --sidebar-icon-color: currentColor;
 }
 
+.theme-doc-sidebar-menu .sidebar-icon-deploy-to-cloud .menu__link {
+  --sidebar-icon-mask: url('/img/sidebar-icon-cloud-sun.svg');
+  --sidebar-icon-color: currentColor;
+}
+
+.theme-doc-sidebar-menu .sidebar-icon-custom-hosting > div.menu__list-item-collapsible > a.menu__link--sublist {
+  --sidebar-icon-mask: url('/img/sidebar-icon-hammer.svg');
+  --sidebar-icon-color: currentColor;
+}
+
 .theme-doc-sidebar-menu .sidebar-mobile-product-switch.sidebar-icon-serverpod-cloud,
 .theme-doc-sidebar-menu .sidebar-mobile-product-switch.sidebar-icon-serverpod-cloud .menu__link {
   --sidebar-icon-mask: url('/img/sidebar-icon-cloud-sun.svg');

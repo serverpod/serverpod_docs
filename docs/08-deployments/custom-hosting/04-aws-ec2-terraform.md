@@ -1,6 +1,6 @@
 # AWS EC2 with Terraform
 
-Serverpod makes it easy to deploy your server to AWS using Github and Terraform. Terraform will set up and manage your infrastructure while you use Github actions to manage versions and deployments. Creating your project using `serverpod create` Serverpod will automatically generate your deployment scripts. The default setup uses a minimal configuration that will fit within the AWS free tier, but you can easily modify the configuration to suit your needs.
+Serverpod can be deployed to AWS using Github and Terraform. Terraform sets up and manages your infrastructure while you use Github actions to manage versions and deployments. The default setup uses a minimal configuration that fits within the AWS free tier, but you can modify it to suit your needs.
 
 :::caution
 

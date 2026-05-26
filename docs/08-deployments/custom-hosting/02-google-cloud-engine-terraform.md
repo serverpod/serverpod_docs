@@ -1,6 +1,6 @@
 # Google Cloud Engine with Terraform
 
-Serverpod makes deploying your server to Cloud Engine easy using Github, Terraform, and Docker containers. Terraform will set up and manage your infrastructure while you use Github to build your Docker container and manage versions and deployments. Creating your project using `serverpod create` will automatically generate your deployment scripts. The default setup creates a minimal configuration, but you can easily modify the configuration to suit your needs.
+Serverpod can be deployed to Cloud Engine using Github, Terraform, and Docker containers. Terraform sets up and manages your infrastructure while you use Github to build your Docker container and manage versions and deployments. The default setup creates a minimal configuration, but you can modify it to suit your needs.
 
 :::caution
 
