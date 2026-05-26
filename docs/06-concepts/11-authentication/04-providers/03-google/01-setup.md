@@ -264,7 +264,16 @@ The examples below use port `8082` (Serverpod's default from `config/development
    );
    ```
 
-   Use `'localhost'` during development and your production domain (e.g., `'my-awesome-project.serverpod.space'`) in production. The path `/auth/callback` can be anything, as long as it matches the URL you register with Google in step 2 and pass to `initializeGoogleSignIn` later.
+   The path `/auth/callback` can be anything, as long as it matches the URL you register with Google in step 2 and pass to `initializeGoogleSignIn` later.
+
+   In production, pass `host:` to restrict the route to your production domain:
+
+   ```dart
+   pod.webServer.addRoute(
+     FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'),
+     '/auth/callback',
+   );
+   ```
 
    :::tip
    The same route works for every OAuth2 PKCE provider. Register it once and reuse the callback URL for Google, GitHub, and any future provider.
