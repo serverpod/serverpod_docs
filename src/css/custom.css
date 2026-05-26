@@ -546,7 +546,7 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
 }
 
 .theme-doc-sidebar-menu .sidebar-icon-custom-hosting > div.menu__list-item-collapsible > a.menu__link--sublist {
-  --sidebar-icon-mask: url('/img/sidebar-icon-hammer.svg');
+  --sidebar-icon-mask: url('/img/sidebar-icon-server.svg');
   --sidebar-icon-color: currentColor;
 }
 

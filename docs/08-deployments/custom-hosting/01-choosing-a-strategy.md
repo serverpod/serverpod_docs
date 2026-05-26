@@ -5,7 +5,7 @@ description: Choose how to self-host a Serverpod server, on a server cluster, a 
 
 # Choosing a strategy
 
-You can run a Serverpod server anywhere it runs as a Dart process or a Docker container: a managed server cluster, a serverless platform, or your own machine. This page covers the trade-offs, and the following pages walk through each path. For the managed path, see [Serverpod Cloud](/cloud).
+You can run a Serverpod server anywhere that supports a Dart process or a Docker container: a managed server cluster, a serverless platform, or your own machine. This page covers the trade-offs, and the following pages walk through each path. For the managed path, see [Serverpod Cloud](/cloud).
 
 ## Server cluster or serverless?
 
