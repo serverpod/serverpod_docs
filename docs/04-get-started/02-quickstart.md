@@ -27,7 +27,7 @@ Use Serverpod's `create` command to create a new project. The `create` command i
 $ serverpod create my_project
 ```
 
-Step through the prompts, accepting the default for each by pressing Enter. When you reach the editor selection, choose the editor or agent you plan to use, then press Enter to create the project.
+The command opens an interactive screen with sensible defaults already selected. Leave the defaults as they are, but make sure to select the editor or agent you plan to use, since the rest of this guide relies on it to build your app. Navigate with the arrow keys, press `Space` to select it, then press `Enter` to create the project.
 
 Next, open your newly created project with your favorite AI powered editor. Open the root folder of the full project, for example, `my_project`, which includes the server, client, and Flutter app.
 
