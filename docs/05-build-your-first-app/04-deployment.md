@@ -36,4 +36,4 @@ Serverpod Cloud is currently in private beta. Request access by [filling out thi
 
 ## Other deployment options
 
-Check out [choosing a deployment strategy](../deployments/deployment-strategy) for more information on how to deploy your Serverpod application to other platforms.
+Check out [Custom hosting](../08-deployments/custom-hosting/01-choosing-a-strategy.md) for more information on how to deploy your Serverpod application to other platforms.
