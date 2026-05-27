@@ -30,22 +30,26 @@ final firebaseIdpConfig = FirebaseIdpConfig(
 );
 ```
 
-**From a JSON map** (useful when credentials are assembled programmatically):
+**From a JSON map** (useful when credentials are assembled programmatically, for example by pulling each field from `passwords.yaml` or a secrets manager):
 
 ```dart
 final firebaseIdpConfig = FirebaseIdpConfig(
   credentials: FirebaseServiceAccountCredentials.fromJson({
     'type': 'service_account',
-    'project_id': 'your-project-id',
-    'private_key_id': '...',
-    'private_key': '-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n',
-    'client_email': 'firebase-adminsdk-xxxxx@your-project-id.iam.gserviceaccount.com',
-    'client_id': '...',
+    'project_id': pod.getPassword('firebaseProjectId')!,
+    'private_key_id': pod.getPassword('firebasePrivateKeyId')!,
+    'private_key': pod.getPassword('firebasePrivateKey')!,
+    'client_email': pod.getPassword('firebaseClientEmail')!,
+    'client_id': pod.getPassword('firebaseClientId')!,
     'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
     'token_uri': 'https://oauth2.googleapis.com/token',
   }),
 );
 ```
+
+:::warning
+Do not inline the service account fields (especially `private_key`) directly in source code. Load every sensitive field from a secure source such as `pod.getPassword()` (backed by `passwords.yaml` or `SERVERPOD_PASSWORD_*` environment variables) or a secrets manager.
+:::
 
 **Project ID only** (only token verification, no admin operations like deleting Firebase accounts):
 
