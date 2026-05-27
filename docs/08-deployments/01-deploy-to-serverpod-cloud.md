@@ -8,7 +8,11 @@ description: Deploy your Serverpod Flutter backend to Serverpod Cloud in minutes
 
 [Serverpod Cloud](/cloud) is the recommended way to host a Serverpod server. It is a fully managed platform built and maintained by the Serverpod team, designed specifically for Serverpod apps. You deploy in minutes with zero configuration, and there is no VM setup, container configuration, or infrastructure to orchestrate yourself.
 
+:::info
+
 Your first project includes a one-month free trial, with no credit card required.
+
+:::
 
 Cloud manages the production infrastructure for you:
 
