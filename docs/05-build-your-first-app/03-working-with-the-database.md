@@ -1,18 +1,22 @@
 ---
-sidebar_label: Manage the database
+title: Manage the database
 sidebar_class_name: sidebar-icon-get-started-step-3
 slug: /get-started/working-with-the-database
+description: Store your Serverpod recipes in the database using the ORM and migrations, so they persist between sessions and can be listed in your app.
 ---
+
+<!-- markdownlint-disable MD025 -->
 
 # Manage the database
 
-In this section, we will build upon the models we created in the previous section and add a database to store the recipes that users create in the app. This will allow our application to persist data between sessions.
+Right now your recipes disappear when the app reloads. Here you'll store them in the database so they persist, and list previously generated recipes in the app. Serverpod maps your model to a table and gives you a typed API to read and write rows, without writing any SQL.
 
-## Object relation mapping
+Keep `serverpod start` running from the previous page.
 
-Any Serverpod model can be mapped to the database through Serverpod's object relation mapping (ORM). To enable database storage for our recipe model, simply add the `table` keyword to the `Recipe` model in our `recipe.spy.yaml` file. This will map the model to a new table in the database called `recipes`.
+## Map the model to a table
 
-<!--SNIPSTART 03-table-model-->
+Add the `table` keyword to your `Recipe` model in `recipe.spy.yaml`. This maps the model to a database table called `recipes`:
+
 ```yaml
 ### Our AI generated Recipe
 class: Recipe
@@ -24,43 +28,28 @@ fields:
   text: String
   ### The date the recipe was created
   date: DateTime
-  ### The ingredients the user has passed in
+  ### The ingredients the user passed in
   ingredients: String
 ```
-<!--SNIPEND-->
+
+Save the file. The regenerated `Recipe` class now exposes database methods through `Recipe.db`.
 
 :::info
-Check out the reference for [database models](../06-concepts/02-models/01-models.md#keywords-1) for an overview of all available keywords.
+See the [database models](../06-concepts/02-models/01-models.md#keywords-1) reference for all the keywords you can use in a table.
 :::
 
-## Migrations
+## Create and apply the migration
 
-Database migrations in Serverpod provide a way to safely evolve your database schema over time. When you make changes to your models that affect the database structure, you need to create a migration. A migration consists of SQL queries that update the database schema to match your model changes.
+Changing the schema requires a [migration](../06-concepts/06-database/11-migrations.md): a set of SQL steps that bring the database up to date with your models. The `serverpod start` terminal has shortcuts for this, listed along the bottom. With that terminal focused:
 
-To create a migration, follow these two steps in order:
+- Press **M** to create the migration from your model change.
+- Press **A** to apply it, which creates the `recipes` table in your database.
 
-1. Run `serverpod generate` to update the generated code based on your model changes.
-2. Run `serverpod create-migration` to create the necessary database migration.
+## Save recipes to the database
 
-```bash
-$ cd magic_recipe_server
-$ serverpod generate
-$ serverpod create-migration
-```
+Now that `Recipe` is a table, you can write rows. In `recipe_endpoint.dart`, save the generated recipe before returning it. Replace the `return Recipe(...)` you added earlier with:
 
-Each time you run `serverpod create-migration`, a new migration file will be created in your _migrations_ folder. These step-by-step migrations provide a history of your database changes and allow you to roll back changes if needed.
-
-## Writing to the database
-
-Now that we've added the `table` keyword to our `Recipe` model, it becomes a `TableRow` type, giving us access to database operations. Serverpod automatically generates database bindings that we can access through the static `db` field of the `Recipe` class. Let's use the `insertRow` method to save new recipes to the database:
-
-<!--SNIPSTART 03-persisted-endpoint {"selectedLines": ["10-12", "39-51"]}-->
 ```dart
-// ...
-class RecipeEndpoint extends Endpoint {
-  /// Pass in a string containing the ingredients and get a recipe back.
-  Future<Recipe> generateRecipe(Session session, String ingredients) async {
-// ...
     final recipe = Recipe(
       author: 'Gemini',
       text: responseText,
@@ -68,209 +57,65 @@ class RecipeEndpoint extends Endpoint {
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database, the returned recipe has the id set.
-    final recipeWithId = await Recipe.db.insertRow(session, recipe);
-
-    return recipeWithId;
-  }
-
+    // Save the recipe to the database. The returned row has its id set.
+    return Recipe.db.insertRow(session, recipe);
 ```
-<!--SNIPEND-->
 
-## Reading from the database
+## List past recipes
 
-Next, let's add a new method to the `RecipeEndpoint` class that will return all the recipes that we have created and saved to the database.
+Add a second method to the endpoint that returns every saved recipe, newest first:
 
-To make sure that we get them in the correct order, we sort them by the date they were created.
-
-<!--SNIPSTART 03-persisted-endpoint {"selectedLines": ["10-12", "52-61"]}-->
 ```dart
-// ...
-class RecipeEndpoint extends Endpoint {
-  /// Pass in a string containing the ingredients and get a recipe back.
-  Future<Recipe> generateRecipe(Session session, String ingredients) async {
-// ...
-  }
-
-  /// This method returns all the generated recipes from the database.
+  /// Returns all recipes saved in the database, most recent first.
   Future<List<Recipe>> getRecipes(Session session) async {
-    // Get all the recipes from the database, sorted by date.
-    return Recipe.db.find(
-      session,
-      orderBy: (t) => t.date.desc(),
-    );
+    return Recipe.db.find(session, orderBy: (t) => t.date.desc());
   }
-}
 ```
-<!--SNIPEND-->
-
-<details>
-
-<summary>Click to see the full code</summary>
-<p>
-
-<!--SNIPSTART 03-persisted-endpoint-->
-```dart
-import 'dart:async';
-
-import 'package:dartantic_ai/dartantic_ai.dart';
-import 'package:magic_recipe_server/src/generated/protocol.dart';
-import 'package:serverpod/serverpod.dart';
-
-/// This is the endpoint that will be used to generate a recipe using the
-/// Google Gemini API. It extends the Endpoint class and implements the
-/// generateRecipe method.
-class RecipeEndpoint extends Endpoint {
-  /// Pass in a string containing the ingredients and get a recipe back.
-  Future<Recipe> generateRecipe(Session session, String ingredients) async {
-    // Serverpod automatically loads your passwords.yaml file and makes the passwords available
-    // in the session.passwords map.
-    final geminiApiKey = session.passwords['geminiApiKey'];
-    if (geminiApiKey == null) {
-      throw Exception('Gemini API key not found');
-    }
-
-    // Configure the Dartantic AI agent for Gemini before sending the prompt.
-    final agent = Agent.forProvider(
-      GoogleProvider(apiKey: geminiApiKey),
-      chatModelName: 'gemini-2.5-flash-lite',
-    );
-
-    // A prompt to generate a recipe, the user will provide a free text input with the ingredients.
-    final prompt =
-        'Generate a recipe using the following ingredients: $ingredients, always put the title '
-        'of the recipe in the first line, and then the instructions. The recipe should be easy '
-        'to follow and include all necessary steps. Please provide a detailed recipe.';
-
-    final response = await agent.send(prompt);
-    final responseText = response.output;
-
-    // Check if the response is empty.
-    if (responseText.isEmpty) {
-      throw Exception('No response from Gemini API');
-    }
-
-    final recipe = Recipe(
-      author: 'Gemini',
-      text: responseText,
-      date: DateTime.now(),
-      ingredients: ingredients,
-    );
-
-    // Save the recipe to the database, the returned recipe has the id set.
-    final recipeWithId = await Recipe.db.insertRow(session, recipe);
-
-    return recipeWithId;
-  }
-
-  /// This method returns all the generated recipes from the database.
-  Future<List<Recipe>> getRecipes(Session session) async {
-    // Get all the recipes from the database, sorted by date.
-    return Recipe.db.find(
-      session,
-      orderBy: (t) => t.date.desc(),
-    );
-  }
-}
-```
-<!--SNIPEND-->
-
-</p>
-</details>
 
 :::info
-The when adding a `table` to the model class definition, the model will now give you access to the database. In this case we find the database methods under `Recipe.db`.
-
-The `insertRow` method is used to insert a new row into the database. The `find` method is used to query the database and get all the rows of a specific type. See [CRUD](../06-concepts/06-database/05-crud.md) and [relation queries](../06-concepts/06-database/07-relation-queries.md) for more information.
+`insertRow` and `find` are part of Serverpod's [ORM](../06-concepts/06-database/02-models.md). See [CRUD](../06-concepts/06-database/05-crud.md) for the full set of database operations.
 :::
 
-## Generate the code
+## Show the saved recipes in your app
 
-Like before, when you change something that has an effect on your client code, you need to run `serverpod generate`. We don't need to run `serverpod create-migrations` again because we already created a migration in the previous step and haven't done any changes that affect the database.
+Update `recipe_screen.dart` to load past recipes when it opens and list them next to the generator. Replace the file with:
 
-```bash
-$ cd magic_recipe_server
-$ serverpod generate
-```
-
-## Call the endpoint from the app
-
-Now that we have updated the endpoint, we can call it from the app. We do this in the `magic_recipe_flutter/lib/main.dart` file. We will call the `getRecipes` method when the app starts and store the result in a list of `Recipe` objects. We will also update the UI to show the list of recipes.
-
-![Final result](/img/getting-started/final-result.png)
-
-If you want to see what changed, we suggest to creating a git commit now and then replacing the code in the `main.dart` file.
-
-<!--SNIPSTART 03-flutter-->
 ```dart
-import 'package:magic_recipe_client/magic_recipe_client.dart';
 import 'package:flutter/material.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
+import 'package:magic_recipe_client/magic_recipe_client.dart';
 
-/// Sets up a global client object that can be used to talk to the server from
-/// anywhere in our app. The client is generated from your server code
-/// and is set up to connect to a Serverpod running on a local server on
-/// the default port. You will need to modify this to connect to staging or
-/// production servers.
-/// In a larger app, you may want to use the dependency injection of your choice
-/// instead of using a global client object. This is just a simple example.
-late final Client client;
+import '../main.dart';
+import 'greetings_screen.dart';
 
-late String serverUrl;
-
-void main() {
-  // When you are running the app on a physical device, you need to set the
-  // server URL to the IP address of your computer. You can find the IP
-  // address by running `ipconfig` on Windows or `ifconfig` on Mac/Linux.
-  // You can set the variable when running or building your app like this:
-  // E.g. `flutter run --dart-define=SERVER_URL=https://api.example.com/`
-  const serverUrlFromEnv = String.fromEnvironment('SERVER_URL');
-  final serverUrl =
-      serverUrlFromEnv.isEmpty ? 'http://$localhost:8080/' : serverUrlFromEnv;
-
-  client = Client(serverUrl)
-    ..connectivityMonitor = FlutterConnectivityMonitor();
-
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RecipeScreen extends StatefulWidget {
+  const RecipeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Serverpod Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Serverpod Example'),
-    );
-  }
+  State<RecipeScreen> createState() => _RecipeScreenState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  MyHomePageState createState() => MyHomePageState();
-}
-
-class MyHomePageState extends State<MyHomePage> {
-  /// Holds the last result or null if no result exists yet.
+class _RecipeScreenState extends State<RecipeScreen> {
+  /// The recipe currently shown, or null if there's none yet.
   Recipe? _recipe;
 
+  /// Recipes loaded from the database, most recent first.
   List<Recipe> _recipeHistory = [];
 
-  /// Holds the last error message that we've received from the server or null
-  /// if no error exists yet.
+  /// The last error message, or null if there's no error.
   String? _errorMessage;
 
   final _textEditingController = TextEditingController();
 
   bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load the recipes already saved in the database.
+    client.recipe.getRecipes().then((recipes) {
+      setState(() => _recipeHistory = recipes);
+    });
+  }
 
   void _callGenerateRecipe() async {
     try {
@@ -279,186 +124,89 @@ class MyHomePageState extends State<MyHomePage> {
         _recipe = null;
         _loading = true;
       });
-      final result =
-          await client.recipe.generateRecipe(_textEditingController.text);
+
+      final result = await client.recipe.generateRecipe(
+        _textEditingController.text,
+      );
+
       setState(() {
-        _errorMessage = null;
         _recipe = result;
+        _recipeHistory = [result, ..._recipeHistory];
         _loading = false;
-        _recipeHistory.insert(0, result);
       });
     } catch (e) {
       setState(() {
         _errorMessage = '$e';
-        _recipe = null;
         _loading = false;
       });
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    // Get the favourite recipes from the database
-    client.recipe.getRecipes().then((favouriteRecipes) {
-      setState(() {
-        _recipeHistory = favouriteRecipes;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Row(
-        children: [
-          Expanded(
-            child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.grey[300]),
-              child: ListView.builder(
-                itemCount: _recipeHistory.length,
-                itemBuilder: (context, index) {
-                  final recipe = _recipeHistory[index];
-                  return ListTile(
-                    title: Text(
-                        recipe.text.substring(0, recipe.text.indexOf('\n'))),
-                    subtitle: Text('${recipe.author} - ${recipe.date}'),
-                    onTap: () {
-                      // Show the recipe in the text field
-                      _textEditingController.text = recipe.ingredients;
-                      setState(() {
-                        _recipe = recipe;
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
+    return Row(
+      children: [
+        // The list of recipes saved in the database.
+        Expanded(
+          child: ListView.builder(
+            itemCount: _recipeHistory.length,
+            itemBuilder: (context, index) {
+              final recipe = _recipeHistory[index];
+              return ListTile(
+                title: Text(recipe.text.split('\n').first),
+                subtitle: Text('${recipe.author} - ${recipe.date}'),
+                onTap: () => setState(() => _recipe = recipe),
+              );
+            },
           ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: TextField(
-                      controller: _textEditingController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter your ingredients',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: ElevatedButton(
-                      onPressed: _loading ? null : _callGenerateRecipe,
-                      child: _loading
-                          ? const Text('Loading...')
-                          : const Text('Send to Server'),
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child:
-                          // Change the ResultDisplay to use the Recipe object
-                          ResultDisplay(
-                        resultMessage: _recipe != null
-                            ? '${_recipe?.author} on ${_recipe?.date}:\n'
-                              '${_recipe?.text}'
-                            : null,
-                        errorMessage: _errorMessage,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// ResultDisplays shows the result of the call. Either the returned result from
-/// the `example.greeting` endpoint method or an error message.
-class ResultDisplay extends StatelessWidget {
-  final String? resultMessage;
-  final String? errorMessage;
-
-  const ResultDisplay({
-    super.key,
-    this.resultMessage,
-    this.errorMessage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    String text;
-    Color backgroundColor;
-    if (errorMessage != null) {
-      backgroundColor = Colors.red[300]!;
-      text = errorMessage!;
-    } else if (resultMessage != null) {
-      backgroundColor = Colors.green[300]!;
-      text = resultMessage!;
-    } else {
-      backgroundColor = Colors.grey[300]!;
-      text = 'No server response yet.';
-    }
-
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 50),
-      child: Container(
-        color: backgroundColor,
-        child: Center(
-          child: Text(text),
         ),
-      ),
+        // The generator and the selected recipe.
+        Expanded(
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _textEditingController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your ingredients',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _loading ? null : _callGenerateRecipe,
+                  child: _loading
+                      ? const Text('Loading...')
+                      : const Text('Generate Recipe'),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: ResultDisplay(
+                      resultMessage: _recipe != null
+                          ? '${_recipe!.author} on ${_recipe!.date}:\n${_recipe!.text}'
+                          : null,
+                      errorMessage: _errorMessage,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 ```
-<!--SNIPEND-->
 
-## Run the app
+You added a new endpoint method (`getRecipes`), so the generated client changed. Press `R` in the `serverpod start` terminal to hot restart.
 
-To run the application with database support, follow these steps in order:
+Generate a few recipes, then reload the page. They're still there, loaded from the database:
 
-First, start the database and apply migrations:
+![Final result](/img/getting-started/final-result.png)
 
-```bash
-$ cd magic_recipe_server
-$ docker compose up -d                   # Start the database container
-$ dart bin/main.dart --apply-migrations  # Apply any pending migrations
-```
+## Next steps
 
-:::tip
-The `--apply-migrations` flag is safe to use during development - if no migrations are pending, it will simply be ignored. For production environments, you may want more controlled migration management.
-:::
-
-Next, launch the Flutter app:
-
-```bash
-$ cd magic_recipe_flutter
-$ flutter run -d chrome
-```
-
-## Summary
-
-You've now learned the fundamentals of Serverpod:
-
-- Creating and using endpoints with custom data models.
-- Storing data persistently in a database.
-- Using the generated client code in your Flutter app.
-
-We're excited to see what you'll build with Flutter and Serverpod! If you need help, don't hesitate to ask questions in our [community on Github](https://github.com/serverpod/serverpod/discussions). Both the Serverpod team and community members are active and ready to help. To connect with other Serverpod users we also have a [Discord community](https://serverpod.dev/discord).
-
-:::tip
-Database operations are a broad topic, and Serverpod's ORM offers many powerful features. To learn more about advanced database operations, check out the [Database](../06-concepts/06-database/01-connection.md) section.
-:::
+Your app now persists data. With the recipe generator working end to end, the last step is to put it online: next, you'll deploy it to Serverpod Cloud.

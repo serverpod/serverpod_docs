@@ -11,7 +11,7 @@ description: Build a Serverpod endpoint that turns a list of ingredients into an
 
 You'll build a recipe generator: a Serverpod endpoint that takes a list of ingredients, asks Google's Gemini API for a recipe, and returns it to your Flutter app. Along the way you'll see that calling your server is as simple as calling a local method.
 
-Prefer to have an AI agent build an app for you? Follow the [Quickstart](/quickstart) instead. This guide takes the hands-on path: you'll build the recipe app yourself, so you understand each piece.
+Prefer to have an AI agent build an app for you? Follow the [Quickstart](../04-get-started/02-quickstart.md) instead. This guide takes the hands-on path: you'll build the recipe app yourself, so you understand each piece.
 
 :::info
 The server is the right place for work you can't or shouldn't do in the app, such as calling an API secured by a secret key, accessing a database, or sending push notifications and emails. Here, it keeps your Gemini API key off the client.
@@ -19,7 +19,7 @@ The server is the right place for work you can't or shouldn't do in the app, suc
 
 ## Before you start
 
-- [Serverpod installed](./installation). Run `serverpod version` to confirm it works.
+- [Serverpod installed](../04-get-started/01-installation.md). Run `serverpod version` to confirm it works.
 - A free Gemini API key. Create one on [Google AI Studio](https://aistudio.google.com/app/apikey); it's free, but you need to sign in with a Google account.
 
 ## Create the project
