@@ -6,7 +6,7 @@ This page covers additional configuration options for the Firebase identity prov
 
 The [setup guide](./setup) uses `FirebaseIdpConfigFromPasswords`, which loads the service account key from `passwords.yaml` for you. When you need to load credentials from a different source (a file path, a secrets manager, or just a project ID), use `FirebaseIdpConfig` directly and pass a `FirebaseServiceAccountCredentials` instance.
 
-`FirebaseServiceAccountCredentials` provides four constructors. These are the only supported ways to construct it:
+`FirebaseServiceAccountCredentials` provides four constructors:
 
 **From a JSON string** (use this when reading the JSON from a secrets manager or environment variable):
 
@@ -101,45 +101,46 @@ The `firebaseAccountDetailsValidation` callback receives a `FirebaseAccountDetai
 
 Which properties are populated depends on the Firebase sign-in method the user chose. For example, `phone` is only populated for phone authentication, and `email` may be `null` if the user signed in with phone only.
 
-## Reacting to auth user creation
+## Reacting to Firebase account creation
 
-[`onBeforeAuthUserCreated`](https://pub.dev/documentation/serverpod_auth_idp_server/latest/core/AuthUsersConfig/onBeforeAuthUserCreated.html) and [`onAfterAuthUserCreated`](https://pub.dev/documentation/serverpod_auth_idp_server/latest/core/AuthUsersConfig/onAfterAuthUserCreated.html) are global callbacks on `AuthUsersConfig`. They fire for every identity provider, not just Firebase. See [Working with users](../../working-with-users#reacting-to-the-user-created-event) for full details.
-
-The example below uses Firebase phone numbers as the trigger for assigning a `phone-verified` scope at sign-up, and persists the Firebase UID for later admin lookups:
+For side-effects that need Firebase-specific data (the Firebase UID, the linked email or phone), use `onAfterFirebaseAccountCreated` on `FirebaseIdpConfig`. It fires once when a Firebase account is created and linked to an auth user, and receives the `FirebaseAccount` alongside the session, auth user, and active transaction.
 
 ```dart
-pod.initializeAuthServices(
-  tokenManagerBuilders: [
-    JwtConfigFromPasswords(),
-  ],
-  identityProviderBuilders: [
-    FirebaseIdpConfigFromPasswords(),
-  ],
-  authUsersConfig: AuthUsersConfig(
-    onBeforeAuthUserCreated: (
-      session,
-      scopes,
-      blocked, {
-      required transaction,
-    }) {
-      return (
-        scopes: {...scopes, Scope('user')},
-        blocked: blocked,
-      );
-    },
-    onAfterAuthUserCreated: (
-      session,
-      authUser, {
-      required transaction,
-    }) async {
-      // e.g. send a welcome email, log for analytics
-    },
-  ),
+final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(
+  onAfterFirebaseAccountCreated: (
+    session,
+    authUser,
+    firebaseAccount, {
+    required transaction,
+  }) async {
+    // Persist the Firebase UID alongside the Serverpod user so admin
+    // tools and customer support can look up the Firebase account later.
+    session.log(
+      'Linked Firebase user ${firebaseAccount.userIdentifier} '
+      'to auth user ${authUser.id}',
+    );
+  },
 );
 ```
 
-:::warning
-Both callbacks run inside the same database transaction as the account creation. Throwing an exception inside either callback aborts the sign-up. Wrap external side-effects (email sending, analytics) in `try`/`catch` so a third-party outage does not block new sign-ups.
+:::note
+The callback runs inside the same database transaction as the Firebase account creation, so any database work you perform with the provided `transaction` is committed atomically with sign-up. Wrap external side-effects (HTTP calls, analytics, email) in `try`/`catch` so a third-party outage does not roll back the sign-up.
+:::
+
+For provider-agnostic logic that should run on every sign-up regardless of provider, use the global [`onBeforeAuthUserCreated`](https://pub.dev/documentation/serverpod_auth_idp_server/latest/core/AuthUsersConfig/onBeforeAuthUserCreated.html) / [`onAfterAuthUserCreated`](https://pub.dev/documentation/serverpod_auth_idp_server/latest/core/AuthUsersConfig/onAfterAuthUserCreated.html) callbacks on `AuthUsersConfig` instead. See [Working with users](../../working-with-users#reacting-to-the-user-created-event) for details.
+
+## Clock skew tolerance
+
+Firebase ID tokens are validated against the server's clock, so a server with a slightly drifting clock can reject tokens that are otherwise valid. `clockSkewTolerance` widens the validation window on `FirebaseIdpConfig` to account for that drift. Most projects can leave the default in place; reach for this when your server logs show repeated `token expired` or `token not yet valid` rejections that go away once you nudge the clock.
+
+```dart
+final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(
+  clockSkewTolerance: const Duration(seconds: 30),
+);
+```
+
+:::caution
+Widen the tolerance only as far as you need to. Larger windows accept tokens that have been expired for longer, which weakens the validation. Fixing the underlying clock drift (NTP sync, container time source) is the better long-term answer.
 :::
 
 ## FirebaseIdpConfig parameter reference

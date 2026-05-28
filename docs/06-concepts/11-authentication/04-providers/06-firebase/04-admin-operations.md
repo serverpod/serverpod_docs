@@ -8,7 +8,7 @@ Admin operations should only be called from secure server-side code. Do not expo
 
 ## Accessing the FirebaseIdpAdmin
 
-You can access the admin operations through the `AuthServices.instance.firebaseIdp` property. This requires that the Firebase identity provider is already configured (see [setup](./setup#1-add-the-firebase-identity-provider)).
+You can access the admin operations through the `AuthServices.instance.firebaseIdp` property. This requires that the Firebase identity provider is already configured (see [setup](./setup#add-the-firebase-identity-provider)).
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/firebase.dart';

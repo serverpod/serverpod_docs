@@ -13,7 +13,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Generate a **service account key** from **Project settings** > **Service accounts**.
 - [ ] Enable the **authentication methods** you want to use under **Security** > **Authentication** > **Sign-in method**.
 - [ ] Confirm **Firebase App Check** is **disabled** (enable it later only after the client integration is in place).
-- [ ] In **Authentication** > **Settings** > **Authorized domains**, the list includes `localhost` for development and your production domain when you ship.
+- [ ] In **Authentication** > **Settings** > **Authorized domains**, add your production domain when you ship. Firebase pre-populates `localhost` for development, so you don't need to add it yourself.
 
 #### Server
 
@@ -63,7 +63,7 @@ dart run bin/main.dart --apply-migrations
 
 **Cause:** Firebase ID tokens expire after one hour. If the server's system clock is significantly off, valid tokens may appear expired.
 
-**Resolution:** Check that the server's system clock is accurate. If the client token is genuinely expired (e.g., the user's app was backgrounded for a long time), the client should re-authenticate with Firebase to obtain a fresh ID token before calling `controller.login()`.
+**Resolution:** First, check that the server's system clock is accurate (NTP sync, container time source). If the underlying drift cannot be fixed immediately, widen the validation window with [`clockSkewTolerance`](./customizations#clock-skew-tolerance). If the client token is genuinely expired (e.g., the user's app was backgrounded for a long time), the client should re-authenticate with Firebase to obtain a fresh ID token before calling `controller.login()`.
 
 ## Server fails to parse firebaseServiceAccountKey from passwords.yaml
 

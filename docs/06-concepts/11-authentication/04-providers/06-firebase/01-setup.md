@@ -96,7 +96,7 @@ Production credentials are covered in [Publishing to production](#publishing-to-
 
 ## Server-side configuration
 
-### 1. Add the Firebase identity provider
+### Add the Firebase identity provider
 
 Open your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`). It should already contain a `pod.initializeAuthServices()` call from the project template.
 
@@ -124,7 +124,7 @@ pod.initializeAuthServices(
 
 `FirebaseIdpConfigFromPasswords()` automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Customizations](./customizations) page.
 
-### 2. Create the endpoint
+### Create the endpoint
 
 Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/firebase_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
 
@@ -134,7 +134,7 @@ import 'package:serverpod_auth_idp_server/providers/firebase.dart';
 class FirebaseIdpEndpoint extends FirebaseIdpBaseEndpoint {}
 ```
 
-### 3. Generate code and apply migrations
+### Generate code and apply migrations
 
 Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
 
@@ -150,7 +150,7 @@ Skipping the migration will cause the server to crash at runtime when the Fireba
 
 ## Client-side configuration
 
-### 1. Install required packages
+### Install required packages
 
 From your Flutter project directory (e.g., `my_project_flutter/`), add the Firebase and Serverpod authentication packages along with [`firebase_ui_auth`](https://pub.dev/packages/firebase_ui_auth), which provides the pre-built sign-in screens this guide uses:
 
@@ -162,7 +162,7 @@ flutter pub add firebase_core firebase_auth firebase_ui_auth serverpod_auth_idp_
 `firebase_ui_auth` is the fastest path to a working sign-in screen. If you want to build a fully custom UI on top of `firebase_auth` directly, see [Using firebase_auth directly](./customizing-the-ui#using-firebase_auth-directly).
 :::
 
-### 2. Configure FlutterFire
+### Configure FlutterFire
 
 First, log in to Firebase from your terminal:
 
@@ -186,7 +186,7 @@ This generates a `firebase_options.dart` file with your platform-specific Fireba
 If your Flutter project folder name contains an underscore (or any character that is not valid in a reverse-DNS bundle identifier), FlutterFire's auto-registration step will fail for iOS and macOS. Pass the bundle ID explicitly when this happens. See [FlutterFire configure fails for iOS or macOS apps](./troubleshooting#flutterfire-configure-fails-for-ios-or-macos-apps) in the troubleshooting guide.
 :::
 
-### 3. Initialize Firebase and Serverpod
+### Initialize Firebase and Serverpod
 
 In your Flutter app's `main.dart` file (e.g., `my_project_flutter/lib/main.dart`), the template already sets up the `Client`. Initialize both Firebase and the Serverpod auth services:
 
@@ -331,7 +331,9 @@ Before going live, complete every step below. Skipping any of these is the most 
 
 ### 1. Decide which Firebase project production should use
 
-Most teams keep a separate Firebase project for production so dev experiments do not affect real users. If that is your setup, create the production Firebase project now and generate a fresh service account key from it (same steps as in [Generate a service account key](#generate-a-service-account-key) above). You can also reuse your dev Firebase project in production; in that case the service account key carries over and you can skip straight to step 2.
+The simplest path is to reuse your dev Firebase project for production. The service account key you already wired up carries over, and you can skip straight to step 2.
+
+If dev experiments must stay isolated from real users, create a separate Firebase project for production now and generate a fresh service account key from it (same steps as in [Generate a service account key](#generate-a-service-account-key) above). This is the recommended setup for any project with production traffic you cannot risk affecting from dev.
 
 ### 2. Add the production service account key
 
