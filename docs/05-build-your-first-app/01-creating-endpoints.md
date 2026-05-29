@@ -1,53 +1,74 @@
 ---
-sidebar_label: Create your first endpoint
+title: Create your first endpoint
 sidebar_class_name: sidebar-icon-get-started-step-1
 slug: /get-started/creating-endpoints
+description: Build a Serverpod endpoint that turns a list of ingredients into an AI-generated recipe with Gemini, and call it from your Flutter app.
 ---
+
+<!-- markdownlint-disable MD025 -->
 
 # Create your first endpoint
 
-With Serverpod, calling an endpoint method in your server is as simple as calling a local method in your app. Let's create your first custom endpoint method and call it from the Flutter app. In this example, you will create a method that generates recipes from ingredients you may have in your fridge. Your server will talk with Google's Gemini API to make this magic happen. You will then call your endpoint method from the Flutter app and display the recipe.
+You'll build a recipe generator: a Serverpod endpoint that takes a list of ingredients, asks Google's Gemini API for a recipe, and returns it to your Flutter app. Along the way you'll see that calling your server is as simple as calling a local method.
+
+Prefer to have an AI agent build an app for you? Follow the [Quickstart](../04-get-started/02-quickstart.md) instead. This guide takes the hands-on path: you'll build the recipe app yourself, so you understand each piece.
 
 :::info
-On the server, you can do things you don't want to do in the app, like calling an API secured by a secret key or accessing a database. The server can also do things that are impossible in the app, like sending push notifications or emails.
+The server is the right place for work you can't or shouldn't do in the Flutter app, such as calling an API secured by a secret key, accessing a database, or sending push notifications and emails. Here, it keeps your Gemini API key off the client.
 :::
 
-## Create a new project
+## Before you start
 
-Use the `serverpod create` command to create a new project. This command will generate a new project with a server, a client, and a Flutter app.
+- [Serverpod installed](../04-get-started/01-installation.md). Run `serverpod version` to confirm it works.
+- A free Gemini API key. On [Google AI Studio](https://aistudio.google.com/app/apikey), sign in with a Google account and click **Create API key**.
+
+## Create the project
+
+Use `serverpod create` to generate a new project with a server, a client, and a Flutter app:
 
 ```bash
-serverpod create magic_recipe
+$ serverpod create magic_recipe
 ```
 
-:::tip
-Always open the root directory of the project in your IDE. This will make it easier to navigate between the server and app packages. It will also prevent your analyzer from going out of sync when you generate code.
-:::
+The command is interactive. Step through the prompts, accepting the defaults.
 
-### Add the Gemini API to your project
+Open the project's **root** folder (`magic_recipe`) in your editor, not one of the sub-packages. This keeps the analyzer in sync when code is generated and makes it easy to move between the server and app.
 
-To generate our recipes, we will use Google's free Gemini API. To use it, you must create an API key on [this page](https://aistudio.google.com/app/apikey). It's free, but you have to sign in with your Google account. Add your key to the `config/passwords.yaml` file in your project's server package. Git ignores this file, so you can safely add your API key here.
+### Add your Gemini API key
+
+Gemini is Google's generative AI model. Your server sends it the ingredients and gets a recipe back, and the API key authenticates those calls.
+
+Add your key to `config/passwords.yaml` in the server package. Git ignores this file, so your key stays out of version control.
 
 ```yaml
-# config/passwords.yaml
-# This file is not included in the git repository. You can safely add your API key here.
-# The API key is used to authenticate with the Gemini API.
+# magic_recipe_server/config/passwords.yaml
 development:
   geminiApiKey: '--- Your Gemini Api Key ---'
 ```
 
-Next, we add the Dartantic AI package as a dependency to our server. This package provides a convenient interface for working with different AI providers, including Google's Gemini API.
+Then add the Dartantic AI package to the server. It provides a single interface for talking to AI providers, including Gemini:
 
 ```bash
 $ cd magic_recipe_server
 $ dart pub add dartantic_ai
 ```
 
-## Create a new endpoint
+## Start the app
 
-Create a new file in `magic_recipe_server/lib/src/recipes/` called `recipe_endpoint.dart`. This is where you will define your endpoint and its methods. With Serverpod, you can choose any directory structure you want to use. E.g., you could also use `src/endpoints/` if you want to go layer first or `src/features/recipes/` if you have many features.
+From the project's root folder, start everything with one command:
 
-<!--SNIPSTART 01-getting-started-endpoint-->
+```bash
+$ serverpod start
+```
+
+`serverpod start` generates your code, starts the server with its built-in PostgreSQL database (no Docker required), and opens the Flutter app in Chrome. The app that opens is the default Serverpod starter: enter your name, tap **Send to Server**, and the server responds with a greeting.
+
+Leave `serverpod start` running. It watches your project, so every time you save a file it regenerates the necessary code and hot reloads the app. You'll rely on this for the rest of the guide instead of restarting anything by hand.
+
+## Add an endpoint
+
+Server endpoints live in `lib/src/<feature>/`, like the `greetings` endpoint the template generated. Create a file at `magic_recipe_server/lib/src/recipes/recipe_endpoint.dart`:
+
 ```dart
 import 'package:dartantic_ai/dartantic_ai.dart';
 import 'package:serverpod/serverpod.dart';
@@ -58,8 +79,6 @@ import 'package:serverpod/serverpod.dart';
 class RecipeEndpoint extends Endpoint {
   /// Pass in a string containing the ingredients and get a recipe back.
   Future<String> generateRecipe(Session session, String ingredients) async {
-    // Serverpod automatically loads your passwords.yaml file and makes the
-    // passwords available in the session.passwords map.
     final geminiApiKey = session.passwords['geminiApiKey'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
@@ -71,8 +90,6 @@ class RecipeEndpoint extends Endpoint {
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
-    // A prompt to generate a recipe, the user will provide a free text input
-    // with the ingredients.
     final prompt =
         'Generate a recipe using the following ingredients: $ingredients. '
         'Always put the title of the recipe in the first line, followed by the '
@@ -83,7 +100,6 @@ class RecipeEndpoint extends Endpoint {
 
     final responseText = response.output;
 
-    // Check if the response is empty.
     if (responseText.isEmpty) {
       throw Exception('No response from Gemini API');
     }
@@ -92,46 +108,39 @@ class RecipeEndpoint extends Endpoint {
   }
 }
 ```
-<!--SNIPEND-->
+
+The endpoint reads your Gemini key from `session.passwords`, which Serverpod populates from the `passwords.yaml` file you edited earlier.
 
 :::info
-For methods to be recognized by Serverpod, they need to return a typed `Future` or `Stream`, where the type must be `void` `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or a [serializable model](../06-concepts/02-models/01-models.md). The first parameter must be a `Session` object. You can pass any serializable types as parameters, and even use `List`, `Map`, `Set` or Dart records as long as they are typed.
+Endpoint methods take a `Session` as their first parameter and return a typed `Future` or `Stream`. You can pass and return primitive types or any [model defined in a `.spy.yaml` file](../06-concepts/02-models/01-models.md). The class name's `Endpoint` suffix is dropped on the client, so `RecipeEndpoint` is called via `client.recipe`. See [How it works](../04-get-started/03-how-it-works.md) for how that call reaches the server.
 :::
 
-Now, you need to generate the code for your new endpoint. You do this by running `serverpod generate` in the server directory of your project:
+Save the file. Because `serverpod start` is watching, it regenerates the client bindings for `generateRecipe` automatically. You'll see it run in the terminal.
 
-```bash
-$ cd magic_recipe_server
-$ serverpod generate
-```
+## Call it from your app
 
-`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
+Your app's UI lives in `magic_recipe_flutter/lib/screens/`, where the template already added a `GreetingsScreen`. Add a recipe screen alongside it.
 
-:::note
-When writing server-side code, in most cases, you want it to be _stateless_. This means you avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status messages to your client. If you want to run more complex computations, you can return a `Stream` to yield progress updates as your task progresses.
-:::
+Create `magic_recipe_flutter/lib/screens/recipe_screen.dart`:
 
-## Call the endpoint from the client
-
-Now that you have created the endpoint, you can call it from the Flutter app. Do this in the `magic_recipe_flutter/lib/main.dart` file. Since the generated template uses a StatelessWidget for `MyApp`, you will need to introduce a StatefulWidget called `MyHomePage` to manage the state of the app. Replace the `MyApp` widget with the following code (feel free to just copy and paste):
-
-<!--SNIPSTART 01-getting-started-flutter-->
 ```dart
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+import 'package:flutter/material.dart';
 
-  final String title;
+import '../main.dart';
+import 'greetings_screen.dart';
+
+class RecipeScreen extends StatefulWidget {
+  const RecipeScreen({super.key});
 
   @override
-  MyHomePageState createState() => MyHomePageState();
+  State<RecipeScreen> createState() => _RecipeScreenState();
 }
 
-class MyHomePageState extends State<MyHomePage> {
-  /// Holds the last result or null if no result exists yet.
+class _RecipeScreenState extends State<RecipeScreen> {
+  /// Holds the last result, or null if there's no result yet.
   String? _resultMessage;
 
-  /// Holds the last error message that we've received from the server or null
-  /// if no error exists yet.
+  /// Holds the last error message, or null if there's no error yet.
   String? _errorMessage;
 
   final _textEditingController = TextEditingController();
@@ -140,29 +149,23 @@ class MyHomePageState extends State<MyHomePage> {
 
   void _callGenerateRecipe() async {
     try {
-      // Reset the state.
       setState(() {
         _errorMessage = null;
         _resultMessage = null;
         _loading = true;
       });
 
-      // Call our `generateRecipe` method on the server.
       final result = await client.recipe.generateRecipe(
         _textEditingController.text,
       );
 
-      // Update the state with the recipe we got from the server.
       setState(() {
-        _errorMessage = null;
         _resultMessage = result;
         _loading = false;
       });
     } catch (e) {
-      // If something goes wrong, set an error message.
       setState(() {
         _errorMessage = '$e';
-        _resultMessage = null;
         _loading = false;
       });
     }
@@ -170,76 +173,63 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: TextField(
-                controller: _textEditingController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your ingredients',
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          TextField(
+            controller: _textEditingController,
+            decoration: const InputDecoration(
+              hintText: 'Enter your ingredients',
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _loading ? null : _callGenerateRecipe,
+            child: _loading
+                ? const Text('Loading...')
+                : const Text('Generate Recipe'),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: SingleChildScrollView(
+              child: ResultDisplay(
+                resultMessage: _resultMessage,
+                errorMessage: _errorMessage,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: ElevatedButton(
-                onPressed: _loading ? null : _callGenerateRecipe,
-                child: _loading
-                    ? const Text('Loading...')
-                    : const Text('Generate Recipe'),
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ResultDisplay(
-                  resultMessage: _resultMessage,
-                  errorMessage: _errorMessage,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 ```
-<!--SNIPEND-->
 
-## Run the app
+`client` comes from `main.dart`, where the template already wired it to talk to your server, and `ResultDisplay` is reused from `greetings_screen.dart`.
 
-:::tip
-Before you start your server, ensure no other Serverpod server is running. Also, ensure that Docker containers from other Serverpod projects aren't running to avoid port conflicts. You can see and stop containers in the Docker Desktop app.
-:::
+Now show the recipe screen instead of the greeting demo. In `magic_recipe_flutter/lib/main.dart`, add the import:
 
-Let's try our new recipe app! First, start the server:
-
-```bash
-$ cd magic_recipe_server
-$ docker compose up -d
-$ dart bin/main.dart --apply-migrations
+```dart
+import 'screens/recipe_screen.dart';
 ```
 
-Now, you can start the Flutter app:
+Then, in the `MyHomePage` widget, change the body from `GreetingsScreen` to `RecipeScreen`:
 
-```bash
-$ cd magic_recipe_flutter
-$ flutter run -d chrome
+```dart
+      body: const RecipeScreen(),
 ```
 
-This will start the Flutter app in your browser:
+Save. UI edits like this would normally hot reload, but adding the endpoint also changed the generated client. The app's `client` is created once in `main()`, which only re-runs on a restart, so the app needs a hot restart to pick up the new `client.recipe` endpoint.
+
+In the `serverpod start` terminal:
+
+- Press **R** to hot restart.
+
+Then enter some ingredients and tap **Generate Recipe**. The app calls your endpoint and displays the result:
 
 ![Example Flutter App](/img/getting-started/endpoint-chrome-result.png)
 
-Try out the app by clicking the button to get a new recipe. The app will call the endpoint on the server and display the result in the app.
-
 ## Next steps
 
-For now, you are just returning a `String` to the client. In the next section, you will create a custom data model to return structured data. Serverpod makes it easy by handling all the serialization and deserialization for you.
+You've created an endpoint and called it from your app, passing a string back and forth. Next, you'll return structured data using a Serverpod model, with serialization handled for you. Leave `serverpod start` running; you'll keep building on the same app.
