@@ -77,7 +77,11 @@ In `recipe_screen.dart`, the call now returns a `Recipe` object, so assigning `r
       });
 ```
 
-Save. Because the model and the endpoint's return type changed, the generated client changed too, so hot reload isn't enough. Press `R` in the `serverpod start` terminal to hot restart.
+Save. Because the model and the endpoint's return type changed, the generated client changed too, so hot reload isn't enough.
+
+In the `serverpod start` terminal:
+
+- Press **R** to hot restart.
 
 Enter some ingredients and tap **Generate Recipe**. The result now shows the author and date alongside the recipe:
 

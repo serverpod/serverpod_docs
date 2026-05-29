@@ -204,7 +204,11 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
 The new `import 'package:magic_recipe_client/magic_recipe_client.dart';` line brings in the `Recipe` class Serverpod generated from your model. It's the same class the server uses, so when you read `recipe.author`, `recipe.text`, or `recipe.date` in the app, the field names and types are guaranteed to match the server.
 
-You added a new endpoint method (`getRecipes`), so the generated client changed. Press `R` in the `serverpod start` terminal to hot restart.
+You added a new endpoint method (`getRecipes`), so the generated client changed.
+
+In the `serverpod start` terminal:
+
+- Press **R** to hot restart.
 
 Generate a few recipes, then reload the page. They're still there, loaded from the database:
 

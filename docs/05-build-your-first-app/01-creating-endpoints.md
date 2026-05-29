@@ -220,7 +220,11 @@ Then, in the `MyHomePage` widget, change the body from `GreetingsScreen` to `Rec
       body: const RecipeScreen(),
 ```
 
-Save. UI edits like this would normally hot reload, but adding the endpoint also changed the generated client. The app's `client` is created once in `main()`, which only re-runs on a restart, so the app needs a hot restart to pick up the new `client.recipe` endpoint. Press `R` in the `serverpod start` terminal.
+Save. UI edits like this would normally hot reload, but adding the endpoint also changed the generated client. The app's `client` is created once in `main()`, which only re-runs on a restart, so the app needs a hot restart to pick up the new `client.recipe` endpoint.
+
+In the `serverpod start` terminal:
+
+- Press **R** to hot restart.
 
 Then enter some ingredients and tap **Generate Recipe**. The app calls your endpoint and displays the result:
 
