@@ -81,28 +81,30 @@ If the agent fails to reload the app, you can always hit the `R` key to force a 
 
 ## Deploy the app to the cloud
 
-To deploy your app to Serverpod Cloud, you will need to create an account and set up a new project in Serverpod Cloud. Head to the **[Serverpod Cloud Console](https://console.serverpod.cloud/)** and follow the instructions there. You get a 1-month free trial. No credit card required.
+Deploy your app to **[Serverpod Cloud](/cloud)**, a fully managed platform built by the Serverpod team. Your first project includes a one-month free trial, with no credit card required.
 
-Install the Serverpod Cloud command line tools:
+Create your Cloud account on the **[Serverpod Cloud Console](https://console.serverpod.cloud/)**, then install the Serverpod Cloud command line tools:
 
-```txt
-$ dart install serverpod_cloud_cli
+```bash
+$ dart pub global activate serverpod_cloud_cli
 ```
 
-With the Serverpod Cloud project set up and the CLI tools installed, you can deploy your backend and web app using the `scloud launch` command:
+From your project's root folder, launch your app:
 
-```txt
+```bash
 $ scloud launch
 ```
 
-After the project has been uploaded for the first time, use the `deploy` command whenever you make changes to your project:
+This creates the Cloud project, provisions a database, and deploys your backend along with the web build of your app.
 
-```txt
+After the first launch, redeploy changes with:
+
+```bash
 $ scloud deploy
 ```
 
 :::tip
 
-In the Serverpod Cloud console, open Serverpod Insights to view server logs, CPU usage, and other information.
+In the **[Serverpod Cloud Console](https://console.serverpod.cloud/)**, open Serverpod Insights to view server logs, CPU usage, and other information.
 
 :::

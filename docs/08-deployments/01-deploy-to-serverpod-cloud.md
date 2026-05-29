@@ -25,7 +25,7 @@ Cloud manages the production infrastructure for you:
 
 You deploy with the `scloud` CLI:
 
-1. Install the `scloud` CLI.
+1. Install the `scloud` CLI with `dart pub global activate serverpod_cloud_cli`.
 2. Run `scloud launch`. It creates the Cloud project, provisions a database if you enable one, and deploys your server.
 3. Set any app secrets (API keys, OAuth credentials) with `scloud password set`.
 
