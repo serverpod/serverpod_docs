@@ -43,6 +43,8 @@ See the [database models](../06-concepts/02-models/01-models.md#keywords-1) refe
 
 Changing the schema requires a [migration](../06-concepts/06-database/11-migrations.md): a set of SQL steps that bring the database up to date with your models. The `serverpod start` terminal has shortcuts for this, listed along the bottom. With that terminal focused:
 
+![serverpod start tui](/img/getting-started/tui-logs.png)
+
 - Press **M** to create the migration from your model change.
 - Press **A** to apply it, which creates the `recipes` table in your database.
 
