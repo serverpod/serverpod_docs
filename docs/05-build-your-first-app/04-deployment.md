@@ -16,18 +16,16 @@ Your recipe app runs locally. The last step is to put it online. The recommended
 Install the Serverpod Cloud CLI:
 
 ```bash
-$ dart install serverpod_cloud_cli
+$ dart pub global activate serverpod_cloud_cli
 ```
 
-From your project's root folder, launch the app. This creates a Cloud project, provisions a database, and deploys your server along with the web build of your app:
+From your project's root folder, launch the app. This creates a Cloud project, provisions a managed Postgres database (separate from the embedded one `serverpod start` runs locally), and deploys your server along with the web build of your app:
 
 ```bash
 $ scloud launch
 ```
 
-:::tip
-The first upload includes your Flutter web build and can exceed the default timeout. If the upload times out, retry with a higher limit (in seconds), for example `scloud launch --timeout 600`.
-:::
+The first upload includes your Flutter web build and can exceed the default timeout on a slower connection. If the upload times out, retry with a higher limit (in seconds), for example, `scloud launch --timeout 600`.
 
 Your Gemini API key lives in `passwords.yaml`, which stays on your machine and is never deployed. Set it as a secret in Cloud so the deployed server can call Gemini:
 
@@ -52,8 +50,8 @@ Prefer to host the server yourself? See [Custom hosting](../08-deployments/custo
 You've built and deployed a full-stack app with Flutter and Serverpod:
 
 - A custom endpoint that calls an external API from the server.
-- A typed data model shared between the server and the app.
+- A type-safe data model shared between the server and the Flutter app.
 - Persistent storage with the database.
-- A Flutter app that talks to all of it through the generated client.
+- A Flutter app that talks to your server through the generated client.
 
-We're excited to see what you'll build next. If you need help, ask in our [community on GitHub](https://github.com/serverpod/serverpod/discussions) or join the [Discord community](https://serverpod.dev/discord). To go deeper into any topic, browse the [Concepts](../06-concepts/01-working-with-endpoints/01-working-with-endpoints.md) section.
+We're excited to see what you'll build next. If you need help, join the [Discord community](https://serverpod.dev/discord) or ask in our [community on GitHub](https://github.com/serverpod/serverpod/discussions). To go deeper into any topic, browse the [Concepts](../06-concepts/01-working-with-endpoints/01-working-with-endpoints.md) section.

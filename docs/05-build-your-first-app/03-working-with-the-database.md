@@ -2,14 +2,14 @@
 title: Manage the database
 sidebar_class_name: sidebar-icon-get-started-step-3
 slug: /get-started/working-with-the-database
-description: Store your Serverpod recipes in the database using the ORM and migrations, so they persist between sessions and can be listed in your app.
+description: Store your Serverpod recipes in the database with typed methods and migrations, so they persist between sessions and can be listed in your app.
 ---
 
 <!-- markdownlint-disable MD025 -->
 
 # Manage the database
 
-Right now your recipes disappear when the app reloads. Here you'll store them in the database so they persist, and list previously generated recipes in the app. Serverpod maps your model to a table and gives you a typed API to read and write rows, without writing any SQL.
+Right now your recipes disappear when the Flutter app reloads. Here you'll store them in the database so they persist, and list previously generated recipes in the app. Serverpod maps your model to a table and gives you a type-safe API to read and write rows, without writing any SQL.
 
 Keep `serverpod start` running from the previous page.
 
@@ -20,6 +20,7 @@ Add the `table` keyword to your `Recipe` model in `recipe.spy.yaml`. This maps t
 ```yaml
 ### Our AI generated Recipe
 class: Recipe
+### The database table that stores recipes
 table: recipes
 fields:
   ### The author of the recipe
@@ -57,9 +58,10 @@ Now that `Recipe` is a table, you can write rows. In `recipe_endpoint.dart`, sav
       ingredients: ingredients,
     );
 
-    // Save the recipe to the database. The returned row has its id set.
     return Recipe.db.insertRow(session, recipe);
 ```
+
+`insertRow` returns the saved row with its `id` populated by the database.
 
 ## List past recipes
 
@@ -73,7 +75,7 @@ Add a second method to the endpoint that returns every saved recipe, newest firs
 ```
 
 :::info
-`insertRow` and `find` are part of Serverpod's [ORM](../06-concepts/06-database/02-models.md). See [CRUD](../06-concepts/06-database/05-crud.md) for the full set of database operations.
+`insertRow` and `find` are Serverpod's typed database methods. See [CRUD](../06-concepts/06-database/05-crud.md) for the full set of operations.
 :::
 
 ## Show the saved recipes in your app
@@ -111,7 +113,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load the recipes already saved in the database.
     client.recipe.getRecipes().then((recipes) {
       setState(() => _recipeHistory = recipes);
     });
@@ -146,7 +147,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // The list of recipes saved in the database.
         Expanded(
           child: ListView.builder(
             itemCount: _recipeHistory.length,
@@ -160,7 +160,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
             },
           ),
         ),
-        // The generator and the selected recipe.
         Expanded(
           flex: 3,
           child: Padding(
@@ -200,6 +199,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
   }
 }
 ```
+
+The new `import 'package:magic_recipe_client/magic_recipe_client.dart';` line brings in the `Recipe` class Serverpod generated from your model. It's the same class the server uses, so when you read `recipe.author`, `recipe.text`, or `recipe.date` in the app, the field names and types are guaranteed to match the server.
 
 You added a new endpoint method (`getRecipes`), so the generated client changed. Press `R` in the `serverpod start` terminal to hot restart.
 

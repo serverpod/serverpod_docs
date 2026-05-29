@@ -9,7 +9,7 @@ description: Define a Serverpod data model so your endpoint returns typed, struc
 
 # Create data models
 
-On the [previous page](./01-creating-endpoints.md) your endpoint returned a plain string. Here you'll define a `Recipe` model so the server returns structured, typed data instead. You define the model once in YAML, and Serverpod generates the Dart class plus all the serialization that moves it between server and client.
+On the [previous page](./01-creating-endpoints.md) your endpoint returned a plain string. Here you'll define a `Recipe` model so the server returns structured, typed data instead. You define the model once in YAML, and Serverpod generates the Dart class plus all the serialization needed between server and client.
 
 Keep `serverpod start` running from the previous page.
 
@@ -68,7 +68,7 @@ Save the file. The client regenerates so `generateRecipe` now returns a `Recipe`
 
 ## Show it in your app
 
-In `recipe_screen.dart`, the call now returns a `Recipe` object, so assigning `result` to a string no longer compiles. In `_callGenerateRecipe`, update the success `setState` to read the model's fields:
+In `recipe_screen.dart`, the call now returns a `Recipe` object, so assigning `result` to a string no longer compiles. `_resultMessage` itself stays a `String?`; you just format the `Recipe`'s fields into it. In `_callGenerateRecipe`, update the success `setState`:
 
 ```dart
       setState(() {

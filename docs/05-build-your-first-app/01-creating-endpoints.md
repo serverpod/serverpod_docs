@@ -14,13 +14,13 @@ You'll build a recipe generator: a Serverpod endpoint that takes a list of ingre
 Prefer to have an AI agent build an app for you? Follow the [Quickstart](../04-get-started/02-quickstart.md) instead. This guide takes the hands-on path: you'll build the recipe app yourself, so you understand each piece.
 
 :::info
-The server is the right place for work you can't or shouldn't do in the app, such as calling an API secured by a secret key, accessing a database, or sending push notifications and emails. Here, it keeps your Gemini API key off the client.
+The server is the right place for work you can't or shouldn't do in the Flutter app, such as calling an API secured by a secret key, accessing a database, or sending push notifications and emails. Here, it keeps your Gemini API key off the client.
 :::
 
 ## Before you start
 
 - [Serverpod installed](../04-get-started/01-installation.md). Run `serverpod version` to confirm it works.
-- A free Gemini API key. Create one on [Google AI Studio](https://aistudio.google.com/app/apikey); it's free, but you need to sign in with a Google account.
+- A free Gemini API key. On [Google AI Studio](https://aistudio.google.com/app/apikey), sign in with a Google account and click **Create API key**.
 
 ## Create the project
 
@@ -63,7 +63,7 @@ $ serverpod start
 
 `serverpod start` generates your code, starts the server with its built-in PostgreSQL database (no Docker required), and opens the Flutter app in Chrome. The app that opens is the default Serverpod starter: enter your name, tap **Send to Server**, and the server responds with a greeting.
 
-Leave `serverpod start` running. It watches your project, so every time you save a file it regenerates the necessary code and hot-reloads the app. You'll rely on this for the rest of the guide instead of restarting anything by hand.
+Leave `serverpod start` running. It watches your project, so every time you save a file it regenerates the necessary code and hot reloads the app. You'll rely on this for the rest of the guide instead of restarting anything by hand.
 
 ## Add an endpoint
 
@@ -79,8 +79,6 @@ import 'package:serverpod/serverpod.dart';
 class RecipeEndpoint extends Endpoint {
   /// Pass in a string containing the ingredients and get a recipe back.
   Future<String> generateRecipe(Session session, String ingredients) async {
-    // Serverpod automatically loads your passwords.yaml file and makes the
-    // passwords available in the session.passwords map.
     final geminiApiKey = session.passwords['geminiApiKey'];
     if (geminiApiKey == null) {
       throw Exception('Gemini API key not found');
@@ -92,8 +90,6 @@ class RecipeEndpoint extends Endpoint {
       chatModelName: 'gemini-2.5-flash-lite',
     );
 
-    // A prompt to generate a recipe, the user will provide a free text input
-    // with the ingredients.
     final prompt =
         'Generate a recipe using the following ingredients: $ingredients. '
         'Always put the title of the recipe in the first line, followed by the '
@@ -104,7 +100,6 @@ class RecipeEndpoint extends Endpoint {
 
     final responseText = response.output;
 
-    // Check if the response is empty.
     if (responseText.isEmpty) {
       throw Exception('No response from Gemini API');
     }
@@ -117,7 +112,7 @@ class RecipeEndpoint extends Endpoint {
 The endpoint reads your Gemini key from `session.passwords`, which Serverpod populates from the `passwords.yaml` file you edited earlier.
 
 :::info
-Endpoint methods take a `Session` as their first parameter and return a typed `Future` or `Stream`. You can pass and return primitive types or any [serializable model](../06-concepts/02-models/01-models.md). The class name's `Endpoint` suffix is dropped on the client, so `RecipeEndpoint` is called through `client.recipe`. See [How it works](../04-get-started/03-how-it-works.md) for how that call reaches the server.
+Endpoint methods take a `Session` as their first parameter and return a typed `Future` or `Stream`. You can pass and return primitive types or any [model defined in a `.spy.yaml` file](../06-concepts/02-models/01-models.md). The class name's `Endpoint` suffix is dropped on the client, so `RecipeEndpoint` is called via `client.recipe`. See [How it works](../04-get-started/03-how-it-works.md) for how that call reaches the server.
 :::
 
 Save the file. Because `serverpod start` is watching, it regenerates the client bindings for `generateRecipe` automatically. You'll see it run in the terminal.
@@ -160,7 +155,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
         _loading = true;
       });
 
-      // Call the `generateRecipe` method on the server.
       final result = await client.recipe.generateRecipe(
         _textEditingController.text,
       );
@@ -226,7 +220,7 @@ Then, in the `MyHomePage` widget, change the body from `GreetingsScreen` to `Rec
       body: const RecipeScreen(),
 ```
 
-Save. UI edits like this hot-reload on their own, but adding the endpoint also changed the generated client, and the app's `client` is created once in `main()`, which only re-runs on a restart. Press `R` in the `serverpod start` terminal to hot restart so the app picks up the new `client.recipe` endpoint.
+Save. UI edits like this would normally hot reload, but adding the endpoint also changed the generated client. The app's `client` is created once in `main()`, which only re-runs on a restart, so the app needs a hot restart to pick up the new `client.recipe` endpoint. Press `R` in the `serverpod start` terminal.
 
 Then enter some ingredients and tap **Generate Recipe**. The app calls your endpoint and displays the result:
 
