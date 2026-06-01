@@ -23,7 +23,7 @@ If you specifically need an **OAuth App** instead of a GitHub App, the setup flo
 2. Fill in the basics:
 
    - **GitHub App name** (required, up to 34 characters, unique across GitHub).
-   - **Homepage URL** (required).
+   - **Homepage URL**
    - **Description** (optional, shown to users during install).
 
 ![GitHub App basics](/img/authentication/providers/github/1-app-basics.png)
