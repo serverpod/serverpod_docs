@@ -200,7 +200,7 @@ flutter build web --output ../my_project_server/web/app  # from your Flutter pro
 dart run bin/main.dart                                   # from your server project
 ```
 
-Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod, for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 

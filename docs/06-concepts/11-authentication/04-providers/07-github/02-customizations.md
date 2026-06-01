@@ -233,7 +233,7 @@ Use this flow when your Flutter web app and Serverpod are on different origins. 
 
 1. Place a static `auth.html` file in your Flutter project's `web/` folder. A single copy is shared across every identity provider that uses an OAuth2 redirect, so create it once. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
 
-2. Run Flutter on a fixed port. The examples use `49660`, but any free port works, keep it consistent everywhere:
+2. Run Flutter on a fixed port. The examples use `49660`, but any free port works; keep it consistent everywhere:
 
    ```bash
    flutter run -d chrome --web-port=49660
