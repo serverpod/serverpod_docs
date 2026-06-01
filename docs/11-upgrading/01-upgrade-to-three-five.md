@@ -15,7 +15,7 @@ This guide walks through the upgrade and should take about 15 minutes.
 
 - Your project is on the latest Serverpod 3.4.x release.
 - Your project compiles and tests pass.
-- You've committed your current state to git so you can roll back if needed.
+- You've committed your current state to Git so you can roll back if needed.
 
 ## Update the Serverpod CLI
 
