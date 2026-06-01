@@ -227,6 +227,22 @@ This approach is useful when you need to:
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
 
+### Separately-hosted Flutter web
+
+Use this flow when your Flutter web app and Serverpod are on different origins. Common cases: `flutter run -d chrome` locally with Serverpod on a separate port, or a CDN-hosted Flutter build with a separate API server.
+
+1. Place a static `auth.html` file in your Flutter project's `web/` folder. A single copy is shared across every identity provider that uses an OAuth2 redirect, so create it once. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
+
+2. Run Flutter on a fixed port. The examples use `49660`, but any free port works, keep it consistent everywhere:
+
+   ```bash
+   flutter run -d chrome --web-port=49660
+   ```
+
+3. Register the full `auth.html` URL on your GitHub App's **Callback URL** field (e.g., `http://localhost:49660/auth.html` locally, `https://app.example.com/auth.html` in production). GitHub Apps accept up to 10 callback URLs, so dev and prod entries can coexist with the Serverpod-hosted route and mobile schemes.
+
+4. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument instead of the route URL.
+
 ## GitHubIdpConfig parameter reference
 
 | Parameter | Type | Required | Description |

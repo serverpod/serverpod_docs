@@ -10,10 +10,6 @@ Before following this guide, make sure you have:
 - A running Serverpod project (server, client, and Flutter app packages from `serverpod create`).
 - The Serverpod auth module installed and configured per the [authentication setup](../../setup). If your project was generated with an older Serverpod version, follow that guide first to add `serverpod_auth_idp_server` and `serverpod_auth_idp_flutter` and to configure `pod.initializeAuthServices()` before continuing.
 
-:::note
-If you specifically need an **OAuth App** instead of a GitHub App, the setup flow below is the same except OAuth Apps allow only a single Callback URL (GitHub Apps allow up to 10). See GitHub's [Differences between GitHub Apps and OAuth Apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps).
-:::
-
 ## Get your GitHub credentials
 
 ### Register a new GitHub App
@@ -22,35 +18,26 @@ If you specifically need an **OAuth App** instead of a GitHub App, the setup flo
 
 2. Fill in the basics:
 
-   - **GitHub App name** (required, up to 34 characters, unique across GitHub).
-   - **Homepage URL**
-   - **Description** (optional, shown to users during install).
+   - **GitHub App name**.
+   - **Homepage URL**.
+   - **Description** (optional).
 
 ![GitHub App basics](/img/authentication/providers/github/1-app-basics.png)
 
 ### Configure the callback URL
 
-The callback URL is where GitHub redirects the user after they authorize your app. For Serverpod sign-in, this must match the redirect URI you pass to `initializeGitHubSignIn` in your Flutter app, and the registered URL in the web callback page setup.
+The callback URL is where GitHub redirects the user after they authorize your app.
 
 1. In the **Callback URL** field, enter the redirect URI for your app. GitHub Apps accept up to 10 entries, one per line. Add every platform you target:
 
-   | Platform | Example value |
-   | --- | --- |
-   | iOS and Android | `com.example.yourapp://auth` (custom scheme registered in `AndroidManifest.xml` and `Info.plist`) |
-   | Web (Serverpod-hosted Flutter) | `https://my-awesome-project.serverpod.space/auth/callback` |
-   | Web (Flutter dev server) | `http://localhost:49660/auth.html` |
-
-   The web entries depend on how your Flutter web app is served. See [Web](#web) below for the two flows (Serverpod-hosted using a built-in callback route, or separately-hosted using a static `auth.html` file).
-
-   :::tip
-   For the mobile scheme, use a value unique to your app (reverse-DNS of your bundle ID is a good convention, for example `com.example.yourapp://auth`). Generic schemes like `myapp://auth` work but can collide with other apps installed on the device.
-   :::
+   - **iOS and Android**: `com.example.yourapp://auth` (a custom scheme registered in `AndroidManifest.xml` and `Info.plist`).
+   - **Web**: `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production.
 
    ![Callback URL field](/img/authentication/providers/github/2-callback-url.png)
 
-2. Leave **Expire user authorization tokens** enabled (GitHub's default). Token expiration is recommended for sign-in flows so leaked tokens have a short useful lifetime. Serverpod handles the refresh flow automatically; you do not need to write any refresh logic.
+2. Leave **Expire user authorization tokens** enabled (GitHub's default). Token expiration is recommended for sign-in flows so leaked tokens have a short useful lifetime. Serverpod handles refreshing the token; you do not need to write any refresh logic.
 
-3. Leave **Request user authorization (OAuth) during installation** unchecked unless you need the installation to immediately trigger an OAuth sign-in.
+3. Leave **Request user authorization (OAuth) during installation** unchecked unless you need the installation of your Flutter app to immediately trigger an OAuth sign-in.
 
 ### Disable webhooks
 
@@ -62,7 +49,7 @@ Under **Webhook**, uncheck **Active** to disable the whole section.
 
 ### Set permissions
 
-GitHub Apps use fine-grained **permissions** instead of OAuth **scopes**. For sign-in you only need access to the user's profile.
+For sign-in you only need access to the user's profile.
 
 1. Under **Account permissions**, set **Email addresses** to **Read-only**. This lets your app read the user's primary verified email.
 
@@ -206,13 +193,18 @@ The scheme in `AndroidManifest.xml` must exactly match the scheme in your GitHub
 
 ### Web
 
-On web, GitHub sign-in redirects the browser to a callback page that posts the result back to your Flutter app via `postMessage`. The browser enforces same-origin on `postMessage`, so the callback page must be served from the same host and port as your Flutter web app.
+On web, GitHub completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** as the callback route. To test locally, build your Flutter web app into Serverpod's `web/app/` directory:
 
-Serverpod can host this callback for you when the Flutter web app is served by the same Serverpod server (the default project template, which copies the Flutter web build into Serverpod's `web/app/` directory via the `flutter_build` script). Use the static `auth.html` fallback only if your Flutter web app is hosted on a different origin (for example, a separate dev server during local development, or a CDN in production).
+```bash
+flutter build web --output ../my_project_server/web/app  # from your Flutter project
+dart run bin/main.dart                                   # from your server project
+```
 
-#### Serverpod-hosted Flutter web
+Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod, for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 
-1. In `server.dart`, before `pod.start()`, register the callback route:
+The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
+
+1. In your server project's `server.dart` file, before `pod.start()`, register the callback route:
 
    ```dart
    import 'package:serverpod_auth_idp_server/core.dart';
@@ -220,55 +212,37 @@ Serverpod can host this callback for you when the Flutter web app is served by t
    // ...
 
    pod.webServer.addRoute(
+     FlutterWebAuth2CallbackRoute(),
+     '/auth/callback',
+   );
+   ```
+
+   The path `/auth/callback` can be anything, as long as it matches the URL you register with GitHub in step 2 and pass to `initializeGitHubSignIn` later.
+
+   In production, pass `host:` to restrict the route to your production domain:
+
+   ```dart
+   pod.webServer.addRoute(
      FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'),
      '/auth/callback',
    );
    ```
 
-   Set `host` to the domain that serves your Flutter web app so the route only responds to requests on that origin. The second argument to `addRoute` is the path; use any path you like, as long as it matches the callback URL registered on your GitHub App and the `redirectUri` you pass to `initializeGitHubSignIn`.
+   :::tip
+   The same route works for every OAuth2 PKCE provider. Register it once and reuse the callback URL for GitHub, Google, and any future provider.
+   :::
 
-   The route is provider-agnostic. Register it once and reuse the same callback URL across every OAuth2 PKCE provider (GitHub, Google, etc.).
+2. Add the full callback URL to your GitHub App's **Callback URL** field (e.g., `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production). GitHub Apps accept up to 10 entries, so dev and prod entries can coexist.
 
-2. Register `https://my-awesome-project.serverpod.space/auth/callback` as a **Callback URL** on your GitHub App.
+3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client (covered in [Initialize the GitHub sign-in service](#initialize-the-github-sign-in-service) below).
 
-3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client (covered in [Present the authentication UI](#present-the-authentication-ui) below).
+   :::tip
+   You can also pass the redirect URI via `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app) for the pattern.
+   :::
 
 :::note
-`FlutterWebAuth2CallbackRoute` requires `serverpod_auth_idp_server` 3.5.0-beta.8 or later. On earlier versions, use the [Separately-hosted Flutter web](#separately-hosted-flutter-web-or-local-flutter-dev-server) flow instead.
+`FlutterWebAuth2CallbackRoute` requires `serverpod_auth_idp_server` 3.5.0-beta.8 or later.
 :::
-
-#### Separately-hosted Flutter web (or local Flutter dev server)
-
-If your Flutter web app is served on a different origin from Serverpod, the `postMessage` from the callback page is blocked by the browser. This is the situation during local development when you run `flutter run -d chrome --web-port=49660` and Serverpod's web server is on `localhost:8082`, or in production if you host the Flutter web build on a CDN separate from your Serverpod API server.
-
-In that case, place a static `auth.html` file in your Flutter project's `web/` folder. A single copy is shared across every identity provider that uses an OAuth2 redirect, so create it once.
-
-```html
-<!DOCTYPE html>
-<title>Authentication complete</title>
-<p>Authentication is complete. If this does not happen automatically, please close the window.</p>
-<script>
-  function postAuthenticationMessage() {
-    const message = {
-      'flutter-web-auth-2': window.location.href
-    };
-
-    if (window.opener) {
-      window.opener.postMessage(message, window.location.origin);
-      window.close();
-    } else if (window.parent && window.parent !== window) {
-      window.parent.postMessage(message, window.location.origin);
-    } else {
-      localStorage.setItem('flutter-web-auth-2', window.location.href);
-      window.close();
-    }
-  }
-
-  postAuthenticationMessage();
-</script>
-```
-
-Register the full URL of this file (for example, `http://localhost:49660/auth.html` for the Flutter dev server) as a **Callback URL** on your GitHub App, and pass the same URL to `initializeGitHubSignIn` via `redirectUri`. GitHub Apps accept up to 10 callback URLs, so dev and prod entries can coexist with mobile schemes.
 
 ## Present the authentication UI
 
@@ -298,7 +272,7 @@ void main() async {
 }
 ```
 
-Replace `your-github-client-id` with the **Client ID** from your GitHub App, and `redirectUri` with the matching callback URL you registered: a reverse-DNS custom scheme for mobile, `https://your-domain.com/auth/callback` for Serverpod-hosted web, or the full `auth.html` URL when Flutter web is separately hosted.
+Replace `your-github-client-id` with the **Client ID** from your GitHub App, and `redirectUri` with the matching callback URL you registered: a reverse-DNS custom scheme for mobile, or the route URL from [Web](#web) for Flutter web. Swap the redirect URI for your production URL when deploying.
 
 :::tip
 To keep these values out of `main.dart` and vary them per build, read them from `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app) for the pattern.
@@ -318,8 +292,7 @@ Before going live, complete the following steps:
 
 Go back to your GitHub App's settings and add your production callback URL to **Callback URL** alongside the development one. Both should remain registered so dev and prod work simultaneously.
 
-- For Serverpod-hosted Flutter web (standard project template), the production callback is `https://my-awesome-project.serverpod.space/auth/callback`. Make sure `pod.webServer.addRoute(FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'), '/auth/callback')` is called in `server.dart` so the route is registered in production.
-- For separately-hosted Flutter web, use the production `auth.html` URL (for example, `https://app.example.com/auth.html`).
+- For web, add the production route URL you registered in [Web](#web) (e.g., `https://my-awesome-project.serverpod.space/auth/callback`). Make sure `pod.webServer.addRoute(FlutterWebAuth2CallbackRoute(host: 'my-awesome-project.serverpod.space'), '/auth/callback')` is called in `server.dart` so the route is registered in production. If you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow, register the production `auth.html` URL instead (e.g., `https://app.example.com/auth.html`).
 - For mobile custom schemes (e.g., `com.example.yourapp://auth`), no change is needed between dev and prod.
 
 ### 2. Set production credentials
