@@ -70,10 +70,10 @@ indexes:
     type: brin
 ```
 
-If no type is specified the default is `btree`. All [PostgreSQL index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+If no type is specified the default is `btree`. All [Postgres index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
 
 :::info
-Index types are only supported for PostgreSQL. On SQLite3, only `btree` indexes are supported. Indexes declared with different types on the models will be skipped when creating a migration and a warning will be logged.
+Index types are only supported for Postgres. On SQLite, only `btree` indexes are supported. Indexes declared with different types on the models will be skipped when creating a migration and a warning will be logged.
 :::
 
 ## GIN indexes

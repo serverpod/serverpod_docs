@@ -13,7 +13,7 @@ All vector types support specialized distance operations for similarity search a
 To ensure optimal performance with vector similarity searches, consider creating specialized vector indexes on your vector fields. See the [Vector indexes](../database/indexing#vector-indexes) section for more details.
 
 :::info
-The usage of Vector fields requires the PostgreSQL database with the `pgvector` extension installed - which comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrade to pgvector](../../upgrading/upgrade-to-pgvector) guide.
+The usage of Vector fields requires a Postgres database with the `pgvector` extension installed. The extension comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrade to pgvector](../../upgrading/upgrade-to-pgvector) guide.
 :::
 
 ## Vector

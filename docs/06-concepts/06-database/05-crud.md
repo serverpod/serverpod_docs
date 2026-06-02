@@ -57,7 +57,7 @@ The method returns only the rows that were successfully inserted. If all rows co
 This is useful for idempotent operations where you want to insert data without failing on duplicates.
 
 :::note
-Under the hood, this uses a `ON CONFLICT DO NOTHING` SQL clause. Only unique and exclusion constraint violations are ignored — other errors such as `NOT NULL`, `CHECK`, or foreign key violations will still throw an exception.
+Under the hood, this uses an `ON CONFLICT DO NOTHING` SQL clause. Only unique and exclusion constraint violations are ignored. Other errors such as `NOT NULL`, `CHECK`, or foreign key violations will still throw an exception.
 :::
 
 :::warning

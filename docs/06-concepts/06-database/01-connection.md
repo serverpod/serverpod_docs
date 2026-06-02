@@ -2,14 +2,14 @@
 
 In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
 
-If using PostgreSQL, the easiest way to get started is to use a Docker container to run your local PostgreSQL server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run PostgreSQL locally yourself.
+If using Postgres, the easiest way to get started is to use a Docker container to run your local Postgres server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run Postgres locally yourself.
 
 ### Connection details
 
 Each environment configuration contains a `database` keyword that specifies the connection details.
 For your development build you can find the connection details in the `config/development.yaml` file.
 
-Below is an example for PostgreSQL:
+Below is an example for Postgres:
 
 ```yaml
 ...
@@ -40,7 +40,7 @@ Note that the same database backend must be used for all run modes. For more inf
 
 #### Configure search paths
 
-If using PostgreSQL, you can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
+If using Postgres, you can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
 
 To override this, use the optional `searchPaths` setting in your configuration:
 
@@ -91,7 +91,7 @@ database:
 
 You can also configure this setting via the environment variable `SERVERPOD_DATABASE_MAX_CONNECTION_COUNT`.
 
-On SQLite, this configuration will set the number of read-only transactions that can be executed concurrently - only one write transaction can be executed at a time.
+On SQLite, this configuration sets the number of read-only transactions that can run concurrently. Only one write transaction can run at a time.
 
 ### Database password
 
@@ -110,7 +110,7 @@ No database password is required when using SQLite.
 
 ## Development database
 
-A newly created Serverpod project has a preconfigured Docker instance with a PostgreSQL database set up. Run the following command from the root of the `server` package to start the database:
+A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. Run the following command from the root of the `server` package to start the database:
 
 ```bash
 $ docker compose up --build --detach
