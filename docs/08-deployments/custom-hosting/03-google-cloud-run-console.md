@@ -1,6 +1,6 @@
-# Google Cloud Run with CGP Console
+# Google Cloud Run with GCP Console
 
-If your server does not maintain a state and you aren't using future calls, running your Serverpod on Google Cloud Run can be a great option. Cloud Run is the easiest way to deploy your server but may be less flexible as your application grows. Check the [Choosing deployment strategy](deployment-strategy) page for more information on choosing the best solution for your needs.
+If your server does not maintain a state and you aren't using future calls, running your Serverpod on Google Cloud Run can be a great option. Cloud Run is the easiest way to deploy your server but may be less flexible as your application grows. See [Choosing a strategy](./01-choosing-a-strategy.md) for more on choosing the best solution for your needs.
 
 ## Before you begin
 

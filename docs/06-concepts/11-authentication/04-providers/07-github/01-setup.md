@@ -163,37 +163,13 @@ In order to capture the callback url, the following activity needs to be added t
 
 ### Web
 
-On the web, you need a specific endpoint to capture the OAuth2 callback. To set this up, create an HTML file (e.g., `auth.html`) inside your project's `./web` folder and add the following content:
+On the web, GitHub sign-in completes by redirecting the browser to a callback page that hands the result back to your Flutter app. That page is `web/auth.html`, and it is shared across every identity provider that uses an OAuth2 redirect.
 
-```html
-<!DOCTYPE html>
-<title>Authentication complete</title>
-<p>Authentication is complete. If this does not happen automatically, please close the window.</p>
-<script>
-  function postAuthenticationMessage() {
-    const message = {
-      'flutter-web-auth-2': window.location.href
-    };
+1. Create the callback page if you have not already. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
 
-    if (window.opener) {
-      window.opener.postMessage(message, window.location.origin);
-      window.close();
-    } else if (window.parent && window.parent !== window) {
-      window.parent.postMessage(message, window.location.origin);
-    } else {
-      localStorage.setItem('flutter-web-auth-2', window.location.href);
-      window.close();
-    }
-  }
+2. Register the full `auth.html` URL (for example, `http://localhost:49660/auth.html`) as the **Authorization callback URL** on your GitHub OAuth app.
 
-  postAuthenticationMessage();
-</script>
-```
-
-:::note
-You only need a single callback file (e.g. `auth.html`) in your `./web` folder.
-This file is shared across all IDPs that use the OAuth2 utility, as long as your redirect URIs point to it.
-:::
+3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client.
 
 ## Present the authentication UI
 
