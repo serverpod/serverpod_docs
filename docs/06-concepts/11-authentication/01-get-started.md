@@ -13,8 +13,8 @@ This guide walks you through that, then shows how to test signing up and signing
 ## Prerequisites
 
 - A project created with `serverpod create` on Serverpod 3.5 or later. If you are upgrading an older project, follow [Migrate to the new auth module](./setup) first to add authentication.
-- Docker installed and running, so the server can start its database.
 - The Flutter SDK installed, so you can run the app.
+- Docker installed and running, if your project uses a Docker Postgres. Projects on the embedded Postgres option don't need Docker.
 
 ## Show the sign-in screen
 
