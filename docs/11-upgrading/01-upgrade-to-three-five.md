@@ -7,7 +7,7 @@ description: Upgrade your Serverpod 3.4 project to 3.5 (Jetstream) by adopting s
 
 # Upgrade to 3.5
 
-Serverpod 3.5 (Jetstream) ships a new development workflow (`serverpod start`), an embedded Postgres option, and built-in agent skills. The changes are mostly opt-in: your existing 3.4 project keeps working with small updates.
+Serverpod 3.5 (Jetstream) brings a unified `serverpod start` command with hot reload that runs your server, database, and Flutter app together. The release also includes an embedded Postgres option and optional AI agent skills for your editor. The changes are mostly opt-in: your existing 3.4 project keeps working with small updates.
 
 This guide walks through the upgrade and should take about 15 minutes.
 
@@ -22,7 +22,7 @@ This guide walks through the upgrade and should take about 15 minutes.
 Install the 3.5 CLI:
 
 ```bash
-$ dart pub global activate serverpod_cli 3.5.0-beta.9
+$ dart install serverpod_cli 3.5.0-beta.9
 ```
 
 Verify the version:
@@ -49,32 +49,66 @@ environment:
   sdk: '^3.10.3'
 ```
 
-From the project's root folder, refresh dependencies (Dart workspaces resolve all sub-packages in one command), then regenerate the server and client code:
+From the project's root folder, refresh dependencies. Dart workspaces (used by projects created with the 3.3+ scaffold) resolve all sub-packages in one command:
 
 ```bash
 $ dart pub upgrade
+```
+
+If your project doesn't use a Dart workspace (there's no `workspace:` block in the root `pubspec.yaml`), run `dart pub upgrade` separately in each sub-package. To adopt workspaces, see Dart's [pub workspaces documentation](https://dart.dev/tools/pub/workspaces).
+
+Then refresh the generated server and client code:
+
+```bash
 $ serverpod generate
 ```
 
 ## Generate the 3.5 migration
 
-3.5 adds a few new internal Serverpod tables and updates some indexes (such as `serverpod_future_call_claim` and indexes on `serverpod_log` and `serverpod_query_log`). Create a migration that captures these schema deltas so your database can be brought up to date:
+Version 3.5 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
 
 ```bash
-$ serverpod create-migration
+$ serverpod create-migration --tag "upgrade-3.5"
 ```
 
 This writes a new migration to `<project>_server/migrations/`. It will be applied to your database in the next step.
 
 ## Adopt the new development workflow
 
-3.5 replaces the `docker compose up` + `dart bin/main.dart` + `flutter run` triad with a single command, `serverpod start`, which runs the server, the database, and your Flutter app together with hot reload. Before running it, choose how to handle the database.
+Version 3.5 introduces a faster, integrated development workflow. The new `serverpod start` command runs your server, your Flutter app, and (optionally) your database in a single watch process with hot reload, replacing the manual `docker compose up` + `dart bin/main.dart` + `flutter run` triad. The result is a tighter edit-save-see-result loop and built-in tooling for migrations, hot restart, and agent skills.
+
+Before running it, choose how to handle the database.
 
 ### Choose your data store
 
-You can either switch to the new embedded Postgres or keep your existing Docker Postgres. The choice depends on whether you have development data you need to keep.
+You have two paths. Pick the one that fits where you are today; both work with `serverpod start`.
 
-**Path A: switch to the embedded Postgres.** Add `dataPath` to the database section of `<project>_server/config/development.yaml` and `<project>_server/config/testing.yaml`:
+#### Keep your Docker Postgres (easiest upgrade)
+
+If you've been developing against a Docker Postgres on 3.4, you can keep it without changing your config. Pass `--docker` to `serverpod start` so it uses your existing `docker-compose.yaml`:
+
+```bash
+$ serverpod start --docker
+```
+
+`serverpod start --docker` will start Docker for you if it isn't running, and will tear down the compose stack on exit if it was the one that started it.
+
+#### Switch to the embedded Postgres (recommended for new development)
+
+Version 3.5 ships a built-in Postgres that runs as a child process of your Dart server, using the same Postgres dialect as production. It has practical advantages over Docker for day-to-day development:
+
+**Pros:**
+
+- No Docker dependency.
+- No TCP port conflicts (uses a Unix domain socket by default).
+- Cleanup by deleting the data directory.
+
+**Trade-offs:**
+
+- Tests must run with `--concurrency=1` (the cluster is single-tenant).
+- Manual access (e.g. with `psql`) requires a Dart process to be running the cluster.
+
+To switch, add `dataPath` to the database section of `<project>_server/config/development.yaml` and `<project>_server/config/testing.yaml`:
 
 ```yaml
 database:
@@ -87,35 +121,29 @@ database:
 
 For `testing.yaml`, use a separate directory, for example `dataPath: .serverpod/test/pgdata`.
 
+Once `dataPath` is set, `serverpod start` uses the embedded Postgres automatically:
+
+```bash
+$ serverpod start
+```
+
+`dataPath` belongs in `development.yaml` and `testing.yaml` only. For production, use a managed Postgres: [Serverpod Cloud](/cloud) provisions one for you, or you can connect to a managed service like Cloud SQL or RDS. Do not add `dataPath` to `production.yaml` or `staging.yaml`.
+
 :::warning
 
-The embedded Postgres uses a fresh data directory, separate from your Docker volumes. If you have seeded development data you need to keep, follow Path B, or import your data into the new directory after switching.
-
-:::
-
-**Path B: keep your Docker Postgres.** No config change. You'll pass `--docker` to `serverpod start` so it uses your existing `docker-compose.yaml`.
-
-:::warning
-
-Make sure Docker is running before `serverpod start --docker`. If it isn't, `serverpod start` may fall back to the embedded Postgres path and connect your app to an empty database. This is harmless, but it can look like your data disappeared. Your Docker data is still in its volume. Start Docker and re-run `serverpod start --docker` to reconnect.
+If you've added `dataPath` to your config and also pass `--docker`, the server connects to the embedded Postgres rather than your Docker Postgres. `dataPath` is honored by the server process regardless of the `--docker` flag, which only controls whether `serverpod start` brings up the `docker-compose` stack. If that's not what you wanted, your Docker volume is still intact: remove `dataPath` from your config to use the Docker Postgres again.
 
 :::
 
 ### Start the server
 
-From the project's root folder, run:
+The first run compiles the native build hooks (this can take about 30 seconds) and applies the migration you generated above. The server then starts and watches your project; saving a file hot-reloads the code.
 
-```bash
-$ serverpod start            # Path A (embedded Postgres)
-# or:
-$ serverpod start --docker   # Path B (Docker Postgres)
-```
-
-The first run compiles the native build hooks (this can take ~30 seconds) and applies the migration you generated above. The server then starts, watches your project, and hot-reloads on save.
+`serverpod start` also launches your Flutter app, in Chrome by default. Pass `--flutter-device <name>` to target a different device. For IDE debugging, projects scaffolded with 3.5 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 3.5 scaffold if you want the same setup.
 
 ## Add the agent skills (optional)
 
-3.5 ships AI agent skills (for editors like Claude Code and Cursor) and an MCP server. Install them with:
+Version 3.5 ships AI agent skills (for editors like Claude Code and Cursor) and an MCP server. Install them with:
 
 ```bash
 $ dart install skills
@@ -127,17 +155,44 @@ From your project's root folder, install the skills for your editor:
 $ skills get --ide cursor
 ```
 
-Replace `cursor` with the editor you use: `antigravity`, `claude`, `cline`, `codex`, `copilot`, `cursor`, `opencode`, or `generic`.
+Replace `cursor` with the editor you use: `antigravity`, `claude`, `cline`, `codex`, `copilot`, `cursor`, `opencode`, or `generic` to install at the `.agents` folder.
 
 ## Production deployment notes
 
-Your production Dockerfile pattern (`dart compile exe bin/main.dart -o bin/server`) continues to work in 3.5. Build hooks run automatically during compilation. The only change you may need is to bump the Dart SDK base image to 3.10.x or newer:
+Your production build needs to switch from `dart compile exe` to `dart build cli`. The 3.5 server includes native build hooks that `dart compile` doesn't support. The new build produces a bundle (executable plus its native libraries) rather than a single static binary, so your Dockerfile needs a few updates.
 
-```dockerfile
-FROM dart:3.10.3 AS build
-```
+The fastest fix is to copy the updated Dockerfile from a fresh 3.5 project's `<project>_server/Dockerfile`. The key changes from the 3.4 pattern are:
 
-The embedded Postgres is a development convenience and does not run in production. Use a managed Postgres for your deployed server: [Serverpod Cloud](/cloud) provisions one for you automatically, or you can connect to a managed service like Cloud SQL or RDS.
+- **Build from the project root**, not the server directory, so Dart workspaces resolve correctly:
+
+    ```bash
+    $ docker build -f <project>_server/Dockerfile .
+    ```
+
+- Use **`dart build cli`** instead of `dart compile exe`:
+
+    ```dockerfile
+    RUN dart build cli --target bin/main.dart --output build
+    ```
+
+- **Copy the bundle directory**, not a single executable. The bundle contains `bin/main` and `lib/*` (the native libraries):
+
+    ```dockerfile
+    COPY --from=build /app/<project>_server/build/bundle/ ./
+    ```
+
+- **Update ENTRYPOINT** to point at the bundled binary:
+
+    ```dockerfile
+    ENTRYPOINT ./bin/server --mode=$runmode --server-id=$serverid --logging=$logging --role=$role
+    ```
+
+- **Bump the Dart SDK base image** to 3.10.x or newer:
+
+    ```dockerfile
+    FROM dart:3.10.3 AS build
+    ```
+
 
 ## What's new in 3.5
 
@@ -155,18 +210,11 @@ The embedded Postgres is a development convenience and does not run in productio
 - **Health endpoints** on the built-in webserver.
 - **IDE and agent selection** in `serverpod create`.
 
-### Migration concerns
-
-These are not new features but can affect existing 3.4 projects:
-
-- **`serverpod_database` package extraction.** Database types and helpers moved from `serverpod` into a new `serverpod_database` package. If you imported database APIs directly from `serverpod`, some of those imports now come from `serverpod_database`. The compiler will point out any imports that need updating after you run `dart pub upgrade`.
-- **Logging revamp.** The logging API was reworked. If you have custom log handling, review your code against the new API.
-
 ## Troubleshooting
 
-### Port conflicts on `serverpod start`
+### Port conflicts on startup
 
-A previous `serverpod start` or a separate Postgres process may still be listening on 8090 or 8080. Stop the other process, or run on different ports.
+Running more than one Serverpod server on the same machine can conflict on the default ports (8080 for the main server, 8090 for the database). This is a long-standing limitation, not specific to `serverpod start`. Stop the other server, or run on different ports.
 
 ### Agent skills aren't picked up after install
 
