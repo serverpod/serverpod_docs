@@ -35,7 +35,7 @@ In total, there are three caches where you can store your objects. Two caches ar
 Depending on the type and number of objects that are cached in the global cache, you may want to specify custom caching rules in Redis. This is currently not handled automatically by Serverpod.
 
 :::info
-During development, you can run and test uses of the global cache on your code without depending on a running Redis server. If the server runs on `development`/`test` run mode and the Redis cache is configured, but not available, the global cache will fall back to an isolated in-memory cache.
+During development, you can run code that uses the global cache without a running Redis server. If Redis is unreachable (or not configured) in a non-production run mode, the global cache falls back to an isolated in-memory cache.
 :::
 
 ### Caching primitive objects
