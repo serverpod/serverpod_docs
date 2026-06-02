@@ -1,16 +1,8 @@
----
-sidebar_label: Migrate auth module
----
+# Setup
 
-# Migrate to the new auth module
+Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth_idp` module. The module makes it easy to authenticate with email, social sign-ins and more.
 
-This guide is for existing projects upgrading from an older Serverpod version to the modular `serverpod_auth_idp` auth module. It covers the server, client, and app.
-
-:::note
-New projects created with `serverpod create` (Serverpod 3.4 or later) already include `serverpod_auth_idp`. See [Get started with authentication](./get-started) to turn on the sign-in screen.
-:::
-
-`serverpod_auth_idp` supports email, social sign-ins (Google, Apple, GitHub, and more), and passkeys. See [Identity providers configuration](#identity-providers-configuration) below for the full list, or [Custom authentication](./custom-overrides) if you need full control over the flow.
+The list of identity providers is continuously growing and new providers are added as they are developed. If you want to contribute a new provider, please consider [contributing](/contribute) your code. See the [identity providers configuration](#identity-providers-configuration) section for details on all available providers.
 
 ![Sign-in with Serverpod](/img/authentication/sign-in-widget-device.png)
 
