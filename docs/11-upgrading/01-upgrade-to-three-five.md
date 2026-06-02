@@ -193,7 +193,6 @@ The fastest fix is to copy the updated Dockerfile from a fresh 3.5 project's `<p
     FROM dart:3.10.3 AS build
     ```
 
-
 ## What's new in 3.5
 
 - **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create a migration, **A** to apply migrations, **P** to apply a repair migration.
