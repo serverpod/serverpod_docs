@@ -21,6 +21,46 @@ var result = await session.db.transaction((transaction) async {
 
 In the example we insert a company and an employee in the same transaction. If any of the operations fail, the entire transaction will be rolled back and no changes will be made to the database. If the transaction is successful, the return value will be `true`.
 
+## Transaction failure exceptions
+
+When the transaction callback throws an exception, Serverpod rolls back the
+transaction and rethrows that exception.
+
+When the database rejects a query inside the transaction, Serverpod throws a
+`DatabaseQueryException`. This can happen, for example, when concurrent writes
+conflict with the selected transaction isolation level, or when PostgreSQL
+detects a deadlock.
+
+The exact database error code depends on why PostgreSQL rejected the query.
+Serverpod exposes PostgreSQL error code constants through `PgErrorCode`, so you
+can compare them with the `code` field on `DatabaseQueryException`.
+
+```dart
+try {
+  await session.db.transaction(
+    (transaction) async {
+      await Company.db.updateRow(
+        session,
+        company,
+        transaction: transaction,
+      );
+    },
+    settings: TransactionSettings(isolationLevel: IsolationLevel.serializable),
+  );
+} on DatabaseQueryException catch (e) {
+  if (e.code == PgErrorCode.serializationFailure ||
+      e.code == PgErrorCode.deadlockDetected) {
+    // Retry the transaction or report a write conflict to the caller.
+    return;
+  }
+
+  rethrow;
+}
+```
+
+For all PostgreSQL error codes, see the [PostgreSQL error code
+appendix](https://www.postgresql.org/docs/current/errcodes-appendix.html).
+
 ## Transaction isolation
 
 The transaction isolation level can be configured when initiating a transaction. The isolation level determines how the transaction interacts with concurrent database operations. If no isolation level is supplied, the level is determined by the database engine.
@@ -47,9 +87,9 @@ In the example the isolation level is set to `IsolationLevel.serializable`.
 
 The available isolation levels are:
 
-| Isolation Level | Constant              | Description |
-|-----------------|-----------------------|-------------|
-| Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in PostgresSQL |
+| Isolation Level | Constant | Description |
+| --- | --- | --- |
+| Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in PostgreSQL |
 | Read committed | `IsolationLevel.readCommitted` | Each statement in the transaction sees a snapshot of the database as of the beginning of that statement. |
 | Repeatable read | `IsolationLevel.repeatableRead` | The transaction only observes rows committed before the first statement in the transaction was executed giving a consistent view of the database. If any conflicting writes among concurrent transactions occur, an exception is thrown. |
 | Serializable | `IsolationLevel.serializable` | Gives the same guarantees as `IsolationLevel.repeatableRead` but also throws if read rows are updated by other transactions. |
