@@ -91,7 +91,7 @@ If you've been developing against a Docker Postgres on 3.4, you can keep it with
 $ serverpod start --docker
 ```
 
-`serverpod start --docker` will start Docker for you if it isn't running, and will tear down the compose stack on exit if it was the one that started it.
+With `--docker`, `serverpod start` brings up Docker if it isn't running, and tears down the compose stack on exit if the command brought it up.
 
 #### Switch to the embedded Postgres (recommended for new development)
 
@@ -127,7 +127,7 @@ Once `dataPath` is set, `serverpod start` uses the embedded Postgres automatical
 $ serverpod start
 ```
 
-`dataPath` belongs in `development.yaml` and `testing.yaml` only. For production, use a managed Postgres: [Serverpod Cloud](/cloud) provisions one for you, or you can connect to a managed service like Cloud SQL or RDS. Do not add `dataPath` to `production.yaml` or `staging.yaml`.
+The `dataPath` setting belongs in `development.yaml` and `testing.yaml` only. For production, use a managed Postgres: [Serverpod Cloud](/cloud) provisions one for you, or you can connect to a managed service like Cloud SQL or RDS. Do not add `dataPath` to `production.yaml` or `staging.yaml`.
 
 :::warning
 
@@ -139,7 +139,7 @@ If you've added `dataPath` to your config and also pass `--docker`, the server c
 
 The first run compiles the native build hooks (this can take about 30 seconds) and applies the migration you generated above. The server then starts and watches your project; saving a file hot-reloads the code.
 
-`serverpod start` also launches your Flutter app, in Chrome by default. Pass `--flutter-device <name>` to target a different device. For IDE debugging, projects scaffolded with 3.5 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 3.5 scaffold if you want the same setup.
+Beyond the server, `serverpod start` also launches the project's Flutter app. By default it uses Flutter's `web-server` device and opens your browser. Pass `--flutter-device <name>` to target a specific device. For IDE debugging, projects scaffolded with 3.5 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 3.5 scaffold if you want the same setup.
 
 ## Add the agent skills (optional)
 
@@ -159,39 +159,9 @@ Replace `cursor` with the editor you use: `antigravity`, `claude`, `cline`, `cod
 
 ## Production deployment notes
 
-Your production build needs to switch from `dart compile exe` to `dart build cli`. The 3.5 server includes native build hooks that `dart compile` doesn't support. The new build produces a bundle (executable plus its native libraries) rather than a single static binary, so your Dockerfile needs a few updates.
+Your production build needs to switch from `dart compile exe` to `dart build cli`. The 3.5 server includes native build hooks that `dart compile` doesn't support, and produces a bundle (executable plus its native libraries) rather than a single static binary, so your Dockerfile needs a few updates.
 
-The fastest fix is to copy the updated Dockerfile from a fresh 3.5 project's `<project>_server/Dockerfile`. The key changes from the 3.4 pattern are:
-
-- **Build from the project root**, not the server directory, so Dart workspaces resolve correctly:
-
-    ```bash
-    $ docker build -f <project>_server/Dockerfile .
-    ```
-
-- Use **`dart build cli`** instead of `dart compile exe`:
-
-    ```dockerfile
-    RUN dart build cli --target bin/main.dart --output build
-    ```
-
-- **Copy the bundle directory**, not a single executable. The bundle contains `bin/main` and `lib/*` (the native libraries):
-
-    ```dockerfile
-    COPY --from=build /app/<project>_server/build/bundle/ ./
-    ```
-
-- **Update ENTRYPOINT** to point at the bundled binary:
-
-    ```dockerfile
-    ENTRYPOINT ./bin/server --mode=$runmode --server-id=$serverid --logging=$logging --role=$role
-    ```
-
-- **Bump the Dart SDK base image** to 3.10.x or newer:
-
-    ```dockerfile
-    FROM dart:3.10.3 AS build
-    ```
+Copy the updated Dockerfile from the [3.5 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 3.5 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and bump the Dart SDK base image to 3.10.x or newer.
 
 ## What's new in 3.5
 
@@ -218,6 +188,10 @@ Running more than one Serverpod server on the same machine can conflict on the d
 ### Agent skills aren't picked up after install
 
 Run `skills get` again from the project's root folder. Some editors, like Cursor, require enabling the MCP server in their settings.
+
+## Still stuck?
+
+If something here didn't go as expected, reach out on the [community page](../support).
 
 ## Related
 
