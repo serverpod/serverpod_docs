@@ -1,38 +1,8 @@
-# Calling endpoints
+# Configure HTTP calls
 
-When you run `serverpod generate` after defining endpoints on your server, Serverpod creates a `Client` class in your client package with typed methods for each endpoint. This `client` is used to call the endpoints on the server as if they were local methods.
+The generated `Client` accepts an optional `httpClientOverride` parameter that controls the underlying HTTP transport used for API calls. Use it when you need to customize how requests are sent, such as enabling browser credentials or using platform-native HTTP stacks.
 
-## Initializing the client
-
-The client is initialized by creating the `Client` object and storing it as a singleton in your app - usually through a service locator.
-
-```dart
-// Store the client in a service locator
-var client = Client('http://localhost:8080/')
-  ..connectivityMonitor = FlutterConnectivityMonitor();
-```
-
-## Connecting from a different device
-
-If you run the app in an Android emulator, use `10.0.2.2` instead of `localhost`, since `10.0.2.2` is the IP address of the host machine from inside the emulator. To access the server from a different device on the same network (such as a physical phone), replace `localhost` with the local IP address of your machine. You can find the local IP by running `ifconfig` (Linux/macOS) or `ipconfig` (Windows).
-
-Make sure to also update the `publicHost` in the development config to make sure the server always serves the client with the correct path to assets etc.
-
-```yaml
-# your_project_server/config/development.yaml
-
-apiServer:
-  port: 8080
-  publicHost: localhost # Change this line
-  publicPort: 8080
-  publicScheme: http
-```
-
-## HTTP client override
-
-The generated `Client` accepts an optional `httpClientOverride` parameter that controls the underlying HTTP transport used for API calls. Use this parameter to customize the HTTP client behavior such as CORS credentials on web or platform-native HTTP stacks.
-
-### CORS credentials on web
+## Include CORS credentials on web
 
 By default, browser requests do not include cookies or HTTP authentication credentials in cross-origin requests. If your app relies on cookie-based sessions or similar mechanisms, pass a `BrowserClient` with `withCredentials` enabled:
 
@@ -89,11 +59,11 @@ void run(List<String> args) async {
 
 Set `origin` to the exact origin of your Flutter web app (scheme, host, and port). In production, list each allowed origin explicitly.
 
-### Platform-native HTTP clients
+## Use platform-native HTTP clients
 
-You can use the `httpClientOverride` parameter to override the default HTTP client with a platform-native HTTP client. On iOS and macOS, you can use [cupertino_http](https://pub.dev/packages/cupertino_http) to route traffic through `NSURLSession`. On Android, you can use [cronet_http](https://pub.dev/packages/cronet_http) to use the Cronet network stack.
+You can also override the default HTTP client with a platform-native HTTP client. On iOS and macOS, you can use [cupertino_http](https://pub.dev/packages/cupertino_http) to route traffic through `NSURLSession`. On Android, you can use [cronet_http](https://pub.dev/packages/cronet_http) to use the Cronet network stack.
 
-Below is an example of how to override the default HTTP client by platform-native HTTP clients.
+Below is an example of how to override the default HTTP client with platform-native HTTP clients.
 
 ```dart
 import 'dart:io';
@@ -127,8 +97,18 @@ void main() async {
 }
 ```
 
-:::info
-Note that the above example does not work if web also needs to be supported, since `dart:io` is not available on web. To support web, hide the `http.Client` creation logic behind a conditional import.
-:::
+### Support web with conditional imports
+
+The above example does not work if your app also targets web, since `dart:io` is not available there. Put the platform-specific `http.Client` creation logic behind a conditional import instead:
+
+```dart
+import 'src/http_client_stub.dart'
+    if (dart.library.io) 'src/http_client_io.dart';
+
+final client = Client(
+  serverUrl,
+  httpClientOverride: createHttpClient(),
+);
+```
 
 Add the corresponding package to your Flutter app's `pubspec.yaml` before using these clients.

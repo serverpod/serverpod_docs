@@ -43,7 +43,7 @@ On the client side, you can now call the method by calling:
 var result = await client.example.hello('World');
 ```
 
-The client is initialized like this:
+Initialize the generated client once and keep it somewhere that the rest of your app can reuse, such as a service locator:
 
 ```dart
 // Sets up a singleton client object that can be used to talk to the server from
@@ -55,7 +55,21 @@ var client = Client('http://localhost:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
-See the [Calling endpoints](./working-with-endpoints/calling-endpoints) page for more details on how to initialize and use the generated client.
+If you run the app in an Android emulator, use `10.0.2.2` instead of `localhost`, since `10.0.2.2` is the IP address of the host machine from inside the emulator. To access the server from a different device on the same network (such as a physical phone), replace `localhost` with the local IP address of your machine. You can find the local IP by running `ifconfig` (Linux/macOS) or `ipconfig` (Windows).
+
+Make sure to also update the `publicHost` in the development config so the server always serves the client with the correct path to assets and other resources.
+
+```yaml
+# your_project_server/config/development.yaml
+
+apiServer:
+  port: 8080
+  publicHost: localhost # Change this line
+  publicPort: 8080
+  publicScheme: http
+```
+
+See [Configure HTTP calls](./working-with-endpoints/configure-http-calls) for transport-specific configuration such as browser credentials or platform-native HTTP clients.
 
 ## Passing parameters
 
