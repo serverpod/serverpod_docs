@@ -99,7 +99,7 @@ The format of the response is as follows:
 Serverpod automatically registers health indicators based on your configuration:
 
 - **ServerpodStartupIndicator** - Tracks server initialization completion.
-- **DatabaseHealthIndicator** - Checks PostgreSQL connectivity (if database is configured).
+- **DatabaseHealthIndicator** - Checks database connectivity (if database is configured).
 - **RedisHealthIndicator** - Checks Redis connectivity (if Redis is enabled).
 
 ## Custom health indicators

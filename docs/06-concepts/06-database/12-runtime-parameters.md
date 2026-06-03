@@ -6,6 +6,10 @@ Runtime parameters in Serverpod allow you to fine-tune the behavior of the datab
 Setting runtime parameters affects PostgreSQL's query planning and execution. Always test different parameter combinations with your specific dataset and query patterns to find the optimal configuration.
 :::
 
+:::info
+Runtime parameters are only supported for PostgreSQL. Setting runtime parameters on SQLite is a no-op.
+:::
+
 ## Parameter scopes
 
 Runtime parameters can be applied with different scopes:
