@@ -195,5 +195,5 @@ If something here didn't go as expected, reach out on the [community page](../su
 
 ## Related
 
-- [Migrations](../06-concepts/06-database/11-migrations.md): how Serverpod's migration system works under the hood.
-- [Build your first app](../05-build-your-first-app/01-creating-endpoints.md): the hands-on tour of the 3.5 workflow if you want to see `serverpod start` from scratch.
+- [Migrations](../concepts/database/migrations): how Serverpod's migration system works under the hood.
+- [Build your first app](../get-started/creating-endpoints): the hands-on tour of the 3.5 workflow if you want to see `serverpod start` from scratch.
