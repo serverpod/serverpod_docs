@@ -47,7 +47,7 @@ void run(List<String> args) async {
       JwtConfig(
         // Pepper used to hash the refresh token secret.
         refreshTokenHashPepper: pod.getPassword('jwtRefreshTokenHashPepper')!,
-        // Algorithm used to sign the tokens (`hmacSha512` or `ecdsaSha512`).
+        // Algorithm used to sign the tokens (`hmacSha512`, `hmacSha256` or `ecdsaSha512`).
         algorithm: JwtAlgorithm.hmacSha512(
           // Private key to sign the tokens. Must be a valid HMAC SHA-512 key.
           SecretKey(pod.getPassword('jwtHmacSha512PrivateKey')!),

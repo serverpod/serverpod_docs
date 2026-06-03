@@ -84,7 +84,7 @@ The `lockMode` parameter determines the type of lock acquired. Different lock mo
 | For share | `LockMode.forShare` | Shared lock that blocks exclusive locks but allows other shared locks. Use when you need to ensure rows don't change while reading. |
 | For key share | `LockMode.forKeyShare` | Weakest lock that only blocks changes to key columns. |
 
-For a detailed explanation of how lock modes interact, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS).
+For a detailed explanation of how lock modes interact, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS). On SQLite, row locking is a no-op operation, since it only supports one write-transaction at a time.
 
 ## Lock behavior
 
