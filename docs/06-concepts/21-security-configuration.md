@@ -45,7 +45,6 @@ To enable SSL/TLS when using the Serverpod client, pass a **`SecurityContext`** 
 final securityContext = SecurityContext()
   ..setTrustedCertificates('path/to/server_cert.pem');
 
-
 final client = Client(
   'https://yourserver.com',
   securityContext: securityContext,
@@ -53,6 +52,24 @@ final client = Client(
 );
 ```
 
-:::info
-Note that, if you use the [`httpClientOverride` parameter](./working-with-endpoints/calling-endpoints#http-client-override), you need to provide the security context through the client being passed to `httpClientOverride`. You cannot set `securityContext` and `httpClientOverride` on the same client.
-:::
+#### Using `SecurityContext` with `httpClientOverride`
+
+If you use the [`httpClientOverride` parameter](./working-with-endpoints/configure-http-calls), provide the security context through the HTTP client you pass in. You cannot set `securityContext` and `httpClientOverride` on the same `Client` instance.
+
+For example, on `dart:io` platforms you can create an `HttpClient` with your trusted certificates and wrap it in an `IOClient`:
+
+```dart
+import 'dart:io';
+
+import 'package:http/io_client.dart';
+
+final securityContext = SecurityContext()
+  ..setTrustedCertificates('path/to/server_cert.pem');
+
+final client = Client(
+  'https://yourserver.com',
+  httpClientOverride: IOClient(
+    HttpClient(context: securityContext),
+  ),
+);
+```
