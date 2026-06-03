@@ -33,7 +33,7 @@ This command will install the Serverpod command-line interface (CLI) globally on
 $ serverpod version
 ```
 
-If everything is correctly configured, the help for the `serverpod` command is now displayed.
+If everything is correctly configured, the installed Serverpod version is now displayed.
 
 :::warning
 
