@@ -1,3 +1,7 @@
+---
+description: Community-built tools for deploying Serverpod, including a CLI for deploying to a VPS with Docker-Compose. Not officially maintained.
+---
+
 # Community-supported deployments
 
 Serverpod can be deployed in multiple ways, and the community has developed tools to simplify the process. While these tools are not officially maintained by the Serverpod team, they can be a great starting point for getting your server up and running quickly.
