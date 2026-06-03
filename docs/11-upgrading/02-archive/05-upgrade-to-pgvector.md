@@ -68,7 +68,7 @@ $ serverpod create-migration
 $ dart run bin/main.dart --apply-migrations
 ```
 
-For more details on creating and applying migrations, see the [Migrations](../concepts/database/migrations) section.
+For more details on creating and applying migrations, see the [Migrations](../../concepts/database/migrations) page.
 
 The pgvector extension will be automatically enabled during the first migration that includes a vector column.
 
