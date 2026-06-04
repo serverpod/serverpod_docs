@@ -58,8 +58,7 @@ try {
 }
 ```
 
-For all PostgreSQL error codes, see the [PostgreSQL error code
-appendix](https://www.postgresql.org/docs/current/errcodes-appendix.html).
+For all PostgreSQL error codes, see the [PostgreSQL error code appendix](https://www.postgresql.org/docs/current/errcodes-appendix.html).
 
 ## Transaction isolation
 
