@@ -64,7 +64,7 @@ Serverpod treats the exception as an internal server error.
 ```dart
 import 'package:serverpod_serialization/serverpod_serialization.dart';
 
-class UserFacingException implements SerializableException {
+class UserFacingException implements SerializableException, Exception {
   final String message;
   final String? code;
 
@@ -99,7 +99,7 @@ Register it in the server project's `config/generator.yaml`, then run
 
 ```yaml
 extraClasses:
-  - package:my_project_shared/my_project_shared.dart:UserFacingException
+  - "package:my_project_shared/my_project_shared.dart:UserFacingException"
 ```
 
 The `SerializableException` interface marks the exception as safe to serialize
