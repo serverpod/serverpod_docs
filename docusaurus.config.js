@@ -218,7 +218,6 @@ const config = {
             to: '/concepts/scheduling/setup',
           },
           {
-            // Cloud IA: Deploying your application content consolidated into the Deployments concept page.
             from: ['/cloud/reference/deployment/deploying-your-application'],
             to: '/cloud/concepts/deployments',
           },
