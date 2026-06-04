@@ -51,18 +51,4 @@ scloud deployment show
 
 The command prints information about your deployment and its status. Once the deployment completes successfully, your Serverpod server will be running on Serverpod Cloud.
 
-## Deploy updates
-
-After making changes to your project, redeploy it with:
-
-```bash
-scloud deploy
-```
-
-This command builds the updated server and deploys the new version to Serverpod Cloud.
-
-:::tip
-
-If you are deploying a Flutter web app together with your server APIs, make sure to update the version in your Flutter app's `pubspec.yaml`. Otherwise, an old version of the web app may be cached by the user's browser.
-
-:::
+For subsequent deploys, status checks, and the rest of the deploy lifecycle, see the [Deployments](/cloud/concepts/deployments) concept page.

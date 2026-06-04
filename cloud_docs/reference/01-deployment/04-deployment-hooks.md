@@ -191,5 +191,5 @@ project:
 
 ## Related documentation
 
-- [Deploying Your Application](./01-deploying-your-application.md) - Learn about the deployment process
+- [Deployments](/cloud/concepts/deployments) - Deploy operations, status checks, package validation, and `.scloudignore` configuration.
 - [Configuration Overview](/cloud/guides/passwords) - Overview of secrets, variables, and passwords
