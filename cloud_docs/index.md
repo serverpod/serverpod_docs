@@ -8,7 +8,9 @@ description: Serverpod Cloud is a managed hosting platform for Serverpod apps. D
 
 # Introduction
 
-Serverpod Cloud is a managed hosting platform for Serverpod apps. You deploy and manage your app with the `scloud` command-line interface; a web console covers project management, billing, and inspection.
+Serverpod Cloud is a managed hosting platform for Serverpod apps. You deploy and run your app with the `scloud` command-line interface, and use the web console for account setup, billing, and project dashboards.
+
+Deploy is two commands. No Dockerfile, no container config, no infrastructure setup:
 
 ```bash
 dart install serverpod_cloud_cli
