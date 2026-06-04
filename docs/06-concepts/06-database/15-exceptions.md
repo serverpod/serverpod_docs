@@ -25,8 +25,8 @@ try {
 
 When a database exception is not caught inside an endpoint, it follows
 Serverpod's normal endpoint exception handling and is logged as an uncaught
-server exception. Database exceptions are not serializable exceptions sent to
-the client with their database details.
+server exception. Serverpod does not serialize database exception details and
+send them to the client; those details stay server-side in the logs.
 
 ## Exception types
 
