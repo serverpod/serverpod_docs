@@ -9,6 +9,7 @@ Before following this guide, make sure you have:
 - A GitHub account with access to [Developer Settings](https://github.com/settings/apps).
 - A running Serverpod project (server, client, and Flutter app packages from `serverpod create`).
 - The Serverpod auth module installed and configured per the [authentication setup](../../setup). If your project was generated with an older Serverpod version, follow that guide first to add `serverpod_auth_idp_server` and `serverpod_auth_idp_flutter` and to configure `pod.initializeAuthServices()` before continuing.
+- `serverpod_auth_idp_server` 3.5.0-beta.8 or later (required for the web callback route).
 
 ## Get your GitHub credentials
 
@@ -197,10 +198,10 @@ On web, GitHub completes sign-in by redirecting the browser to a callback URL yo
 
 ```bash
 flutter build web --output ../my_project_server/web/app  # from your Flutter project
-dart run bin/main.dart                                   # from your server project
+serverpod start --no-flutter                             # from your server project
 ```
 
-Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+Open `http://localhost:8082/app` to test. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app instead of launching a separate `flutter run -d chrome` instance, which runs on a different port and would not share Serverpod's origin. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -233,16 +234,6 @@ The examples below use port `8082` (Serverpod's default from `config/development
    :::
 
 2. Add the full callback URL to your GitHub App's **Callback URL** field (e.g., `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production). GitHub Apps accept up to 10 entries, so dev and prod entries can coexist.
-
-3. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument when you initialize the client (covered in [Initialize the GitHub sign-in service](#initialize-the-github-sign-in-service) below).
-
-   :::tip
-   You can also pass the redirect URI via `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app) for the pattern.
-   :::
-
-:::note
-`FlutterWebAuth2CallbackRoute` requires `serverpod_auth_idp_server` 3.5.0-beta.8 or later.
-:::
 
 ## Present the authentication UI
 
