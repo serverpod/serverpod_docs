@@ -15,18 +15,13 @@ Deploy your project to Cloud:
 scloud deploy
 ```
 
-The CLI packages your project, uploads it, kicks off the build, and prints URLs you can access once the deployment is live:
+The CLI packages your project, uploads it, and tails the build through four lifecycle stages until the new version is serving traffic. Once the deployment is live, your project is reachable at its default URLs:
 
-```text
-✓ Project uploaded successfully! 🚀
+- Web: `https://<project-id>.serverpod.space/`
+- API: `https://<project-id>.api.serverpod.space/`
+- Insights: `https://<project-id>.insights.serverpod.space/`
 
-When the server has started, you can access it at:
-  Web:      https://my-app.serverpod.space/
-  API:      https://my-app.api.serverpod.space/
-  Insights: https://my-app.insights.serverpod.space/
-
-See `scloud domain --help` to set up a custom domain.
-```
+Set up your own URL with the [`scloud domain`](/cloud/reference/cli/commands/domain) command. See [Custom domains](/cloud/concepts/custom-domains).
 
 Other flags:
 
@@ -44,18 +39,19 @@ Watch the latest deployment as it runs:
 scloud deployment show
 ```
 
-The command prints a real-time lifecycle update:
+The command tracks the deployment through four stages and updates each line as it progresses:
 
 ```text
-Tracking status of my-app deploy 4583d0a1-3d0a-400e-a9a5-9880da6abc94, started at 2026-06-03 13:41:21:
+Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
+(Press Ctrl+C to exit)
 
-✓ Booster liftoff:      Upload successful!
-✓ Orbit acceleration:   Build successful!
-✓ Orbital insertion:    Deploy successful!
-✓ Pod commissioning:    Service successful! 🚀
+Upload successful.
+Cloud build successful.
+Infra deploy successful.
+Service rollout successful. 🚀
 ```
 
-The output marks each of the four lifecycle stages: **Booster liftoff** (upload), **Orbit acceleration** (build), **Orbital insertion** (deploy), and **Pod commissioning** (service ready).
+The stages: **Upload** (your project package reaches Cloud), **Cloud build** (Cloud builds the container), **Infra deploy** (the new version rolls out), and **Service rollout** (the new version takes traffic).
 
 List recent deployments:
 

@@ -192,4 +192,4 @@ project:
 ## Related documentation
 
 - [Deployments](/cloud/concepts/deployments) - Deploy operations, status checks, package validation, and `.scloudignore` configuration.
-- [Configuration Overview](/cloud/guides/passwords) - Overview of secrets, variables, and passwords
+- [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) - Project configuration tiers and operations.
