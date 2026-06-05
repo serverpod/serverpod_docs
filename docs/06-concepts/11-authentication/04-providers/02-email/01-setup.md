@@ -68,7 +68,7 @@ void _sendPasswordResetCode(
 }
 ```
 
-Then, extend the abstract endpoint to expose it on the server, by creating a new endpoint file in your `lib/src/endpoints/` directory to expose the email-specific authentication routes:
+Then extend the abstract endpoint to expose the email authentication routes on the server. Create the file anywhere under your server's `lib/` directory (for example, `<project>_server/lib/src/endpoints/`); the generator picks it up:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/email.dart';
