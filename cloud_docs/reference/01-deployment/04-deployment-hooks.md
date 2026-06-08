@@ -191,5 +191,5 @@ project:
 
 ## Related documentation
 
-- [Deployments](/cloud/concepts/deployments) - Deploy operations, status checks, package validation, and `.scloudignore` configuration.
+- [Deployments](/cloud/concepts/deployments) - Deploy your app, check deployment status, and validate before deploying.
 - [Configuration Overview](/cloud/guides/passwords) - Overview of secrets, variables, and passwords

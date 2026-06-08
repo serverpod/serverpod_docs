@@ -5,9 +5,13 @@ description: Deploy your Serverpod app to Cloud, check deployment status, valida
 
 # Deployments
 
-A deployment is your Serverpod app packaged, uploaded, built, and run on Cloud. Each `scloud deploy` produces a new immutable deployment with its own ID and lifecycle, and Cloud serves the most recent successful one. Subsequent deploys roll your app forward without anything else for you to do.
+A deployment is one running version of your Serverpod app on Cloud. Every `scloud deploy` rolls out a new version, and Cloud serves the most recent successful one, so subsequent deploys move your app forward automatically.
 
 ## Deploy your app
+
+:::info
+If this is the first time you're deploying this project to Cloud, follow [Deploy your first app](/cloud/getting-started/launch) first. It walks through `scloud launch`, which creates the project before the first deploy.
+:::
 
 Deploy your project to Cloud:
 
@@ -15,18 +19,13 @@ Deploy your project to Cloud:
 scloud deploy
 ```
 
-The CLI packages your project, uploads it, kicks off the build, and prints URLs you can access once the deployment is live:
+The CLI packages your project, uploads it, and waits for the new version to go live. Once the deployment is live, your project is reachable at its default URLs:
 
-```text
-✓ Project uploaded successfully! 🚀
+- Web: `https://<project-id>.serverpod.space/`
+- API: `https://<project-id>.api.serverpod.space/`
+- Insights: `https://<project-id>.insights.serverpod.space/`
 
-When the server has started, you can access it at:
-  Web:      https://my-app.serverpod.space/
-  API:      https://my-app.api.serverpod.space/
-  Insights: https://my-app.insights.serverpod.space/
-
-See `scloud domain --help` to set up a custom domain.
-```
+To use your own URL instead, see [`scloud domain`](/cloud/reference/cli/commands/domain).
 
 Other flags:
 
@@ -34,7 +33,7 @@ Other flags:
 - `--dart-version`: override the Dart SDK used at build time.
 - `--concurrency=<N>`: how many files are zipped in parallel during packaging (default `5`).
 
-To regenerate code or run other tasks before each deploy, configure a pre-deploy hook (see [Deployment hooks](/cloud/reference/deployment/deployment-hooks)).
+To regenerate code or run other tasks before each deploy, configure a pre-deploy hook. See [Deployment hooks](/cloud/reference/deployment/deployment-hooks).
 
 ## Check deployment status
 
@@ -44,18 +43,19 @@ Watch the latest deployment as it runs:
 scloud deployment show
 ```
 
-The command prints a real-time lifecycle update:
+The command tracks the deployment through its four lifecycle stages and updates each line as it progresses. When complete:
 
 ```text
-Tracking status of my-app deploy 4583d0a1-3d0a-400e-a9a5-9880da6abc94, started at 2026-06-03 13:41:21:
+Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
+(Press Ctrl+C to exit)
 
-✓ Booster liftoff:      Upload successful!
-✓ Orbit acceleration:   Build successful!
-✓ Orbital insertion:    Deploy successful!
-✓ Pod commissioning:    Service successful! 🚀
+Upload successful.
+Cloud build successful.
+Infra deploy successful.
+Service rollout successful. 🚀
 ```
 
-The output marks each of the four lifecycle stages: **Booster liftoff** (upload), **Orbit acceleration** (build), **Orbital insertion** (deploy), and **Pod commissioning** (service ready).
+The four stages are **Upload** (your project package reaches Cloud), **Cloud build** (Cloud builds the container), **Infra deploy** (Cloud prepares the infrastructure for the new version), and **Service rollout** (the new version starts serving requests).
 
 List recent deployments:
 
@@ -160,4 +160,4 @@ Common causes are missing dependencies in `pubspec.yaml` or compile errors in yo
 - [Deployment hooks](/cloud/reference/deployment/deployment-hooks) for pre- and post-deploy automation.
 - [Handling private dependencies](/cloud/reference/deployment/handling-private-dependencies) for private package access during the build.
 - [Including non-Dart files](/cloud/reference/deployment/assets) for static assets.
-- [Deploying using GitHub Actions](/cloud/reference/deployment/github-automation) for CI/CD setups.
+- [Automate deployment with GitHub Actions](/cloud/reference/deployment/github-automation) for CI/CD setups.
