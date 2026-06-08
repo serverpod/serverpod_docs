@@ -1,3 +1,7 @@
+---
+description: Configure HTTP calls to set CORS credentials for web apps or use platform-native networking libraries.
+---
+
 # Configure HTTP calls
 
 The generated `Client` accepts an optional `httpClientOverride` parameter that controls the underlying HTTP transport used for API calls. Use it when you need to customize how requests are sent, such as enabling browser credentials or using platform-native HTTP stacks.
