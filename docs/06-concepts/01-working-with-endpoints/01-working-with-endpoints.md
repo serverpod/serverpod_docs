@@ -69,7 +69,7 @@ apiServer:
   publicScheme: http
 ```
 
-See [Configure HTTP calls](./working-with-endpoints/configure-http-calls) for transport-specific configuration such as browser credentials or platform-native HTTP clients.
+To enable browser credentials for CORS or use platform-native HTTP clients, see [Configure HTTP calls](./working-with-endpoints/configure-http-calls).
 
 ## Passing parameters
 
