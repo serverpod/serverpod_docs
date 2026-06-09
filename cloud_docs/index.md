@@ -18,7 +18,7 @@ scloud launch
 
 ## What Serverpod Cloud manages
 
-- **Runtime and scaling.** Your app runs on a production runtime that scales automatically.
+- **Runtime and scaling.** Your app runs on a production runtime that scales as traffic grows.
 - **Networking and TLS.** Encrypted endpoints, certificates, and load balancing work without configuration.
 - **Managed Postgres** (optional). Cloud can provision a production-grade Postgres database with automatic migrations and backups.
 - **Secrets and environment variables.** Manage sensitive values through `scloud`; values are encrypted where applicable.
