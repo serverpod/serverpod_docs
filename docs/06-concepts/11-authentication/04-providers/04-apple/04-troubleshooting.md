@@ -126,7 +126,7 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 ```bash
 serverpod generate
 serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
 
 ## Apple rejects the redirect URI with `invalid_request`

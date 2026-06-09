@@ -21,7 +21,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Confirm the `project_id` inside `firebaseServiceAccountKey` matches the Firebase project the client is using.
 - [ ] Add `FirebaseIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `FirebaseIdpEndpoint` file in `lib/src/auth/` extending `FirebaseIdpBaseEndpoint`.
-- [ ] Run **`serverpod generate`**, then **`serverpod create-migration`**, then apply migrations with `dart run bin/main.dart --apply-migrations`.
+- [ ] Run **`serverpod generate`**, then **`serverpod create-migration`**, then start the server with `serverpod start`.
 
 #### Client
 
@@ -43,7 +43,7 @@ Go through this before investigating a specific error. Most problems come from a
 ```bash
 serverpod generate
 serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
 
 ## Token verification fails with "invalid signature"
@@ -109,7 +109,7 @@ If you haven't run `flutterfire configure`, do so to generate the `firebase_opti
 
 1. **Missing service account key:** The `firebaseServiceAccountKey` is not present in `passwords.yaml`, or the JSON is invalid.
 2. **Missing endpoint:** You did not create the endpoint class extending `FirebaseIdpBaseEndpoint`. Without it, the client has no endpoint to call.
-3. **Missing migration:** The provider's database tables don't exist yet. Apply migrations with `dart run bin/main.dart --apply-migrations`.
+3. **Missing migration:** The provider's database tables don't exist yet. Start the server with `serverpod start`.
 4. **Project mismatch:** The service account key belongs to a different Firebase project than the one configured in your Flutter app. Compare `project_id` in `firebaseServiceAccountKey` against the project in `firebase_options.dart`.
 5. **App Check enabled prematurely:** If you enabled Firebase App Check before the client integration is in place, every request will be rejected with an App Check assertion error. Disable App Check until the client is wired up.
 

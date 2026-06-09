@@ -174,7 +174,7 @@ Every line of the JSON must be indented by at least one level more than `googleC
 ```bash
 serverpod generate
 serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
 
 ## Lightweight sign-in (One Tap) not appearing

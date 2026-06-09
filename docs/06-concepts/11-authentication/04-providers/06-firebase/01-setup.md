@@ -141,7 +141,7 @@ Run the following commands from your server project directory (e.g., `my_project
 ```bash
 serverpod generate
 serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
 
 :::note

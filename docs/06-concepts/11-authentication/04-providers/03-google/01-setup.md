@@ -152,7 +152,7 @@ Run the following commands from your server project directory (e.g., `my_project
 ```bash
 serverpod generate
 serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
 
 :::warning
@@ -244,7 +244,7 @@ On web, Google completes sign-in by redirecting the browser to a callback URL yo
 
 ```bash
 flutter build web --output ../my_project_server/web/app  # from your Flutter project
-dart run bin/main.dart                                   # from your server project
+serverpod start                                          # from your server project
 ```
 
 Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod — for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.

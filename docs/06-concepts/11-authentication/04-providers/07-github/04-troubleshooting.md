@@ -161,7 +161,7 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 **Cause:** The keys are missing from `config/passwords.yaml`, are spelled differently, or are not present under the active environment section.
 
-**Resolution:** Confirm both keys exist under the section matching your run mode (`development:` for `dart run bin/main.dart`, `production:` when deployed):
+**Resolution:** Confirm both keys exist under the section matching your run mode (`development:` when running locally with `serverpod start`, `production:` when deployed):
 
 ```yaml
 development:
@@ -182,7 +182,7 @@ Quotes are required because the values are strings; YAML interprets unquoted val
 ```bash
 serverpod generate
 serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
 
 ## Android sign-in opens GitHub but the callback never fires
