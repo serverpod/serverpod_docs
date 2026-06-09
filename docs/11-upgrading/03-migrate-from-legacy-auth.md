@@ -144,7 +144,7 @@ development:
   emailSecretHashPepper: 'your-email-pepper'
 ```
 
-See [Storing secrets](../06-concepts/11-authentication/01-setup#storing-secrets) for production handling and additional provider-specific secrets.
+See [Storing secrets](../concepts/authentication/setup#storing-secrets) for production handling and additional provider-specific secrets.
 
 The server now starts with both legacy and modular endpoints mounted side by side, so existing legacy clients still work.
 
@@ -295,5 +295,5 @@ Reach out on the [community page](../support).
 ## Related
 
 - [Upgrade to 3.5](./upgrade-to-three-five): do this first.
-- [Authentication setup](../06-concepts/11-authentication/01-setup): modular configuration reference.
-- [Database migrations](../06-concepts/06-database/11-migrations): creating and applying schema changes safely.
+- [Authentication setup](../concepts/authentication/setup): modular configuration reference.
+- [Database migrations](../concepts/database/migrations): creating and applying schema changes safely.
