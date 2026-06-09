@@ -7,16 +7,13 @@ sidebar_label: Migrate from legacy auth
 
 This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or earlier 3.5 betas. At the end, existing users sign in through the new modular auth stack with their old passwords and old sessions, and your legacy endpoints keep working until every client has rolled forward. Plan for about an hour, plus migration runtime.
 
-## Requirements
+## Before you start
 
 - A Serverpod 3.5.x project. If you are still on 3.4 or earlier, follow [Upgrade to 3.5](./upgrade-to-three-five) first.
 - Dart SDK 3.8.0 or later.
 - Flutter SDK 3.32.0 or later (only if you are migrating the Flutter app).
 - Postgres 14 or later, or SQLite3.
 - The four auth packages at `3.5.0-beta.9` (or the matching beta on pub.dev): `serverpod_auth_core`, `serverpod_auth_idp`, `serverpod_auth_bridge`, and `serverpod_auth_migration`. These are still beta and may receive breaking changes before 3.5 stable.
-
-## Before you start
-
 - Back up your production database.
 - Commit your current state on a clean branch.
 - Restore a copy of production data into a staging environment and rehearse this guide against it before running it for real.
@@ -37,7 +34,27 @@ dependencies:
   serverpod_auth_migration_server: 3.5.0-beta.9
 ```
 
-Add the matching `_client` and `_flutter` packages to `<project>_client/pubspec.yaml` and `<project>_flutter/pubspec.yaml`. The Flutter app also needs `serverpod_auth_bridge_client` for the session import covered later under [Update the Flutter app](#update-the-flutter-app).
+In `<project>_client/pubspec.yaml`:
+
+```yaml
+dependencies:
+  serverpod_client: 3.5.0-beta.9
+  serverpod_auth_core_client: 3.5.0-beta.9
+  serverpod_auth_idp_client: 3.5.0-beta.9
+  serverpod_auth_bridge_client: 3.5.0-beta.9
+```
+
+In `<project>_flutter/pubspec.yaml`:
+
+```yaml
+dependencies:
+  serverpod_flutter: 3.5.0-beta.9
+  serverpod_auth_core_flutter: 3.5.0-beta.9
+  serverpod_auth_idp_flutter: 3.5.0-beta.9
+  serverpod_auth_bridge_flutter: 3.5.0-beta.9
+```
+
+`serverpod_auth_bridge_client` and `serverpod_auth_bridge_flutter` are required for the session import covered later under [Update the Flutter app](#update-the-flutter-app).
 
 From each package directory, run:
 
@@ -127,7 +144,7 @@ development:
   emailSecretHashPepper: 'your-email-pepper'
 ```
 
-See [Storing secrets](/concepts/authentication/setup#storing-secrets) for production handling and additional provider-specific secrets.
+See [Storing secrets](../06-concepts/11-authentication/01-setup#storing-secrets) for production handling and additional provider-specific secrets.
 
 The server now starts with both legacy and modular endpoints mounted side by side, so existing legacy clients still work.
 
@@ -176,15 +193,41 @@ Future<void> runMigration(Serverpod pod) async {
 }
 ```
 
+Run this as a one-off from a dedicated entry point, not on a request path. The simplest pattern is a script under `<project>_server/bin/migrate.dart` that imports the helper above and invokes it once on a `Serverpod` instance started with `--role maintenance`. Do not call `runMigration` from inside an endpoint or future call.
+
 The migration is idempotent: re-running `migrateUsers` skips users that already have a row in `serverpod_auth_migration_migrated_user`. The returned count is "users selected this run," not "new users created."
 
-After this runs, `serverpod_auth_migration_migrated_user` has one row per legacy user, and a rerun of `migrateUsers` returns 0.
+## Wire up sign-in for migrated users
 
-## Sign in works for migrated users
+For email accounts, the `PasswordImportingEmailIdpEndpoint` subclass from the server step calls `AuthBackwardsCompatibility.importLegacyPasswordIfNeeded` before delegating to the base implementation. The bridge upgrades the password hash on first login and removes the `LegacyEmailPassword` row.
 
-For email accounts, the `PasswordImportingEmailIdpEndpoint` subclass from the server step calls `AuthBackwardsCompatibility.importLegacyPasswordIfNeeded` before delegating to the base implementation. The first time a migrated user signs in with their old password, the bridge validates the legacy SHA-256 hash, sets a fresh Argon2id hash on the new email IdP account, and removes the `LegacyEmailPassword` row.
+For Google accounts, `AuthMigrations.migrateUsers` seeded the `serverpod_auth_bridge_external_user_id` table with each legacy user's stored identifier (a Google `sub` for newer rows, or an email address for older rows). Subclass `GoogleIdpBaseEndpoint` and call `AuthBackwardsCompatibility.importGoogleAccount` before the base login. The bridge looks up the legacy identifier by Google `sub` first, falls back to a case-insensitive email match, links the Google account to the existing `AuthUser`, and removes the bridge mapping.
 
-For Google accounts, `AuthMigrations.migrateUsers` seeded the `serverpod_auth_bridge_external_user_id` table with each legacy user's stored identifier (a Google `sub` for newer rows, or an email address for older rows). When a migrated user signs in with Google, call `AuthBackwardsCompatibility.importGoogleAccount` before the regular Google IdP login. The bridge looks up the legacy identifier by Google `sub` first and falls back to a case-insensitive email match, links the Google account to the existing `AuthUser`, and removes the bridge mapping so it does not fire twice.
+Put this in its own file under `<project>_server/lib/src/endpoints/`, alongside the email endpoint:
+
+```dart
+// lib/src/endpoints/google_linking_idp_endpoint.dart
+import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_bridge_server/serverpod_auth_bridge_server.dart';
+import 'package:serverpod_auth_idp_server/core.dart';
+import 'package:serverpod_auth_idp_server/providers/google.dart';
+
+class GoogleLinkingIdpEndpoint extends GoogleIdpBaseEndpoint {
+  @override
+  Future<AuthSuccess> login(
+    Session session, {
+    required String idToken,
+    required String? accessToken,
+  }) async {
+    await AuthBackwardsCompatibility.importGoogleAccount(
+      session,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+    return super.login(session, idToken: idToken, accessToken: accessToken);
+  }
+}
+```
 
 A migrated user can now sign in with their old password or Google account and lands in their existing data.
 
@@ -252,5 +295,5 @@ Reach out on the [community page](../support).
 ## Related
 
 - [Upgrade to 3.5](./upgrade-to-three-five): do this first.
-- [Authentication setup](/concepts/authentication/setup): modular configuration reference.
-- [Database migrations](/concepts/database/migrations): creating and applying schema changes safely.
+- [Authentication setup](../06-concepts/11-authentication/01-setup): modular configuration reference.
+- [Database migrations](../06-concepts/06-database/11-migrations): creating and applying schema changes safely.
