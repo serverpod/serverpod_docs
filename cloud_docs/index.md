@@ -8,19 +8,18 @@ description: Serverpod Cloud is a managed hosting platform for Serverpod apps. D
 
 # Introduction
 
-Serverpod Cloud is a managed hosting platform for Serverpod apps with predictable pricing. You deploy and run your app with the `scloud` command-line interface, and use the web console for account setup, billing, and project dashboards.
+Serverpod Cloud is a managed hosting platform for Serverpod apps with predictable pricing. You deploy your app with the `scloud` command-line interface or via CI/CD, and use the web console for account setup, billing, and project dashboards.
 
-Your first deploy is two commands. No Dockerfile, no container config, no infrastructure setup:
+With [`scloud` installed](/cloud/getting-started/installation), launch your first project with one command. No Dockerfile, no container config, no infrastructure setup:
 
 ```bash
-dart install serverpod_cloud_cli
 scloud launch
 ```
 
 ## What Serverpod Cloud manages
 
 - **Runtime and scaling.** Your app runs on a production runtime that scales automatically.
-- **Networking and TLS.** Encrypted endpoints and certificates work without configuration.
+- **Networking and TLS.** Encrypted endpoints, certificates, and load balancing work without configuration.
 - **Managed Postgres** (optional). Cloud can provision a production-grade Postgres database with automatic migrations and backups.
 - **Secrets and environment variables.** Manage sensitive values through `scloud`; values are encrypted where applicable.
 - **Custom domains.** Attach your own domain; TLS certificates are provisioned and renewed. Cloud hosts both your backend and a preconfigured website for your Flutter web app.
