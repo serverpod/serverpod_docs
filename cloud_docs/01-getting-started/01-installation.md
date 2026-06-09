@@ -1,28 +1,30 @@
 ---
-sidebar_label: Installation
+title: Install scloud
+sidebar_label: Install scloud
 sidebar_class_name: sidebar-installation-icon
+description: Install scloud, Serverpod Cloud's command-line interface, and authenticate it with your account.
 ---
 
-# Installation
+# Install scloud
 
-This page shows how to install `scloud`, Serverpod Cloud's command line interface, and how to authenticate it with your account. After completing these steps, you're ready to deploy your first Serverpod server.
+This page shows how to install `scloud`, Serverpod Cloud's command-line interface, and authenticate it with your account. After completing these steps, you're ready to deploy your first Serverpod app.
 
 ## Prerequisites
 
-Before installing the CLI, make sure you have the following:
+Before installing the CLI, make sure you have:
 
-- **Dart installed** – Follow the official guide: [https://dart.dev/get-dart#install](https://dart.dev/get-dart#install)
-- **A Serverpod Cloud account** – Sign up at [https://console.serverpod.cloud/auth/signup](https://console.serverpod.cloud/auth/signup)
+- **Dart installed.** Follow [Dart's install guide](https://dart.dev/get-dart#install).
+- **A Serverpod Cloud account.** [Sign up for Cloud](https://console.serverpod.cloud/auth/signup).
 
 ## Install the Serverpod Cloud CLI
 
-Install the `serverpod_cloud_cli` package globally using Dart to make the `scloud` command available:
+Install `serverpod_cloud_cli` to make the `scloud` command available:
 
 ```bash
-dart pub global activate serverpod_cloud_cli
+dart install serverpod_cloud_cli
 ```
 
-After installation, verify that the CLI is available:
+Verify the CLI is available:
 
 ```bash
 scloud version
@@ -38,4 +40,4 @@ Log in to your Serverpod Cloud account from the terminal:
 scloud auth login
 ```
 
-This command opens a browser window where you can authenticate your account. Once authentication completes, the CLI is authorized to manage your Serverpod Cloud projects.
+This opens a browser window where you authenticate. Once authentication completes, the CLI is authorized to manage your Serverpod Cloud projects.
