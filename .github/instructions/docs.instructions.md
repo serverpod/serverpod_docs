@@ -132,29 +132,50 @@ Stating specific facts about a third-party service that we don't own and would h
 ❌ `GitHub Apps allow up to 10 callback URLs (OAuth Apps allow only one).` — this is a GitHub product detail; if GitHub changes it, our docs silently become wrong.  
 ✅ Remove it, or if necessary to complete the task, link to GitHub's documentation for service-specific limits, and state only what the reader needs to do.
 
-### 14. Version history noise
+### 12. Version history noise
 
 Describing old Serverpod behavior in a current task page. The reader is completing a task with the current version; what the framework used to do is irrelevant unless they are migrating.
 
 ❌ `In previous versions of Serverpod the insert method mutated the input object by setting the id field. In the example above the input variable remains unmodified after the insert/insertRow call.`  
 ✅ Remove it. The code example already demonstrates current behavior. If an upgrade note is needed, it belongs in the version upgrade guide.
 
-### 15. Concept preamble on a task page
+### 13. Concept preamble on a task page
 
-Opening with multiple sentences explaining what a feature *is* and *why it exists*, before the first step. One short orienting sentence is acceptable; more delays the reader's first action.
+Applies to **guides and tutorials**. Opening with multiple sentences explaining what a feature *is* and *why it exists*, before the first step. One short orienting sentence is acceptable; more delays the reader's first action.
 
 ❌ Four-sentence explanation of what middleware is and why it's useful, before any code appears on a page whose job is to show how to add middleware.  
 ✅ One sentence: `Middleware runs before and after your route handlers, making it suitable for logging, API key validation, and CORS.` Then show the first step.
 
-Deeper concept explanation belongs on a dedicated concept page, not at the top of a task page.
+Deeper concept explanation belongs on a dedicated concept page, not at the top of a guide or tutorial.
 
-### 16. Obvious constraint restatement
+### 14. Obvious constraint restatement
 
 Stating API preconditions that Dart's type system or the runtime already enforces. Keep only constraints that are *silent* (produce wrong behavior without a compile error or exception) or require out-of-code setup.
 
 ❌ `The object that you update must have its id set to a non-null value and the id needs to exist on a row in the database.` — `id` is typed `int?`; passing `null` is a compile-time type error.  
 ❌ `At least one column must be specified in the columnValues parameter, otherwise an ArgumentError will be thrown.` — an empty list throws immediately with a descriptive error.  
 ✅ Remove both. Silent constraints — for example, a `deleteWhere` filter that matches more rows than the reader expects — are worth calling out.
+
+### 15. Sentence-starting code span
+
+Starting a sentence or paragraph with a backtick-wrapped identifier. An inline code span at the start reads as a symbol, not a sentence opener; lead with a noun phrase instead.
+
+❌ `` `dataPath` controls where Serverpod writes its data files. ``  
+✅ The `dataPath` setting controls where Serverpod writes its data files.
+
+### 16. Numbered folder prefixes in cross-doc links
+
+Including the numeric folder prefixes (`06-`, `11-`, `01-`) when linking to other docs pages. Docusaurus resolves links by slug, not by folder name, and numbered paths break the strict-mode broken-link check.
+
+❌ `[Setup](../06-concepts/11-authentication/01-setup)`  
+✅ `[Setup](../concepts/authentication/setup)`
+
+### 17. Opaque Related entry
+
+Linking to a page in a Related or See also section using a term the current page never explained. If the reader hasn't encountered the linked concept, the entry gives them nothing to act on.
+
+❌ `[.scloudignore](../concepts/scloudignore)` — only useful if the page already introduced `.scloudignore`.  
+✅ Describe what the linked page is for using terms the reader already knows: `[Excluding files from deployment](../concepts/scloudignore)`.
 
 ---
 
