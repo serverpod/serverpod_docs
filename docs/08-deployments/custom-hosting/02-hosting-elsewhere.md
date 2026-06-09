@@ -1,6 +1,10 @@
+---
+description: Run Serverpod on any host that supports a Dart process or a Docker container, with notes on required services, configuration, server roles, and Docker.
+---
+
 # Hosting elsewhere
 
-You can host Serverpod anywhere, running Dart directly or through a Docker container. This page contains helpful information if you want to deploy Serverpod on a custom platform.
+You can host Serverpod anywhere, running Dart directly or through a Docker container.
 
 ## Required services
 
