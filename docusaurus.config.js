@@ -217,6 +217,10 @@ const config = {
             from: ['/concepts/scheduling'],
             to: '/concepts/scheduling/setup',
           },
+          {
+            from: ['/cloud/reference/deployment/deploying-your-application'],
+            to: '/cloud/concepts/deployments',
+          },
         ],
       },
     ],
