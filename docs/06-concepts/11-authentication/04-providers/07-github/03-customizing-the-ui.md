@@ -52,6 +52,10 @@ GitHubSignInWidget(
 )
 ```
 
+:::note
+The `scopes` argument applies to **OAuth Apps**. For a **GitHub App**, the App's [Permissions](./setup#set-permissions) configured on the GitHub side control access and the `scopes` argument is ignored.
+:::
+
 ## Building a custom UI with the `GitHubAuthController`
 
 For more control over the UI, you can use the `GitHubAuthController` class, which provides all the authentication logic without any UI components. This allows you to build a completely custom authentication interface.
