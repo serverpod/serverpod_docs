@@ -221,6 +221,22 @@ const config = {
             from: ['/cloud/reference/deployment/deploying-your-application'],
             to: '/cloud/concepts/deployments',
           },
+          {
+            from: ['/cloud/guides/logs', '/cloud/reference/logging'],
+            to: '/cloud/concepts/logs',
+          },
+          {
+            from: ['/cloud/guides/passwords'],
+            to: '/cloud/concepts/passwords-secrets-env-vars',
+          },
+          {
+            from: ['/cloud/guides/custom-domains'],
+            to: '/cloud/concepts/custom-domains',
+          },
+          {
+            from: ['/cloud/guides/database'],
+            to: '/cloud/concepts/database',
+          },
         ],
       },
     ],
