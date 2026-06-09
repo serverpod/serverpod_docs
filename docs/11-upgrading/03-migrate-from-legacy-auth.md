@@ -1,5 +1,4 @@
 ---
-title: Migrate from legacy serverpod_auth
 description: Move a Serverpod 3.5 project off serverpod_auth_server onto the modular auth stack with email, Google, and Flutter session continuity.
 sidebar_label: Migrate from legacy auth
 ---
@@ -38,16 +37,16 @@ dependencies:
   serverpod_auth_migration_server: 3.5.0-beta.9
 ```
 
-Add the matching `_client` and `_flutter` packages to `<project>_client/pubspec.yaml` and `<project>_flutter/pubspec.yaml`. The Flutter app also needs `serverpod_auth_bridge_client` for the session import in step 8.
+Add the matching `_client` and `_flutter` packages to `<project>_client/pubspec.yaml` and `<project>_flutter/pubspec.yaml`. The Flutter app also needs `serverpod_auth_bridge_client` for the session import covered later under [Update the Flutter app](#update-the-flutter-app).
 
 From each package directory, run:
 
 ```bash
-$ dart pub upgrade
-$ serverpod generate
+dart pub upgrade
+serverpod generate
 ```
 
-Outcome: the project builds with the new packages installed alongside the legacy ones.
+The project now builds with the new packages installed alongside the legacy ones.
 
 ## Configure the server
 
@@ -130,15 +129,15 @@ development:
 
 See [Storing secrets](/concepts/authentication/setup#storing-secrets) for production handling and additional provider-specific secrets.
 
-Outcome: the server starts cleanly with both legacy and modular endpoints mounted side by side; existing legacy clients still work.
+The server now starts with both legacy and modular endpoints mounted side by side, so existing legacy clients still work.
 
 ## Run the migration
 
 Create and apply the schema migrations for the new modular tables:
 
 ```bash
-$ serverpod create-migration --tag modular-auth
-$ dart run bin/main.dart --apply-migrations
+serverpod create-migration --tag modular-auth
+dart run bin/main.dart --apply-migrations
 ```
 
 Then run the user migration once. The example below migrates every legacy user, but you can pass `maxUsers` to process in batches if your dataset is large. The `userMigration` callback fires once per migrated user so you can remap your own foreign keys from the legacy `int` user ID to the new `UuidValue` auth user ID inside the same transaction.
@@ -179,7 +178,7 @@ Future<void> runMigration(Serverpod pod) async {
 
 The migration is idempotent: re-running `migrateUsers` skips users that already have a row in `serverpod_auth_migration_migrated_user`. The returned count is "users selected this run," not "new users created."
 
-Outcome: `serverpod_auth_migration_migrated_user` has one row per legacy user, and `pod.createSession()` followed by `AuthMigrations.migrateUsers` returns 0 on a rerun.
+After this runs, `serverpod_auth_migration_migrated_user` has one row per legacy user, and a rerun of `migrateUsers` returns 0.
 
 ## Sign in works for migrated users
 
@@ -187,7 +186,7 @@ For email accounts, the `PasswordImportingEmailIdpEndpoint` subclass from the se
 
 For Google accounts, `AuthMigrations.migrateUsers` seeded the `serverpod_auth_bridge_external_user_id` table with each legacy user's stored identifier (a Google `sub` for newer rows, or an email address for older rows). When a migrated user signs in with Google, call `AuthBackwardsCompatibility.importGoogleAccount` before the regular Google IdP login. The bridge looks up the legacy identifier by Google `sub` first and falls back to a case-insensitive email match, links the Google account to the existing `AuthUser`, and removes the bridge mapping so it does not fire twice.
 
-Outcome: a migrated user signs in with their old password or Google account and lands in their existing data.
+A migrated user can now sign in with their old password or Google account and lands in their existing data.
 
 ## Update the Flutter app
 
@@ -214,9 +213,9 @@ Future<void> main() async {
 }
 ```
 
-This requires `serverpod_auth_bridge_client` and `serverpod_auth_bridge_flutter` in `<project>_flutter/pubspec.yaml` from step 4.
+This requires `serverpod_auth_bridge_client` and `serverpod_auth_bridge_flutter` in `<project>_flutter/pubspec.yaml` from [Add the new auth packages](#add-the-new-auth-packages).
 
-Outcome: users on an installed build with an old auth key keep their session through the upgrade without re-authenticating.
+Flutter clients that used the default legacy session storage carry the legacy session forward on first launch after the upgrade. If your project customized session storage, pass a `legacyStringGetter` to `initAndImportLegacySessionIfNeeded` that reads from your custom location.
 
 ## Verify and clean up
 
