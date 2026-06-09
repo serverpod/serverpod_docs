@@ -132,15 +132,6 @@ Stating specific facts about a third-party service that we don't own and would h
 ❌ `GitHub Apps allow up to 10 callback URLs (OAuth Apps allow only one).` — this is a GitHub product detail; if GitHub changes it, our docs silently become wrong.  
 ✅ Remove it, or if necessary to complete the task, link to GitHub's documentation for service-specific limits, and state only what the reader needs to do.
 
-### 12. Ambiguous "app" in full-stack context
-
-Using "app" without qualification when it could mean the Flutter app, the Serverpod server, or the full-stack product. Serverpod projects have both a server and a Flutter app — be specific.
-
-❌ `The app calls your endpoint and displays the result.`  
-❌ `Leave the app running. Every time you save a file it hot-reloads.`  
-✅ `The Flutter app calls your endpoint and displays the result.`  
-✅ `Leave serverpod start running. Every time you save a file it regenerates code and hot-reloads the Flutter app.`
-
 ### 14. Version history noise
 
 Describing old Serverpod behavior in a current task page. The reader is completing a task with the current version; what the framework used to do is irrelevant unless they are migrating.
