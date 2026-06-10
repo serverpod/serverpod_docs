@@ -59,8 +59,7 @@ void run(List<String> args) async {
   await pod.start();
 }
 ```
-
-Then, extend the abstract endpoint for refreshing JWT tokens to expose it on the server:
+Then extend the abstract endpoint for refreshing JWT tokens to expose it on the server. Create the file anywhere under your server's `lib/` directory (for example, `<project>_server/lib/src/endpoints/`); the generator picks it up:
 
 ```dart
 import 'package:serverpod_auth_idp_server/core.dart' as core;
