@@ -1,11 +1,11 @@
 ---
-title: Ship non-Dart files with your server
+sidebar_label: Ship non-Dart files with your server
 description: Include configuration files, templates, data, or other non-Dart assets alongside your Serverpod Cloud server and read them at runtime.
 ---
 
 # Ship non-Dart files with your server
 
-Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with your server code on Cloud. This guide walks through the convention for placing assets in your project and reading them from your server.
+Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with your server code on Cloud. Place them in an `assets/` folder at the project root and read them with `./assets/<path>` at runtime.
 
 ## Before you start
 
@@ -36,7 +36,7 @@ Then deploy:
 scloud deploy
 ```
 
-Cloud zips your project directory and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). The folder name `assets/` is a convention; you can call it anything, but `assets/` is what other Serverpod projects use and what the rest of this guide assumes.
+Cloud zips your project directory and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). `assets/` is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
 
 To preview which files Cloud will upload before deploying:
 
@@ -114,13 +114,17 @@ Two files affect what's in the deployment:
 
 Hidden files (those starting with `.`) are excluded by default. If you need them shipped, opt back in via `.scloudignore`. See [Deployments](/cloud/concepts/deployments) for the full picture of the deployment package.
 
+:::tip
+
+Asset files count toward your deployment package size. Large folders slow uploads and the Cloud build step. For files larger than a few megabytes that don't need to live in version control, consider an external object store and reading them from the network instead.
+
+:::
+
 ## Troubleshooting
 
 **File not found at runtime.** The path is relative to the server's working directory, not to the source file. Use `./assets/<path>`. Verify the file is in the deployment with `scloud deploy --dry-run --show-files` before debugging at runtime.
 
 **Asset missing from the deployment.** Check `.gitignore` and `.scloudignore`. Patterns like `*.json` exclude every `.json` file unless you opt them back in with `!assets/**`.
-
-**Large assets slow deploys.** Asset files add to your deployment package size. Large folders slow uploads and the Cloud build step. For files larger than a few megabytes that don't need to live in version control, consider an external object store and reading them from the network instead.
 
 ## Related
 

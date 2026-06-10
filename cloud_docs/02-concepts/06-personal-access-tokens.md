@@ -1,5 +1,5 @@
 ---
-title: Personal access tokens
+sidebar_label: Personal access tokens
 description: Create personal access tokens to authenticate scloud in CI pipelines, scripts, and headless environments without interactive login.
 ---
 
@@ -37,7 +37,7 @@ The token is only visible once:
 c2FzAZxXRnzFeN2xTo6xVInh3k3bNanACBRM7ux5AYOLQDgzK82PZvdRn0N_f2WqLPCZ
 ```
 
-:::caution
+:::warning
 
 The CLI prints the token once. Store it somewhere secure (a secret in your CI system, a password manager). It can't be retrieved again.
 
