@@ -37,11 +37,52 @@ dependencies:
 
 When you deploy your Serverpod application, the CLI automatically detects workspace structures and includes all necessary workspace packages in your deployment package.
 
+## Using private git dependencies
+
+If your server depends on Dart packages from a private git repository, the
+Serverpod Cloud build process needs to be given read access to it.
+
+Do this by setting a _build secret_ on the project.
+
+> Build secrets are kept separate from runtime secrets and will not be accessible
+anywhere outside the build pipeline. They are automatically encrypted in transit
+and at rest.
+
+Use the `scloud deployment build-secret` commands to manage your build secrets.
+
+#### List the current build secrets
+```sh
+$ scloud deployment build-secret list
+```
+
+#### Add or modify a build secret
+```sh
+$ scloud deployment build-secret set MY_SECRET_NAME "my-secret-value"
+```
+
+#### Add or modify a build secret with the value in a file
+```
+$ scloud deployment build-secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
+```
+
+### SSH keys
+
+Currently SSH keys are supported, and you store the private SSH key in the build secret.
+
+### Accessing a private repository in GitHub
+
+If you are using GitHub, you can set up a _deploy key_ for this.
+It only needs read access.
+
+[Set up deploy keys in GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#set-up-deploy-keys)
+
+Then store the private SSH key as a build secret on your Severpod Cloud project,
+and redeploy.
+
 ## Current limitations
 
 Serverpod Cloud currently does not support:
 
-- **Private git references**: Dependencies pointing to private Git repositories using `git:` URLs are not supported during deployment.
 - **Private package managers**: Custom package registry configurations are not supported.
 
 If you need to include private code in your deployment, use Dart workspaces to manage these dependencies as local packages within your project structure.
