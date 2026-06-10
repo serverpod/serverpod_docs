@@ -42,11 +42,15 @@ When you deploy your Serverpod application, the CLI automatically detects worksp
 If your server depends on Dart packages from a private git repository, the
 Serverpod Cloud build process needs to be given read access to it.
 
-Do this by setting a _build secret_ on the project.
+Do this by setting a _build secret_ on the project. SSH keys are supported, and you store the private SSH key in the build secret.
 
-> Build secrets are kept separate from runtime secrets and will not be accessible
+:::info
+Build secrets are kept separate from runtime secrets and will not be accessible
 anywhere outside the build pipeline. They are automatically encrypted in transit
 and at rest.
+:::
+
+### CLI commands for build secrets
 
 Use the `scloud deployment build-secret` commands to manage your build secrets.
 
@@ -57,17 +61,13 @@ $ scloud deployment build-secret list
 
 #### Add or modify a build secret
 ```sh
-$ scloud deployment build-secret set MY_SECRET_NAME "my-secret-value"
+$ scloud deployment build-secret set MY_SECRET_NAME "my-private-ssh-key"
 ```
 
 #### Add or modify a build secret with the value in a file
 ```
 $ scloud deployment build-secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
 ```
-
-### SSH keys
-
-Currently SSH keys are supported, and you store the private SSH key in the build secret.
 
 ### Accessing a private repository in GitHub
 
@@ -76,7 +76,7 @@ It only needs read access.
 
 [Set up deploy keys in GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#set-up-deploy-keys)
 
-Then store the private SSH key as a build secret on your Severpod Cloud project,
+Then store the private SSH key as a build secret on your Serverpod Cloud project,
 and redeploy.
 
 ## Current limitations
