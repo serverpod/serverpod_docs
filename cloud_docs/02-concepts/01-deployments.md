@@ -33,7 +33,7 @@ Other flags:
 - `--dart-version`: override the Dart SDK used at build time.
 - `--concurrency=<N>`: how many files are zipped in parallel during packaging (default `5`).
 
-To regenerate code or run other tasks before each deploy, configure a pre-deploy hook. See [Deployment hooks](/cloud/reference/deployment/deployment-hooks).
+To regenerate code or run other tasks before each deploy, configure a pre-deploy hook. See [Deployment hooks](/cloud/concepts/deployment-hooks).
 
 ## Check deployment status
 
@@ -157,7 +157,7 @@ Common causes are missing dependencies in `pubspec.yaml` or compile errors in yo
 
 ## Related
 
-- [Deployment hooks](/cloud/reference/deployment/deployment-hooks) for pre- and post-deploy automation.
+- [Deployment hooks](/cloud/concepts/deployment-hooks) for pre- and post-deploy automation.
 - [Handling private dependencies](/cloud/reference/deployment/handling-private-dependencies) for private package access during the build.
-- [Including non-Dart files](/cloud/reference/deployment/assets) for static assets.
+- [Ship non-Dart files with your server](/cloud/guides/ship-non-dart-files) for shipping static assets like configuration and templates.
 - [Automate deployment with GitHub Actions](/cloud/reference/deployment/github-automation) for CI/CD setups.

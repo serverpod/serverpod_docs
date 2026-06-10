@@ -2,9 +2,9 @@
 
 Handle user authentication.
 
-See also the [personal access tokens (PAT) guide](/cloud/reference/personal-access-tokens)
-on how to prepare and use personal access tokens for CI pipelines, scripts, or
-headless environments where you cannot run `scloud auth login`.
+See also the [Personal access tokens](/cloud/concepts/personal-access-tokens)
+concept page on how to prepare and use personal access tokens for CI pipelines,
+scripts, or headless environments where you cannot run `scloud auth login`.
 
 ## `auth login`
 
