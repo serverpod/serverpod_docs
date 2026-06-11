@@ -46,7 +46,7 @@ Examples
     $ scloud deploy --output deployment.zip
 
 
-See the full documentation at: /cloud/reference/cli/commands/deploy
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/deploy
 
 ```
 

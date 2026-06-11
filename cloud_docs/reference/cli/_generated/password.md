@@ -8,7 +8,7 @@ environment variables.
 Passwords defined by this command can be accessed with the getPassword function.
 
 If you need to set a secret without the SERVERPOD_PASSWORD_ prefix, you can do so by using the
-secret create command.
+secret set command.
 
 
 Usage: scloud password <subcommand> [arguments]
@@ -21,7 +21,7 @@ Available subcommands:
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/password
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/password
 
 ```
 
@@ -47,7 +47,7 @@ Usage: scloud password list [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/password
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/password
 
 ```
 
@@ -74,7 +74,7 @@ Value
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/password
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/password
 
 ```
 
@@ -93,6 +93,6 @@ Usage: scloud password unset [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/password
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/password
 
 ```
