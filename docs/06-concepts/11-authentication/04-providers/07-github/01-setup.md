@@ -140,13 +140,11 @@ import 'package:serverpod_auth_idp_server/providers/github.dart';
 class GitHubIdpEndpoint extends GitHubIdpBaseEndpoint {}
 ```
 
-### Generate code and apply migrations
+### Start the server
 
-Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
+Start the server from your server project directory (e.g., `my_project_server/`):
 
 ```bash
-serverpod generate
-serverpod create-migration
 serverpod start
 ```
 
