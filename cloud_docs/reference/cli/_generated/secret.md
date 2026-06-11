@@ -7,24 +7,24 @@ Usage: scloud secret <subcommand> [arguments]
 -h, --help    Print this usage information.
 
 Available subcommands:
-  create   Create a secret.
-  delete   Delete a secret.
-  list     List all secrets.
+  list    List all secrets.
+  set     Set a secret (create or update).
+  unset   Remove a secret.
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/secret
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/secret
 
 ```
 
 ### Sub commands
 
-#### `create`
+#### `set`
 
 ```console
-Create a secret.
+Set a secret (create or update).
 
-Usage: scloud secret create [arguments]
+Usage: scloud secret set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked. See `scloud
@@ -37,7 +37,7 @@ Value
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/secret
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/secret
 
 ```
 
@@ -54,16 +54,16 @@ Usage: scloud secret list [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/secret
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/secret
 
 ```
 
-#### `delete`
+#### `unset`
 
 ```console
-Delete a secret.
+Remove a secret.
 
-Usage: scloud secret delete [arguments]
+Usage: scloud secret unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked. See `scloud
@@ -72,6 +72,6 @@ Usage: scloud secret delete [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/secret
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/secret
 
 ```

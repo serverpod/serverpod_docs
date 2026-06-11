@@ -46,6 +46,6 @@ Mission Control
 
 Run "scloud help <command>" for more information about a command.
 
-See the full documentation at: /cloud/
+See the full documentation at: https://docs.serverpod.dev/cloud
 ```
 

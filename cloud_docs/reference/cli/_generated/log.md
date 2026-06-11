@@ -78,7 +78,7 @@ Examples
     $ scloud log --since 2025-01-15T14:00:00Z --until 30m
 
 
-See the full documentation at: /cloud/reference/cli/commands/log
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/log
 
 ```
 

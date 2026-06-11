@@ -17,7 +17,7 @@ Management
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/project
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
 
 ```
 
@@ -36,7 +36,7 @@ Usage: scloud project create [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/project
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
 
 ```
 
@@ -51,7 +51,7 @@ Usage: scloud project delete [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/project
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
 
 ```
 
@@ -66,7 +66,7 @@ Usage: scloud project list [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/project
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
 
 ```
 
@@ -92,7 +92,7 @@ Usage: scloud project link [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/project
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
 
 ```
 
@@ -111,6 +111,6 @@ Available subcommands:
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/project
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
 
 ```
