@@ -5,7 +5,7 @@ description: Create personal access tokens to authenticate scloud in CI pipeline
 
 # Personal access tokens
 
-Personal access tokens let you authenticate the Serverpod Cloud CLI without interactive login. Use them in CI pipelines, scripts, or headless environments where you cannot run `scloud auth login`.
+When you need to run `scloud` in a CI pipeline, a script, or a headless environment where the browser-based `scloud auth login` flow isn't possible, you authenticate with a personal access token instead. Tokens are long-lived credentials you generate once, store as a secret, and pass to `scloud` as a flag or environment variable.
 
 ## When to use tokens
 
