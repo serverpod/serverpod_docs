@@ -28,7 +28,7 @@ It creates a Cloud project and ships its first version. The CLI walks you throug
 - **Project ID.** scloud suggests a default from your pubspec name (for example, `my-app`). Press Enter to accept, or type a different ID. The project ID becomes part of your default URL (`<project-id>.serverpod.space`).
 - **Plan.** Type `starter` or `growth` (see [Cloud plans](https://serverpod.dev/cloud) for details). Pick `starter` for a first deploy. Starter includes a 1-month free trial; no credit card required.
 - **Database.** Press Enter for yes if you want Cloud to provision and manage a Postgres database for your server. Type `n` if your app doesn't need a database, or if you plan to connect to your own.
-- **Pre-deploy hooks.** Hooks run scripts before each deploy. scloud may offer to add `serverpod generate` and a Flutter build hook (if your project defines one). Accept the ones that match your project. See [Deployment hooks](/cloud/reference/deployment/deployment-hooks) for details.
+- **Pre-deploy hooks.** Hooks run scripts before each deploy. scloud may offer to add `serverpod generate` and a Flutter build hook (if your project defines one). Accept the ones that match your project. See [Deployment hooks](/cloud/concepts/deployment-hooks) for details.
 
 After the final confirmation, scloud creates the Cloud project, writes a `scloud.yaml` linking subsequent commands to it, uploads your code, and starts the deploy.
 

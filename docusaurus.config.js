@@ -237,6 +237,18 @@ const config = {
             from: ['/cloud/guides/database'],
             to: '/cloud/concepts/database',
           },
+          {
+            from: ['/cloud/reference/personal-access-tokens'],
+            to: '/cloud/concepts/personal-access-tokens',
+          },
+          {
+            from: ['/cloud/reference/deployment/assets'],
+            to: '/cloud/guides/ship-non-dart-files',
+          },
+          {
+            from: ['/cloud/reference/deployment/deployment-hooks'],
+            to: '/cloud/concepts/deployment-hooks',
+          },
         ],
       },
     ],
