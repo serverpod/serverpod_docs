@@ -5,7 +5,7 @@ description: Deploy your Serverpod app to Cloud, check deployment status, valida
 
 # Deployments
 
-A deployment is one running version of your Serverpod app on Cloud. Every `scloud deploy` rolls out a new version, and Cloud serves the most recent successful one, so subsequent deploys move your app forward automatically.
+Every code change you ship to Serverpod Cloud goes through a deployment. A deployment is one running version of your Serverpod app; every `scloud deploy` rolls out a new version, and Cloud serves the most recent successful one, so subsequent deploys move your app forward automatically.
 
 ## Deploy your app
 
