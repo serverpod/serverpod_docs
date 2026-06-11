@@ -134,7 +134,7 @@ Stating specific facts about a third-party service that we don't own and would h
 
 ### 12. Version history noise
 
-Describing old Serverpod behavior in a current task page. The reader is completing a task with the current version; what the framework used to do is irrelevant unless they are migrating.
+Describing old Serverpod behavior in a current guide or tutorial. The reader is completing a task with the current version; what the framework used to do is irrelevant unless they are migrating.
 
 ❌ `In previous versions of Serverpod the insert method mutated the input object by setting the id field. In the example above the input variable remains unmodified after the insert/insertRow call.`  
 ✅ Remove it. The code example already demonstrates current behavior. If an upgrade note is needed, it belongs in the version upgrade guide.
