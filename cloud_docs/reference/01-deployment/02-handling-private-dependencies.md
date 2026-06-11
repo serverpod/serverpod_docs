@@ -1,6 +1,9 @@
 # Handling private dependencies
 
-Serverpod Cloud supports Dart workspaces for managing private dependencies in your deployments. This lets you include local packages and organize monorepo structures.
+Serverpod Cloud supports deploying your project with private dependencies.
+The typical methods are:
+- Dart workspaces which lets you include local packages within a monorepo structure
+- Access credentials for dependencies in private git repositories
 
 ## Using Dart workspaces
 
@@ -65,8 +68,13 @@ $ scloud deployment build-secret set MY_SECRET_NAME "my-private-ssh-key"
 ```
 
 #### Add or modify a build secret with the value in a file
-```
+```sh
 $ scloud deployment build-secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
+```
+
+#### Remove a build secret
+```sh
+$ scloud deployment build-secret unset MY_SECRET_NAME
 ```
 
 ### Accessing a private repository in GitHub
@@ -84,10 +92,3 @@ and redeploy.
 Serverpod Cloud currently does not support:
 
 - **Private package managers**: Custom package registry configurations are not supported.
-
-If you need to include private code in your deployment, use Dart workspaces to manage these dependencies as local packages within your project structure.
-
-## Workspace detection
-
-The deployment process automatically detects if your project uses workspace resolution. When deploying from within a workspace, all workspace packages required by your Serverpod application are automatically included in the deployment package.
-
