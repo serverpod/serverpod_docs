@@ -23,7 +23,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Add `AppleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 * [ ] Call **`pod.configureAppleIdpRoutes(...)`** on the server before the pod starts.
 * [ ] Create an `AppleIdpEndpoint` file in `lib/src/auth/`.
-* [ ] Run **`serverpod generate`**, then apply migrations using `--apply-migrations`.
+* [ ] Started the server with `serverpod start`.
 
 #### Client
 
@@ -124,8 +124,6 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 **Resolution:** Create and apply the migration:
 
 ```bash
-serverpod generate
-serverpod create-migration
 serverpod start
 ```
 

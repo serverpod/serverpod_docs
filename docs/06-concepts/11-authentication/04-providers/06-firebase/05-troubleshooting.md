@@ -41,8 +41,6 @@ Go through this before investigating a specific error. Most problems come from a
 **Resolution:** Create and apply the migration:
 
 ```bash
-serverpod generate
-serverpod create-migration
 serverpod start
 ```
 

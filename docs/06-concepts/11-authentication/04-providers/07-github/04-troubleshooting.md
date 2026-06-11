@@ -20,7 +20,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Added `githubClientId` and `githubClientSecret` to `config/passwords.yaml` under the matching environment (`development:` for local, `production:` for prod), or set the matching `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables.
 - [ ] Added `GitHubIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Created a `GitHubIdpEndpoint` file in `lib/src/auth/`.
-- [ ] Ran `serverpod generate`, then `serverpod create-migration`, then applied migrations with `--apply-migrations`.
+- [ ] Started the server with `serverpod start`.
 
 #### Client
 
@@ -180,8 +180,6 @@ Quotes are required because the values are strings; YAML interprets unquoted val
 **Resolution:** Create and apply the migration:
 
 ```bash
-serverpod generate
-serverpod create-migration
 serverpod start
 ```
 

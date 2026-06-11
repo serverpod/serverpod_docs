@@ -21,7 +21,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] For new or customized servers, confirm auth services and JWT are configured per [Authentication setup](../../setup#identity-providers-configuration) before adding Google.
 - [ ] Add `GoogleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `GoogleIdpEndpoint` file in `lib/src/auth/`.
-- [ ] Run `serverpod generate`, then `serverpod create-migration`, then apply migrations using `--apply-migrations`.
+- [ ] Started the server with `serverpod start`.
 
 #### Client
 
@@ -172,8 +172,6 @@ Every line of the JSON must be indented by at least one level more than `googleC
 **Resolution:** Create and apply the migration:
 
 ```bash
-serverpod generate
-serverpod create-migration
 serverpod start
 ```
 
