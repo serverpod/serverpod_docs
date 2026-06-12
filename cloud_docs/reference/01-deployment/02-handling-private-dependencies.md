@@ -2,7 +2,7 @@
 
 Serverpod Cloud supports deploying your project with private dependencies.
 The typical methods are:
-- Dart workspaces which lets you include local packages within a monorepo structure
+- Dart workspaces, which let you include local packages within a monorepo structure
 - Access credentials for dependencies in private git repositories
 
 ## Using Dart workspaces
