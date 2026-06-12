@@ -94,7 +94,9 @@ For each migration, five files are created:
 
 ## Apply migrations
 
-Migrations are applied using the server runtime. To apply migrations, navigate to your project's `server` package directory, then start the server with the `--apply-migrations` flag. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
+During local development, `serverpod start` applies your migrations for you: pending migrations run on the first boot, and you can apply new ones at any time by pressing **A** in the terminal UI.
+
+To apply migrations explicitly, for example in production or an automated pipeline, start the server runtime with the `--apply-migrations` flag from your `server` package directory. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
 
 ```bash
 $ dart run bin/main.dart --apply-migrations
