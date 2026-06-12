@@ -20,7 +20,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Added `githubClientId` and `githubClientSecret` to `config/passwords.yaml` under the matching environment (`development:` for local, `production:` for prod), or set the matching `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables.
 - [ ] Added `GitHubIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Created a `GitHubIdpEndpoint` file in `lib/src/auth/`.
-- [ ] Ran `serverpod generate`, then `serverpod create-migration`, then applied migrations with `--apply-migrations`.
+- [ ] Started the server with `serverpod start`, then created and applied the migration (pressed **M**, then **A**).
 
 #### Client
 
@@ -161,7 +161,7 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 **Cause:** The keys are missing from `config/passwords.yaml`, are spelled differently, or are not present under the active environment section.
 
-**Resolution:** Confirm both keys exist under the section matching your run mode (`development:` for `dart run bin/main.dart`, `production:` when deployed):
+**Resolution:** Confirm both keys exist under the section matching your run mode (`development:` when running locally with `serverpod start`, `production:` when deployed):
 
 ```yaml
 development:
@@ -175,15 +175,9 @@ Quotes are required because the values are strings; YAML interprets unquoted val
 
 **Problem:** The server builds and starts, but crashes when a user tries to sign in with GitHub. The error cites a missing table such as `serverpod_auth_idp_github_account`.
 
-**Cause:** `serverpod generate` has been run, but the accompanying database migration was not created or applied.
+**Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** Create and apply the migration:
-
-```bash
-serverpod generate
-serverpod create-migration
-dart run bin/main.dart --apply-migrations
-```
+**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ## Android sign-in opens GitHub but the callback never fires
 
