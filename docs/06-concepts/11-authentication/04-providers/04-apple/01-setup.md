@@ -174,6 +174,8 @@ Start the server from your server project directory (e.g., `my_project_server/`)
 serverpod start
 ```
 
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+
 :::note
 Skipping the migration will cause the server to crash at runtime when the Apple provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 :::

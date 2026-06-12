@@ -23,7 +23,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Add `AppleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 * [ ] Call **`pod.configureAppleIdpRoutes(...)`** on the server before the pod starts.
 * [ ] Create an `AppleIdpEndpoint` file in `lib/src/auth/`.
-* [ ] Started the server with `serverpod start`.
+* [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**, then **A**).
 
 #### Client
 
@@ -119,13 +119,9 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 
 **Problem:** The server builds and starts, but crashes when a user tries Apple sign-in. The error cites a missing table (like `serverpod_auth_idp_apple_account`).
 
-**Cause:** `serverpod generate` has been run, but you didn't create or apply the accompanying database migration.
+**Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** Create and apply the migration:
-
-```bash
-serverpod start
-```
+**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ## Apple rejects the redirect URI with `invalid_request`
 

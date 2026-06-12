@@ -153,6 +153,8 @@ Start the server from your server project directory (e.g., `my_project_server/`)
 serverpod start
 ```
 
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+
 :::warning
 Skipping the migration will cause the server to crash at runtime when the Google provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 :::
@@ -320,7 +322,7 @@ Swap the redirect URI for your production URL when deploying. See [Configuring t
 
 ### Show the Google sign-in button
 
-The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and `serverpod generate` has run, the Google button appears inside it.
+The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and the client code has been regenerated, the Google button appears inside it.
 
 ```dart
 import 'package:flutter/material.dart';

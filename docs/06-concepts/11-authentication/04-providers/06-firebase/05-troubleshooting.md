@@ -21,7 +21,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Confirm the `project_id` inside `firebaseServiceAccountKey` matches the Firebase project the client is using.
 - [ ] Add `FirebaseIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `FirebaseIdpEndpoint` file in `lib/src/auth/` extending `FirebaseIdpBaseEndpoint`.
-- [ ] Run **`serverpod generate`**, then **`serverpod create-migration`**, then start the server with `serverpod start`.
+- [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**, then **A**).
 
 #### Client
 
@@ -36,13 +36,9 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Problem:** The server builds and starts, but crashes when a user tries Firebase sign-in. The error cites a missing table (like `serverpod_auth_idp_firebase_account`).
 
-**Cause:** `serverpod generate` has been run, but you didn't create or apply the accompanying database migration.
+**Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** Create and apply the migration:
-
-```bash
-serverpod start
-```
+**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ## Token verification fails with "invalid signature"
 
