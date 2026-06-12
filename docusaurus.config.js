@@ -249,6 +249,10 @@ const config = {
             from: ['/cloud/reference/deployment/deployment-hooks'],
             to: '/cloud/concepts/deployment-hooks',
           },
+          {
+            from: ['/cloud/reference/deployment/github-automation'],
+            to: '/cloud/guides/deploy-from-ci-with-github-actions',
+          },
         ],
       },
     ],
