@@ -9,6 +9,7 @@ Usage: scloud launch [arguments]
     --[no-]enable-db           Flag to enable the database for the project.
     --[no-]deploy              Flag to immediately deploy the project.
     --dart-version             Overrides the Dart SDK version to use for building the project.
+    --[no-]tui                 Flag to enable interactive terminal UI.
 
 Project
     --project                  The ID of an existing project to use.
