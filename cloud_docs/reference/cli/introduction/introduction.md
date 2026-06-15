@@ -1,8 +1,10 @@
 ---
-title: Introduction
-description: How to find any scloud command, read its documentation, and use the global options and environment variables that apply across every command.
+sidebar_label: Introduction
+description: The Serverpod Cloud CLI (scloud) reference. Every command, with the global options and environment variables that apply across all of them.
 sidebar_position: 1
 ---
+
+# Introduction to the scloud CLI
 
 The Serverpod Cloud CLI (`scloud`) creates, manages, and deploys your Serverpod projects on Cloud. This reference covers every command, option, and flag.
 
@@ -11,7 +13,7 @@ The Serverpod Cloud CLI (`scloud`) creates, manages, and deploys your Serverpod 
 Before running any command:
 
 - Install `scloud`. See [Install scloud](/cloud/getting-started/installation).
-- Authenticate with `scloud auth login` interactively, or pass a personal access token in non-interactive contexts. See [Personal access tokens](/cloud/concepts/personal-access-tokens).
+- Authenticate with `scloud auth login` interactively, or pass a personal access token in non-interactive contexts like CI pipelines. See [Personal access tokens](/cloud/concepts/personal-access-tokens).
 
 ## Command syntax
 
