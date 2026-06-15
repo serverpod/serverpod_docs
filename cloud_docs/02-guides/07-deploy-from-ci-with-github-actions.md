@@ -5,20 +5,18 @@ description: Use the official serverpod_cloud_deploy GitHub Action to deploy you
 
 # Deploy from CI with GitHub Actions
 
-Use the official [`serverpod/serverpod_cloud_deploy`](https://github.com/serverpod/serverpod_cloud_deploy) action to deploy your Serverpod Cloud project on every push. Setup takes about ten minutes once you have a personal access token.
+Use the official [`serverpod/serverpod_cloud_deploy`](https://github.com/serverpod/serverpod_cloud_deploy) action to deploy your Serverpod Cloud project on every push to your main branch. Setup takes about ten minutes once you have a personal access token.
 
 ## Before you start
 
 - A personal access token. See [Create a token](/cloud/concepts/personal-access-tokens#create-a-token) on the Personal access tokens page.
 - The project's `scloud.yaml` committed to the repository. It's created by `scloud launch` or `scloud link`.
-- Either: generated Serverpod files committed to the repository, **or** a willingness to run `serverpod generate` in CI (covered as a variant below).
+- Either: generated Serverpod files committed to the repository, **or** a CI step that runs `serverpod generate` (covered as a variant below).
 - One Serverpod project per repository, located no more than two subdirectory levels below the repository root.
 
 ## Add the token as a repository secret
 
-In your GitHub repository, go to **Settings → Secrets and variables → Actions → New repository secret**. Name the secret `SERVERPOD_CLOUD_TOKEN` and paste the token value.
-
-Using `SERVERPOD_CLOUD_TOKEN` as the secret name matches the environment variable `scloud` reads, which keeps the workflow YAML clean.
+In your GitHub repository, go to **Settings → Secrets and variables → Actions → New repository secret**. Name the secret `SERVERPOD_CLOUD_TOKEN` (or anything else, as long as it matches the workflow below) and paste the token value.
 
 ## Add the workflow file
 
@@ -124,7 +122,7 @@ The `flutter-action@v2` step is required if the `generate` step pulls Flutter pa
 
 ## Troubleshooting
 
-**`scloud auth login` is required in the run output.** The `token` input is empty or the secret name in the workflow doesn't match what's in your repository's secrets. Confirm the secret is named `SERVERPOD_CLOUD_TOKEN` and the workflow references `${{ secrets.SERVERPOD_CLOUD_TOKEN }}`.
+**`scloud auth login` is required in the run output.** The `token` input is empty or the secret name in the workflow doesn't match what's in your repository's secrets. Confirm the secret name in your repository matches the name your workflow references in `${{ secrets.<name> }}`.
 
 **Project not found.** Either `scloud.yaml` isn't committed and the action can't resolve the project, or `project_id` was passed but doesn't match a project on your Cloud account. Commit `scloud.yaml`, or pass the correct `project_id` as an action input.
 
