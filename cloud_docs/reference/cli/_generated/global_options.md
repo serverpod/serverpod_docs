@@ -27,7 +27,7 @@ Available commands:
   version      Prints the version of the Serverpod Cloud CLI.
 
 Getting started
-  launch       Guided launch of a new Serverpod Cloud project.
+  launch       Common command to launch and deploy Serverpod Cloud projects.
 
 Management
   auth         Manage user authentication.
