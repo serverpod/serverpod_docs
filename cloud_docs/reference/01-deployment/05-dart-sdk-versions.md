@@ -169,5 +169,5 @@ environment:
 
 ## Related documentation
 
-- [Deploying Your Application](./01-deploying-your-application.md) - Learn how to deploy your Serverpod application
+- [Deployments](/cloud/concepts/deployments) - Deploy operations, status checks, package validation, and `.scloudignore` configuration.
 - [Handling Private Dependencies](./02-handling-private-dependencies.md) - Manage workspace dependencies

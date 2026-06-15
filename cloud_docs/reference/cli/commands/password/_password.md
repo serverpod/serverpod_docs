@@ -49,4 +49,4 @@ If you need to set a secret without the `SERVERPOD_PASSWORD_` prefix, you can do
 - [`scloud secret`](/cloud/reference/cli/commands/secret) - Manage general secrets without the `SERVERPOD_PASSWORD_` prefix
 - [`scloud variable`](/cloud/reference/cli/commands/variable) - Manage non-sensitive configuration values
 
-For detailed information about when to use passwords vs secrets vs variables, see the [Configuration Management guide](/cloud/guides/passwords).
+For detailed information about when to use passwords vs secrets vs variables, see the [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) concept page.

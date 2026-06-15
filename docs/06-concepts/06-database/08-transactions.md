@@ -26,9 +26,11 @@ In the example we insert a company and an employee in the same transaction. If a
 The transaction isolation level can be configured when initiating a transaction. The isolation level determines how the transaction interacts with concurrent database operations. If no isolation level is supplied, the level is determined by the database engine.
 
 :::info
+At the time of writing, the default isolation level for the Postgres database engine is `IsolationLevel.readCommitted`.
+:::
 
-At the time of writing, the default isolation level for the PostgreSQL database engine is `IsolationLevel.readCommitted`.
-
+:::info
+Transaction isolation is only supported for Postgres. SQLite uses `serializable` by default and currently does not support changing the transaction level to `readUncommitted`.
 :::
 
 To set the isolation level, configure the `isolationLevel` property of the `TransactionSettings` object:
@@ -85,12 +87,12 @@ Once a savepoint is created, you can roll back to it by calling the `rollback` m
 await session.db.transaction((transaction) async {
   // Changes preserved in the database
   await Company.db.insertRow(session, company, transaction: transaction);
-  
+
   // Create savepoint
   var savepoint = await transaction.createSavepoint();
 
   await Employee.db.insertRow(session, employee, transaction: transaction);
-  // Changes rolled back 
+  // Changes rolled back
   await savepoint.rollback();
 });
 ```

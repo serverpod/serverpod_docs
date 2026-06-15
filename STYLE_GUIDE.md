@@ -26,6 +26,20 @@ Strong: Switching between Dart on the frontend and another language on the backe
 Weak: Supercharge your backend journey.\
 Strong: Deploy your backend without touching a single config file.
 
+### Words to avoid
+
+The following words add length without adding meaning, or sound marketing-inflected in technical prose. Replace them with the plain version.
+
+| Avoid | Use instead |
+| --- | --- |
+| robust | reliable |
+| seamless | smooth |
+| powerful | (cut it, or say what it does) |
+| intuitive | (cut it, or say what it does) |
+| leverage | use |
+| facilitate | help, allow |
+| enables you to X | lets you X / you can X |
+
 ---
 
 ## 2. Terminology and naming consistency
@@ -131,3 +145,11 @@ Avoid:
 - Act now!
 - Limited time only!
 
+---
+
+## 8. Em dashes
+
+Avoid em dashes (—) in running text. They are hard to read aloud and almost always signal a sentence that should be split or rephrased. Use a comma, parenthesis, colon, or period instead.
+
+Avoid: `Call initializeAuthServices before pod.start — this registers the token managers.`\
+Prefer: `Call initializeAuthServices before pod.start. This registers the token managers.`

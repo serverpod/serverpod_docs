@@ -1,147 +1,74 @@
 # Customizing the UI
 
-When using the Firebase identity provider, you build your authentication UI using Firebase's own packages (`firebase_auth` or `firebase_ui_auth`). The `FirebaseAuthController` handles syncing the authenticated Firebase user with your Serverpod backend.
+When using the Firebase identity provider, you build your authentication UI on top of [`firebase_auth`](https://pub.dev/packages/firebase_auth), optionally with [`firebase_ui_auth`](https://pub.dev/packages/firebase_ui_auth) for the pre-built sign-in screens. The [`FirebaseAuthController`](https://pub.dev/documentation/serverpod_auth_idp_flutter_firebase/latest/serverpod_auth_idp_flutter_firebase/FirebaseAuthController-class.html) handles syncing the authenticated Firebase user with your Serverpod backend. This page breaks down the gate widget shown in the [setup guide](./setup#present-the-authentication-ui) and then covers building a fully custom UI with `firebase_auth` directly.
 
-:::info
-Unlike other Serverpod identity providers, Firebase does not provide built-in sign-in widgets. You use Firebase's official packages for the UI, then sync the result with Serverpod using `FirebaseAuthController`.
-:::
+## Anatomy of the gate widget
 
-## Using firebase_ui_auth SignInScreen
+The [setup guide](./setup#present-the-authentication-ui) shows a `SignInScreen` widget that wraps your app and only renders the `child` once the user is authenticated. Three pieces drive that flow:
 
-The `firebase_ui_auth` package provides a complete `SignInScreen` widget that handles the entire authentication flow. Here's a full example:
+### FirebaseAuthController
 
-```dart
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:firebase_ui_auth/firebase_ui_auth.dart' as firebase_ui;
-import 'package:flutter/material.dart';
-import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
-
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
-
-  @override
-  State<AuthScreen> createState() => _AuthScreenState();
-}
-
-class _AuthScreenState extends State<AuthScreen> {
-  late final FirebaseAuthController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = FirebaseAuthController(
-      client: client,
-      onAuthenticated: () {
-        // User successfully synced with Serverpod
-        // NOTE: Do not navigate here - use client.auth.authInfoListenable instead
-      },
-      onError: (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return firebase_ui.SignInScreen(
-      providers: [
-        firebase_ui.EmailAuthProvider(),
-        // Add more providers as needed:
-        // firebase_ui.PhoneAuthProvider(),
-        // firebase_ui.GoogleProvider(clientId: '...'),
-      ],
-      actions: [
-        firebase_ui.AuthStateChangeAction<firebase_ui.SignedIn>((context, state) async {
-          final user = firebase_auth.FirebaseAuth.instance.currentUser;
-          if (user != null) {
-            await controller.login(user);
-          }
-        }),
-        firebase_ui.AuthStateChangeAction<firebase_ui.UserCreated>((context, state) async {
-          final user = firebase_auth.FirebaseAuth.instance.currentUser;
-          if (user != null) {
-            await controller.login(user);
-          }
-        }),
-      ],
-    );
-  }
-}
-```
-
-The `SignInScreen` automatically handles the UI for all configured providers. You only need to connect the Firebase authentication result to Serverpod using the `FirebaseAuthController`.
-
-Refer to the [firebase_ui_auth documentation](https://pub.dev/packages/firebase_ui_auth) for configuration details and available providers.
-
-## Using the FirebaseAuthController
-
-The `FirebaseAuthController` manages the synchronization between Firebase authentication state and Serverpod sessions.
+The controller manages the sync between Firebase authentication state and your Serverpod session. The `client` argument is the global Serverpod `Client` instance created in `main.dart` (see [Initialize Firebase and Serverpod](./setup#3-initialize-firebase-and-serverpod)).
 
 ```dart
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
-
-final controller = FirebaseAuthController(
+controller = FirebaseAuthController(
   client: client,
-  onAuthenticated: () {
-    // User successfully synced with Serverpod
-    // NOTE: Do not navigate here - use client.auth.authInfoListenable instead
-  },
-  onError: (error) {
-    // Handle errors
-  },
+  onAuthenticated: () => context.showSnackBar(
+    message: 'User authenticated.',
+    backgroundColor: Colors.green,
+  ),
+  onError: (error) => context.showSnackBar(
+    message: 'Authentication failed: $error',
+    backgroundColor: Colors.red,
+  ),
 );
 ```
 
-### FirebaseAuthController State Management
+:::warning
+Do not navigate to a home screen inside `onAuthenticated`. This callback fires every time a sync succeeds, including on app restart. Instead, gate the UI on `controller.isAuthenticated` (as the setup example does), or listen to `client.auth.authInfoListenable`.
+:::
 
-Your widget should render the appropriate UI based on the controller's state:
+### Action handlers
+
+`firebase_ui_auth` emits state changes through [`AuthStateChangeAction`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/AuthStateChangeAction-class.html). Two handlers cover the cases that need a Serverpod sync:
+
+- [`SignedIn`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/SignedIn-class.html) -- a returning user signed in.
+- [`UserCreated`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/UserCreated-class.html) -- a brand-new account was just created.
+
+Both call [`controller.login(user)`](https://pub.dev/documentation/serverpod_auth_idp_flutter_firebase/latest/serverpod_auth_idp_flutter_firebase/FirebaseAuthController/login.html) so the Firebase user is registered with Serverpod:
 
 ```dart
-// Check current state
-final state = controller.state; // FirebaseAuthState enum
-
-// Check if loading
-final isLoading = controller.isLoading;
-
-// Check if authenticated
-final isAuthenticated = controller.isAuthenticated;
-
-// Get error message
-final errorMessage = controller.errorMessage;
-
-// Get error object
-final error = controller.error;
-
-// Listen to state changes
-controller.addListener(() {
-  setState(() {
-    // Rebuild UI when controller state changes
-  });
-});
+Future<void> _handleAuthStateChange() async {
+  final user = firebase_auth.FirebaseAuth.instance.currentUser;
+  if (user != null) await controller.login(user);
+}
 ```
 
-### FirebaseAuthController States
+### controller.isAuthenticated
 
-- `FirebaseAuthState.idle` - Ready for user interaction.
-- `FirebaseAuthState.loading` - Processing authentication with Serverpod.
-- `FirebaseAuthState.error` - An error occurred.
-- `FirebaseAuthState.authenticated` - Successfully authenticated with Serverpod.
+The `build` method checks `controller.isAuthenticated` to decide whether to show the sign-in UI or the wrapped `child`:
+
+```dart
+if (controller.isAuthenticated) return widget.child;
+```
+
+Add more providers to the `firebase_ui.SignInScreen` as needed (see the [firebase_ui_auth documentation](https://pub.dev/packages/firebase_ui_auth)):
+
+```dart
+providers: [
+  firebase_ui.EmailAuthProvider(),
+  // firebase_ui.PhoneAuthProvider(),
+  // firebase_ui.GoogleProvider(clientId: '...'),
+],
+```
+
+## Controller reference
 
 ### The login method
 
-The `login` method accepts a `firebase_auth.User` object and syncs it with Serverpod:
+After a user signs in through Firebase (using any method), pass the `firebase_auth.User` to the controller to sync with Serverpod:
 
 ```dart
-// Get the current Firebase user after sign-in
 final firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;
 
 if (firebaseUser != null) {
@@ -149,23 +76,101 @@ if (firebaseUser != null) {
 }
 ```
 
-## Integration patterns
+### State management
 
-### Using firebase_auth directly
+The controller is a `ChangeNotifier`, so it notifies your widget whenever its state changes. Register a listener inside `initState` and call `setState` to trigger a rebuild:
 
-For full control over the authentication UI, use the `firebase_auth` package directly. The basic flow is:
+```dart
+@override
+void initState() {
+  super.initState();
+  controller = FirebaseAuthController(client: client);
 
-1. Build your own sign-in UI with text fields and buttons.
-2. Call Firebase authentication methods (e.g., `signInWithEmailAndPassword`).
-3. On success, pass the `firebase_auth.User` to `controller.login()`.
-4. Handle errors from both Firebase and the Serverpod sync.
+  controller.addListener(() {
+    if (mounted) setState(() {});
+  });
+}
+```
 
-Refer to the [firebase_auth documentation](https://pub.dev/packages/firebase_auth) for available authentication methods.
+The controller exposes a few properties for your `build` method:
+
+- `controller.isLoading` -- Whether the controller is processing a request.
+- `controller.isAuthenticated` -- Whether the user is authenticated.
+- `controller.errorMessage` -- The error message string, if any.
+- `controller.error` -- The raw error object, for advanced error handling.
+
+Use them in your `build` method to render the right UI for the current state:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  if (controller.isLoading) {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  if (controller.errorMessage != null) {
+    return Center(child: Text('Error: ${controller.errorMessage}'));
+  }
+
+  if (controller.isAuthenticated) {
+    return widget.child;
+  }
+
+  // Otherwise, show the sign-in UI.
+  return const SignInForm();
+}
+```
+
+If you need finer-grained control, switch on `controller.state` directly:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return switch (controller.state) {
+    FirebaseAuthState.idle => const SignInForm(),
+    FirebaseAuthState.loading => const Center(child: CircularProgressIndicator()),
+    FirebaseAuthState.error => Center(child: Text('Error: ${controller.errorMessage}')),
+    FirebaseAuthState.authenticated => widget.child,
+  };
+}
+```
+
+## Using firebase_auth directly
+
+For full control over the authentication UI, use the [`firebase_auth`](https://pub.dev/packages/firebase_auth) package directly. Build your own sign-in UI, call [`FirebaseAuth`](https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth-class.html) methods, then pass the result to `controller.login()`:
+
+```dart
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+
+final credential = await firebase_auth.FirebaseAuth.instance
+    .signInWithEmailAndPassword(
+  email: emailController.text,
+  password: passwordController.text,
+);
+
+final user = credential.user;
+if (user != null) {
+  await controller.login(user);
+}
+```
+
+Refer to the [firebase_auth documentation](https://pub.dev/packages/firebase_auth) for all available authentication methods.
 
 ### Listening to Firebase auth state changes
 
-For apps that need to react to Firebase auth state changes automatically, listen to `FirebaseAuth.instance.authStateChanges()` and call `controller.login()` when a user signs in.
+For apps that need to react to Firebase auth state changes automatically (e.g., the user signs in on another device, or the session is restored after an app restart), subscribe to [`FirebaseAuth.instance.authStateChanges()`](https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth/authStateChanges.html). The stream emits the current `User` whenever Firebase's auth state changes; pass that user to `controller.login()` to sync with Serverpod.
 
-:::note
-When using the auth state listener pattern, check the Serverpod auth state before calling `login()` to prevent re-syncing an already authenticated user.
+```dart
+firebase_auth.FirebaseAuth.instance.authStateChanges().listen((user) async {
+  if (user == null) return;
+
+  // Guard against re-syncing an already authenticated user.
+  if (!controller.isAuthenticated) {
+    await controller.login(user);
+  }
+});
+```
+
+:::warning
+Always check `controller.isAuthenticated` before calling `login()` inside the listener. The stream fires on every app start with the cached Firebase user, and `login()` would otherwise re-sync on every launch.
 :::

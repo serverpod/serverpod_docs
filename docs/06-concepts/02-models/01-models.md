@@ -5,7 +5,7 @@ sidebar_label: Working with models
 
 # Working with models
 
-Models are Yaml files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server.
+Models are Yaml files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server and/or client.
 
 Using regular `.yaml` files within `lib/src/models` is supported, but it is recommended to use `.spy.yaml` (.spy stands for "Serverpod YAML"). Using this file type allows placing the model files anywhere in your servers `lib` directory and enables syntax highlighting provided by the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code.
 
@@ -106,7 +106,7 @@ This is particularly helpful when:
 - Integrating with third-party services like MongoDB (e.g., mapping `id` to `_id`)
 
 :::info
-The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the `column` property instead. This is an experimental feature; see the [Experimental documentation](experimental#column-name-override) under *Column name override* for details.
+The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the [`column` property](database/models#column-name-override) instead.
 :::
 
 ### Immutable classes

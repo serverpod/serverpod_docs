@@ -16,7 +16,7 @@ Project
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/launch
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/launch
 
 ```
 

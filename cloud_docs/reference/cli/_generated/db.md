@@ -15,7 +15,7 @@ Danger Zone
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/db
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/db
 
 ```
 
@@ -34,7 +34,7 @@ Usage: scloud db connection [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/db
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/db
 
 ```
 
@@ -52,7 +52,7 @@ Available subcommands:
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/db
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/db
 
 ```
 
@@ -69,6 +69,6 @@ Usage: scloud db wipe [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/db
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/db
 
 ```

@@ -12,10 +12,26 @@ fields:
 When the `table` keyword is added to the model, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod create-migration` command that will generate the necessary [migrations](migrations) needed to update the database.
 
 :::info
-
 When you add a `table` to a serializable class, Serverpod will automatically add an `id` field of type `int?` to the class. You should not define this field yourself. The `id` is set when you interact with an object stored in the database.
-
 :::
+
+## Client-side database
+
+Models with the `table` keyword can also generate a client-side database with the `database` keyword:
+
+```yaml
+class: Company
+table: company
+database: client
+```
+
+| Value | Description |
+| ------- | ----------- |
+| `server` | Generates tables only on the server, and a non-table model on the client package (default). |
+| `client` | Generates tables only on the client, and a non-table model on the server package. |
+| `all` | Generates table models on both server and client. |
+
+For how to use the client-side database, see the [Client-side database](client-side-database) section.
 
 ## Non persistent fields
 
@@ -56,7 +72,7 @@ For a complete guide on how to work with relations see the [relation section](re
 
 ### Storing serializable fields as JSONB
 
-By default, complex types are stored as `json` in PostgreSQL. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes).
+By default, complex types are stored as `json` in the database. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes) for PostgreSQL.
 
 :::info
 The `serializationDataType` keyword is only valid on serializable field types (models, Lists, Maps). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
@@ -146,3 +162,98 @@ fields:
 ```
 
 When using `defaultModel=random`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
+
+## Column name override
+
+By default, the column name in the database is the same as the name of the field in the model. However, you can override this to use a different name by using the `column` keyword. For example, if you have a model property named `userName` you might want to store it in the database as `user_name`.
+
+To override the column name, use the `column` keyword on the field definition:
+
+```yaml
+class: User
+table: users
+fields:
+  userName: String, column=user_name
+```
+
+:::info
+When adding a column name override to an existing model, the next migration will contain a column rename operation to rename the column in the database.
+:::
+
+Restrictions:
+
+- The `id` field cannot have a column name override.
+- The column name must be unique within the model.
+- The `column` keyword is only allowed on the [foreign key field](relations/one-to-one#with-an-id-field) of a relation.
+
+### Relations
+
+You can use the `column` keyword to override the name of the foreign key field in a relation.
+
+```yaml
+# Employee
+class: Employee
+table: employee
+fields:
+  name: String
+  departmentId: int, relation(name=department_employees, parent=department), column=fk_employee_department_id
+
+# Department
+class: Department
+table: department
+fields:
+  name: String
+  employees: List<Employee>?, relation(name=department_employees)
+```
+
+Overriding the column name is also supported when the field is used in an index. Note that the index uses the name of the field, not the column name.
+
+```yaml
+# Contractor
+class: Contractor
+table: contractor
+fields:
+  name: String
+  serviceIdField: int?, column=fk_contractor_service_id
+  service: Service?, relation(field=serviceIdField)
+indexes:
+  contractor_service_unique_idx:
+    fields: serviceIdField
+    unique: true
+
+# Service
+class: Service
+table: service
+fields:
+  name: String
+  description: String?
+```
+
+### Inheritance
+
+Besides column override being a database-level feature, it is allowed to be set on non-table models to support [inheritance](../models/inheritance-and-polymorphism). If a base class has a column name override, all child classes that implement a table will inherit the column name override. This is especially useful when you have multiple database tables that share similar column names.
+
+```yaml
+# Entity
+class: Entity
+fields:
+  name: String
+  createdAt: DateTime, default=now, column=created_at
+  updatedAt: DateTime, default=now, column=updated_at
+
+# Employee
+class: Employee
+extends: Entity
+table: employee
+fields:
+  departmentId: int, relation(name=department_employees, parent=department), column=fk_employee_department_id
+
+# Department
+class: Department
+extends: Entity
+table: department
+fields:
+  employees: List<Employee>?, relation(name=department_employees)
+```
+
+In the above example, the `Employee` and `Department` classes will receive the `createdAt` and `updatedAt` fields from the `Entity` class with the columns overridden to `created_at` and `updated_at`, respectively.

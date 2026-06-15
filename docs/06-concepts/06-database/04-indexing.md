@@ -46,6 +46,15 @@ indexes:
 
 The `unique` keyword is a bool that can toggle the index to be unique, the default is set to false. If the `unique` keyword is applied to a multi-column index, the index will be unique for the combination of the fields.
 
+Alternatively, for single-column indexes, marking a column as unique can be simplified by using the `unique` keyword directly on the field definition:
+
+```yaml
+class: Company
+table: company
+fields:
+  name: String, unique
+```
+
 ## Specifying index type
 
 It is possible to add a type key to specify the index type.
@@ -61,7 +70,11 @@ indexes:
     type: brin
 ```
 
-If no type is specified the default is `btree`. All [PostgreSQL index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+If no type is specified the default is `btree`. All [Postgres index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+
+:::info
+Index types are only supported for Postgres. On SQLite, only `btree` indexes are supported. Indexes declared with different types on the models will be skipped when creating a migration and a warning will be logged.
+:::
 
 ## GIN indexes
 
@@ -108,10 +121,6 @@ indexes:
 
 :::tip
 If you only need containment queries (`@>`), use `jsonbPathOps` — it produces a smaller and faster index than the default `jsonbOps`.
-:::
-
-:::info
-GIN indexes are a PostgreSQL feature. On SQLite, GIN index definitions are silently skipped during migration generation.
 :::
 
 For details on configuring JSONB storage on your model fields, see [Storing serializable fields as JSONB](models#storing-serializable-fields-as-jsonb).
