@@ -123,7 +123,7 @@ Store the token as a repository secret, then pass it to the official action:
     token: ${{ secrets.SERVERPOD_CLOUD_TOKEN }}
 ```
 
-A full setup walkthrough lives in the [serverpod_cloud_deploy action README](https://github.com/serverpod/serverpod_cloud_deploy).
+For the full walkthrough, see [Deploy from CI with GitHub Actions](/cloud/guides/deploy-from-ci-with-github-actions).
 
 ## Related
 
