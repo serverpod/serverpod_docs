@@ -5,6 +5,8 @@ description: Custom domains attach to the web, API, or Insights surface of a Ser
 
 # Custom domains
 
+When you're ready to ship your project to real users, you might want it reachable at `yourapp.com` rather than the `*.serverpod.space` defaults. Custom domains attach a domain you own to your project's web, API, or Insights surface, with automatic TLS and DNS-based verification.
+
 Every Serverpod Cloud project gets default domains automatically. A project named `my-app` is reachable at:
 
 | Service  | Default domain                             |
@@ -12,8 +14,6 @@ Every Serverpod Cloud project gets default domains automatically. A project name
 | Web      | `https://my-app.serverpod.space/`          |
 | API      | `https://my-app.api.serverpod.space/`      |
 | Insights | `https://my-app.insights.serverpod.space/` |
-
-Custom domains let you replace any of those with your own URL. Serverpod Cloud provisions and renews TLS certificates automatically; the only setup required is a DNS record and a verification step.
 
 ## Attach a custom domain
 
