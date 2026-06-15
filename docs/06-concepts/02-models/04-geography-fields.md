@@ -1,3 +1,7 @@
+---
+description: Store geospatial data in Serverpod models using GeographyPoint, GeographyLineString, GeographyPolygon, and GeographyGeometryCollection backed by PostGIS.
+---
+
 # Geography fields
 
 Geography types are used for storing geospatial data on the surface of the Earth. They are stored as PostGIS geography columns in PostgreSQL using the WGS 84 coordinate system (SRID 4326), which is the standard used by GPS.
@@ -51,7 +55,7 @@ fields:
 
 ## GeographyGeometryCollection
 
-The `GeographyGeometryCollection` type stores a collection of mixed geography types — points, lines, and polygons — as a single field.
+The `GeographyGeometryCollection` type stores a collection of mixed geography types (points, lines, and polygons) as a single field.
 
 ```yaml
 class: Region
