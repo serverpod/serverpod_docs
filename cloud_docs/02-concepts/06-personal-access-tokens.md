@@ -7,14 +7,6 @@ description: Create personal access tokens to authenticate scloud in CI pipeline
 
 When you need to run `scloud` in a CI pipeline, a script, or a headless environment where the browser-based `scloud auth login` flow isn't possible, you authenticate with a personal access token instead. Tokens are long-lived credentials you generate once, store as a secret, and pass to `scloud` as a flag or environment variable.
 
-## When to use tokens
-
-Use a personal access token when:
-
-- Running `scloud` in a CI/CD pipeline (GitHub Actions, GitLab CI, and so on).
-- Automating deploys or other `scloud` commands from a script or cron job.
-- Using `scloud` on a server or container with no browser for interactive login.
-
 For everyday development on your machine, `scloud auth login` is simpler; it stores credentials locally and you don't need to handle tokens.
 
 ## Create a token

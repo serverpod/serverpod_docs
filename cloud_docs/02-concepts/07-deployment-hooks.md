@@ -5,7 +5,7 @@ description: Run custom scripts at fixed points in a Serverpod Cloud deploy. Pre
 
 # Deployment hooks
 
-If every deploy needs you to build a Flutter web client, regenerate Serverpod code, run database migrations, or send a Slack notification on release, deployment hooks let `scloud deploy` do that work for you. Hooks run your own scripts at fixed points around the deploy. Without them, those steps live in a separate command you remember to run yourself.
+If you need something to run on every deploy, like database migrations, deployment hooks let you trigger your own scripts before or after `scloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
 
 ## When to use hooks
 
