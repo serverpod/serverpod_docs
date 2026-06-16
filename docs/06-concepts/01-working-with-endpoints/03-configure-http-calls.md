@@ -21,7 +21,7 @@ final client = Client(
 
 On the server, Serverpod adds CORS headers to API responses by default through `httpResponseHeaders` and `httpOptionsResponseHeaders` on the `Serverpod` constructor. The defaults allow cross-origin `POST` requests from any origin (`Access-Control-Allow-Origin: *`) and permit common request headers such as `Authorization` on preflight `OPTIONS` requests.
 
-Credential-aware requests require stricter headers: the browser rejects `Access-Control-Allow-Origin: *` when credentials are included, and the server must respond with `Access-Control-Allow-Credentials: true` and a specific origin. Override the defaults in your `lib/server.dart` (or wherever you construct `Serverpod`):
+Credential-aware requests require `Access-Control-Allow-Credentials: true` and a specific origin instead of the wildcard. Override the defaults in your `lib/server.dart` (or wherever you construct `Serverpod`):
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -67,7 +67,7 @@ Set `origin` to the exact origin of your Flutter web app (scheme, host, and port
 
 You can also override the default HTTP client with a platform-native HTTP client. On iOS and macOS, you can use [cupertino_http](https://pub.dev/packages/cupertino_http) to route traffic through `NSURLSession`. On Android, you can use [cronet_http](https://pub.dev/packages/cronet_http) to use the Cronet network stack.
 
-Below is an example of how to override the default HTTP client with platform-native HTTP clients.
+Add the corresponding package to your Flutter app's `pubspec.yaml` before using these clients.
 
 ```dart
 import 'dart:io';
@@ -114,5 +114,3 @@ final client = Client(
   httpClientOverride: createHttpClient(),
 );
 ```
-
-Add the corresponding package to your Flutter app's `pubspec.yaml` before using these clients.
