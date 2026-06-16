@@ -1,4 +1,5 @@
 ---
+sidebar_position: 2
 title: Logs
 description: How Serverpod Cloud surfaces logs through Insights, the scloud CLI for terminal access and filtering, and session-log configuration.
 ---

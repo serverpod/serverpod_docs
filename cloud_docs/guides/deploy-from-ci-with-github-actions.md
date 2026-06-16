@@ -1,4 +1,5 @@
 ---
+sidebar_position: 3
 sidebar_label: Deploy from CI with GitHub Actions
 description: Use the official serverpod_cloud_deploy GitHub Action to deploy your Serverpod Cloud project on every push to your main branch.
 ---

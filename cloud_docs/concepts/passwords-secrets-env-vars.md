@@ -1,4 +1,5 @@
 ---
+sidebar_position: 3
 title: Passwords, secrets, and environment variables
 description: "Serverpod Cloud has three configuration tiers: encrypted passwords via the Serverpod API, encrypted secrets as named env vars, and plaintext variables."
 ---

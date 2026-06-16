@@ -1,4 +1,5 @@
 ---
+sidebar_position: 4
 title: Custom domains
 description: Custom domains attach to the web, API, or Insights surface of a Serverpod Cloud project, with automatic TLS and DNS-based verification.
 ---

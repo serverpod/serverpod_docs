@@ -1,4 +1,5 @@
 ---
+sidebar_position: 2
 sidebar_label: Deploy your first app
 description: Run scloud launch to create a Cloud project, deploy your Serverpod server, and open it at a public URL. Takes about five minutes.
 sidebar_class_name: sidebar-icon-deploying

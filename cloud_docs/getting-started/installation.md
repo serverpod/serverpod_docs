@@ -1,4 +1,5 @@
 ---
+sidebar_position: 1
 title: Install scloud
 sidebar_label: Install scloud
 sidebar_class_name: sidebar-installation-icon
