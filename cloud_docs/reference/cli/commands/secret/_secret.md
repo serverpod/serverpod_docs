@@ -1,9 +1,5 @@
 # `secret`
 
-The `scloud secret` command provides management of secrets for your project.
+`scloud secret` stores sensitive values that your server reads from `Platform.environment` (rather than through Serverpod's `getPassword()` API). Secrets are encrypted at rest and injected as environment variables under names you choose.
 
-To add a secret, use the `create` command:
-
-```bash
-scloud secret create MY_SECRET secretvalue
-```
+For values you read through Serverpod's API, use [`scloud password`](/cloud/reference/cli/commands/password). For non-sensitive config, use [`scloud variable`](/cloud/reference/cli/commands/variable). See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for when to use which.
