@@ -41,14 +41,15 @@ scloud deployment build-log > build-log.txt
 scloud deployment build-log | grep ERROR
 ```
 
+For a step-by-step walkthrough of diagnosing and recovering from a failed deploy, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
+
 ## View runtime logs
 
 Runtime logs are the live output of your deployed service. Each entry contains:
 
 - **Timestamp**: local time by default, UTC with `--utc`
 - **Level**: `INFO`, `ERROR`, and so on
-- **Origin service**: `API`, `insights`, or `web`
-- **Message body**
+- **Content**: the log message body
 
 Fetch the most recent records:
 
@@ -123,10 +124,10 @@ Press `Ctrl+C` to stop. `--tail` cannot be combined with `--since` or `--until`.
 
 ## Configure session logging
 
-Two environment variables control how each request's session logs are handled. By default:
+Two environment variables control session logging. With a database enabled (the typical Cloud configuration), the defaults are:
 
-- `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` defaults to `true`. Session logs print to the runtime console.
-- `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED` defaults to `false`. Session logs are not written to the database for later inspection.
+- `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED` defaults to `true`. Session logs are written to the database and visible in Insights.
+- `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` defaults to `false`. Session logs are not printed to the runtime console and don't appear in `scloud log` output. Set it to `true` to enable both.
 
 To change either default, set the value with `scloud variable set`. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for variable management.
 
