@@ -8,7 +8,7 @@ To create a project from the command line:
 scloud project create my-project --enable-db
 ```
 
-If the project doesn't need a database (e.g., a [Serverpod Mini project](https://docs.serverpod.dev/get-started-with-mini)), pass `--no-enable-db` instead. Once created, deploy with [`scloud deploy`](/cloud/reference/cli/commands/deploy).
+If the project doesn't need a database, pass `--no-enable-db` instead. Once created, deploy with [`scloud deploy`](/cloud/reference/cli/commands/deploy).
 
 ## Link an existing project
 
