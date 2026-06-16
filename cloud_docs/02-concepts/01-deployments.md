@@ -5,7 +5,7 @@ description: Deploy your Serverpod app to Cloud, check deployment status, valida
 
 # Deployments
 
-A deployment is one running version of your Serverpod app on Cloud. Every `scloud deploy` rolls out a new version, and Cloud serves the most recent successful one, so subsequent deploys move your app forward automatically.
+When you ship a code change to Serverpod Cloud, `scloud deploy` builds and rolls out a new version of your server. Cloud switches traffic automatically to the latest successful deploy, keeping the previous one live if a build fails.
 
 ## Deploy your app
 
@@ -160,4 +160,4 @@ Common causes are missing dependencies in `pubspec.yaml` or compile errors in yo
 - [Deployment hooks](/cloud/concepts/deployment-hooks) for pre- and post-deploy automation.
 - [Handling private dependencies](/cloud/reference/deployment/handling-private-dependencies) for private package access during the build.
 - [Ship non-Dart files with your server](/cloud/guides/ship-non-dart-files) for shipping static assets like configuration and templates.
-- [Automate deployment with GitHub Actions](/cloud/reference/deployment/github-automation) for CI/CD setups.
+- [Deploy from CI with GitHub Actions](/cloud/guides/deploy-from-ci-with-github-actions) for shipping every push.

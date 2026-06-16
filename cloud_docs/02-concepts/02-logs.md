@@ -5,9 +5,9 @@ description: How Serverpod Cloud surfaces logs through Insights, the scloud CLI 
 
 # Logs
 
-Serverpod Cloud collects logs from your running app and from each deployment's build, and surfaces them in two places: Serverpod Insights, a visual log viewer in the Cloud console; and the `scloud` CLI, which gives terminal access to runtime logs (with rich filtering) and is the only path to build logs from failed deploys.
+When a request fails, a deploy errors out, or you're chasing a slow endpoint, logs are where you go to find out what happened. Serverpod Cloud collects logs from your running app and from each deployment's build, and surfaces them through Serverpod Insights (a visual viewer in the Cloud console) and the `scloud` CLI.
 
-Insights is usually the right starting point for understanding what your app is doing because logs are grouped by session. The CLI is faster for one-off checks, supports filtering by time, and is the source of truth for build-time output.
+Insights groups logs by session, so it's the right starting point for tracing a single request end-to-end. The CLI is faster for one-off filtering and is the only path to build logs from failed deploys.
 
 ## View logs in Insights
 

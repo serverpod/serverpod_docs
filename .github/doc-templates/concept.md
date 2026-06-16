@@ -16,10 +16,18 @@ description: <One sentence summary, 120–160 chars. Used for SEO and AI retriev
 
 # <Capability name>
 
-Two to four sentences. What the capability is, in plain language. The reader should leave this
-paragraph knowing what the feature does and roughly when they'd reach for it.
+Two to four sentences. The order matters:
 
-Don't open with marketing. Open with the substance.
+1. First sentence: a concrete reason the reader would reach for this capability. Name
+   use cases or stakes they will recognise. ("Cloud collects logs so you can debug a deploy
+   that broke at 3am or trace a request that took two seconds." beats "Cloud has a logging
+   system.") The first sentence is what a scanner reads to decide if the page is relevant.
+2. Second sentence: what the capability is and how it works at a glance. Mechanics live
+   here, not in the opener.
+3. (Optional) third or fourth sentence: scope, roadmap status, or a pointer to a section
+   below.
+
+Don't open with marketing or feature labels. Open with the substance.
 If the capability has a roadmap item (workaround today, native support coming), say so here.
 
 ## When to use <capability>
@@ -90,7 +98,7 @@ If an operation has a primary form and a variant, show both in adjacent code blo
 ## Checklist before publishing
 
 - [ ] `description` frontmatter is present and reads well in isolation (120–160 chars).
-- [ ] Overview opens with what the capability is, in plain language. No marketing.
+- [ ] Overview opens with a concrete reason a reader would care, not the mechanism. Names use cases or stakes by name before describing structure.
 - [ ] Roadmap status stated up front if relevant.
 - [ ] Operations are action-shaped headings, ordered by how often the reader needs them.
 - [ ] Code blocks are language-tagged; `title` attributes used for file content.

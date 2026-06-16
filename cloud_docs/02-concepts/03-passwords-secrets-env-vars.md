@@ -5,7 +5,7 @@ description: "Serverpod Cloud has three configuration tiers: encrypted passwords
 
 # Passwords, secrets, and environment variables
 
-Serverpod Cloud has three tiers for project configuration. Passwords are encrypted and accessed through Serverpod's `getPassword()` API. Secrets are encrypted and injected as environment variables under a name you choose. Variables are plaintext, for non-sensitive configuration.
+Your server needs sensitive values (database passwords, third-party API keys, OAuth client secrets) and runtime configuration without checking them into source. Serverpod Cloud gives you three configuration tiers. Passwords are encrypted and accessed through Serverpod's `getPassword()` API. Secrets are encrypted and injected as environment variables under a name you choose. Variables are plaintext, for non-sensitive configuration.
 
 |                       | Passwords                                              | Secrets                                                    | Variables                                               |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------- |

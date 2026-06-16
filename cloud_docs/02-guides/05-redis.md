@@ -1,14 +1,15 @@
 ---
-title: Redis (PubSub and caching)
+sidebar_label: Use Redis for PubSub and caching
+description: Configure a third-party Redis service like Upstash for distributed caching and PubSub across multiple Serverpod Cloud server instances.
 ---
 
-# Redis (PubSub and caching)
+# Use Redis for PubSub and caching
 
 Serverpod Cloud does not yet provide Redis natively. You can use a third-party Redis service and point your Serverpod app at it. This guide uses [Upstash](https://upstash.com) as an example; other Redis-compatible providers that support TLS and password auth will work with the same configuration pattern.
 
 Serverpod uses Redis for **distributed caching** and **PubSub** when running across multiple servers. The connection is configured via environment variables and a password.
 
-## Prerequisites
+## Before you start
 
 - Completed the **Installation** steps (`scloud` installed and authenticated).
 - A Serverpod Cloud project already deployed (or ready to deploy).
@@ -70,9 +71,9 @@ scloud deploy
 
 After a successful deploy, your server will use Upstash for Redis-backed caching and PubSub.
 
-## Related documentation
+## Related
 
-- [Serverpod configuration](https://docs.serverpod.dev/concepts/configuration) – Redis options and environment variables
-- [Serverpod caching](https://docs.serverpod.dev/concepts/caching) – Local and Redis-backed caches
-- [Upstash: Connect your client](https://upstash.com/docs/redis/howto/connectclient) – Connection details and TLS
-- [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) – How Serverpod Cloud injects passwords and variables
+- [Serverpod configuration](https://docs.serverpod.dev/concepts/configuration) for Redis options and environment variables.
+- [Serverpod caching](https://docs.serverpod.dev/concepts/caching) for local and Redis-backed caches.
+- [Upstash: Connect your client](https://upstash.com/docs/redis/howto/connectclient) for connection details and TLS.
+- [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for how Serverpod Cloud injects passwords and variables.
