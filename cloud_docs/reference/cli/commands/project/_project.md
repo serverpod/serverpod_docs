@@ -1,4 +1,4 @@
-# `project`
+# scloud project
 
 `scloud project` provides commands for managing your Serverpod Cloud projects.
 
@@ -8,7 +8,7 @@ A project is created by running the following command:
 scloud project create my-project --enable-db
 ```
 
-If the project does not need a databse (e.g. if it is a [Serverpod Mini project](https://docs.serverpod.dev/get-started-with-mini)), the `--no-enable-db` flag can instead be passed.
+If the project does not need a database (e.g. if it is a [Serverpod Mini project](https://docs.serverpod.dev/get-started-with-mini)), the `--no-enable-db` flag can instead be passed.
 
 See the [`deploy` command](./deploy) on how to deploy your project.
 

@@ -1,4 +1,4 @@
-# `password`
+# scloud password
 
 ## Summary
 
@@ -41,7 +41,7 @@ scloud password unset database
 ```
 
 :::note
-If you need to set a secret without the `SERVERPOD_PASSWORD_` prefix, you can do so by using the [`secret create`](/cloud/reference/cli/commands/secret) command.
+If you need to set a secret without the `SERVERPOD_PASSWORD_` prefix, you can do so by using the [`secret set`](/cloud/reference/cli/commands/secret) command.
 :::
 
 ## Related commands

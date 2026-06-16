@@ -1,4 +1,4 @@
-# `domain`
+# scloud domain
 
 The `scloud domain` command offers custom domain management for your Serverpod Cloud projects.
 

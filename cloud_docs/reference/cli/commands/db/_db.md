@@ -1,4 +1,4 @@
-# `db`
+# scloud db
 
 `scloud db` provides commands for managing your Serverpod Cloud database for projects that have the database enabled.
 
