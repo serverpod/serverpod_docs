@@ -1,19 +1,5 @@
 # scloud variable
 
-The `scloud variable` command provides management of environment variables for your Serverpod Cloud projects.
+`scloud variable` manages plaintext environment variables for non-sensitive configuration (URLs, feature flags, log levels). Variables are visible in the CLI and the Cloud console; for sensitive values, use `scloud secret` or `scloud password` instead.
 
-To add an environment variable, use the `set` command:
-
-```bash
-scloud variable set MY_VAR myvalue
-```
-
-:::note
-Some limitations to keep in mind:
-
-- Environment variable names can only contain lowercase letters `a-z`, uppercase letters `A-Z`, digits `0-9` and underscore `_` for separation. The name has to start with a letter.
-- Maximum name length is `255`.
-- The maximum total size of all environment variables cannot exceed `64kB`.
-
-:::
-
+See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the tier comparison, naming rules, and size limits.

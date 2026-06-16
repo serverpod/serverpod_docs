@@ -13,7 +13,6 @@ Serverpod uses Redis for **distributed caching** and **PubSub** when running acr
 
 - Completed the **Installation** steps (`scloud` installed and authenticated).
 - A Serverpod Cloud project already deployed (or ready to deploy).
-- Linked your project (run from your server directory, or use `-p your-project-id`).
 
 ## Create a Redis database on Upstash
 
@@ -40,13 +39,13 @@ Use the exact password from the Upstash database page.
 
 ## Set Redis connection variables
 
-Configure host, port, enable Redis, and require SSL using environment variables. From your server project directory (or with `-p your-project-id`):
+Configure host, port, enable Redis, and require SSL using environment variables:
 
 ```bash
-scloud variable create SERVERPOD_REDIS_HOST "YOUR_UPSTASH_ENDPOINT"
-scloud variable create SERVERPOD_REDIS_PORT "YOUR_UPSTASH_PORT"
-scloud variable create SERVERPOD_REDIS_ENABLED "true"
-scloud variable create SERVERPOD_REDIS_REQUIRE_SSL "true"
+scloud variable set SERVERPOD_REDIS_HOST "YOUR_UPSTASH_ENDPOINT"
+scloud variable set SERVERPOD_REDIS_PORT "YOUR_UPSTASH_PORT"
+scloud variable set SERVERPOD_REDIS_ENABLED "true"
+scloud variable set SERVERPOD_REDIS_REQUIRE_SSL "true"
 ```
 
 Replace `YOUR_UPSTASH_ENDPOINT` with the Upstash endpoint (host only, no `rediss://` or port). Replace `YOUR_UPSTASH_PORT` with the port number as a string (most likely `6380` for Upstash).
@@ -56,7 +55,7 @@ Replace `YOUR_UPSTASH_ENDPOINT` with the Upstash endpoint (host only, no `rediss
 If your Redis provider uses a username (e.g. ACL), you can set:
 
 ```bash
-scloud variable create SERVERPOD_REDIS_USER "default"
+scloud variable set SERVERPOD_REDIS_USER "default"
 ```
 
 :::
