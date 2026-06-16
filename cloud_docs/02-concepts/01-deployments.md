@@ -155,6 +155,8 @@ Common causes are missing dependencies in `pubspec.yaml` or compile errors in yo
 
 **Package resolution failure.** Update your `pubspec.yaml` (run `dart pub get` locally to verify), then redeploy.
 
+For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
+
 ## Related
 
 - [Deployment hooks](/cloud/concepts/deployment-hooks) for pre- and post-deploy automation.

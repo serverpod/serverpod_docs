@@ -41,6 +41,8 @@ scloud deployment build-log > build-log.txt
 scloud deployment build-log | grep ERROR
 ```
 
+For a step-by-step walkthrough of diagnosing and recovering from a failed deploy, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
+
 ## View runtime logs
 
 Runtime logs are the live output of your deployed service. Each entry contains:
