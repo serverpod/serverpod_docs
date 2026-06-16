@@ -1,4 +1,4 @@
-# `me`
+# scloud me
 
 `scloud me` prints the user currently logged in to the CLI. Use it to confirm which account you're authenticated as before running a privileged command, or when sharing context with support.
 

@@ -1,4 +1,4 @@
-# Command line completion
+# scloud completion
 
 As an `scloud` user, you can enable command line completion in most shells.
 

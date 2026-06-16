@@ -1,4 +1,4 @@
-# `help`
+# scloud help
 
 `scloud help` lists every available command with a short description. Run `scloud help <command>` to drill into one command's arguments and examples; every command also accepts `--help` directly.
 

@@ -1,4 +1,4 @@
-# `password`
+# scloud password
 
 ## Summary
 

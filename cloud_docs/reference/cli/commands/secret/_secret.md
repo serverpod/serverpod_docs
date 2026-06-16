@@ -1,4 +1,4 @@
-# `secret`
+# scloud secret
 
 `scloud secret` stores sensitive values that your server reads from `Platform.environment` (rather than through Serverpod's `getPassword()` API). Secrets are encrypted at rest and injected as environment variables under names you choose.
 

@@ -1,4 +1,4 @@
-# `project`
+# scloud project
 
 `scloud project` provides commands for managing your Serverpod Cloud projects.
 

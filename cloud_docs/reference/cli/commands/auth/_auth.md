@@ -1,4 +1,4 @@
-# `auth`
+# scloud auth
 
 Handle user authentication.
 

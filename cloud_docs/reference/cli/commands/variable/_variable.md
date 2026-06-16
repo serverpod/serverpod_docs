@@ -1,4 +1,4 @@
-# `variable`
+# scloud variable
 
 The `scloud variable` command provides management of environment variables for your Serverpod Cloud projects.
 

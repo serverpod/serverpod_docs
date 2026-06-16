@@ -1,4 +1,4 @@
-# `log`
+# scloud log
 
 The `scloud log` command provides a way to retrieve logs for your live service.
 

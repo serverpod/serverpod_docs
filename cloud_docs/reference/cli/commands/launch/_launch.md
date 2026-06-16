@@ -1,4 +1,4 @@
-# `launch`
+# scloud launch
 
 An interactive, guided setup of a new Serverpod Cloud project.
 
