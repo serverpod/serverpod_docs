@@ -11,7 +11,6 @@ Your `scloud deploy` just failed. This guide walks you through finding what brok
 
 - The `scloud` CLI installed and authenticated. See [Install scloud](/cloud/getting-started/installation).
 - A Serverpod Cloud project with at least one deploy attempt.
-- Run the commands below from your server directory (so `scloud.yaml` is auto-detected), or pass `-p <project-id>` from anywhere else.
 
 ## Confirm the deploy failed
 
