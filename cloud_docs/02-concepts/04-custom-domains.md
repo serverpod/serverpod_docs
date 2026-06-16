@@ -69,7 +69,7 @@ Complete the setup by adding the records to your DNS configuration
 
 ## Verify the domain
 
-DNS changes typically propagate within a few minutes but can take up to 48 hours. Once propagation completes, Serverpod Cloud verifies the domain automatically.
+DNS changes typically propagate within a few minutes but can take up to 24 hours. Once propagation completes, Serverpod Cloud verifies the domain automatically.
 
 To force a verification attempt without waiting:
 
@@ -103,7 +103,7 @@ scloud domain detach example.com
 
 ## Troubleshooting
 
-**Verification fails.** DNS records may be missing or still propagating. Confirm the records are in place at your registrar, then wait up to 48 hours and retry with `scloud domain verify <domain>`.
+**Verification fails.** DNS records may be missing or still propagating. Confirm the records are in place at your registrar, then wait up to 24 hours and retry with `scloud domain verify <domain>`.
 
 **Can't attach the domain.** The domain is already attached to another project. Detach it from that project first.
 

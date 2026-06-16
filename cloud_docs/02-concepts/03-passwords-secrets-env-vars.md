@@ -39,7 +39,7 @@ scloud password set myApiKey "your_secret_value"
 Read the value in code:
 
 ```dart
-final apiKey = await session.serverpod.getPassword('myApiKey');
+final apiKey = session.serverpod.getPassword('myApiKey');
 ```
 
 Pass `--from-file` when the value is long, multi-line, or shouldn't appear in shell history:
