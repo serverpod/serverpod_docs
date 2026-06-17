@@ -37,7 +37,7 @@ Then deploy:
 scloud deploy
 ```
 
-Cloud zips your project directory and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). `assets/` is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
+Cloud zips your project directory and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). The `assets/` name is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
 
 To preview which files Cloud will upload before deploying:
 

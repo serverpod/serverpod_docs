@@ -73,7 +73,7 @@ Any PostgreSQL-compatible client works. A few popular options:
 
 ## Reset the database
 
-`scloud db wipe` deletes all tables, all data, and all applied migrations from the managed database. It asks for confirmation by default.
+The `scloud db wipe` command deletes all tables, all data, and all applied migrations from the managed database. It asks for confirmation by default.
 
 ```bash
 scloud db wipe
