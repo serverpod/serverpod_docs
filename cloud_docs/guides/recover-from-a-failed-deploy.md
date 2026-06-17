@@ -1,4 +1,5 @@
 ---
+sidebar_position: 4
 sidebar_label: Recover from a failed deploy
 description: Diagnose why your scloud deploy failed, read the build log, identify the failure type, and ship a fix to recover without disrupting any running version.
 ---

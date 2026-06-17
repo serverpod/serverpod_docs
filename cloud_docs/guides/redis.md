@@ -1,4 +1,5 @@
 ---
+sidebar_position: 1
 sidebar_label: Use Redis for PubSub and caching
 description: Configure a third-party Redis service like Upstash for distributed caching and PubSub across multiple Serverpod Cloud server instances.
 ---

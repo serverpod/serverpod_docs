@@ -1,4 +1,5 @@
 ---
+sidebar_position: 1
 title: Deployments
 description: Deploy your Serverpod app to Cloud, check deployment status, validate packages before deploying, and control what's included in the deployment.
 ---

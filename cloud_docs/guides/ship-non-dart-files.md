@@ -1,4 +1,5 @@
 ---
+sidebar_position: 2
 sidebar_label: Ship non-Dart files with your server
 description: Include configuration files, templates, data, or other non-Dart assets alongside your Serverpod Cloud server and read them at runtime.
 ---

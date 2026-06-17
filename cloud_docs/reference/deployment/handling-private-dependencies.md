@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Handling private dependencies
 
 Serverpod Cloud supports deploying your project with private dependencies.

@@ -1,4 +1,5 @@
 ---
+sidebar_position: 5
 title: Database
 description: How Serverpod Cloud's managed PostgreSQL works, including provisioning, automatic server credentials, migrations on deploy, backups, user access, and resetting the database.
 ---
