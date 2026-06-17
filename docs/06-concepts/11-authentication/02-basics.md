@@ -1,4 +1,9 @@
-# The basics
+---
+sidebar_label: The basics
+description: Authentication tokens are handled automatically by Serverpod. Learn how to access the signed-in user from the Session object.
+---
+
+# Authentication basics
 
 Serverpod automatically checks if the user is logged in and if the user has the right privileges to access each endpoint. When using the Serverpod Authentication modules, you will not have to worry about keeping track of tokens, refreshing them or even including them in requests as this all happens automatically under the hood.
 

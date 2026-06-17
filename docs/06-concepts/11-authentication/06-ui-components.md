@@ -1,4 +1,9 @@
-# UI Components
+---
+sidebar_label: UI Components
+description: Authentication UI components and controllers let you build sign-in, registration, and password flows, including the all-in-one SignInWidget.
+---
+
+# Authentication UI components
 
 The authentication system provides a comprehensive set of UI components and controllers for building authentication interfaces. These components handle the complete authentication flow, including sign-in, registration, and password management.
 

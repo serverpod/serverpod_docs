@@ -1,3 +1,7 @@
+---
+description: Authenticated users have a stable identifier across your server. Access them and their profile data from the Session object.
+---
+
 # Working with users
 
 The authentication module provides convenient ways to work with your authenticated users and their related profile data.

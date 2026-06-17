@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Authentication in Serverpod is provided by the serverpod_auth_idp module. Install and configure it to add user management and sign-in to your project.
+---
+
+# Set up the authentication module
 
 Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth_idp` module. The module makes it easy to authenticate with email, social sign-ins and more.
 
