@@ -1,9 +1,9 @@
 ---
 sidebar_label: Google
-description: Sign in with Google in the legacy serverpod_auth module uses Google credentials added to your app and server.
+description: Sign in with Google in the legacy serverpod_auth module uses Google credentials added to your app and server across iOS, Android, and Web.
 ---
 
-# Sign in with Google
+# Google sign-in
 
 To set up Sign in with Google, you will need a Google account for your organization and set up a new project. For the project, you need to set up _Credentials_ and _Oauth consent screen_. You will also need to add the `serverpod_auth_google_flutter` package to your app and do some additional setup depending on each platform.
 

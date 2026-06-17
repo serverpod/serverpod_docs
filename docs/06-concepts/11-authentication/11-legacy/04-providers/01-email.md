@@ -3,7 +3,7 @@ sidebar_label: Email
 description: Sign in with Email in the legacy serverpod_auth module connects Serverpod to an SMTP service for email and password sign-in.
 ---
 
-# Sign in with Email
+# Email sign-in
 
 To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Sendgrid or Mandrill, support SMTP.
 

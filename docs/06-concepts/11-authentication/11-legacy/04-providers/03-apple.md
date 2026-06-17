@@ -1,9 +1,9 @@
 ---
 sidebar_label: Apple
-description: Sign in with Apple in the legacy serverpod_auth module is supported on iOS and macOS.
+description: Sign in with Apple in the legacy serverpod_auth module is supported on iOS and macOS, including in development with an Apple Developer subscription.
 ---
 
-# Sign in with Apple
+# Apple sign-in
 
 Sign-in with Apple, requires that you have a subscription to the [Apple developer program](https://developer.apple.com/programs/), even if you only want to test the feature in development mode.
 
