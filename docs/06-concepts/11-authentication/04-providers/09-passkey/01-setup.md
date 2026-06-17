@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Passkey authentication adds passwordless sign-in to your Serverpod backend using the WebAuthn and FIDO2 standards.
+---
+
+# Set up passkey authentication
 
 Passkeys provide a passwordless authentication method using WebAuthn/FIDO2 standards. They offer a secure, phishing-resistant way for users to sign in using biometric authentication, security keys, or device PINs.
 

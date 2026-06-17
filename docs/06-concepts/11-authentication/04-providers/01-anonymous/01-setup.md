@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Anonymous authentication lets users access your app without an account. Enable it in your Serverpod auth configuration.
+---
+
+# Set up anonymous sign-in
 
 :::warning
 The Anonymous identity provider is **experimental** and can not be completely used yet due to the missing support for account linking. The missing parts will be added in the next releases.

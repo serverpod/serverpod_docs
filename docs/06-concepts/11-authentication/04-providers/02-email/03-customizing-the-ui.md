@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: Email sign-in UI can be customized with the EmailSignInWidget and EmailAuthController to build a custom authentication flow.
+---
+
+# Customize the Sign in with Email UI
 
 When using the email identity provider, you can customize the UI to your liking. You can use the `EmailSignInWidget` to display the email authentication flow in your own custom UI, or you can use the `EmailAuthController` to build a completely custom authentication interface.
 

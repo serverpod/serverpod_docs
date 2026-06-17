@@ -1,3 +1,7 @@
+---
+description: Building a custom OAuth2 identity provider with Serverpod's OAuth2 utility, shown through a complete, working example.
+---
+
 # Creating an OAuth2-based Identity Provider
 
 This page provides a complete, working implementation of a custom OAuth2 provider. The [GitHub IDP](../../github/setup) is built the same way, using the same OAuth2 utility shown here, so this example illustrates the general pattern you can follow when creating your own IDP.

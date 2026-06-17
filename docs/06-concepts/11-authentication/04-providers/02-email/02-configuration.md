@@ -1,4 +1,9 @@
-# Configuration
+---
+sidebar_label: Configuration
+description: Email identity provider options include password peppering and other security settings. Configure them beyond the basic setup.
+---
+
+# Configure Sign in with Email
 
 This page covers configuration options for the email identity provider beyond the basic setup.
 

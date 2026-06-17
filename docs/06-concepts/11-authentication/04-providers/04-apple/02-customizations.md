@@ -1,4 +1,9 @@
-# Customizations
+---
+sidebar_label: Customizations
+description: Sign in with Apple can be configured through AppleIdpConfig, including how to load credentials and use the available options.
+---
+
+# Customize Sign in with Apple
 
 This page covers additional configuration options for the Apple identity provider beyond the basic setup.
 

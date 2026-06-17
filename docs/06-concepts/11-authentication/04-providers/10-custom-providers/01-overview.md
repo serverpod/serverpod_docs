@@ -1,3 +1,7 @@
+---
+description: Custom providers extend Serverpod's authentication module with your own identity providers alongside the built-in ones.
+---
+
 # Custom providers
 
 Serverpod's authentication module makes it easy to implement custom authentication providers. This allows you to leverage all the existing providers supplied by the module along with the specific providers your project requires.

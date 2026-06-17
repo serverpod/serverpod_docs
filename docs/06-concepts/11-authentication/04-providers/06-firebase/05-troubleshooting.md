@@ -1,4 +1,9 @@
-# Troubleshooting
+---
+sidebar_label: Troubleshooting
+description: Firebase authentication failures with Serverpod, and how to diagnose and fix them.
+---
+
+# Troubleshoot Firebase authentication
 
 This page helps you identify common Firebase authentication failures with Serverpod, explains why they occur, and shows how to resolve them. For issues with Firebase itself, see the [Firebase Auth documentation](https://firebase.google.com/docs/auth).
 

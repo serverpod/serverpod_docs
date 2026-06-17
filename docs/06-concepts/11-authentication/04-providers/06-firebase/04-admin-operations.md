@@ -1,4 +1,9 @@
-# Admin operations
+---
+sidebar_label: Admin operations
+description: Firebase admin operations manage Firebase-authenticated accounts from secure server-side code through the FirebaseIdpAdmin.
+---
+
+# Firebase admin operations
 
 The Firebase identity provider provides admin operations through `FirebaseIdpAdmin` for managing Firebase-authenticated accounts on the server. Common use cases include linking an existing Serverpod user to a Firebase account, looking up accounts for support tools, and cleaning up orphaned accounts.
 

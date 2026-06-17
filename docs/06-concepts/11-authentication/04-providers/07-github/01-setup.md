@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Sign in with GitHub uses OAuth2 credentials from a GitHub App. Register the app and add the provider to your Serverpod app.
+---
+
+# Set up Sign in with GitHub
 
 Sign in with GitHub uses OAuth2 credentials from a **GitHub App** registered on GitHub.
 
