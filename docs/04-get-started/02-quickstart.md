@@ -39,7 +39,7 @@ If you are using Cursor, you will need to **enable the MCP server** in your proj
 
 ## Start the server and the app
 
-Start the server and the Flutter app by opening up a terminal window and running the `serverpod start` command:
+Start the server and the Flutter app by opening up a terminal window and running the [`serverpod start`](../06-concepts/00-start-command.md) command:
 
 ```bash
 $ serverpod start
