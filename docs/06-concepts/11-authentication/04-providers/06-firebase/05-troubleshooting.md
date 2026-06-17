@@ -103,7 +103,7 @@ If you haven't run `flutterfire configure`, do so to generate the `firebase_opti
 
 1. **Missing service account key:** The `firebaseServiceAccountKey` is not present in `passwords.yaml`, or the JSON is invalid.
 2. **Missing endpoint:** You did not create the endpoint class extending `FirebaseIdpBaseEndpoint`. Without it, the client has no endpoint to call.
-3. **Missing migration:** The provider's database tables don't exist yet. Start the server with `serverpod start`.
+3. **Missing migration:** The provider's database tables don't exist yet. In the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 4. **Project mismatch:** The service account key belongs to a different Firebase project than the one configured in your Flutter app. Compare `project_id` in `firebaseServiceAccountKey` against the project in `firebase_options.dart`.
 5. **App Check enabled prematurely:** If you enabled Firebase App Check before the client integration is in place, every request will be rejected with an App Check assertion error. Disable App Check until the client is wired up.
 
