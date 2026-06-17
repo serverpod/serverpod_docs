@@ -1,3 +1,7 @@
+---
+description: Stream data between server and client in Serverpod using streaming methods over a self-managed WebSocket connection, with support for bidirectional streams and serializable exceptions.
+---
+
 # Streams
 
 For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
@@ -53,7 +57,7 @@ In the example above, the `echoStream` method passes back any message sent throu
 
 :::tip
 
-Note that we can mix different types in the stream. This stream is defined as dynamic and can contain any type that can be serialized by Serverpod.
+The stream is defined as dynamic and can contain any type that can be serialized by Serverpod.
 
 :::
 
@@ -75,7 +79,7 @@ All streams in parameters are closed when the method call is over.
 
 Authentication is seamlessly integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
 
-Authentication is validated when the stream is first established, utilizing the authentication data stored in the `Session` object. If a user's authentication is subsequently revoked—requiring denial of access to the stream—the stream will be promptly closed, and an exception will be thrown.
+Authentication is validated when the stream is first established, using the authentication data stored in the `Session` object. If a user's authentication is revoked, the stream is closed and an exception is thrown.
 
 For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#handling-revoked-authentication).
 
@@ -144,7 +148,7 @@ To send a message to a client, call the `sendStreamMessage` method. You will nee
 
 #### The user object
 
-It's often handy to associate a state together with a streaming session. Typically, you do this when a stream is opened.
+Associate state with a streaming session by setting a user object when the stream is opened.
 
 ```dart
 Future<void> streamOpened(StreamingSession session) async {
@@ -156,11 +160,10 @@ You can access the user object at any time by calling the `getUserObject` method
 
 ### Handling streams in your app
 
-Before you can access streams in your client, you need to connect to the server's web socket. You do this by calling connectWebSocket on your client.
+Before you can access streams in your client, you need to connect to the server's web socket by calling `openStreamingConnection` on your client.
 
 ```dart
 await client.openStreamingConnection();
-
 ```
 
 You can monitor the state of the connection by adding a listener to the client.
