@@ -1,4 +1,9 @@
-# Custom overrides
+---
+sidebar_label: Custom overrides
+description: Implement your own authentication handling in Serverpod when the serverpod_auth_idp module does not fit your requirements.
+---
+
+# Custom authentication overrides
 
 It is recommended to use the `serverpod_auth_idp` package but if you have special requirements not fulfilled by it, you can implement your authentication module. Serverpod is designed to make it easy to add custom authentication overrides.
 

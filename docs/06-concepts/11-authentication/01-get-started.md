@@ -1,5 +1,6 @@
 ---
 sidebar_label: Get started
+description: Turn on the built-in sign-in screen, run your Serverpod app, and test signing up and signing in.
 ---
 
 # Get started with authentication

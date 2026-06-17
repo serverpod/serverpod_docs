@@ -1,4 +1,9 @@
-# UI Components
+---
+sidebar_label: UI Components
+description: Build authentication interfaces with Serverpod's ready-made widgets and controllers, including the all-in-one SignInWidget.
+---
+
+# Authentication UI components
 
 The authentication system provides a comprehensive set of UI components and controllers for building authentication interfaces. These components handle the complete authentication flow, including sign-in, registration, and password management.
 

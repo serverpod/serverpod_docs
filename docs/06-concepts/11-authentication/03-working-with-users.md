@@ -1,3 +1,7 @@
+---
+description: Access authenticated users and their profile data, and learn how user identifiers work across your Serverpod server.
+---
+
 # Working with users
 
 The authentication module provides convenient ways to work with your authenticated users and their related profile data.
