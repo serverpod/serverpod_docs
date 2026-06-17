@@ -131,7 +131,7 @@ By default, every file ignored by `.gitignore` is also excluded from the deploym
 !lib/src/generated/
 ```
 
-`scloud` may generate intermediate files under `.scloud/` directories. Add the pattern to your project's `.gitignore` so they don't end up in version control:
+The `scloud` CLI may generate intermediate files under `.scloud/` directories. Add the pattern to your project's `.gitignore` so they don't end up in version control:
 
 ```text title=".gitignore"
 # scloud deployment generated files
