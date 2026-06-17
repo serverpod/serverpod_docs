@@ -1,6 +1,6 @@
 ---
 sidebar_label: Setup
-description: Install and configure the serverpod_auth_idp module to add user management and authentication to your Serverpod project.
+description: Authentication in Serverpod is provided by the serverpod_auth_idp module. Install and configure it to add user management and sign-in to your project.
 ---
 
 # Set up the authentication module

@@ -1,6 +1,6 @@
 ---
 sidebar_label: The basics
-description: Learn how Serverpod handles authentication tokens automatically and how to access the signed-in user from the Session object.
+description: Authentication tokens are handled automatically by Serverpod. Learn how to access the signed-in user from the Session object.
 ---
 
 # Authentication basics

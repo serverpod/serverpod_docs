@@ -1,6 +1,6 @@
 ---
 sidebar_label: Custom overrides
-description: Implement your own authentication handling in Serverpod when the serverpod_auth_idp module does not fit your requirements.
+description: Custom authentication overrides let you implement your own handling when the serverpod_auth_idp module does not fit your requirements.
 ---
 
 # Custom authentication overrides

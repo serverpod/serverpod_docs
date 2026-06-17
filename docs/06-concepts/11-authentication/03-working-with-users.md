@@ -1,5 +1,5 @@
 ---
-description: Access authenticated users and their profile data, and learn how user identifiers work across your Serverpod server.
+description: Authenticated users have a stable identifier across your server. Access them and their profile data from the Session object.
 ---
 
 # Working with users
