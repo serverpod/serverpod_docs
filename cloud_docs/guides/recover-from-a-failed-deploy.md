@@ -57,7 +57,7 @@ scloud deployment build-log | grep ERROR
 
 Most failed deploys fall into one of these patterns. Match the log output to the closest one.
 
-**Pre-deploy hook failure.** A script in your `scloud.yaml` under `project.scripts.pre_deploy` exited non-zero, so the upload never happened. Run the failing command locally to reproduce, fix the script, commit, and redeploy. See [Deployment hooks](/cloud/concepts/deployment-hooks) for the failure semantics.
+**Pre-deploy hook failure.** A script in your `scloud.yaml` under `project.scripts.pre_deploy` exited non-zero, so the upload never happened. Run the failing command locally to reproduce, fix the script, commit, and redeploy. See [Deployment hooks](/cloud/concepts/deployment-hooks) for the failure semantics and the [scloud.yaml schema](/cloud/reference/scloud-yaml-schema#pre_deploy) for the accepted formats.
 
 **Upload timeout.** The CLI reports `Send Timeout. Please check your internet connection and try again.` The project never reached Cloud, so nothing was built. Common on first deploys with large project packages or slow connections. Retry with a longer timeout:
 
