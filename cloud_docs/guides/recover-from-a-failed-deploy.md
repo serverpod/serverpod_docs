@@ -67,7 +67,7 @@ scloud deploy --timeout 120s
 
 If the timeout keeps tripping at high values, the issue is likely upstream (network or Cloud-side); retry later.
 
-**Package resolution failure.** Cloud can't resolve your `pubspec.yaml`. Run `dart pub get` locally to reproduce the error, fix the pubspec (mismatched versions, missing packages, private dependencies that aren't configured), and redeploy. For private packages, see [Handling private dependencies](/cloud/reference/deployment/handling-private-dependencies).
+**Package resolution failure.** Cloud can't resolve your `pubspec.yaml`. Run `dart pub get` locally to reproduce the error, fix the pubspec (mismatched versions, missing packages, private dependencies that aren't configured), and redeploy. For private packages, see [Private dependencies](/cloud/reference/private-dependencies).
 
 **Build failure.** Lines beginning with `ERROR:` or `FAILED:` in the build log, usually pointing at a Dart compile error, a missing import, or a missing dependency. Fix the file in your project, commit, and redeploy.
 

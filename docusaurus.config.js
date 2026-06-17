@@ -253,6 +253,18 @@ const config = {
             from: ['/cloud/reference/deployment/github-automation'],
             to: '/cloud/guides/deploy-from-ci-with-github-actions',
           },
+          {
+            from: ['/cloud/reference/deployment/handling-private-dependencies'],
+            to: '/cloud/reference/private-dependencies',
+          },
+          {
+            from: ['/cloud/reference/deployment/dart-sdk-versions'],
+            to: '/cloud/reference/dart-sdk-versions',
+          },
+          {
+            from: ['/cloud/reference/project-id'],
+            to: '/cloud/reference/project-id-rules',
+          },
         ],
       },
     ],

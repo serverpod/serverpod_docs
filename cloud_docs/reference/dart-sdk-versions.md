@@ -1,8 +1,10 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
+title: Dart SDK versions
+description: Which Dart SDK versions Serverpod Cloud supports, how the SDK version is selected for your build, and how to pin a version in pubspec.yaml.
 ---
 
-# Dart SDK version handling
+# Dart SDK versions
 
 Serverpod Cloud supports specific Dart SDK versions for building and deploying your applications. Understanding how SDK versions are determined and used is important for configuring your project correctly.
 
@@ -174,4 +176,4 @@ environment:
 ## Related documentation
 
 - [Deployments](/cloud/concepts/deployments) - Deploy operations, status checks, package validation, and `.scloudignore` configuration.
-- [Handling private dependencies](/cloud/reference/deployment/handling-private-dependencies) for managing workspace dependencies.
+- [Private dependencies](/cloud/reference/private-dependencies) for managing workspace dependencies.

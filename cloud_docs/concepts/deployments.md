@@ -161,6 +161,6 @@ For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides
 ## Related
 
 - [Deployment hooks](/cloud/concepts/deployment-hooks) for pre- and post-deploy automation.
-- [Handling private dependencies](/cloud/reference/deployment/handling-private-dependencies) for private package access during the build.
+- [Private dependencies](/cloud/reference/private-dependencies) for private package access during the build.
 - [Ship non-Dart files with your server](/cloud/guides/ship-non-dart-files) for shipping static assets like configuration and templates.
 - [Deploy from CI with GitHub Actions](/cloud/guides/deploy-from-ci-with-github-actions) for shipping every push.
