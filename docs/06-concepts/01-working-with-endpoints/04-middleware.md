@@ -1,10 +1,10 @@
+---
+description: Add middleware to Serverpod to intercept HTTP requests and responses for concerns such as logging, caching, and rate limiting.
+---
+
 # Middleware
 
-Serverpod provides a middleware system that allows you to intercept and process HTTP requests before they reach your endpoints, and modify responses before they're sent to clients. This enables cross-cutting concerns like caching and rate limiting.
-
-## Overview
-
-Middleware in Serverpod are based on [Relic middleware](https://docs.dartrelic.dev/reference/middleware).
+Middleware runs before and after your endpoints, making it suitable for logging, caching, and rate limiting. Serverpod middleware follows the [Relic middleware](https://docs.dartrelic.dev/reference/middleware) interface.
 
 ## Adding middleware to your server
 
@@ -38,7 +38,7 @@ typedef Handler = FutureOr<Result> Function(Request request);
 typedef Middleware = Handler Function(Handler innerHandler);
 ```
 
-`Result` is a sealed type with three subclasses: `Response`, `Hijack`, and `WebSocketUpgrade`. Middleware that modifies response-specific fields must first narrow to `Response` with an `is` check.
+The return value is a `Result`, which can be a `Response`, `Hijack`, or `WebSocketUpgrade`. Check `is Response` before modifying response-specific fields.
 
 ### Simple middleware example
 
@@ -95,14 +95,6 @@ Middleware errorHandlingMiddleware() {
 
 1. **Order matters**: Add middleware in the order you want it to execute.
 
-2. **Keep middleware focused**: Each middleware should have a single, well-defined responsibility.
+2. **Performance**: Middleware executes on every request, so keep it efficient.
 
-3. **Handle errors gracefully**: Always consider error cases and decide whether to handle or rethrow.
-
-4. **Performance considerations**: Middleware executes on every request, so keep it efficient.
-
-5. **Test your middleware**: Write tests to verify middleware behavior in isolation and when composed.
-
-6. **Document configuration**: If middleware accepts parameters, document them clearly.
-
-7. **Avoid side effects**: Be cautious with middleware that modifies global state or external systems.
+3. **Test your middleware**: Write tests to verify middleware behavior in isolation and when composed.
