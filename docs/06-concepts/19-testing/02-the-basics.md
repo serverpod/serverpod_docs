@@ -1,3 +1,7 @@
+---
+description: The Serverpod test tools basics, set up scenarios with sessionBuilder, seed the database, control rollback behavior, and simulate authenticated and unauthenticated sessions.
+---
+
 # The basics
 
 ## Set up a test scenario
@@ -229,7 +233,7 @@ var transactionFuture = session.db.transaction((tx) async {
 await transactionFuture;
 ```
 
-In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practise, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabse.disabled` will ensure the code behaves like in production.
+In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practise, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabase.disabled` will ensure the code behaves like in production.
 <!-- markdownlint-enable MD029 -->
 
 ## Test exceptions
