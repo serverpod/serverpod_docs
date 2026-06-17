@@ -35,11 +35,13 @@ Then run `pub get` from your server's directory (e.g., `mypod_server`):
 $ dart pub get
 ```
 
-Start the server to wire up the module and apply any database changes it brings:
+Start the server to wire up the module:
 
 ```bash
 $ serverpod start
 ```
+
+The module adds tables to your database, so create and apply a migration: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ### Client setup
 
