@@ -1,3 +1,7 @@
+---
+description: Group database operations into atomic transactions in Serverpod, with support for isolation levels, savepoints, and rollback.
+---
+
 # Transactions
 
 The essential point of a database transaction is that it bundles multiple steps into a single, all-or-nothing operation. The intermediate states between the steps are not visible to other concurrent transactions, and if some failure occurs that prevents the transaction from completing, then none of the steps affect the database at all.
@@ -26,7 +30,7 @@ In the example we insert a company and an employee in the same transaction. If a
 The transaction isolation level can be configured when initiating a transaction. The isolation level determines how the transaction interacts with concurrent database operations. If no isolation level is supplied, the level is determined by the database engine.
 
 :::info
-At the time of writing, the default isolation level for the Postgres database engine is `IsolationLevel.readCommitted`.
+The default isolation level for the Postgres database engine is `IsolationLevel.readCommitted`.
 :::
 
 :::info
@@ -49,8 +53,8 @@ In the example the isolation level is set to `IsolationLevel.serializable`.
 
 The available isolation levels are:
 
-| Isolation Level | Constant              | Description |
-|-----------------|-----------------------|-------------|
+| Isolation Level | Constant | Description |
+| --- | --- | --- |
 | Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in PostgresSQL |
 | Read committed | `IsolationLevel.readCommitted` | Each statement in the transaction sees a snapshot of the database as of the beginning of that statement. |
 | Repeatable read | `IsolationLevel.repeatableRead` | The transaction only observes rows committed before the first statement in the transaction was executed giving a consistent view of the database. If any conflicting writes among concurrent transactions occur, an exception is thrown. |

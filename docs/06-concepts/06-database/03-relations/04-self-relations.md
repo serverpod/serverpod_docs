@@ -1,3 +1,7 @@
+---
+description: Define self-referential relationships where a table has a foreign key pointing to its own primary key, supporting one-to-one, one-to-many, and many-to-many patterns.
+---
+
 # Self-relations
 
 A self-referential or self-relation occurs when a table has a foreign key that references its own primary key within the same table. This creates a relationship between different rows within the same table.
@@ -39,7 +43,7 @@ The field `motherId: int?` is injected into the dart class, the field is nullabl
 
 ## Many-to-many
 
-Let's imagine we have a system where we have members that can block other members. We would like to be able to query who I'm blocking and who is blocking me. This can be achieved by modeling the data as a many-to-many relation ship.
+Let's imagine we have a system where we have members that can block other members. We would like to be able to query who I'm blocking and who is blocking me. This can be achieved by modeling the data as a many-to-many relationship.
 
 Each member has a list of all other members they are blocking and another list of all members that are blocking them. But since the list side needs to point to a foreign key and cannot point to another list directly, we have to define a junction table that holds the connection between the rows.
 

@@ -1,3 +1,7 @@
+---
+description: Define one-to-one relationships between database tables using Serverpod's relation keyword, with support for object fields, ID fields, and bidirectional relations.
+---
+
 # One-to-one
 
 One-to-one (1:1) relationships represent a unique association between two entities, there is at most one model that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
@@ -160,7 +164,7 @@ Both relations operate independently of each other, resulting in two distinct re
 
 ## Bidirectional relations
 
-If access to the same relation is desired from both sided, a bidirectional relation can be defined.
+If access to the same relation is desired from both sides, a bidirectional relation can be defined.
 
 ```yaml
 # user.yaml

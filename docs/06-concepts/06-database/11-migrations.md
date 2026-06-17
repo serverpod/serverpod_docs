@@ -1,3 +1,7 @@
+---
+description: Create and apply database migrations in Serverpod to keep your schema in sync as your models evolve, including repair migrations for out-of-sync databases.
+---
+
 # Migrations
 
 Serverpod comes bundled with a simple-to-use but powerful migration system that helps you keep your database schema up to date as your project evolves. Database migrations provide a structured way of upgrading your database while maintaining existing data.
