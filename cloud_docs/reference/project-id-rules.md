@@ -20,7 +20,7 @@ commands) you will get an error message if the name is not valid.
 
 Most `scloud` commands need to know which project to operate on, which can be
 specified in multiple ways:
-- The `scloud.yaml` file in your server package's root directory (see also the [`scloud project link`](/cloud/reference/cli/commands/project/) command)
+- The `scloud.yaml` file in your project directory (see [scloud.yaml schema](/cloud/reference/scloud-yaml-schema) for the file format and the [`scloud project link`](/cloud/reference/cli/commands/project/) command for how to generate or update it)
 - The `-p` / `--project` command line option
 - The `SERVERPOD_CLOUD_PROJECT_ID` environment variable
 

@@ -19,7 +19,7 @@ If your deploy doesn't depend on either, don't add hooks. Deploys work without t
 
 ## Configure hooks
 
-Hooks live in `scloud.yaml` under `project.scripts`. Each hook accepts either a single command (string) or a list of commands (array).
+Hooks live in `scloud.yaml` under `project.scripts`. Each hook accepts either a single command (string) or a list of commands (array). See the [scloud.yaml schema](/cloud/reference/scloud-yaml-schema#scripts) for the field types and validation rules.
 
 Single command:
 
@@ -52,7 +52,7 @@ A non-zero exit code halts further commands in that hook.
 
 :::warning
 
-`pre_deploy` and `post_deploy` failures are not symmetric:
+The `pre_deploy` and `post_deploy` hooks fail asymmetrically:
 
 - A failing `pre_deploy` script aborts the deploy *before* Cloud receives your code.
 - A failing `post_deploy` script runs *after* the upload, so the deploy has already happened. The `scloud deploy` command exits with an error, but the new version is live.
