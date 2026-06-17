@@ -1,9 +1,10 @@
 ---
-sidebar_position: 2
-title: Project identifier
+sidebar_position: 3
+title: Project identifier rules
+description: "Naming rules for the Serverpod Cloud project identifier and how scloud picks which project to operate on: scloud.yaml, -p flag, or environment variable."
 ---
 
-# Project identifier
+# Project identifier rules
 
 The identifier given to a project in Serverpod Cloud must adhere to these rules:
 

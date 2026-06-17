@@ -1,8 +1,10 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
+title: Private dependencies
+description: How to deploy a Serverpod Cloud project that depends on private packages, using Dart workspaces or build secrets for private git repositories.
 ---
 
-# Handling private dependencies
+# Private dependencies
 
 Serverpod Cloud supports deploying your project with private dependencies.
 The typical methods are:

@@ -466,7 +466,8 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   --sidebar-icon-color: currentColor;
 }
 
-.theme-doc-sidebar-menu .sidebar-icon-overview .menu__link {
+.theme-doc-sidebar-menu .sidebar-icon-overview > .menu__link,
+.theme-doc-sidebar-menu .sidebar-icon-overview > div.menu__list-item-collapsible > a.menu__link--sublist {
   --sidebar-icon-mask: url('/img/sidebar-icon-compass.svg');
   --sidebar-icon-color: currentColor;
 }
