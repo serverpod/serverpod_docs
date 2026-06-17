@@ -3,7 +3,7 @@ sidebar_label: Setup
 description: Sign in with Apple requires Apple credentials and platform setup. Register them and add the provider to your Serverpod app across iOS, macOS, Android, and Web.
 ---
 
-# Set up Sign in with Apple
+# Set up Apple sign-in
 
 ## Prerequisites
 

@@ -3,7 +3,7 @@ sidebar_label: Setup
 description: Sign in with Google requires Google Cloud OAuth credentials. Create them for your platforms and add the provider to your Serverpod app.
 ---
 
-# Set up Sign in with Google
+# Set up Google sign-in
 
 Sign in with Google requires a Google Cloud project. You also need platform-specific OAuth credentials depending on which platforms you target.
 

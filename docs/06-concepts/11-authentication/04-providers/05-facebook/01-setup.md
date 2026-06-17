@@ -3,7 +3,7 @@ sidebar_label: Setup
 description: Sign in with Facebook uses a Facebook Login app and an extra provider package. Create the app and add the provider to your Serverpod app.
 ---
 
-# Set up Sign in with Facebook
+# Set up Facebook sign-in
 
 Facebook authentication in Serverpod is provided through an external package that handles the complete sign-in flow on iOS, Android, Web, and macOS. Unlike other providers built into the core auth module, Facebook Sign-In requires an additional package installation.
 

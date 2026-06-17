@@ -1,6 +1,6 @@
 ---
 sidebar_label: Customizing the UI
-description: Firebase authentication UI is built on firebase_auth and synced with Serverpod through the FirebaseAuthController.
+description: Firebase authentication UI is built on the firebase_auth package and synced with your Serverpod backend through the FirebaseAuthController.
 ---
 
 # Customize the Firebase authentication UI

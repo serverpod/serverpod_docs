@@ -3,7 +3,7 @@ sidebar_label: Customizations
 description: Sign in with GitHub can be configured through GitHubIdpConfig, including how to load credentials and use the available callbacks.
 ---
 
-# Customize Sign in with GitHub
+# Customize GitHub sign-in
 
 This page covers additional configuration options for the GitHub identity provider beyond the basic setup.
 

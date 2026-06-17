@@ -1,9 +1,9 @@
 ---
 sidebar_label: Troubleshooting
-description: Sign in with Google failures, from setup mistakes to platform-specific errors, and how to diagnose and fix them.
+description: Sign in with Google failures, from setup mistakes to platform-specific errors, and how to diagnose and resolve each one in your Serverpod app.
 ---
 
-# Troubleshoot Sign in with Google
+# Troubleshoot Google sign-in
 
 This page helps you identify common Sign in with Google failures, explains why they occur, and shows how to resolve them. For platform-specific issues with the underlying Flutter package, see the [google_sign_in_android troubleshooting guide](https://pub.dev/packages/google_sign_in_android#troubleshooting).
 

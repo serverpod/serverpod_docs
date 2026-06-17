@@ -1,6 +1,6 @@
 ---
 sidebar_label: Customizing the UI
-description: Facebook sign-in UI can be customized with the FacebookSignInWidget and FacebookAuthController to build a custom flow.
+description: Facebook sign-in UI can be customized with the FacebookSignInWidget and FacebookAuthController to build a custom authentication flow in your app.
 ---
 
 # Customize the Facebook sign-in UI

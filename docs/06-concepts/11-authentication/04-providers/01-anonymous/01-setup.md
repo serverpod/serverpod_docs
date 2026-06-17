@@ -1,6 +1,6 @@
 ---
 sidebar_label: Setup
-description: Anonymous authentication lets users access your app without an account. Enable it in your Serverpod auth configuration.
+description: Anonymous authentication lets users access your app without creating an account. Enable it in your Serverpod auth configuration to get started.
 ---
 
 # Set up anonymous sign-in

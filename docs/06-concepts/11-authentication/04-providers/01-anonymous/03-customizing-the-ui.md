@@ -1,6 +1,6 @@
 ---
 sidebar_label: Customizing the UI
-description: Anonymous sign-in UI can be customized with the AnonymousSignInWidget and AnonymousAuthController to fit your app.
+description: Anonymous sign-in UI can be customized with the AnonymousSignInWidget and AnonymousAuthController to match the rest of your app's design.
 ---
 
 # Customize the anonymous sign-in UI

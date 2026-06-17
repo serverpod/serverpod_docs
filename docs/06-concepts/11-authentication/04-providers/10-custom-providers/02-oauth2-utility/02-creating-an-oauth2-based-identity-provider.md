@@ -1,5 +1,5 @@
 ---
-description: Building a custom OAuth2 identity provider with Serverpod's OAuth2 utility, shown through a complete, working example.
+description: Building a custom OAuth2 identity provider with Serverpod's OAuth2 utility, shown through a complete, working example you can adapt for your own.
 ---
 
 # Creating an OAuth2-based Identity Provider

@@ -3,7 +3,7 @@ sidebar_label: Configuration
 description: Microsoft identity provider options include which account types can sign in through the tenant setting. Configure them beyond the basic setup.
 ---
 
-# Configure Sign in with Microsoft
+# Configure Microsoft sign-in
 
 This page covers configuration options for the Microsoft identity provider beyond the basic setup.
 

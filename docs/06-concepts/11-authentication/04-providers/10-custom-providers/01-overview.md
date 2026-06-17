@@ -1,5 +1,5 @@
 ---
-description: Custom providers extend Serverpod's authentication module with your own identity providers alongside the built-in ones.
+description: Custom providers extend Serverpod's authentication module with your own identity providers, alongside all the built-in ones the module ships with.
 ---
 
 # Custom providers

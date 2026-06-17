@@ -3,7 +3,7 @@ sidebar_label: Customizations
 description: Sign in with Google can be configured through GoogleIdpConfig, including how to load client secrets and use the available callbacks.
 ---
 
-# Customize Sign in with Google
+# Customize Google sign-in
 
 This page covers additional configuration options for the Google identity provider beyond the basic setup.
 

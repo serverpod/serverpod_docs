@@ -1,6 +1,6 @@
 ---
 sidebar_label: Customizing the UI
-description: Google sign-in UI can be customized with the GoogleSignInWidget and GoogleAuthController to build a custom flow.
+description: Google sign-in UI can be customized with the GoogleSignInWidget and GoogleAuthController to build a custom authentication flow in your app.
 ---
 
 # Customize the Google sign-in UI

@@ -3,7 +3,7 @@ sidebar_label: Configuration
 description: Facebook identity provider options include custom validation of account details before sign-in. Configure them beyond the basic setup.
 ---
 
-# Configure Sign in with Facebook
+# Configure Facebook sign-in
 
 This page covers configuration options for the Facebook identity provider beyond the basic setup.
 

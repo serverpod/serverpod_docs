@@ -1,6 +1,6 @@
 ---
 sidebar_label: Customizing the UI
-description: Apple sign-in UI can be customized with the AppleSignInWidget and AppleAuthController to build a custom flow.
+description: Apple sign-in UI can be customized with the AppleSignInWidget and AppleAuthController to build a custom authentication flow in your app.
 ---
 
 # Customize the Apple sign-in UI
