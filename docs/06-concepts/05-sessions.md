@@ -1,12 +1,14 @@
+---
+description: Understand Serverpod sessions, which provides access to the database, cache, storage, and messaging for every endpoint call.
+---
+
 # Sessions
 
-A Session in Serverpod is a request-scoped context object that exists for the duration of a single client request or connection. It provides access to server resources and maintains state during request processing.
-
-Sessions are the gateway to Serverpod's functionality - every interaction with the database, cache, file storage, or messaging system happens through a session. The framework automatically creates the appropriate session type when a client makes a request, manages its lifecycle, and ensures proper cleanup when the request completes. For special cases like background tasks or system operations, you can also create and manage sessions manually.
+Every endpoint method receives a `Session` object. It is the entry point for the database, cache, file storage, and messaging system. Serverpod creates and closes sessions automatically for endpoint calls; for background tasks you create and close them manually.
 
 :::note
 
-A Serverpod Session should not be confused with the concept of "web sessions" or "user sessions" which persist over multiple API calls. See the [Authentication documentation](./11-authentication/01-setup.md) for managing persistent authentication.
+A Serverpod Session should not be confused with the concept of "web sessions" or "user sessions" which persist over multiple API calls. See the [Authentication documentation](./authentication/setup) for managing persistent authentication.
 
 :::
 
@@ -14,12 +16,12 @@ A Serverpod Session should not be confused with the concept of "web sessions" or
 
 ### Essential properties
 
-- **`db`** - Database access. [See database docs](./06-database/01-connection.md)
-- **`caches`** - Local and distributed caching. [See caching docs](./08-caching.md)
-- **`storage`** - File storage operations. [See file uploads](./12-file-uploads.md)
-- **`messages`** - Server events for real-time communication within and across servers. [See server events docs](./16-server-events.md)
-- **`passwords`** - Credentials from config and environment. [See configuration](./07-configuration.md)
-- **`authenticated`** - Current user authentication info. [See authentication docs](./11-authentication/02-basics.md)
+- **`db`** - Database access. [See database docs](./database/connection)
+- **`caches`** - Local and distributed caching. [See caching docs](./caching)
+- **`storage`** - File storage operations. [See file uploads](./file-uploads)
+- **`messages`** - Server events for real-time communication within and across servers. [See server events docs](./server-events)
+- **`passwords`** - Credentials from config and environment. [See configuration](./configuration)
+- **`authenticated`** - Current user authentication info. [See authentication docs](./authentication/basics)
 
 ### Key methods
 
@@ -82,9 +84,7 @@ flowchart TB
     Close --> End([Request Complete])
 ```
 
-Sessions follow a predictable lifecycle from creation to cleanup. When a client makes a request, Serverpod automatically creates the appropriate session type (see table above), initializes it with a unique ID, and sets up access to resources like the database, cache, and file storage.
-
-During the active phase, your operation executes with full access to Serverpod resources through the session. You can query the database, write logs, send messages, and access storage - all operations are tracked and tied to this specific session. When the operation completes, most sessions close automatically, writing any accumulated logs to the database and releasing all resources.
+When a client makes a request, Serverpod creates the appropriate session type (see table above) and tears it down when the operation completes. Most sessions close automatically; `InternalSession` is the exception.
 
 ### Internal Sessions
 
@@ -116,7 +116,7 @@ Cleanup callbacks run in the order they were registered and are called for all s
 
 ## Logging
 
-Serverpod batches log entries for performance. During normal operations, logs accumulate in memory and are written to the database in a single batch when the session closes. This includes all your `session.log()` calls, database query timings, and session metadata. The exception is streaming sessions (`MethodStreamSession` and `StreamingSession`), which write logs continuously by default to avoid memory buildup during long connections.
+Log entries are written to the database when the session closes. Streaming sessions (`MethodStreamSession` and `StreamingSession`) write logs continuously to avoid memory buildup during long connections.
 
 :::warning
 
@@ -300,4 +300,4 @@ withServerpod('test group', (sessionBuilder, endpoints) {
 });
 ```
 
-For detailed testing strategies, see the [testing documentation](./19-testing/01-get-started.md).
+For detailed testing strategies, see the [testing documentation](./testing/get-started).
