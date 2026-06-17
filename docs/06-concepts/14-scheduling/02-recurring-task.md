@@ -1,3 +1,7 @@
+---
+description: Implement cron-like recurring tasks in Serverpod by scheduling a future call from within itself to re-run at a fixed interval.
+---
+
 # Recurring Task
 
 The recommended way to achieve cron-like scheduling is by scheduling a future call inside another.
@@ -49,23 +53,22 @@ class ExampleFutureCall extends FutureCall {
 }
 ```
 
-Now when you schedule the `doWork` future call, it will continously invoke `_doWork` at an interval of 20 minutes.
+Now when you schedule the `doWork` future call, it will continuously invoke `_doWork` at an interval of 20 minutes.
 
 ```dart
-import 'package:serverpod/serverpod.dart'; 
-import 'package:serverpod_auth_idp_server/core.dart'; 
-  
-import 'src/generated/protocol.dart'; 
-import 'src/generated/endpoints.dart'; 
-  
-void run(List<String> args) async { 
-  final pod = Serverpod( 
-    args, 
-    Protocol(), 
-    Endpoints(), 
-  ); 
- 
-  await pod.start(); 
+import 'package:serverpod/serverpod.dart';
+
+import 'src/generated/protocol.dart';
+import 'src/generated/endpoints.dart';
+
+void run(List<String> args) async {
+  final pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+  );
+
+  await pod.start();
   await pod.futureCalls.callWithDelay(Duration(minutes: 20)).example.doWork(2);
 }
 ```
