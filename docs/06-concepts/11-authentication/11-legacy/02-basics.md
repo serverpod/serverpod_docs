@@ -1,4 +1,9 @@
-# The basics
+---
+sidebar_label: The basics
+description: Authentication tokens in the legacy serverpod_auth module are handled automatically. Learn how to access the signed-in user from the Session object.
+---
+
+# Legacy authentication basics
 
 Serverpod automatically checks if the user is logged in and if the user has the right privileges to access the endpoint. When using the `serverpod_auth` module you will not have to worry about keeping track of tokens, refreshing them or, even including them in requests as this all happens automatically under the hood.
 

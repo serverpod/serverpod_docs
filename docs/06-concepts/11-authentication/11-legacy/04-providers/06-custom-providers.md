@@ -1,3 +1,7 @@
+---
+description: Custom providers in the legacy serverpod_auth module let you implement your own authentication and connect users with auth tokens.
+---
+
 # Custom providers
 
 Serverpod's authentication module makes it easy to implement custom authentication providers. This allows you to leverage all the existing providers supplied by the module along with the specific providers your project requires.
