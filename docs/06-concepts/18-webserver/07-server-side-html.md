@@ -1,3 +1,7 @@
+---
+description: Server-side HTML rendering in Serverpod uses WidgetRoute and Mustache templates, with full access to the database and caching.
+---
+
 # Server-Side HTML
 
 For simple HTML pages, you can use `WidgetRoute` and `TemplateWidget`. The
@@ -107,10 +111,10 @@ class DataRoute extends WidgetRoute {
 
 :::info Alternative
 
-If you prefer [Jaspr](https://docs.page/schultek/jaspr), which provides a
-Flutter-like API for building web applications. You can integrate Jaspr with
-Serverpod's web server using custom `Route` classes, giving you full control
-over request handling while leveraging Jaspr's component model.
+[Jaspr](https://docs.page/schultek/jaspr) provides a Flutter-like API for
+building web applications. You can integrate it with Serverpod's web server
+using custom `Route` classes, giving you full control over request handling
+while using Jaspr's component model.
 
 :::
 
