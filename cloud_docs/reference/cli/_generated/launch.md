@@ -14,7 +14,6 @@ Usage: scloud launch [arguments]
 -p, --project                  The ID of the project.
     --plan=<starter|growth>    Selects the plan to use.
     --[no-]enable-db           Flag to enable the database for the project.
-    --[no-]deploy              Flag to immediately deploy the project.
     --dart-version             Overrides the Dart SDK version to use for building the project.
 
 Deployment options
