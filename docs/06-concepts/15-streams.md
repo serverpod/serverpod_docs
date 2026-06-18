@@ -77,7 +77,7 @@ All streams in parameters are closed when the method call is over.
 
 ### Authentication
 
-Authentication is seamlessly integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
+Authentication is integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
 
 Authentication is validated when the stream is first established, using the authentication data stored in the `Session` object. If a user's authentication is revoked, the stream is closed and an exception is thrown.
 
