@@ -368,7 +368,7 @@ Declare module dependencies and optionally assign nicknames for easier reference
 
 ```yaml
 modules:
-  serverpod_auth_idp:
+  serverpod_auth_core:
     nickname: auth
   my_custom_module:
     nickname: custom
