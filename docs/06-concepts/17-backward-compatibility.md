@@ -1,3 +1,7 @@
+---
+description: Keep your Serverpod server compatible with older client versions by following rules around endpoint signatures, serialized model fields, and future call methods.
+---
+
 # Backward compatibility
 
 As your app evolves, features will be added or changed. However, your users may still use older versions of the app as not everyone will update to the latest version and automatic updates through the app stores take time. Therefore it may be essential to make updates to your server compatible with older app versions.
@@ -41,7 +45,7 @@ class TeamV2Endpoint extends TeamEndpoint {
 }
 ```
 
-In the above example, we created a new `TeamV2` endpoint, which hides the `join` method and instead exposes a `joinWithCode` method with the added parameter and the new return type. Additionally all the other inherited (and untouched) methods from the parent class are exposed.
+In the above example, we created a new `TeamV2` endpoint, which hides the `join` method and instead exposes a `joinWithCode` method with the added parameter and the new return type. Additionally, all the other inherited (and untouched) methods from the parent class are exposed.
 
 While we may have liked to re-use the `join` method name, Dart inheritance rules do not allow doing so. Otherwise, we would have to write the endpoint from scratch, meaning without inheritance, and re-implement all methods we would like to keep.
 

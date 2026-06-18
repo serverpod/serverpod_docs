@@ -1,3 +1,7 @@
+---
+description: Use Serverpod's built-in event messaging system to send and receive messages within or across servers, coordinating streams and shared state via channels.
+---
+
 # Server events
 
 Serverpod framework comes with a built-in event messaging system. This enables efficient message exchange within and across servers, making it ideal for scenarios where shared state is needed, such as coordinating streams or managing data across a server cluster.
@@ -25,7 +29,7 @@ var message = UserUpdate(); // Model that represents changes to user data.
 session.messages.postMessage('user_updates', message);
 ```
 
-In the example above, the message published on the `user_updates` channel. Any subscriber to this channel in the server will receive the message.
+In the example above, the message is published on the `user_updates` channel. Any subscriber to this channel in the server will receive the message.
 
 ### Global messages
 
@@ -46,7 +50,7 @@ If Redis is not enabled, sending global messages will throw an exception.
 
 ## Receiving messages
 
-Receiving messages is just as simple as sending them! Serverpod provides two ways to handle incoming messages: by creating a stream that subscribes to a channel or by adding a listener to a channel.
+Serverpod provides two ways to handle incoming messages: by creating a stream that subscribes to a channel or by adding a listener to a channel.
 
 ### Creating a stream
 
@@ -59,11 +63,11 @@ stream.listen((message) {
 })
 ```
 
-In the above example, a stream is created that listens to the `user_updates` channel and processes incoming requests.
+In the above example, a stream is created that listens to the `user_updates` channel and processes incoming messages.
 
 #### Stream lifecycle
 
-The stream is automatically closed when the session is closed. If you want to close the stream manually, you simply cancel the stream subscription.
+The stream is automatically closed when the session is closed. To close the stream manually, cancel the stream subscription.
 
 ```dart
 var stream = session.messages.createStream('user_updates');
@@ -73,8 +77,6 @@ var subscription = stream.listen((message) {
 
 subscription.cancel();
 ```
-
-In the above example, the stream is first created and then canceled.
 
 ### Adding a listener
 
@@ -86,7 +88,7 @@ session.messages.addListener('user_updates', (message) {
 });
 ```
 
-In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. The listener will be called regardless if a message is published globally by another server or internally by the same server.
+In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. The listener will be called regardless of whether a message is published globally by another server or internally by the same server.
 
 #### Listener lifecycle
 
