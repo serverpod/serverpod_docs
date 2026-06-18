@@ -116,24 +116,13 @@ By default, endpoints for all providers are disabled. To enable a provider, it i
     class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
     ```
 
-3. Run `serverpod generate` to generate the client code and endpoint methods for the provider.
+3. Start the server with `serverpod start`. It generates the client code and endpoint methods for the provider, then runs the server with hot reload.
 
     ```bash
-    $ serverpod generate
+    $ serverpod start
     ```
 
-4. Create a migration to initialize the database for the provider.
-
-    ```bash
-    # Create the migration
-    $ serverpod create-migration
-
-    # Start the database container
-    $ docker compose up --build --detach
-
-    # Apply the migration
-    $ dart run bin/main.dart --role maintenance --apply-migrations
-    ```
+4. Create and apply the migration that initializes the database for the provider. In the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
     :::info
     If this is the first time creating migrations after adding the module, besides the provider tables, all auth module tables will also be created. More detailed migration instructions can be found in the [migration guide](../database/migrations).

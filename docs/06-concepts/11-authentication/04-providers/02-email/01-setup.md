@@ -81,7 +81,7 @@ import 'package:serverpod_auth_idp_server/providers/email.dart';
 class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
 ```
 
-Then, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

@@ -145,15 +145,15 @@ import 'package:serverpod_auth_idp_server/providers/github.dart';
 class GitHubIdpEndpoint extends GitHubIdpBaseEndpoint {}
 ```
 
-### Generate code and apply migrations
+### Start the server
 
-Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
+Start the server from your server project directory (e.g., `my_project_server/`):
 
 ```bash
-serverpod generate
-serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
+
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 :::warning
 Skipping the migration will cause the server to crash at runtime when the GitHub provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -276,7 +276,7 @@ To keep these values out of `main.dart` and vary them per build, read them from 
 
 ### Show the GitHub sign-in button
 
-The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GitHubIdpEndpoint` is exposed and `serverpod generate` has run, the GitHub button appears inside it.
+The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GitHubIdpEndpoint` is exposed and the client code has been regenerated, the GitHub button appears inside it.
 
 To customize the GitHub button or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
 
