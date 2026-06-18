@@ -1,3 +1,7 @@
+---
+description: Request data in Serverpod's web server is accessible via Relic's type-safe accessors for path parameters, query parameters, headers, and the request body.
+---
+
 # Request Data
 
 Once a route matches, you'll need to extract data from the request. Relic

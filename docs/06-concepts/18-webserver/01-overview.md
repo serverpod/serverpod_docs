@@ -1,3 +1,7 @@
+---
+description: Serverpod's built-in web server, built on the Relic framework, lets you serve web pages, REST APIs, webhooks, and static files alongside your application server.
+---
+
 # Overview
 
 In addition to the application server, Serverpod comes with a built-in web server. The web server allows you to access your database and business layer the same way you would from a method call from an app. This makes it simple to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or define custom REST APIs to communicate with third-party services.
@@ -31,7 +35,7 @@ pod.webServer.addRoute(HelloRoute(), '/api/hello');
 await pod.start();
 ```
 
-Visit `http://localhost:8080/api/hello` to see your API response.
+Visit `http://localhost:8082/api/hello` to see your API response.
 
 ## Core concepts
 
@@ -87,7 +91,7 @@ Routes are matched in the order they were added.
 
 ## When to use what
 
-### Rest apis → custom routes
+### REST APIs → custom routes
 
 For REST APIs, webhooks, or custom HTTP handlers, use custom `Route` classes:
 
