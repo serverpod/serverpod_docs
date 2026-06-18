@@ -1,5 +1,5 @@
 ---
-description: The legacy string-based API for registering and scheduling future calls, prefer the type-safe API for new code.
+description: The legacy string-based API for registering and scheduling future calls. Prefer the type-safe API for new code.
 ---
 
 # Legacy
