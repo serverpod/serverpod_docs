@@ -1,4 +1,5 @@
 ---
+description: Best practices for Serverpod integration testing, import only the generated test tools file, rely on automatic database rollback, and always call endpoints through the provided endpoints object.
 # Don't display do's and don'ts in the table of contents
 toc_max_heading_level: 2
 ---
