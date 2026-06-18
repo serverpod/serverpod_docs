@@ -1,3 +1,7 @@
+---
+description: Extend or override FutureCall classes from other Serverpod modules, including support for abstract base classes that expose their methods through subclasses.
+---
+
 # Inheritance
 
 Inheritance gives you the possibility to modify the behavior of `FutureCall` classes defined in other Serverpod modules. If the parent `FutureCall` class was marked as `abstract`, no code is generated for it.
@@ -86,6 +90,6 @@ class ExcitedGreeter extends Greeter {
 }
 ```
 
-Since `Greeter` is `abstract`, it will not be exposed on the server. The `ExcitedGreeter` will expose a single `hello` method, and its implementation will augment the superclass's one by adding `!!!` to the output.
+Since `Greeter` is `abstract`, it will not be exposed on the server. The `ExcitedGreeter` will expose a single `hello` method, overriding the superclass implementation by adding `!!!` to the output.
 
 This way, you can modify the behavior of future call methods while still sharing the implementation through calls to `super`. Be aware that the method signature has to be compatible with the base class per Dart's rules, meaning you can add optional parameters, but can not add required parameters or change the return type.
