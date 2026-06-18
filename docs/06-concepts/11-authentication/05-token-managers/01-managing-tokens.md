@@ -1,3 +1,7 @@
+---
+description: Token managers issue, validate, revoke, and list authentication tokens in Serverpod. Learn how they work and how to access them.
+---
+
 # Managing tokens
 
 The authentication system uses token managers to handle authentication tokens. Token managers are responsible for issuing, validating, revoking, and listing authentication tokens.
