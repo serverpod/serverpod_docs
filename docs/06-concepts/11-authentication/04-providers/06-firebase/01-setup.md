@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Firebase authentication connects any Firebase sign-in method to your Serverpod backend and syncs the authenticated user with a server-side session.
+---
+
+# Set up Firebase authentication
 
 Firebase authentication lets you use any Firebase sign-in method (email/password, phone, Google, Apple, Facebook, etc.) with your Serverpod backend. Firebase handles the sign-in flow through its own SDKs, while Serverpod syncs the authenticated user and manages the server-side session.
 

@@ -1,4 +1,9 @@
-# Troubleshooting
+---
+sidebar_label: Troubleshooting
+description: Sign in with GitHub failures, from setup mistakes to OAuth callback errors, and how to diagnose and resolve each one in your Serverpod app.
+---
+
+# Troubleshoot GitHub sign-in
 
 This page helps you identify common Sign in with GitHub failures, explains why they occur, and shows how to resolve them. For underlying issues with the OAuth callback library, see the [flutter_web_auth_2 documentation](https://pub.dev/packages/flutter_web_auth_2).
 

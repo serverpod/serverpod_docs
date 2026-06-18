@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: GitHub sign-in UI can be customized with the GitHubSignInWidget and GitHubAuthController to build a custom authentication flow in your app.
+---
+
+# Customize the GitHub sign-in UI
 
 When using the GitHub identity provider, you can customize the UI to your liking. You can use the `GitHubSignInWidget` to display the GitHub Sign-In flow in your own custom UI, or you can use the `GitHubAuthController` to build a completely custom authentication interface.
 
