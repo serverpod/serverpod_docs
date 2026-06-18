@@ -1,3 +1,7 @@
+---
+description: Add indexes to Serverpod database tables to improve query performance, including unique, GIN, HNSW, and IVFFLAT vector indexes.
+---
+
 # Indexing
 
 For performance reasons, you may want to add indexes to your database tables. These are added in the YAML-files defining the serializable objects.

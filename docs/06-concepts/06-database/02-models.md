@@ -1,3 +1,7 @@
+---
+description: Map serializable models to database tables, with support for custom ID types, non-persistent fields, JSONB storage, and column name overrides.
+---
+
 # Models
 
 It's possible to map serializable models to tables in your database. To do this, add the `table` key to your yaml file:
@@ -123,7 +127,7 @@ If you change the `serializationDataType` between `json` and `jsonb` at any leve
 
 ## Change ID type
 
-Changing the type of the `id` field allows you to customize the identifier type for your database tables. This is done by declaring the `id` field on table models with one of the supported types. If the field is omitted, the id field will still be created with type `int`, as have always been.
+Changing the type of the `id` field allows you to customize the identifier type for your database tables. This is done by declaring the `id` field on table models with one of the supported types. If the field is omitted, the id field will still be created with type `int` by default.
 
 The following types are supported for the `id` field:
 
@@ -147,7 +151,7 @@ fields:
 class: IntIdTable
 table: int_id_table
 fields:
-  id: int?, defaultPersist=serial  // The default keyword for 'int' is optional.
+  id: int?, defaultPersist=serial  # The default keyword for 'int' is optional.
 ```
 
 #### Default Uuid model value

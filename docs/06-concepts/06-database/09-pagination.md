@@ -1,3 +1,7 @@
+---
+description: Paginate database query results in Serverpod using limit and offset, or implement cursor-based pagination for frequently updated datasets.
+---
+
 # Pagination
 
 Serverpod provides built-in support for pagination to help manage large datasets, allowing you to retrieve data in smaller chunks. Pagination is achieved using the `limit` and `offset` parameters.

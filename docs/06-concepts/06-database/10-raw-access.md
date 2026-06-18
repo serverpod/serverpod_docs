@@ -1,3 +1,7 @@
+---
+description: Execute raw SQL queries directly against the database using Serverpod's unsafe query methods with support for named and positional parameter binding.
+---
+
 # Raw access
 
 The library provides methods to execute raw SQL queries directly on the database for advanced scenarios.
@@ -34,9 +38,9 @@ Simple query mode is suitable for:
 * Situations where the extended query protocol is not available (e.g., replication mode or with proxies like PGBouncer).
 
 ```dart
-  DatabaseResult result = await session.db.unsafeSimpleQuery(
-      r'SELECT * FROM mytable WHERE id = 1; SELECT * FROM othertable;'
-  );
+DatabaseResult result = await session.db.unsafeSimpleQuery(
+  r'SELECT * FROM mytable WHERE id = 1; SELECT * FROM othertable;',
+);
 ```
 
 ## `unsafeSimpleExecute`
@@ -46,9 +50,9 @@ Similar to `unsafeExecute`, but uses the simple query protocol. It does not retu
 Simple query mode is suitable for the same scenarios as `unsafeSimpleQuery`.
 
 ```dart
-  int result = await session.db.unsafeSimpleExecute(
-      r'DELETE FROM mytable WHERE id = 1; DELETE FROM othertable;'
-  );
+int result = await session.db.unsafeSimpleExecute(
+  r'DELETE FROM mytable WHERE id = 1; DELETE FROM othertable;',
+);
 ```
 
 ## Query parameters

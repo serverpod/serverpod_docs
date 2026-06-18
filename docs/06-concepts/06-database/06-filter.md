@@ -1,3 +1,7 @@
+---
+description: Build type-safe database filter expressions in Serverpod using column operations, logical operators, and relation filters.
+---
+
 # Filter
 
 Serverpod makes it easy to build expressions that are statically type-checked. Columns and relational fields are referenced using table descriptor objects. The table descriptors, `t`, are accessible from each model and are passed as an argument to a model specific expression builder function. A callback is then used as argument to the `where` parameter when fetching data from the database.
@@ -16,7 +20,8 @@ Compare a column to an exact value, meaning only rows that match exactly will re
 
 ```dart
 await User.db.find(
-  where: (t) => t.name.equals('Alice')
+  session,
+  where: (t) => t.name.equals('Alice'),
 );
 ```
 

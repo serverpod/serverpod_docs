@@ -1,3 +1,7 @@
+---
+description: Sort database query results by one or more columns in Serverpod using orderBy and orderByList, with support for relational fields and aggregated counts.
+---
+
 # Sort
 
 It is often desirable to order the results of a database query. The 'find' method has an `orderBy` parameter where you can specify a column for sorting. The parameter takes a callback as an argument that passes a model-specific table descriptor, also accessible through the `t` field on the model. The table descriptor represents the database table associated with the model and includes fields for each corresponding column. The callback is then used to specify the column to sort by.
@@ -11,7 +15,7 @@ var companies = await Company.db.find(
 
 In the example we fetch all companies and sort them by their name.
 
-By default the order is set to ascending, this can be changed to descending by setting the param `orderDecending: true`.
+By default, results are sorted in ascending order. To sort in descending order, call `.desc()` on the column:
 
 ```dart
 var companies = await Company.db.find(
