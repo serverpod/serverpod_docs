@@ -88,8 +88,8 @@ The following table shows the built-in secrets that Serverpod uses for its core 
 
 For secrets related to first-party Serverpod packages, see their respective documentation:
 
-- **Cloud storage (GCP/S3)**: [Uploading files](file-uploads)
-- **Authentication**: [Authentication Setup](authentication/setup#storing-secrets)
+- **Cloud storage**: see [Uploading files](file-uploads) for Google Cloud Storage, AWS S3, and Cloudflare R2 secrets.
+- **Authentication**: see [Storing Secrets](authentication/setup#storing-secrets) on the Authentication setup page.
 
 #### Custom Secrets
 
