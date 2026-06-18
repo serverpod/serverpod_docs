@@ -1,5 +1,5 @@
 ---
-description: Schedule future work in Serverpod using future calls — invoke methods after a delay, at a specific time, or on a recurring interval, with persistence across restarts.
+description: Schedule future work in Serverpod using future calls: invoke methods after a delay, at a specific time, or on a recurring interval, with persistence across restarts.
 ---
 
 # Setup
