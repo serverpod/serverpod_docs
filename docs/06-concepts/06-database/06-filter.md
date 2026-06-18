@@ -404,3 +404,92 @@ await User.db.find(
 ```
 
 In the example we fetch all users that have only "book" orders.
+
+## Geography operators
+
+All geography field types (`GeographyPoint`, `GeographyLineString`, `GeographyPolygon`, `GeographyGeometryCollection`) support spatial filter and ordering operations.
+
+### intersects
+
+Returns rows where the geography column spatially intersects the given geography value. Wraps `ST_Intersects`.
+
+```dart
+var point = GeographyPoint(longitude: 2.35, latitude: 48.85);
+
+await Store.db.find(
+  session,
+  where: (t) => t.location.intersects(point),
+);
+```
+
+### dwithin
+
+Returns rows where the geography column is within a given distance (in metres) of the given geography value. Wraps `ST_DWithin`.
+
+```dart
+var point = GeographyPoint(longitude: 2.35, latitude: 48.85);
+
+await Store.db.find(
+  session,
+  where: (t) => t.location.dwithin(point, 1000),
+);
+```
+
+### distance
+
+Returns the distance in metres between the geography column and the given geography value. Wraps `ST_Distance`. The result can be used in `orderBy` for nearest-first ordering, or compared numerically in `where`.
+
+```dart
+var point = GeographyPoint(longitude: 2.35, latitude: 48.85);
+
+// Order results nearest-first
+await Store.db.find(
+  session,
+  orderBy: (t) => t.location.distance(point),
+);
+
+// Filter by distance and order results nearest-first
+await Store.db.find(
+  session,
+  where: (t) => t.location.distance(point) < 5000,
+  orderBy: (t) => t.location.distance(point),
+);
+```
+
+### contains
+
+Returns rows where the geography column fully contains the given geography value. Wraps `ST_Covers`.
+
+```dart
+var point = GeographyPoint(longitude: 2.35, latitude: 48.85);
+
+await DeliveryZone.db.find(
+  session,
+  where: (t) => t.boundary.contains(point),
+);
+```
+
+### within
+
+Returns rows where the geography column is fully within the given geography value. Wraps `ST_CoveredBy`.
+
+```dart
+var zone = GeographyPolygon(
+  exteriorRing: [
+    GeographyPoint(longitude: 2.30, latitude: 48.82),
+    GeographyPoint(longitude: 2.40, latitude: 48.82),
+    GeographyPoint(longitude: 2.40, latitude: 48.90),
+    GeographyPoint(longitude: 2.30, latitude: 48.90),
+    GeographyPoint(longitude: 2.30, latitude: 48.82),
+  ],
+);
+
+await Store.db.find(
+  session,
+  where: (t) => t.location.within(zone),
+);
+```
+
+:::tip
+For optimal performance with spatial queries, consider creating a GIST index on your geography fields. See the [Geography indexes](indexing#geography-indexes) section for more details.
+:::
