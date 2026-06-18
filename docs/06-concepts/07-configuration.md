@@ -1,4 +1,8 @@
-# Configurations
+---
+description: Configure Serverpod using YAML files, environment variables, or a Dart config object, with full reference tables for all available options.
+---
+
+# Configuration
 
 Serverpod can be configured in a few different ways. The minimum required settings to provide is the configuration for the API server. If no settings are provided at all, the default settings for the API server are used.
 
@@ -141,8 +145,6 @@ You can also define custom passwords using environment variables with the `SERVE
 | Environment variable format | Description                                                                                                                               |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` will be stripped from the key name. |
-
-**Example:**
 
 To define a custom password through an environment variable:
 

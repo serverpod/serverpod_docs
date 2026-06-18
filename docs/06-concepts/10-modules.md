@@ -1,3 +1,7 @@
+---
+description: Add, reference, and create Serverpod modules, reusable packages that bundle server, client, and Flutter code with their own endpoints and database tables.
+---
+
 # Modules
 
 Serverpod is built around the concept of modules. A Serverpod module is similar to a Dart package but contains both server, client, and Flutter code. A module contains its own namespace for endpoints and methods to minimize the risk of conflicts.

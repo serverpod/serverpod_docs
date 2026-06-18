@@ -1,3 +1,7 @@
+---
+description: Log custom messages, exceptions, and queries in Serverpod using the session log method, with configurable retention, console output, and database storage.
+---
+
 # Logging
 
 Serverpod uses the database for storing logs; this makes it easy to search for errors, slow queries, or debug messages. To log custom messages during the execution of a session, use the `log` method of the `session` object. When the session is closed, either from successful execution or by failing from throwing an exception, the messages are written to the log. By default, session log entries are written for every completed session.
@@ -75,7 +79,7 @@ You can use the companion app  **[Serverpod Insights](../tools/insights)** to re
 
 Since log entries are stored in the database when persistent logging is enabled, the logs table can grow without bound if not purged. Serverpod can automatically purge logs based on configurable retention policies to prevent unchecked storage growth.
 
-##### Defaults values
+##### Default values
 
 - **Cleanup interval**: 24 hours — the cleanup job runs once per day.
 - **Retention period**: 90 days — removes entries older than this.
