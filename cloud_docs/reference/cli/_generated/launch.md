@@ -10,20 +10,21 @@ Otherwise it will guide you through setting up a new Serverpod Cloud project.
 
 
 Usage: scloud launch [arguments]
--h, --help                     Print this usage information.
--p, --project                  The ID of the project.
-    --plan=<starter|growth>    Selects the plan to use.
-    --dart-version             Overrides the Dart SDK version to use for building the project.
+-h, --help                       Print this usage information.
+-p, --project                    The ID of the project.
+    --[no-]pre-deploy-scripts    Set up pre-deploy scripts.
+                                 (defaults to on)
+    --dart-version               Overrides the Dart SDK version to use for building the project.
 
 Deployment options
--c, --concurrency=<integer>    Number of concurrent files processed when zipping the project.
-                               (defaults to "5")
-    --dry-run                  Do not actually deploy, just print the deployment steps.
-    --show-files               Display the file tree that will be uploaded.
--o, --output                   Save the deployment zip file to the specified path. Must end with
-                               .zip
-    --[no-]await               Await the deployment to finish while showing status progression.
-                               (defaults to on)
+-c, --concurrency=<integer>      Number of concurrent files processed when zipping the project.
+                                 (defaults to "5")
+    --dry-run                    Do not actually deploy, just print the deployment steps.
+    --show-files                 Display the file tree that will be uploaded.
+-o, --output                     Save the deployment zip file to the specified path. Must end with
+                                 .zip
+    --[no-]await                 Await the deployment to finish while showing status progression.
+                                 (defaults to on)
 
 Run "scloud help" to see global options.
 
