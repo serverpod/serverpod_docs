@@ -31,8 +31,6 @@ Usage: scloud auth login [arguments]
                                              (defaults to "5m")
     --[no-]persistent                        Store the authentication credentials.
                                              (defaults to on)
-    --[no-]browser                           Allow CLI to open browser for logging in.
-                                             (defaults to on)
 
 Run "scloud help" to see global options.
 
