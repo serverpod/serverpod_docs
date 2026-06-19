@@ -151,6 +151,8 @@ This returns a `UserProfileModel` object containing the logged-in user's profile
 
 ### Extending the user profile edit endpoint
 
+For a step-by-step guide covering upload, display, validation, and storage, see [Manage user profile photos](./profile-photos).
+
 The authentication module provides a `UserProfileEditBaseEndpoint` abstract class that you can extend to expose user profile editing functionality to your app. This base endpoint includes methods for:
 
 - Removing user images
