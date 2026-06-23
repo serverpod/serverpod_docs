@@ -55,11 +55,7 @@ catch(e) {
 
 ### Custom serializable exception classes
 
-Use the `exception` keyword in a Serverpod model file when you define a new
-exception for your project. If you already have a Dart exception class in a
-package shared by the server and client, the class must implement
-`SerializableException` for Serverpod to send it to the client. Otherwise,
-Serverpod treats the exception as an internal server error.
+If you already have a Dart exception class in a package shared by the server and client, the class must implement `SerializableException` for Serverpod to send it to the client. Otherwise, Serverpod treats the exception as an internal server error.
 
 ```dart
 import 'package:serverpod_serialization/serverpod_serialization.dart';
@@ -93,18 +89,14 @@ class UserFacingException implements SerializableException {
 }
 ```
 
-The class must also be known to Serverpod's generated serialization manager.
-Register it in the server project's `config/generator.yaml`, then run
-`serverpod generate`:
+The class must also be known to Serverpod's generated serialization manager. Register it in the server project's `config/generator.yaml`, then run `serverpod generate`:
 
 ```yaml
 extraClasses:
   - package:my_project_shared/my_project_shared.dart:UserFacingException
 ```
 
-The `SerializableException` interface marks the exception as safe to serialize
-to the client. The `extraClasses` entry lets Serverpod generate the
-deserialization code needed to reconstruct the exception on the client.
+The `SerializableException` interface marks the exception as safe to serialize to the client. See [Custom serializable classes](configuration#custom-serializable-classes) for how the `extraClasses` entry registers the type for code generation.
 
 ### Default values in exceptions
 
