@@ -57,6 +57,51 @@ catch(e) {
 }
 ```
 
+### Custom serializable exception classes
+
+If you already have a Dart exception class in a package shared by the server and client, the class must implement `SerializableException` for Serverpod to send it to the client. Otherwise, Serverpod treats the exception as an internal server error.
+
+```dart
+import 'package:serverpod_serialization/serverpod_serialization.dart';
+
+class UserFacingException implements SerializableException {
+  final String message;
+  final String? code;
+
+  UserFacingException({
+    required this.message,
+    this.code,
+  });
+
+  factory UserFacingException.fromJson(Map<String, dynamic> json) {
+    return UserFacingException(
+      message: json['message'] as String,
+      code: json['code'] as String?,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'code': code,
+    };
+  }
+
+  @override
+  String toString() => message;
+}
+```
+
+The class must also be known to Serverpod's generated serialization manager. Register it in the server project's `config/generator.yaml`, then run `serverpod generate`:
+
+```yaml
+extraClasses:
+  - package:my_project_shared/my_project_shared.dart:UserFacingException
+```
+
+The `SerializableException` interface marks the exception as safe to serialize to the client. See [Custom serializable classes](configuration#custom-serializable-classes) for how the `extraClasses` entry registers the type for code generation.
+
 ### Default values in exceptions
 
 Serverpod allows you to specify default values for fields in exceptions, similar to how it's done in models using the `default` and `defaultModel` keywords. If you're unfamiliar with how these keywords work, you can refer to the [Default Values](models#default-values) section in the [Working with Models](models) documentation.
