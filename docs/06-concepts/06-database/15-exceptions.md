@@ -1,8 +1,10 @@
+---
+description: Serverpod wraps database failures in typed exceptions. Learn when each database exception is thrown and how to handle them.
+---
+
 # Database exceptions
 
-Serverpod wraps database failures in exceptions that implement `DatabaseException`.
-This gives you one common type to catch for database failures and more specific
-types when you want to handle a known operation failure.
+Serverpod wraps database failures in exceptions that implement `DatabaseException`. This gives you one common type to catch for database failures and more specific types when you want to handle a known operation failure.
 
 ```dart
 try {
@@ -23,10 +25,7 @@ try {
 }
 ```
 
-When a database exception is not caught inside an endpoint, it follows
-Serverpod's normal endpoint exception handling and is logged as an uncaught
-server exception. Serverpod does not serialize database exception details and
-send them to the client; those details stay server-side in the logs.
+When a database exception is not caught inside an endpoint, it follows Serverpod's normal endpoint exception handling and is logged as an uncaught server exception. Serverpod does not serialize database exception details and send them to the app; those details stay server-side in the logs. See [Error handling and exceptions](../exceptions) for how uncaught exceptions reach the app.
 
 ## Exception types
 
@@ -42,9 +41,7 @@ send them to the client; those details stay server-side in the logs.
 
 ## Query exception details
 
-`DatabaseQueryException` exposes optional fields from the underlying database
-adapter. These fields are useful for logging and for handling known database
-errors:
+The `DatabaseQueryException` type exposes optional fields from the underlying database adapter. These fields are useful for logging and for handling known database errors:
 
 - `code`
 - `detail`
@@ -54,9 +51,7 @@ errors:
 - `constraintName`
 - `position`
 
-For example, PostgreSQL constraint errors can include a database error code and
-the violated constraint name. These values are database-adapter details, so
-write defensive code that handles `null` values.
+For example, PostgreSQL constraint errors can include a database error code and the violated constraint name. These values are database-adapter details, so write defensive code that handles `null` values.
 
 ```dart
 try {
@@ -74,19 +69,10 @@ try {
 
 ## Operation exceptions
 
-The row-level operation exceptions describe cases where Serverpod expected one
-row to be affected but the database result did not match that expectation. For
-example, `updateById` throws a `DatabaseUpdateRowException` when no row exists
-for the id you pass in.
+The row-level operation exceptions describe cases where Serverpod expected one row to be affected but the database result did not match that expectation. For example, `updateById` throws a `DatabaseUpdateRowException` when no row exists for the id you pass in.
 
-Batch and filtered operations have their own documented behavior. Some methods,
-such as `updateWhere` or `deleteWhere`, can validly affect zero rows and return
-an empty list instead of throwing a row-level exception.
+Batch and filtered operations have their own documented behavior. Some methods, such as `updateWhere` or `deleteWhere`, can validly affect zero rows and return an empty list instead of throwing a row-level exception.
 
 ## SQLite foreign key checks
 
-When using the client-side SQLite database, Serverpod can run a SQLite foreign
-key integrity check when it verifies database integrity, such as after applying
-migrations in debug mode. If SQLite reports invalid foreign key references,
-Serverpod throws `SqliteForeignKeyViolationException`. The exception contains
-the violating rows returned by SQLite's `PRAGMA foreign_key_check`.
+When using SQLite, Serverpod runs a foreign key integrity check after applying migrations in the development run mode. If SQLite reports invalid foreign key references, Serverpod throws `SqliteForeignKeyViolationException`. The exception contains the violating rows returned by SQLite's `PRAGMA foreign_key_check`.
