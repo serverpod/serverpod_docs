@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: Google sign-in UI can be customized with the GoogleSignInWidget and GoogleAuthController to build a custom authentication flow in your app.
+---
+
+# Customize the Google sign-in UI
 
 When using the Google identity provider, you can customize the UI to your liking. You can use the `GoogleSignInWidget` to display the Google Sign-In flow in your own custom UI, or you can use the `GoogleAuthController` to build a completely custom authentication interface.
 

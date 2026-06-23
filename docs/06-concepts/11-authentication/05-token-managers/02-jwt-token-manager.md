@@ -1,3 +1,7 @@
+---
+description: The JwtTokenManager provides stateless JWT authentication with short-lived access tokens and refresh token rotation. Configure it on the server.
+---
+
 # JWT Token Manager
 
 The `JwtTokenManager` uses JWT (JSON Web Tokens) for stateless authentication. This token manager provides:
@@ -52,17 +56,25 @@ Finally, run `serverpod generate` to generate the client code and expose the end
 
 ### Basic configuration options
 
-- `algorithm`: Required. The algorithm to use for signing tokens (HMAC SHA-512 or ECDSA SHA-512).
+- `algorithm`: Required. The algorithm to use for signing tokens (HMAC SHA-512, HMAC SHA-256 or ECDSA SHA-512).
 - `refreshTokenHashPepper`: Required. A secret pepper for hashing refresh tokens. Must be at least 10 characters long, but [the recommended length is 32 bytes](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2).
 
 #### Token Algorithms
 
-There are two supported token algorithms:
+There are three supported token algorithms:
 
 - **HMAC SHA-512**: Use HMAC SHA-512 for symmetric key signing.
 
     ```dart
     algorithm: JwtAlgorithm.hmacSha512(
+      SecretKey(pod.getPassword('authenticationTokenPrivateKey')!),
+    ),
+    ```
+
+- **HMAC SHA-256**: Use HMAC SHA-256 for symmetric key signing.
+
+    ```dart
+    algorithm: JwtAlgorithm.hmacSha256(
       SecretKey(pod.getPassword('authenticationTokenPrivateKey')!),
     ),
     ```
@@ -76,7 +88,7 @@ There are two supported token algorithms:
     ),
     ```
 
-As of now, the `JwtConfigFromPasswords` only supports HMAC SHA-512. To use ECDSA SHA-512, you need to pass the private and public keys manually.
+As of now, the `JwtConfigFromPasswords` only supports HMAC SHA-512 and HMAC SHA-256. To use ECDSA SHA-512, you need to pass the private and public keys manually.
 
 ### Extra configuration options
 

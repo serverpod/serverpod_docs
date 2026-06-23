@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Firebase authentication connects any Firebase sign-in method to your Serverpod backend and syncs the authenticated user with a server-side session.
+---
+
+# Set up Firebase authentication
 
 Firebase authentication lets you use any Firebase sign-in method (email/password, phone, Google, Apple, Facebook, etc.) with your Serverpod backend. Firebase handles the sign-in flow through its own SDKs, while Serverpod syncs the authenticated user and manages the server-side session.
 
@@ -134,15 +139,15 @@ import 'package:serverpod_auth_idp_server/providers/firebase.dart';
 class FirebaseIdpEndpoint extends FirebaseIdpBaseEndpoint {}
 ```
 
-### 3. Generate code and apply migrations
+### 3. Start the server
 
-Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
+Start the server from your server project directory (e.g., `my_project_server/`):
 
 ```bash
-serverpod generate
-serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
+
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 :::note
 Skipping the migration will cause the server to crash at runtime when the Firebase provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).

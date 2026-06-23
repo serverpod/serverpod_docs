@@ -1,3 +1,7 @@
+---
+description: Add indexes to Serverpod database tables to improve query performance, including unique, GIN, HNSW, and IVFFLAT vector indexes.
+---
+
 # Indexing
 
 For performance reasons, you may want to add indexes to your database tables. These are added in the YAML-files defining the serializable objects.
@@ -70,7 +74,11 @@ indexes:
     type: brin
 ```
 
-If no type is specified the default is `btree`. All [PostgreSQL index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+If no type is specified the default is `btree`. All [Postgres index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+
+:::info
+Index types are only supported for Postgres. On SQLite, only `btree` indexes are supported. Indexes declared with different types on the models will be skipped when creating a migration and a warning will be logged.
+:::
 
 ## GIN indexes
 
@@ -117,10 +125,6 @@ indexes:
 
 :::tip
 If you only need containment queries (`@>`), use `jsonbPathOps` — it produces a smaller and faster index than the default `jsonbOps`.
-:::
-
-:::info
-GIN indexes are a PostgreSQL feature. On SQLite, GIN index definitions are silently skipped during migration generation.
 :::
 
 For details on configuring JSONB storage on your model fields, see [Storing serializable fields as JSONB](models#storing-serializable-fields-as-jsonb).
@@ -221,3 +225,23 @@ If more than one distance function is going to be frequently used on the same ve
 :::
 
 For more details on vector indexes and its configuration, refer to the [pgvector extension documentation](https://github.com/pgvector/pgvector/tree/master?tab=readme-ov-file#indexing).
+
+### Geography indexes
+
+Geography columns benefit from GIST (Generalized Search Tree) spatial indexes, which significantly improve the performance of spatial queries such as proximity searches, intersection tests, and containment checks.
+
+```yaml
+class: Store
+table: store
+fields:
+  name: String
+  location: GeographyPoint
+indexes:
+  store_location_idx:
+    fields: location
+    type: gist
+```
+
+:::tip
+A GIST index on a geography column accelerates all spatial operations (`intersects`, `dwithin`, `distance`, `contains`, `within`). For tables with many rows and frequent spatial queries, adding a GIST index is strongly recommended.
+:::

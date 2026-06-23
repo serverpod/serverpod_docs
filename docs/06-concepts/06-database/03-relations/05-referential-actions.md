@@ -1,6 +1,10 @@
+---
+description: Control how updates and deletes propagate across related tables using the onUpdate and onDelete referential action properties.
+---
+
 # Referential actions
 
-In Serverpod, the behavior of update and delete for relations can be precisely defined using the onUpdate and onDelete properties. These properties map directly to the corresponding referential actions in PostgreSQL.
+In Serverpod, the behavior of update and delete for relations can be precisely defined using the `onUpdate` and `onDelete` properties. These properties map directly to the corresponding referential actions in the database.
 
 ## Available referential actions
 
@@ -14,7 +18,7 @@ In Serverpod, the behavior of update and delete for relations can be precisely d
 
 ## Syntax
 
-Use the following syntax to apply referential actions
+Use the following syntax to apply referential actions:
 
 ```yaml
 relation(onUpdate=<ACTION>, onDelete=<ACTION>)

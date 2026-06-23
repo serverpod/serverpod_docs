@@ -1,9 +1,17 @@
+---
+description: Fine-tune PostgreSQL query behavior per transaction or globally using Serverpod's runtime parameters, particularly for vector similarity search optimization.
+---
+
 # Runtime parameters
 
 Runtime parameters in Serverpod allow you to fine-tune the behavior of the database engine for specific queries or workloads. This can significantly improve performance, especially for complex queries or large datasets.
 
 :::warning
 Setting runtime parameters affects PostgreSQL's query planning and execution. Always test different parameter combinations with your specific dataset and query patterns to find the optimal configuration.
+:::
+
+:::info
+Runtime parameters are only supported for PostgreSQL. Setting runtime parameters on SQLite is a no-op.
 :::
 
 ## Parameter scopes

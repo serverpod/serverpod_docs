@@ -14,6 +14,8 @@ Usage: scloud deploy [arguments]
     --show-files               Display the file tree that will be uploaded.
 -o, --output                   Save the deployment zip file to the specified path. Must end with
                                .zip
+    --[no-]await               Await the deployment to finish while showing status progression.
+                               (defaults to on)
     --dart-version             Overrides the Dart SDK version to use for building the project.
 
 Run "scloud help" to see global options.
@@ -46,7 +48,7 @@ Examples
     $ scloud deploy --output deployment.zip
 
 
-See the full documentation at: /cloud/reference/cli/commands/deploy
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/deploy
 
 ```
 

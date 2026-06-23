@@ -1,3 +1,7 @@
+---
+description: User information in the legacy serverpod_auth module is read and updated through the Users class. Learn how to work with signed-in users.
+---
+
 # Working with users
 
 It's a common task to read or update user information on your server. You can always retrieve the id of a signed-in user through the session object.

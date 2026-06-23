@@ -14,7 +14,7 @@ Available subcommands:
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/auth
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
 
 ```
 
@@ -31,12 +31,10 @@ Usage: scloud auth login [arguments]
                                              (defaults to "5m")
     --[no-]persistent                        Store the authentication credentials.
                                              (defaults to on)
-    --[no-]browser                           Allow CLI to open browser for logging in.
-                                             (defaults to on)
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/auth
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
 
 ```
 
@@ -58,7 +56,7 @@ Sessions
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/auth
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
 
 ```
 
@@ -73,7 +71,7 @@ Usage: scloud auth list [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/auth
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
 
 ```
 
@@ -98,6 +96,6 @@ TTL: Expire after non-use
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/auth
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
 
 ```

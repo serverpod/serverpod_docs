@@ -3,56 +3,30 @@ title: Introduction
 sidebar_position: -1
 sidebar_label: Introduction
 sidebar_class_name: sidebar-introduction-icon
+description: Serverpod Cloud is a managed hosting platform for Serverpod apps. Deploy from the command line; Cloud manages runtime, networking, database, and secrets.
 ---
 
 # Introduction
 
-**Serverpod Cloud** is a fully managed hosting platform for Serverpod apps. It lets you deploy and run your Serverpod backend from the command line or via CI/CD. The platform manages all infrastructure needed to run your service in production. It can seamlessly scale to any size, and pricing is predictable. Serverpod Cloud handles networking, load balancing, custom domain names, and your database.
+Serverpod Cloud is a managed hosting platform for Serverpod apps with predictable pricing. You deploy your app with the `scloud` command-line interface or via CI/CD, and use the web console for account setup, billing, and project dashboards.
 
-This documentation covers account setup, installing and using the `scloud` command, deploying your server, configuring environments, and operating your services in production.
-
-## Zero-configuration deployments
-
-Deploy your Serverpod server directly from your project directory using the command line or integrate it into your CI/CD pipeline. No manual VM setup, container configuration, or infrastructure orchestration is needed.
+With [`scloud` installed](/cloud/getting-started/installation), launch your first project with one command. No Dockerfile, no container config, no infrastructure setup:
 
 ```bash
-### Install the CLI tool
-dart pub global activate serverpod_cloud_cli
-
-### Launch your Serverpod project
 scloud launch
 ```
 
-## Managed runtime and networking
+## What Serverpod Cloud manages
 
-Your deployment automatically receives a production-ready runtime environment with:
+- **Runtime and scaling.** Your app runs on a production runtime that scales as traffic grows.
+- **Networking and TLS.** Encrypted endpoints, certificates, and load balancing work without configuration.
+- **[Managed Postgres](/cloud/concepts/database)** (optional). Cloud can provision a production-grade Postgres database with automatic migrations and backups.
+- **[Secrets and environment variables](/cloud/concepts/passwords-secrets-env-vars).** Manage sensitive values through `scloud`; values are encrypted where applicable.
+- **[Custom domains](/cloud/concepts/custom-domains).** Attach your own domain; TLS certificates are provisioned and renewed. Cloud hosts both your backend and a preconfigured website for your Flutter web app.
+- **[Logs and inspection](/cloud/concepts/logs).** View logs in the CLI or in Serverpod Insights, the desktop log viewer (requires a database).
+- **PubSub, caching, and file storage.** Supported through the Serverpod framework using third-party services today; managed services are on the roadmap. See [Use Redis for PubSub and caching](/cloud/guides/redis) for the typical setup.
 
-- Encrypted endpoints and certificates that work reliably with high loads and streaming data.
-- Load balancing and automatic scaling to any size.
-- Health checks for your backend and related services.
+## Where to go next
 
-This allows your server to run reliably without configuring networking or reverse proxies.
-
-## Managed database (optional)
-
-Serverpod Cloud can provision and manage a production-grade PostgreSQL database for your project. When enabled, database migrations are applied automatically during deployment. All authentication tokens and keys are fully managed and configured, and your database is frequently backed up.
-
-## Secure passwords and secrets
-
-Manage secrets, passwords, and environment variables through the `scloud` CLI. Sensitive values are encrypted where applicable, allowing you to easily connect to 3rd party services while keeping your app's configuration out of your source code.
-
-## Custom domains and web server
-
-Attach your own domain to a deployment. TLS certificates are automatically provisioned and renewed. Serverpod Cloud will host both your backend service and a website preconfigured for a Flutter web app.
-
-## Insights, logs, and diagnostics
-
-Serverpod Cloud comes with Serverpod Insights, our visual log viewer, preconfigured (requires a database). This gives you access to our world-class logging and server monitoring.
-
-## PubSub and caching
-
-The Serverpod framework has built-in support for sending messages between your servers, and caching objects works out of the box. We are working on building a service native to Serverpod Cloud; in the meantime, it's easy to configure a 3rd party service.
-
-## File storage buckets
-
-A fully managed file upload and storage service is planned for Serverpod Cloud. While it's being built, you can still use a 3rd party service, such as GCP or AWS, as these (and other compatible services) are supported by the Serverpod framework.
+- [Install scloud](/cloud/getting-started/installation) to set up the CLI.
+- [Deploy your first app](/cloud/getting-started/launch) for a guided first deploy.

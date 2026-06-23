@@ -1,3 +1,7 @@
+---
+description: Lock specific database rows within a transaction in Serverpod to safely handle concurrent updates and prevent conflicting writes.
+---
+
 # Row locking
 
 Row-level locking allows you to lock specific rows in the database to prevent other transactions from modifying them while you work. This is essential for safely handling concurrent updates, such as processing payments, managing inventory, or any scenario where two transactions might conflict.
@@ -78,20 +82,20 @@ await session.db.transaction((transaction) async {
 The `lockMode` parameter determines the type of lock acquired. Different lock modes allow varying levels of concurrent access.
 
 | Lock Mode | Constant | Description |
-|---|---|---|
+| --- | --- | --- |
 | For update | `LockMode.forUpdate` | Exclusive lock that blocks all other locks. Use when you intend to update or delete the locked rows. |
 | For no key update | `LockMode.forNoKeyUpdate` | Exclusive lock that allows `forKeyShare` locks. Use when updating non-key columns only. |
 | For share | `LockMode.forShare` | Shared lock that blocks exclusive locks but allows other shared locks. Use when you need to ensure rows don't change while reading. |
 | For key share | `LockMode.forKeyShare` | Weakest lock that only blocks changes to key columns. |
 
-For a detailed explanation of how lock modes interact, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS).
+For a detailed explanation of how lock modes interact, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS). On SQLite, row locking is a no-op operation, since it only supports one write-transaction at a time.
 
 ## Lock behavior
 
 The `lockBehavior` parameter controls what happens when a requested row is already locked by another transaction. If not specified, the default behavior is to wait.
 
 | Behavior | Constant | Description |
-|---|---|---|
+| --- | --- | --- |
 | Wait | `LockBehavior.wait` | Wait until the lock becomes available. This is the default. |
 | No wait | `LockBehavior.noWait` | Throw an exception immediately if any row is already locked. |
 | Skip locked | `LockBehavior.skipLocked` | Skip rows that are currently locked and return only the unlocked rows. |

@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: The legacy serverpod_auth module adds email and social sign-in to older Serverpod projects. Install and configure it on the server and client.
+---
+
+# Set up the legacy auth module
 
 Serverpod comes with built-in user management and authentication. It is possible to build a [custom authentication implementation](custom-overrides), but the recommended way to authenticate users is to use the `serverpod_auth` module. The module makes it easy to authenticate with email or social sign-ins and currently supports signing in with email, Google, Apple, and Firebase.
 

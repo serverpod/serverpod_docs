@@ -217,6 +217,54 @@ const config = {
             from: ['/concepts/scheduling'],
             to: '/concepts/scheduling/setup',
           },
+          {
+            from: ['/cloud/reference/deployment/deploying-your-application'],
+            to: '/cloud/concepts/deployments',
+          },
+          {
+            from: ['/cloud/guides/logs', '/cloud/reference/logging'],
+            to: '/cloud/concepts/logs',
+          },
+          {
+            from: ['/cloud/guides/passwords'],
+            to: '/cloud/concepts/passwords-secrets-env-vars',
+          },
+          {
+            from: ['/cloud/guides/custom-domains'],
+            to: '/cloud/concepts/custom-domains',
+          },
+          {
+            from: ['/cloud/guides/database'],
+            to: '/cloud/concepts/database',
+          },
+          {
+            from: ['/cloud/reference/personal-access-tokens'],
+            to: '/cloud/concepts/personal-access-tokens',
+          },
+          {
+            from: ['/cloud/reference/deployment/assets'],
+            to: '/cloud/guides/ship-non-dart-files',
+          },
+          {
+            from: ['/cloud/reference/deployment/deployment-hooks'],
+            to: '/cloud/concepts/deployment-hooks',
+          },
+          {
+            from: ['/cloud/reference/deployment/github-automation'],
+            to: '/cloud/guides/deploy-from-ci-with-github-actions',
+          },
+          {
+            from: ['/cloud/reference/deployment/handling-private-dependencies'],
+            to: '/cloud/reference/private-dependencies',
+          },
+          {
+            from: ['/cloud/reference/deployment/dart-sdk-versions'],
+            to: '/cloud/reference/dart-sdk-versions',
+          },
+          {
+            from: ['/cloud/reference/project-id'],
+            to: '/cloud/reference/project-id-rules',
+          },
         ],
       },
     ],

@@ -1,3 +1,7 @@
+---
+description: Create relations between your own database tables and tables from Serverpod modules using a bridge table approach.
+---
+
 # Relations with modules
 
 Serverpod [modules](../../modules) usually come with predefined tables and data structures. Sometimes it can be useful to extend them with your data structures by creating a relation to the module tables. Relations to modules come with some restrictions since you do not own the definition of the table, you cannot change the table structure of a module table.

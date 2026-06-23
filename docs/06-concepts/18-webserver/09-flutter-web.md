@@ -1,3 +1,7 @@
+---
+description: Flutter web app serving in Serverpod uses FlutterRoute to handle WASM multi-threading headers, SPA-style routing, and cache control.
+---
+
 # Flutter web apps
 
 Serverpod can serve your Flutter web application directly, allowing you to host both your API and web frontend from the same server. `FlutterRoute` handles the specifics of serving Flutter web apps, including WASM multi-threading headers and SPA-style routing.

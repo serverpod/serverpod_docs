@@ -8,7 +8,7 @@ Usage: scloud me [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/me
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/me
 
 ```
 

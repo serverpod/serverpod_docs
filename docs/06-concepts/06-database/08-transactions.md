@@ -1,3 +1,7 @@
+---
+description: Group database operations into atomic transactions in Serverpod, with support for isolation levels, savepoints, and rollback.
+---
+
 # Transactions
 
 The essential point of a database transaction is that it bundles multiple steps into a single, all-or-nothing operation. The intermediate states between the steps are not visible to other concurrent transactions, and if some failure occurs that prevents the transaction from completing, then none of the steps affect the database at all.
@@ -23,17 +27,9 @@ In the example we insert a company and an employee in the same transaction. If a
 
 ## Transaction failure exceptions
 
-When the transaction callback throws an exception, Serverpod rolls back the
-transaction and rethrows that exception.
+When the database rejects a query inside the transaction, Serverpod throws a `DatabaseQueryException`. This can happen, for example, when concurrent writes conflict with the selected transaction isolation level, or when Postgres detects a deadlock.
 
-When the database rejects a query inside the transaction, Serverpod throws a
-`DatabaseQueryException`. This can happen, for example, when concurrent writes
-conflict with the selected transaction isolation level, or when PostgreSQL
-detects a deadlock.
-
-The exact database error code depends on why PostgreSQL rejected the query.
-Serverpod exposes PostgreSQL error code constants through `PgErrorCode`, so you
-can compare them with the `code` field on `DatabaseQueryException`.
+The exact database error code depends on why Postgres rejected the query. Serverpod exposes Postgres error code constants through `PgErrorCode`, so you can compare them with the `code` field on `DatabaseQueryException`.
 
 ```dart
 try {
@@ -65,9 +61,11 @@ For all PostgreSQL error codes, see the [PostgreSQL error code appendix](https:/
 The transaction isolation level can be configured when initiating a transaction. The isolation level determines how the transaction interacts with concurrent database operations. If no isolation level is supplied, the level is determined by the database engine.
 
 :::info
+The default isolation level for the Postgres database engine is `IsolationLevel.readCommitted`.
+:::
 
-At the time of writing, the default isolation level for the PostgreSQL database engine is `IsolationLevel.readCommitted`.
-
+:::info
+Transaction isolation is only supported for Postgres. SQLite uses `serializable` by default and currently does not support changing the transaction level to `readUncommitted`.
 :::
 
 To set the isolation level, configure the `isolationLevel` property of the `TransactionSettings` object:
@@ -88,7 +86,7 @@ The available isolation levels are:
 
 | Isolation Level | Constant | Description |
 | --- | --- | --- |
-| Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in PostgreSQL |
+| Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in Postgres |
 | Read committed | `IsolationLevel.readCommitted` | Each statement in the transaction sees a snapshot of the database as of the beginning of that statement. |
 | Repeatable read | `IsolationLevel.repeatableRead` | The transaction only observes rows committed before the first statement in the transaction was executed giving a consistent view of the database. If any conflicting writes among concurrent transactions occur, an exception is thrown. |
 | Serializable | `IsolationLevel.serializable` | Gives the same guarantees as `IsolationLevel.repeatableRead` but also throws if read rows are updated by other transactions. |
@@ -124,12 +122,12 @@ Once a savepoint is created, you can roll back to it by calling the `rollback` m
 await session.db.transaction((transaction) async {
   // Changes preserved in the database
   await Company.db.insertRow(session, company, transaction: transaction);
-  
+
   // Create savepoint
   var savepoint = await transaction.createSavepoint();
 
   await Employee.db.insertRow(session, employee, transaction: transaction);
-  // Changes rolled back 
+  // Changes rolled back
   await savepoint.rollback();
 });
 ```

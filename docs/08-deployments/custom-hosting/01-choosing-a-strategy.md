@@ -5,7 +5,7 @@ description: Choose how to self-host a Serverpod server, on a server cluster, a 
 
 # Choosing a strategy
 
-You can run a Serverpod server anywhere that supports a Dart process or a Docker container: a managed server cluster, a serverless platform, or your own machine. This page covers the trade-offs, and the following pages walk through each path. For the managed path, see [Serverpod Cloud](/cloud).
+You can run a Serverpod server anywhere that supports a Dart process or a Docker container: a managed server cluster, a serverless platform, or your own machine. This page covers the trade-offs. For the managed path, see [Serverpod Cloud](/cloud).
 
 ## Server cluster or serverless?
 
@@ -25,11 +25,8 @@ Serverless does not support:
 
 ## Pick a guide
 
-- [Google Cloud Engine with Terraform](./02-google-cloud-engine-terraform.md): server cluster on GCP.
-- [Google Cloud Run with GCP Console](./03-google-cloud-run-console.md): serverless on GCP.
-- [AWS EC2 with Terraform](./04-aws-ec2-terraform.md): server cluster on AWS.
-- [Hosting elsewhere](./05-hosting-elsewhere.md): run Serverpod on any Dart or Docker host.
-- [Community-supported deployments](./06-community-supported.md): tools built by the community.
+- [Hosting elsewhere](./02-hosting-elsewhere.md): run Serverpod on any Dart or Docker host.
+- [Community-supported deployments](./03-community-supported.md): tools built by the community.
 
 ## Approximate costs
 

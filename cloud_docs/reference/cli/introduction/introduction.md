@@ -1,49 +1,55 @@
 ---
-title: Introduction
+sidebar_label: Introduction
+description: The Serverpod Cloud CLI (scloud) reference. Every command, with the global options and environment variables that apply across all of them.
 sidebar_position: 1
 ---
 
-The Serverpod Cloud CLI provides all you need to create, manage, and deploy your
-Serverpod projects in Serverpod Cloud.
+# Introduction to the scloud CLI
 
-> If you're new to developing with Serverpod, check out the [create a Serverpod project guide](https://docs.serverpod.dev/get-started) in the Serverpod framework docs!
+The Serverpod Cloud CLI (`scloud`) creates, manages, and deploys your Serverpod projects on Cloud. This reference covers every command, option, and flag.
 
+## Install and authenticate
 
-## Getting started
+Before running any command:
 
-Run the following to install the CLI:
+- Install `scloud`. See [Install scloud](/cloud/getting-started/installation).
+- Authenticate with `scloud auth login` interactively, or pass a personal access token in non-interactive contexts like CI pipelines. See [Personal access tokens](/cloud/concepts/personal-access-tokens).
 
-```sh
-dart pub global activate serverpod_cloud_cli
+## Command syntax
+
+Every `scloud` invocation follows the same shape:
+
+```text
+scloud [global options] <command> [<subcommand>] [arguments] [options]
 ```
 
-Log in to your Serverpod Cloud account using the CLI:
-<br/>(If you don't have a Serverpod Cloud account yet, visit [Serverpod Cloud](https://serverpod.cloud/).)
+Global options can appear anywhere on the line; `scloud --token foo deploy` and `scloud deploy --token foo` are equivalent. When you run a command from a project directory containing `scloud.yaml`, the project ID is picked up automatically; pass `-p <project-id>` from anywhere else.
 
-```sh
-scloud auth login
-```
+## Global options
 
-Go to your Serverpod server directory (e.g. `./myproject/myproject_server`)
-and run the [`launch` command](/cloud/reference/cli/commands/launch)
-to get an interactive, guided set up of a new Serverpod Cloud project:
+A small set of options applies to every command: authentication (`--token`), project selection (`-p` / `--project`), output verbosity (`-v` / `--verbose`), and analytics (`-a` / `--analytics`). The full list, including timeouts and config-file overrides, lives on the [Global options](/cloud/reference/cli/global_options) page.
 
-```sh
-scloud launch
-```
+## Environment variables
 
-If the project requires any environment variables, secrets, or passwords, they can be added with the [`variable`](/cloud/reference/cli/commands/variable), [`secret`](/cloud/reference/cli/commands/secret), and [`password`](/cloud/reference/cli/commands/password) commands. See the [Configuration Management guide](/cloud/guides/passwords) for details on when to use each. Once the project is ready to be deployed, run the following command:
+Most global options have an environment-variable equivalent so workflows and CI don't need flags everywhere. The two you'll reach for most often:
 
-```sh
-scloud deploy
-```
+- **Authentication in CI:** `SERVERPOD_CLOUD_TOKEN` (equivalent to `--token`).
+- **Project selection:** `SERVERPOD_CLOUD_PROJECT_ID` (equivalent to `-p`).
 
-To follow the progress of the deployment, use the [`deployment show` command](/cloud/reference/cli/commands/deployment):
+The full list is on the [CLI environment variables](/cloud/reference/cli/env_vars) page.
 
-```sh
-scloud deployment show
-```
+## Where the concepts live
 
-That's it, you have now deployed your Serverpod app! 🚀
+Command pages describe *what* a command does. For the *why* and *when*, the concept pages are the home:
 
-For more information on the different commands, see the commands section in the side menu. For instance, to view the service's domains or to add your own custom domains, see the [`domain` command](/cloud/reference/cli/commands/domain).
+- Deploying, validating, rolling back: [Deployments](/cloud/concepts/deployments).
+- Pre- and post-deploy automation: [Deployment hooks](/cloud/concepts/deployment-hooks).
+- Runtime and build logs: [Logs](/cloud/concepts/logs).
+- Default and custom domains: [Custom domains](/cloud/concepts/custom-domains).
+- Managed PostgreSQL: [Database](/cloud/concepts/database).
+- Sensitive values and runtime config: [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars).
+- CI and headless authentication: [Personal access tokens](/cloud/concepts/personal-access-tokens).
+
+## How this reference is organized
+
+Each command page combines a hand-written introduction with auto-generated subcommand and option listings drawn from `scloud --help`. The sidebar lists commands alphabetically. Use the search box for fast lookup by flag or argument name.

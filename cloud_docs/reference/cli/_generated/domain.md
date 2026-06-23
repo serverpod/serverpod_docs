@@ -24,7 +24,7 @@ Available subcommands:
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/domain
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/domain
 
 ```
 
@@ -58,7 +58,7 @@ Usage: scloud domain attach [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/domain
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/domain
 
 ```
 
@@ -75,7 +75,7 @@ Usage: scloud domain list [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/domain
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/domain
 
 ```
 
@@ -93,7 +93,7 @@ Usage: scloud domain detach [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/domain
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/domain
 
 ```
 
@@ -111,6 +111,6 @@ Usage: scloud domain verify [arguments]
 
 Run "scloud help" to see global options.
 
-See the full documentation at: /cloud/reference/cli/commands/domain
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/domain
 
 ```

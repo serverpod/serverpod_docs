@@ -1,4 +1,8 @@
-# Configurations
+---
+description: Configure Serverpod using YAML files, environment variables, or a Dart config object, with full reference tables for all available options.
+---
+
+# Configuration
 
 Serverpod can be configured in a few different ways. The minimum required settings to provide is the configuration for the API server. If no settings are provided at all, the default settings for the API server are used.
 
@@ -57,6 +61,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 | SERVERPOD_DATABASE_REQUIRE_SSL            | database.requireSsl           | false     | Indicates if SSL is required for the database                                                                                                                                     |
 | SERVERPOD_DATABASE_IS_UNIX_SOCKET         | database.isUnixSocket         | false     | Specifies if the database connection is a Unix socket                                                                                                                             |
 | SERVERPOD_DATABASE_MAX_CONNECTION_COUNT   | database.maxConnectionCount   | 10        | The maximum number of connections in the database pool. Set to 0 or a negative value for unlimited connections.                                                                   |
+| SERVERPOD_DATABASE_FILE_PATH              | database.filePath             | -         | The SQLite database file path. Set this instead of host/port/name/user when using SQLite.                                                                                         |
 | SERVERPOD_REDIS_HOST                      | redis.host                    | -         | The host address of the Redis server                                                                                                                                              |
 | SERVERPOD_REDIS_PORT                      | redis.port                    | -         | The port number for the Redis server                                                                                                                                              |
 | SERVERPOD_REDIS_USER                      | redis.user                    | -         | The user name for Redis authentication                                                                                                                                            |
@@ -141,8 +146,6 @@ You can also define custom passwords using environment variables with the `SERVE
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` will be stripped from the key name. |
 
-**Example:**
-
 To define a custom password through an environment variable:
 
 ```bash
@@ -214,6 +217,36 @@ futureCall:
   scanInterval: 2000
 ```
 
+#### Database backends
+
+Serverpod supports both PostgreSQL and SQLite as database backends.
+
+:::warning
+The same database backend must be used for all run modes. Otherwise, an error will be thrown when generating migrations. This practice is recommended to ensure that the development environment is consistent with the production environment.
+:::
+
+##### PostgreSQL
+
+```yaml
+database:
+  host: localhost
+  port: 8090
+  name: database_name
+  user: postgres
+  maxConnectionCount: 10
+```
+
+Set the database password in `passwords.yaml` (`database`) or through `SERVERPOD_PASSWORD_database`.
+
+##### SQLite
+
+```yaml
+database:
+  filePath: server.db
+```
+
+No database password is required when using SQLite.
+
 ### Passwords file example
 
 The password file contains the secrets used by the server to connect to different services but you can also supply your secrets if you want. This file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs.
@@ -234,6 +267,10 @@ production:
   serviceSecret: 'production_service_secret'
   twilioApiKey: 'prod_twilio_key'
 ```
+
+:::info
+The `database` keyword is only needed for PostgreSQL. SQLite does not use a password.
+:::
 
 ### Dart config object example
 

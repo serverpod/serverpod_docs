@@ -1,4 +1,9 @@
-# Configuration
+---
+sidebar_label: Configuration
+description: Anonymous authentication can take an app attestation token to protect sign-in from abuse. Configure this and other options for the provider.
+---
+
+# Configure anonymous sign-in
 
 This page covers configuration options for the anonymous identity provider beyond the basic setup.
 

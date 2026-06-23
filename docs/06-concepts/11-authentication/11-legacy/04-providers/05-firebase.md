@@ -1,4 +1,9 @@
-# Firebase
+---
+sidebar_label: Firebase
+description: Firebase authentication in the legacy serverpod_auth module uses Firebase UI auth to add social sign-in methods Serverpod does not support directly.
+---
+
+# Firebase authentication
 
 Serverpod uses [Firebase UI auth](https://pub.dev/packages/firebase_ui_auth) to handle authentication through Firebase. It allows you to add social sign-in types that Serverpod doesn't directly support.
 

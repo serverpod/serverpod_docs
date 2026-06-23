@@ -1,3 +1,7 @@
+---
+description: Health checks in Serverpod expose Kubernetes-style HTTP endpoints (/livez, /readyz, /startupz) for liveness, readiness, and startup probing, with support for custom health indicators and metrics.
+---
+
 # Health checks
 
 Serverpod provides a complete health check system that allows you to monitor the health of your server and your dependencies through Kubernetes-style HTTP endpoints (`/livez`, `/readyz`, `/startupz`) - each with a specific purpose that helps orchestrators (like Kubernetes) make informed decisions about container lifecycle and traffic routing.
@@ -99,7 +103,7 @@ The format of the response is as follows:
 Serverpod automatically registers health indicators based on your configuration:
 
 - **ServerpodStartupIndicator** - Tracks server initialization completion.
-- **DatabaseHealthIndicator** - Checks PostgreSQL connectivity (if database is configured).
+- **DatabaseHealthIndicator** - Checks database connectivity (if database is configured).
 - **RedisHealthIndicator** - Checks Redis connectivity (if Redis is enabled).
 
 ## Custom health indicators
@@ -182,7 +186,7 @@ Independently from the health check endpoints, Serverpod also collects health me
 
 ### Adding custom metrics
 
-Sometimes it is helpful to add custom health metrics. This can be for monitoring external services or internal processes within your Serverpod. To set up your custom metrics, you must create a `HealthCheckHandler` and register it with your Serverpod.
+Add custom health metrics to monitor external services or internal processes. To set up your custom metrics, you must create a `HealthCheckHandler` and register it with your Serverpod.
 
 ```dart
 // Create your custom health metric handler.

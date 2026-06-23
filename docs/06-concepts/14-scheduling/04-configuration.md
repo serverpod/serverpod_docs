@@ -1,8 +1,10 @@
+---
+description: Configure future call execution, concurrency limits, scan interval, and broken call handling in Serverpod using YAML or environment variables.
+---
+
 # Configuration
 
 Future calls can be configured using options defined in the configuration files or environment variables. For a detailed list of configuration options, refer to the [Configuration](../configuration) page.
-
-Below is an example of how you can configure future calls in a YAML file:
 
 ```yaml
 futureCallExecutionEnabled: true
@@ -16,8 +18,6 @@ futureCall:
 
 This option allows you to enable or disable the execution of future calls. By default, it is set to `true`. You might want to disable future call execution in environments where you don't want background tasks to run, such as during testing or in a staging environment where you want to focus on API behavior without triggering scheduled tasks.
 
-Example configuration:
-
 ```yaml
 futureCallExecutionEnabled: false
 ```
@@ -28,8 +28,6 @@ This option sets the maximum number of future calls that can run concurrently. B
 
 Setting this value to a negative number or `null` removes the limitation, allowing an unlimited number of concurrent future calls. However, this should be used with caution as it can lead to resource exhaustion.
 
-Example configuration:
-
 ```yaml
 futureCall:
   concurrencyLimit: 5  # Adjust this value based on your server's capacity
@@ -38,8 +36,6 @@ futureCall:
 ### Scan interval
 
 This option determines how often the system scans for future calls to execute, in milliseconds. The default value is `5000` (5 seconds). Adjusting this interval can help balance responsiveness and resource usage. For example, reducing the interval can make future calls execute closer to their scheduled time, while increasing it can reduce database load in environments with limited resources.
-
-Example configuration:
 
 ```yaml
 futureCall:
@@ -62,10 +58,9 @@ By default, the server will perform a check for broken future calls on startup i
 
 This check can be controlled using the `checkBrokenCalls` configuration option. If it is set to `true`, the server will perform a check for broken future calls on startup regardless of the number of calls. If it is set to `false`, the server will not perform a check for broken future calls on startup.
 
-Example configuration:
-
 ```yaml
-checkBrokenCalls: false
+futureCall:
+  checkBrokenCalls: false
 ```
 
 :::tip
@@ -74,6 +69,7 @@ The future calls check can be used with the maintenance role to programmatically
 ```bash
 $ dart run bin/main.dart --role maintenance
 ```
+
 :::
 
 ### Delete broken calls
@@ -82,8 +78,7 @@ When detecting broken future calls, the server will log a warning, but will not 
 
 This configuration is only valid if the check is executed (either automatically or through explicitly enabling `checkBrokenCalls`).
 
-Example configuration:
-
 ```yaml
-deleteBrokenCalls: false
+futureCall:
+  deleteBrokenCalls: false
 ```

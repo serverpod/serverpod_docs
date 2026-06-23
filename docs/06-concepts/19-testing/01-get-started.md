@@ -1,18 +1,17 @@
-# Get started
+---
+sidebar_label: Get started
+description: Integration testing in Serverpod uses the withServerpod helper to call endpoints directly, seed the database, and simulate authenticated sessions without running a separate server.
+---
 
-Serverpod provides simple but feature rich test tools to make testing your backend a breeze.
+# Get started with testing
 
-:::info
-
-For Serverpod Mini projects, everything related to the database in this guide can be ignored.
-
-:::
+Serverpod's test tools let you call endpoints directly, seed the database, and simulate authenticated sessions, all without spinning up a separate server.
 
 <!-- markdownlint-disable MD029 -->
 <details>
-<summary> Have an existing project? Follow these steps first!</summary>
+<summary>Project created with Serverpod 2.1 or earlier? Complete these steps first.</summary>
 <p>
-For existing non-Mini projects, a few extra things need to be done:
+If your project was created with Serverpod 2.1 or earlier, the test infrastructure is not yet set up. Complete these steps before continuing:
 1. Add the `server_test_tools_path` key with the value `test/integration/test_tools` to `config/generator.yaml`:
 
 ```yaml
@@ -26,7 +25,7 @@ server_test_tools_path: test/integration/test_tools
 ```yaml
 # Add to the existing services
 postgres_test:
-  image: postgres:16.3
+  image: pgvector/pgvector:pg16
   ports:
     - '9090:5432'
   environment:
@@ -55,7 +54,7 @@ volumes:
 services:
   # Development services
   postgres:
-    image: postgres:16.3
+    image: pgvector/pgvector:pg16
     ports:
       - '8090:5432'
     environment:
@@ -74,7 +73,7 @@ services:
 
   # Test services
   postgres_test:
-    image: postgres:16.3
+    image: pgvector/pgvector:pg16
     ports:
       - '9090:5432'
     environment:
@@ -134,12 +133,17 @@ database:
   port: 9090
   name: <projectname>_test
   user: postgres
+  dataPath: .serverpod/test/pgdata
 
 # This is the setup for your Redis test instance.
 redis:
   enabled: false
   host: localhost
   port: 9091
+
+sessionLogs:
+  persistentEnabled: true
+  consoleEnabled: true
 ```
 
 4. Add this entry to `config/passwords.yaml`
@@ -173,9 +177,9 @@ That's it, the project setup should be ready to start using the test tools!
 
 Go to the server directory and generate the test tools:
 
- ```bash
- serverpod generate
- ```
+```bash
+serverpod generate
+```
 
 The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
 
