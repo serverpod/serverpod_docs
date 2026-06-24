@@ -2,83 +2,67 @@
 sidebar_label: How it works
 sidebar_class_name: sidebar-icon-overview
 slug: /how-it-works
-description: "Understand Serverpod's architecture: the three-package layout, the code generator, and the request lifecycle that gives you full-stack type safety."
+description: "Understand your day with Serverpod: the save-and-hot-reload dev loop, the three-package layout and code generator, and full-stack type safety."
 ---
 
 # How Serverpod works
 
-Serverpod is built around three Dart packages and a code generator, which bridges the gap between your server-side logic, your database, and your Flutter app. Together, they give you full-stack type safety from your database to your Flutter app.
+With Serverpod you write Dart on both sides of your app and run one command to see your changes immediately. Edit a file, hit save, and your running server, your Flutter app, and the generated code that connects them update together. No manual rebuilds or restarts, no Docker to wire up, and no API code to write by hand.
 
-## Project structure
+Serverpod is a full backend: the database, authentication, file uploads, caching, and real-time are built in, so you build features instead of wiring together separate services. Underneath, a Serverpod project is a single workspace of Dart packages, and a code generator keeps the types shared between your server and app in sync.
 
-When you run `serverpod create`, it produces three Dart packages in a single workspace:
+## What you build
+
+When you run `serverpod create`, you get one workspace with three Dart packages:
 
 ```text
 my_project/
-├── my_project_server/   # Your server-side code
-├── my_project_client/   # Auto-generated. Never edit by hand.
+├── my_project_server/   # Your backend code.
+├── my_project_client/   # Generated. Never edit by hand.
 └── my_project_flutter/  # Your Flutter app.
 ```
 
-The `_server` package holds your backend code, while the `_client` package acts as a bridge, providing the Flutter app with a typed API to call the server.
+You write your backend in the `_server` package: [endpoint methods](../concepts/working-with-endpoints) that your app calls, and [model files](../concepts/models) (`.spy.yaml`) that define your data. From those, Serverpod's code generator produces the `_client` package, a typed Dart API for your app, along with the serialization and database classes on the server. You never write serialization, HTTP calls, or API contracts.
 
-Because the client package is auto-generated from the server code, there is no need to write serialization code, HTTP calls, or API contracts.
-
-## Code generation
-
-Code generation cuts boilerplate and keeps types in sync between server and app. Serverpod watches your `_server` package as you edit and runs the generator automatically.
-
-The generator reads two kinds of source files:
-
-- **Model files (`.spy.yaml`)** defining your data classes.
-- **Endpoint classes** defining your server's API.
-
-From these files, Serverpod generates:
-
-- **A typed client** in the `_client` package, allowing your Flutter app to call the backend with full type-safety.
-- **Serialization and ORM classes** in the `_server` package, for database access and communication.
-
-## Calling the backend
-
-Thanks to the generated client, calling a server endpoint from your Flutter app feels like a local method call. You do not need to write any networking or serialization code.
+That makes a call to the server look like a local method call:
 
 ```dart
-final result = await client.greeting.hello('World');
+final greeting = await client.example.hello('World');
 ```
 
-This example calls the `hello` method on the `greeting` endpoint. The generated client handles the JSON serialization, HTTP request, and response deserialization automatically.
+The generated client handles the request, the response, and the JSON in between. Every endpoint method also receives a [`Session`](../concepts/sessions), the context for that one call, with access to the database, cache, signed-in user, and logging.
 
-## Request lifecycle
+Most calls follow this request-and-response shape. For live updates, Serverpod also has [streaming endpoints](../concepts/streams) that keep a connection open so the server and app can push data to each other.
 
-When your Flutter app calls a server method, the generated client serializes the request and sends it to the server. Serverpod uses a protocol similar to JSON-RPC, which makes remote method calls feel like local function calls instead of traditional REST requests.
+## The dev loop
 
-The diagram below shows the journey of a request:
+Day to day, you run one command:
 
-```mermaid
-sequenceDiagram
-    participant App as Flutter app
-    participant Client as Generated client
-    participant Server as Serverpod server
-    participant Endpoint as Your endpoint
-
-    App->>Client: client.endpoint.method(args)
-    Client->>Server: HTTP request (JSON)
-    Server->>Endpoint: method(session, args)
-    Endpoint-->>Server: result
-    Server-->>Client: HTTP response (JSON)
-    Client-->>App: typed Dart object
+```bash
+$ serverpod start
 ```
 
-### Real-time streaming
+This starts your server, launches your Flutter app, and watches your code. When you save a change, Serverpod hot reloads the server, regenerates the client, and reloads your app. When your models change, it applies migrations to keep your database in sync. You stay in one terminal and see each change right away.
 
-Regular endpoint methods follow the request/response lifecycle above. For real-time use cases like live updates, collaborative features, and multiplayer, Serverpod also supports [streaming endpoints](../06-concepts/15-streams.md), which keep a WebSocket connection open and let server and client push data to each other continuously.
+By default there is no Docker to set up. Serverpod runs an embedded Postgres for you, managed by the server. If you would rather run Postgres or other services in Docker, opt in with `serverpod start --docker`.
 
-### Session
+## An AI-assisted workflow
 
-The `Session` parameter that every endpoint method receives is the context for that single request. It gives access to the database, cache, signed-in user, and logging, all available only while the request runs. Each call gets its own `Session`.
+If you build with AI tools, Serverpod supports that too. When you create a project, it can scaffold agent skills for your editor (Claude, Cursor, and VS Code), and `serverpod start` runs an MCP server that lets those tools work with your running project. This path is entirely optional, and the traditional workflow above is unchanged if you do not use it.
 
-## Type safety across the stack
+## Choices that shape your project
 
-Type safety across the entire stack, from the database to your Flutter app, is guaranteed because Serverpod's model files (`.spy.yaml`) are the single source of truth. When code is generated, the same Dart class is used in database queries, server logic, and your Flutter app.
+The `serverpod create` command lets you tailor the project it generates. You choose:
 
-This eliminates a whole category of bugs common in traditional client-server development, such as mismatched field names, incorrect types, or forgotten null checks after an API change. If you rename a field in a model file and regenerate, the Dart compiler immediately tells you every place in both the server and the app that needs updating.
+- **Project type.** A full server, or a reusable module shared across servers.
+- **Database and caching.** Postgres or SQLite, plus optional Redis for caching and cross-server messaging.
+- **Authentication.** Built-in email and social sign-in, one of Serverpod's optional [modules](../concepts/modules).
+- **Web server.** Optionally serve web pages and your Flutter web build alongside your API.
+
+## Why it works
+
+Type safety runs from your database to your Flutter app because your model files are the single source of truth. When you generate code, the same Dart class is used in database queries, server logic, and your app. Rename a field and regenerate, and the Dart compiler points you at every place in the server and the app that needs updating. A whole category of client-server bugs (mismatched field names, wrong types, forgotten null checks after an API change) becomes compile errors you fix before you ship. This safety net matters all the more when AI tools are writing some of that code for you.
+
+## Next steps
+
+When you are ready to ship, see [Deploy to Serverpod Cloud](../deployments/deploy-to-serverpod-cloud) to take your app to production.
