@@ -51,7 +51,7 @@ Run `serverpod generate`. Your Flutter client exposes methods on `client.userPro
 
 ```dart
 final profile = await client.userProfile.setUserImage(byteData);
-print(profile.imageUrl); // Uri? — public URL of the new image
+print(profile.imageUrl); // Uri?, the public URL of the new image
 ```
 
 To fetch the profile without exposing edit methods, use the module endpoint:
@@ -62,7 +62,7 @@ final profile = await client.modules.serverpod_auth_core.userProfileInfo.get();
 
 ### Restrict who can edit
 
-There is no built-in `userCanEditUserImage` flag in v3 auth (legacy auth had this). Override the endpoint to restrict uploads:
+There is no built-in `userCanEditUserImage` flag in `serverpod_auth_idp` (legacy `serverpod_auth` had this). Override the endpoint to restrict uploads:
 
 ```dart
 class UserProfileEndpoint extends UserProfileEditBaseEndpoint {
@@ -78,7 +78,7 @@ class UserProfileEndpoint extends UserProfileEditBaseEndpoint {
 
 ## Upload a profile photo from Flutter
 
-There is no built-in upload widget for v3 auth. Pick an image on the client, convert it to `ByteData`, and pass it to `setUserImage`.
+There is no built-in upload widget in the authentication module. Pick an image on the client, convert it to `ByteData`, and pass it to `setUserImage`.
 
 The server decodes the image, crops it to a square, resizes it, and stores it. The format you send does not affect the stored format.
 
@@ -91,7 +91,7 @@ import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
 /// Picks an image, optionally resizes it, and returns [ByteData] for upload.
-/// The server crops to square and resizes again — client-side prep is for UX and bandwidth.
+/// The server crops to square and resizes again. Client-side prep is for UX and bandwidth.
 Future<ByteData?> pickProfileImageBytes({int maxSize = 512}) async {
   Uint8List? rawBytes;
 
@@ -109,7 +109,7 @@ Future<ByteData?> pickProfileImageBytes({int maxSize = 512}) async {
   if (rawBytes == null) return null;
 
   final decoded = img.decodeImage(rawBytes);
-  if (decoded == null) return null; // invalid image — show an error to the user
+  if (decoded == null) return null; // invalid image; show an error to the user
 
   final resized = decoded.width > maxSize || decoded.height > maxSize
       ? img.copyResizeCropSquare(decoded, size: maxSize)
@@ -143,7 +143,7 @@ On iOS and Android, use `image_cropper` with a circular crop before upload for b
 
 ## Display the profile photo
 
-`UserProfileModel.imageUrl` is a public `Uri?`. When it is `null`, show a placeholder.
+The `UserProfileModel.imageUrl` field is a public `Uri?`. When it is `null`, show a placeholder.
 
 ```dart
 final profile = await client.userProfile.get();
@@ -159,7 +159,7 @@ CircleAvatar(
 
 For caching, use `cached_network_image` or `extended_image`.
 
-`imageUrl` is public. If you fetch another user's `UserProfileModel` from your own endpoint, display `imageUrl` the same way. Only upload endpoints are scoped to the signed-in user.
+The `imageUrl` field is public. If you fetch another user's `UserProfileModel` from your own endpoint, display `imageUrl` the same way. Only upload endpoints are scoped to the signed-in user.
 
 ## Remove or replace a photo
 
@@ -169,7 +169,7 @@ Remove the photo (`imageUrl` becomes `null`):
 final profile = await client.userProfile.removeUserImage();
 ```
 
-Unlike [legacy auth](./legacy/working-with-users), removing a photo does **not** restore a generated default avatar. Show a placeholder in your UI, or call `setDefaultUserImage` on signup (see below).
+Unlike [legacy serverpod_auth](./legacy/working-with-users), removing a photo does **not** restore a generated default avatar. Show a placeholder in your UI, or call `setDefaultUserImage` on signup (see below).
 
 Replace a photo by calling `setUserImage` again with new bytes. The server creates a new stored file with a new random suffix.
 
@@ -205,14 +205,14 @@ pod.initializeAuthServices(
 );
 ```
 
-`defaultUserImageGenerator` produces a colored circle with the first letter of the user name.
+The `defaultUserImageGenerator` function produces a colored circle with the first letter of the user name.
 
 The server automatically validates and optimizes uploads: it decodes bytes (must be a valid image), square-crops to `userImageSize`, re-encodes as JPG or PNG per config, and stores the file in public storage.
 
 Recommended client-side checks (not enforced by the server):
 
 - Allow only JPG and PNG extensions.
-- Reject files over roughly 5–10 MB before upload.
+- Reject files over roughly 5 to 10 MB before upload.
 - Verify `decodeImage` succeeds before calling `setUserImage`.
 
 Google and similar providers automatically import a profile photo on first sign-in when the provider returns one and the user has no image yet.
@@ -263,9 +263,9 @@ final profile = await session.authenticated!.userProfile(session);
 1. Sign in to your app.
 2. Call `client.userProfile.setUserImage(byteData)` with a test PNG or JPG.
 3. Confirm the returned `imageUrl` is non-null and starts with your server's public host.
-4. Open `imageUrl` in a browser — the image loads.
+4. Open `imageUrl` in a browser. The image loads.
 5. Confirm your UI updates after upload.
-6. Call `removeUserImage()` — `imageUrl` becomes `null` and your placeholder appears.
+6. Call `removeUserImage()`. `imageUrl` becomes `null` and your placeholder appears.
 
 ## Troubleshooting
 
@@ -291,11 +291,11 @@ Default JPG quality is 70. Raise `userImageQuality` or use PNG format in `UserPr
 
 ### Web upload fails silently
 
-`file_picker` may return null bytes. Ensure you read bytes correctly from the picked file.
+The `file_picker` package may return null bytes. Ensure you read bytes correctly from the picked file.
 
 ## Related
 
-- [Working with users](./working-with-users) — profiles, names, and the edit endpoint overview
-- [Authentication setup](./setup) — initial auth module configuration
-- [Uploading files](../file-uploads) — cloud storage for production
-- [Legacy: displaying or editing user images](./legacy/working-with-users) — v2 auth widgets
+- [Working with users](./working-with-users): profiles, names, and the edit endpoint overview
+- [Authentication setup](./setup): initial auth module configuration
+- [Uploading files](../file-uploads): cloud storage for production
+- [Legacy: displaying or editing user images](./legacy/working-with-users): legacy `serverpod_auth` widgets
