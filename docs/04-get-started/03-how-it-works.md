@@ -65,4 +65,4 @@ Type safety runs from your database to your Flutter app because your model files
 
 ## Next steps
 
-When you are ready to ship, see [Deploy to Serverpod Cloud](../deployments/deploy-to-serverpod-cloud) to take your app to production.
+When you are ready to ship, see [Deploy to Serverpod Cloud](../08-deployments/01-deploy-to-serverpod-cloud.md) to take your app to production.
