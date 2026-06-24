@@ -172,6 +172,8 @@ var updatedCompany = await Company.db.updateById(
 
 The `updateById` method updates only the specified columns for the row with the given ID. The method returns the updated row, or throws a `DatabaseUpdateRowException` if no row with the given ID exists. At least one column must be specified in the `columnValues` parameter, otherwise an `ArgumentError` will be thrown.
 
+See [Database exceptions](./exceptions) for the full set of database exception types and when they are thrown.
+
 You can also update columns to null values:
 
 ```dart

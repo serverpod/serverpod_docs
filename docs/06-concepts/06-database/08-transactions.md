@@ -55,12 +55,43 @@ The available isolation levels are:
 
 | Isolation Level | Constant | Description |
 | --- | --- | --- |
-| Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in PostgresSQL |
+| Read uncommitted | `IsolationLevel.readUncommitted` | Exhibits the same behavior as `IsolationLevel.readCommitted` in Postgres |
 | Read committed | `IsolationLevel.readCommitted` | Each statement in the transaction sees a snapshot of the database as of the beginning of that statement. |
 | Repeatable read | `IsolationLevel.repeatableRead` | The transaction only observes rows committed before the first statement in the transaction was executed giving a consistent view of the database. If any conflicting writes among concurrent transactions occur, an exception is thrown. |
 | Serializable | `IsolationLevel.serializable` | Gives the same guarantees as `IsolationLevel.repeatableRead` but also throws if read rows are updated by other transactions. |
 
 For a detailed explanation of the different isolation levels, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/transaction-iso.html).
+
+## Transaction failure exceptions
+
+When the database rejects a query inside the transaction, Serverpod throws a `DatabaseQueryException`. This can happen, for example, when concurrent writes conflict with the selected transaction isolation level, or when Postgres detects a deadlock.
+
+The exact database error code depends on why Postgres rejected the query. Serverpod exposes Postgres error code constants through `PgErrorCode`, so you can compare them with the `code` field on `DatabaseQueryException`.
+
+```dart
+try {
+  await session.db.transaction(
+    (transaction) async {
+      await Company.db.updateRow(
+        session,
+        company,
+        transaction: transaction,
+      );
+    },
+    settings: TransactionSettings(isolationLevel: IsolationLevel.serializable),
+  );
+} on DatabaseQueryException catch (e) {
+  if (e.code == PgErrorCode.serializationFailure ||
+      e.code == PgErrorCode.deadlockDetected) {
+    // Retry the transaction or report a write conflict to the caller.
+    return;
+  }
+
+  rethrow;
+}
+```
+
+For all PostgreSQL error codes, see the [PostgreSQL error code appendix](https://www.postgresql.org/docs/current/errcodes-appendix.html).
 
 ## Savepoints
 
