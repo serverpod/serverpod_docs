@@ -16,7 +16,7 @@ Install the CLI with Dart before running any command:
 dart pub global activate serverpod_cli
 ```
 
-See [Installation](/get-started/installation) for the full setup, including the prerequisites.
+See [Installation](../../../04-get-started/01-installation.md) for the full setup, including the prerequisites.
 
 ## Command syntax
 
@@ -30,11 +30,11 @@ Run `serverpod help` to list the commands, or `serverpod help <command>` for the
 
 ## Global options
 
-A small set of options applies to every command: output verbosity (`-q` / `--quiet`, `-v` / `--verbose`), analytics (`-a` / `--analytics`), interactive prompts (`--interactive`), and experimental features (`--experimental-features`). The full list lives on the [Global options](/concepts/cli/global_options) page.
+A small set of options applies to every command: output verbosity (`-q` / `--quiet`, `-v` / `--verbose`), analytics (`-a` / `--analytics`), interactive prompts (`--interactive`), and experimental features (`--experimental-features`). The full list lives on the [Global options](../global_options/global_options.mdx) page.
 
 ## Environment variables
 
-The CLI reads a single environment variable, described on the [Environment variables](/concepts/cli/env_vars) page.
+The CLI reads a single environment variable, described on the [Environment variables](../env_vars/env_vars.md) page.
 
 ## How this reference is organized
 
