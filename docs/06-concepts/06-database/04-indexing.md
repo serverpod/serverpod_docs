@@ -61,7 +61,7 @@ fields:
 
 ### Composite unique constraints
 
-When a value should be unique only within a scope — for example, a setting key that is unique per user — use `unique(per=...)` on the field that must be unique within that scope. Serverpod auto-generates a composite unique index with the `per` columns first, followed by the annotated field.
+When a value should be unique only within a scope (for example, a setting key that is unique per user), use `unique(per=...)` on the field that must be unique within that scope. Serverpod auto-generates a composite unique index with the `per` columns first, followed by the annotated field.
 
 ```yaml
 class: UserSetting
