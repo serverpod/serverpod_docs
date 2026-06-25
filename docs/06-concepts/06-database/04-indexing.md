@@ -59,6 +59,46 @@ fields:
   name: String, unique
 ```
 
+### Composite unique constraints
+
+When a value should be unique only within a scope (for example, a setting key that is unique per user), use `unique(per=...)` on the field that must be unique within that scope. Serverpod auto-generates a composite unique index with the `per` columns first, followed by the annotated field.
+
+```yaml
+class: UserSetting
+table: user_setting
+fields:
+  userId: int
+  key: String, unique(per=userId)
+```
+
+In this example, two rows can share the same `key` if they belong to different users, but the same user cannot have two rows with the same `key`.
+
+For a scope that spans multiple columns, pass a list of field names:
+
+```yaml
+class: Product
+table: product
+fields:
+  tenantId: int
+  category: String
+  sku: String, unique(per=[tenantId, category])
+```
+
+You can also use the equivalent expanded form, where you name the index yourself:
+
+```yaml
+class: Product
+table: product
+fields:
+  tenantId: int
+  category: String
+  sku: String
+indexes:
+  product_unique_idx:
+    fields: tenantId, category, sku
+    unique: true
+```
+
 ## Specifying index type
 
 It is possible to add a type key to specify the index type.
