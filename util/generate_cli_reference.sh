@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Generates the framework CLI reference usage blocks under
-# docs/06-concepts/23-cli/_generated/ from the installed `serverpod` CLI.
+# docs/06-concepts/cli/_generated/ from the installed `serverpod` CLI.
 #
 # This mirrors how the Serverpod Cloud CLI reference is produced from
 # `cli_tools`. Run it after installing the target CLI version:
@@ -15,7 +15,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT_DIR="$REPO_ROOT/docs/06-concepts/23-cli/_generated"
+OUT_DIR="$REPO_ROOT/docs/06-concepts/cli/_generated"
 
 COMMANDS=(
   cloud
