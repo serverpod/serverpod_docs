@@ -87,8 +87,8 @@ fields:
 You can also use the equivalent expanded form:
 
 ```yaml
-class: UserSetting
-table: user_setting
+class: Product
+table: product
 fields:
   tenantId: int
   category: String
