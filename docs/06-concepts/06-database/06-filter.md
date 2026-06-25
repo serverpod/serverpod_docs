@@ -427,7 +427,7 @@ await Store.db.find(
 );
 ```
 
-### dwithin
+### distanceWithin
 
 Returns rows where the geography column is within a given distance (in metres) of the given geography value. Wraps `ST_DWithin`.
 
@@ -436,7 +436,7 @@ var point = GeographyPoint(longitude: 2.35, latitude: 48.85);
 
 await Store.db.find(
   session,
-  where: (t) => t.location.dwithin(point, 1000),
+  where: (t) => t.location.distanceWithin(point, 1000),
 );
 ```
 
@@ -496,5 +496,5 @@ await Store.db.find(
 ```
 
 :::tip
-For optimal performance with spatial queries, consider creating a GIST index on your geography fields. See the [Geography indexes](indexing#geography-indexes) section for more details.
+For optimal performance with spatial queries, consider creating a spatial index on your geography fields. See the [Geography indexes](indexing#geography-indexes) section for more details.
 :::

@@ -268,7 +268,12 @@ For more details on vector indexes and its configuration, refer to the [pgvector
 
 ### Geography indexes
 
-Geography columns benefit from GIST (Generalized Search Tree) spatial indexes, which significantly improve the performance of spatial queries such as proximity searches, intersection tests, and containment checks.
+Geography columns benefit from spatial indexes, which significantly improve the performance of spatial queries such as proximity searches, intersection tests, and containment checks. Two index types are available for geography fields:
+
+- `gist` - Generalized Search Tree, the default and the right choice for most workloads.
+- `spgist` - Space-Partitioned Generalized Search Tree.
+
+If no `type` is specified for an index on a geography field, it defaults to `gist`.
 
 ```yaml
 class: Store
@@ -282,6 +287,26 @@ indexes:
     type: gist
 ```
 
+Use `spgist` by setting the index `type` explicitly:
+
+```yaml
+class: DeliveryZone
+table: delivery_zone
+fields:
+  name: String
+  boundary: GeographyPolygon
+indexes:
+  delivery_zone_boundary_idx:
+    fields: boundary
+    type: spgist
+```
+
 :::tip
-A GIST index on a geography column accelerates all spatial operations (`intersects`, `dwithin`, `distance`, `contains`, `within`). For tables with many rows and frequent spatial queries, adding a GIST index is strongly recommended.
+A spatial index accelerates all spatial operations (`intersects`, `distanceWithin`, `distance`, `contains`, `within`). For tables with many rows and frequent spatial queries, adding one is strongly recommended.
+:::
+
+Geography fields only support the `gist` and `spgist` index types; any other type is rejected when generating migrations. An index may cover several geography columns, but geography and non-geography fields cannot be mixed in the same index.
+
+:::info
+`spgist` indexes on the geography type require a recent version of PostGIS. If your PostgreSQL instance ships an older PostGIS, use `gist` instead.
 :::
