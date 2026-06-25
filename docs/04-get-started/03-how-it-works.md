@@ -2,35 +2,35 @@
 sidebar_label: How it works
 sidebar_class_name: sidebar-icon-overview
 slug: /how-it-works
-description: 'The fast way to start building with Serverpod: write endpoints, call them from Flutter, define data models, and see changes with one-command hot reload.'
+description: 'Start building with Serverpod. Learn how to add endpoints, call them from Flutter, define data models, and work with hot reload across the backend and your app.'
 ---
 
 # How Serverpod works
 
-With Serverpod you write Dart on both sides of your app and run one command to see your changes immediately. Edit a file, hit save, and your running server, your Flutter app, and the generated code that connects them update together. No manual rebuilds or restarts, no Docker to wire up, and no API code to write by hand.
+With Serverpod, you write type-safe Dart on both your Flutter app and the backend. With hot reload, all the changes immediately take effect. Edit a file, hit save, and your running server, your Flutter app, your database, and the generated code that connects them update together. No manual rebuilds or restarts, no Docker to wire up, and no API code to write by hand.
 
-Serverpod is a full backend: the database, authentication, file uploads, caching, real-time, scheduling, and logging are built in, so you build features instead of wiring together separate services. A project is a single workspace of Dart packages, and a code generator keeps the types shared between your server and app in sync, so a renamed field or a wrong type is a compile error rather than a runtime surprise.
+Serverpod is a full backend. It manages your database, authentication, file uploads, caching, real-time communication, scheduling, and logging. You can focus on building features instead of wiring together separate services. A project is a single workspace of Dart packages, and a code generator keeps the types shared between your server and app in sync. If you rename a field or use an incorrect type, they will show up as compile-time errors rather than a surprise when you run the app.
 
 ## Create your project
 
 A Serverpod project starts with the `serverpod create` command, which walks you through a few choices that shape what it generates:
 
-- **Project type:** A full server, or a reusable module shared across servers.
-- **Database and caching:** Postgres or SQLite, plus optional Redis for caching and cross-server messaging.
-- **Authentication:** Built-in email and social sign-in, one of Serverpod's optional [modules](../concepts/modules).
-- **Web server:** Optionally serve web pages and your Flutter web build alongside your API.
-- **AI agent (optional):** The coding agent you build with (Claude, Cursor, or VS Code), set up with agent skills.
+- **Project type:** A full server, or a reusable [module](../concepts/modules) shared across servers.
+- **Database and caching:** Add a Postgres database and Redis (for pub/sub and caching).
+- **Authentication:** Built-in email and social sign-ins.
+- **Web server:** Optionally serve web pages and your Flutter web app alongside your API.
+- **AI agent / Code editor (optional):** The coding agent you build with (Claude, Cursor, or VS Code), set up with agent skills.
 
 The result is one workspace with three Dart packages:
 
 ```text
 my_project/
 ├── my_project_server/   # Your backend code.
-├── my_project_client/   # Generated. Never edit by hand.
+├── my_project_client/   # Generated client code used by the app.
 └── my_project_flutter/  # Your Flutter app.
 ```
 
-You write two kinds of things in the `_server` package: endpoints that your app calls, and models that define your data. Serverpod's code generator turns them into the `_client` package, a typed Dart API for your app, along with the serialization and database code on the server. You never write serialization, HTTP calls, or API contracts.
+In the `_server` package you add your endpoints and data models. Serverpod's code generator generates code on the server and in the client package. You get a type-safe Dart API for your app, along with the serialization and database code on the server. You never write serialization, HTTP calls, or API contracts.
 
 ## Run your project
 
@@ -40,11 +40,11 @@ You run the whole project with one command:
 $ serverpod start
 ```
 
-This starts your server, launches your Flutter app, and watches your code. When you save a change, Serverpod regenerates the client, hot reloads the server, and reloads your app, so you see each change right away.
+This starts your server, launches your Flutter app, and watches your code. When you make a change, Serverpod instantly regenerates the client, hot reloads the server, and reloads your app.
 
 :::tip
 
-Start your project before you begin building. With `serverpod start` already running, every change after that, whether you make it or an agent does, is caught and reloaded as you go.
+Start your project before you begin building. With `serverpod start` already running, every change after that, whether you make it yourself or an agent does it, is reloaded as you go.
 
 :::
 
@@ -60,11 +60,11 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-The `Session` is the context for that one call, with access to the database, cache, signed-in user, and logging. Parameters and return types can be the built-in types (`bool`, `int`, `double`, `String`, `DateTime`, `Duration`, `Uri`, `UuidValue`, `BigInt`, `ByteData`), a `List`, `Map`, `Set`, or `Record` of those, or any model you define. See [Working with endpoints](../concepts/working-with-endpoints) for the full list.
+The `Session` is the context for that one call, with access to the database, cache, signed-in user, and logging. Parameters and return types can be the built-in types (`bool`, `int`, `double`, `String`, `DateTime`, `Duration`, `Uri`, `UuidValue`, `BigInt`, `ByteData`), a `List`, `Map`, `Set`, or `Record` of those, or any data model you define. See [Working with endpoints](../concepts/working-with-endpoints) for more information.
 
 ## Call it from your app
 
-On the app side, the generated client turns each endpoint method into what looks like a local call:
+On the app side, the generated client turns each endpoint method into what looks like a local method:
 
 ```dart
 final greeting = await client.example.hello('World');
@@ -74,7 +74,7 @@ The client handles the request, the response, and the JSON in between. Most call
 
 ## Define your data models
 
-Models are the data your app and server pass back and forth, the objects your endpoints take and return. You define them in `.spy.yaml` files, each naming a class and listing its fields:
+Models are the data classes your app and server pass back and forth, the objects your endpoints take and return. You define them in `.spy.yaml` files, each naming a class and listing its fields:
 
 ```yaml
 class: Company
@@ -104,18 +104,18 @@ final stored = await Company.db.findById(session, company.id);
 
 These run on the same `session` your endpoint method receives. When you change a table model, press `M` in the `serverpod start` terminal to create a migration, then `A` to apply it. Pending migrations also apply on startup.
 
-That database runs without setup on your part: Serverpod manages an embedded Postgres for you, with no Docker to configure. If you would rather run Postgres or other services in Docker, opt in with `serverpod start --docker`.
+That database runs without setup on your part: Serverpod manages an embedded Postgres for you, with no Docker to configure. If you would rather manage Postgres yourself, you can change the configuration in the server's `config` directory.
 
-See [Working with the database](../concepts/database/crud) for filters, relations, and transactions.
+See [Working with the database](../concepts/database/crud) for building queries, relations, and transactions.
 
 ## Build with an AI agent
 
-Serverpod is built to work with AI coding agents. You pick your agent when you create the project, and Serverpod scaffolds skills that teach it how a Serverpod project fits together. While `serverpod start` runs, it exposes an MCP server that lets the agent work with your live project: write endpoints and models, manage the database, and reload the app as it goes. You describe the feature you want, and the agent builds it.
+Serverpod is built to work with AI coding agents. You pick your agent when you create the project, and Serverpod installs skills that teach it how a Serverpod project fits together. While `serverpod start` runs, it exposes an MCP server that lets the agent work with your live project. It can write endpoints and models, manage the database, and reload the app as it goes. You describe the feature you want, and the agent builds it.
 
-Your models stay the single source of truth, so when the agent renames a field or changes a type, the regenerated code turns the mismatch into a compile error rather than a runtime bug.
+Your data models and endpoint methods are the single source of truth. When the agent renames a field or changes its type, the regenerated code treats the mismatch as a compile-time error rather than a runtime bug.
 
-This path is optional, and everything above works the same without it. For a guided walkthrough, see the [Quickstart](02-quickstart.md).
+If you want to quickly try out Serverpod and build something with an AI agent, check out our [Quickstart](02-quickstart.md) guide.
 
 ## Next steps
 
-Ready to build something? Follow [Build your first app](../05-build-your-first-app/01-creating-endpoints.md) to create your first endpoint and call it from Flutter. When you are ready to ship, [Deploy to Serverpod Cloud](../08-deployments/01-deploy-to-serverpod-cloud.md) takes your app to production.
+Ready to build something for real? Follow [Build your first app](../05-build-your-first-app/01-creating-endpoints.md) to create your first endpoint and call it from Flutter. When you are ready to ship, [Deploy to Serverpod Cloud](../08-deployments/01-deploy-to-serverpod-cloud.md) takes your app to production in just a few minutes.
