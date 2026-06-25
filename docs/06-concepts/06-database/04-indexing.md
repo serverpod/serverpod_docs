@@ -84,7 +84,7 @@ fields:
   sku: String, unique(per=[tenantId, category])
 ```
 
-You can also use the equivalent expanded form:
+You can also use the equivalent expanded form, where you name the index yourself:
 
 ```yaml
 class: Product
