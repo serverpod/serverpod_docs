@@ -13,3 +13,4 @@ Usage: serverpod create-repair-migration [arguments]
 
 Run "serverpod help" to see global options.
 ```
+

@@ -12,3 +12,4 @@ Usage: serverpod generate [arguments]
 
 Run "serverpod help" to see global options.
 ```
+

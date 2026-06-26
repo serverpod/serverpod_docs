@@ -8,3 +8,4 @@ Usage: serverpod version [arguments]
 
 Run "serverpod help" to see global options.
 ```
+

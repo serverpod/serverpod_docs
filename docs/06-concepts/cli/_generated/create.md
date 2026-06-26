@@ -19,3 +19,4 @@ Project Template
 
 Run "serverpod help" to see global options.
 ```
+

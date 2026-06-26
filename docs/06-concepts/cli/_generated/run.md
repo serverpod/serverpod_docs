@@ -10,3 +10,4 @@ Usage: serverpod run <script-name>
 
 Run "serverpod help" to see global options.
 ```
+

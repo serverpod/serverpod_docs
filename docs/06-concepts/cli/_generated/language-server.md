@@ -9,3 +9,4 @@ Usage: serverpod language-server [arguments]
 
 Run "serverpod help" to see global options.
 ```
+

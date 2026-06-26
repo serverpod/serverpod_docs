@@ -18,3 +18,4 @@ Usage: serverpod quickstart [arguments]
 
 Run "serverpod help" to see global options.
 ```
+

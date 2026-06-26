@@ -9,7 +9,7 @@ Global options:
 -h, --help                     Print this usage information.
 -q, --quiet                    Suppress all cli output. Is overridden by  -v, --verbose.
 -v, --verbose                  Prints additional information useful for development. Overrides --q, --quiet.
--a, --[no-]analytics           Toggles if analytics data is sent.
+-a, --[no-]analytics           Toggles if analytics data is sent. 
                                (defaults to on)
     --[no-]interactive         Enable interactive prompts. Automatically disabled in CI environments.
     --version                  Prints the active version of the Serverpod CLI.
@@ -31,3 +31,4 @@ Available commands:
 
 Run "serverpod help <command>" for more information about a command.
 ```
+

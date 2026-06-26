@@ -11,3 +11,4 @@ Usage: serverpod create-migration [arguments]
 
 Run "serverpod help" to see global options.
 ```
+
