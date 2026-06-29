@@ -158,9 +158,9 @@ Since `CalculatorEndpoint` is annotated with `@doNotGenerate`, it will not be ex
 Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice, nothing will ever call this method on `AdderEndpoint`.
 
 :::warning
-If the parent class is only `abstract` (and not itself annotated with `@doNotGenerate`), Serverpod still generates an abstract client class that mirrors it, and every subclass's generated client must implement all of its methods. In that case, `@doNotGenerate` **cannot** be used to hide an inherited method – doing so removes the method from the subclass's generated client while the abstract client class still declares it, which causes a Dart compile error ("missing concrete implementation"). To hide an inherited method, the parent class must be marked `@doNotGenerate` itself, not just `abstract`.
+If the parent class is only `abstract` (and not itself annotated with `@doNotGenerate`), Serverpod still generates an abstract client class that mirrors it, and every subclass's generated client must implement all of its methods. In that case, `@doNotGenerate` **cannot** be used to hide an inherited method. Doing so removes the method from the subclass's generated client while the abstract client class still declares it, which causes a Dart compile error ("missing concrete implementation"). To hide an inherited method, the parent class must be marked `@doNotGenerate` itself, not just `abstract`.
 
-If the parent class is a normal, concrete class (neither `abstract` nor `@doNotGenerate`), it is exposed on the server and the client in its own right. Hiding the method on the child only removes it from the child's client – it remains accessible through the parent's own generated client class.
+If the parent class is a normal, concrete class (neither `abstract` nor `@doNotGenerate`), it is exposed on the server and the client in its own right. Hiding the method on the child only removes it from the child's client. It remains accessible through the parent's own generated client class.
 :::
 
 ## Unhiding endpoint methods annotated with `@doNotGenerate` in the super class
