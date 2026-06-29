@@ -13,7 +13,7 @@ The Serverpod CLI (`serverpod`) creates projects, generates server and client co
 Install the CLI with Dart before running any command:
 
 ```bash
-dart pub global activate serverpod_cli
+dart install serverpod_cli
 ```
 
 See [Installation](../../../04-get-started/01-installation.md) for the full setup, including the prerequisites.
@@ -38,4 +38,4 @@ The CLI reads a single environment variable, described on the [Environment varia
 
 ## How this reference is organized
 
-Each command page combines a hand-written introduction with the auto-generated subcommand and option listings drawn from `serverpod help`. The sidebar lists commands alphabetically. Use the search box for fast lookup by flag or argument name.
+Most command pages combine a hand-written introduction with the auto-generated subcommand and option listings drawn from `serverpod help`. The sidebar lists commands alphabetically. Use the search box for fast lookup by flag or argument name.
