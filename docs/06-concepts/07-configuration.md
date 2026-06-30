@@ -142,17 +142,45 @@ To define a custom password through an environment variable:
 export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
 ```
 
-**Accessing Custom Passwords:**
+#### Accessing Secrets in Code
 
-You can then access any custom password (whether defined in the passwords file or via environment variables) in your endpoint code through the `Session.passwords` map:
+Secrets are only available on the server. They are never sent to or accessible from your Flutter app.
+
+Inside an endpoint, read a secret from the [`Session`](sessions) through the `passwords` map:
 
 ```dart
 Future<void> processPayment(Session session, PaymentData data) async {
   final stripeApiKey = session.passwords['stripeApiKey'];
-  // Use the API key to make requests to Stripe
-  ...
+  // Use the API key to make requests to Stripe.
 }
 ```
+
+`session.serverpod.getPassword('stripeApiKey')` returns the same value.
+
+Outside of a request, for example during startup in your server's `run` function, read it from the `Serverpod` instance with `getPassword`:
+
+```dart
+// `pod` is the Serverpod instance created in run().
+final stripeApiKey = pod.getPassword('stripeApiKey');
+```
+
+This works for built-in and custom secrets alike, whether they come from the passwords file or an environment variable.
+
+#### Secrets in Production
+
+A new project gitignores `config/passwords.yaml` and credential files such as `config/firebase_service_account_key.json`, so secrets are not committed by default. Keep production secrets out of source control.
+
+In production, set secrets through `SERVERPOD_PASSWORD_*` environment variables, or your host's secret manager, rather than a checked-in passwords file.
+
+#### Secrets on Serverpod Cloud
+
+On [Serverpod Cloud](/cloud), set these values from the command line instead of editing a passwords file:
+
+```bash
+scloud password set stripeApiKey "sk_live_..."
+```
+
+Use `--from-file` for long or multi-line values such as a service account JSON. Cloud stores each password encrypted and injects it so `getPassword` reads it exactly as it does locally. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
 
 ### Config file example
 
