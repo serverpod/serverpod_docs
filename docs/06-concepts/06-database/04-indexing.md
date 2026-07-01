@@ -305,7 +305,7 @@ indexes:
 A spatial index accelerates all spatial operations (`intersects`, `distanceWithin`, `distance`, `contains`, `within`). For tables with many rows and frequent spatial queries, adding one is strongly recommended.
 :::
 
-Geography fields only support the `gist` and `spgist` index types. Specifying any other type fails code generation with `The "type" property must be one of: gist, spgist.` An index may cover several geography columns, but geography and non-geography fields cannot be mixed in the same index — doing so fails with `Mixing geography and non-geography fields in the same index is not allowed.`
+Geography fields only support the `gist` and `spgist` index types. Specifying any other type fails code generation with `The "type" property must be one of: gist, spgist.` An index may cover several geography columns, but it cannot mix geography and non-geography fields. Doing so fails with `Mixing geography and non-geography fields in the same index is not allowed.`
 
 :::info
 `spgist` indexes on the geography type require a recent version of PostGIS. If your PostgreSQL instance ships an older PostGIS, use `gist` instead.
