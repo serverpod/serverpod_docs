@@ -83,7 +83,7 @@ These can be separately declared for each run mode in the corresponding yaml fil
 
 ### Secrets
 
-Secrets are declared in the `passwords.yaml` file. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs. You can also define custom secrets using [environment variables](#2-via-environment-variables).
+Secrets are declared in the `passwords.yaml` file. Serverpod's API reads them with `getPassword`, so this page uses *secret* and *password* interchangeably. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs. You can also define custom secrets using [environment variables](#2-via-environment-variables).
 
 #### Built-in Secrets
 
@@ -142,17 +142,45 @@ To define a custom password through an environment variable:
 export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
 ```
 
-**Accessing Custom Passwords:**
+#### Accessing Secrets in Code
 
-You can then access any custom password (whether defined in the passwords file or via environment variables) in your endpoint code through the `Session.passwords` map:
+Secrets are only available on the server. They are never sent to or accessible from your Flutter app.
+
+Inside an endpoint, read a secret from the [`Session`](sessions) through the `passwords` map:
 
 ```dart
 Future<void> processPayment(Session session, PaymentData data) async {
   final stripeApiKey = session.passwords['stripeApiKey'];
-  // Use the API key to make requests to Stripe
-  ...
+  // Use the API key to make requests to Stripe.
 }
 ```
+
+`session.serverpod.getPassword('stripeApiKey')` returns the same value.
+
+Outside of a request, for example during startup in your server's `run` function, read it from the `Serverpod` instance with `getPassword`:
+
+```dart
+// `pod` is the Serverpod instance created in run().
+final stripeApiKey = pod.getPassword('stripeApiKey');
+```
+
+This works for built-in and custom secrets alike, whether they come from the passwords file or an environment variable.
+
+#### Secrets in Production
+
+A new project's `.gitignore` excludes `config/passwords.yaml` and credential files such as `config/firebase_service_account_key.json`, so secrets are not committed by default. Keep production secrets out of source control.
+
+In production, set secrets through `SERVERPOD_PASSWORD_*` environment variables, or your host's secret manager, rather than a checked-in passwords file.
+
+#### Passwords on Serverpod Cloud
+
+On [Serverpod Cloud](/cloud), the values you read with `getPassword` live in the **Passwords** tier. Set them from the command line instead of editing a passwords file:
+
+```bash
+scloud password set stripeApiKey "sk_live_..."
+```
+
+Use `--from-file` for long or multi-line values such as a service account JSON. Cloud stores each password encrypted and injects it so `getPassword` reads it exactly as it does locally. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
 
 ### Config file example
 
