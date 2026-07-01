@@ -426,7 +426,7 @@ In Xcode, select the **Runner** target, go to **Signing & Capabilities**, and en
 
 #### Enable Keychain Sharing
 
-macOS uses `flutter_secure_storage` to securely store session data. Add the **Keychain Sharing** capability in Xcode (**Runner** > **Signing & Capabilities** > **+ Capability** > **Keychain Sharing**).
+macOS uses `flutter_secure_storage` to securely store session data. Add the **Keychain Sharing** capability in Xcode (**Runner** > **Signing & Capabilities** > **+ Capability** > **Keychain Sharing**). See [Set up authentication on macOS](../../macos-authentication) for file-based setup steps and troubleshooting.
 
 #### Initialize the FacebookSignInService
 
