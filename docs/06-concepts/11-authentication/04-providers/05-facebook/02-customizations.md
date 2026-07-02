@@ -1,11 +1,11 @@
 ---
-sidebar_label: Configuration
-description: Facebook identity provider options include custom validation of account details before sign-in. Configure them beyond the basic setup.
+sidebar_label: Customizations
+description: Sign in with Facebook can be configured through FacebookIdpConfig, including how to load credentials and use the available callbacks.
 ---
 
-# Configure Facebook sign-in
+# Customize Facebook sign-in
 
-This page covers configuration options for the Facebook identity provider beyond the basic setup.
+This page covers additional configuration options for the Facebook identity provider beyond the basic setup.
 
 ## Configuration options
 
@@ -125,7 +125,7 @@ final facebookIdpConfig = FacebookIdpConfigFromPasswords(
 );
 ```
 
-### Reacting to account creation
+### Reacting to Facebook account creation
 
 You can use the `onAfterFacebookAccountCreated` callback to run logic after a new Facebook account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
@@ -152,11 +152,11 @@ This callback runs inside the same database transaction as the account creation.
 If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraFacebookInfoCallback` to fetch and store the data you need before the auth user is created.
 :::
 
-## Configuring Facebook Sign-In on the app
+### Configuring Facebook sign-in on the app
 
 When using the external `serverpod_auth_idp_flutter_facebook` package, you can configure the App ID in your Flutter application.
 
-### Passing configuration in code
+#### Passing configuration in code
 
 You can pass the App ID directly when initializing the Facebook Sign-In service:
 
@@ -168,7 +168,7 @@ await client.auth.initializeFacebookSignIn(
 
 If the `appId` value is not supplied when initializing the service, the provider will automatically fetch it from the `FACEBOOK_APP_ID` environment variable. This approach is useful for different configurations per platform or build environment.
 
-### Using environment variables
+#### Using environment variables
 
 Alternatively, you can pass the App ID during build time using the `--dart-define` option. The Facebook Sign-In provider supports the following environment variable:
 

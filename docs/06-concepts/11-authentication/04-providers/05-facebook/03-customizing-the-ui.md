@@ -23,12 +23,12 @@ import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_f
 FacebookSignInWidget(
   client: client,
   // Button customization
-  text: FacebookButtonText.continueWith, // or signIn, signInWith, signUp
-  type: FacebookButtonType.standard, // or icon
+  type: FacebookButtonText.continueWith, // or signinWith, signupWith, signIn
   style: FacebookButtonStyle.blue, // or white
-  size: FacebookButtonSize.large, // or medium
-  shape: FacebookButtonShape.pill, // or rectangular, rounded
-  logoAlignment: FacebookButtonLogoAlignment.left, // or center
+  size: FacebookButtonSize.large, // or medium, small
+  shape: FacebookButtonShape.pill, // or rectangular
+  logoAlignment: FacebookButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // in pixels, max 400
 
   // Permissions to request from Facebook
   // These are the default permissions.

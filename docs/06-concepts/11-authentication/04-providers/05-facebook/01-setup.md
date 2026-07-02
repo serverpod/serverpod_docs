@@ -153,7 +153,7 @@ Finally, start the server with `serverpod start` to generate the client code, th
 - `appId`: Required. The App ID of your Facebook App.
 - `appSecret`: Required. The App secret of your Facebook App.
 
-For more details on configuration options, see the [configuration section](./configuration).
+For more details on configuration options, see the [customizations section](./customizations).
 
 ## Client-side configuration
 
