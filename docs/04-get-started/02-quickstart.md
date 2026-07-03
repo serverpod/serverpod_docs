@@ -108,6 +108,10 @@ The agent will start building your app. It will manage your database and perform
 
 If your app uses authentication, the verification code will be displayed as an alert in Serverpod's command line interface. Press the `C` key to copy the code.
 
+:::
+
+:::tip
+
 If the agent fails to reload the app, you can always hit the `R` key to force a restart of the server and the app.
 
 :::
