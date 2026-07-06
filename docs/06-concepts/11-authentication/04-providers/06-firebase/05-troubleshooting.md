@@ -1,4 +1,9 @@
-# Troubleshooting
+---
+sidebar_label: Troubleshooting
+description: Firebase authentication failures when using Firebase with Serverpod, with the cause of each one and the steps to diagnose and resolve it.
+---
+
+# Troubleshoot Firebase authentication
 
 This page helps you identify common Firebase authentication failures with Serverpod, explains why they occur, and shows how to resolve them. For issues with Firebase itself, see the [Firebase Auth documentation](https://firebase.google.com/docs/auth).
 
@@ -21,7 +26,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Confirm the `project_id` inside `firebaseServiceAccountKey` matches the Firebase project the client is using.
 - [ ] Add `FirebaseIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `FirebaseIdpEndpoint` file in `lib/src/auth/` extending `FirebaseIdpBaseEndpoint`.
-- [ ] Run **`serverpod generate`**, then **`serverpod create-migration`**, then apply migrations with `dart run bin/main.dart --apply-migrations`.
+- [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**, then **A**).
 
 #### Client
 
@@ -36,15 +41,9 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Problem:** The server builds and starts, but crashes when a user tries Firebase sign-in. The error cites a missing table (like `serverpod_auth_idp_firebase_account`).
 
-**Cause:** `serverpod generate` has been run, but you didn't create or apply the accompanying database migration.
+**Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** Create and apply the migration:
-
-```bash
-serverpod generate
-serverpod create-migration
-dart run bin/main.dart --apply-migrations
-```
+**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ## Token verification fails with "invalid signature"
 
@@ -109,7 +108,7 @@ If you haven't run `flutterfire configure`, do so to generate the `firebase_opti
 
 1. **Missing service account key:** The `firebaseServiceAccountKey` is not present in `passwords.yaml`, or the JSON is invalid.
 2. **Missing endpoint:** You did not create the endpoint class extending `FirebaseIdpBaseEndpoint`. Without it, the client has no endpoint to call.
-3. **Missing migration:** The provider's database tables don't exist yet. Apply migrations with `dart run bin/main.dart --apply-migrations`.
+3. **Missing migration:** The provider's database tables don't exist yet. In the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 4. **Project mismatch:** The service account key belongs to a different Firebase project than the one configured in your Flutter app. Compare `project_id` in `firebaseServiceAccountKey` against the project in `firebase_options.dart`.
 5. **App Check enabled prematurely:** If you enabled Firebase App Check before the client integration is in place, every request will be rejected with an App Check assertion error. Disable App Check until the client is wired up.
 

@@ -338,13 +338,13 @@ Declare module dependencies and optionally assign nicknames for easier reference
 
 ```yaml
 modules:
-  serverpod_auth:
+  serverpod_auth_core:
     nickname: auth
   my_custom_module:
     nickname: custom
 ```
 
-This allows you to reference module classes as `module:auth:UserInfo` in your model files. See the [modules documentation](modules) for more information.
+This allows you to reference module classes as `module:auth:AuthUser` in your model files. See the [modules documentation](modules) for more information.
 
 ### Shared packages
 

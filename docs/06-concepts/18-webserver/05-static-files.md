@@ -1,3 +1,7 @@
+---
+description: Static file serving in Serverpod supports automatic content-type detection, cache control headers, cache-busting, and conditional request handling.
+---
+
 # Static files
 
 Static assets like images, CSS, and JavaScript files are essential for web
@@ -70,7 +74,7 @@ pod.webServer.addRoute(
 );
 ```
 
-### Generating versioned urls
+### Generating versioned URLs
 
 Use the `assetPath()` method to generate cache-busted URLs for your assets:
 

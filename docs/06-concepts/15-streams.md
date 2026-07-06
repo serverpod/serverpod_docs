@@ -1,3 +1,7 @@
+---
+description: Stream data between server and client in Serverpod using streaming methods over a self-managed WebSocket connection, with support for bidirectional streams and serializable exceptions.
+---
+
 # Streams
 
 For some applications, it's not enough to be able to call server-side methods. You may also want to push data from the server to the client or send data two-way. Examples include real-time games or chat applications. Luckily, Serverpod supports a framework for streaming data. It's possible to stream any serialized objects to or from any endpoint.
@@ -53,7 +57,7 @@ In the example above, the `echoStream` method passes back any message sent throu
 
 :::tip
 
-Note that we can mix different types in the stream. This stream is defined as dynamic and can contain any type that can be serialized by Serverpod.
+The stream is defined as dynamic and can contain any type that can be serialized by Serverpod.
 
 :::
 
@@ -73,9 +77,9 @@ All streams in parameters are closed when the method call is over.
 
 ### Authentication
 
-Authentication is seamlessly integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
+Authentication is integrated into streaming method calls. When a client initiates a streaming method, the server automatically authenticates the session.
 
-Authentication is validated when the stream is first established, utilizing the authentication data stored in the `Session` object. If a user's authentication is subsequently revoked—requiring denial of access to the stream—the stream will be promptly closed, and an exception will be thrown.
+Authentication is validated when the stream is first established, using the authentication data stored in the `Session` object. If a user's authentication is revoked, the stream is closed and an exception is thrown.
 
 For more details on handling revoked authentication, refer to the section on [handling revoked authentication](authentication/custom-overrides#handling-revoked-authentication).
 
@@ -124,64 +128,39 @@ In the example above, the client sends an error to the server, which then throws
 
 Read more about serializable exceptions here: [Serializable exceptions](exceptions).
 
-## Streaming Endpoints (Deprecated)
+## Example: live updates for a filtered query
 
-:::warning
-Streaming Endpoints are deprecated and will be removed in a future version of Serverpod. Use [Streaming Methods](#streaming-methods) instead for a simpler and more robust streaming experience.
-:::
-
-Streaming endpoints were Serverpod's first attempt at streaming data. This approach is more manual, requiring developers to manage the WebSocket connection to the server.
-
-### Handling streams server-side
-
-The Endpoint class has three methods you override to work with streams.
-
-- `streamOpened` is called when a user connects to a stream on the Endpoint.
-- `streamClosed` is called when a user disconnects from a stream on the Endpoint.
-- `handleStreamMessage` is called when a serialized message is received from a client.
-
-To send a message to a client, call the `sendStreamMessage` method. You will need to include the session associated with the user.
-
-#### The user object
-
-It's often handy to associate a state together with a streaming session. Typically, you do this when a stream is opened.
+A common real-time need is to push updates for one record or filter, for example the messages in a single chat room. Combine a streaming method with [server events](./server-events): the streaming method subscribes the client to a channel scoped to that filter, and whatever changes the data posts to the same channel.
 
 ```dart
-Future<void> streamOpened(StreamingSession session) async {
-  setUserObject(session, MyUserObject());
+class ChatEndpoint extends Endpoint {
+  // The client subscribes to live messages for one room.
+  Stream<ChatMessage> watchRoom(Session session, int roomId) async* {
+    yield* session.messages.createStream<ChatMessage>('room_$roomId');
+  }
+
+  // Posting a message stores it and broadcasts it to everyone watching the room.
+  Future<void> postToRoom(Session session, int roomId, String text) async {
+    var message = ChatMessage(roomId: roomId, text: text);
+    await ChatMessage.db.insertRow(session, message);
+    await session.messages.postMessage('room_$roomId', message);
+  }
 }
 ```
 
-You can access the user object at any time by calling the `getUserObject` method. The user object is automatically discarded when a session ends.
-
-### Handling streams in your app
-
-Before you can access streams in your client, you need to connect to the server's web socket. You do this by calling connectWebSocket on your client.
+On the client, listen to the returned stream and call `postToRoom` to publish:
 
 ```dart
-await client.openStreamingConnection();
+var messages = client.chat.watchRoom(roomId);
+messages.listen((message) {
+  print('Room ${message.roomId}: ${message.text}');
+});
 
+await client.chat.postToRoom(roomId, 'Hello, room!');
 ```
 
-You can monitor the state of the connection by adding a listener to the client.
-Once connected to your server's web socket, you can pass and receive serialized objects.
+Because the channel name includes the `roomId`, each client receives updates only for the room it is watching. The same pattern works for any filter: scope the channel by the id or query you care about, and post to it whenever the data changes. To fan the updates out across multiple server instances, post with `global: true` (see [Global messages](./server-events#global-messages)).
 
-Listen to its web socket stream to receive updates from an endpoint on the server.
+## Streaming endpoints (deprecated)
 
-```dart
-await for (var message in client.myEndpoint.stream) {
-  _handleMessage(message);
-}
-```
-
-You send messages to the server's endpoint by calling `sendStreamMessage`.
-
-```dart
-client.myEndpoint.sendStreamMessage(MyMessage(text: 'Hello'));
-```
-
-:::info
-
-Authentication is handled automatically. If you have signed in, your web socket connection will be authenticated.
-
-:::
+Serverpod's original streaming API (`streamOpened`, `handleStreamMessage`, `sendStreamMessage`, `openStreamingConnection`) is deprecated and will be removed in a future version. Use [streaming methods](#streaming-methods) instead. The old API is kept for reference in [Streaming endpoints (deprecated)](../upgrading/archive/streaming-endpoints).

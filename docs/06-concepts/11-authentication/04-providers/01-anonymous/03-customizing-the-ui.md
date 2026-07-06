@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: Anonymous sign-in UI can be customized with the AnonymousSignInWidget and AnonymousAuthController to match the rest of your app's design.
+---
+
+# Customize the anonymous sign-in UI
 
 When using the anonymous identity provider, you can customize the UI to your liking. You can use the `AnonymousSignInWidget` to display the anonymous sign-in button in your own layout, or you can use the `AnonymousAuthController` to build a completely custom authentication interface.
 

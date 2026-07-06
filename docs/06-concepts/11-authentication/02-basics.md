@@ -1,4 +1,9 @@
-# The basics
+---
+sidebar_label: The basics
+description: Authentication tokens are handled automatically by Serverpod. Learn how to access the signed-in user from the Session object.
+---
+
+# Authentication basics
 
 Serverpod automatically checks if the user is logged in and if the user has the right privileges to access each endpoint. When using the Serverpod Authentication modules, you will not have to worry about keeping track of tokens, refreshing them or even including them in requests as this all happens automatically under the hood.
 
@@ -90,13 +95,17 @@ Using `@unauthenticatedClientCall` on an endpoint or method that also has `requi
 
 ## Authorization on endpoints
 
-Serverpod also supports scopes for restricting access. One or more scopes can be associated with a user. For instance, this can be used to give admin access to a specific user. To restrict access for an endpoint, override the `requiredScopes` property. Note that setting `requiredScopes` implicitly sets `requireLogin` to true.
+Scopes define what an authenticated user is allowed to do. Each scope is an independent capability identified by a string name. Scopes do not inherit from each other. Holding `Scope.admin` does not grant any other scope.
+
+Each endpoint exposes two properties for access control:
+
+- `requireLogin`: the user must be signed in, with no specific scope required.
+- `requiredScopes`: the user must hold every scope in the set.
+
+To restrict access by scope, override the `requiredScopes` property:
 
 ```dart
 class MyEndpoint extends Endpoint {
-  @override
-  bool get requireLogin => true;
-
   @override
   Set<Scope> get requiredScopes => {Scope.admin};
 
@@ -107,9 +116,97 @@ class MyEndpoint extends Endpoint {
 }
 ```
 
+Serverpod ships with `Scope.admin` for built-in admin functionality in Serverpod modules. Define your own scope names for application-specific access control.
+
+:::info
+When `requiredScopes` is non-empty, authentication is required even if `requireLogin` is false.
+:::
+
+### Custom scopes
+
+Define constants for your domain by extending the `Scope` class:
+
+```dart
+class CustomScope extends Scope {
+  const CustomScope(String name) : super(name);
+
+  static const userRead = CustomScope('userRead');
+  static const userWrite = CustomScope('userWrite');
+}
+```
+
+Then use the custom scopes on your endpoints:
+
+```dart
+class MyEndpoint extends Endpoint {
+  @override
+  Set<Scope> get requiredScopes => {CustomScope.userRead, CustomScope.userWrite};
+
+  Future<void> myMethod(Session session) async {
+    ...
+  }
+  ...
+}
+```
+
+The user must hold both `userRead` and `userWrite` to access this endpoint. You can reuse the same scope constants across multiple endpoints to build different access combinations.
+
+Keep scope names stable once deployed, as renaming a scope will revoke it from any user who had it.
+
+You can also define shared scope requirements in a base endpoint class. See [Endpoint inheritance](../working-with-endpoints/endpoint-inheritance) for details.
+
+:::caution
+Keep in mind that a scope is merely an arbitrary string and can be written in any format you prefer. However, it's crucial to use unique strings for each scope, as duplicated scope strings may lead to unintentional data exposure.
+:::
+
+### How scopes combine
+
+When an endpoint lists multiple scopes in `requiredScopes`, the user must have all of them. Serverpod evaluates scopes with AND logic. There is no OR matching and no scope hierarchy.
+
+Consider a user management feature with two admin endpoints: one for aggregated user analytics and one for editing user data. Not every admin should be able to modify users, so the endpoints require different scope combinations:
+
+```dart
+class UserAnalyticsEndpoint extends Endpoint {
+  @override
+  Set<Scope> get requiredScopes => {Scope.admin};
+
+  Future<UserStats> getStats(Session session) async {
+    ...
+  }
+}
+
+class UserEditEndpoint extends Endpoint {
+  @override
+  Set<Scope> get requiredScopes => {
+    Scope.admin,
+    CustomScope.userWrite,
+  };
+
+  Future<void> updateUser(Session session, UserData data) async {
+    ...
+  }
+}
+```
+
+An admin user with only `Scope.admin` can call `UserAnalyticsEndpoint` but not `UserEditEndpoint`. To allow editing, grant both scopes:
+
+```dart
+import 'package:serverpod_auth_idp_server/core.dart';
+
+await AuthServices.instance.authUsers.update(
+  session,
+  authUserId: authUserId,
+  scopes: {Scope.admin, CustomScope.userWrite},
+);
+```
+
+This lets you compose capabilities at the endpoint level instead of building nested roles.
+
 ### Managing scopes
 
-New users are created without any scopes. To update a user's scopes, use the `update` method from `AuthServices.instance.authUsers`. This method replaces all previously stored scopes.
+New users are created without any scopes. Scope changes take effect only for new sign-ins. Existing sessions and tokens reflect the scopes that were set when the user last signed in.
+
+To update a user's scopes, use the `update` method from `AuthServices.instance.authUsers`. This method replaces all previously stored scopes:
 
 ```dart
 import 'package:serverpod_auth_idp_server/core.dart';
@@ -121,39 +218,14 @@ await AuthServices.instance.authUsers.update(
 );
 ```
 
-### Custom scopes
+Changing a user's scopes does not affect existing sessions or tokens until the user signs in again or their tokens are revoked. For open streaming connections, Serverpod closes method streams when a revoked scope overlaps what the endpoint requires. See [Managing tokens](./token-managers/managing-tokens#revoking-tokens) for revoking tokens across devices.
 
-You may need more granular access control for specific endpoints. To create custom scopes, extend the Scope class, as shown below:
+### HTTP responses
 
-```dart
-class CustomScope extends Scope {
-  const CustomScope(String name) : super(name);
+When access is denied, Serverpod returns:
 
-  static const userRead = CustomScope('userRead');
-  static const userWrite = CustomScope('userWrite');
-}
-```
-
-Then use the custom scopes like this:
-
-```dart
-class MyEndpoint extends Endpoint {
-  @override
-  bool get requireLogin => true;
-
-  @override
-  Set<Scope> get requiredScopes => {CustomScope.userRead, CustomScope.userWrite};
-
-  Future<void> myMethod(Session session) async {
-    ...
-  }
-  ...
-}
-```
-
-:::caution
-Keep in mind that a scope is merely an arbitrary string and can be written in any format you prefer. However, it's crucial to use unique strings for each scope, as duplicated scope strings may lead to unintentional data exposure.
-:::
+- **401 Unauthorized**: no token was provided, or the token is invalid.
+- **403 Forbidden**: the user is authenticated but missing one or more required scopes.
 
 ## Client-side authentication
 
@@ -220,7 +292,9 @@ void _onAuthStateChanged() {
 }
 ```
 
-The listener is triggered whenever the user's sign-in state changes.## User authentication
+The listener is triggered whenever the user's sign-in state changes.
+
+## User authentication
 
 ### Signing out users
 

@@ -1,16 +1,12 @@
-# Command line completion
+# scloud completion
 
 As an `scloud` user, you can enable command line completion in most shells.
 
-Two completion tools are supported, _completely_ and _carapace_.
+Two completion tools are supported: Completely and Carapace.
 
-Completely is easier to set up for the end user, but only has direct support
-for bash and zsh.
-See also: https://github.com/bashly-framework/completely
+Completely is easier to set up for the end user, but only has direct support for bash and zsh. See [Completely on GitHub](https://github.com/bashly-framework/completely).
 
-Carapace supports nearly all shells but requires the end user to install
-the carapace tool.
-See also: https://carapace.sh/
+Carapace supports nearly all shells but requires the end user to install the Carapace tool. See the [Carapace docs](https://carapace.sh/).
 
 ## Installing completion
 
@@ -58,22 +54,19 @@ source ~/.local/share/bash-completion/completions/scloud.bash
 
 ### Nearly all shells with Carapace
 
-Carapace supports nearly all shells but requires the end user to install
-the carapace tool.
-See also: https://carapace.sh/
+Carapace supports nearly all shells but requires the end user to install the Carapace tool. See the [Carapace docs](https://carapace.sh/).
 
 #### Prerequisites
 
-To install `carapace` on macOS:
+To install Carapace on macOS:
 
 ```sh
 brew install carapace
 ```
 
-For installing in other environments, see:
-https://carapace-sh.github.io/carapace-bin/install.html
+For other environments, see the [Carapace install guide](https://carapace-sh.github.io/carapace-bin/install.html).
 
-#### Enable carapace completion for scloud
+#### Enable Carapace completion for scloud
 
 Run the following once for the current shell,
 or add to your shell startup script:
@@ -91,5 +84,4 @@ zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 source <(carapace scloud)
 ```
 
-For more information and installing in other shells, see:
-https://carapace-sh.github.io/carapace-bin/setup.html
+For other shells, see the [Carapace setup guide](https://carapace-sh.github.io/carapace-bin/setup.html).

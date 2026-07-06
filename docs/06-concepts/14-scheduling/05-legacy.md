@@ -1,10 +1,14 @@
+---
+description: The legacy string-based API for registering and scheduling future calls. Prefer the type-safe API for new code.
+---
+
 # Legacy
 
 :::warning
 This approach is error prone since it involves manually registering and scheduling future calls using string identifiers. The recommended way to interact with the future calls feature is through the [type-safe API](setup).
 :::
 
-Creating a future call is simple, extend the `FutureCall` class and override the `invoke` method. The method takes two params the first being the [`Session`](../sessions) object and the second being an optional SerializableModel ([See models](../models)).
+To create a future call, extend the `FutureCall` class and override the `invoke` method. The method takes two params: the first is a [`Session`](../sessions) object and the second is an optional serializable model ([See models](../models)).
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -17,7 +21,7 @@ class ExampleFutureCall extends FutureCall<MyModelEntity> {
 }
 ```
 
-To let your Server get access to the future call you have to register it in the main run method in your `server.dart` file. You register the future call by calling `registerFutureCall` on the Serverpod object and giving it an instance of the future call together with a string that gives the future call a name. The name has to be globally unique and is used to later invoke the future call.
+Register the future call in the `run` function in your `server.dart` file by calling `registerFutureCall` with an instance of the class and a globally unique name string. The name is used to invoke the future call later.
 
 ```dart
 void run(List<String> args) async {
@@ -35,7 +39,7 @@ void run(List<String> args) async {
 }
 ```
 
-You are now able to register a future call to be invoked in the future by calling either `futureCallWithDelay` or `futureCallAtTime` depending on your needs.
+With the future call registered, you can schedule it using either `futureCallWithDelay` or `futureCallAtTime` depending on your needs.
 
 Invoke the future call 1 hour from now by calling `futureCallWithDelay`.
 
@@ -53,12 +57,12 @@ Invoke the future call at a specific time and/or date in the future by calling `
 await session.serverpod.futureCallAtTime(
   'exampleFutureCall',
   data,
-  DateTime(2025, 1, 1),
+  DateTime(2030, 1, 1),
 );
 ```
 
 :::note
-`data` is an object created from a class defined in one of your yaml files and has to be the same as the one you expect to receive in the future call. in the `model` folder, `data` may also be null if you don't need it.
+`data` is an object created from a class defined in one of your yaml model files and must match the type expected by the future call. `data` may also be `null` if you don't need it.
 :::
 
 When registering a future call, it is also possible to give it an `identifier` so that it can be referenced later. The same identifier can be applied to multiple future calls.

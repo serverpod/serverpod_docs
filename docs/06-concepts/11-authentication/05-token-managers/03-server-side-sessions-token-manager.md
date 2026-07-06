@@ -1,3 +1,7 @@
+---
+description: The ServerSideSessionsTokenManager provides database-backed sessions with immediate revocation and inactivity timeouts. Configure it on the server.
+---
+
 # Server-side Sessions Token Manager
 
 The `ServerSideSessionsTokenManager` uses session-based tokens stored in the database. This token manager provides:

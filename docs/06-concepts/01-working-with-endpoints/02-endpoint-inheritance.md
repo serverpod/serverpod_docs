@@ -1,6 +1,10 @@
+---
+description: Endpoint inheritance lets one endpoint extend another, override behavior from Serverpod modules, and control which subclasses generate client code.
+---
+
 # Endpoint inheritance
 
-Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass – as long as it does not opt out again.
+Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass, as long as it does not opt out again.
 Inheritance gives you the possibility to modify the behavior of `Endpoint` classes defined in other Serverpod modules.
 
 Currently, there are the following possibilities to extend another `Endpoint` class:
@@ -108,12 +112,34 @@ This way, you can modify the behavior of endpoint methods while still sharing th
 
 ## Hiding endpoint methods with `@doNotGenerate`
 
-In case you want to hide methods from an endpoint use `@doNotGenerate` in the child class like so:
+In case you want to hide a method that the child class declares itself (i.e. one that is not inherited from a parent class whose client is still being generated), annotate it with `@doNotGenerate` like so:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 
-abstract class CalculatorEndpoint extends Endpoint {
+class AdderEndpoint extends Endpoint {
+  Future<int> add(Session session, int a, int b) async {
+    return a + b;
+  }
+
+  @doNotGenerate
+  Future<int> subtract(Session session, int a, int b) async {
+    throw UnimplementedError();
+  }
+}
+```
+
+The `AdderEndpoint` exposes `add`, but `subtract` is annotated with `@doNotGenerate` and is therefore excluded from the generated client.
+
+### Hiding an inherited method
+
+Hiding a method that is *inherited* from a parent class only works if the parent class itself is fully annotated with `@doNotGenerate`, meaning no client class is generated for it at all:
+
+```dart
+import 'package:serverpod/serverpod.dart';
+
+@doNotGenerate
+class CalculatorEndpoint extends Endpoint {
   Future<int> add(Session session, int a, int b) async {
     return a + b;
   }
@@ -125,16 +151,21 @@ abstract class CalculatorEndpoint extends Endpoint {
 
 class AdderEndpoint extends CalculatorEndpoint {
   @doNotGenerate
+  @override
   Future<int> subtract(Session session, int a, int b) async {
     throw UnimplementedError();
   }
 }
 ```
 
-Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `AdderEndpoint` inherits all methods from its parent class, but since it opts to hide `subtract` by annotating it with `@doNotGenerate` only the `add` method will be exposed.
-Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler – in practice, nothing will ever call this method on `AdderEndpoint`.
+Since `CalculatorEndpoint` is annotated with `@doNotGenerate`, it will not be exposed on the server, and no client class is generated for it. `AdderEndpoint` inlines the inherited methods directly, and since it re-declares `subtract` with `@doNotGenerate`, only `add` is exposed on the generated client.
+Don't worry about the exception in the `subtract` implementation. That is only added to satisfy the Dart compiler. In practice, nothing will ever call this method on `AdderEndpoint`.
 
-Hiding endpoints from a super class is only appropriate in case the parent `class` is `abstract` or annotated with `@doNotGenerate`. Otherwise, the method that should be hidden on the child would still be accessible via the parent class.
+:::warning
+If the parent class is only `abstract` (and not itself annotated with `@doNotGenerate`), Serverpod still generates an abstract client class that mirrors it, and every subclass's generated client must implement all of its methods. In that case, `@doNotGenerate` **cannot** be used to hide an inherited method. Doing so removes the method from the subclass's generated client while the abstract client class still declares it, which causes a Dart compile error ("missing concrete implementation"). To hide an inherited method, the parent class must be marked `@doNotGenerate` itself, not just `abstract`.
+
+If the parent class is a normal, concrete class (neither `abstract` nor `@doNotGenerate`), it is exposed on the server and the client in its own right. Hiding the method on the child only removes it from the child's client. It remains accessible through the parent's own generated client class.
+:::
 
 ## Unhiding endpoint methods annotated with `@doNotGenerate` in the super class
 
@@ -295,7 +326,7 @@ var advancedCalc = client.getEndpointOfType<EndpointCalculator>('advancedCalcula
 
 #### Use case: Module-provided abstract endpoints
 
-This pattern is particularly powerful for modules. A module can provide an abstract endpoint that defines an interface, and users of the module can extend it to expose the functionality on their server:
+This pattern is especially useful for modules. A module can provide an abstract endpoint that defines an interface, and users of the module can extend it to expose the functionality on their server:
 
 **In a module (e.g., `serverpod_auth`):**
 
@@ -347,7 +378,7 @@ class UserLoggedInWidget extends StatelessWidget {
 
 **In the user application:**
 
-The user will just have to extend the abstract endpoint to expose it on their server. Then, any client code that depends on the abstract endpoint will work seamlessly, regardless of the concrete class name or location.
+The user will just have to extend the abstract endpoint to expose it on their server. Then, any client code that depends on the abstract endpoint will work regardless of the concrete class name or location.
 
 ```dart
 // Extend the module's abstract endpoint to expose it

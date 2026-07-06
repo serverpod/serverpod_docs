@@ -1,3 +1,7 @@
+---
+description: File upload handling in Serverpod uses cloud storage providers (GCP, S3, Cloudflare R2) or the database, with server-generated upload descriptions and client-side verification.
+---
+
 # Uploading files
 
 Serverpod has built-in support for handling file uploads. Out of the box, your server is configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use Google Cloud Storage or S3 in production scenarios.
@@ -55,7 +59,7 @@ Future<bool> verifyUpload(Session session, String path) async {
 
 ### Client-side code
 
-To upload a file from the app side, first request the upload description. Next, upload the file. You can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the data must be held in RAM memory. Finally, you should verify the upload with the server.
+To upload a file from the app side, first request the upload description. Next, upload the file. You can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the data must be held in RAM. Finally, you should verify the upload with the server.
 
 ```dart
 var uploadDescription = await client.myEndpoint.getUploadDescription('myfile');
@@ -78,7 +82,7 @@ In a real-world app, you most likely want to create the file paths on your serve
 
 ## Accessing stored files
 
-It's possible to quickly check if an uploaded file exists or access the file itself. If a file is in a public storage, it is also accessible to the world through an URL. If it is private, it can only be accessed from the server.
+You can check if a file exists or retrieve it directly from your server. Files in public storage are also accessible via URL; private files can only be accessed from the server.
 
 To check if a file exists, use the `fileExists` method.
 
@@ -132,7 +136,7 @@ Serverpod can use Google Cloud Storage's HMAC interoperability (S3-compatible) t
 
 1. Create a service account with the _Storage Admin_ role.
 2. Under _Cloud Storage_ > _Settings_ > _Interoperability_, create a new HMAC key for your newly created service account.
-3. Add the two keys you received in the previous step to your `config/password.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively. You can also pass them in as environment variables. The environment variable names are `SERVERPOD_HMAC_ACCESS_KEY_ID` and `SERVERPOD_HMAC_SECRET_KEY`.
+3. Add the two keys you received in the previous step to your `config/passwords.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively. You can also pass them in as environment variables. The environment variable names are `SERVERPOD_HMAC_ACCESS_KEY_ID` and `SERVERPOD_HMAC_SECRET_KEY`.
 4. When creating a new bucket, set the _Access control_ to _Fine-grained_ and disable the _Prevent public access_ option.
 
 You may also want to add the bucket as a backend for your load balancer to give it a custom domain name.

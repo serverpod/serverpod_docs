@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: The OAuth2 utility provides PKCE helpers to integrate any OAuth2-compliant provider without handling the low-level protocol yourself.
+---
+
+# Set up the OAuth2 utility
 
 The Serverpod Auth module provides generic OAuth2 utilities that simplify implementing custom identity providers. These utilities handle the complex OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange), allowing you to integrate any OAuth2-compliant provider without dealing with low-level protocol details.
 

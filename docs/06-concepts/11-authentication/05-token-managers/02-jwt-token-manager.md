@@ -1,3 +1,7 @@
+---
+description: The JwtTokenManager provides stateless JWT authentication with short-lived access tokens and refresh token rotation. Configure it on the server.
+---
+
 # JWT Token Manager
 
 The `JwtTokenManager` uses JWT (JSON Web Tokens) for stateless authentication. This token manager provides:

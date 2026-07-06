@@ -1,3 +1,7 @@
+---
+description: Create and apply database migrations in Serverpod to keep your schema in sync as your models evolve, including repair migrations for out-of-sync databases.
+---
+
 # Migrations
 
 Serverpod comes bundled with a simple-to-use but powerful migration system that helps you keep your database schema up to date as your project evolves. Database migrations provide a structured way of upgrading your database while maintaining existing data.
@@ -94,7 +98,16 @@ For each migration, five files are created:
 
 ## Apply migrations
 
-Migrations are applied using the server runtime. To apply migrations, navigate to your project's `server` package directory, then start the server with the `--apply-migrations` flag. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
+### During development
+
+`serverpod start` applies your migrations for you. With the `serverpod start` terminal focused:
+
+- Pending migrations are applied automatically on the first boot.
+- Press **A** to apply new migrations as you create them.
+
+### In production or CI
+
+To apply migrations explicitly, start the server runtime with the `--apply-migrations` flag from your `server` package directory. Migrations are applied as part of the startup sequence and the framework asserts that each migration is only applied once to the database.
 
 ```bash
 $ dart run bin/main.dart --apply-migrations

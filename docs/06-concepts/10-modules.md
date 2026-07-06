@@ -1,3 +1,7 @@
+---
+description: Add, reference, and create Serverpod modules, reusable packages that bundle server, client, and Flutter code with their own endpoints and database tables.
+---
+
 # Modules
 
 Serverpod is built around the concept of modules. A Serverpod module is similar to a Dart package but contains both server, client, and Flutter code. A module contains its own namespace for endpoints and methods to minimize the risk of conflicts.
@@ -29,19 +33,19 @@ modules:
     nickname: auth
 ```
 
-Then run `pub get` and `serverpod generate` from your server's directory (e.g., `mypod_server`) to add the module to your project's deserializer.
+Then run `pub get` from your server's directory (e.g., `mypod_server`):
 
 ```bash
 $ dart pub get
-$ serverpod generate
 ```
 
-Finally, since modules might include modifications to the database schema, you should create a new database migration and apply it by running `serverpod create-migration`  then `dart bin/main.dart --apply-migrations` from your server's directory.
+Start the server to wire up the module:
 
 ```bash
-$ serverpod create-migration
-$ dart bin/main.dart --apply-migrations
+$ serverpod start
 ```
+
+The module adds tables to your database, so create and apply a migration: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ### Client setup
 

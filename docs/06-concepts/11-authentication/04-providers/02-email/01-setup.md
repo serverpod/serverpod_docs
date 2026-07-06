@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Sign in with Email lets users authenticate with an email and password. Connect Serverpod to an SMTP service and configure the email identity provider.
+---
+
+# Set up email sign-in
 
 To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
 
@@ -76,7 +81,7 @@ import 'package:serverpod_auth_idp_server/providers/email.dart';
 class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
 ```
 
-Then, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

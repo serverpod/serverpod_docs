@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: Facebook sign-in UI can be customized with the FacebookSignInWidget and FacebookAuthController to build a custom authentication flow in your app.
+---
+
+# Customize the Facebook sign-in UI
 
 When using the Facebook identity provider, you can customize the UI to your liking. You can use the `FacebookSignInWidget` to display the Facebook Sign-In flow in your own custom UI, or you can use the `FacebookAuthController` to build a completely custom authentication interface.
 
@@ -18,12 +23,12 @@ import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_f
 FacebookSignInWidget(
   client: client,
   // Button customization
-  text: FacebookButtonText.continueWith, // or signIn, signInWith, signUp
-  type: FacebookButtonType.standard, // or icon
+  type: FacebookButtonText.continueWith, // or signinWith, signupWith, signIn
   style: FacebookButtonStyle.blue, // or white
-  size: FacebookButtonSize.large, // or medium
-  shape: FacebookButtonShape.pill, // or rectangular, rounded
-  logoAlignment: FacebookButtonLogoAlignment.left, // or center
+  size: FacebookButtonSize.large, // or medium, small
+  shape: FacebookButtonShape.pill, // or rectangular
+  logoAlignment: FacebookButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // in pixels, max 400
 
   // Permissions to request from Facebook
   // These are the default permissions.

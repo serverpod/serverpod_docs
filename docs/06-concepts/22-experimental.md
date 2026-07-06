@@ -1,14 +1,14 @@
+---
+description: Experimental features in Serverpod are opt-in additions with unstable APIs, including diagnostic event handlers for exception monitoring and shutdown task registration.
+---
+
 # Experimental features
 
 :::warning
 Be cautious when using experimental features in production environments, as their stability is uncertain and they may receive breaking changes in upcoming releases.
 :::
 
-"Experimental Features" are cutting-edge additions to Serverpod that are currently under development or testing or whose API is not yet stable.
-These features allow developers to explore new functionalities and provide feedback, helping shape the future of Serverpod.
-However, they may not be fully stable or complete and are subject to change.
-
-Experimental features are disabled by default, i.e. they are not active unless the developer opts-in.
+Experimental features are opt-in additions to Serverpod. They are disabled by default; enable them through the `experimentalFeatures` argument on the `Serverpod` constructor or via `config/generator.yaml`.
 
 :::note
 To make the LSP server understand the usage of experimental flags and avoid complaints about unknown syntax on model files, configure experimental features in the `config/generator.yaml` file. See the [configuration documentation](configuration#experimental-features) for more details.
@@ -51,7 +51,7 @@ they do not allow any behavior-changing action such as suppressing exceptions or
 
 ### Setup
 
-This feature is enabled by providing one ore more `DiagnosticEventHandler` implementations
+This feature is enabled by providing one or more `DiagnosticEventHandler` implementations
 to the Serverpod constructor's `experimentalFeatures` specification.
 
 Example:

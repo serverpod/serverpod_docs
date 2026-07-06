@@ -1,8 +1,12 @@
+---
+description: Routing in Serverpod's web server supports HTTP method filtering, path parameters, wildcards, fallback handling, and virtual host routing.
+---
+
 # Routing
 
 Routes are the foundation of your web server, directing incoming HTTP requests
 to the right handlers. While simple routes work well for basic APIs, Serverpod
-provides powerful routing features for complex applications: HTTP method
+provides routing features for complex applications: HTTP method
 filtering, path parameters, wildcards, and fallback handling. Understanding
 these patterns helps you build clean, maintainable APIs.
 
@@ -58,7 +62,7 @@ The examples in this documentation omit error handling for brevity.
 
 :::
 
-## Http methods
+## HTTP methods
 
 Routes can specify which HTTP methods they respond to using the `methods`
 parameter.
@@ -201,7 +205,7 @@ pod.webServer.addRoute(UserCrudModule(), '/api/users');
 
 This creates `GET /api/users` and `GET /api/users/:id` endpoints.
 
-Note that handlers receive only a `Request` parameter. To access the `Session`,
+Handlers receive only a `Request` parameter. To access the `Session`,
 use `request.session` (unlike `Route.handleCall()` which receives both as
 explicit parameters).
 
