@@ -1,5 +1,5 @@
 ---
-description: "Run your Serverpod project in development with serverpod start: code generation, hot reload, database migrations, and the companion Flutter app in one terminal."
+description: The serverpod start command runs your project in development, with code generation, hot reload, database migrations, and the Flutter app in one terminal.
 ---
 
 # Running your server

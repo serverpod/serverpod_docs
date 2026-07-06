@@ -1,5 +1,5 @@
 ---
-description: 'Every Serverpod configuration option: run settings, server and service ports, database, Redis, session logs, future calls, and code generation.'
+description: Every Serverpod configuration option, covering run settings, server and service ports, database, Redis, session logs, future calls, and code generation.
 ---
 
 # Configuration reference

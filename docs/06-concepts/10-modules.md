@@ -1,5 +1,5 @@
 ---
-description: Add, reference, and create Serverpod modules, reusable packages that bundle server, client, and Flutter code with their own endpoints and database tables.
+description: Serverpod modules are reusable packages that bundle server, client, and Flutter code with their own endpoints and database tables.
 ---
 
 # Modules

@@ -1,5 +1,5 @@
 ---
-description: "Configure Serverpod with YAML files, environment variables, or a Dart config object: run modes, the three configuration sources and their precedence, and secrets."
+description: Configuration in Serverpod comes from YAML files, environment variables, or a Dart config object, with run modes, source precedence, and secrets.
 ---
 
 # Configuration
@@ -67,8 +67,8 @@ sessionLogs:
 futureCallExecutionEnabled: true
 
 futureCall:
-  concurrencyLimit: 5
-  scanInterval: 2000
+  concurrencyLimit: 1
+  scanInterval: 5000
 ```
 
 ### Database backends
