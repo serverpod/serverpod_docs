@@ -557,3 +557,7 @@ flutter build web --dart-define=FACEBOOK_APP_ID=your-facebook-app-id
 ```
 
 On iOS and Android the App ID comes from the native configuration files, so no build-time value is needed. See [Configuring Facebook sign-in on the app](./customizations#configuring-facebook-sign-in-on-the-app).
+
+:::tip
+If you run into issues, see the [troubleshooting guide](./troubleshooting).
+:::
