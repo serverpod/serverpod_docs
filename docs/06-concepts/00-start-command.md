@@ -4,7 +4,7 @@ description: "Run your Serverpod project in development with serverpod start: co
 
 # Running your server
 
-During development you want one command that keeps your server, generated code, and app in sync as you edit, so a change shows up the moment you save it. The `serverpod start` command does exactly that: it generates the latest code, runs your server with hot reload, and launches your companion Flutter apps, all inside a single interactive terminal.
+As you build, one command keeps your server, generated code, and app in sync, so a change shows up the moment you save. The `serverpod start` command does exactly that: it generates the latest code, runs your server with hot reload, and launches your companion Flutter apps, all inside a single interactive terminal.
 
 Run it from anywhere inside your project folder:
 
