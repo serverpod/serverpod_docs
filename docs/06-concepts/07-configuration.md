@@ -249,31 +249,6 @@ scloud password set stripeApiKey "sk_live_..."
 
 Use `--from-file` for long or multi-line values such as a service account JSON. Cloud stores each password encrypted and injects it so `getPassword` reads it exactly as it does locally. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
 
-### Passwords file example
-
-The password file contains the secrets used by the server to connect to different services, and you can add your own alongside them. It is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs.
-
-```yaml
-shared:
-  myCustomSharedSecret: 'secret_key'
-
-development:
-  database: 'development_password'
-  redis: 'development_password'
-  serviceSecret: 'development_service_secret'
-  twilioApiKey: 'dev_twilio_key'
-
-production:
-  database: 'production_password'
-  redis: 'production_password'
-  serviceSecret: 'production_service_secret'
-  twilioApiKey: 'prod_twilio_key'
-```
-
-:::info
-The `database` keyword is only needed for PostgreSQL. SQLite does not use a password.
-:::
-
 ## Configure code generation
 
 Serverpod uses a `generator.yaml` file to configure code generation. Place this file in the `config` directory of your server project.
