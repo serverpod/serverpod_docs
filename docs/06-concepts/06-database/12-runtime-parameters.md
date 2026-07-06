@@ -1,5 +1,5 @@
 ---
-description: Fine-tune PostgreSQL query behavior per transaction or globally using Serverpod's runtime parameters, particularly for vector similarity search optimization.
+description: Runtime parameters tune PostgreSQL query behavior per transaction or globally in Serverpod, notably for vector similarity search.
 ---
 
 # Runtime parameters

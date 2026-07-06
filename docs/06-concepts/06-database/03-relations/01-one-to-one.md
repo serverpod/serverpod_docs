@@ -1,5 +1,5 @@
 ---
-description: Define one-to-one relationships between database tables using Serverpod's relation keyword, with support for object fields, ID fields, and bidirectional relations.
+description: A one-to-one relationship links two tables through Serverpod's relation keyword, with object fields, ID fields, and bidirectional access.
 ---
 
 # One-to-one

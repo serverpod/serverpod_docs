@@ -1,5 +1,5 @@
 ---
-description: Create, read, update, and delete database rows in Serverpod using the generated static db methods on your model classes.
+description: The generated db methods on each model class create, read, update, and delete database rows in Serverpod.
 ---
 
 # CRUD

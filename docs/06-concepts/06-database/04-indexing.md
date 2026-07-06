@@ -1,5 +1,5 @@
 ---
-description: Add indexes to Serverpod database tables to improve query performance, including unique, GIN, HNSW, and IVFFLAT vector indexes.
+description: Indexes on Serverpod database tables improve query performance, including unique, GIN, HNSW, and IVFFLAT vector indexes.
 ---
 
 # Indexing

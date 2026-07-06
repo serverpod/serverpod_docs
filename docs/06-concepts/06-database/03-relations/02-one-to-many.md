@@ -1,5 +1,5 @@
 ---
-description: Define one-to-many relationships between database tables using Serverpod's relation keyword, with implicit and explicit definition options.
+description: A one-to-many relationship links a parent row to many child rows through Serverpod's relation keyword, with implicit and explicit options.
 ---
 
 # One-to-many

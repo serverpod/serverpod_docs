@@ -1,5 +1,5 @@
 ---
-description: Lock specific database rows within a transaction in Serverpod to safely handle concurrent updates and prevent conflicting writes.
+description: Row locking holds specific database rows within a transaction in Serverpod, so concurrent updates do not conflict.
 ---
 
 # Row locking

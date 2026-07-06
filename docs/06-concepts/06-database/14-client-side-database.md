@@ -1,5 +1,5 @@
 ---
-description: Use a SQLite database on the Flutter client with the same ORM interface as the server, including CRUD, relations, and transactions.
+description: The client-side database runs SQLite on the Flutter client with the same ORM interface as the server, including CRUD, relations, and transactions.
 ---
 
 # Client-side database

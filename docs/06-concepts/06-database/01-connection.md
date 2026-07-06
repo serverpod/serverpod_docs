@@ -1,5 +1,5 @@
 ---
-description: Configure Serverpod's database connection details, passwords, and connect to custom Postgres or SQLite instances.
+description: The database connection is defined in Serverpod's configuration and password files, with support for custom Postgres or SQLite instances.
 ---
 
 # Connection

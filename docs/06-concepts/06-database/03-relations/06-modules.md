@@ -1,5 +1,5 @@
 ---
-description: Create relations between your own database tables and tables from Serverpod modules using a bridge table approach.
+description: Module relations connect your own database tables to tables from Serverpod modules through a bridge table.
 ---
 
 # Relations with modules

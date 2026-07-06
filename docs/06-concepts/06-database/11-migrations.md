@@ -1,10 +1,10 @@
 ---
-description: Create and apply database migrations in Serverpod to keep your schema in sync as your models evolve, including repair migrations for out-of-sync databases.
+description: Database migrations keep your Serverpod schema in sync as your models evolve, with repair migrations to recover a database that has drifted out of sync.
 ---
 
 # Migrations
 
-Serverpod comes bundled with a simple-to-use but powerful migration system that helps you keep your database schema up to date as your project evolves. Database migrations provide a structured way of upgrading your database while maintaining existing data.
+Serverpod comes with a migration system that helps you keep your database schema up to date as your project evolves. Database migrations provide a structured way of upgrading your database while maintaining existing data.
 
 A migration is a set of database operations (e.g. creating a table, adding a column, etc.) required to update the database schema to match the requirements of the project. Each migration handles both initializing a new database and rolling an existing one forward from a previous state.
 
@@ -69,11 +69,18 @@ This would create a migration named `<timestamp>-v1-0-0`:
 │    └── 20231205080937028-v1-0-0
 ```
 
-### Add data in a migration
+### Writing custom SQL
 
-Since the migrations are written in SQL, it is possible to add data to the database in a migration. This can be useful if you want to add initial data to the database.
+Migrations are plain SQL, so you can edit a generated `migration.sql` to do work the generator does not produce on its own, such as seeding reference data, backfilling a new column, or transforming existing data alongside a schema change.
 
-The developer is responsible for ensuring that any added SQL statements are compatible with the database schema and rolling forward from the previous migrations.
+Open the `migration.sql` file in the migration's directory and add your statements. Serverpod applies the file as-is when it rolls the database forward.
+
+Custom SQL is worth reaching for when:
+
+- Initial or reference data needs to be in place as soon as the schema exists.
+- A schema change requires moving or transforming existing data, for example splitting one column into two.
+
+You own the correctness of anything you add. Make sure it matches the schema at that point in the migration history and rolls forward cleanly from the previous migration. Serverpod does not validate hand-written SQL. Once a migration has been applied, treat it as immutable and create a new migration for further changes instead of editing it.
 
 ### Migrations directory structure
 
@@ -100,7 +107,7 @@ For each migration, five files are created:
 
 ### During development
 
-`serverpod start` applies your migrations for you. With the `serverpod start` terminal focused:
+The `serverpod start` command applies your migrations for you. With its terminal focused:
 
 - Pending migrations are applied automatically on the first boot.
 - Press **A** to apply new migrations as you create them.
@@ -122,6 +129,10 @@ $ dart run bin/main.dart --role maintenance --apply-migrations
 This is useful if migrations are applied as part of an automated process.
 
 If migrations are applied at the same time as repair migration, the repair migration is applied first.
+
+### On Serverpod Cloud
+
+Serverpod Cloud applies migrations for you. Every deploy starts the server with `--apply-migrations`, so any pending migrations run before the server serves requests. If a migration fails, the deploy fails; fix the migration and redeploy. See [Cloud database](/cloud/concepts/database#migrations-run-on-every-deploy) for the full flow.
 
 ## Creating a repair migration
 
@@ -235,3 +246,9 @@ Then apply the repair migration, any repair migration will only be applied once:
 ```bash
 $ dart run bin/main.dart --apply-repair-migration
 ```
+
+## Troubleshooting
+
+**Check the flag name when migrations do not apply.** The flag is `--apply-migrations`, plural. Passing the singular `--apply-migration` fails to parse, so Serverpod logs `Failed to parse command line arguments. Using default values.` and falls back to defaults. Migrations are not applied, and any other flags on the same command are dropped as well. If migrations are not running, check the flag spelling first.
+
+**Deleting a migration does not undo it.** Removing a migration directory does not roll the schema back. To undo a migration, create a repair migration targeting the version you want to return to and apply it, as described in [Rolling back migrations](#rolling-back-migrations). Only the schema is reverted; data is not.

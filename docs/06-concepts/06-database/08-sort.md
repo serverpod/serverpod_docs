@@ -1,5 +1,5 @@
 ---
-description: Sort database query results by one or more columns in Serverpod using orderBy and orderByList, with support for relational fields and aggregated counts.
+description: Serverpod sorts query results by one or more columns with orderBy and orderByList, including relational fields and aggregated counts.
 ---
 
 # Sort

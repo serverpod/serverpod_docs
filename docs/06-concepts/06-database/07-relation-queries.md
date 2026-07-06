@@ -1,5 +1,5 @@
 ---
-description: Query, filter, sort, and paginate relational data in Serverpod using include, includeList, attach, and detach methods.
+description: Relation queries in Serverpod fetch, filter, sort, and paginate related data through include, includeList, attach, and detach methods.
 ---
 
 # Relation queries (Joins)
@@ -174,7 +174,7 @@ var user = await Company.db.findById(
 
 The example above retrieves the next 10 employees starting from the 11th record:
 
-Using these methods in conjunction provides a powerful way to query, filter, and sort relational data efficiently.
+Combined, these methods let you query, filter, and sort relational data efficiently.
 
 ## Update
 
