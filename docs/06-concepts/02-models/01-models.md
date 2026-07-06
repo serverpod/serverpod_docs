@@ -1,6 +1,7 @@
 ---
 slug: /concepts/models
 sidebar_label: Working with models
+description: Define serializable classes, exceptions, and enums in Serverpod model files, with fields, defaults, visibility, and generated Dart code.
 ---
 
 # Working with models
@@ -23,7 +24,7 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](./models/vector-fields#vector), [HalfVector](./models/vector-fields#halfvector), [SparseVector](./models/vector-fields#sparsevector), [Bit](./models/vector-fields#bit), [GeographyPoint](./models/geography-fields#geographypoint), [GeographyLineString](./models/geography-fields#geographylinestring), [GeographyPolygon](./models/geography-fields#geographypolygon), [GeographyGeometryCollection](./models/geography-fields#geographygeometrycollection) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](./models/vector-and-geography-fields#vector), [HalfVector](./models/vector-and-geography-fields#halfvector), [SparseVector](./models/vector-and-geography-fields#sparsevector), [Bit](./models/vector-and-geography-fields#bit), [GeographyPoint](./models/vector-and-geography-fields#geographypoint), [GeographyLineString](./models/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./models/vector-and-geography-fields#geographypolygon), [GeographyGeometryCollection](./models/vector-and-geography-fields#geographygeometrycollection) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Required fields
 
@@ -180,11 +181,11 @@ values:
   - bird
 ```
 
-`serialized` has two valid values: `byName` (the default) and `byIndex`. When using `byName` the string literal of the enum is used; when using `byIndex` the index value (0, 1, 2, etc.) is used.
+The `serialized` keyword has two valid values: `byName` (the default) and `byIndex`. When using `byName` the string literal of the enum is used; when using `byIndex` the index value (0, 1, 2, etc.) is used.
 
 :::warning
 
-`byIndex` is fragile: adding, removing, or reordering enum values silently changes the serialized form, which can corrupt persisted data. Only use `byIndex` when you need to maintain compatibility with existing data already serialized that way.
+Using `byIndex` is fragile: adding, removing, or reordering enum values silently changes the serialized form, which can corrupt persisted data. Only use `byIndex` when you need to maintain compatibility with existing data already serialized that way.
 
 :::
 
@@ -361,7 +362,7 @@ You can use these default values individually or in combination as needed. It is
 
 When using `default` or `defaultModel` in combination with `defaultPersist`, it's important to understand how the interaction between these keywords affects the final value in the database.
 
-If you set a `default` or `defaultModel` value, the model's field or variable will have a value when it's passed to the database—it will not be `null`. Because of this, the SQL query will not use the `defaultPersist` value since the field already has a value assigned by the model. In essence, assigning a `default` or `defaultModel` is like directly providing a value to the field, and the database will use this provided value instead of its own default.
+If you set a `default` or `defaultModel` value, the model's field or variable will have a value when it's passed to the database, so it will not be `null`. Because of this, the SQL query will not use the `defaultPersist` value since the field already has a value assigned by the model. In essence, assigning a `default` or `defaultModel` is like directly providing a value to the field, and the database will use this provided value instead of its own default.
 
 This means that `defaultPersist` only comes into play when the model does not provide a value, allowing the database to apply its own default setting.
 
@@ -520,36 +521,4 @@ fields:
 
 ## Keywords
 
-| **Keyword**                                                         | Note                                                                                                          | [class](#class) | [exception](#exception) | [enum](#enum) |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | :-------------: | :---------------------: | :-----------: |
-| [**values**](#enum)                                                 | A special key for enums with a list of all enum values.                                                       |                 |                         |      ✅       |
-| [**serialized**](#enum)                                             | Sets the mode enums are serialized in                                                                         |                 |                         |      ✅       |
-| [**properties**](#enhanced-enums-with-properties)                   | Defines custom properties for enhanced enums.                                                                 |                 |                         |      ✅       |
-| [**immutable**](#immutable-classes)                                 | Boolean flag to generate an immutable class with final fields, equals operator, and hashCode.                 |       ✅        |           ✅            |               |
-| [**serverOnly**](#limiting-visibility-of-a-generated-class)         | Boolean flag if code generator only should create the code for the server.                                    |       ✅        |           ✅            |      ✅       |
-| [**table**](database/models)                                        | A name for the database table, enables generation of database code.                                           |       ✅        |                         |               |
-| [**managedMigration**](database/migrations#opt-out-of-migrations)   | A boolean flag to opt out of the database migration system.                                                   |       ✅        |                         |               |
-| [**fields**](#class)                                                | All fields in the generated class should be listed here.                                                      |       ✅        |           ✅            |               |
-| [**type (fields)**](#class)                                         | Denotes the data type for a field.                                                                            |       ✅        |           ✅            |               |
-| [**required**](#required-fields)                                    | Makes the field as required. This keyword can only be used for **nullable** fields.                           |       ✅        |           ✅            |               |
-| [**scope**](#limiting-visibility-of-a-generated-class)              | Denotes the scope for a field.                                                                                |       ✅        |                         |               |
-| [**jsonKey**](#json-key-aliasing)                                   | Sets a custom key name for JSON serialization and deserialization.                                            |       ✅        |                         |               |
-| [**persist**](database/models)                                      | A boolean flag if the data should be stored in the database or not can be negated with `!persist`             |       ✅        |                         |               |
-| [**relation**](database/relations/one-to-one)                       | Sets a relation between model files, requires a table name to be set.                                         |       ✅        |                         |               |
-| [**name**](database/relations/one-to-one#bidirectional-relations)   | Give a name to a relation to pair them.                                                                       |       ✅        |                         |               |
-| [**parent**](database/relations/one-to-one#with-an-id-field)        | Sets the parent table on a relation.                                                                          |       ✅        |                         |               |
-| [**field**](database/relations/one-to-one#custom-foreign-key-field) | A manual specified foreign key field.                                                                         |       ✅        |                         |               |
-| [**onUpdate**](database/relations/referential-actions)              | Set the referential actions when updating data in the database.                                               |       ✅        |                         |               |
-| [**onDelete**](database/relations/referential-actions)              | Set the referential actions when deleting data in the database.                                               |       ✅        |                         |               |
-| [**optional**](database/relations/one-to-one#optional-relation)     | A boolean flag to make a relation optional.                                                                   |       ✅        |                         |               |
-| [**indexes**](database/indexing)                                    | Create indexes on your fields / columns.                                                                      |       ✅        |                         |               |
-| [**fields (index)**](database/indexing)                             | List the fields to create the indexes on.                                                                     |       ✅        |                         |               |
-| [**type (index)**](database/indexing)                               | The type of index to create.                                                                                  |       ✅        |                         |               |
-| [**parameters (index)**](database/indexing#vector-indexes)          | Parameters for specialized index types like HNSW and IVFFLAT vector indexes.                                  |       ✅        |                         |               |
-| [**distanceFunction (index)**](database/indexing#vector-indexes)    | Distance function for vector indexes. Allowed values depend on the field's vector type and index type — see [vector indexes](database/indexing#vector-indexes). |       ✅        |                         |               |
-| [**unique**](database/indexing)                                     | Creates a unique index. |       ✅        |                         |               |
-| [**default**](#default-values)                                      | Sets the default value for both the model and the database. This keyword cannot be used with **relation**.    |       ✅        |                         |               |
-| [**defaultModel**](#default-values)                                 | Sets the default value for the model side. This keyword cannot be used with **relation**.                     |       ✅        |                         |               |
-| [**defaultPersist**](#default-values)                               | Sets the default value for the database side. This keyword cannot be used with **relation** and **!persist**. |       ✅        |                         |               |
-| [**extends**](./models/inheritance-and-polymorphism#extending-a-class)       | Specifies a parent class to inherit from.                                                                     |       ✅        |           ✅            |               |
-| [**sealed**](./models/inheritance-and-polymorphism#sealed-classes)            | Boolean flag to create a sealed class hierarchy, enabling exhaustive type checking.                           |       ✅        |                         |               |
+For every keyword available in a model file, and whether it applies to a `class`, `exception`, or `enum`, see the [Model reference](lookups/model-reference).

@@ -1,32 +1,38 @@
+---
+sidebar_label: Custom serialization
+description: Pass custom classes through Serverpod endpoints and models with toJson/fromJson, Freezed support, and ProtocolSerialization for server-only fields.
+---
+
 # Custom serialization
 
 For most purposes, you will want to use Serverpod's native serialization. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to the following rules:
 
 1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
 
-    ```dart
-    Map<String, dynamic> toJson() {
-      return {
-        'name': 'John Doe',
-      };
-    }
-    ```
+   ```dart
+   Map<String, dynamic> toJson() {
+     return {
+       'name': 'John Doe',
+     };
+   }
+   ```
 
 2. There must be a constructor or factory called `fromJson()`, which takes a JSON serialization as parameters.
 
-    ```dart
-    factory ClassName.fromJson(
-      Map<String, dynamic> json,
-    ) {
-      return ClassName(
-        name: json['name'] as String,
-      );
-    }
-    ```
+   ```dart
+   factory ClassName.fromJson(
+     Map<String, dynamic> json,
+   ) {
+     return ClassName(
+       name: json['name'] as String,
+     );
+   }
+   ```
 
 3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
 
    ```yaml
+
    ...
    extraClasses:
      - package:my_project_shared/my_project_shared.dart:ClassName
@@ -96,12 +102,12 @@ class ClassName {
 }
 ```
 
-After adding a new serializable class, you must run `serverpod generate`. You are now able to use this class in your endpoints and leverage the full serialization/deserialization management that comes with Serverpod.
+After adding a new serializable class, you must run `serverpod generate`. You are now able to use this class in your endpoints with the full serialization and deserialization management that comes with Serverpod.
 
 In your server project, you can create an endpoint returning your custom object.
 
 ```dart
-import 'package:relation_test_shared/relation_test_shared.dart';
+import 'package:my_project_shared/my_project_shared.dart';
 import 'package:serverpod/serverpod.dart';
 
 class ExampleEndpoint extends Endpoint {
@@ -158,7 +164,7 @@ class CustomClass implements ProtocolSerialization {
   final String? value;
   final String? serverSideValue;
 
-  .......
+  CustomClass({this.value, this.serverSideValue});
 
   // Serializes fields specifically for protocol communication
   Map<String, dynamic> toJsonForProtocol() {

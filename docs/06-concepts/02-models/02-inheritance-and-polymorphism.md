@@ -1,3 +1,7 @@
+---
+description: Define class hierarchies in Serverpod models with extends and sealed, use polymorphic types in endpoints, and handle unknown subtypes across client versions.
+---
+
 # Inheritance and polymorphism
 
 ## Inheritance
@@ -176,7 +180,7 @@ class NotificationEndpoint extends Endpoint {
 }
 ```
 
-Polymorphic types also work seamlessly in Lists, Maps, Sets, Records, and nullable contexts.
+Polymorphic types also work in Lists, Maps, Sets, Records, and nullable contexts.
 
 ### Handling unknown class names
 
@@ -186,7 +190,7 @@ When deserializing polymorphic types, Serverpod uses the class name encoded in t
 - An older client is receiving data from a class that was recently added on the server.
 - A newer client is sending data with a class that hasn't been deployed to the server yet.
 
-If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking backward compatibility.
+If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking [backward compatibility](../backward-compatibility).
 
 :::info
 This will only work for non-streaming endpoints. Streaming endpoints will always throw an exception if the class name is not known.
