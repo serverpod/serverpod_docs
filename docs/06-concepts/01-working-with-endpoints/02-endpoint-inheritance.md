@@ -1,5 +1,5 @@
 ---
-description: Base endpoints on other endpoints with inheritance, override behavior from Serverpod modules, and control which subclasses generate client code.
+description: Endpoint inheritance lets one endpoint extend another, override behavior from Serverpod modules, and control which subclasses generate client code.
 ---
 
 # Endpoint inheritance

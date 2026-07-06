@@ -130,7 +130,7 @@ Read more about serializable exceptions here: [Serializable exceptions](exceptio
 
 ## Example: live updates for a filtered query
 
-A common real-time need is to push updates for one record or filter, for example the messages in a single chat room. Combine a streaming method with [server events](server-events): the streaming method subscribes the client to a channel scoped to that filter, and whatever changes the data posts to the same channel.
+A common real-time need is to push updates for one record or filter, for example the messages in a single chat room. Combine a streaming method with [server events](./server-events): the streaming method subscribes the client to a channel scoped to that filter, and whatever changes the data posts to the same channel.
 
 ```dart
 class ChatEndpoint extends Endpoint {
@@ -143,7 +143,7 @@ class ChatEndpoint extends Endpoint {
   Future<void> postToRoom(Session session, int roomId, String text) async {
     var message = ChatMessage(roomId: roomId, text: text);
     await ChatMessage.db.insertRow(session, message);
-    session.messages.postMessage('room_$roomId', message);
+    await session.messages.postMessage('room_$roomId', message);
   }
 }
 ```
@@ -159,7 +159,7 @@ messages.listen((message) {
 await client.chat.postToRoom(roomId, 'Hello, room!');
 ```
 
-Because the channel name includes the `roomId`, each client receives updates only for the room it is watching. The same pattern works for any filter: scope the channel by the id or query you care about, and post to it whenever the data changes. To fan the updates out across multiple server instances, post with `global: true` (see [Global messages](server-events#global-messages)).
+Because the channel name includes the `roomId`, each client receives updates only for the room it is watching. The same pattern works for any filter: scope the channel by the id or query you care about, and post to it whenever the data changes. To fan the updates out across multiple server instances, post with `global: true` (see [Global messages](./server-events#global-messages)).
 
 ## Streaming endpoints (deprecated)
 

@@ -1,7 +1,7 @@
 ---
 slug: /concepts/working-with-endpoints
 sidebar_label: Working with endpoints
-description: Define server methods as endpoints, generate a typed client, and call them from your Flutter app, including pointing the client at each environment.
+description: Endpoints expose server methods to a generated, typed client your Flutter app calls, with one client setup pointed at each environment.
 ---
 
 # Working with endpoints

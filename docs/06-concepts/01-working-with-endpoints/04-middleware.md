@@ -1,6 +1,6 @@
 ---
 sidebar_label: Endpoint middleware
-description: Add middleware to the API server to intercept endpoint requests and responses for concerns such as logging, caching, and rate limiting.
+description: Middleware on the API server intercepts endpoint requests and responses for concerns such as logging, caching, and rate limiting.
 ---
 
 # Endpoint middleware
