@@ -540,7 +540,7 @@ scloud password set facebookAppId your-facebook-app-id
 scloud password set facebookAppSecret --from-file path/to/facebook-app-secret.txt
 ```
 
-Run these from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and other options.
+Run these from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.
 
 ### 4. Provide the App ID to the production Flutter build
 
