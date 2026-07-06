@@ -139,7 +139,7 @@ If you've added `dataPath` to your config and also pass `--docker`, the server c
 
 The first run compiles the native build hooks (this can take about 30 seconds) and applies the migration you generated above. The server then starts and watches your project; saving a file hot-reloads the code.
 
-Beyond the server, `serverpod start` also launches the project's Flutter app. By default it uses Flutter's `web-server` device and opens your browser. Pass `--flutter-device <name>` to target a specific device. For IDE debugging, projects scaffolded with 4.0 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 4.0 scaffold if you want the same setup.
+Beyond the server, `serverpod start` also launches the project's Flutter apps configured with `auto_launch: true`. For IDE debugging, projects scaffolded with 4.0 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 4.0 scaffold if you want the same setup.
 
 ## Add the agent skills (optional)
 
