@@ -529,7 +529,7 @@ production:
   facebookAppSecret: 'your-facebook-app-secret'
 ```
 
-Alternatively, set the `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret` [environment variables](../../../07-configuration.md#2-via-environment-variables) on your production server with the same values.
+Alternatively, set the `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret` [environment variables](../../../07-configuration.md#via-environment-variables) on your production server with the same values.
 
 #### Serverpod Cloud
 
