@@ -22,7 +22,7 @@ This guide walks through the upgrade and should take about 15 minutes.
 Install the 4.0 CLI:
 
 ```bash
-$ dart install serverpod_cli 4.0.0
+$ dart install serverpod_cli 4.0.0-beta.0
 ```
 
 Verify the version:
