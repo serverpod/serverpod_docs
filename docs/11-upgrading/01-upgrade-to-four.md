@@ -1,6 +1,6 @@
 ---
 title: Upgrade to 4.0
-description: Upgrade your Serverpod 3.4 project to 4.0 (Jetstream) by adopting serverpod start, the embedded Postgres option, and the new agent skills.
+description: Upgrading a Serverpod 3.4 project to 4.0 (Jetstream) brings serverpod start, the embedded Postgres option, and the new agent skills.
 ---
 
 <!-- markdownlint-disable MD025 -->
