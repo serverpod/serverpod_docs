@@ -1,5 +1,4 @@
 ---
-title: Configuration
 description: "Configure Serverpod with YAML files, environment variables, or a Dart config object: run modes, the three configuration sources and their precedence, and secrets."
 ---
 

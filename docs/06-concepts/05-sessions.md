@@ -1,5 +1,4 @@
 ---
-title: Sessions
 description: The Session object gives every endpoint call access to the database, cache, file storage, and messaging, and manages its own lifecycle and logging.
 ---
 

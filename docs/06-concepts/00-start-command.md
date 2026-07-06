@@ -1,5 +1,4 @@
 ---
-title: Running your server
 description: "Run your Serverpod project in development with serverpod start: code generation, hot reload, database migrations, and the companion Flutter app in one terminal."
 ---
 
