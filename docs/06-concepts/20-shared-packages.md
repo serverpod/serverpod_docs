@@ -28,7 +28,7 @@ dependencies:
 ```
 
 :::info
-Use the same Serverpod version as your project. Replace `SERVERPOD_VERSION` with your Serverpod version (e.g., `3.5.0`).
+Use the same Serverpod version as your project. Replace `SERVERPOD_VERSION` with your Serverpod version (e.g., `4.0.0-beta.0`).
 :::
 
 ### Add model files
