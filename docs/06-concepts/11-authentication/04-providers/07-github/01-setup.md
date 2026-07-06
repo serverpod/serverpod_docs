@@ -9,7 +9,7 @@ Before following this guide, make sure you have:
 - A GitHub account with access to [Developer Settings](https://github.com/settings/apps).
 - A running Serverpod project (server, client, and Flutter app packages from `serverpod create`).
 - The Serverpod auth module installed and configured per the [authentication setup](../../setup). If your project was generated with an older Serverpod version, follow that guide first to add `serverpod_auth_idp_server` and `serverpod_auth_idp_flutter` and to configure `pod.initializeAuthServices()` before continuing.
-- `serverpod_auth_idp_server` 4.0.0 or later (required for the web callback route).
+- `serverpod_auth_idp_server` 4.0.0-beta.0 or later (required for the web callback route).
 
 ## Get your GitHub credentials
 

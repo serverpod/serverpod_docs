@@ -24,7 +24,7 @@ $ flutter doctor
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
 
 ```txt
-$ dart install serverpod_cli 4.0.0
+$ dart install serverpod_cli 4.0.0-beta.0
 ```
 
 This command will install the Serverpod command-line interface (CLI) globally on your machine. You can verify the installation by running:
