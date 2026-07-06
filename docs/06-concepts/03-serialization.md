@@ -1,6 +1,6 @@
 ---
 sidebar_label: Custom serialization
-description: Pass custom classes through Serverpod endpoints and models with toJson/fromJson, Freezed support, and ProtocolSerialization for server-only fields.
+description: Custom serialization passes your own classes through Serverpod endpoints and models with toJson/fromJson, Freezed, and ProtocolSerialization for server-only fields.
 ---
 
 # Custom serialization

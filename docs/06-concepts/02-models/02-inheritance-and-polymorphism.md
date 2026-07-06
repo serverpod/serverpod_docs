@@ -1,5 +1,5 @@
 ---
-description: Define class hierarchies in Serverpod models with extends and sealed, use polymorphic types in endpoints, and handle unknown subtypes across client versions.
+description: Model inheritance defines class hierarchies with extends and sealed, uses polymorphic types in endpoints, and handles unknown subtypes across client versions.
 ---
 
 # Inheritance and polymorphism

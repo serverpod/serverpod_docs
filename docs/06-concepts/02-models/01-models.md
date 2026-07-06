@@ -1,7 +1,7 @@
 ---
 slug: /concepts/models
 sidebar_label: Working with models
-description: Define serializable classes, exceptions, and enums in Serverpod model files, with fields, defaults, visibility, and generated Dart code.
+description: Serverpod model files define serializable classes, exceptions, and enums, with fields, defaults, visibility, and generated Dart code.
 ---
 
 # Working with models

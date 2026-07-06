@@ -1,5 +1,5 @@
 ---
-description: Store high-dimensional embeddings with vector fields (pgvector) and geospatial data with geography fields (PostGIS) in Serverpod models.
+description: Vector and geography fields store high-dimensional embeddings with pgvector and geospatial data with PostGIS in Serverpod models.
 ---
 
 # Vector & geography fields
