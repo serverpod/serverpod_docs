@@ -1,10 +1,11 @@
 ---
-description: Add middleware to Serverpod to intercept HTTP requests and responses for concerns such as logging, caching, and rate limiting.
+sidebar_label: Endpoint middleware
+description: Add middleware to the API server to intercept endpoint requests and responses for concerns such as logging, caching, and rate limiting.
 ---
 
-# Middleware
+# Endpoint middleware
 
-Middleware runs before and after your endpoints, making it suitable for logging, caching, and rate limiting. Serverpod middleware follows the [Relic middleware](https://docs.dartrelic.dev/reference/middleware) interface.
+Middleware runs before and after your endpoints, making it suitable for logging, caching, and rate limiting. Serverpod middleware follows the [Relic middleware](https://docs.dartrelic.dev/reference/middleware) interface. To add middleware to web server routes instead, scoped to path prefixes, see [Web server middleware](../webserver/middleware).
 
 ## Adding middleware to your server
 
@@ -91,10 +92,4 @@ Middleware errorHandlingMiddleware() {
 }
 ```
 
-## Best practices
-
-1. **Order matters**: Add middleware in the order you want it to execute.
-
-2. **Performance**: Middleware executes on every request, so keep it efficient.
-
-3. **Test your middleware**: Write tests to verify middleware behavior in isolation and when composed.
+Middleware runs on every request in the order it is added, so keep each one focused and efficient.

@@ -114,3 +114,28 @@ final client = Client(
   httpClientOverride: createHttpClient(),
 );
 ```
+
+The stub file provides a fallback for platforms without `dart:io` (such as web), where the default client is used:
+
+```dart title="src/http_client_stub.dart"
+import 'package:http/http.dart' as http;
+
+http.Client? createHttpClient() => null;
+```
+
+The `dart:io` implementation wraps the platform-native client from the example above in a top-level `createHttpClient()` function:
+
+```dart title="src/http_client_io.dart"
+import 'dart:io';
+
+// Same imports as the platform-native example above.
+
+http.Client? createHttpClient() {
+  if (Platform.isAndroid) {
+    // ... return the CronetClient shown above
+  } else if (Platform.isIOS || Platform.isMacOS) {
+    // ... return the CupertinoClient shown above
+  }
+  return null;
+}
+```

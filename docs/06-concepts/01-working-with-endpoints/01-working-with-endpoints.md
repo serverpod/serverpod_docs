@@ -1,6 +1,7 @@
 ---
 slug: /concepts/working-with-endpoints
 sidebar_label: Working with endpoints
+description: Define server methods as endpoints, generate a typed client, and call them from your Flutter app, including pointing the client at each environment.
 ---
 
 # Working with endpoints
@@ -70,6 +71,28 @@ apiServer:
 ```
 
 To enable browser credentials for CORS or use platform-native HTTP clients, see [Configure HTTP calls](./working-with-endpoints/configure-http-calls).
+
+## Point the client at each environment
+
+The URL you pass to `Client` is the server the app connects to, so it changes between development, staging, and production. Keep one client setup and choose the URL at build time with `--dart-define`:
+
+```dart
+const serverUrl = String.fromEnvironment(
+  'SERVERPOD_URL',
+  defaultValue: 'http://localhost:8080/',
+);
+
+var client = Client(serverUrl)
+  ..connectivityMonitor = FlutterConnectivityMonitor();
+```
+
+Pass the URL for each build:
+
+```bash
+flutter run --dart-define=SERVERPOD_URL=https://staging.example.com/
+```
+
+Without the define, the app falls back to the local server. In production, use your deployed server's public URL. If you deploy to [Serverpod Cloud](/cloud), that is the URL of your deployed app.
 
 ## Passing parameters
 
