@@ -26,6 +26,7 @@ Available commands:
   mcp-server                Start an MCP bridge to the `serverpod start` runner of one server project.
   quickstart                Creates a new Serverpod project with basic options.
   run                       Run a script defined in the "serverpod/scripts" section of pubspec.yaml.
+  start                     Start the full development stack with hot reload: generates code, runs the server, and launches the companion Flutter apps in an interactive terminal UI.
   upgrade                   Upgrade Serverpod to the latest version.
   version                   Prints the active version of the Serverpod CLI.
 
