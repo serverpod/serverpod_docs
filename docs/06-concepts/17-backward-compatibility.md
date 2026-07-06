@@ -1,5 +1,5 @@
 ---
-description: Keep your Serverpod server compatible with older client versions by following rules around endpoint signatures, serialized model fields, and future call methods.
+description: Backward compatibility keeps your Serverpod server working with older client versions through rules for endpoint signatures, serialized model fields, and future call methods.
 ---
 
 # Backward compatibility
