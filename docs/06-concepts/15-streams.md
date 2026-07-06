@@ -1,5 +1,5 @@
 ---
-description: Stream data between server and client in Serverpod using streaming methods over a self-managed WebSocket connection, with support for bidirectional streams and serializable exceptions.
+description: Streaming methods push data between server and client over a self-managed WebSocket, supporting bidirectional streams and serializable exceptions.
 ---
 
 # Streams

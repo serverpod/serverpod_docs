@@ -1,5 +1,5 @@
 ---
-description: Configure HTTP calls to set CORS credentials for web apps or use platform-native networking libraries.
+description: HTTP call configuration on the generated client sets CORS credentials for web apps or swaps in platform-native networking libraries.
 ---
 
 # Configure HTTP calls

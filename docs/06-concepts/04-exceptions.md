@@ -1,5 +1,5 @@
 ---
-description: Handle server errors in Serverpod by defining serializable exceptions that are thrown on the server and caught in your Flutter app.
+description: Serializable exceptions carry error data from the server to your Flutter app, which catches them by type alongside connection and server errors.
 ---
 
 # Error handling and exceptions
