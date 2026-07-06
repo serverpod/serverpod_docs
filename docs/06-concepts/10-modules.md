@@ -1,4 +1,5 @@
 ---
+title: Modules
 description: Add, reference, and create Serverpod modules, reusable packages that bundle server, client, and Flutter code with their own endpoints and database tables.
 ---
 
@@ -32,6 +33,8 @@ modules:
   serverpod_auth_idp:
     nickname: auth
 ```
+
+See [Configuration](configuration#module-dependencies) for the full set of `generator.yaml` module options.
 
 Then run `pub get` from your server's directory (e.g., `mypod_server`):
 

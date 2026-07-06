@@ -21,9 +21,7 @@ serverpod start [options] [-- <server-args>]
 | `-d`, `--directory <path>` | auto-detect | Set the server package directory. Auto-detected from the current directory when omitted. |
 | `--docker` / `--no-docker` | `false` | Start Docker Compose services if a `docker-compose.yaml` exists (typically Redis when running Postgres separately). Off by default; pass `--docker` to opt in. |
 | `--tui` / `--no-tui` | `true` | Show the interactive terminal UI. Pass `--no-tui` to run without it, for example in scripts or non-interactive shells. |
-| `--flutter` / `--no-flutter` | `true` | Launch the companion Flutter app alongside the server. Pass `--no-flutter` to start only the server. |
-| `--flutter-device <name>` | `chrome` | Choose the device passed to `flutter run -d`. Use `web-server` for headless or CI runs. |
-| `--flutter-option <arg>` | none | Forward an extra argument to [`flutter run`](https://docs.flutter.dev/reference/flutter-cli). Repeatable, e.g. `--flutter-option=--web-port=8090`. |
+| `--flutter` / `--no-flutter` | `true` | Auto-launch the companion Flutter apps marked `auto_launch: true` in the server's `pubspec.yaml`. Pass `--no-flutter` to disable auto-launch; apps can still be launched on demand from the terminal UI. |
 | `-h`, `--help` | | Print usage information. |
 
 ## Terminal UI shortcuts
@@ -59,5 +57,5 @@ The server accepts the following arguments:
 | `-A`, `--apply-repair-migration` | | `false` | Apply the repair migration on boot. |
 
 :::note
-`serverpod start` is intended for local development. For production, deploy the server instead. See [Deploy to Serverpod Cloud](../../../../08-deployments/01-deploy-to-serverpod-cloud.md) or [Custom hosting](../../../../08-deployments/custom-hosting/01-choosing-a-strategy.md).
+Use `serverpod start` for local development only. For production, deploy the server instead. See [Deploy to Serverpod Cloud](../../../../08-deployments/01-deploy-to-serverpod-cloud.md) or [Custom hosting](../../../../08-deployments/custom-hosting/01-choosing-a-strategy.md).
 :::
