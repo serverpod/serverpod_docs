@@ -9,7 +9,7 @@ This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or
 
 ## Before you start
 
-- A Serverpod 3.5.x project. If you are still on 3.4 or earlier, follow [Upgrade to 3.5](./upgrade-to-three-five) first.
+- A Serverpod 3.5.x project. If you are still on 3.4 or earlier, follow [Upgrade to 4.0](./upgrade-to-four) first.
 - Dart SDK 3.8.0 or later.
 - Flutter SDK 3.32.0 or later (only if you are migrating the Flutter app).
 - Postgres 14 or later, or SQLite3.
@@ -294,6 +294,6 @@ Reach out on the [community page](../support).
 
 ## Related
 
-- [Upgrade to 3.5](./upgrade-to-three-five): do this first.
+- [Upgrade to 4.0](./upgrade-to-four): do this first.
 - [Authentication setup](../concepts/authentication/setup): modular configuration reference.
 - [Database migrations](../concepts/database/migrations): creating and applying schema changes safely.
