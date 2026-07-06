@@ -37,9 +37,9 @@ In each package's `pubspec.yaml` (`<project>_server`, `<project>_client`, `<proj
 
 ```yaml
 dependencies:
-  serverpod: 4.0.0
-  serverpod_client: 4.0.0      # in the client and Flutter packages
-  serverpod_flutter: 4.0.0     # in the Flutter package
+  serverpod: 4.0.0-beta.0
+  serverpod_client: 4.0.0-beta.0      # in the client and Flutter packages
+  serverpod_flutter: 4.0.0-beta.0     # in the Flutter package
 ```
 
 Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to match the 4.0 minimum:
