@@ -5,24 +5,28 @@ description: Sign in with Facebook uses a Facebook Login app and an extra provid
 
 # Set up Facebook sign-in
 
-Facebook authentication in Serverpod is provided through an external package that handles the complete sign-in flow on iOS, Android, Web, and macOS. Unlike other providers built into the core auth module, Facebook Sign-In requires an additional package installation.
+Sign in with Facebook uses a **Facebook Login app** and the external `serverpod_auth_idp_flutter_facebook` package. Unlike providers built into the core auth module, Facebook sign-in needs this extra package, which wraps the native Facebook SDK to handle the flow on iOS, Android, web, and macOS.
 
-To set up **Sign in with Facebook**, you must create an App with use case **Authenticate with Facebook Login** on [Facebook for Developers](https://developers.facebook.com/) and configure your Serverpod application accordingly.
+## Prerequisites
 
-:::note
-Right now, we have official support for iOS, Android, Web, and macOS for Facebook Sign In.
-:::
+Before following this guide, make sure you have:
 
-:::caution
-You need to install the auth module before you continue, see [Setup](../../setup).
-:::
+- A Facebook account with access to [Facebook for Developers](https://developers.facebook.com/).
+- A running Serverpod project (server, client, and Flutter app packages from `serverpod create`).
+- The Serverpod auth module installed and configured per the [authentication setup](../../setup). If your project was generated with an older Serverpod version, follow that guide first to add `serverpod_auth_idp_server` and `serverpod_auth_idp_flutter` and to configure `pod.initializeAuthServices()` before continuing.
 
-## Create your Facebook App
+## Create your Facebook app
 
 1. Go to [Facebook for Developers](https://developers.facebook.com/apps/creation/) and log in with your Facebook account.
 2. Click **Create an app** and follow the setup wizard:
    - **App details**: Enter your **App name** and **App contact email**.
+
+     ![Create app details](/img/authentication/providers/facebook/12-create-app-details.png)
+
    - **Use cases**: Select **"Authenticate and request data from users with Facebook Login"**.
+
+     ![Select the Facebook Login use case](/img/authentication/providers/facebook/13-select-use-case.png)
+
    - **Business**: Optionally select a **Business Portfolio** if available.
    - Complete any additional **Requirements**.
 3. Click through to the **Overview** page and go to your app **Dashboard**.
@@ -46,6 +50,9 @@ Configure the permissions your application will request:
 
 Configure the authentication settings:
 
+- Turn **Login with the JavaScript SDK** to **Yes**. Web and macOS sign-in use the Facebook JavaScript SDK, and the flow fails at runtime with "JSSDK Option is Not Toggled" if this is left off. You can skip this if you only target iOS and Android.
+
+  ![Login with the JavaScript SDK](/img/authentication/providers/facebook/11-js-sdk-toggle.png)
 - In **Allowed Domains for the JavaScript SDK**, add:
   - `https://www.facebook.com` (required to avoid CORS issues)
   - Your own domain if you plan to support web authentication (e.g., `https://yourdomain.com`)
@@ -77,66 +84,54 @@ The **App secret** is sensitive. Keep it confidential and never commit it to ver
 
 ## Server-side configuration
 
-### Store the credentials
+### Store your credentials
 
-Add your Facebook credentials to the `config/passwords.yaml` file, or set them as environment variables `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret`.
+Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add `facebookAppId` and `facebookAppSecret` to the `development:` section using the values from your Facebook app:
 
 ```yaml
 development:
-  facebookAppId: 'YOUR_FACEBOOK_APP_ID'
-  facebookAppSecret: 'YOUR_FACEBOOK_APP_SECRET'
+  # ... existing keys (database, redis, serviceSecret, etc.) ...
+  facebookAppId: 'your-facebook-app-id'
+  facebookAppSecret: 'your-facebook-app-secret'
 ```
+
+For production, add the same two keys to the `production:` section, or set the `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret` environment variables on your production server. See [Publishing to production](#publishing-to-production) below for the full prod walkthrough.
 
 :::warning
-Keep your App secret confidential. Never commit this value to version control. Store it securely using environment variables or secret management.
+**Never commit `config/passwords.yaml` to version control.** It contains your app secret. Use environment variables or a secrets manager in production.
 :::
 
-### Configure the Facebook identity provider
+### Add the Facebook identity provider
 
-In your main `server.dart` file, configure the Facebook identity provider:
+Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+
+Add the Facebook import and `FacebookIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/facebook.dart';
-
-void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
-
-  pod.initializeAuthServices(
-    tokenManagerBuilders: [
-      JwtConfigFromPasswords(),
-    ],
-    identityProviderBuilders: [
-      FacebookIdpConfig(
-        appId: pod.getPassword('facebookAppId')!,
-        appSecret: pod.getPassword('facebookAppSecret')!,
-      ),
-    ],
-  );
-
-  await pod.start();
-}
 ```
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    // ... any existing providers (e.g., EmailIdpConfigFromPasswords) ...
+    FacebookIdpConfigFromPasswords(),
+  ],
+);
+```
+
+`FacebookIdpConfigFromPasswords()` automatically loads the App ID and secret from the `facebookAppId` and `facebookAppSecret` keys in `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables).
 
 :::tip
-You can use `FacebookIdpConfigFromPasswords()` to automatically load credentials from `config/passwords.yaml` or the `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret` environment variables:
-
-```dart
-identityProviderBuilders: [
-  FacebookIdpConfigFromPasswords(),
-],
-```
-
+If you need more control over how the credentials are loaded, use `FacebookIdpConfig(appId: ..., appSecret: ...)` instead. See [Customizations](./customizations) for details.
 :::
 
-### Expose the endpoint
+### Create the endpoint
 
-Create an endpoint that extends `FacebookIdpBaseEndpoint` to expose the Facebook authentication API:
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/facebook_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/facebook.dart';
@@ -144,16 +139,19 @@ import 'package:serverpod_auth_idp_server/providers/facebook.dart';
 class FacebookIdpEndpoint extends FacebookIdpBaseEndpoint {}
 ```
 
-### Generate and migrate
+### Start the server
 
-Finally, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Start the server from your server project directory (e.g., `my_project_server/`):
 
-### Basic configuration options
+```bash
+serverpod start
+```
 
-- `appId`: Required. The App ID of your Facebook App.
-- `appSecret`: Required. The App secret of your Facebook App.
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
-For more details on configuration options, see the [customizations section](./customizations).
+:::warning
+Skipping the migration will cause the server to crash at runtime when the Facebook provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+:::
 
 ## Client-side configuration
 
@@ -394,14 +392,16 @@ Enter your website's Site URL (e.g., `https://yourdomain.com`) and save your cha
 You can skip the remaining steps (2-5) as they are not required for Flutter apps or have already been covered.
 :::
 
-**2. Configure Allowed Domains in Settings (Important)**
+**2. Configure Settings (Important)**
 
-Go to **Use cases** > **Customize** > **Settings** and find **Allowed Domains for the JavaScript SDK**. Add all domains where your app will be accessible:
+Go to **Use cases** > **Customize** > **Settings** and configure the following:
 
-- Add your development domain: `http://localhost:PORT` (e.g., `http://localhost:56635`).
-- Add your production domain: `https://yourdomain.com`.
+- Confirm **Login with the JavaScript SDK** is set to **Yes** (from the [Settings step](#2-settings) above). Web sign-in fails with "JSSDK Option is Not Toggled" without it.
+- Under **Allowed Domains for the JavaScript SDK**, add all domains where your app will be accessible:
+  - Your development domain: `http://localhost:PORT` (e.g., `http://localhost:8082` when serving the Flutter web build from Serverpod).
+  - Your production domain: `https://yourdomain.com`.
 
-This configuration enables Facebook authentication to work on these domains. Without this, Facebook Sign In will fail due to CORS restrictions.
+This enables Facebook authentication on these domains. Without it, Facebook sign-in fails due to CORS restrictions.
 
 ![Allowed Domains](/img/authentication/providers/facebook/3-allowed-domains.png)
 
@@ -454,9 +454,9 @@ For more detailed macOS setup instructions, refer to the [flutter_facebook_auth 
 
 ## Present the authentication UI
 
-### Initializing the `FacebookSignInService`
+### Initialize the Facebook sign-in service
 
-To use the FacebookSignInService, you need to initialize it in your main function. The initialization is done from the `initializeFacebookSignIn()` extension method on the `FlutterAuthSessionManager`.
+Initialize the service in your app's `main()` function using the `initializeFacebookSignIn()` extension method on `FlutterAuthSessionManager`, on the line after `client.auth.initialize()`.
 
 ```dart
 import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
@@ -483,36 +483,77 @@ client.auth.initializeFacebookSignIn(
 For iOS and Android, the App ID is not required as the SDK reads credentials from native configuration.
 :::
 
-### Using the `FacebookSignInWidget`
+### Show the Facebook sign-in button
 
-If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Facebook identity provider will be automatically detected and displayed in the sign-in widget (provided you've installed the `serverpod_auth_idp_flutter_facebook` package and initialized the service).
+If you use the template's `SignInWidget` (see [Present the authentication UI](../../setup#present-the-authentication-ui)), the Facebook button is detected and shown automatically once the `serverpod_auth_idp_flutter_facebook` package is installed and the service is initialized. It handles the full sign-in flow, token management, and error handling on iOS, Android, web, and macOS.
 
-You can also use the `FacebookSignInWidget` to include the Facebook authentication flow in your own custom UI:
+To customize the button or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
 
-```dart
-import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
+## Publishing to production
 
-FacebookSignInWidget(
-  client: client,
-  onAuthenticated: () {
-    // Do something when the user is authenticated.
-    //
-    // NOTE: You should not navigate to the home screen here, otherwise
-    // the user will have to sign in again every time they open the app.
-  },
-  onError: (error) {
-    // Handle errors
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $error')),
-    );
-  },
-)
+Before going live, complete the following steps.
+
+### 1. Switch the app to Live mode
+
+New Facebook apps start in **Development mode**, where only people with a [role on the app](https://developers.facebook.com/docs/development/build-and-test/app-roles) (admins, developers, testers) can sign in. To let anyone sign in, toggle the app from **Development** to **Live** at the top of the [Facebook App Dashboard](https://developers.facebook.com/apps).
+
+:::note
+Going Live requires a valid **Privacy Policy URL** (**App settings** > **Basic**), and requesting permissions beyond `email` and `public_profile` requires **App Review**. See [Accessing Facebook APIs](./customizations#accessing-facebook-apis).
+:::
+
+### 2. Add your production domains and platforms
+
+- **Web and macOS**: In **Use cases** > **Customize** > **Settings**, confirm **Login with the JavaScript SDK** is **Yes** and add your production domain to **Allowed Domains for the JavaScript SDK** (e.g., `https://yourdomain.com`) alongside your development domain. Both can stay registered so dev and prod work at the same time.
+- **Android**: Add your **release key hash** (not just the debug one) to the Android platform in the Facebook app. Generate it from your release keystore:
+
+  ```bash
+  keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
+  ```
+
+- **iOS**: No change is needed between dev and prod for the custom URL scheme.
+
+### 3. Set production credentials
+
+Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones; both stay in place and Serverpod picks the right set based on the run mode.
+
+You can reuse the same Facebook app for development and production, or [create a separate app](https://developers.facebook.com/apps/creation/) per environment and use its credentials.
+
+#### Self-hosted
+
+Add `facebookAppId` and `facebookAppSecret` to the `production:` section of `passwords.yaml`:
+
+```yaml
+production:
+  # ... existing keys ...
+  facebookAppId: 'your-facebook-app-id'
+  facebookAppSecret: 'your-facebook-app-secret'
 ```
 
-The widget automatically handles:
+Alternatively, set the `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret` [environment variables](../../../07-configuration.md#2-via-environment-variables) on your production server with the same values.
 
-- Facebook Sign-In flow for iOS, Android, Web, and macOS.
-- Token management.
-- Underlying Facebook Sign-In package error handling.
+#### Serverpod Cloud
 
-For details on how to customize the Facebook Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
+Use `scloud password set` to upload each value. The App ID is public, so pass it as a positional argument. The App secret is sensitive, so read it from a file with `--from-file` to keep it out of your shell history:
+
+```bash
+scloud password set facebookAppId your-facebook-app-id
+scloud password set facebookAppSecret --from-file path/to/facebook-app-secret.txt
+```
+
+Run these from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.
+
+### 4. Provide the App ID to the production Flutter build
+
+On web and macOS the App ID must be available to the Flutter app at build time. When you omit `appId`, the provider reads it from the `FACEBOOK_APP_ID` compile-time environment variable, so a single `main.dart` works in dev and prod:
+
+```dart
+await client.auth.initializeFacebookSignIn();
+```
+
+Pass the value in your production build (or the `flutter_build` step for Serverpod Cloud):
+
+```bash
+flutter build web --dart-define=FACEBOOK_APP_ID=your-facebook-app-id
+```
+
+On iOS and Android the App ID comes from the native configuration files, so no build-time value is needed. See [Configuring Facebook sign-in on the app](./customizations#configuring-facebook-sign-in-on-the-app).
