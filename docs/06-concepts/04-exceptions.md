@@ -6,7 +6,7 @@ description: Handle server errors in Serverpod by defining serializable exceptio
 
 Serverpod allows you to throw an exception on the server, serialize it, and catch it in your client app.
 
-If you throw a normal exception that isn't caught by your code, it will be treated as an internal server error. The exception will be logged together with its stack trace, and a 500 HTTP status (internal server error) will be sent to the client. On the client side, this will throw a non-specific ServerpodException, which provides no more data than a session id number which can help identify the call in your logs.
+If you throw a normal exception that isn't caught by your code, it will be treated as an internal server error. The exception will be logged together with its stack trace, and a 500 HTTP status (internal server error) will be sent to the client. On the client side, this throws a `ServerpodClientException` with status code 500 (specifically `ServerpodClientInternalServerError`). The error message and stack trace stay on the server, logged to the `serverpod_session_log` table.
 
 :::tip
 Use the Serverpod Insights app to view your logs. It will show any failed or slow calls and will make it easy to pinpoint any errors in your server.
@@ -116,3 +116,41 @@ fields:
   message: String, default="An error occurred"
   errorCode: int, default=1001
 ```
+
+## Handling errors on the client
+
+A call from the client can fail in three ways, and you usually handle each one differently:
+
+- A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the reader what happened.
+- A **`ServerpodClientException`**: something went wrong in the communication or on the server. Its typed subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500).
+- A **connection failure**: when the app cannot reach the server (offline, wrong URL, or a timeout), it throws a `ServerpodClientException` with a `statusCode` of `-1`.
+
+Catch the specific cases first, then fall back to the general one:
+
+```dart
+try {
+  await client.example.doThingy();
+} on MyException catch (e) {
+  // A failure you defined and threw on the server.
+  showError(e.message);
+} on ServerpodClientUnauthorized catch (_) {
+  // The call requires the user to sign in.
+  redirectToSignIn();
+} on ServerpodClientException catch (e) {
+  if (e.statusCode == -1) {
+    // Could not reach the server.
+    showError('Cannot reach the server. Check your connection and try again.');
+  } else {
+    // The server returned an error, for example a 500.
+    showError('Something went wrong. Please try again.');
+  }
+}
+```
+
+## Don't leak sensitive data
+
+Only the serializable exceptions you define reach the client, and every field on them is sent as-is. An uncaught exception becomes a generic 500 with no details, so internal errors never leak on their own. The risk is what you put on the exceptions you do send.
+
+- Don't put stack traces, secrets, database IDs, or internal messages into serializable exception fields. Send only what the reader should see.
+- Write user-facing messages, and keep the diagnostic detail in your server logs where you can look it up later.
+- Validate and sanitize input before acting on it, so a bad request fails cleanly instead of surfacing an internal error.

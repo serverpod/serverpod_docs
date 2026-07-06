@@ -128,63 +128,39 @@ In the example above, the client sends an error to the server, which then throws
 
 Read more about serializable exceptions here: [Serializable exceptions](exceptions).
 
-## Streaming Endpoints (Deprecated)
+## Example: live updates for a filtered query
 
-:::warning
-Streaming Endpoints are deprecated and will be removed in a future version of Serverpod. Use [Streaming Methods](#streaming-methods) instead for a simpler and more robust streaming experience.
-:::
-
-Streaming endpoints were Serverpod's first attempt at streaming data. This approach is more manual, requiring developers to manage the WebSocket connection to the server.
-
-### Handling streams server-side
-
-The Endpoint class has three methods you override to work with streams.
-
-- `streamOpened` is called when a user connects to a stream on the Endpoint.
-- `streamClosed` is called when a user disconnects from a stream on the Endpoint.
-- `handleStreamMessage` is called when a serialized message is received from a client.
-
-To send a message to a client, call the `sendStreamMessage` method. You will need to include the session associated with the user.
-
-#### The user object
-
-Associate state with a streaming session by setting a user object when the stream is opened.
+A common real-time need is to push updates for one record or filter, for example the messages in a single chat room. Combine a streaming method with [server events](./server-events): the streaming method subscribes the client to a channel scoped to that filter, and whatever changes the data posts to the same channel.
 
 ```dart
-Future<void> streamOpened(StreamingSession session) async {
-  setUserObject(session, MyUserObject());
+class ChatEndpoint extends Endpoint {
+  // The client subscribes to live messages for one room.
+  Stream<ChatMessage> watchRoom(Session session, int roomId) async* {
+    yield* session.messages.createStream<ChatMessage>('room_$roomId');
+  }
+
+  // Posting a message stores it and broadcasts it to everyone watching the room.
+  Future<void> postToRoom(Session session, int roomId, String text) async {
+    var message = ChatMessage(roomId: roomId, text: text);
+    await ChatMessage.db.insertRow(session, message);
+    await session.messages.postMessage('room_$roomId', message);
+  }
 }
 ```
 
-You can access the user object at any time by calling the `getUserObject` method. The user object is automatically discarded when a session ends.
-
-### Handling streams in your app
-
-Before you can access streams in your client, you need to connect to the server's web socket by calling `openStreamingConnection` on your client.
+On the client, listen to the returned stream and call `postToRoom` to publish:
 
 ```dart
-await client.openStreamingConnection();
+var messages = client.chat.watchRoom(roomId);
+messages.listen((message) {
+  print('Room ${message.roomId}: ${message.text}');
+});
+
+await client.chat.postToRoom(roomId, 'Hello, room!');
 ```
 
-You can monitor the state of the connection by adding a listener to the client.
-Once connected to your server's web socket, you can pass and receive serialized objects.
+Because the channel name includes the `roomId`, each client receives updates only for the room it is watching. The same pattern works for any filter: scope the channel by the id or query you care about, and post to it whenever the data changes. To fan the updates out across multiple server instances, post with `global: true` (see [Global messages](./server-events#global-messages)).
 
-Listen to its web socket stream to receive updates from an endpoint on the server.
+## Streaming endpoints (deprecated)
 
-```dart
-await for (var message in client.myEndpoint.stream) {
-  _handleMessage(message);
-}
-```
-
-You send messages to the server's endpoint by calling `sendStreamMessage`.
-
-```dart
-client.myEndpoint.sendStreamMessage(MyMessage(text: 'Hello'));
-```
-
-:::info
-
-Authentication is handled automatically. If you have signed in, your web socket connection will be authenticated.
-
-:::
+Serverpod's original streaming API (`streamOpened`, `handleStreamMessage`, `sendStreamMessage`, `openStreamingConnection`) is deprecated and will be removed in a future version. Use [streaming methods](#streaming-methods) instead. The old API is kept for reference in [Streaming endpoints (deprecated)](../upgrading/archive/streaming-endpoints).
