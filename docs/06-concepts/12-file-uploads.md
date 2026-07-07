@@ -136,7 +136,7 @@ Serverpod can use Google Cloud Storage's HMAC interoperability (S3-compatible) t
 
 1. Create a service account with the _Storage Admin_ role.
 2. Under _Cloud Storage_ > _Settings_ > _Interoperability_, create a new HMAC key for your newly created service account.
-3. Add the two keys you received in the previous step to your `config/password.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively. You can also pass them in as environment variables. The environment variable names are `SERVERPOD_HMAC_ACCESS_KEY_ID` and `SERVERPOD_HMAC_SECRET_KEY`.
+3. Add the two keys you received in the previous step to your `config/passwords.yaml` file. The keys should be named `HMACAccessKeyId` and `HMACSecretKey`, respectively. You can also pass them in as environment variables. The environment variable names are `SERVERPOD_HMAC_ACCESS_KEY_ID` and `SERVERPOD_HMAC_SECRET_KEY`.
 4. When creating a new bucket, set the _Access control_ to _Fine-grained_ and disable the _Prevent public access_ option.
 
 You may also want to add the bucket as a backend for your load balancer to give it a custom domain name.

@@ -38,7 +38,7 @@ By default, `serverpod start` runs in the `development` run mode. To start in an
 serverpod start -- --mode staging
 ```
 
-The run mode selects which configuration and passwords the server loads. See [Configuration](configuration) for what each mode reads. For every argument `serverpod start` forwards to the server, see the [`serverpod start` reference](cli/commands/start).
+The run mode selects which configuration and passwords the server loads. See [Configuration](configuration) for what each mode reads.
 
 ## Run the server on its own
 
@@ -52,6 +52,6 @@ You can still launch an app on demand from the terminal afterwards. To run witho
 
 ## Related
 
-- [`serverpod start` reference](cli/commands/start): every option, terminal shortcut, and forwarded server argument.
+- [`serverpod start` reference](cli/commands/start): every command-line option.
 - [Configuration](configuration): the run modes and files the server loads on start.
 - [Deploy to Serverpod Cloud](../08-deployments/01-deploy-to-serverpod-cloud.md): run your server in production instead of locally.

@@ -1,13 +1,13 @@
 ---
-title: Upgrade to 3.5
-description: Upgrade your Serverpod 3.4 project to 3.5 (Jetstream) by adopting serverpod start, the embedded Postgres option, and the new agent skills.
+title: Upgrade to 4.0
+description: Upgrading a Serverpod 3.4 project to 4.0 (Jetstream) brings serverpod start, the embedded Postgres option, and the new agent skills.
 ---
 
 <!-- markdownlint-disable MD025 -->
 
-# Upgrade to 3.5
+# Upgrade to 4.0
 
-Serverpod 3.5 (Jetstream) brings a unified `serverpod start` command with hot reload that runs your server, database, and Flutter app together. The release also includes an embedded Postgres option and optional AI agent skills for your editor. The changes are mostly opt-in: your existing 3.4 project keeps working with small updates.
+Serverpod 4.0 (Jetstream) brings a unified `serverpod start` command with hot reload that runs your server, database, and Flutter app together. The release also includes an embedded Postgres option and optional AI agent skills for your editor. The changes are mostly opt-in: your existing 3.4 project keeps working with small updates.
 
 This guide walks through the upgrade and should take about 15 minutes.
 
@@ -19,10 +19,10 @@ This guide walks through the upgrade and should take about 15 minutes.
 
 ## Update the Serverpod CLI
 
-Install the 3.5 CLI:
+Install the 4.0 CLI:
 
 ```bash
-$ dart install serverpod_cli 3.5.0-beta.9
+$ dart install serverpod_cli 4.0.0-beta.0
 ```
 
 Verify the version:
@@ -33,16 +33,16 @@ $ serverpod version
 
 ## Update your project dependencies
 
-In each package's `pubspec.yaml` (`<project>_server`, `<project>_client`, `<project>_flutter`), bump the Serverpod packages to 3.5. Serverpod prefers an exact version pin over a caret range to keep the CLI and the packages in sync:
+In each package's `pubspec.yaml` (`<project>_server`, `<project>_client`, `<project>_flutter`), bump the Serverpod packages to 4.0. Serverpod prefers an exact version pin over a caret range to keep the CLI and the packages in sync:
 
 ```yaml
 dependencies:
-  serverpod: 3.5.0-beta.9
-  serverpod_client: 3.5.0-beta.9      # in the client and Flutter packages
-  serverpod_flutter: 3.5.0-beta.9     # in the Flutter package
+  serverpod: 4.0.0-beta.0
+  serverpod_client: 4.0.0-beta.0      # in the client and Flutter packages
+  serverpod_flutter: 4.0.0-beta.0     # in the Flutter package
 ```
 
-Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to match the 3.5 minimum:
+Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to match the 4.0 minimum:
 
 ```yaml
 environment:
@@ -63,19 +63,19 @@ Then refresh the generated server and client code:
 $ serverpod generate
 ```
 
-## Generate the 3.5 migration
+## Generate the 4.0 migration
 
-Version 3.5 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
+Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
 
 ```bash
-$ serverpod create-migration --tag "upgrade-3.5"
+$ serverpod create-migration --tag "upgrade-4.0"
 ```
 
 This writes a new migration to `<project>_server/migrations/`. It will be applied to your database in the next step.
 
 ## Adopt the new development workflow
 
-Version 3.5 introduces a faster, integrated development workflow. The new `serverpod start` command runs your server, your Flutter app, and (optionally) your database in a single watch process with hot reload, replacing the manual `docker compose up` + `dart bin/main.dart` + `flutter run` triad. The result is a tighter edit-save-see-result loop and built-in tooling for migrations, hot restart, and agent skills.
+Version 4.0 introduces a faster, integrated development workflow. The new `serverpod start` command runs your server, your Flutter app, and (optionally) your database in a single watch process with hot reload, replacing the manual `docker compose up` + `dart bin/main.dart` + `flutter run` triad. The result is a tighter edit-save-see-result loop and built-in tooling for migrations, hot restart, and agent skills.
 
 Before running it, choose how to handle the database.
 
@@ -95,7 +95,7 @@ With `--docker`, `serverpod start` brings up Docker if it isn't running, and tea
 
 #### Switch to the embedded Postgres (recommended for new development)
 
-Version 3.5 ships a built-in Postgres that runs as a child process of your Dart server, using the same Postgres dialect as production. It has practical advantages over Docker for day-to-day development:
+Version 4.0 ships a built-in Postgres that runs as a child process of your Dart server, using the same Postgres dialect as production. It has practical advantages over Docker for day-to-day development:
 
 **Pros:**
 
@@ -139,11 +139,11 @@ If you've added `dataPath` to your config and also pass `--docker`, the server c
 
 The first run compiles the native build hooks (this can take about 30 seconds) and applies the migration you generated above. The server then starts and watches your project; saving a file hot-reloads the code.
 
-Beyond the server, `serverpod start` also launches the project's Flutter app. By default it uses Flutter's `web-server` device and opens your browser. Pass `--flutter-device <name>` to target a specific device. For IDE debugging, projects scaffolded with 3.5 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 3.5 scaffold if you want the same setup.
+Beyond the server, `serverpod start` also launches the project's Flutter apps configured with `auto_launch: true`. For IDE debugging, projects scaffolded with 4.0 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 4.0 scaffold if you want the same setup.
 
 ## Add the agent skills (optional)
 
-Version 3.5 ships AI agent skills (for editors like Claude Code and Cursor) and an MCP server. Install them with:
+Version 4.0 ships AI agent skills (for editors like Claude Code and Cursor) and an MCP server. Install them with:
 
 ```bash
 $ dart install skills
@@ -159,11 +159,11 @@ Replace `cursor` with the editor you use: `antigravity`, `claude`, `cline`, `cod
 
 ## Production deployment notes
 
-Your production build needs to switch from `dart compile exe` to `dart build cli`. The 3.5 server includes native build hooks that `dart compile` doesn't support, and produces a bundle (executable plus its native libraries) rather than a single static binary, so your Dockerfile needs a few updates.
+Your production build needs to switch from `dart compile exe` to `dart build cli`. The 4.0 server includes native build hooks that `dart compile` doesn't support, and produces a bundle (executable plus its native libraries) rather than a single static binary, so your Dockerfile needs a few updates.
 
-Copy the updated Dockerfile from the [3.5 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 3.5 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and bump the Dart SDK base image to 3.10.x or newer.
+Copy the updated Dockerfile from the [4.0 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 4.0 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and bump the Dart SDK base image to 3.10.x or newer.
 
-## What's new in 3.5
+## What's new in 4.0
 
 - **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create a migration, **A** to apply migrations, **P** to apply a repair migration.
 - **Flutter app spawning** from `serverpod start` so the Flutter app runs alongside the server in the same TUI.
@@ -196,4 +196,4 @@ If something here didn't go as expected, reach out on the [community page](../su
 ## Related
 
 - [Migrations](../concepts/database/migrations): how Serverpod's migration system works under the hood.
-- [Build your first app](../get-started/creating-endpoints): the hands-on tour of the 3.5 workflow if you want to see `serverpod start` from scratch.
+- [Build your first app](../get-started/creating-endpoints): the hands-on tour of the 4.0 workflow if you want to see `serverpod start` from scratch.
