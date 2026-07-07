@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Sign in with Google requires Google Cloud OAuth credentials. Create them for your platforms and add the provider to your Serverpod app.
+---
+
+# Set up Google sign-in
 
 Sign in with Google requires a Google Cloud project. You also need platform-specific OAuth credentials depending on which platforms you target.
 
@@ -145,15 +150,15 @@ import 'package:serverpod_auth_idp_server/providers/google.dart';
 class GoogleIdpEndpoint extends GoogleIdpBaseEndpoint {}
 ```
 
-### Generate code and apply migrations
+### Start the server
 
-Run the following commands from your server project directory (e.g., `my_project_server/`) to generate client code and apply the database migration:
+Start the server from your server project directory (e.g., `my_project_server/`):
 
 ```bash
-serverpod generate
-serverpod create-migration
-dart run bin/main.dart --apply-migrations
+serverpod start
 ```
+
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 :::warning
 Skipping the migration will cause the server to crash at runtime when the Google provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -244,7 +249,7 @@ On web, Google completes sign-in by redirecting the browser to a callback URL yo
 
 ```bash
 flutter build web --output ../my_project_server/web/app  # from your Flutter project
-dart run bin/main.dart                                   # from your server project
+serverpod start                                          # from your server project
 ```
 
 Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod — for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
@@ -322,7 +327,7 @@ Swap the redirect URI for your production URL when deploying. See [Configuring t
 
 ### Show the Google sign-in button
 
-The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and `serverpod generate` has run, the Google button appears inside it.
+The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and the client code has been regenerated, the Google button appears inside it.
 
 ```dart
 import 'package:flutter/material.dart';

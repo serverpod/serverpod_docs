@@ -10,34 +10,34 @@ slug: /installation
 
 Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed.
 
-::::info
+:::info
 Check your Flutter installation by running the following command in your terminal:
 
 ```bash
 $ flutter doctor
 ```
 
-::::
+:::
 
 ### Install Serverpod
 
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
 
 ```txt
-$ dart install serverpod_cli 3.5.0-beta.9
+$ dart install serverpod_cli 4.0.0-beta.0
 ```
 
 This command will install the Serverpod command-line interface (CLI) globally on your machine. You can verify the installation by running:
 
 ```bash
-$ serverpod version
+$ serverpod
 ```
 
 If everything is correctly configured, the help for the `serverpod` command is now displayed.
 
 :::warning
 
-If the Serverpod CLI is already installed globally, deactivate it before installing or upgrading:
+If a previous version of Serverpod is already installed with `dart pub global activate`, deactivate it before installing or upgrading:
 
 ```txt
 $ dart pub global deactivate serverpod_cli

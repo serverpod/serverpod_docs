@@ -1,4 +1,9 @@
-# Troubleshooting
+---
+sidebar_label: Troubleshooting
+description: Sign in with Google failures, from setup mistakes to platform-specific errors, and how to diagnose and resolve each one in your Serverpod app.
+---
+
+# Troubleshoot Google sign-in
 
 This page helps you identify common Sign in with Google failures, explains why they occur, and shows how to resolve them. For platform-specific issues with the underlying Flutter package, see the [google_sign_in_android troubleshooting guide](https://pub.dev/packages/google_sign_in_android#troubleshooting).
 
@@ -21,7 +26,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] For new or customized servers, confirm auth services and JWT are configured per [Authentication setup](../../setup#identity-providers-configuration) before adding Google.
 - [ ] Add `GoogleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `GoogleIdpEndpoint` file in `lib/src/auth/`.
-- [ ] Run `serverpod generate`, then `serverpod create-migration`, then apply migrations using `--apply-migrations`.
+- [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**, then **A**).
 
 #### Client
 
@@ -167,15 +172,9 @@ Every line of the JSON must be indented by at least one level more than `googleC
 
 **Problem:** The server builds and starts, but crashes when a user tries Google sign-in. The error cites a missing table (like `serverpod_auth_idp_google_account`).
 
-**Cause:** `serverpod generate` has been run, but you didn't create or apply the accompanying database migration.
+**Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** Create and apply the migration:
-
-```bash
-serverpod generate
-serverpod create-migration
-dart run bin/main.dart --apply-migrations
-```
+**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
 ## Lightweight sign-in (One Tap) not appearing
 

@@ -1,3 +1,7 @@
+---
+description: Define many-to-many relationships between database tables using a junction model that holds foreign keys to both sides of the relation.
+---
+
 # Many-to-many
 
 Many-to-many (n:m) relationships describes a scenario where multiple records from a table can relate to multiple records in another table. An example of this would be the relationship between students and courses, where a single student can enroll in multiple courses, and a single course can have multiple students.

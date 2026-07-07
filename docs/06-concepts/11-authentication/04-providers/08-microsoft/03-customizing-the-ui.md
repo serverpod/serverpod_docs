@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: Microsoft sign-in UI can be customized with the MicrosoftSignInWidget and MicrosoftAuthController to build a custom flow.
+---
+
+# Customize the Microsoft sign-in UI
 
 When using the Microsoft identity provider, you can customize the UI to your liking. You can use the `MicrosoftSignInWidget` to display the Microsoft Sign-In flow in your own custom UI, or you can use the `MicrosoftAuthController` to build a completely custom authentication interface.
 

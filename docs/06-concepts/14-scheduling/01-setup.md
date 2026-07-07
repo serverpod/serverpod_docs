@@ -1,3 +1,7 @@
+---
+description: "Schedule future work in Serverpod using future calls: invoke methods after a delay, at a specific time, or on a recurring interval, with persistence across restarts."
+---
+
 # Setup
 
 Serverpod supports scheduling future work with the `future call` feature. Future calls are calls that will be invoked at a later time. An example is if you want to send a drip-email campaign after a user signs up. You can schedule a future call for a day, a week, a month, or a [recurring interval](recurring-task). The calls are stored in the database, so they will persist even if the server is restarted.
@@ -40,7 +44,6 @@ The future calls you create are registered by `Serverpod` after the server start
 
 ```dart
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_idp_server/core.dart';
 
 import 'src/generated/protocol.dart';
 import 'src/generated/endpoints.dart';

@@ -1,3 +1,7 @@
+---
+description: Advanced Serverpod testing examples, run integration and unit tests separately, test business logic with sessions, test multi-user stream interactions, and manage database connections.
+---
+
 # Advanced examples
 
 ## Run unit and integration tests separately
@@ -29,13 +33,13 @@ withServerpod('Given decreasing product quantity when quantity is zero', (
   var session = sessionBuilder.build();
 
   setUp(() async {
-    await Product.db.insertRow(session, [
+    await Product.db.insertRow(session,
       Product(
         id: 123,
         name: 'Apple',
         quantity: 0,
       ),
-    ]);
+    );
   });
 
   test('then should throw `InvalidOperationException`',
@@ -116,7 +120,7 @@ withServerpod('Given CommunicationExampleEndpoint', (sessionBuilder, endpoints) 
 
 ## Optimising number of database connections
 
-By default, Dart's test runner runs tests concurrently. The number of concurrent tests depends on the running hosts' available CPU cores. If the host has a lot of cores it could trigger a case where the number of connections to the database exceeeds the maximum connections limit set for the database, which will cause tests to fail.
+By default, Dart's test runner runs tests concurrently. The number of concurrent tests depends on the running hosts' available CPU cores. If the host has a lot of cores it could trigger a case where the number of connections to the database exceeds the maximum connections limit set for the database, which will cause tests to fail.
 
 Each `withServerpod` call will lazily create its own Serverpod instance which will connect to the database. Specifically, the code that causes the Serverpod instance to be created is `sessionBuilder.build()`, which happens at the latest in an endpoint call if not called by the test before.
 

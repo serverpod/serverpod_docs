@@ -1,3 +1,7 @@
+---
+description: Use a SQLite database on the Flutter client with the same ORM interface as the server, including CRUD, relations, and transactions.
+---
+
 # Client-side database
 
 When at least one table model has `database: client` or `database: all`, the generated `Client` class gets a `createSession` method that returns a `ClientDatabaseSession` for a SQLite database file.
@@ -52,7 +56,7 @@ void main() async {
   // Create the session to use in database operations.
   final session = await client.createSession(path, isDebugMode: kDebugMode);
 
-  // Store the session in your state manager to use it all database operations.
+  // Store the session in your state manager to use it for all database operations.
   // Since the session opens and closes the database when created, it is not
   // recommended to create a new session for each database operation.
 }

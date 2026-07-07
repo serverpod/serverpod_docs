@@ -1,22 +1,12 @@
-# `auth`
+# scloud auth
 
-Handle user authentication.
+`scloud auth` manages your login session: log in to Serverpod Cloud, log out, and revoke other sessions or tokens. Most `scloud` commands authenticate against the cloud API, so you need to be logged in (or pass a token) to do anything that touches your projects.
 
-See also the [Personal access tokens](/cloud/concepts/personal-access-tokens)
-concept page on how to prepare and use personal access tokens for CI pipelines,
-scripts, or headless environments where you cannot run `scloud auth login`.
-
-## `auth login`
-
-Log in to Serverpod Cloud. Most `scloud` commands requires the CLI to be authenticated.
-
-## `auth logout`
-
-Log out from Serverpod Cloud and remove stored credentials.
+For long-lived authentication (CI pipelines, scripts), see [Personal access tokens](/cloud/concepts/personal-access-tokens), which covers token creation, the `SERVERPOD_CLOUD_TOKEN` environment variable, and the `--token` flag.
 
 ## Credentials storage
 
-After running `auth login`, your authentication token is stored locally at:
+After running `scloud auth login`, your authentication token is stored locally at:
 
 ```text
 ~/.serverpod/cloud/serverpod_cloud_auth.json
@@ -28,23 +18,4 @@ This file contains a JSON object with your token:
 {"token": "your-token-here"}
 ```
 
-## Using the token
-
-### Environment variable
-
-You can set the `SERVERPOD_CLOUD_TOKEN` environment variable to authenticate without logging in:
-
-```bash
-export SERVERPOD_CLOUD_TOKEN="your-token-here"
-scloud me 
-```
-
-### Command-line flag
-
-Alternatively, use the `--token` flag with any command:
-
-```bash
-scloud --token="your-token-here" me
-```
-
-This is useful for CI/CD pipelines and automated scripts.
+Delete the file (or run `scloud auth logout`) to clear stored credentials.

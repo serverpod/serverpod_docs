@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Sign in with Microsoft uses a Microsoft Entra ID app registration. Create it and add the provider to your Serverpod app.
+---
+
+# Set up Microsoft sign-in
 
 To set up **Sign in with Microsoft**, you must create an app registration on [Microsoft Entra ID (formerly Azure AD)](https://portal.azure.com/) and configure your Serverpod application accordingly.
 
@@ -182,7 +187,7 @@ class MicrosoftIdpEndpoint extends MicrosoftIdpBaseEndpoint {}
 
 ### Generate and migrate
 
-Finally, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Finally, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

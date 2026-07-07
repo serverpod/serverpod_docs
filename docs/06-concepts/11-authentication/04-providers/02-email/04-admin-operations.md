@@ -1,4 +1,9 @@
-# Admin Operations
+---
+sidebar_label: Admin Operations
+description: Email admin operations manage email accounts and clean up expired or dangling verification requests through the EmailIdpAdmin server-side API.
+---
+
+# Email admin operations
 
 The email identity provider provides admin operations through `EmailIdpAdmin` for managing email accounts and cleaning up expired or dangling requests. These operations are useful for administrative tasks, maintenance, and preventing database bloat.
 

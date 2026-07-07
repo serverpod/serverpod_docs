@@ -1,3 +1,7 @@
+---
+description: Middleware in Serverpod's web server lets you apply cross-cutting concerns like authentication, logging, and CORS globally or to specific path prefixes.
+---
+
 # Middleware
 
 Routes handle the core logic of your application, but many concerns cut across
@@ -133,7 +137,7 @@ per-request state. For more details, see the [Relic documentation](https://docs.
 
 :::info
 
-Note that Serverpod's `Route.handleCall()` already receives a `Session` parameter
+Serverpod's `Route.handleCall()` already receives a `Session` parameter
 which includes authenticated user information if available. Use `ContextProperty`
 for web-specific request data that isn't part of the standard Session, such as
 request IDs, feature flags, or API version information extracted from headers.

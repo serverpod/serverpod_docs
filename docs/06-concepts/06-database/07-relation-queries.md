@@ -1,3 +1,7 @@
+---
+description: Query, filter, sort, and paginate relational data in Serverpod using include, includeList, attach, and detach methods.
+---
+
 # Relation queries (Joins)
 
 The Serverpod query framework supports filtering on, sorting on, and including relational data structures. In SQL this is often achieved using a join operation. The functionality is available if there exists any [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relations between two models.
@@ -16,7 +20,7 @@ var employee = await Employee.db.findById(
 );
 ```
 
-The example above return a employee including the related address object.
+The example above returns an employee including the related address object.
 
 ### Nested includes
 

@@ -1,3 +1,7 @@
+---
+description: Add indexes to Serverpod database tables to improve query performance, including unique, GIN, HNSW, and IVFFLAT vector indexes.
+---
+
 # Indexing
 
 For performance reasons, you may want to add indexes to your database tables. These are added in the YAML-files defining the serializable objects.
@@ -53,6 +57,46 @@ class: Company
 table: company
 fields:
   name: String, unique
+```
+
+### Composite unique constraints
+
+When a value should be unique only within a scope (for example, a setting key that is unique per user), use `unique(per=...)` on the field that must be unique within that scope. Serverpod auto-generates a composite unique index with the `per` columns first, followed by the annotated field.
+
+```yaml
+class: UserSetting
+table: user_setting
+fields:
+  userId: int
+  key: String, unique(per=userId)
+```
+
+In this example, two rows can share the same `key` if they belong to different users, but the same user cannot have two rows with the same `key`.
+
+For a scope that spans multiple columns, pass a list of field names:
+
+```yaml
+class: Product
+table: product
+fields:
+  tenantId: int
+  category: String
+  sku: String, unique(per=[tenantId, category])
+```
+
+You can also use the equivalent expanded form, where you name the index yourself:
+
+```yaml
+class: Product
+table: product
+fields:
+  tenantId: int
+  category: String
+  sku: String
+indexes:
+  product_unique_idx:
+    fields: tenantId, category, sku
+    unique: true
 ```
 
 ## Specifying index type
@@ -221,3 +265,48 @@ If more than one distance function is going to be frequently used on the same ve
 :::
 
 For more details on vector indexes and its configuration, refer to the [pgvector extension documentation](https://github.com/pgvector/pgvector/tree/master?tab=readme-ov-file#indexing).
+
+### Geography indexes
+
+Geography columns benefit from spatial indexes, which significantly improve the performance of spatial queries such as proximity searches, intersection tests, and containment checks. Two index types are available for geography fields:
+
+- `gist` - Generalized Search Tree, the default and the right choice for most workloads.
+- `spgist` - Space-Partitioned Generalized Search Tree.
+
+If no `type` is specified for an index on a geography field, it defaults to `gist`.
+
+```yaml
+class: Store
+table: store
+fields:
+  name: String
+  location: GeographyPoint
+indexes:
+  store_location_idx:
+    fields: location
+    type: gist
+```
+
+Use `spgist` by setting the index `type` explicitly:
+
+```yaml
+class: DeliveryZone
+table: delivery_zone
+fields:
+  name: String
+  boundary: GeographyPolygon
+indexes:
+  delivery_zone_boundary_idx:
+    fields: boundary
+    type: spgist
+```
+
+:::tip
+A spatial index accelerates all spatial operations (`intersects`, `distanceWithin`, `distance`, `contains`, `within`). For tables with many rows and frequent spatial queries, adding one is strongly recommended.
+:::
+
+Geography fields only support the `gist` and `spgist` index types. Specifying any other type fails code generation with `The "type" property must be one of: gist, spgist.` An index may cover several geography columns, but it cannot mix geography and non-geography fields. Doing so fails with `Mixing geography and non-geography fields in the same index is not allowed.`
+
+:::info
+`spgist` indexes on the geography type require a recent version of PostGIS. If your PostgreSQL instance ships an older PostGIS, use `gist` instead.
+:::

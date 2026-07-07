@@ -1,5 +1,6 @@
 ---
 sidebar_label: Get started
+description: Authentication is built into every new Serverpod project. Turn on the sign-in screen, run your app, and test signing up and signing in.
 ---
 
 # Get started with authentication
@@ -12,7 +13,7 @@ This guide walks you through that, then shows how to test signing up and signing
 
 ## Prerequisites
 
-- A project created with `serverpod create` on Serverpod 3.5 or later. For older projects, see [Setup](./setup) first to add the auth module.
+- A project created with `serverpod create` on Serverpod 4.0 or later. For older projects, see [Setup](./setup) first to add the auth module.
 - The Flutter SDK installed, so you can run the app.
 - Docker installed and running, if your project uses a Docker Postgres. Projects on the embedded Postgres option don't need Docker.
 

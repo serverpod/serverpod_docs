@@ -1,12 +1,7 @@
-# `launch`
+# scloud launch
 
-An interactive, guided set up of a new Serverpod Cloud project.
+`scloud launch` is the front door for new projects: it interactively creates a Serverpod Cloud project, links your local server to it, and deploys for the first time. The flow prompts for the project name, whether to enable a database, and confirms each step before performing it.
 
-Promts for the needed settings.
-(The settings can also be specified on the command line.)
+Once your project is linked, you typically switch to `scloud deploy` for subsequent updates. For non-interactive project creation (no prompts), use `scloud project create` and pass the settings as flags.
 
-The user will be asked for confirmation before performing any work.
-
-```bash
-scloud launch
-```
+See [Deploy your first app](/cloud/getting-started/launch) for the full walkthrough.

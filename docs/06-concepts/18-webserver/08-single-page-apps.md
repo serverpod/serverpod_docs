@@ -1,3 +1,7 @@
+---
+description: Single page apps in Serverpod use SpaRoute to serve static files and fall back to index.html for client-side routing.
+---
+
 # Single page apps
 
 Single Page Applications (SPAs) handle routing on the client side, which requires special server configuration. When users navigate to a route like `/dashboard` or `/settings`, the browser requests that path from the server. Since these aren't real files, the server needs to return the main `index.html` file so the client-side router can handle the route.

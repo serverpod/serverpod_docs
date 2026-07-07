@@ -1,4 +1,9 @@
-# Customizing the UI
+---
+sidebar_label: Customizing the UI
+description: Firebase authentication UI is built on the firebase_auth package and synced with your Serverpod backend through the FirebaseAuthController.
+---
+
+# Customize the Firebase authentication UI
 
 When using the Firebase identity provider, you build your authentication UI on top of [`firebase_auth`](https://pub.dev/packages/firebase_auth), optionally with [`firebase_ui_auth`](https://pub.dev/packages/firebase_ui_auth) for the pre-built sign-in screens. The [`FirebaseAuthController`](https://pub.dev/documentation/serverpod_auth_idp_flutter_firebase/latest/serverpod_auth_idp_flutter_firebase/FirebaseAuthController-class.html) handles syncing the authenticated Firebase user with your Serverpod backend. This page breaks down the gate widget shown in the [setup guide](./setup#present-the-authentication-ui) and then covers building a fully custom UI with `firebase_auth` directly.
 

@@ -1,4 +1,9 @@
-# Setup
+---
+sidebar_label: Setup
+description: Anonymous authentication lets users access your app without creating an account. Enable it in your Serverpod auth configuration to get started.
+---
+
+# Set up anonymous sign-in
 
 :::warning
 The Anonymous identity provider is **experimental** and can not be completely used yet due to the missing support for account linking. The missing parts will be added in the next releases.
@@ -48,7 +53,7 @@ import 'package:serverpod_auth_idp_server/providers/anonymous.dart';
 class AnonymousIdpEndpoint extends AnonymousIdpBaseEndpoint {}
 ```
 
-Then, run `serverpod generate` to generate the client code and create a migration to initialize the database for the provider. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

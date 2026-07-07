@@ -1,3 +1,7 @@
+---
+description: Fine-tune PostgreSQL query behavior per transaction or globally using Serverpod's runtime parameters, particularly for vector similarity search optimization.
+---
+
 # Runtime parameters
 
 Runtime parameters in Serverpod allow you to fine-tune the behavior of the database engine for specific queries or workloads. This can significantly improve performance, especially for complex queries or large datasets.

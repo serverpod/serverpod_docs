@@ -1,3 +1,7 @@
+---
+description: Configure Serverpod's database connection details, passwords, and connect to custom Postgres or SQLite instances.
+---
+
 # Connection
 
 In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
@@ -8,8 +12,6 @@ If using Postgres, the easiest way to get started is to use a Docker container t
 
 Each environment configuration contains a `database` keyword that specifies the connection details.
 For your development build you can find the connection details in the `config/development.yaml` file.
-
-Below is an example for Postgres:
 
 ```yaml
 ...
@@ -96,8 +98,6 @@ On SQLite, this configuration sets the number of read-only transactions that can
 ### Database password
 
 The database password is stored in a separate file called `passwords.yaml` in the same `config` directory. The password for each environment is stored under the `database` keyword in the file.
-
-An example of this could look like this:
 
 ```yaml
 ...

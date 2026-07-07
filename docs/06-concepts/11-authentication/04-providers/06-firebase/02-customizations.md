@@ -1,4 +1,9 @@
-# Customizations
+---
+sidebar_label: Customizations
+description: Firebase identity provider credentials can be loaded from different sources with FirebaseIdpConfig. Configure the provider beyond the basic setup.
+---
+
+# Customize Firebase authentication
 
 This page covers additional configuration options for the Firebase identity provider beyond the basic setup.
 

@@ -1,3 +1,7 @@
+---
+description: Authenticated users have a stable identifier across your server. Access them and their profile data from the Session object.
+---
+
 # Working with users
 
 The authentication module provides convenient ways to work with your authenticated users and their related profile data.
@@ -8,7 +12,7 @@ All authenticated users have an authentication identifier, that uniquely identif
 
 ```dart
 var userIdString = session.authenticated?.userIdentifier;
-// requires `import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart';`
+// requires `import 'package:serverpod_auth_idp_server/core.dart';`
 var userIdUuidValue = session.authenticated?.authUserId;
 ```
 
@@ -146,6 +150,8 @@ final userProfile = await client.modules.serverpod_auth_core.userProfileInfo.get
 This returns a `UserProfileModel` object containing the logged-in user's profile information such as their name, email, and profile picture.
 
 ### Extending the user profile edit endpoint
+
+For a step-by-step guide covering upload, display, validation, and storage, see [Manage user profile photos](./profile-photos).
 
 The authentication module provides a `UserProfileEditBaseEndpoint` abstract class that you can extend to expose user profile editing functionality to your app. This base endpoint includes methods for:
 

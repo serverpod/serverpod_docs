@@ -1,18 +1,19 @@
+---
+description: Security configuration in Serverpod lets you enable TLS/SSL directly on the server or configure the client to trust a certificate, using SecurityContextConfig.
+---
+
 # Security Configuration
 
 :::info
 
-In a **production environment**, TLS termination is **normally handled by a load balancer** or **reverse proxy** (e.g., Nginx, AWS ALB, or Cloudflare).
-However, Serverpod also supports setting up **TLS/SSL directly on the server**, allowing you to provide your own certificates if needed.
+In a production environment, TLS termination is normally handled by a load balancer or reverse proxy (e.g., Nginx, AWS ALB, or Cloudflare).
+However, Serverpod also supports setting up TLS/SSL directly on the server, allowing you to provide your own certificates if needed.
 
 :::
 
-Serverpod supports **TLS/SSL security configurations** through the **Dart configuration object**.
-To enable SSL/TLS, you must pass a **`SecurityContextConfig`** to the `Serverpod` constructor.
-
 ## Server Security Configuration
 
-To enable SSL/TLS in Serverpod, configure the `SecurityContextConfig` and pass it to the `Serverpod` instance.
+To enable TLS/SSL, pass a `SecurityContextConfig` to the `Serverpod` constructor.
 
 ### Dart Configuration Example
 
@@ -35,11 +36,11 @@ Serverpod(
 
 ## Client Security Configuration
 
-When connecting to a **Serverpod server over HTTPS**, the client must be configured to trust the server's certificate.
+When connecting to a Serverpod server over HTTPS, the client must be configured to trust the server's certificate.
 
 ### Dart Configuration Example
 
-To enable SSL/TLS when using the Serverpod client, pass a **`SecurityContext`** to the `Client` constructor.
+To enable SSL/TLS, pass a `SecurityContext` to the `Client` constructor.
 
 ```dart
 final securityContext = SecurityContext()
