@@ -141,15 +141,52 @@ The first run compiles the native build hooks (this can take about 30 seconds) a
 
 Beyond the server, `serverpod start` also launches the project's Flutter apps configured with `auto_launch: true`. For IDE debugging, projects scaffolded with 4.0 include a `launch.json` that runs `serverpod start` with the debugger attached; you can copy that file into your existing project from a fresh 4.0 scaffold if you want the same setup.
 
-## Add the agent skills (optional)
+## Set up the agent workflow (optional)
 
-Version 4.0 ships AI agent skills (for editors like Claude Code and Cursor) and an MCP server. Install them with:
+Version 4.0 ships AI agent skills and MCP servers (for editors like Claude Code and Cursor) that let your agent build, run, and inspect your server. A new project configures these during `serverpod create`, so the smoothest way to add the same setup to your upgraded project is to run the same command against the current directory.
+
+:::warning
+
+Configuration files you created manually can be overwritten, so commit your work before running the command.
+
+:::
+
+From the project's root folder, run:
+
+```bash
+$ serverpod create .
+```
+
+Serverpod detects the existing project and adds the missing pieces without touching your source code. It registers the **Serverpod** and **Dart** MCP servers and installs the agent skills for the editors you select. Each selected editor gets a config file in its own format: `.mcp.json` for Claude, `.cursor/mcp.json` for Cursor, and `.vscode/mcp.json` for VS Code. For Claude, `.mcp.json` looks like this:
+
+```json
+{
+  "mcpServers": {
+    "serverpod": {
+      "command": "serverpod",
+      "args": ["mcp-server", "--server-dir", "<project>_server"]
+    },
+    "dart": {
+      "command": "dart",
+      "args": ["mcp-server"]
+    }
+  }
+}
+```
+
+VS Code's `.vscode/mcp.json` registers the same two servers but nests them under a `servers` key instead of `mcpServers`.
+
+If you are using Cursor, enable the **Serverpod** and **Dart** MCP servers in your project settings (_Cursor Settings_ > _Tools & MCPs_).
+
+### Install the skills without the MCP setup
+
+If you already have the MCP servers configured and only want to install or refresh the agent skills, install the skills tool:
 
 ```bash
 $ dart install skills
 ```
 
-From your project's root folder, install the skills for your editor:
+Then, from your project's root folder, pull the skills for your editor:
 
 ```bash
 $ skills get --ide cursor
@@ -167,7 +204,7 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 
 - **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create a migration, **A** to apply migrations, **P** to apply a repair migration.
 - **Flutter app spawning** from `serverpod start` so the Flutter app runs alongside the server in the same TUI.
-- **AI agent skills and MCP server** scaffolded during `serverpod create`; existing projects opt in with `dart install skills` and `skills get`.
+- **AI agent skills and MCP servers** scaffolded during `serverpod create`; existing projects opt in by running `serverpod create .`.
 - **Embedded Postgres**: zero-Docker development via `dataPath`.
 - **SQLite database support** as an alternative dialect to Postgres.
 - **Client-side database generation** for the Flutter app.
@@ -185,9 +222,9 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 
 Running more than one Serverpod server on the same machine can conflict on the default ports (8080 for the main server, 8090 for the database). This is a long-standing limitation, not specific to `serverpod start`. Stop the other server, or run on different ports.
 
-### Agent skills aren't picked up after install
+### Agent skills or MCP servers aren't picked up after setup
 
-Run `skills get` again from the project's root folder. Some editors, like Cursor, require enabling the MCP server in their settings.
+Run `serverpod create .` again from the project's root folder. Some editors, like Cursor, require enabling the **Serverpod** and **Dart** MCP servers in their settings (_Cursor Settings_ > _Tools & MCPs_).
 
 ## Still stuck?
 
