@@ -1,5 +1,5 @@
 ---
-description: Understand Serverpod sessions, which provides access to the database, cache, storage, and messaging for every endpoint call.
+description: The Session object gives every endpoint call access to the database, cache, file storage, and messaging, and manages its own lifecycle and logging.
 ---
 
 # Sessions
@@ -233,7 +233,7 @@ Future<List<User>> getActiveUsers(Session session) async {
 
 ### 2. Use FutureCalls for delayed operations
 
-Instead of managing sessions for async work, use Serverpod's future call system:
+Instead of managing sessions for async work, use Serverpod's [future call system](scheduling/setup):
 
 ```dart
 // ✅ Good - Let Serverpod manage the session

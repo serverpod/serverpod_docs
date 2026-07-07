@@ -459,7 +459,7 @@ production:
     }
 ```
 
-Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` [environment variable](../../../07-configuration.md#2-via-environment-variables) on your production server with the same JSON value.
+Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` [environment variable](../../../07-configuration.md#via-environment-variables) on your production server with the same JSON value.
 
 #### Serverpod Cloud
 

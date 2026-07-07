@@ -1,190 +1,26 @@
 ---
-description: Configure Serverpod using YAML files, environment variables, or a Dart config object, with full reference tables for all available options.
+description: Configuration in Serverpod comes from YAML files, environment variables, or a Dart config object, with run modes, source precedence, and secrets.
 ---
 
 # Configuration
 
-Serverpod can be configured in a few different ways. The minimum required settings to provide is the configuration for the API server. If no settings are provided at all, the default settings for the API server are used.
+Configuration decides what your server listens on, which database and Redis it connects to, and how it behaves in each run mode, so the same code runs locally, in staging, and in production without edits. Serverpod reads configuration from three sources: environment variables, the `config/<run-mode>.yaml` files, and a `ServerpodConfig` Dart object passed to the `Serverpod` constructor. You can mix them, and each source overrides the ones before it.
 
-## Configuration options
+The only settings you must provide are for the API server. With no configuration at all, Serverpod uses its built-in defaults.
 
-There are three different ways to configure Serverpod: with environment variables, via yaml config files, or by supplying the dart configuration object to the Serverpod constructor. The environment variables take precedence over the yaml configurations but both can be used simultaneously. The dart configuration object will override any environment variable or config file. The tables show all available configuration options provided in the Serverpod core library.
+## How configuration works
 
-```mermaid
-flowchart TB
-    %% ── widest box first so YAML feels like the default bedrock
-    A["YAML config files<br/>(default)"]:::yaml
-    B["Environment variables<br/>(overrides YAML)"]:::env
-    C["Dart configuration object<br/>(overrides YAML and ENV)"]:::dart
+The three sources apply in order of precedence. The YAML files are the baseline, environment variables override the YAML files, and the Dart configuration object overrides both:
 
-    A --> B
-    B --> C
+- **YAML files** (`config/development.yaml`, `config/staging.yaml`, `config/production.yaml`, `config/test.yaml`): the baseline configuration, one file per run mode.
+- **Environment variables**: override matching YAML values, useful for per-deployment settings and secrets.
+- **Dart configuration object**: a `ServerpodConfig` passed to the `Serverpod` constructor, overriding everything else.
 
-    %% Styles (optional - tweak to your theme)
-  class A yaml
-    class B env
-    class C dart
-```
+For every available option, its environment variable, config-file key, and default, see the [Configuration reference](lookups/configuration-reference).
 
-### Configuration options for the server
+## Configuration files
 
-| Environment variable             | Command line option        | Config file option   | Default     | Description                                                                                                      |
-| -------------------------------- | -------------------------- | -------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| SERVERPOD_RUN_MODE               | `--mode`                   | N/A                  | development | Configures the mode of the server instance. Valid options are `development`, `staging`, `production` and `test`. |
-| SERVERPOD_SERVER_ID              | `--server-id`              | serverId             | default     | Configures the id of the server instance.                                                                        |
-| SERVERPOD_SERVER_ROLE            | `--role`                   | role                 | monolith    | Configures the role of the server instance. Valid options are `monolith`, `serverless` and `maintenance`.        |
-| SERVERPOD_LOGGING_MODE           | `--logging`                | logging              | normal      | Configures the logging level. Valid options are `normal`, and `verbose`.                                         |
-| SERVERPOD_APPLY_MIGRATIONS       | `--apply-migrations`       | applyMigrations      | false       | Configures if migrations should be applied when the server starts.                                               |
-| SERVERPOD_APPLY_REPAIR_MIGRATION | `--apply-repair-migration` | applyRepairMigration | false       | Configures if repair migrations should be applied when the server starts.                                        |
-
-These can be separately declared for each run mode in the corresponding yaml file (`development.yaml`,`staging.yaml`, `production.yaml` and `testing.yaml`) or as environment variables.
-
-| Environment variable                      | Config file                   | Default   | Description                                                                                                                                                                       |
-| ----------------------------------------- | ----------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SERVERPOD_API_SERVER_PORT                 | apiServer.port                | 8080      | The port number for the API server                                                                                                                                                |
-| SERVERPOD_API_SERVER_PUBLIC_HOST          | apiServer.publicHost          | localhost | The public host address of the API server                                                                                                                                         |
-| SERVERPOD_API_SERVER_PUBLIC_PORT          | apiServer.publicPort          | 8080      | The public port number for the API server                                                                                                                                         |
-| SERVERPOD_API_SERVER_PUBLIC_SCHEME        | apiServer.publicScheme        | http      | The public scheme (http/https) for the API server                                                                                                                                 |
-| SERVERPOD_INSIGHTS_SERVER_PORT            | insightsServer.port           | -         | The port number for the Insights server                                                                                                                                           |
-| SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST     | insightsServer.publicHost     | -         | The public host address of the Insights server                                                                                                                                    |
-| SERVERPOD_INSIGHTS_SERVER_PUBLIC_PORT     | insightsServer.publicPort     | -         | The public port number for the Insights server                                                                                                                                    |
-| SERVERPOD_INSIGHTS_SERVER_PUBLIC_SCHEME   | insightsServer.publicScheme   | -         | The public scheme (http/https) for the Insights server                                                                                                                            |
-| SERVERPOD_WEB_SERVER_PORT                 | webServer.port                | -         | The port number for the Web server                                                                                                                                                |
-| SERVERPOD_WEB_SERVER_PUBLIC_HOST          | webServer.publicHost          | -         | The public host address of the Web server                                                                                                                                         |
-| SERVERPOD_WEB_SERVER_PUBLIC_PORT          | webServer.publicPort          | -         | The public port number for the Web server                                                                                                                                         |
-| SERVERPOD_WEB_SERVER_PUBLIC_SCHEME        | webServer.publicScheme        | -         | The public scheme (http/https) for the Web server                                                                                                                                 |
-| SERVERPOD_DATABASE_HOST                   | database.host                 | -         | The host address of the database                                                                                                                                                  |
-| SERVERPOD_DATABASE_PORT                   | database.port                 | -         | The port number for the database connection                                                                                                                                       |
-| SERVERPOD_DATABASE_NAME                   | database.name                 | -         | The name of the database                                                                                                                                                          |
-| SERVERPOD_DATABASE_USER                   | database.user                 | -         | The user name for database authentication                                                                                                                                         |
-| SERVERPOD_DATABASE_SEARCH_PATHS           | database.searchPaths          | -         | The search paths used for all database connections                                                                                                                                |
-| SERVERPOD_DATABASE_REQUIRE_SSL            | database.requireSsl           | false     | Indicates if SSL is required for the database                                                                                                                                     |
-| SERVERPOD_DATABASE_IS_UNIX_SOCKET         | database.isUnixSocket         | false     | Specifies if the database connection is a Unix socket                                                                                                                             |
-| SERVERPOD_DATABASE_MAX_CONNECTION_COUNT   | database.maxConnectionCount   | 10        | The maximum number of connections in the database pool. Set to 0 or a negative value for unlimited connections.                                                                   |
-| SERVERPOD_DATABASE_FILE_PATH              | database.filePath             | -         | The SQLite database file path. Set this instead of host/port/name/user when using SQLite.                                                                                         |
-| SERVERPOD_REDIS_HOST                      | redis.host                    | -         | The host address of the Redis server                                                                                                                                              |
-| SERVERPOD_REDIS_PORT                      | redis.port                    | -         | The port number for the Redis server                                                                                                                                              |
-| SERVERPOD_REDIS_USER                      | redis.user                    | -         | The user name for Redis authentication                                                                                                                                            |
-| SERVERPOD_REDIS_ENABLED                   | redis.enabled                 | false     | Indicates if Redis is enabled                                                                                                                                                     |
-| SERVERPOD_REDIS_REQUIRE_SSL               | redis.requireSsl              | false     | Indicates if SSL is required for the Redis connection                                                                                                                             |
-| SERVERPOD_MAX_REQUEST_SIZE                | maxRequestSize                | 524288    | The maximum size of requests allowed in bytes                                                                                                                                     |
-| SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED  | sessionLogs.persistentEnabled | -         | Enables or disables logging session data to the database. Defaults to `true` if a database is configured, otherwise `false`.                                                      |
-| SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL    | sessionLogs.cleanupInterval   | 24h       | How often to run the log cleanup job. Duration string (e.g. `24h`, `2d`). Set to null to disable automated purging.                                                               |
-| SERVERPOD_SESSION_LOG_RETENTION_PERIOD    | sessionLogs.retentionPeriod   | 90d       | How long to keep session log entries. Duration string (e.g. `30d`, `60d`). Set to null to disable time-based cleanup.                                                             |
-| SERVERPOD_SESSION_LOG_RETENTION_COUNT     | sessionLogs.retentionCount    | 100000    | Maximum number of session log entries to keep. Set to null to disable count-based cleanup.                                                                                        |
-| SERVERPOD_SESSION_CONSOLE_LOG_ENABLED     | sessionLogs.consoleEnabled    | -         | Enables or disables logging session data to the console. Defaults to `true` if no database is configured, otherwise `false`.                                                      |
-| SERVERPOD_SESSION_CONSOLE_LOG_FORMAT      | sessionLogs.consoleLogFormat  | json      | The format for console logging of session data. Valid options are `text` and `json`. Defaults to `text` for run mode `development`, otherwise `json`.                             |
-| SERVERPOD_FUTURE_CALL_EXECUTION_ENABLED   | futureCallExecutionEnabled    | true      | Enables or disables the execution of future calls.                                                                                                                                |
-| SERVERPOD_FUTURE_CALL_CONCURRENCY_LIMIT   | futureCall.concurrencyLimit   | 1         | The maximum number of concurrent future calls allowed. If the value is negative or null, no limit is applied.                                                                     |
-| SERVERPOD_FUTURE_CALL_SCAN_INTERVAL       | futureCall.scanInterval       | 5000      | The interval in milliseconds for scanning future calls                                                                                                                            |
-| SERVERPOD_FUTURE_CALL_CHECK_BROKEN_CALLS  | futureCall.checkBrokenCalls   | -         | Enables or disables the automatic check for broken future calls on startup. By default, the server performs an automatic check if there are less than 1000 calls in the database. |
-| SERVERPOD_FUTURE_CALL_DELETE_BROKEN_CALLS | futureCall.deleteBrokenCalls  | false     | Enables or disables the deletion of broken future calls when running the check on startup.                                                                                        |
-| SERVERPOD_WEBSOCKET_PING_INTERVAL         | websocketPingInterval         | 30        | The interval in seconds between WebSocket ping messages sent to keep streaming connections alive. Must be a positive integer.                                                     |
-
-### Secrets
-
-Secrets are declared in the `passwords.yaml` file. Serverpod's API reads them with `getPassword`, so this page uses *secret* and *password* interchangeably. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs. You can also define custom secrets using [environment variables](#2-via-environment-variables).
-
-#### Built-in Secrets
-
-The following table shows the built-in secrets that Serverpod uses for its core functionality. These can be configured either through environment variables or by adding the corresponding key in a respective run mode or shared section in the passwords file. These are separate from any custom passwords you might define.
-
-| Environment variable             | Passwords file | Default | Description                                                       |
-| -------------------------------- | -------------- | ------- | ----------------------------------------------------------------- |
-| SERVERPOD_PASSWORD_database      | database       | -       | The password for the database                                     |
-| SERVERPOD_PASSWORD_serviceSecret | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
-| SERVERPOD_PASSWORD_redis         | redis          | -       | The password for the Redis server                                 |
-
-#### Secrets for First Party Packages
-
-For secrets related to first-party Serverpod packages, see their respective documentation:
-
-- **Cloud storage**: see [Uploading files](file-uploads) for Google Cloud Storage, AWS S3, and Cloudflare R2 secrets.
-- **Authentication**: see [Storing Secrets](authentication/setup#storing-secrets) on the Authentication setup page.
-
-#### Custom Secrets
-
-You can define your own custom secrets in two ways.
-
-##### 1. Via Passwords File
-
-Add your custom secrets directly to the passwords file under the `shared` section (available in all run modes) or under specific run mode sections.
-
-```yaml
-shared:
-  myCustomSharedSecret: 'secret_key'
-  stripeApiKey: 'sk_test_123...'
-
-development:
-  database: 'development_password'
-  redis: 'development_password'
-  serviceSecret: 'development_service_secret'
-  twilioApiKey: 'dev_twilio_key'
-
-production:
-  database: 'production_password'
-  redis: 'production_password'
-  serviceSecret: 'production_service_secret'
-  twilioApiKey: 'prod_twilio_key'
-```
-
-##### 2. Via Environment Variables
-
-You can also define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available as `myApiKey` (the prefix is stripped). These environment variables will override any passwords defined in the passwords file if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
-
-| Environment variable format | Description                                                                                                                               |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` will be stripped from the key name. |
-
-To define a custom password through an environment variable:
-
-```bash
-export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
-```
-
-#### Accessing Secrets in Code
-
-Secrets are only available on the server. They are never sent to or accessible from your Flutter app.
-
-Inside an endpoint, read a secret from the [`Session`](sessions) through the `passwords` map:
-
-```dart
-Future<void> processPayment(Session session, PaymentData data) async {
-  final stripeApiKey = session.passwords['stripeApiKey'];
-  // Use the API key to make requests to Stripe.
-}
-```
-
-`session.serverpod.getPassword('stripeApiKey')` returns the same value.
-
-Outside of a request, for example during startup in your server's `run` function, read it from the `Serverpod` instance with `getPassword`:
-
-```dart
-// `pod` is the Serverpod instance created in run().
-final stripeApiKey = pod.getPassword('stripeApiKey');
-```
-
-This works for built-in and custom secrets alike, whether they come from the passwords file or an environment variable.
-
-#### Secrets in Production
-
-A new project's `.gitignore` excludes `config/passwords.yaml` and credential files such as `config/firebase_service_account_key.json`, so secrets are not committed by default. Keep production secrets out of source control.
-
-In production, set secrets through `SERVERPOD_PASSWORD_*` environment variables, or your host's secret manager, rather than a checked-in passwords file.
-
-#### Passwords on Serverpod Cloud
-
-On [Serverpod Cloud](/cloud), the values you read with `getPassword` live in the **Passwords** tier. Set them from the command line instead of editing a passwords file:
-
-```bash
-scloud password set stripeApiKey "sk_live_..."
-```
-
-Use `--from-file` for long or multi-line values such as a service account JSON. Cloud stores each password encrypted and injects it so `getPassword` reads it exactly as it does locally. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
-
-### Config file example
-
-The config file should be named after the run mode you start the server in and it needs to be placed inside the `config` directory in the root of the server project. As an example, you have the `config/development.yaml` that will be used when running in the `development` run mode.
+Name each config file after the run mode you start the server in and place it in the `config` directory at the root of the server project. For example, `config/development.yaml` is used when running in the `development` run mode.
 
 ```yaml
 apiServer:
@@ -231,11 +67,11 @@ sessionLogs:
 futureCallExecutionEnabled: true
 
 futureCall:
-  concurrencyLimit: 5
-  scanInterval: 2000
+  concurrencyLimit: 1
+  scanInterval: 5000
 ```
 
-#### Database backends
+### Database backends
 
 Serverpod supports both PostgreSQL and SQLite as database backends.
 
@@ -243,7 +79,7 @@ Serverpod supports both PostgreSQL and SQLite as database backends.
 The same database backend must be used for all run modes. Otherwise, an error will be thrown when generating migrations. This practice is recommended to ensure that the development environment is consistent with the production environment.
 :::
 
-##### PostgreSQL
+#### PostgreSQL
 
 ```yaml
 database:
@@ -256,7 +92,7 @@ database:
 
 Set the database password in `passwords.yaml` (`database`) or through `SERVERPOD_PASSWORD_database`.
 
-##### SQLite
+#### SQLite
 
 ```yaml
 database:
@@ -265,34 +101,9 @@ database:
 
 No database password is required when using SQLite.
 
-### Passwords file example
+## Configure in Dart
 
-The password file contains the secrets used by the server to connect to different services but you can also supply your secrets if you want. This file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs.
-
-```yaml
-shared:
-  myCustomSharedSecret: 'secret_key'
-
-development:
-  database: 'development_password'
-  redis: 'development_password'
-  serviceSecret: 'development_service_secret'
-  twilioApiKey: 'dev_twilio_key'
-
-production:
-  database: 'production_password'
-  redis: 'production_password'
-  serviceSecret: 'production_service_secret'
-  twilioApiKey: 'prod_twilio_key'
-```
-
-:::info
-The `database` keyword is only needed for PostgreSQL. SQLite does not use a password.
-:::
-
-### Dart config object example
-
-To configure Serverpod in Dart you simply pass an instance of the `ServerpodConfig` class to the `Serverpod` constructor. This config will override any environment variables or config files present. The `Serverpod` constructor is normally used inside the `run` function in your `server.dart` file. At a minimum, the `apiServer` has to be provided.
+To configure Serverpod in Dart, pass an instance of the `ServerpodConfig` class to the `Serverpod` constructor. This config overrides any environment variables or config files present. The `Serverpod` constructor is normally used inside the `run` function in your `server.dart` file. At a minimum, the `apiServer` has to be provided.
 
 ```dart
 Serverpod(
@@ -322,9 +133,9 @@ Serverpod(
 );
 ```
 
-### Default
+### Default configuration
 
-If no yaml config files exist, no environment variables are configured and no dart config file is supplied this default configuration will be used.
+If no YAML config files exist, no environment variables are configured, and no Dart config is supplied, this default configuration is used.
 
 ```dart
 ServerpodConfig(
@@ -337,24 +148,112 @@ ServerpodConfig(
 );
 ```
 
-## Code generation configuration
+## Secrets
 
-While the above configurations control how your server runs, Serverpod also uses a `generator.yaml` file to configure code generation. This file should be placed in the `config` directory of your server project.
+Secrets are declared in the `passwords.yaml` file. Serverpod's API reads them with `getPassword`, so this page uses *secret* and *password* interchangeably. The password file is structured with a common `shared` section, any secret put here will be used in all run modes. The other sections are the names of the run modes followed by respective key/value pairs. You can also define custom secrets using [environment variables](#via-environment-variables).
 
-### Generator configuration options
+### Built-in secrets
 
-| Option                        | Type   | Default                     | Description                                                                                 |
-| ----------------------------- | ------ | --------------------------- | ------------------------------------------------------------------------------------------- |
-| type                          | string | server                      | The package type. Valid options are `server`, `module`, or `internal`.                      |
-| nickname                      | string | -                           | For modules only. Defines how the module is referenced in code.                             |
-| client_package_path           | string | ../[name]\_client           | Path to the client package relative to the server.                                          |
-| server_test_tools_path        | string | test/integration/test_tools | Path where test tools are generated. Remove this to disable test tools generation.          |
-| shared_packages               | list   | -                           | Paths to shared packages containing models usable by both server and client.                |
-| modules                       | map    | -                           | Module dependencies with optional nicknames.                                                |
-| extraClasses                  | list   | -                           | List of custom serializable classes to include in code generation.                          |
-| serialize_as_jsonb_by_default | bool   | false                       | When true, all serializable fields default to `jsonb` storage instead of `json`.            |
-| features                      | map    | \{database: true\}          | Feature flags. Currently only `database` is supported.                                      |
-| experimental_features         | map    | -                           | Experimental features. Available keys: `all` (no experimental feature currently available). |
+The following table shows the built-in secrets that Serverpod uses for its core functionality. These can be configured either through environment variables or by adding the corresponding key in a respective run mode or shared section in the passwords file. These are separate from any custom passwords you might define.
+
+| Environment variable             | Passwords file | Default | Description                                                       |
+| -------------------------------- | -------------- | ------- | ----------------------------------------------------------------- |
+| SERVERPOD_PASSWORD_database      | database       | -       | The password for the database                                     |
+| SERVERPOD_PASSWORD_serviceSecret | serviceSecret  | -       | The token used to connect with insights must be at least 20 chars |
+| SERVERPOD_PASSWORD_redis         | redis          | -       | The password for the Redis server                                 |
+
+### Secrets for first-party packages
+
+For secrets related to first-party Serverpod packages, see their respective documentation:
+
+- **Cloud storage**: see [Uploading files](file-uploads) for Google Cloud Storage, AWS S3, and Cloudflare R2 secrets.
+- **Authentication**: see [Storing Secrets](authentication/setup#storing-secrets) on the Authentication setup page.
+
+### Custom secrets
+
+You can define your own custom secrets in two ways.
+
+#### Via the passwords file
+
+Add your custom secrets directly to the passwords file under the `shared` section (available in all run modes) or under specific run mode sections.
+
+```yaml
+shared:
+  myCustomSharedSecret: 'secret_key'
+  stripeApiKey: 'sk_test_123...'
+
+development:
+  database: 'development_password'
+  redis: 'development_password'
+  serviceSecret: 'development_service_secret'
+  twilioApiKey: 'dev_twilio_key'
+
+production:
+  database: 'production_password'
+  redis: 'production_password'
+  serviceSecret: 'production_service_secret'
+  twilioApiKey: 'prod_twilio_key'
+```
+
+#### Via environment variables
+
+You can also define custom passwords using environment variables with the `SERVERPOD_PASSWORD_` prefix. For example, `SERVERPOD_PASSWORD_myApiKey` will be available as `myApiKey` (the prefix is stripped). These environment variables will override any passwords defined in the passwords file if the name (after stripping the prefix) matches. Like the `shared` section in the passwords file, these environment variables are available in all run modes.
+
+| Environment variable format | Description                                                                                                                               |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| SERVERPOD_PASSWORD\_\*      | Custom password that will be available in the Session.passwords map. The prefix `SERVERPOD_PASSWORD_` will be stripped from the key name. |
+
+To define a custom password through an environment variable:
+
+```bash
+export SERVERPOD_PASSWORD_stripeApiKey=sk_test_123...
+```
+
+### Access secrets in code
+
+Secrets are only available on the server. They are never sent to or accessible from your Flutter app.
+
+Inside an endpoint, read a secret from the [`Session`](sessions) through the `passwords` map:
+
+```dart
+Future<void> processPayment(Session session, PaymentData data) async {
+  final stripeApiKey = session.passwords['stripeApiKey'];
+  // Use the API key to make requests to Stripe.
+}
+```
+
+The same value is available from `session.serverpod.getPassword('stripeApiKey')`.
+
+Outside of a request, for example during startup in your server's `run` function, read it from the `Serverpod` instance with `getPassword`:
+
+```dart
+// `pod` is the Serverpod instance created in run().
+final stripeApiKey = pod.getPassword('stripeApiKey');
+```
+
+This works for built-in and custom secrets alike, whether they come from the passwords file or an environment variable.
+
+### Secrets in production
+
+A new project's `.gitignore` excludes `config/passwords.yaml` and credential files such as `config/firebase_service_account_key.json`, so secrets are not committed by default. Keep production secrets out of source control.
+
+In production, set secrets through `SERVERPOD_PASSWORD_*` environment variables, or your host's secret manager, rather than a checked-in passwords file.
+
+### Passwords on Serverpod Cloud
+
+On [Serverpod Cloud](/cloud), the values you read with `getPassword` live in the **Passwords** tier. Set them from the command line instead of editing a passwords file:
+
+```bash
+scloud password set stripeApiKey "sk_live_..."
+```
+
+Use `--from-file` for long or multi-line values such as a service account JSON. Cloud stores each password encrypted and injects it so `getPassword` reads it exactly as it does locally. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
+
+## Configure code generation
+
+Serverpod uses a `generator.yaml` file to configure code generation. Place this file in the `config` directory of your server project.
+
+For every `generator.yaml` option, its type and default, see the [Configuration reference](lookups/configuration-reference#code-generation). The sections below explain the options you set most often.
 
 ### Package types
 
@@ -443,17 +342,10 @@ Enable experimental features that are still in development:
 
 ```yaml
 experimental_features:
-  inheritance: true # Enables class inheritance in model files
-  # or
-  all: true # Enables all experimental features
+  all: true # Enables all available experimental features
 ```
 
-Available experimental features:
-
-- `inheritance`: Enables the `extends` keyword in model files for class inheritance
-- `all`: Enables all available experimental features
-
-See the [experimental features documentation](experimental) for detailed information about each feature.
+The `all` key opts into every available experimental feature. No experimental features are available in the current version. See the [experimental features documentation](experimental) for details.
 
 :::warning
 Experimental features may change or be removed in future versions.
