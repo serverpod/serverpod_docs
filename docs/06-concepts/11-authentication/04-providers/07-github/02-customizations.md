@@ -16,7 +16,7 @@ The GitHub identity provider can be configured using one of two classes:
 - **`GitHubIdpConfigFromPasswords`**: Automatically loads the client ID and secret from the `githubClientId` and `githubClientSecret` keys in `passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables). This is the class used in the [setup guide](./setup) and is recommended for most projects.
 - **`GitHubIdpConfig`**: Requires you to pass the client ID and secret directly. Use this when you load credentials from a custom source, such as a secrets manager or a programmatically constructed config.
 
-`GitHubIdpConfigFromPasswords` is a convenience wrapper around `GitHubIdpConfig` that handles credential loading for you.
+The `GitHubIdpConfigFromPasswords` class is a convenience wrapper around `GitHubIdpConfig` that handles credential loading for you.
 
 Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GitHubIdpConfigFromPasswords` unless the section specifically demonstrates manual credential loading.
 
@@ -151,7 +151,7 @@ If you need to assign Serverpod scopes based on provider account data, updating 
 
 The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to GitHub; they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
 
-`onBeforeAuthUserCreated` receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
+The `onBeforeAuthUserCreated` callback receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
 
 ```dart
 pod.initializeAuthServices(

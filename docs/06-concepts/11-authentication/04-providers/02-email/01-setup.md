@@ -56,7 +56,7 @@ void _sendRegistrationCode(
   required Transaction? transaction,
 }) {
   // NOTE: Here you call your mail service to send the verification code to
-  // the user. For testing, we will just log the verification code.
+  // the user. For testing, we will log the verification code.
   session.log('[EmailIDP] Registration code ($email): $verificationCode');
 }
 
@@ -68,7 +68,7 @@ void _sendPasswordResetCode(
   required Transaction? transaction,
 }) {
   // NOTE: Here you call your mail service to send the verification code to
-  // the user. For testing, we will just log the verification code.
+  // the user. For testing, we will log the verification code.
   session.log('[EmailIDP] Password reset code ($email): $verificationCode');
 }
 ```

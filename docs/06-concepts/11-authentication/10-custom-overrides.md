@@ -5,11 +5,11 @@ description: Custom authentication overrides let you implement your own handling
 
 # Custom authentication overrides
 
-It is recommended to use the `serverpod_auth_idp` package but if you have special requirements not fulfilled by it, you can implement your authentication module. Serverpod is designed to make it easy to add custom authentication overrides.
+It is recommended to use the `serverpod_auth_idp` package, but if you have special requirements it does not fulfill, you can implement your own authentication module. Serverpod is designed to make it easy to add custom authentication overrides.
 
 ## Server setup
 
-When running a custom auth integration it is up to you to build the authentication model and issuing auth tokens.
+When running a custom auth integration it is up to you to build the authentication model and issue auth tokens.
 
 ### Token validation
 
@@ -95,12 +95,12 @@ You are responsible for implementing the endpoints to authenticate/authorize the
 
 ```dart
 class UserEndpoint extends Endpoint {
-  Future<LoginResponse> login(
+  Future<LoginResponse?> login(
     Session session,
     String username,
     String password,
   ) async {
-    var identifier = authenticateUser(session, username, password);
+    var identifier = await authenticateUser(session, username, password);
     if (identifier == null) return null;
 
     return issueMyToken(identifier, scopes: {});
@@ -139,7 +139,7 @@ class SimpleAuthKeyProvider implements ClientAuthKeyProvider {
   }
 }
 
-var client = Client('http://$localhost:8080/')
+var client = Client('http://localhost:8080/')
   ..authKeyProvider = SimpleAuthKeyProvider()
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
@@ -205,7 +205,7 @@ class MyOAuthKeyProvider implements ClientAuthKeyProvider {
   }
 }
 
-var client = Client('http://$localhost:8080/')
+var client = Client('http://localhost:8080/')
   ..authKeyProvider = MyOAuthKeyProvider()
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
@@ -220,7 +220,7 @@ final pod = Serverpod(
   Endpoints(),
   authenticationHandler: (Session session, String token) async {
     /// Bearer token validation handler
-    var (uid, scopes) = myBearerTokenValidator(token)
+    var (uid, scopes) = myBearerTokenValidator(token);
     if (uid == null) return null;
 
     return AuthenticationInfo(uid, scopes);

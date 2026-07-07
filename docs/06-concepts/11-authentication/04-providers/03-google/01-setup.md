@@ -87,7 +87,7 @@ All platforms (iOS, Android, and Web) require a **Web application** OAuth client
 
 ### Store your credentials
 
-Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add the `googleClientSecret` key to the `development:` section using the client ID and client secret you just copied:
+Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add the `googleClientSecret` key to the `development:` section using the client ID and client secret you copied:
 
 ```yaml
 development:
@@ -134,7 +134,7 @@ pod.initializeAuthServices(
 );
 ```
 
-`GoogleIdpConfigFromPasswords()` automatically loads the client secret from the `googleClientSecret` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable).
+The `GoogleIdpConfigFromPasswords()` constructor automatically loads the client secret from the `googleClientSecret` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable).
 
 :::tip
 If you need more control over how the client secret is loaded, you can use `GoogleIdpConfig(clientSecret: GoogleClientSecret.fromJsonString(...))` instead. See the [customizations](./customizations) page for details.
@@ -252,7 +252,7 @@ flutter build web --output ../my_project_server/web/app  # from your Flutter pro
 serverpod start                                          # from your server project
 ```
 
-Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod — for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod: for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -399,7 +399,7 @@ body: SignInScreen(
 ),
 ```
 
-`SignInWidget` renders the standard Google sign-in button:
+The `SignInWidget` renders the standard Google sign-in button:
 
 ![Google sign-in button](/img/authentication/providers/google/3-button.png)
 
@@ -417,7 +417,7 @@ Before going live, complete the following steps:
 
 Google's **Authorized domains** field on the [Branding](https://console.cloud.google.com/auth/branding) page accepts only the **top private domain** (the root). Once the root is verified, every subdomain under it is automatically authorized, and you do not need to add each project subdomain separately.
 
-If you deploy on Serverpod Cloud under a `*.serverpod.space` subdomain, `serverpod.space` is already verified by Serverpod. Just add `serverpod.space` to **Authorized domains** in the Google Auth Platform, no DNS verification is required on your end.
+If you deploy on Serverpod Cloud under a `*.serverpod.space` subdomain, `serverpod.space` is already verified by Serverpod. Add `serverpod.space` to **Authorized domains** in the Google Auth Platform; no DNS verification is required on your end.
 
 For a custom domain, verify ownership of your root domain (e.g., `example.com`) at [Google Search Console](https://search.google.com/search-console) by adding the DNS TXT record Google provides. After verification completes, add the root to **Authorized domains** in the Google Auth Platform.
 

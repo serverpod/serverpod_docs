@@ -6,7 +6,7 @@ description: Token managers issue, validate, revoke, and list authentication tok
 
 The authentication system uses token managers to handle authentication tokens. Token managers are responsible for issuing, validating, revoking, and listing authentication tokens.
 
-## Default Token Managers
+## Default token managers
 
 Serverpod provides two built-in token managers:
 - `JwtTokenManager` for JWT-based authentication. See [JWT Token Manager](./jwt-token-manager) for details.
@@ -28,7 +28,7 @@ The `MultiTokenManager` is a composite token manager that is automatically creat
 - Validates tokens against all managers (primary and additional).
 - Delegates management operations to all managers.
 
-### Token Validation Flow
+### Token validation flow
 
 When validating a token, the `MultiTokenManager`:
 
@@ -43,9 +43,9 @@ This allows you to support multiple token types simultaneously, which is useful 
 - Supporting legacy tokens alongside new tokens.
 - Using different token types for different use cases.
 
-## Token Lifecycle Management
+## Token lifecycle management
 
-### Issuing Tokens
+### Issuing tokens
 
 Tokens are issued automatically by identity providers when users authenticate. You can also issue tokens programmatically:
 
@@ -62,7 +62,7 @@ final authSuccess = await AuthServices.instance.tokenManager.issueToken(
 
 It is possible to attach metadata to tokens using either global callbacks configured on each token manager or by inserting a metadata row right after issuing the token. For more details, see the specific configuration sections for [Server-Side Sessions](./server-side-sessions-token-manager#attaching-custom-metadata-to-sessions) and [JWT](./jwt-token-manager#attaching-custom-metadata-to-tokens).
 
-### Validating Tokens
+### Validating tokens
 
 Tokens are validated automatically by the authentication handler. You can also validate tokens manually:
 
@@ -80,7 +80,7 @@ if (authInfo != null) {
 }
 ```
 
-### Revoking Tokens
+### Revoking tokens
 
 Revoke specific tokens by token ID:
 
@@ -112,7 +112,7 @@ await AuthServices.instance.tokenManager.revokeAllTokens(
 );
 ```
 
-### Listing Tokens
+### Listing tokens
 
 List all tokens for a user:
 
@@ -137,7 +137,7 @@ final tokens = await AuthServices.instance.tokenManager.listTokens(
 );
 ```
 
-## Accessing Specific Token Managers
+## Accessing specific token managers
 
 In case more than one token manager is configured, you can access specific token manager types from the `AuthServices` instance using the `getTokenManager<T>()` method.
 

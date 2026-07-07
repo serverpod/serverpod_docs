@@ -22,12 +22,12 @@ Add the auth modules as dependencies to the server project's `pubspec.yaml`.
 ```yaml
 dependencies:
   ...
-  serverpod_auth_idp_server: 3.x.x
+  serverpod_auth_idp_server: 4.0.0-beta.0
 ```
 
 The `serverpod_auth_idp_server` package contains all components required to configure authentication services.
 
-### Configure Authentication Services
+### Configure authentication services
 
 In your main `server.dart` file, configure the authentication system using the `pod.initializeAuthServices()` extension method.
 
@@ -72,7 +72,7 @@ import 'package:serverpod_auth_idp_server/core.dart' as core;
 class RefreshJwtTokensEndpoint extends core.RefreshJwtTokensEndpoint {}
 ```
 
-### Token Manager Configuration
+### Token manager configuration
 
 The authentication system uses token managers to handle authentication tokens. You need to configure at least one token manager to be used as the primary token manager. Additional token managers can be configured to be used for validation and management operations.
 
@@ -83,7 +83,7 @@ Serverpod provides two built-in token manager builders:
 
 For more details on how to configure token managers or create custom ones, see the dedicated [Token Managers](./token-managers/managing-tokens) documentation.
 
-### Identity Providers Configuration
+### Identity providers configuration
 
 Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
 
@@ -128,7 +128,7 @@ By default, endpoints for all providers are disabled. To enable a provider, it i
     If this is the first time creating migrations after adding the module, besides the provider tables, all auth module tables will also be created. More detailed migration instructions can be found in the [migration guide](../database/migrations).
     :::
 
-### Storing Secrets
+### Storing secrets
 
 Secrets like peppers and private keys should be stored securely. The example above uses `pod.getPassword()` which reads from your `config/passwords.yaml` file or environment variables in the format `SERVERPOD_PASSWORD_<key>='value'`.
 
@@ -179,7 +179,7 @@ Add the `serverpod_auth_idp_client` package to your client project's `pubspec.ya
 ```yaml
 dependencies:
   ...
-  serverpod_auth_idp_client: 3.x.x
+  serverpod_auth_idp_client: 4.0.0-beta.0
 ```
 
 ## App setup
@@ -190,8 +190,8 @@ First, add dependencies to your app's `pubspec.yaml` file for the methods of sig
 dependencies:
   flutter:
     sdk: flutter
-  serverpod_auth_idp_flutter: 3.x.x
-  serverpod_flutter: 3.x.x
+  serverpod_auth_idp_flutter: 4.0.0-beta.0
+  serverpod_flutter: 4.0.0-beta.0
   your_client:
     path: ../your_client
 ```

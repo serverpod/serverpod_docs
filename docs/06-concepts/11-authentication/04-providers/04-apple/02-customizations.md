@@ -13,7 +13,7 @@ Below is a non-exhaustive list of some of the most common configuration options.
 
 ### Loading Apple credentials
 
-`AppleIdpConfigFromPasswords()` reads the eight `apple*` keys from `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_` environment variables) for you. This is the path used in the [setup guide](./setup#add-the-apple-identity-provider) and is the recommended default:
+The `AppleIdpConfigFromPasswords()` constructor reads the eight `apple*` keys from `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_` environment variables) for you. This is the path used in the [setup guide](./setup#add-the-apple-identity-provider) and is the recommended default:
 
 ```dart
 final appleIdpConfig = AppleIdpConfigFromPasswords();
@@ -105,7 +105,7 @@ These parameters are only used on web and Android. On native Apple platforms (iO
 
 #### Using environment variables
 
-`APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` are the two build variables read by `initializeAppleSignIn()` on web and Android:
+The build variables `APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` are read by `initializeAppleSignIn()` on web and Android:
 
 - `APPLE_SERVICE_IDENTIFIER`: your Services ID identifier (e.g. `com.example.service`)
 - `APPLE_REDIRECT_URI`: the server callback URL (e.g. `https://example.com/auth/callback`)

@@ -58,7 +58,7 @@ It is not possible to forcefully enable a provider, since this depends on the co
 
 But, even though the `SignInWidget` automatically detects enabled providers, you can disable specific providers if you want to hide them on the client, but still keep them available on the server.
 
-This is useful if you want gradually disable a provider, but still keep compatibility with older clients.
+This is useful if you want to gradually disable a provider, but still keep compatibility with older clients.
 
 ```dart
 SignInWidget(
@@ -80,7 +80,7 @@ SignInWidget(
 You can customize individual provider widgets:
 
 ```dart
-SignInWidget(
+final signInWidget = SignInWidget(
   client: client,
   emailSignInWidget: EmailSignInWidget(
     client: client,
@@ -111,7 +111,7 @@ SignInWidget(
   ),
   onAuthenticated: _onAuthenticated,
   onError: _onError,
-)
+);
 
 void _onAuthenticated() {
   // Handle successful authentication

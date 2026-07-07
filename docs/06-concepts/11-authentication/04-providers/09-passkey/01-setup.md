@@ -74,8 +74,6 @@ Finally, start the server with `serverpod start` to generate the client code, th
 - `hostname`: Required. The hostname (relying party ID) to be used on the web and associated with any apps. This should match your application's domain.
 - `challengeLifetime`: Optional. Maximum time after which a challenge must have been solved. Default is 5 minutes.
 
-<!-- For more details on configuration options, see the [configuration section](./02-configuration). -->
-
 ## Client-side implementation
 
 :::info

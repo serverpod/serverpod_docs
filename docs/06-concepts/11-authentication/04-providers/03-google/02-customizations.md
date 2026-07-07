@@ -16,7 +16,7 @@ The Google identity provider can be configured using one of two classes:
 - **`GoogleIdpConfigFromPasswords`**: Automatically loads the client secret from the `googleClientSecret` key in `passwords.yaml` (or the `SERVERPOD_PASSWORD_googleClientSecret` environment variable). This is the class used in the [setup guide](./setup) and is recommended for most projects.
 - **`GoogleIdpConfig`**: Requires you to pass a `GoogleClientSecret` object directly. Use this when you need to load credentials from a custom source, such as a JSON file, a secrets manager, or a programmatically constructed map.
 
-`GoogleIdpConfigFromPasswords` is a convenience wrapper around `GoogleIdpConfig` that handles credential loading for you.
+The `GoogleIdpConfigFromPasswords` class is a convenience wrapper around `GoogleIdpConfig` that handles credential loading for you.
 
 Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GoogleIdpConfigFromPasswords` unless the section specifically demonstrates manual client secret loading.
 
@@ -119,9 +119,9 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
 
 ### Reacting to auth user creation
 
-The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to Google -- they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
+The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to Google; they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
 
-`onBeforeAuthUserCreated` receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
+The `onBeforeAuthUserCreated` callback receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
 
 ```dart
 pod.initializeAuthServices(
@@ -156,7 +156,7 @@ pod.initializeAuthServices(
 
 ### Lightweight Sign-In on the Flutter app
 
-Lightweight sign-in is a feature that attempts to authenticate users previously logged in with Google automatically with minimal or no user interaction. When enabled, the Google authentication controller will try to sign in users seamlessly using platform-specific lightweight authentication methods. This feature is disabled by default, but can be enabled from the `GoogleSignInWidget` or `GoogleAuthController`.
+Lightweight sign-in is a feature that attempts to authenticate users previously logged in with Google automatically with minimal or no user interaction. When enabled, the Google authentication controller will try to sign the user in using platform-specific lightweight authentication methods. This feature is disabled by default, but can be enabled from the `GoogleSignInWidget` or `GoogleAuthController`.
 
 ```dart
 GoogleSignInWidget(
@@ -169,7 +169,7 @@ GoogleSignInWidget(
 ```
 
 :::note
-Lightweight sign-in runs automatically when the controller is initialized (typically at app launch). If it fails — e.g., no previous session, or the user dismisses the prompt — the regular sign-in button remains available.
+Lightweight sign-in runs automatically when the controller is initialized (typically at app launch). If it fails (no previous session, or the user dismisses the prompt), the regular sign-in button remains available.
 :::
 
 ### Configuring Client IDs on the App
@@ -246,7 +246,7 @@ Use this flow when your Flutter web app and Serverpod are on different origins. 
 
 1. Place a static `auth.html` file in your Flutter project's `web/` folder. A single copy is shared across every identity provider that uses an OAuth2 redirect, so create it once. Follow [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) in the authentication setup guide.
 
-2. Run Flutter on a fixed port. The examples use `49660`, but any free port works — keep it consistent everywhere:
+2. Run Flutter on a fixed port. The examples use `49660`, but any free port works, as long as you keep it consistent everywhere:
 
    ```bash
    flutter run -d chrome --web-port=49660
