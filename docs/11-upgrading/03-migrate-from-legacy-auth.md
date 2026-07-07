@@ -1,19 +1,19 @@
 ---
-description: Move a Serverpod 3.5 project off serverpod_auth_server onto the modular auth stack with email, Google, and Flutter session continuity.
+description: Upgrading from serverpod_auth_server to the new modular auth stack while existing users keep their passwords and sessions and legacy endpoints keep working.
 sidebar_label: Migrate from legacy auth
 ---
 
 # Migrate from legacy serverpod_auth
 
-This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or earlier 3.5 betas. At the end, existing users sign in through the new modular auth stack with their old passwords and old sessions, and your legacy endpoints keep working until every client has rolled forward. Plan for about an hour, plus migration runtime.
+This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or later. At the end, existing users sign in through the new modular auth stack with their old passwords and old sessions, and your legacy endpoints keep working until every client has rolled forward. Plan for about an hour, plus migration runtime.
 
 ## Before you start
 
-- A Serverpod 3.5.x project. If you are still on 3.4 or earlier, follow [Upgrade to 4.0](./upgrade-to-four) first.
+- A Serverpod 4.0.x project. If you are on an earlier version, follow [Upgrade to 4.0](./upgrade-to-four) first.
 - Dart SDK 3.8.0 or later.
 - Flutter SDK 3.32.0 or later (only if you are migrating the Flutter app).
 - Postgres 14 or later, or SQLite3.
-- The four auth packages at `3.5.0-beta.9` (or the matching beta on pub.dev): `serverpod_auth_core`, `serverpod_auth_idp`, `serverpod_auth_bridge`, and `serverpod_auth_migration`. These are still beta and may receive breaking changes before 3.5 stable.
+- The four new auth packages at `4.0.0-beta.0`: `serverpod_auth_core`, `serverpod_auth_idp`, `serverpod_auth_bridge`, and `serverpod_auth_migration`.
 - Back up your production database.
 - Commit your current state on a clean branch.
 - Restore a copy of production data into a staging environment and rehearse this guide against it before running it for real.
@@ -26,32 +26,32 @@ In `<project>_server/pubspec.yaml`:
 
 ```yaml
 dependencies:
-  serverpod: 3.5.0-beta.9
-  serverpod_auth_server: 3.5.0-beta.9            # legacy, keep during migration
-  serverpod_auth_core_server: 3.5.0-beta.9
-  serverpod_auth_idp_server: 3.5.0-beta.9
-  serverpod_auth_bridge_server: 3.5.0-beta.9
-  serverpod_auth_migration_server: 3.5.0-beta.9
+  serverpod: 4.0.0-beta.0
+  serverpod_auth_server: 4.0.0-beta.0            # legacy, keep during migration
+  serverpod_auth_core_server: 4.0.0-beta.0
+  serverpod_auth_idp_server: 4.0.0-beta.0
+  serverpod_auth_bridge_server: 4.0.0-beta.0
+  serverpod_auth_migration_server: 4.0.0-beta.0
 ```
 
 In `<project>_client/pubspec.yaml`:
 
 ```yaml
 dependencies:
-  serverpod_client: 3.5.0-beta.9
-  serverpod_auth_core_client: 3.5.0-beta.9
-  serverpod_auth_idp_client: 3.5.0-beta.9
-  serverpod_auth_bridge_client: 3.5.0-beta.9
+  serverpod_client: 4.0.0-beta.0
+  serverpod_auth_core_client: 4.0.0-beta.0
+  serverpod_auth_idp_client: 4.0.0-beta.0
+  serverpod_auth_bridge_client: 4.0.0-beta.0
 ```
 
 In `<project>_flutter/pubspec.yaml`:
 
 ```yaml
 dependencies:
-  serverpod_flutter: 3.5.0-beta.9
-  serverpod_auth_core_flutter: 3.5.0-beta.9
-  serverpod_auth_idp_flutter: 3.5.0-beta.9
-  serverpod_auth_bridge_flutter: 3.5.0-beta.9
+  serverpod_flutter: 4.0.0-beta.0
+  serverpod_auth_core_flutter: 4.0.0-beta.0
+  serverpod_auth_idp_flutter: 4.0.0-beta.0
+  serverpod_auth_bridge_flutter: 4.0.0-beta.0
 ```
 
 `serverpod_auth_bridge_client` and `serverpod_auth_bridge_flutter` are required for the session import covered later under [Update the Flutter app](#update-the-flutter-app).
