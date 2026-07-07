@@ -1,5 +1,5 @@
 ---
-description: Upgrade from serverpod_auth_server to the new modular auth stack while existing users keep their passwords and sessions and legacy endpoints keep working.
+description: Upgrading from serverpod_auth_server to the new modular auth stack while existing users keep their passwords and sessions and legacy endpoints keep working.
 sidebar_label: Migrate from legacy auth
 ---
 
