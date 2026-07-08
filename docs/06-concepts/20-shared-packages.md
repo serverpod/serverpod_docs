@@ -4,7 +4,7 @@ description: Shared packages in Serverpod let you define models usable in both s
 
 # Shared packages
 
-Shared packages let you define models and logic that can be safely imported in both server and client code. They contain the models and the protocol file, depend exclusively on the `serverpod_serialization` package, and have no server-only dependencies. This makes them ideal for data structures that need to be used across your full stack—for example, DTOs, API request/response shapes, or domain models that flow between Flutter and your Serverpod backend with their custom logic.
+Shared packages let you define models and logic that can be safely imported in both server and client code. They contain the models and the protocol file, depend exclusively on the `serverpod_serialization` package, and have no server-only dependencies. This makes them ideal for data structures that need to be used across your full stack, for example DTOs, API request/response shapes, or domain models that flow between Flutter and your Serverpod backend with their custom logic.
 
 Models and the protocol file are generated in the shared package's own directory when you run `serverpod generate` from your server project. The shared package is tied to the project through the `shared_packages` field in `config/generator.yaml`.
 
@@ -21,14 +21,14 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.10.3
 
 dependencies:
   serverpod_serialization: SERVERPOD_VERSION
 ```
 
 :::info
-Use the same Serverpod version as your project. Replace `SERVERPOD_VERSION` with your Serverpod version (e.g., `3.4.0`).
+Use the same Serverpod version as your project. Replace `SERVERPOD_VERSION` with your Serverpod version (e.g., `4.0.0-beta.0`).
 :::
 
 ### Add model files

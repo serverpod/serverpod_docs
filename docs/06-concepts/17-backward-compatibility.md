@@ -1,5 +1,5 @@
 ---
-description: Keep your Serverpod server compatible with older client versions by following rules around endpoint signatures, serialized model fields, and future call methods.
+description: Backward compatibility keeps your Serverpod server working with older client versions through rules for endpoint signatures, serialized model fields, and future call methods.
 ---
 
 # Backward compatibility
@@ -13,6 +13,8 @@ Following a simple set of rules, your server will stay compatible with older app
 3. __Avoid changing or removing fields and types in the serialized classes.__ However, you are free to add new fields as long as they are nullable or have a default value.
 4. __Avoid changing parameter names in future call methods.__ Changing the parameter names of the future call methods will break backward compatibility since parameters are passed by name.
 5. __Do not delete future call methods or change their signature.__ Instead, add new methods if you must pass another set of parameters.
+
+For polymorphic models, Serverpod can also deserialize an unknown subtype as its known base class, which lets you add subtypes without breaking older clients. See [Handling unknown class names](models/inheritance-and-polymorphism#handling-unknown-class-names).
 
 ## Managing breaking changes with endpoint inheritance
 
