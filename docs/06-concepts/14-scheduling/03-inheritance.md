@@ -1,5 +1,5 @@
 ---
-description: Extend or override FutureCall classes from other Serverpod modules, including support for abstract base classes that expose their methods through subclasses.
+description: FutureCall inheritance extends or overrides future call classes from other Serverpod modules, including abstract base classes exposed through subclasses.
 ---
 
 # Inheritance

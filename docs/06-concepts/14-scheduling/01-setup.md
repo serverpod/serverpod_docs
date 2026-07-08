@@ -1,5 +1,5 @@
 ---
-description: "Schedule future work in Serverpod using future calls: invoke methods after a delay, at a specific time, or on a recurring interval, with persistence across restarts."
+description: Future calls in Serverpod schedule work to run after a delay, at a specific time, or on a recurring interval, persisted across restarts.
 ---
 
 # Setup
@@ -7,6 +7,10 @@ description: "Schedule future work in Serverpod using future calls: invoke metho
 Serverpod supports scheduling future work with the `future call` feature. Future calls are calls that will be invoked at a later time. An example is if you want to send a drip-email campaign after a user signs up. You can schedule a future call for a day, a week, a month, or a [recurring interval](recurring-task). The calls are stored in the database, so they will persist even if the server is restarted.
 
 A future call is guaranteed to only execute once across all your instances that are running, but execution failures are not handled automatically. It is your responsibility to schedule a new future call if the work was not able to complete.
+
+:::info
+The future call feature is not enabled when running Serverpod in serverless mode.
+:::
 
 To create future calls, extend the `FutureCall` class and define the methods you wish to invoke at a later time.
 
@@ -109,6 +113,28 @@ This identifier can then be used to cancel all future calls scheduled with said 
 await pod.futureCalls.cancel('an-identifying-string');
 ```
 
-:::info
-The future call feature is not enabled when running Serverpod in serverless mode.
-:::
+Calls that share an identifier still run independently; the identifier only groups them so you can cancel them together, and cancelling affects only calls that have not run yet.
+
+## Schedule from an endpoint
+
+The examples above use the `Serverpod` object directly. Inside an endpoint you reach it through `session.serverpod`, so you can schedule a future call in response to a request:
+
+```dart
+class OrderEndpoint extends Endpoint {
+  Future<void> placeOrder(Session session, Order order) async {
+    // ... store the order ...
+
+    // Send a follow-up an hour from now.
+    await session.serverpod.futureCalls
+        .callWithDelay(const Duration(hours: 1))
+        .example
+        .doWork();
+  }
+}
+```
+
+## Inspecting scheduled calls and timeouts
+
+Scheduled future calls are stored in the `serverpod_future_call` database table. You can query it to see what is pending, which helps when debugging why a call did or did not run.
+
+Future calls do not have an execution timeout: a call runs until its method returns. If a call needs a time limit, enforce it inside the method yourself, for example with `Future.timeout` around the work.
