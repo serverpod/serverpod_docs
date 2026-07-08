@@ -4,6 +4,8 @@ description: Advanced Serverpod testing examples, run integration and unit tests
 
 # Advanced examples
 
+These examples build on [the basics](./the-basics) and cover less common testing needs: separating unit and integration tests, testing business logic directly, multi-user stream interactions, and managing database connections.
+
 ## Run unit and integration tests separately
 
 To run unit and integration tests separately, the `"integration"` tag can be used as a filter. See the following examples:
@@ -19,11 +21,11 @@ dart test -t integration
 dart test -x integration
 ```
 
-To change the name of this tag, see the [`testGroupTagsOverride`](the-basics#configuration) configuration option.
+To change the name of this tag, see the [`testGroupTagsOverride`](./the-basics#configuration) configuration option.
 
 ## Test business logic that depends on `Session`
 
-It is common to break out business logic into modules and keep it separate from the endpoints. If such a module depends on a `Session` object (e.g to interact with the database), then the `withServerpod` helper can still be used and the second `endpoint` argument can simply be ignored:
+It is common to break out business logic into modules and keep it separate from the endpoints. If such a module depends on a `Session` object (e.g to interact with the database), then the `withServerpod` helper can still be used and the second `endpoint` argument can be ignored:
 
 ```dart
 withServerpod('Given decreasing product quantity when quantity is zero', (
@@ -105,20 +107,20 @@ withServerpod('Given CommunicationExampleEndpoint', (sessionBuilder, endpoints) 
     );
 
     var stream =
-        endpoints.testTools.listenForNumbersOnSharedStream(userSession1);
+        endpoints.communicationExample.listenForNumbersOnSharedStream(userSession1);
     // Wait for `listenForNumbersOnSharedStream` to execute up to its
     // `yield` statement before continuing
     await flushEventQueue();
 
-    await endpoints.testTools.postNumberToSharedStream(userSession2, 111);
-    await endpoints.testTools.postNumberToSharedStream(userSession2, 222);
+    await endpoints.communicationExample.postNumberToSharedStream(userSession2, 111);
+    await endpoints.communicationExample.postNumberToSharedStream(userSession2, 222);
 
     await expectLater(stream.take(2), emitsInOrder([111, 222]));
   });
 });
 ```
 
-## Optimising number of database connections
+## Optimizing the number of database connections
 
 By default, Dart's test runner runs tests concurrently. The number of concurrent tests depends on the running hosts' available CPU cores. If the host has a lot of cores it could trigger a case where the number of connections to the database exceeds the maximum connections limit set for the database, which will cause tests to fail.
 

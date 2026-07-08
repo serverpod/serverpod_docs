@@ -11,7 +11,7 @@ Be cautious when using experimental features in production environments, as thei
 Experimental features are opt-in additions to Serverpod. They are disabled by default; enable them through the `experimentalFeatures` argument on the `Serverpod` constructor or via `config/generator.yaml`.
 
 :::note
-To make the LSP server understand the usage of experimental flags and avoid complaints about unknown syntax on model files, configure experimental features in the `config/generator.yaml` file. See the [configuration documentation](configuration#experimental-features) for more details.
+To make the LSP server understand the usage of experimental flags and avoid complaints about unknown syntax on model files, configure experimental features in the `config/generator.yaml` file. See the [configuration documentation](./configuration#experimental-features) for more details.
 :::
 
 ## Experimental internal APIs
@@ -36,7 +36,7 @@ The current options you can pass are:
 
 ## Exception monitoring
 
-Serverpod allows you to monitor exceptions in a central and flexible way by using the new diagnostic event handlers.
+Serverpod allows you to monitor exceptions in a central and flexible way by using diagnostic event handlers.
 These work both for exceptions thrown in application code and from the framework (e.g. server startup or shutdown errors).
 
 This can be used to get all exceptions reported in realtime to services for monitoring and diagnostics,
@@ -72,7 +72,7 @@ Example:
 ### Submitting diagnostic events
 
 The API for submitting diagnostic events from user code, e.g. from endpoint methods, web calls, and future calls,
-is the new method `submitDiagnosticEvent` under the `experimental` member of the Serverpod class.
+is the `submitDiagnosticEvent` method under the `experimental` member of the Serverpod class.
 
 ```dart
   void submitDiagnosticEvent(
@@ -102,7 +102,7 @@ class DiagnosticEventTestEndpoint extends Endpoint {
 ### Guidelines for handlers
 
 A `DiagnosticEvent` represents an event that occurs in the server.
-`DiagnosticEventHandler` implementations can react to these events
+Implementations of `DiagnosticEventHandler` can react to these events
 in order to gain insights into the behavior of the server.
 
 As the name suggests the handlers should perform diagnostics only,
@@ -154,19 +154,19 @@ void main() {
 }
 ```
 
-## Shutdown Tasks
+## Shutdown tasks
 
-Serverpod provides support for registering **shutdown tasks**—asynchronous operations that are executed when the server is shutting down. This is useful for performing cleanup operations such as saving application state or releasing external resources.
+Serverpod provides support for registering **shutdown tasks**: asynchronous operations that run when the server is shutting down. This is useful for performing cleanup operations such as saving application state or releasing external resources.
 
 Shutdown tasks are executed _after_ the server has stopped accepting new requests, but _before_ the Redis and database connections are closed.
 
 All registered shutdown tasks are executed concurrently, and the server waits for all tasks to complete before fully shutting down. If any task fails, the error is logged, but it does not prevent the server from shutting down.
 
-### Managing Shutdown Tasks
+### Managing shutdown tasks
 
 To manage shutdown tasks, use the `experimental.shutdownTasks` API on your `Serverpod` instance. This API offers methods for adding and removing tasks.
 
-#### Add Shutdown Task
+#### Add a shutdown task
 
 Each shutdown task is identified by a unique `Object` identifier and executes a function that returns a `Future<void>`.
 
@@ -185,9 +185,9 @@ serverpod.experimental.shutdownTasks.addTask(
 
 ```
 
-In the example above, a task is added with the identifier `taskIdentifier`. This identifier is used for logging any errors that occur during task execution.
+In the example above, a task is added with the identifier `#taskIdentifier`. This identifier is used for logging any errors that occur during task execution.
 
-#### Remove Shutdown task
+#### Remove a shutdown task
 
 To remove a shutdown task, use the `removeTask` method:
 
@@ -195,4 +195,4 @@ To remove a shutdown task, use the `removeTask` method:
 serverpod.experimental.shutdownTasks.removeTask(#taskIdentifier);
 ```
 
-This will remove the previously registered task associated with `taskIdentifier`.
+This will remove the previously registered task associated with `#taskIdentifier`.

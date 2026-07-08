@@ -2,7 +2,9 @@
 description: Security configuration in Serverpod lets you enable TLS/SSL directly on the server or configure the client to trust a certificate, using SecurityContextConfig.
 ---
 
-# Security Configuration
+# Security and TLS
+
+Serverpod can terminate TLS/SSL directly on the server and configure the client to trust your certificate.
 
 :::info
 
@@ -11,11 +13,11 @@ However, Serverpod also supports setting up TLS/SSL directly on the server, allo
 
 :::
 
-## Server Security Configuration
+## Server security configuration
 
 To enable TLS/SSL, pass a `SecurityContextConfig` to the `Serverpod` constructor.
 
-### Dart Configuration Example
+### Dart configuration example
 
 ```dart
 final securityContext = SecurityContext()
@@ -34,11 +36,11 @@ Serverpod(
 );
 ```
 
-## Client Security Configuration
+## Client security configuration
 
 When connecting to a Serverpod server over HTTPS, the client must be configured to trust the server's certificate.
 
-### Dart Configuration Example
+### Dart configuration example
 
 To enable SSL/TLS, pass a `SecurityContext` to the `Client` constructor.
 

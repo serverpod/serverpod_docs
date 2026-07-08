@@ -1,5 +1,5 @@
 ---
-description: Cache frequently requested objects in Serverpod using local server memory or a distributed Redis cache to reduce expensive database queries.
+description: Caching in Serverpod stores frequently requested objects in local server memory or a distributed Redis cache to reduce expensive database queries.
 ---
 
 # Caching
@@ -34,7 +34,7 @@ Future<UserData> getUserData(Session session, int userId) async {
 }
 ```
 
-There are three caches where you can store your objects. Two caches are local to the server handling the current session, and one is distributed across the server cluster through Redis. There are two variants for the local cache: one regular cache, and a priority cache. Place objects that are frequently accessed in the priority cache.
+There are three caches where you can store your objects, all reached through the `Session` object. Two are local to the server handling the current session: a regular cache (`session.caches.local`) and a priority cache (`session.caches.localPrio`) for frequently accessed objects. The third, `session.caches.global`, is distributed across the server cluster through Redis.
 
 Depending on the type and number of objects that are cached in the global cache, you may want to specify custom caching rules in Redis. This is currently not handled automatically by Serverpod.
 
@@ -44,7 +44,7 @@ During development, you can run code that uses the global cache without a runnin
 
 ### Caching primitive objects
 
-To cache primitive objects, call the `put` method with the object. For the `get`, specify the object type as the generic parameter, just like for `SerializableModel` objects:
+To cache primitive objects, call the `put` method with the object. For the `get`, specify the object type as the generic parameter, as for `SerializableModel` objects:
 
 ```dart
 await session.caches.local.put('userCount', 17, lifetime: Duration(minutes: 5));

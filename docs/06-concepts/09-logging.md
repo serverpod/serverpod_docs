@@ -1,5 +1,5 @@
 ---
-description: Log custom messages, exceptions, and queries in Serverpod using the session log method, with configurable retention, console output, and database storage.
+description: Logging in Serverpod captures custom messages, exceptions, and queries through the session log method, with configurable retention, console output, and database storage.
 ---
 
 # Logging
@@ -21,15 +21,15 @@ session.log(
 );
 ```
 
-Log entries are stored in the following tables of the database: `serverpod_log` for text messages, `serverpod_query_log` for queries, and `serverpod_session_log` for completed sessions. Optionally, it's possible to pass a log level with the message to filter out messages depending on the server's runtime settings.
+Log entries are stored in the following tables of the database: `serverpod_log` for text messages, `serverpod_query_log` for queries, and `serverpod_session_log` for completed sessions.
 
-### Controlling Session Logs with Environment Variables or Configuration Files
+## Controlling session logs with environment variables or configuration files
 
 You can control whether session logs are written to the database, the console, both, or neither, using environment variables or configuration files. **Environment variables take priority** over configuration file settings if both are provided.
 
 For the default values when environment variables are not set, see the [default behavior for session logs](#default-behavior-for-session-logs).
 
-#### Environment Variables
+### Environment variables
 
 - `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED`: Controls whether session logs are written to the database.
 - `SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL`: How often to run the log cleanup job (duration string, e.g. `6h`, `24h`). Set to empty to disable automated purging.
@@ -38,7 +38,7 @@ For the default values when environment variables are not set, see the [default 
 - `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED`: Controls whether session logs are output to the console.
 - `SERVERPOD_SESSION_CONSOLE_LOG_FORMAT`: The format for console logging (`text` or `json`). See [configuration](./configuration).
 
-#### Configuration File Example
+### Configuration file example
 
 You can also configure logging behavior directly in the configuration file:
 
@@ -53,7 +53,7 @@ sessionLogs:
 
 Duration strings for the cleanup interval and retention period use the same format as in [models](./models#supported-default-values): e.g. `30d`, `6h`, `1d 2h 30min`.
 
-### Default Behavior for Session Logs
+## Default behavior for session logs
 
 By default, session logging behavior depends on whether the project has database support:
 
@@ -72,18 +72,18 @@ If `persistentEnabled` is set to `true` but **no database is configured**, a `St
 :::
 
 :::info
-You can use the companion app  **[Serverpod Insights](../tools/insights)** to read, search, and configure the logs.
+You can use the companion app **[Serverpod Insights](../tools/insights)** to read, search, and configure the logs.
 :::
 
-#### Log retention and automated purging
+### Log retention and automated purging
 
 Since log entries are stored in the database when persistent logging is enabled, the logs table can grow without bound if not purged. Serverpod can automatically purge logs based on configurable retention policies to prevent unchecked storage growth.
 
-##### Default values
+#### Default values
 
-- **Cleanup interval**: 24 hours — the cleanup job runs once per day.
-- **Retention period**: 90 days — removes entries older than this.
-- **Retention count**: 100,000 entries — removes entries that exceed this count.
+- **Cleanup interval**: 24 hours; the cleanup job runs once per day.
+- **Retention period**: 90 days; removes entries older than this.
+- **Retention count**: 100,000 entries; removes entries that exceed this count.
 
 If both time-based (retention period) and count-based (retention count) limits are set, entries are removed if they are either too old or beyond the maximum count, whichever is reached first.
 
@@ -91,7 +91,7 @@ If both time-based (retention period) and count-based (retention count) limits a
 Automatic cleanup is only available when persistent logging is enabled and the cleanup interval is configured.
 :::
 
-##### Customizing retention policies
+#### Customizing retention policies
 
 All three settings are optional and can be set to `null` to disable the respective policy. If the `cleanupInterval` is set to `null`, no purging will run regardless of the other settings, and log tables can grow without bound until you run cleanup manually or re-enable the interval.
 
