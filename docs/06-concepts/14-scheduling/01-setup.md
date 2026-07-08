@@ -8,6 +8,10 @@ Serverpod supports scheduling future work with the `future call` feature. Future
 
 A future call is guaranteed to only execute once across all your instances that are running, but execution failures are not handled automatically. It is your responsibility to schedule a new future call if the work was not able to complete.
 
+:::info
+The future call feature is not enabled when running Serverpod in serverless mode.
+:::
+
 To create future calls, extend the `FutureCall` class and define the methods you wish to invoke at a later time.
 
 ```dart
@@ -134,7 +138,3 @@ class OrderEndpoint extends Endpoint {
 Scheduled future calls are stored in the `serverpod_future_call` database table. You can query it to see what is pending, which helps when debugging why a call did or did not run.
 
 Future calls do not have an execution timeout: a call runs until its method returns. If a call needs a time limit, enforce it inside the method yourself, for example with `Future.timeout` around the work.
-
-:::info
-The future call feature is not enabled when running Serverpod in serverless mode.
-:::

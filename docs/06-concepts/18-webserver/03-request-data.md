@@ -80,7 +80,7 @@ The accessors above read headers from the incoming request. To set headers on th
 
 ```dart
 return Response.ok(
-  body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
+  body: Body.fromString('ok'),
   headers: Headers.build((h) {
     h['X-Custom-Header'] = ['value'];
   }),
