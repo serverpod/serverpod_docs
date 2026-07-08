@@ -179,7 +179,7 @@ fields:
 
 When using `defaultModel=random`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
 
-To have the server assign the id instead of the client, use `defaultPersist=random` without `defaultModel`, so the value is set on insert rather than on the client.
+To have the database assign the id on insert instead of generating it when the object is created, use `defaultPersist=random` without `defaultModel`.
 
 ## Column name override
 
