@@ -1,5 +1,5 @@
 ---
-description: Configure future call execution, concurrency limits, scan interval, and broken call handling in Serverpod using YAML or environment variables.
+description: Future call configuration in Serverpod sets concurrency limits, the scan interval, and broken-call handling through YAML or environment variables.
 ---
 
 # Configuration
@@ -10,8 +10,8 @@ Future calls can be configured using options defined in the configuration files 
 futureCallExecutionEnabled: true
 
 futureCall:
-  concurrencyLimit: 5
-  scanInterval: 2000
+  concurrencyLimit: 1 # default
+  scanInterval: 5000 # default, in milliseconds
 ```
 
 ### Enable or disable future call execution

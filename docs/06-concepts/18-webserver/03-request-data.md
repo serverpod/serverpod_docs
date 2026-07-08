@@ -76,6 +76,19 @@ Future<Result> handleCall(Session session, Request request) async {
 }
 ```
 
+The accessors above read headers from the incoming request. To set headers on the response, pass a `headers:` value built with `Headers.build` when you construct the `Response`:
+
+```dart
+return Response.ok(
+  body: Body.fromString(jsonEncode(data), mimeType: MimeType.json),
+  headers: Headers.build((h) {
+    h['X-Custom-Header'] = ['value'];
+  }),
+);
+```
+
+Relic also exposes typed setters for standard headers. See the [Relic documentation](https://docs.dartrelic.dev/) for the full header reference.
+
 ## Body
 
 Read the request body using the appropriate method for your content type:

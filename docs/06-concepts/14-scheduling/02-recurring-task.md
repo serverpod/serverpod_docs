@@ -1,5 +1,5 @@
 ---
-description: Implement cron-like recurring tasks in Serverpod by scheduling a future call from within itself to re-run at a fixed interval.
+description: Recurring tasks in Serverpod re-run at a fixed interval by scheduling a future call from within itself, cron-style.
 ---
 
 # Recurring Task
