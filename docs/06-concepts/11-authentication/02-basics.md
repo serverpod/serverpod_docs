@@ -301,10 +301,10 @@ Serverpod refreshes tokens automatically while the user stays signed in, so most
 Call `validateAuthentication` to check the current session against the server and sign the user out if it is no longer valid:
 
 ```dart
-bool valid = await client.auth.validateAuthentication();
+await client.auth.validateAuthentication(); // throws on transient errors; retry if needed
 ```
 
-The method force-refreshes the token and confirms with the server that the user is still signed in. If the session is no longer valid, it signs the user out on the current device. A transient problem, such as a network error or timeout, does not sign the user out; the exception is thrown instead, so you can catch it and retry.
+The method force-refreshes the token and confirms with the server that the user is still signed in. If the session is no longer valid, it signs the user out on the current device. A transient problem, such as a network error or timeout, does not sign the user out; the exception is thrown instead, so you can catch it and retry. The return value does not indicate whether the session was valid (it is `true` both when the session is valid and when an invalid session is signed out), so check `client.auth.isAuthenticated` afterward to see the current state.
 
 At app startup, use `initialize` to restore a stored session and validate it in one step:
 
