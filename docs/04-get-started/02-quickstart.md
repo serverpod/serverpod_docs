@@ -135,3 +135,9 @@ After the first launch, you redeploy any changes by running `serverpod cloud lau
 In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open Serverpod Insights to view your server logs, CPU usage, and other information.
 
 :::
+
+## Get help
+
+Serverpod 4 is in public beta. We're still fine-tuning agent skills, MCP servers, and the `serverpod start` workflow. If you run into issues, reach out on **[Discord](https://serverpod.dev/discord)** or file an issue on **[GitHub](https://github.com/serverpod/serverpod)**. Pull requests are welcome.
+
+Happy building with Serverpod 4.
