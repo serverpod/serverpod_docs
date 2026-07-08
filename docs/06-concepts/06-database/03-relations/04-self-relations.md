@@ -1,5 +1,5 @@
 ---
-description: Define self-referential relationships where a table has a foreign key pointing to its own primary key, supporting one-to-one, one-to-many, and many-to-many patterns.
+description: A self-referential relationship points a table's foreign key back to its own primary key, supporting one-to-one, one-to-many, and many-to-many patterns.
 ---
 
 # Self-relations

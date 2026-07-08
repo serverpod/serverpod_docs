@@ -1,5 +1,5 @@
 ---
-description: Map serializable models to database tables, with support for custom ID types, non-persistent fields, JSONB storage, and column name overrides.
+description: Table models map serializable classes to database tables in Serverpod, with custom ID types, non-persistent fields, JSONB storage, and column name overrides.
 ---
 
 # Models
@@ -13,7 +13,9 @@ fields:
   name: String
 ```
 
-When the `table` keyword is added to the model, the `serverpod generate` command will generate new methods for [interacting](crud) with the database. The addition of the keyword will also be detected by the `serverpod create-migration` command that will generate the necessary [migrations](migrations) needed to update the database.
+When the `table` keyword is added to the model, Serverpod generates new methods for [interacting](crud) with the database. The keyword is also picked up by the `serverpod create-migration` command, which generates the [migrations](migrations) needed to update the database.
+
+For the full list of keywords you can use in a model file, see the [Model reference](../lookups/model-reference).
 
 :::info
 When you add a `table` to a serializable class, Serverpod will automatically add an `id` field of type `int?` to the class. You should not define this field yourself. The `id` is set when you interact with an object stored in the database.
@@ -125,6 +127,16 @@ When enabled, all serializable fields across all models default to `jsonb` unles
 
 If you change the `serializationDataType` between `json` and `jsonb` at any level, the migration system will convert existing columns automatically with no data loss.
 
+## Choosing an ID strategy
+
+Serverpod supports two id types: `int` (the default) and `UuidValue`. The right choice depends on how the id is generated and where it is exposed.
+
+An `int` id defaults to `serial`, which means the database assigns an auto-incrementing integer when the row is inserted. Serial ids are compact and sequential, which keeps indexes efficient and makes them a good fit for internal references. The trade-offs are that the id only exists after the row is saved, and the values are guessable and enumerable, so a sequential id in a public URL can leak how many records you have or let someone probe for others.
+
+A `UuidValue` id is a 128-bit random value. It is not enumerable, and it can be generated before the row is inserted, which suits ids that appear in public URLs, are created offline on the client, or are merged from several sources. UUIDs are larger than integers and random rather than sequential, so index locality is slightly worse than with serial ids.
+
+As a rule of thumb, use the default `int` serial id for internal tables, and reach for `UuidValue` when the id is public-facing, needs to exist before the row is stored, or is created across more than one system. Because a UUID can be generated on the client, never treat a client-supplied id as proof that the caller owns a record; always check that the authenticated user is allowed to use it.
+
 ## Change ID type
 
 Changing the type of the `id` field allows you to customize the identifier type for your database tables. This is done by declaring the `id` field on table models with one of the supported types. If the field is omitted, the id field will still be created with type `int` by default.
@@ -166,6 +178,8 @@ fields:
 ```
 
 When using `defaultModel=random`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
+
+To have the database assign the id on insert instead of generating it when the object is created, use `defaultPersist=random` without `defaultModel`.
 
 ## Column name override
 

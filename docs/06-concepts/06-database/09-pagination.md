@@ -1,5 +1,5 @@
 ---
-description: Paginate database query results in Serverpod using limit and offset, or implement cursor-based pagination for frequently updated datasets.
+description: Serverpod paginates query results with limit and offset, or cursor-based pagination for frequently updated datasets.
 ---
 
 # Pagination

@@ -1,5 +1,5 @@
 ---
-description: Execute raw SQL queries directly against the database using Serverpod's unsafe query methods with support for named and positional parameter binding.
+description: Serverpod's unsafe query methods run raw SQL directly against the database, with named and positional parameter binding.
 ---
 
 # Raw access

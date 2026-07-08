@@ -1,5 +1,5 @@
 ---
-description: Build type-safe database filter expressions in Serverpod using column operations, logical operators, and relation filters.
+description: Database filter expressions in Serverpod are type-safe, built from column operations, logical operators, and relation filters.
 ---
 
 # Filter

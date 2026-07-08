@@ -1,5 +1,5 @@
 ---
-description: Group database operations into atomic transactions in Serverpod, with support for isolation levels, savepoints, and rollback.
+description: Transactions group database operations into an atomic unit in Serverpod, with isolation levels, savepoints, and rollback.
 ---
 
 # Transactions

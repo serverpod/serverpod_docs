@@ -1,5 +1,5 @@
 ---
-description: Control how updates and deletes propagate across related tables using the onUpdate and onDelete referential action properties.
+description: Referential actions control how updates and deletes propagate across related tables through the onUpdate and onDelete properties.
 ---
 
 # Referential actions

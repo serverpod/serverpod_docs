@@ -1,5 +1,5 @@
 ---
-description: Serverpod wraps database failures in typed exceptions. Learn when each database exception is thrown and how to handle them.
+description: Serverpod wraps database failures in typed exceptions that signal when a query fails and how your code should handle it.
 ---
 
 # Database exceptions
