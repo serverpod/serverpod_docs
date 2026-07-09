@@ -53,7 +53,7 @@ fields:
   hiddenSecretKey: String
 ```
 
-It is also possible to set a `scope` on a per-field basis. By default all fields are visible to both the server and the client. The available scopes are `all`, `serverOnly`, `none`.
+It is also possible to set a `scope` on a per-field basis. By default all fields are visible to both the server and the client. The available scopes are `all`, `serverOnly`, `none`. A field with a scope other than `all` must be nullable.
 
 :::info
 **none** is not typically used in serverpod apps. It is intended for the serverpod framework, itself.
@@ -62,7 +62,7 @@ It is also possible to set a `scope` on a per-field basis. By default all fields
 ```yaml
 class: SelectivelyHiddenClass
 fields:
-  hiddenSecretKey: String, scope=serverOnly
+  hiddenSecretKey: String?, scope=serverOnly
   publicKey: String
 ```
 
