@@ -23,7 +23,7 @@ All platforms require an App ID and a Sign in with Apple key. Android and Web ad
 
 2. Select **App IDs** and click **Continue**.
 
-   ![Register a new identifier — App IDs selected](/img/authentication/providers/apple/4-app-id-create.png)
+   ![Register a new identifier: App IDs selected](/img/authentication/providers/apple/4-app-id-create.png)
 
 3. Select **App** as the type and click **Continue**.
 
@@ -31,7 +31,7 @@ All platforms require an App ID and a Sign in with Apple key. Android and Web ad
 
 5. Scroll down to **Capabilities**, find **Sign in with Apple**, and check it. Keep it set as a **primary App ID**.
 
-   ![App ID capabilities — Sign in with Apple enabled](/img/authentication/providers/apple/5-app-id-capability.png)
+   ![App ID capabilities: Sign in with Apple enabled](/img/authentication/providers/apple/5-app-id-capability.png)
 
 6. Click **Continue**, then **Register**.
 
@@ -43,7 +43,7 @@ Skip this section if you are building for iOS or macOS only.
 
 2. Select **Services IDs** and click **Continue**.
 
-   ![Register a new identifier — Services IDs selected](/img/authentication/providers/apple/6-service-id-create.png)
+   ![Register a new identifier: Services IDs selected](/img/authentication/providers/apple/6-service-id-create.png)
 
 3. Enter a description and a unique **Identifier** (e.g. `com.example.service`). This value becomes your `serviceIdentifier`. Click **Continue**, then **Register**.
 
@@ -54,7 +54,7 @@ Skip this section if you are building for iOS or macOS only.
    - **Domains and Subdomains**: your domain (e.g. `example.com`)
    - **Return URLs**: your server's callback route (e.g. `https://example.com/auth/callback`)
 
-   ![Web Authentication Configuration — Primary App ID, domains, and return URLs](/img/authentication/providers/apple/7-service-id-configure.png)
+   ![Web Authentication Configuration: Primary App ID, domains, and return URLs](/img/authentication/providers/apple/7-service-id-configure.png)
 
 6. Click **Next**, then **Done**, then **Save**.
 
@@ -72,15 +72,15 @@ If you plan to support web sign-in, also register the value you will use for `ap
 
 2. Enter a key name, check **Sign in with Apple**, and click **Configure**. Select your primary App ID and click **Save**.
 
-   ![Configure key — Sign in with Apple checked, primary App ID selected](/img/authentication/providers/apple/8-key-create.png)
+   ![Configure key: Sign in with Apple checked, primary App ID selected](/img/authentication/providers/apple/8-key-create.png)
 
 3. Click **Continue**, then **Register**.
 
-   ![Register a New Key — review screen](/img/authentication/providers/apple/8-key-register.png)
+   ![Register a New Key: review screen](/img/authentication/providers/apple/8-key-register.png)
 
-4. Download the `.p8` key file immediately — **you can only download it once**. Note the **Key ID** shown on this page.
+4. Download the `.p8` key file immediately: **you can only download it once**. Note the **Key ID** shown on this page.
 
-   ![Download Your Key — one-time download warning with Key ID visible](/img/authentication/providers/apple/8-key-download.png)
+   ![Download Your Key: one-time download warning with Key ID visible](/img/authentication/providers/apple/8-key-download.png)
 
 5. Find your **Team ID** in your [Apple Developer Account](https://developer.apple.com/account) under Membership.
 
@@ -142,7 +142,7 @@ pod.initializeAuthServices(
 );
 ```
 
-`AppleIdpConfigFromPasswords()` reads the eight `apple*` keys from `config/passwords.yaml` (or the corresponding `SERVERPOD_PASSWORD_` environment variables), so you do not have to wire up each credential manually.
+The `AppleIdpConfigFromPasswords()` constructor reads the eight `apple*` keys from `config/passwords.yaml` (or the corresponding `SERVERPOD_PASSWORD_` environment variables), so you do not have to wire up each credential manually.
 
 :::tip
 If you need more control over how the credentials are loaded, you can use `AppleIdpConfig(...)` with manual `pod.getPassword()` calls instead. See the [customizations](./customizations) page for details.

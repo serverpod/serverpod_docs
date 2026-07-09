@@ -19,7 +19,7 @@ This guide walks you through that, then shows how to test signing up and signing
 
 ## Show the sign-in screen
 
-Your app already includes a sign-in screen. It is just turned off by default. Turn it on with two small edits to your app's `main.dart`.
+Your app already includes a sign-in screen. It is turned off by default. Turn it on with two small edits to your app's `main.dart`.
 
 First, import the screen:
 

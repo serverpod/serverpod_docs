@@ -127,7 +127,7 @@ pod.initializeAuthServices(
 );
 ```
 
-`FirebaseIdpConfigFromPasswords()` automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Customizations](./customizations) page.
+The `FirebaseIdpConfigFromPasswords()` constructor automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Customizations](./customizations) page.
 
 ### 2. Create the endpoint
 
@@ -164,7 +164,7 @@ flutter pub add firebase_core firebase_auth firebase_ui_auth serverpod_auth_idp_
 ```
 
 :::note
-`firebase_ui_auth` is the fastest path to a working sign-in screen. If you want to build a fully custom UI on top of `firebase_auth` directly, see [Using firebase_auth directly](./customizing-the-ui#using-firebase_auth-directly).
+The `firebase_ui_auth` package is the fastest path to a working sign-in screen. If you want to build a fully custom UI on top of `firebase_auth` directly, see [Using firebase_auth directly](./customizing-the-ui#using-firebase_auth-directly).
 :::
 
 ### 2. Configure FlutterFire

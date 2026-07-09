@@ -35,10 +35,10 @@ Do not navigate to a home screen inside `onAuthenticated`. This callback fires e
 
 ### Action handlers
 
-`firebase_ui_auth` emits state changes through [`AuthStateChangeAction`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/AuthStateChangeAction-class.html). Two handlers cover the cases that need a Serverpod sync:
+The `firebase_ui_auth` package emits state changes through [`AuthStateChangeAction`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/AuthStateChangeAction-class.html). Two handlers cover the cases that need a Serverpod sync:
 
-- [`SignedIn`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/SignedIn-class.html) -- a returning user signed in.
-- [`UserCreated`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/UserCreated-class.html) -- a brand-new account was just created.
+- [`SignedIn`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/SignedIn-class.html): a returning user signed in.
+- [`UserCreated`](https://pub.dev/documentation/firebase_ui_auth/latest/firebase_ui_auth/UserCreated-class.html): a brand-new account was created.
 
 Both call [`controller.login(user)`](https://pub.dev/documentation/serverpod_auth_idp_flutter_firebase/latest/serverpod_auth_idp_flutter_firebase/FirebaseAuthController/login.html) so the Firebase user is registered with Serverpod:
 
@@ -99,10 +99,10 @@ void initState() {
 
 The controller exposes a few properties for your `build` method:
 
-- `controller.isLoading` -- Whether the controller is processing a request.
-- `controller.isAuthenticated` -- Whether the user is authenticated.
-- `controller.errorMessage` -- The error message string, if any.
-- `controller.error` -- The raw error object, for advanced error handling.
+- `controller.isLoading`: Whether the controller is processing a request.
+- `controller.isAuthenticated`: Whether the user is authenticated.
+- `controller.errorMessage`: The error message string, if any.
+- `controller.error`: The raw error object, for advanced error handling.
 
 Use them in your `build` method to render the right UI for the current state:
 

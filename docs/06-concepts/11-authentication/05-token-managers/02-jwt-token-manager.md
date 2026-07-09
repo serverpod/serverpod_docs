@@ -193,7 +193,7 @@ for (final row in tokenMetadata) {
 
 #### Attaching metadata when issuing tokens from an endpoint
 
-The `onRefreshTokenCreated` callback is global and runs for every new refresh token (including those created by identity providers). When you create a token from an endpoint—for example, a personal access token (PAT) or CLI token—you often have endpoint-specific parameters (e.g. a token name or label) that the callback cannot see. In that case, issue the token with `AuthServices.instance.tokenManager.issueToken`, then use the returned `AuthSuccess.jwtRefreshTokenId` to insert your metadata with the endpoint's parameters:
+The `onRefreshTokenCreated` callback is global and runs for every new refresh token (including those created by identity providers). When you create a token from an endpoint, for example a personal access token (PAT) or CLI token, you often have endpoint-specific parameters (e.g. a token name or label) that the callback cannot see. In that case, issue the token with `AuthServices.instance.tokenManager.issueToken`, then use the returned `AuthSuccess.jwtRefreshTokenId` to insert your metadata with the endpoint's parameters:
 
 ```dart
 final authSuccess = await AuthServices.instance.tokenManager.issueToken(

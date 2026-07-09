@@ -15,9 +15,9 @@ This example implements authentication with a fictional OAuth2 provider called "
 - Flutter UI integration
 - Error handling
 
-## Server-Side Implementation
+## Server-side implementation
 
-### 1. Data Model
+### 1. Data model
 
 First, create a data model to store provider accounts:
 
@@ -101,7 +101,7 @@ class MyProviderIdpConfig extends IdentityProviderBuilder<MyProviderIdp> {
 }
 ```
 
-### 3. Provider Class
+### 3. Provider class
 
 Create the main identity provider class:
 
@@ -357,7 +357,7 @@ class MyProviderIdpEndpoint extends IdpBaseEndpoint {
 }
 ```
 
-### 5. Server Registration
+### 5. Server registration
 
 Register the provider in `server.dart`:
 
@@ -392,7 +392,7 @@ void run(List<String> args) async {
 }
 ```
 
-## Client-Side Implementation
+## Client-side implementation
 
 ### 1. Configuration
 
@@ -562,7 +562,7 @@ class MyProviderAuthController extends ChangeNotifier {
 }
 ```
 
-### 4. UI Widget
+### 4. UI widget
 
 Create the sign-in button:
 

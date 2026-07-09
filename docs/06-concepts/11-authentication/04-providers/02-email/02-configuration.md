@@ -35,7 +35,7 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
 
 ### Customizing Password Requirements
 
-By default, the minimum password length is set to 8 characters. If you wish to modify this requirement, you can utilize the `passwordValidationFunction` configuration option.
+By default, the minimum password length is set to 8 characters. If you wish to modify this requirement, you can use the `passwordValidationFunction` configuration option.
 
 ```dart
 final emailIdpConfig = EmailIdpConfigFromPasswords(

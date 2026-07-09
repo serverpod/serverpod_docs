@@ -7,7 +7,7 @@ description: Authentication tokens are handled automatically by Serverpod. Learn
 
 Serverpod automatically checks if the user is logged in and if the user has the right privileges to access each endpoint. When using the Serverpod Authentication modules, you will not have to worry about keeping track of tokens, refreshing them or even including them in requests as this all happens automatically under the hood.
 
-The `Session` object provides information about the current user. A unique `userIdentifier` identifies a user as a `UuidValue`. You should use this id whenever you are referring to a user. Access the id of a signed-in user through the `authenticated` asynchronous getter of the `Session` object.
+The `Session` object provides information about the current user. Access the current authentication through the synchronous `authenticated` getter of the `Session` object. It exposes a `userIdentifier`, a `String` that uniquely identifies the signed-in user. Use this id whenever you refer to a user.
 
 ```dart
 Future<void> myMethod(Session session) async {
@@ -293,6 +293,28 @@ void _onAuthStateChanged() {
 ```
 
 The listener is triggered whenever the user's sign-in state changes.
+
+### Validate the session and handle expiry
+
+Serverpod refreshes tokens automatically while the user stays signed in, so most apps never handle tokens directly. Expiry becomes visible only when the refresh token itself has expired or been revoked: the client can no longer refresh, and the stored session is no longer valid.
+
+Call `validateAuthentication` to check the current session against the server and sign the user out if it is no longer valid:
+
+```dart
+await client.auth.validateAuthentication(); // throws on transient errors; retry if needed
+```
+
+The method force-refreshes the token and confirms with the server that the user is still signed in. If the session is no longer valid, it signs the user out on the current device. A transient problem, such as a network error or timeout, does not sign the user out; the exception is thrown instead, so you can catch it and retry.
+
+At app startup, use `initialize` to restore a stored session and validate it in one step:
+
+```dart
+bool validated = await client.auth.initialize();
+```
+
+The `initialize` method runs `restore` followed by `validateAuthentication`. If the stored session has expired, the user is signed out. If validation cannot complete for a transient reason (network error, server error, or timeout), `initialize` returns `false` and leaves the stored session in place so you can retry later, which keeps offline users signed in.
+
+Because signing out updates the authentication state, a listener registered on `authInfoListenable` (see [Monitor authentication changes](#monitor-authentication-changes)) fires when a session expires, so you can route the user back to a sign-in screen from one place.
 
 ## User authentication
 

@@ -130,7 +130,7 @@ await admin.deletePasswordResetRequestsAttemptsForEmail(
 
 ### Cleaning Up Failed Login Attempts
 
-Failed login attempts are tracked for rate limiting should also be cleaned up when no longer useful for auditing purposes:
+Failed login attempts, tracked for rate limiting, should also be cleaned up when no longer useful for auditing purposes:
 
 ```dart
 // Delete all failed login attempts

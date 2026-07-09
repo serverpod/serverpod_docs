@@ -86,7 +86,7 @@ final controller = GitHubAuthController(
 await controller.signIn();
 ```
 
-### GitHubAuthController State Management
+### GitHubAuthController state management
 
 Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
 
@@ -111,7 +111,7 @@ controller.addListener(() {
 });
 ```
 
-#### GitHubAuthController States
+#### GitHubAuthController states
 
 - `GitHubAuthState.idle` - Ready for user interaction.
 - `GitHubAuthState.loading` - Processing a sign-in request.

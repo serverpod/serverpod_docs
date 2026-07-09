@@ -20,7 +20,7 @@ The [GitHub IDP](../../github/setup) is built using these utilities, serving as 
 
 OAuth2 with PKCE is an authorization protocol that allows users to grant your application access to their data without sharing passwords. The PKCE extension adds an additional security layer, particularly important for mobile and public clients.
 
-### The OAuth2 Flow
+### The OAuth2 flow
 
 Here's how the complete flow works:
 
@@ -35,9 +35,7 @@ Here's how the complete flow works:
 
 PKCE ensures that even if an attacker intercepts the authorization code, they cannot exchange it for an access token without the original code verifier.
 
-## Server-Side Implementation
-
-### Configuration
+## Server-side implementation
 
 ### Configuration
 
@@ -85,11 +83,11 @@ final config = OAuth2PkceServerConfig(
 The `credentialsLocation` parameter controls how your client credentials are sent to the OAuth2 provider:
 
 - **Header mode (recommended):** Credentials are placed in the `Authorization` header using HTTP Basic authentication. This follows RFC 6749 and is generally more secure, since sensitive values don't appear in the request body or logs.
-- **Body mode:** Credentials are sent as form parameters in the request body.Use this only if your provider doesn't support header-based authentication.
+- **Body mode:** Credentials are sent as form parameters in the request body. Use this only if your provider doesn't support header-based authentication.
 
 :::
 
-### Exchanging Tokens
+### Exchanging tokens
 
 Using the previously created `config` object, create the `OAuth2PkceUtil` on your endpoint to exchange the authorization code:
 
@@ -155,14 +153,15 @@ class MyProviderIdpEndpoint extends IdpBaseEndpoint {
 
   Future<AuthSuccess> _issueToken(
     Session session, {
-    required int authUserId,
+    required UuidValue authUserId,
     required Set<Scope> scopes,
   }) async {
     // Issue Serverpod authentication token for the authenticated user
   }
 }
+```
 
-### Exception Handling
+### Exception handling
 
 The server-side utility throws these exceptions:
 
@@ -173,7 +172,7 @@ The server-side utility throws these exceptions:
 | `OAuth2NetworkErrorException` | Network failure | Timeout, connection issues |
 | `OAuth2UnknownException` | Unexpected error | Unknown problems |
 
-## Client-Side Implementation
+## Client-side implementation
 
 ### Configuration
 
@@ -214,7 +213,7 @@ final config = OAuth2PkceProviderClientConfig(
 );
 ```
 
-### Initiating Authorization
+### Initiating authorization
 
 Using the previously created `config` object, create an `OAuth2PkceUtil` instance to start the authorization flow:
 
@@ -257,7 +256,7 @@ try {
 }
 ```
 
-### Exception Handling
+### Exception handling
 
 The client-side utility throws specific exceptions to help you handle different error scenarios:
 
@@ -269,7 +268,7 @@ The client-side utility throws specific exceptions to help you handle different 
 | `OAuth2PkceProviderErrorException` | Provider returned error response | Invalid credentials, rate limiting |
 | `OAuth2PkceUnknownException` | Unexpected error occurred | Network issues, unknown problems |
 
-### Platform-Specific Configuration
+### Platform-specific configuration
 
 The OAuth2 utility uses the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2) package under the hood, which requires platform-specific setup.
 
@@ -339,13 +338,13 @@ This file is shared across all IDPs that use the OAuth2 utility, as long as your
 
 Make sure your redirect URI points to the callback file, e.g. `https://yourdomain.com/auth.html`
 
-## Complete Example of a Custom Provider
+## Complete example of a custom provider
 
-For a full end‑to‑end implementation of a custom OAuth2 provider — including server configuration, client setup and integration of all components — see the [Complete Example](./creating-an-oauth2-based-identity-provider) page.
+For a full end-to-end implementation of a custom OAuth2 provider (server configuration, client setup, and integration of all components), see the [Complete Example](./creating-an-oauth2-based-identity-provider) page.
 
-## Best Practices
+## Best practices
 
-### Security Considerations
+### Security considerations
 
 1. **Always Use PKCE**: Keep `enablePKCE: true` in your client configuration. PKCE protects against authorization code interception attacks.
 2. **Validate State Parameter**: Keep `enableState: true` to prevent CSRF attacks. The state parameter ensures the authorization response matches your request.
@@ -353,7 +352,7 @@ For a full end‑to‑end implementation of a custom OAuth2 provider — includi
 4. **Use HTTPS**: Always use HTTPS URLs for production endpoints. Only use HTTP for local development.
 5. **Validate Redirect URIs**: Ensure redirect URIs in your code exactly match those registered with your OAuth provider.
 
-### Error Handling
+### Error handling
 
 1. **Catch Specific Exceptions**: Handle each exception type appropriately rather than using generic catch-all handlers.
 2. **Log Securely**: Log errors for debugging but never log sensitive data like tokens or secrets.

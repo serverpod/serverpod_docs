@@ -123,7 +123,7 @@ pod.initializeAuthServices(
 );
 ```
 
-`FacebookIdpConfigFromPasswords()` automatically loads the App ID and secret from the `facebookAppId` and `facebookAppSecret` keys in `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables).
+The `FacebookIdpConfigFromPasswords()` constructor automatically loads the App ID and secret from the `facebookAppId` and `facebookAppSecret` keys in `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables).
 
 :::tip
 If you need more control over how the credentials are loaded, use `FacebookIdpConfig(appId: ..., appSecret: ...)` instead. See [Customizations](./customizations) for details.
@@ -196,7 +196,7 @@ defaultConfig {
 
 Replace `YOUR_FACEBOOK_APP_ID` with your App ID and `YOUR_CLIENT_TOKEN` with your Client token (found in **Settings** > **Advanced** > **Client token** in the Facebook App Dashboard).
 
-1. Open `/android/app/src/main/AndroidManifest.xml` and add the following:
+2. Open `/android/app/src/main/AndroidManifest.xml` and add the following:
 
 **Add internet permission before the `<application>` element:**
 
@@ -406,7 +406,7 @@ This enables Facebook authentication on these domains. Without it, Facebook sign
 ![Allowed Domains](/img/authentication/providers/facebook/3-allowed-domains.png)
 
 :::warning
-The facebook javascript SDK is only allowed to use with `https` but you can test the plugin in your localhost with an error message in your web console.
+The Facebook JavaScript SDK is only allowed over `https`, but you can test the plugin on `localhost` (you will see an error message in your web console).
 :::
 
 For more detailed web setup instructions, refer to the [flutter_facebook_auth web documentation](https://facebook.meedu.app/docs/7.x.x/web).

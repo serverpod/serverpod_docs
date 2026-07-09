@@ -16,7 +16,7 @@ var userIdString = session.authenticated?.userIdentifier;
 var userIdUuidValue = session.authenticated?.authUserId;
 ```
 
-Further operations on the authenticated user can be performed using the `AuthUsers` class which is provide by the `AuthServices` instance.
+Further operations on the authenticated user can be performed using the `AuthUsers` class which is provided by the `AuthServices` instance.
 
 ```dart
 await AuthServices.instance.authUsers.delete(session, userIdUuidValue);
@@ -197,7 +197,7 @@ You can also extend the endpoint class to add custom profile editing functionali
 
 ```dart
 class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {
-  Future<UserProfileModel> myCustomProfileEdit(Session session, String bio) async {
+  Future<UserProfileModel?> myCustomProfileEdit(Session session, String bio) async {
     final userProfile = await session.authenticated?.userProfile(session);
 
     // Your custom logic here...
@@ -268,7 +268,7 @@ When referencing module classes in your model files, you can use a nickname for 
 
 The model above creates a relation to the `AuthUser` table and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
 
-This makes it easy to query the additional information later based on the user's `authId`.
+This makes it easy to query the additional information later based on the user's `authUserId`.
 
 ```dart
 final authUserId = session.authenticated?.authUserId;

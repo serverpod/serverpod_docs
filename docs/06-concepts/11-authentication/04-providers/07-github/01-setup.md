@@ -129,7 +129,7 @@ pod.initializeAuthServices(
 );
 ```
 
-`GitHubIdpConfigFromPasswords()` automatically loads the client ID and secret from the `githubClientId` and `githubClientSecret` keys in `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables).
+The `GitHubIdpConfigFromPasswords()` constructor automatically loads the client ID and secret from the `githubClientId` and `githubClientSecret` keys in `config/passwords.yaml` (or the matching `SERVERPOD_PASSWORD_*` environment variables).
 
 :::tip
 If you need more control over how the credentials are loaded, use `GitHubIdpConfig(clientId: ..., clientSecret: ...)` instead. See [Customizations](./customizations) for details.
