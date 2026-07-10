@@ -1,5 +1,5 @@
 ---
-description: Logging in Serverpod captures custom messages, exceptions, and queries through the session log method, with configurable retention, console output, and database storage.
+description: Serverpod logging records custom messages, exceptions, and queries via the session log method and stores them in the database, with configurable retention and console output.
 ---
 
 # Logging
