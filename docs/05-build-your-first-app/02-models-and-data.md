@@ -34,7 +34,7 @@ fields:
 Save the file. `serverpod start` regenerates the `Recipe` class for both the server and the client.
 
 :::info
-Fields can be primitive types, other models, or a typed `List`, `Map`, or `Set`. See [Working with models](../06-concepts/02-models/01-models.md) for the full set of options.
+Fields can be primitive types, other models, or a typed `List`, `Map`, or `Set`. See [Working with models](../concepts/models) for the full set of options.
 :::
 
 ## Return the model from your endpoint

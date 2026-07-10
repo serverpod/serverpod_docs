@@ -54,4 +54,4 @@ You've built and deployed a full-stack app with Flutter and Serverpod:
 - Persistent storage with the database.
 - A Flutter app that talks to your server through the generated client.
 
-We're excited to see what you'll build next. If you need help, join the [Discord community](https://serverpod.dev/discord) or ask in our [community on GitHub](https://github.com/serverpod/serverpod/discussions). To go deeper into any topic, browse the [Concepts](../06-concepts/01-working-with-endpoints/01-working-with-endpoints.md) section.
+We're excited to see what you'll build next. If you need help, join the [Discord community](https://serverpod.dev/discord) or ask in our [community on GitHub](https://github.com/serverpod/serverpod/discussions). To go deeper into any topic, browse the [Concepts](../concepts/working-with-endpoints) section.

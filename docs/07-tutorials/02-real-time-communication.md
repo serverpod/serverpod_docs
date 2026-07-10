@@ -24,7 +24,7 @@ Pixorama is a collaborative drawing app where users can place pixels on a grid t
 
 In traditional REST APIs, communication with the server involves sending a request and receiving a response. However, real-time communication requires the server to push updates to clients as they happen. This is commonly achieved using web sockets, which maintain an open connection between the server and client, allowing for continuous data exchange. While web sockets can be tricky, requiring data serialization and connection management, Serverpod simplifies this process.
 
-With the release of Serverpod 2.1, a new feature called [streaming methods](../../concepts/streams) was introduced. This feature allows us to return a stream from a server method and call it from our app. Serverpod handles the underlying web socket connection for us. Now, let's get started with building Pixorama.
+With the release of Serverpod 2.1, a new feature called [streaming methods](../concepts/endpoints-and-apis/streaming) was introduced. This feature allows us to return a stream from a server method and call it from our app. Serverpod handles the underlying web socket connection for us. Now, let's get started with building Pixorama.
 
 ## Setting up the project
 

@@ -15,7 +15,7 @@ Serverpod is a full backend. It manages your database, authentication, file uplo
 
 A Serverpod project starts with the `serverpod create` command, which walks you through a few choices that shape what it generates:
 
-- **Project type:** A full server, or a reusable [module](../concepts/modules) shared across servers.
+- **Project type:** A full server, or a reusable [module](./concepts/server-fundamentals/modules) shared across servers.
 - **Database and caching:** Add a Postgres database and Redis (for pub/sub and caching).
 - **Authentication:** Built-in email and social sign-ins.
 - **Web server:** Optionally serve web pages and your Flutter web app alongside your API.
@@ -50,7 +50,7 @@ Start your project before you begin building. With `serverpod start` already run
 
 ## Write an endpoint
 
-In Serverpod, endpoints are the entry points your app calls to run code on the server. You define one as a class that extends `Endpoint`, with async methods that each take a [`Session`](../concepts/sessions) as their first argument and return a typed `Future`:
+In Serverpod, endpoints are the entry points your app calls to run code on the server. You define one as a class that extends `Endpoint`, with async methods that each take a [`Session`](./concepts/endpoints-and-apis/sessions) as their first argument and return a typed `Future`:
 
 ```dart
 class ExampleEndpoint extends Endpoint {
@@ -70,7 +70,7 @@ On the app side, the generated client turns each endpoint method into what looks
 final greeting = await client.example.hello('World');
 ```
 
-The client handles the request, the response, and the JSON in between. Most calls follow this request-and-response shape. For live updates, Serverpod also has [streaming endpoints](../concepts/streams) that keep a connection open so the server and app can push data to each other.
+The client handles the request, the response, and the JSON in between. Most calls follow this request-and-response shape. For live updates, Serverpod also has [streaming endpoints](./concepts/endpoints-and-apis/streaming) that keep a connection open so the server and app can push data to each other.
 
 ## Define your data models
 
@@ -106,7 +106,7 @@ These run on the same `session` your endpoint method receives. When you change a
 
 That database runs without setup on your part: Serverpod manages an embedded Postgres for you, with no Docker to configure. If you would rather manage Postgres yourself, you can change the configuration in the server's `config` directory.
 
-See [Working with the database](../concepts/database/crud) for building queries, relations, and transactions.
+See [Working with the database](./concepts/data-and-the-database/database/crud) for building queries, relations, and transactions.
 
 ## Build with an AI agent
 
