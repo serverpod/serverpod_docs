@@ -60,7 +60,7 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-The `Session` is the context for that one call, with access to the database, cache, signed-in user, and logging. Parameters and return types can be the built-in types (`bool`, `int`, `double`, `String`, `DateTime`, `Duration`, `Uri`, `UuidValue`, `BigInt`, `ByteData`), a `List`, `Map`, `Set`, or `Record` of those, or any data model you define. See [Working with endpoints](../concepts/working-with-endpoints) for more information.
+The `Session` is the context for that one call, with access to the database, cache, signed-in user, and logging. Parameters and return types can be the built-in types (`bool`, `int`, `double`, `String`, `DateTime`, `Duration`, `Uri`, `UuidValue`, `BigInt`, `ByteData`), a `List`, `Map`, `Set`, or `Record` of those, or any data model you define. See [Working with endpoints](./concepts/endpoints-and-apis) for more information.
 
 ## Call it from your app
 
@@ -83,7 +83,7 @@ fields:
   foundedDate: DateTime?
 ```
 
-When you generate code, this becomes a `Company` Dart class shared by the server and your app, so the same type flows from your endpoints into your Flutter widgets. Fields support the same types as endpoint methods, plus enums and nested models, and can be nullable. See [Working with models](../concepts/models) for the details.
+When you generate code, this becomes a `Company` Dart class shared by the server and your app, so the same type flows from your endpoints into your Flutter widgets. Fields support the same types as endpoint methods, plus enums and nested models, and can be nullable. See [Working with models](./concepts/data-and-the-database/models) for the details.
 
 Add a `table` key to also store the model in a database table:
 

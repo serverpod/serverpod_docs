@@ -104,7 +104,7 @@ The `SerializableException` interface marks the exception as safe to serialize t
 
 ### Default values in exceptions
 
-Serverpod allows you to specify default values for fields in exceptions, similar to how it's done in models using the `default` and `defaultModel` keywords. If you're unfamiliar with how these keywords work, you can refer to the [Default Values](../models#default-values) section in the [Working with Models](../models) documentation.
+Serverpod allows you to specify default values for fields in exceptions, similar to how it's done in models using the `default` and `defaultModel` keywords. If you're unfamiliar with how these keywords work, you can refer to the [Default Values](../data-and-the-database/models#default-values) section in the [Working with Models](../data-and-the-database/models) documentation.
 
 :::info
 Since exceptions are not persisted in the database, the `defaultPersist` keyword is not supported. If both `default` and `defaultModel` are specified, `defaultModel` will always take precedence, making it unnecessary to use both.

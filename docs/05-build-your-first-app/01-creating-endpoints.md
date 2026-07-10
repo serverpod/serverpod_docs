@@ -112,7 +112,7 @@ class RecipeEndpoint extends Endpoint {
 The endpoint reads your Gemini key from `session.passwords`, which Serverpod populates from the `passwords.yaml` file you edited earlier.
 
 :::info
-Endpoint methods take a `Session` as their first parameter and return a typed `Future` or `Stream`. You can pass and return primitive types or any [model defined in a `.spy.yaml` file](../concepts/models). The class name's `Endpoint` suffix is dropped on the client, so `RecipeEndpoint` is called via `client.recipe`. See [How it works](../04-get-started/03-how-it-works.md) for how that call reaches the server.
+Endpoint methods take a `Session` as their first parameter and return a typed `Future` or `Stream`. You can pass and return primitive types or any [model defined in a `.spy.yaml` file](../concepts/data-and-the-database/models). The class name's `Endpoint` suffix is dropped on the client, so `RecipeEndpoint` is called via `client.recipe`. See [How it works](../04-get-started/03-how-it-works.md) for how that call reaches the server.
 :::
 
 Save the file. Because `serverpod start` is watching, it regenerates the client bindings for `generateRecipe` automatically. You'll see it run in the terminal.

@@ -8,7 +8,7 @@ description: The legacy string-based API for registering and scheduling future c
 This approach is error prone since it involves manually registering and scheduling future calls using string identifiers. The recommended way to interact with the future calls feature is through the [type-safe API](setup).
 :::
 
-To create a future call, extend the `FutureCall` class and override the `invoke` method. The method takes two params: the first is a [`Session`](../endpoints-and-apis/sessions) object and the second is an optional serializable model ([See models](../models)).
+To create a future call, extend the `FutureCall` class and override the `invoke` method. The method takes two params: the first is a [`Session`](../endpoints-and-apis/sessions) object and the second is an optional serializable model ([See models](../data-and-the-database/models)).
 
 ```dart
 import 'package:serverpod/serverpod.dart';

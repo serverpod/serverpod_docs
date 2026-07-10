@@ -18,7 +18,7 @@ For polymorphic models, Serverpod can also deserialize an unknown subtype as its
 
 ## Managing breaking changes with endpoint inheritance
 
-An [endpoint sub-class](/concepts/working-with-endpoints) can be useful when you have to make a breaking change to an entire endpoint but need to keep supporting existing clients. Doing so allows you to share most of its implementation with the old endpoint.
+An [endpoint sub-class](../../endpoints-and-apis) can be useful when you have to make a breaking change to an entire endpoint but need to keep supporting existing clients. Doing so allows you to share most of its implementation with the old endpoint.
 
 Imagine you had a "team" management endpoint where before a user could join if they had an e-mail address ending in the expected domain, but now it should be opened up for anyone to join if they can provide an "invite code". Additionally, the return type (serialized classes) should be updated across the entire endpoint, which would not be allowed on the existing one.
 

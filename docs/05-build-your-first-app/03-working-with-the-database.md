@@ -36,7 +36,7 @@ fields:
 Save the file. The regenerated `Recipe` class now exposes database methods through `Recipe.db`.
 
 :::info
-See the [database models](../concepts/models#keywords-1) reference for all the keywords you can use in a table.
+See the [database models](../concepts/data-and-the-database/models#keywords-1) reference for all the keywords you can use in a table.
 :::
 
 ## Create and apply the migration

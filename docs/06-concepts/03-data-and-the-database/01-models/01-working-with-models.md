@@ -1,5 +1,5 @@
 ---
-slug: /concepts/models
+slug: /concepts/data-and-the-database/models
 sidebar_label: Working with models
 description: Serverpod model files define serializable classes, exceptions, and enums, with fields, defaults, visibility, and generated Dart code.
 ---
@@ -24,7 +24,7 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](./data-and-the-database/models/vector-and-geography-fields#vector), [HalfVector](./data-and-the-database/models/vector-and-geography-fields#halfvector), [SparseVector](./data-and-the-database/models/vector-and-geography-fields#sparsevector), [Bit](./data-and-the-database/models/vector-and-geography-fields#bit), [GeographyPoint](./data-and-the-database/models/vector-and-geography-fields#geographypoint), [GeographyLineString](./data-and-the-database/models/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./data-and-the-database/models/vector-and-geography-fields#geographypolygon), [GeographyGeometryCollection](./data-and-the-database/models/vector-and-geography-fields#geographygeometrycollection) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [Vector](./models/vector-and-geography-fields#vector), [HalfVector](./models/vector-and-geography-fields#halfvector), [SparseVector](./models/vector-and-geography-fields#sparsevector), [Bit](./models/vector-and-geography-fields#bit), [GeographyPoint](./models/vector-and-geography-fields#geographypoint), [GeographyLineString](./models/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./models/vector-and-geography-fields#geographypolygon), [GeographyGeometryCollection](./models/vector-and-geography-fields#geographygeometrycollection) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
 
 ### Required fields
 
@@ -67,7 +67,7 @@ fields:
 ```
 
 :::info
-Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](./data-and-the-database/database/tables) section.
+Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](./database/tables) section.
 :::
 
 ### JSON key aliasing
@@ -107,7 +107,7 @@ This is particularly helpful when:
 - Integrating with third-party services like MongoDB (e.g., mapping `id` to `_id`)
 
 :::info
-The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the [`column` property](./data-and-the-database/database/tables#column-name-override) instead.
+The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the [`column` property](./database/tables#column-name-override) instead.
 :::
 
 ### Immutable classes
@@ -149,7 +149,7 @@ print(user3.email); // alice@example.com
 
 ## Exception
 
-The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](./endpoints-and-apis/error-handling-and-exceptions).
+The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](../endpoints-and-apis/error-handling-and-exceptions).
 
 ```yaml
 exception: MyException
@@ -327,7 +327,7 @@ The `copyWith` method generates a deep copy of an object, preserving all origina
 
 ### toJson / fromJson
 
-The `toJson` and `fromJson` methods are generated on all models to help with serialization. Serverpod manages all serialization for you out of the box and you will rarely have to use these methods by your self. See the [Serialization](./data-and-the-database/models/custom-serialization) section for more info.
+The `toJson` and `fromJson` methods are generated on all models to help with serialization. Serverpod manages all serialization for you out of the box and you will rarely have to use these methods by your self. See the [Serialization](./models/custom-serialization) section for more info.
 
 ### Custom methods
 
@@ -521,4 +521,4 @@ fields:
 
 ## Keywords
 
-For every keyword available in a model file, and whether it applies to a `class`, `exception`, or `enum`, see the [Model reference](lookups/model-reference).
+For every keyword available in a model file, and whether it applies to a `class`, `exception`, or `enum`, see the [Model reference](../lookups/model-reference).

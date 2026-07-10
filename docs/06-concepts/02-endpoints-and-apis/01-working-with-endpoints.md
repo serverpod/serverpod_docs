@@ -1,5 +1,5 @@
 ---
-slug: /concepts/working-with-endpoints
+slug: /concepts/endpoints-and-apis
 sidebar_label: Working with endpoints
 description: Endpoints expose server methods to a generated, typed client your Flutter app calls, with one client setup pointed at each environment.
 ---
