@@ -4,6 +4,8 @@ description: The Serverpod test tools basics, set up scenarios with sessionBuild
 
 # The basics
 
+This page covers the core building blocks of the test tools: setting up a session, seeding the database, controlling rollback, and simulating authenticated and unauthenticated sessions.
+
 ## Set up a test scenario
 
 The `withServerpod` helper provides a `sessionBuilder` that helps with setting up different scenarios for tests. To modify the session builder's properties, call its `copyWith` method. It takes the following named parameters:
@@ -15,7 +17,7 @@ The `withServerpod` helper provides a `sessionBuilder` that helps with setting u
 
 The `copyWith` method creates a new unique session builder with the provided properties. This can then be used in endpoint calls (see section [Setting authenticated state](#setting-authenticated-state) for an example).
 
-To build out a `Session` (to use for [database calls](#seeding-the-database) or [pass on to functions](advanced-examples#test-business-logic-that-depends-on-session)), simply call the `build` method:
+To build out a `Session` (to use for [database calls](#seeding-the-database) or [pass on to functions](./advanced-examples#test-business-logic-that-depends-on-session)), call the `build` method:
 
 ```dart
 Session session = sessionBuilder.build();
@@ -104,7 +106,7 @@ withServerpod('Given Products endpoint', (sessionBuilder, endpoints) {
   test('then calling `all` should return all products', () async {
     final products = await endpoints.products.all(sessionBuilder);
     expect(products, hasLength(2));
-    expect(products.map((p) => p.name), contains(['Apple', 'Banana']));
+    expect(products.map((p) => p.name), containsAll(['Apple', 'Banana']));
   });
 });
 ```
@@ -233,7 +235,7 @@ var transactionFuture = session.db.transaction((tx) async {
 await transactionFuture;
 ```
 
-In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practise, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabase.disabled` will ensure the code behaves like in production.
+In production, the transaction call will throw if any database exception happened during its execution, _even_ if the exception was first caught inside the transaction. However, in the test tools this will not throw an exception due to how the nested transactions are emulated. Quelling exceptions like this is not best practice, but if the code under test does this setting `rollbackDatabase` to `RollbackDatabase.disabled` will ensure the code behaves like in production.
 <!-- markdownlint-enable MD029 -->
 
 ## Test exceptions
@@ -262,8 +264,8 @@ For example, if depending on a generator function to execute up to its `yield`, 
 event queue can be flushed to ensure the generator has executed up to that point:
 
 ```dart
-var stream = endpoints.someEndoint.generatorFunction(session);
+var stream = endpoints.someEndpoint.generatorFunction(session);
 await flushEventQueue();
 ```
 
-See also [this complete example](advanced-examples#multiple-users-interacting-with-a-shared-stream).
+See also [this complete example](./advanced-examples#multiple-users-interacting-with-a-shared-stream).

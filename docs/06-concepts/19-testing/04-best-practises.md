@@ -1,21 +1,20 @@
 ---
 description: Best practices for Serverpod integration testing, import only the generated test tools file, rely on automatic database rollback, and always call endpoints through the provided endpoints object.
-# Don't display do's and don'ts in the table of contents
 toc_max_heading_level: 2
 ---
 
-# Best practises
+# Best practices
 
 ## Imports
 
-While it's possible to import types and test helpers from the `serverpod_test`, it's completely redundant. The generated file exports everything that is needed. Adding an additional import is just unnecessary noise and will likely also be flagged as duplicated imports by the Dart linter.
+While it's possible to import types and test helpers from the `serverpod_test` package, it's completely redundant. The generated file exports everything that is needed. Adding an additional import is unnecessary noise and will likely also be flagged as duplicated imports by the Dart linter.
 
 ### Don't
 
 ```dart
 import 'serverpod_test_tools.dart';
 // Don't import `serverpod_test` directly.
-import 'package:serverpod_test/serverpod_test.dart'; ❌  
+import 'package:serverpod_test/serverpod_test.dart'; ❌
 ```
 
 ### Do
@@ -23,12 +22,12 @@ import 'package:serverpod_test/serverpod_test.dart'; ❌
 ```dart
 // Only import the generated test tools file.
 // It re-exports all helpers and types that are needed.
-import 'serverpod_test_tools.dart'; ✅ 
+import 'serverpod_test_tools.dart'; ✅
 ```
 
-### Database clean up
+## Database clean up
 
-Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](the-basics#rollback-database-configuration) for more info on this behavior).
+Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](./the-basics#rollback-database-configuration) for more info on this behavior).
 
 ### Don't
 
@@ -40,7 +39,7 @@ withServerpod('Given ProductsEndpoint', (sessionBuilder, endpoints) {
     await Product.db.insertRow(session, Product(name: 'Apple', price: 10));
   });
 
-  tearDown(() async {   
+  tearDown(() async {
     await Product.db.deleteWhere( ❌ // Unnecessary clean up
       session,
       where: (_) => Constant.bool(true),
@@ -64,7 +63,7 @@ withServerpod('Given ProductsEndpoint', (sessionBuilder, endpoints) {
   ✅  // Clean up can be omitted since the transaction is rolled back after each by default
 
   // ...
-}); 
+});
 ```
 
 ## Calling endpoints
@@ -85,8 +84,8 @@ void main() {
     var session = sessionBuilder.build();
 
     test('when calling `hello` then should return greeting', () async {
-      // ❌ Don't call and endpoint method directly on the endpoint class.
-      final greeting = await exampleEndpoint.hello(session, 'Michael'); 
+      // ❌ Don't call an endpoint method directly on the endpoint class.
+      final greeting = await exampleEndpoint.hello(session, 'Michael');
       expect(greeting, 'Hello, Michael!');
     });
   });
@@ -98,12 +97,10 @@ void main() {
 ```dart
 void main() {
   withServerpod('Given Example endpoint', (sessionBuilder, endpoints) {
-    var session = sessionBuilder.build();
-
     test('when calling `hello` then should return greeting', () async {
       // ✅ Use the provided `endpoints` to call the endpoint that should be tested.
       final greeting =
-          await endpoints.example.hello(session, 'Michael');
+          await endpoints.example.hello(sessionBuilder, 'Michael');
       expect(greeting, 'Hello, Michael!');
     });
   });

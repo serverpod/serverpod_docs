@@ -181,7 +181,7 @@ Go to the server directory and generate the test tools:
 serverpod generate
 ```
 
-The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practises section](best-practises#unit-and-integration-tests) for more information on this).
+The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practices section](./best-practises#unit-and-integration-tests) for more information on this).
 
 The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
 
@@ -210,7 +210,7 @@ A few things to note from the above example:
 
 :::tip
 
-The location of the test tools can be changed by changing the  `server_test_tools_path` key in `config/generator.yaml`. If you remove the `server_test_tools_path` key, the test tools will stop being generated.
+The location of the test tools can be changed by changing the `server_test_tools_path` key in `config/generator.yaml`. If you remove the `server_test_tools_path` key, the test tools will stop being generated.
 
 :::
 
