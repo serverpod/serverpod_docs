@@ -232,5 +232,5 @@ If something here didn't go as expected, reach out on the [community page](../su
 
 ## Related
 
-- [Migrations](../concepts/database/migrations): how Serverpod's migration system works under the hood.
+- [Migrations](../concepts/data-and-the-database/database/migrations): how Serverpod's migration system works under the hood.
 - [Build your first app](../get-started/creating-endpoints): the hands-on tour of the 4.0 workflow if you want to see `serverpod start` from scratch.

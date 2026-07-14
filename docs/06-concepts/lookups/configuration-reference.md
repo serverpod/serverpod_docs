@@ -4,7 +4,7 @@ description: Every Serverpod configuration option, covering run settings, server
 
 # Configuration reference
 
-Every configuration option Serverpod's core library reads. Options come from three sources: environment variables, the `config/<run-mode>.yaml` files, and the `ServerpodConfig` Dart object. Environment variables override the YAML files, and the Dart object overrides both. For how to choose between them, see [Configuration](../configuration).
+Every configuration option Serverpod's core library reads. Options come from three sources: environment variables, the `config/<run-mode>.yaml` files, and the `ServerpodConfig` Dart object. Environment variables override the YAML files, and the Dart object overrides both. For how to choose between them, see [Configuration](../server-fundamentals/configuration).
 
 ## Run options
 
@@ -87,5 +87,5 @@ Options for `config/generator.yaml`, which configures `serverpod generate`.
 
 ## Related
 
-- [Configuration](../configuration): how the three configuration sources work, run modes, secrets, and package types.
-- [Running your server](../start-command): the run mode and files the server loads on start.
+- [Configuration](../server-fundamentals/configuration): how the three configuration sources work, run modes, secrets, and package types.
+- [Running your server](../server-fundamentals/running-your-server): the run mode and files the server loads on start.

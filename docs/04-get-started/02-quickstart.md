@@ -70,7 +70,7 @@ If you are using Cursor, you will need to **enable the Serverpod and Dart MCP se
 
 ## Start the server and the app
 
-Start the server and the Flutter app by opening up a terminal window and running the [`serverpod start`](../06-concepts/00-start-command.md) command:
+Start the server and the Flutter app by opening up a terminal window and running the [`serverpod start`](./concepts/server-fundamentals/running-your-server) command:
 
 ```bash
 $ serverpod start

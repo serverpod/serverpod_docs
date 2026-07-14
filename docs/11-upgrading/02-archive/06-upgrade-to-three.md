@@ -397,7 +397,7 @@ fields:
 
 The following APIs have been deprecated but will continue to work for the foreseeable future to maintain compatibility with older clients. They will be removed in a future major version:
 
-- Legacy streaming endpoints → Use [streaming methods](/concepts/streams) for new code
+- Legacy streaming endpoints → Use [streaming methods](../../concepts/endpoints-and-apis/streaming) for new code
 
 ## Other changes
 

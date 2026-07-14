@@ -296,4 +296,4 @@ Reach out on the [community page](../support).
 
 - [Upgrade to 4.0](./upgrade-to-four): do this first.
 - [Authentication setup](../concepts/authentication/setup): modular configuration reference.
-- [Database migrations](../concepts/database/migrations): creating and applying schema changes safely.
+- [Database migrations](../concepts/data-and-the-database/database/migrations): creating and applying schema changes safely.
