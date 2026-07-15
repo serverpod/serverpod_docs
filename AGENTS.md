@@ -26,3 +26,11 @@ The same person moves through all three stages. Write for the stage they're in r
 ## The governing principle
 
 Get the reader to a working outcome with minimum friction. Every sentence should either move them forward or be cut.
+
+## Cursor Cloud specific instructions
+
+This is a Docusaurus 3 documentation site (single service). Dependencies are refreshed automatically on startup by the environment update script (`npm ci` plus a `--no-save` install of `markdownlint-cli`), so you should not need to reinstall.
+
+- Run the dev server with `npm start` (Docusaurus at http://localhost:3000/). Most edits hot-reload; changes to `docusaurus.config.js` or `sidebars.js` require a restart. Do NOT run `npm run build` (see the Rules section); ask the user to verify builds instead.
+- `npm run lint` calls `markdownlint` directly. The repo does not list `markdownlint-cli` in `package.json`; the update script installs it into `node_modules/.bin` (`--no-save`) so `npm run lint` resolves it. If lint reports "markdownlint: not found", re-run `npm install --no-save markdownlint-cli`.
+- CI (`.github/workflows/test-build.yml`) installs the latest `markdownlint-cli` unpinned, so lint uses whatever version is current. Newer versions enable additional default rules (e.g. `MD060`, `MD025`) that surface pre-existing findings in `docs/`; a nonzero `npm run lint` exit from those existing files is expected and not an environment problem. Lint is only enforced on `docs/**/*.md`.
