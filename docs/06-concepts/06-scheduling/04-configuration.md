@@ -4,7 +4,7 @@ description: Future call configuration in Serverpod sets concurrency limits, the
 
 # Configuration
 
-Future calls can be configured using options defined in the configuration files or environment variables. For a detailed list of configuration options, refer to the [Configuration](../server-fundamentals/configuration) page.
+Future calls can be configured using options defined in the configuration files or environment variables. For a detailed list of configuration options, refer to the [Configuration reference](../lookups/configuration-reference).
 
 ```yaml
 futureCallExecutionEnabled: true
