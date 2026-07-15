@@ -6,10 +6,10 @@ description: Database backups on Serverpod Cloud are point-in-time snapshots of 
 
 # Database backups
 
-A bad migration or an accidental bulk delete can lose data you needed. Serverpod Cloud can take point-in-time snapshots of your managed database, on demand or on a recurring schedule, and restore the whole database to any snapshot in one step. Backups run on the platform, so there is nothing for you to host or maintain. Today you manage them with the `scloud` CLI, and support in the web console is coming.
+A bad migration or an accidental bulk delete can lose data you needed. Serverpod Cloud can take point-in-time snapshots of your managed database, on demand or on a recurring schedule, and restore the whole database to any snapshot in one step. Backups run on the platform, so there is nothing for you to host or maintain. You manage them with the `scloud` CLI.
 
 :::info
-Backups are available on the **Growth** plan. On other plans, creating a snapshot, setting a schedule, and restoring return an error that backups aren't available for the project's plan. Listing snapshots, deleting snapshots, and viewing or disabling the schedule work on any plan, so a project on a smaller plan can still see and clean up backups it already has.
+Backups are a **Growth** plan feature. On Growth you can create snapshots, schedule backups, and restore. Listing snapshots, deleting snapshots, and viewing or disabling the schedule are available on every plan, so a project on a smaller plan can still see and clean up backups it already has.
 :::
 
 ## When to use each kind of backup
@@ -87,7 +87,7 @@ The current state is retained by the provider as a separate backup.
 Do you want to proceed?
 ```
 
-The connection string and database credentials do not change, so your deployed server keeps working against the same database with no config change. The state from just before the restore is kept as a separate backup, so an accidental restore can itself be recovered from.
+The connection string and database credentials do not change, so your deployed server keeps working against the same database with no config change.
 
 ## Delete a snapshot
 
@@ -101,7 +101,7 @@ Cloud asks for confirmation, then deletes the snapshot permanently. Scheduled sn
 
 ## Pricing
 
-Backup storage is billed separately from your regular database storage, as its own charge rather than counting against your database usage. It uses the same package pricing as database storage, $6 per 10 GB per month, prorated for partial months, and applies only on the Growth plan. A schedule usually costs less than keeping the same number of manual snapshots. Each manual snapshot is a full copy, while a scheduled series stores one full copy plus the changes between snapshots. For current plan pricing, see [Serverpod Cloud plans](https://serverpod.dev/cloud).
+Backup storage is billed separately from your regular database storage, as its own metered charge rather than counting against your database usage. It is priced the same as database storage, billed by usage and prorated for partial months, and applies only on the Growth plan. A schedule usually costs less than keeping the same number of manual snapshots. Each manual snapshot is a full copy, while a scheduled series stores one full copy plus the changes between snapshots. For current plan pricing, see [Serverpod Cloud plans](https://serverpod.dev/cloud).
 
 ## Limits
 
