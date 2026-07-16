@@ -43,4 +43,5 @@ Every keyword available in a Serverpod model file, and whether it applies to a `
 ## Related
 
 - [Working with models](../data-and-the-database/models): how each keyword works, with examples.
+- [Dynamic fields](../data-and-the-database/models/dynamic-fields): store and transfer values whose type varies at runtime.
 - [Database tables](../data-and-the-database/database/tables): the database-specific keywords (`table`, `relation`, `persist`, and indexing).
