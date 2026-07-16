@@ -28,11 +28,11 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-The above code will create an endpoint called `example` (the Endpoint suffix will be removed) with the single `hello` method. To generate the client-side code run `serverpod generate` in the home directory of the server.
+The above code will create an endpoint called `example` (the Endpoint suffix will be removed) with the single `hello` method. While [`serverpod start`](./server-fundamentals/running-your-server) is running, the client-side code is generated automatically when you save. Outside a session, run `serverpod generate` in the server directory instead.
 
 :::info
 
-You can pass the `--watch` flag to `serverpod generate` to watch for changed files and generate code whenever your source files are updated. This is useful during the development of your server.
+You can pass the `--watch` flag to `serverpod generate` to watch for changed files and regenerate without a `serverpod start` session.
 
 :::
 
@@ -58,7 +58,7 @@ var client = Client('http://localhost:8080/')
 
 If you run the app in an Android emulator, use `10.0.2.2` instead of `localhost`, since `10.0.2.2` is the IP address of the host machine from inside the emulator. To access the server from a different device on the same network (such as a physical phone), replace `localhost` with the local IP address of your machine. You can find the local IP by running `ifconfig` (Linux/macOS) or `ipconfig` (Windows).
 
-Make sure to also update the `publicHost` in the development config so the server always serves the client with the correct path to assets and other resources.
+Make sure to also update the `publicHost` in the development config so the server always serves the client with the correct path to assets and other resources. See [Configuration](./server-fundamentals/configuration) for how the config files work.
 
 ```yaml
 # your_project_server/config/development.yaml

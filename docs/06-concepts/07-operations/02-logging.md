@@ -36,7 +36,7 @@ For the default values when environment variables are not set, see the [default 
 - `SERVERPOD_SESSION_LOG_RETENTION_PERIOD`: How long to keep session log entries (duration string, e.g. `30d`, `6h`). Set to empty or omit to use the default (90 days).
 - `SERVERPOD_SESSION_LOG_RETENTION_COUNT`: Maximum number of session log entries to keep. Set to empty or omit to use the default (100,000).
 - `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED`: Controls whether session logs are output to the console.
-- `SERVERPOD_SESSION_CONSOLE_LOG_FORMAT`: The format for console logging (`text` or `json`). See [configuration](../server-fundamentals/configuration).
+- `SERVERPOD_SESSION_CONSOLE_LOG_FORMAT`: The format for console logging (`text` or `json`). See the [Configuration reference](../lookups/configuration-reference).
 
 ### Configuration file example
 
@@ -60,7 +60,7 @@ By default, session logging behavior depends on whether the project has database
 - **When a database is present**
 
   - `persistentEnabled` is set to `true`, meaning logs are stored in the database.
-  - `consoleEnabled` is set to `false` by default, meaning logs are not printed to the console unless explicitly enabled.
+  - `consoleEnabled` defaults to `true` in the `development` run mode and `false` in the other run modes, so local runs print to the console while deployed runs rely on the database logs unless console logging is explicitly enabled.
 
 - **When no database is present**
 

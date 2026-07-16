@@ -30,7 +30,7 @@ my_project/
 └── my_project_flutter/  # Your Flutter app.
 ```
 
-In the `_server` package you add your endpoints and data models. Serverpod's code generator generates code on the server and in the client package. You get a type-safe Dart API for your app, along with the serialization and database code on the server. You never write serialization, HTTP calls, or API contracts.
+In the `_server` package you add your endpoints and data models. Serverpod's code generator generates code on the server and in the client package. You get a type-safe Dart API for your app, along with the serialization and database code on the server. You never write serialization, HTTP calls, or API contracts. For what each package holds in detail, see [Your Serverpod project](./concepts/server-fundamentals/your-serverpod-project).
 
 ## Run your project
 
