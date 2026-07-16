@@ -53,6 +53,88 @@ catch(e) {
 }
 ```
 
+### Group exceptions in a hierarchy
+
+Use `extends` to share fields and handling across related serializable exceptions. Add `sealed: true` to the root when all concrete cases are known and clients should handle them exhaustively.
+
+Define each exception in its own model file. For example, start with a sealed base exception:
+
+```yaml
+# api_exception.spy.yaml
+exception: ApiException
+sealed: true
+fields:
+  message: String
+```
+
+Then extend it with the concrete failures your endpoint can throw:
+
+```yaml
+# not_found_exception.spy.yaml
+exception: NotFoundException
+extends: ApiException
+fields:
+  resource: String
+```
+
+```yaml
+# validation_exception.spy.yaml
+exception: ValidationException
+extends: ApiException
+fields:
+  field: String
+```
+
+After running `serverpod generate`, throw the concrete exceptions from an endpoint:
+
+```dart
+class UserEndpoint extends Endpoint {
+  Future<void> updateName(
+    Session session, {
+    required int userId,
+    required String name,
+  }) async {
+    if (name.trim().isEmpty) {
+      throw ValidationException(
+        message: 'Enter a name.',
+        field: 'name',
+      );
+    }
+
+    var user = await User.db.findById(session, userId);
+    if (user == null) {
+      throw NotFoundException(
+        message: 'The user was not found.',
+        resource: 'user',
+      );
+    }
+
+    await User.db.updateRow(session, user.copyWith(name: name));
+  }
+}
+```
+
+On the client, catch the base type and use an exhaustive switch over its concrete subtypes:
+
+```dart
+try {
+  await client.user.updateName(userId: userId, name: name);
+} on ApiException catch (error) {
+  var message = switch (error) {
+    NotFoundException(:final resource) => '$resource was not found.',
+    ValidationException(:final field) => 'Check the $field field.',
+  };
+
+  showError(message);
+}
+```
+
+The Dart analyzer requires every subtype of the sealed exception to be covered. This makes adding another concrete exception an explicit client change instead of silently falling through a general catch.
+
+Exception hierarchies can be defined in a [shared package](../data-and-the-database/models/shared-packages) when several Serverpod projects need the same wire types. Keep every subtype of a sealed shared exception in that same shared package. A consuming project cannot add another subtype to a sealed exception from a different package.
+
+An exception can only extend another exception, and a regular model class can only extend another regular model class. Serverpod reports a model validation error if a hierarchy mixes the two kinds.
+
 ### Custom serializable exception classes
 
 If you already have a Dart exception class in a package shared by the server and client, the class must implement `SerializableException` for Serverpod to send it to the client. Otherwise, Serverpod treats the exception as an internal server error.
