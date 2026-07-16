@@ -36,12 +36,12 @@ fields:
 Save the file. The regenerated `Recipe` class now exposes database methods through `Recipe.db`.
 
 :::info
-See the [database models](../06-concepts/02-models/01-models.md#keywords-1) reference for all the keywords you can use in a table.
+See the [database models](../concepts/data-and-the-database/models#keywords-1) reference for all the keywords you can use in a table.
 :::
 
 ## Create and apply the migration
 
-Changing the schema requires a [migration](../06-concepts/06-database/11-migrations.md): a set of SQL steps that bring the database up to date with your models. The `serverpod start` terminal has shortcuts for this, listed along the bottom. With that terminal focused:
+Changing the schema requires a [migration](../concepts/data-and-the-database/database/migrations): a set of SQL steps that bring the database up to date with your models. The `serverpod start` terminal has shortcuts for this, listed along the bottom. With that terminal focused:
 
 ![serverpod start tui](/img/getting-started/tui-logs.png)
 
@@ -77,7 +77,7 @@ Add a second method to the endpoint that returns every saved recipe, newest firs
 ```
 
 :::info
-`insertRow` and `find` are Serverpod's typed database methods. See [CRUD](../06-concepts/06-database/05-crud.md) for the full set of operations.
+`insertRow` and `find` are Serverpod's typed database methods. See [CRUD](../concepts/data-and-the-database/database/crud) for the full set of operations.
 :::
 
 ## Show the saved recipes in your app

@@ -45,7 +45,7 @@ services:
       - <projectname>_test_data:/var/lib/postgresql/data
 ```
 
-If your project also uses [vector fields](../concepts/models/vector-fields), you need both pgvector and PostGIS. Create a custom `Dockerfile` instead:
+If your project also uses [vector fields](../concepts/data-and-the-database/models/vector-and-geography-fields), you need both pgvector and PostGIS. Create a custom `Dockerfile` instead:
 
 ```dockerfile
 FROM pgvector/pgvector:pg16
@@ -99,7 +99,7 @@ $ serverpod create-migration
 $ dart run bin/main.dart --apply-migrations
 ```
 
-For more details on creating and applying migrations, see the [Migrations](../concepts/database/migrations) section.
+For more details on creating and applying migrations, see the [Migrations](../concepts/data-and-the-database/database/migrations) section.
 
 The PostGIS extension will be automatically enabled during the first migration that includes a geography column.
 

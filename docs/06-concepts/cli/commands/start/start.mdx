@@ -2,62 +2,8 @@
 title: ""
 ---
 import MaintainedCommandIntro from './_start.md';
+import Start from '../../_generated/start.md';
 
 <MaintainedCommandIntro/>
 
-When it boots the server, `serverpod start` applies any pending migrations. While it runs, you create and apply new migrations from the terminal UI (see [Terminal UI shortcuts](#terminal-ui-shortcuts)).
-
-## Usage
-
-```bash
-serverpod start [options] [-- <server-args>]
-```
-
-## Options
-
-| Option | Default | Description |
-| --- | --- | --- |
-| `-w`, `--watch` / `--no-watch` | `true` | Watch files and hot-reload using the Frontend Server for fast incremental compilation. Pass `--no-watch` to start the server with `dart run` instead. |
-| `-d`, `--directory <path>` | auto-detect | Set the server package directory. Auto-detected from the current directory when omitted. |
-| `--docker` / `--no-docker` | `false` | Start Docker Compose services if a `docker-compose.yaml` exists (typically Redis when running Postgres separately). Off by default; pass `--docker` to opt in. |
-| `--tui` / `--no-tui` | `true` | Show the interactive terminal UI. Pass `--no-tui` to run without it, for example in scripts or non-interactive shells. |
-| `--flutter` / `--no-flutter` | `true` | Launch the companion Flutter app alongside the server. Pass `--no-flutter` to start only the server. |
-| `--flutter-device <name>` | `chrome` | Choose the device passed to `flutter run -d`. Use `web-server` for headless or CI runs. |
-| `--flutter-option <arg>` | none | Forward an extra argument to [`flutter run`](https://docs.flutter.dev/reference/flutter-cli). Repeatable, e.g. `--flutter-option=--web-port=8090`. |
-| `-h`, `--help` | | Print usage information. |
-
-## Terminal UI shortcuts
-
-The interactive terminal UI lists its shortcuts along the bottom. With the `serverpod start` terminal focused:
-
-| Key | Action |
-| --- | --- |
-| **R** | Hot restart the server. |
-| **M** | Create a migration from your current model changes (`Shift+M` to force). |
-| **A** | Apply pending migrations to the database. |
-| **P** | Create a repair migration to reconcile a drifted database (`Shift+P` to force). |
-
-Saving a file hot-reloads the server automatically while watching is enabled.
-
-## Passing arguments to the server
-
-Arguments after `--` are forwarded to the running server. For example, to start it in a specific run mode:
-
-```bash
-serverpod start -- --mode staging
-```
-
-The server accepts the following arguments:
-
-| Argument | Allowed values | Default | Description |
-| --- | --- | --- | --- |
-| `-m`, `--mode` | `development`, `test`, `staging`, `production` | `development` | Set the run mode the server starts in. |
-| `-r`, `--role` | `monolith`, `serverless`, `maintenance` | `monolith` | Set the role the server runs as. |
-| `-l`, `--logging` | `normal`, `verbose` | `normal` | Set the logging level. |
-| `-i`, `--server-id` | any | `default` | Set the id of this server instance. |
-| `-a`, `--apply-migrations` | | `false` | Apply pending database migrations on boot. |
-| `-A`, `--apply-repair-migration` | | `false` | Apply the repair migration on boot. |
-
-:::note
-`serverpod start` is intended for local development. For production, deploy the server instead. See [Deploy to Serverpod Cloud](../../../../08-deployments/01-deploy-to-serverpod-cloud.md) or [Custom hosting](../../../../08-deployments/custom-hosting/01-choosing-a-strategy.md).
-:::
+<Start/>
