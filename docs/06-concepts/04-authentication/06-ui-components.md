@@ -52,7 +52,93 @@ class SignInPage extends StatelessWidget {
 }
 ```
 
-### Disabling Providers
+### Localize sign-in text
+
+Wrap `SignInWidget`, or individual authentication widgets, in a `SignInLocalizationProvider` to replace their built-in English text. The following example supplies Brazilian Portuguese text for the common UI, the complete email flow, password requirements, and each supported provider button:
+
+```dart
+const basicTexts = BasicSignInTexts(
+  noAuthenticationProvidersConfigured:
+      'Nenhum provedor de autenticação configurado',
+  orContinueWith: 'ou continue com',
+);
+
+const emailTexts = EmailSignInTexts(
+  title: 'Entrar com e-mail',
+  forgotPassword: 'Esqueceu sua senha?',
+  signIn: 'Entrar',
+  dontHaveAnAccount: 'Não tem uma conta?',
+  signUp: 'Criar conta',
+  signUpTitle: 'Criar conta com e-mail',
+  continueAction: 'Continuar',
+  alreadyHaveAnAccount: 'Já tem uma conta?',
+  verifyAccountTitle: 'Verificar conta',
+  verifyResetCodeTitle: 'Verificar código de redefinição',
+  verificationMessage:
+      'Enviamos um e-mail de verificação. Confira sua caixa de entrada e '
+      'digite o código abaixo.',
+  verify: 'Verificar',
+  setAccountPasswordTitle: 'Definir senha da conta',
+  passwordLabel: 'Senha',
+  backToSignUp: 'Voltar para criar conta',
+  setNewPasswordTitle: 'Definir nova senha',
+  newPasswordLabel: 'Nova senha',
+  resetPasswordTitle: 'Redefinir senha',
+  resetPasswordDescription:
+      'Digite o endereço de e-mail para redefinir sua senha.',
+  requestPasswordReset: 'Solicitar redefinição de senha',
+  resetPassword: 'Redefinir senha',
+  backToSignIn: 'Voltar para entrar',
+  emailLabel: 'E-mail',
+  termsIntro: 'Li e aceito os ',
+  termsAndConditions: 'Termos e Condições',
+  andText: ' e a ',
+  privacyPolicy: 'Política de Privacidade',
+);
+
+const passwordTexts = PasswordRequirementTexts(
+  minLengthTemplate: 'Pelo menos {length} caracteres',
+  maxLengthTemplate: 'No máximo {length} caracteres',
+  containsLowercase: 'Contém pelo menos uma letra minúscula',
+  containsUppercase: 'Contém pelo menos uma letra maiúscula',
+  containsNumber: 'Contém pelo menos um número',
+  containsSpecialCharacter: 'Contém pelo menos um caractere especial',
+);
+
+SignInLocalizationProvider(
+  basic: basicTexts,
+  email: emailTexts,
+  passwordRequirementTexts: passwordTexts,
+  apple: const AppleSignInTexts(signInButton: 'Entrar com Apple'),
+  google: const GoogleSignInTexts(signInButton: 'Entrar com Google'),
+  github: const GitHubSignInTexts(signInButton: 'Entrar com GitHub'),
+  microsoft: const MicrosoftSignInTexts(signInButton: 'Entrar com Microsoft'),
+  facebook: const FacebookSignInTexts(signInButton: 'Entrar com Facebook'),
+  anonymous: const AnonymousSignInTexts(signInButton: 'Entrar como visitante'),
+  child: SignInWidget(
+    client: client,
+    onAuthenticated: onAuthenticated,
+    onError: onError,
+  ),
+);
+```
+
+`BasicSignInTexts` covers shared messages and dividers. `EmailSignInTexts` covers email sign-in, registration, account verification, password reset, and terms and privacy labels. The provider-specific objects cover the Apple, Google, GitHub, Microsoft, Facebook, and anonymous sign-in buttons. `PasswordRequirementTexts` controls the labels shown by built-in password requirement widgets. Keep the `{length}` placeholder in the minimum and maximum length templates.
+
+Every text object has a `defaults` constant with the built-in English text. If you omit an object from `SignInLocalizationProvider`, its default is used. To change only some values, start from the defaults:
+
+```dart
+email: EmailSignInTexts.defaults.copyWith(
+  title: 'Entrar com e-mail',
+  signIn: 'Entrar',
+),
+```
+
+`SignInLocalizationProvider` supplies text to its descendant widgets. It does not select translations from Flutter's current `Locale`. If your app supports several locales, choose the matching text objects through your app's localization setup and rebuild the provider when the locale changes.
+
+Firebase authentication is not covered by these text objects. The `serverpod_auth_idp_flutter_firebase` package supplies a controller for the Firebase flow, so localize the Flutter UI that you connect to that controller.
+
+### Disable providers
 
 It is not possible to forcefully enable a provider, since this depends on the configuration of the identity providers, as described in the [setup section](./setup#identity-providers-configuration).
 
@@ -75,7 +161,7 @@ SignInWidget(
 )
 ```
 
-### Customizing SignInWidget
+### Customize SignInWidget
 
 You can customize individual provider widgets:
 
