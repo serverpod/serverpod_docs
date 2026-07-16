@@ -81,6 +81,45 @@ fields:
   hash: Bit(256)
 ```
 
+### Read vector values in Dart
+
+`Vector`, `HalfVector`, `SparseVector`, and `Bit` are Dart `Iterable` values. You can read their length, access a zero-based index with `[]`, loop over their elements, and use standard iterable methods:
+
+```dart
+var embedding = const Vector([0.2, 0.4, 0.6]);
+
+print(embedding.length); // 3
+print(embedding[1]); // 0.4
+
+for (var value in embedding) {
+  print(value);
+}
+
+var hasLargeValue = embedding.any((value) => value > 0.5);
+var doubled = embedding.map((value) => value * 2).toList();
+var values = embedding.toList();
+```
+
+`Vector`, `HalfVector`, and `SparseVector` iterate over `double` values. `Bit` iterates over `bool` values:
+
+```dart
+var flags = Bit([true, false, true]);
+var enabledCount = flags.where((value) => value).length;
+var secondFlag = flags[1]; // false
+```
+
+A `SparseVector` iterates over every dimension, including dimensions that are not stored internally. Indexed access and `toList()` return `0.0` for those dimensions:
+
+```dart
+var sparse = SparseVector([1.5, 0.0, 0.0, 2.5]);
+
+print(sparse.length); // 4
+print(sparse[1]); // 0.0
+print(sparse.toList()); // [1.5, 0.0, 0.0, 2.5]
+```
+
+Accessing an index outside `0` through `length - 1` throws a `RangeError` for every vector type.
+
 ## Geography fields
 
 Geography types are used for storing geospatial data on the surface of the Earth. They are stored as PostGIS geography columns in PostgreSQL using the WGS 84 coordinate system (SRID 4326), which is the standard used by GPS. The SRID is fixed to `4326`, available in Dart as `Geography.defaultSrid`; configuring a different SRID per column is not yet supported.
