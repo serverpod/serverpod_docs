@@ -53,7 +53,7 @@ class ExampleEndpoint extends Endpoint {
 
 ## Session lifecycle
 
-Serverpod creates the session when the request or task starts and closes it when the work completes. Closing finalizes the session's log and releases its resources. The exception is `InternalSession`: you [create it yourself](#create-a-session-for-background-work), so you close it yourself.
+Serverpod creates the session when the request or task starts and closes it when the work completes. Closing finalizes the session's log and releases its resources. The exception is `InternalSession`, which you [create yourself](#create-a-session-for-background-work) for background work and which stays open until something closes it.
 
 ### Run cleanup when a session closes
 
@@ -90,6 +90,15 @@ await pod.withSession((session) async {
 ```
 
 If the callback throws, the session is closed with the error and stack trace attached, so they reach the logs, and the error is rethrown.
+
+Session logging is on by default. Pass `enableLogging: false` for work that does not need a session log entry of its own, such as a refresh that runs on a short interval:
+
+```dart
+await pod.withSession(
+  (session) => refreshInMemoryState(session),
+  enableLogging: false,
+);
+```
 
 If you need to manage the lifetime yourself, create the session manually and close it when done. An unclosed session is never finalized and its resources are not released, so pair `createSession` with a `finally`:
 
