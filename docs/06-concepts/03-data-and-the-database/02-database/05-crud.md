@@ -12,7 +12,10 @@ For the following examples we will use this model:
 class: Company
 table: company
 fields:
-  name: String
+  name: String, unique
+  address: String?
+  employeeCount: int, default=0
+  isActive: bool, default=true
 ```
 
 :::note
@@ -59,6 +62,81 @@ This is useful for idempotent operations where you want to insert data without f
 :::warning
 When using `ignoreConflicts` with models that have [non-persistent fields](./tables#non-persistent-fields), each row is inserted individually instead of in a single batch. This is necessary because the database cannot report which rows were skipped in a batch insert, making it impossible to correctly match non-persistent field values back to inserted rows. For large numbers of rows, this can cause performance issues. Consider removing non-persistent fields from the model or inserting in smaller batches.
 :::
+
+## Insert or update rows
+
+Use an upsert when you want to insert a row unless another row already has the same unique value. If a conflict occurs, the existing row is updated instead. The database performs the check and write as one atomic operation.
+
+Call `upsertRow` to upsert one row. The `conflictColumns` must identify a unique constraint or unique index in your database. In the example model, `name` is unique:
+
+```dart
+var company = await Company.db.upsertRow(
+  session,
+  Company(name: 'Serverpod', employeeCount: 42),
+  conflictColumns: (t) => [t.name],
+);
+```
+
+If no company named `Serverpod` exists, a new row is inserted. Otherwise, the existing row keeps its `id`, and its other persistent columns are updated with the values from the supplied object. By default, Serverpod updates every persistent column except the `id` and the columns in `conflictColumns`.
+
+The primary `id` column can also be the conflict target. This is useful when a model may represent either an existing row with an `id` or a new row without one:
+
+```dart
+var company = await Company.db.upsertRow(
+  session,
+  Company(id: companyId, name: 'Serverpod', employeeCount: 42),
+  conflictColumns: (t) => [t.id],
+);
+```
+
+### Choose which columns to update
+
+Use `updateColumns` to limit which columns change when a conflict occurs:
+
+```dart
+var company = await Company.db.upsertRow(
+  session,
+  Company(name: 'Serverpod', employeeCount: 42),
+  conflictColumns: (t) => [t.name],
+  updateColumns: (t) => [t.employeeCount],
+);
+```
+
+This inserts all persistent values for a new row. For an existing row, it updates only `employeeCount`.
+
+Use `updateWhere` to update a conflicting row only when the existing row matches a condition:
+
+```dart
+var company = await Company.db.upsertRow(
+  session,
+  Company(name: 'Serverpod', employeeCount: 42),
+  conflictColumns: (t) => [t.name],
+  updateWhere: (t) => t.isActive.equals(true),
+);
+```
+
+The return type of `upsertRow` is nullable. If an existing row conflicts but does not match `updateWhere`, the row is left unchanged, and the method returns `null`.
+
+### Upsert several rows
+
+Call `upsert` to insert or update several rows in a batch:
+
+```dart
+var companies = await Company.db.upsert(
+  session,
+  [
+    Company(name: 'Serverpod', employeeCount: 42),
+    Company(name: 'Example Ltd', employeeCount: 12),
+  ],
+  conflictColumns: (t) => [t.name],
+);
+```
+
+The batch is atomic. If any write fails, none of the rows are changed. You can also pass a `Transaction` with the `transaction` parameter.
+
+The batch method supports the same `updateColumns` and `updateWhere` parameters as `upsertRow`. Rows rejected by `updateWhere` are not returned, so the result can contain fewer rows than the input. Set `noReturn` to `true` if you do not need the resulting rows. The operation still writes the rows but returns an empty list.
+
+For models with [non-persistent fields](./tables#non-persistent-fields), Serverpod preserves the input values of those fields on the returned objects. The fields do not participate in conflict detection or database updates. A batch may use individual upsert statements internally to match each non-persistent value with the correct result, while keeping the full operation atomic.
 
 ## Read
 
