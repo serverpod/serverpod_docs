@@ -83,7 +83,7 @@ Secrets are read from `config/passwords.yaml` and can be overridden per secret t
 
 | Environment variable            | Overrides passwords-file key                                                     |
 | ------------------------------- | -------------------------------------------------------------------------------- |
-| SERVERPOD*PASSWORD*&lt;name&gt; | Any secret; the prefix is stripped (`SERVERPOD_PASSWORD_database` → `database`). |
+| `SERVERPOD_PASSWORD_<name>` | Any secret; the prefix is stripped (`SERVERPOD_PASSWORD_database` → `database`). |
 | SERVERPOD_DATABASE_PASSWORD     | database                                                                         |
 | SERVERPOD_SERVICE_SECRET        | serviceSecret                                                                    |
 | SERVERPOD_REDIS_PASSWORD        | redis                                                                            |
