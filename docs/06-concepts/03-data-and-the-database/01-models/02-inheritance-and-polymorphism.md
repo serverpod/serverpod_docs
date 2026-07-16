@@ -72,6 +72,51 @@ indexes:
 
 Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes. To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](./shared-packages).
 
+### Place inherited fields at the end
+
+By default, inherited fields are ordered from the root class down to the child class. Add the `tail` option to a field when it should appear after the hierarchy's normal fields. This is useful for common metadata such as creation and update timestamps that should remain at the end of generated constructors and serialized output.
+
+Add `tail` after the field type and any other field options:
+
+```yaml
+class: Entity
+fields:
+  tenantId: UuidValue
+  createdAt: DateTime, default=now, tail
+  updatedAt: DateTime, default=now, tail
+```
+
+Tail ordering applies across multiple inheritance levels. Normal fields keep their root-to-child order. Tail fields are then added from the most specific child back toward the root parent:
+
+```yaml
+class: ArchivedEntity
+extends: Entity
+fields:
+  archiveReason: String
+  archivedAt: DateTime, tail
+```
+
+```yaml
+class: Article
+extends: ArchivedEntity
+fields:
+  title: String
+  publishedAt: DateTime?, tail
+```
+
+The generated `Article` field order is:
+
+1. `tenantId`, the normal root field.
+2. `archiveReason`, the normal parent field.
+3. `title`, the normal child field.
+4. `publishedAt`, the child tail field.
+5. `archivedAt`, the parent tail field.
+6. `createdAt` and `updatedAt`, the root tail fields in their declared order.
+
+This order is used by generated constructor parameters and serialization code. For table models, it is also used in generated table definitions, with the primary `id` first. The `tail` option is not allowed on `id`.
+
+Changing `tail` only changes generated field ordering. It does not rename a database column or create a migration solely to reorder columns in an existing table.
+
 ### Sealed classes
 
 In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies, enabling exhaustive type checking. With sealed classes, the compiler knows all subclasses, ensuring that every possible case is handled when working with the model.
