@@ -254,6 +254,32 @@ var companiesDeleted = await Company.db.deleteWhere(
 
 The above example will delete any row where the `name` ends in _Ltd_. The `deleteWhere` method returns a `List` of the models deleted, ordered by name in descending order, followed by id in ascending order.
 
+## Skip reading affected rows
+
+List-returning write methods normally read the affected rows back from the database. Set `noReturn` to `true` when you only need the operation to succeed and do not need those model objects:
+
+```dart
+await Company.db.updateWhere(
+  session,
+  columnValues: (t) => [t.name('Archived company')],
+  where: (t) => t.name.like('% Ltd'),
+  noReturn: true,
+);
+```
+
+The write still runs with the same filters, conflict handling, transaction, and atomicity guarantees, but the method returns an empty list. Skipping the returned data avoids transferring and deserializing affected rows. This is useful for bulk imports, cleanup jobs, and other writes where you do not need generated IDs, database defaults, updated values, or the affected model objects.
+
+The `noReturn` parameter is available on these generated methods:
+
+- `insert`.
+- `update` and `updateWhere`.
+- `upsert`.
+- `delete` and `deleteWhere`.
+
+It is not available on single-row methods such as `insertRow`, `updateRow`, `upsertRow`, or `deleteRow`, which return the affected row.
+
+Because the returned list is empty, options that only control the order of returned rows have no observable effect. Ordering can still matter on filtered operations when it determines which rows a `limit` or `offset` selects.
+
 ## Count
 
 Count is a special type of query that helps counting the number of rows in the database that matches a specific [filter](./filtering).
