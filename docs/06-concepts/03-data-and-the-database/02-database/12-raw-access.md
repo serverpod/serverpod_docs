@@ -81,3 +81,5 @@ var result = await db.unsafeQuery(
 :::danger
 Always sanitize your input when using raw query methods. For the `unsafeQuery` and `unsafeExecute` methods, use query parameters to prevent SQL injection. Avoid using `unsafeSimpleQuery` and `unsafeSimpleExecute` unless the simple query protocol is strictly required.
 :::
+
+For cross-cutting tracing, metrics, tenant scoping, or policy enforcement across database operations, see [Intercept database access](./database-interceptors).
