@@ -6,17 +6,17 @@ description: Endpoints expose server methods to a generated, typed client your F
 
 # Working with endpoints
 
-Endpoints define the server methods that the client can call. With Serverpod, you add methods to your endpoint, and your client code will be generated to make the method call.
+Endpoints are how your app talks to your server: you write a method on the server, and Serverpod generates a typed Dart method your app calls directly, with no REST layer, JSON parsing, or API contract to maintain. This page covers defining endpoints, calling them from your app, and pointing the app at each environment. The rest of this section builds on it, page by page: [sessions](./endpoints-and-apis/sessions), [error handling](./endpoints-and-apis/error-handling-and-exceptions), [streaming](./endpoints-and-apis/streaming), [server events](./endpoints-and-apis/server-events), and [file uploads](./endpoints-and-apis/file-uploads). See [Related](#related) for the full map.
 
 For the client code to be generated:
 
 - Place the endpoint file anywhere under the `lib` directory of your server.
 - Create a class that extends `Endpoint`.
-- Define methods that return a typed `Future` and take a `Session` object as their first argument.
+- Define methods that return a typed `Future` (or a `Stream`, see [Streaming](./endpoints-and-apis/streaming)) and take a `Session` object as their first argument.
 
-The `Session` object holds information about the call being made and provides access to the database.
+The [`Session`](./endpoints-and-apis/sessions) object holds information about the call being made and provides access to the database.
 
-## Creating an endpoint
+## Create an endpoint
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -28,99 +28,92 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-The above code will create an endpoint called `example` (the Endpoint suffix will be removed) with the single `hello` method. While [`serverpod start`](./server-fundamentals/running-your-server) is running, the client-side code is generated automatically when you save. Outside a session, run `serverpod generate` in the server directory instead.
+The above code creates an endpoint called `example` (the Endpoint suffix is removed) with the single `hello` method. While [`serverpod start`](./server-fundamentals/running-your-server) is running, the client-side code is generated automatically when you save. Outside a start session, run `serverpod generate` (or `serverpod generate --watch`) in the server directory.
 
-:::info
+## Call an endpoint from your app
 
-You can pass the `--watch` flag to `serverpod generate` to watch for changed files and regenerate without a `serverpod start` session.
-
-:::
-
-## Calling an endpoint
-
-On the client side, you can now call the method by calling:
+Your app calls the method through the generated client:
 
 ```dart
 var result = await client.example.hello('World');
 ```
 
-Initialize the generated client once and keep it somewhere that the rest of your app can reuse, such as a service locator:
+The scaffolded Flutter app already creates that client in `lib/main.dart`, connected to your development server:
 
 ```dart
-// Sets up a singleton client object that can be used to talk to the server from
-// anywhere in our app. The client is generated from your server code.
-// The client is set up to connect to a Serverpod running on a local server on
-// the default port. You will need to modify this to connect to staging or
-// production servers.
-var client = Client('http://localhost:8080/')
-  ..connectivityMonitor = FlutterConnectivityMonitor();
+late final Client client;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final serverUrl = await getServerUrl();
+
+  client = Client(serverUrl)
+    ..connectivityMonitor = FlutterConnectivityMonitor();
+
+  runApp(const MyApp());
+}
 ```
 
-If you run the app in an Android emulator, use `10.0.2.2` instead of `localhost`, since `10.0.2.2` is the IP address of the host machine from inside the emulator. To access the server from a different device on the same network (such as a physical phone), replace `localhost` with the local IP address of your machine. You can find the local IP by running `ifconfig` (Linux/macOS) or `ipconfig` (Windows).
+The `getServerUrl()` helper from `serverpod_flutter` picks the server address from the first of these that is set:
 
-Make sure to also update the `publicHost` in the development config so the server always serves the client with the correct path to assets and other resources. See [Configuration](./server-fundamentals/configuration) for how the config files work.
+1. The `SERVER_URL` compile-time define, for [choosing the URL per build](#point-the-client-at-each-environment).
+2. The `apiUrl` value in `assets/config.json`.
+3. The default, `http://localhost:8080/`, where localhost adapts to the platform, so an Android emulator reaches your machine through `10.0.2.2` without any changes.
 
-```yaml
-# your_project_server/config/development.yaml
+The `connectivityMonitor` lets the client observe network changes. Projects created with authentication also attach an `authSessionManager` here.
 
-apiServer:
-  port: 8080
-  publicHost: localhost # Change this line
-  publicPort: 8080
-  publicScheme: http
-```
+On a physical device, localhost is the device itself, so the app needs your machine's network address instead:
+
+1. Find your machine's LAN IP, with `ifconfig` on Linux/macOS or `ipconfig` on Windows.
+2. Set it as the server URL, either as `apiUrl` in `assets/config.json` or with `--dart-define=SERVER_URL=http://192.168.1.20:8080/`.
+
+Also set `publicHost` in the development config to the same IP, so URLs the server hands out, such as public file links, point somewhere the device can reach; see [Configuration](./server-fundamentals/configuration).
 
 To enable browser credentials for CORS or use platform-native HTTP clients, see [Configure HTTP calls](./endpoints-and-apis/configure-http-calls).
 
 ## Point the client at each environment
 
-The URL you pass to `Client` is the server the app connects to, so it changes between development, staging, and production. Keep one client setup and choose the URL at build time with `--dart-define`:
-
-```dart
-const serverUrl = String.fromEnvironment(
-  'SERVERPOD_URL',
-  defaultValue: 'http://localhost:8080/',
-);
-
-var client = Client(serverUrl)
-  ..connectivityMonitor = FlutterConnectivityMonitor();
-```
-
-Pass the URL for each build:
+The resolved server URL is the server the app connects to, so it changes between development, staging, and production. Keep the scaffolded client setup and choose the URL per build with `--dart-define`:
 
 ```bash
-flutter run --dart-define=SERVERPOD_URL=https://staging.example.com/
+flutter run --dart-define=SERVER_URL=https://staging.example.com/
 ```
 
-Without the define, the app falls back to the local server. In production, use your deployed server's public URL. If you deploy to [Serverpod Cloud](/cloud), that is the URL of your deployed app.
+Without the define, the app falls back to `assets/config.json` and then the local server. For a Flutter web app served by your Serverpod web server, the server provides `config.json` at runtime with its own API address, so the deployed web app finds the right server without a rebuild. In production, use your deployed server's public URL. If you deploy to [Serverpod Cloud](/cloud), that is the URL of your deployed app.
 
-## Passing parameters
+## Restrict access to your endpoints
 
-There are some limitations to how endpoint methods can be implemented. Parameters and return types can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, or generated serializable objects (see next section). A typed `Future` should always be returned. Null safety is supported. When passing a `DateTime` it is always converted to UTC.
+Endpoints are open to any client by default. To require a signed-in user, override `requireLogin` and to require specific scopes, override `requiredScopes`:
 
-You can also pass `List`, `Map`, `Record`, and `Set` as parameters, but they need to be strictly typed with one of the types mentioned above.
+```dart
+class PrivateEndpoint extends Endpoint {
+  @override
+  bool get requireLogin => true;
 
-:::warning
-
-While it's possible to pass binary data through a method call and `ByteData`, it is not the most efficient way to transfer large files. See our [file upload](./endpoints-and-apis/file-uploads) interface. The size of a call is by default limited to 524288 bytes (512 KiB). It's possible to change by adding the `maxRequestSize` to your config files. E.g., this will double the request size to 1 MiB:
-
-```yaml
-maxRequestSize: 1048576
+  Future<String> onlyForSignedInUsers(Session session) async {
+    return 'Hello ${session.authenticated?.userIdentifier}';
+  }
+}
 ```
 
-:::
+If a call fails the check, the app receives a typed error; see [error handling](./endpoints-and-apis/error-handling-and-exceptions).
 
-## Return types
+For how users sign in and how scopes work, see [Authentication](./authentication/basics).
 
-The return type must be a typed Future. Supported return types are the same as for parameters.
+## Pass and return data
 
-## Excluding endpoints from code generation
+Parameters and return values can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, `dynamic`, [vector and geography types](./data-and-the-database/models/vector-and-geography-fields), or generated serializable objects ([data models](./data-and-the-database/models)). You can also use `List`, `Map`, `Record`, and `Set`, strictly typed with the types above. Null safety is supported, and return types follow the same rules as parameters. A `DateTime` is always converted to UTC when passed.
 
-If you want the code generator to ignore an endpoint definition, you can annotate either the entire class or individual methods with `@doNotGenerate`. This can be useful if you want to keep the definition in your codebase without generating server or client bindings for it.
+Parameters are sent by name in the request between app and server, so renaming an endpoint method's parameters breaks older app builds. See [backward compatibility](./data-and-the-database/models/backward-compatibility) before changing a published API.
+
+Binary data over a method call is capped by the request size limit, 512 KiB by default (an oversized call fails with an HTTP 413 error). The limit is the `maxRequestSize` key in the [Configuration reference](./lookups/configuration-reference). For transferring files, use the [file upload](./endpoints-and-apis/file-uploads) interface instead.
+
+## Exclude an endpoint from generation
+
+If you want the code generator to ignore an endpoint definition, annotate either the entire class or individual methods with `@doNotGenerate`. This is useful for keeping a definition in your codebase without generating server or client bindings for it.
 
 ### Exclude an entire `Endpoint` class
-
-Annotate the class with `@doNotGenerate` to exclude it entirely:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -133,11 +126,9 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-The above code will not generate any server or client bindings for the example endpoint.
+The above code generates no server or client bindings for the example endpoint.
 
 ### Exclude individual `Endpoint` methods
-
-Alternatively, you can exclude individual methods by annotating them with `@doNotGenerate`.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -154,4 +145,20 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-In this case the `ExampleEndpoint` will only expose the `hello` method, whereas the `goodbye` method will not be accessible externally.
+In this case the `ExampleEndpoint` only exposes the `hello` method, and the `goodbye` method is not accessible externally. For how the annotation interacts with inheritance, see [Endpoint inheritance](./endpoints-and-apis/endpoint-inheritance).
+
+## Test your endpoints
+
+The generated test tools call your endpoints the same way production code does, against a test database. See [Get started with testing](./testing/get-started).
+
+## Related
+
+- [Sessions](./endpoints-and-apis/sessions): the object every endpoint method receives.
+- [Error handling and exceptions](./endpoints-and-apis/error-handling-and-exceptions): typed errors across the wire.
+- [Streaming](./endpoints-and-apis/streaming): push live data to your app.
+- [File uploads](./endpoints-and-apis/file-uploads): direct-to-storage uploads.
+- [Endpoint inheritance](./endpoints-and-apis/endpoint-inheritance): share behavior across endpoints and reshape module endpoints.
+- [Server events](./endpoints-and-apis/server-events): publish and subscribe to messages across sessions and servers.
+- [Endpoint middleware](./endpoints-and-apis/endpoint-middleware): wrap every API request for logging or rate limiting.
+- [Configure HTTP calls](./endpoints-and-apis/configure-http-calls): CORS credentials and native HTTP stacks.
+- [Working with models](./data-and-the-database/models): define the data your endpoints exchange.

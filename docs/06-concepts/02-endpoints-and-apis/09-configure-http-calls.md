@@ -1,10 +1,10 @@
 ---
-description: Configure HTTP calls to set CORS credentials for web apps or use platform-native networking libraries.
+description: HTTP transport for the generated client is configurable through httpClientOverride, for CORS credentials on web and native network stacks.
 ---
 
 # Configure HTTP calls
 
-The generated `Client` accepts an optional `httpClientOverride` parameter that controls the underlying HTTP transport used for API calls. Use it when you need to customize how requests are sent, such as enabling browser credentials or using platform-native HTTP stacks.
+Two situations call for customizing how your app sends requests: a web app that must include cookies on cross-origin calls, and apps that want the platform-native network stacks on iOS and Android. Both are handled by the `httpClientOverride` parameter on the generated `Client`, which swaps the underlying HTTP transport. The `serverUrl` in the examples below is the resolved server address from [calling endpoints](../endpoints-and-apis#call-an-endpoint-from-your-app).
 
 ## Include CORS credentials on web
 
@@ -18,6 +18,8 @@ final client = Client(
   httpClientOverride: BrowserClient()..withCredentials = true,
 );
 ```
+
+### Allow credentials on the server
 
 On the server, Serverpod adds CORS headers to API responses by default through `httpResponseHeaders` and `httpOptionsResponseHeaders` on the `Serverpod` constructor. The defaults allow cross-origin `POST` requests from any origin (`Access-Control-Allow-Origin: *`) and permit common request headers such as `Authorization` on preflight `OPTIONS` requests.
 
@@ -85,12 +87,12 @@ void main() async {
     final engine = CronetEngine.build(
         cacheMode: CacheMode.memory,
         cacheMaxSize: 2 * 1024 * 1024,
-        userAgent: 'Book Agent');
+        userAgent: 'my-app');
     httpClient = CronetClient.fromCronetEngine(engine, closeEngine: true);
   } else if (Platform.isIOS || Platform.isMacOS) {
     final config = URLSessionConfiguration.ephemeralSessionConfiguration()
       ..cache = URLCache.withCapacity(memoryCapacity: 2 * 1024 * 1024)
-      ..httpAdditionalHeaders = {'User-Agent': 'Book Agent'};
+      ..httpAdditionalHeaders = {'User-Agent': 'my-app'};
     httpClient = CupertinoClient.fromSessionConfiguration(config);
   }
 

@@ -4,7 +4,7 @@ description: The Session object gives every endpoint call access to the database
 
 # Sessions
 
-Every endpoint method receives a `Session` object. It is the entry point for the database, cache, file storage, and messaging system. Serverpod creates and closes sessions automatically for endpoint calls; for background tasks you create and close them manually.
+Every endpoint method receives a `Session` object. It is the entry point for the database, cache, file storage, and messaging system. Serverpod creates and closes sessions automatically for endpoint calls. For background work, you create one yourself, most easily with [`withSession`](#create-a-session-for-background-work).
 
 :::note
 
@@ -12,93 +12,57 @@ A Serverpod Session should not be confused with the concept of "web sessions" or
 
 :::
 
-## Quick reference
-
-### Essential properties
-
-- **`db`** - Database access. [See database docs](../data-and-the-database/database/connection)
-- **`caches`** - Local and distributed caching. [See caching docs](../operations/caching)
-- **`storage`** - File storage operations. [See file uploads](./file-uploads)
-- **`messages`** - Server events for real-time communication within and across servers. [See server events docs](./server-events)
-- **`passwords`** - Credentials from config and environment. [See configuration](../server-fundamentals/configuration)
-- **`authenticated`** - Current user authentication info. [See authentication docs](../authentication/basics)
-
-### Key methods
-
-- **`log(message, level)`** - Add log entry
-- **`addWillCloseListener(callback)`** - Register cleanup callback
-
 ## Session types
 
-Serverpod creates different session types based on the context:
+Serverpod creates a session for every unit of work it runs, and the type reflects what triggered it. You will see these names in your [logs](../operations/logging) and in Insights when tracing a call:
 
-| Type                    | Created For                  | Lifetime            | Common Use Cases             |
-| ----------------------- | ---------------------------- | ------------------- | ---------------------------- |
-| **MethodCallSession**   | `Future<T>` endpoint methods | Single request      | API calls, CRUD operations   |
-| **WebCallSession**      | Web server routes            | Single request      | Web pages, form submissions  |
-| **MethodStreamSession** | `Stream<T>` endpoint methods | Stream duration     | Real-time updates, chat      |
-| **StreamingSession**    | WebSocket connections        | Connection duration | Live dashboards, multiplayer |
-| **FutureCallSession**   | Scheduled tasks              | Task execution      | Email sending, batch jobs    |
-| **InternalSession**     | Manual creation              | Until closed        | Background work, migrations  |
+| Type                    | Created for                                                                                                   | Lifetime            | Typical uses                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------- | ---------------------------- |
+| **MethodCallSession**   | `Future` [endpoint methods](../endpoints-and-apis)                                                            | Single request      | API calls, CRUD operations   |
+| **WebCallSession**      | [Web server](../web-server/overview) routes                                                                   | Single request      | Web pages, form submissions  |
+| **MethodStreamSession** | [Streaming methods](./streaming)                                                                              | Stream duration     | Real-time updates, chat      |
+| **StreamingSession**    | WebSocket connections of the [deprecated streaming endpoints API](./streaming#streaming-endpoints-deprecated) | Connection duration | Legacy real-time code        |
+| **FutureCallSession**   | [Scheduled tasks](../scheduling/setup)                                                                        | Task execution      | Email sending, batch jobs    |
+| **InternalSession**     | [Manual creation](#create-a-session-for-background-work)                                                      | Until closed        | Background work, migrations  |
 
-### Example: Automatic session (MethodCallSession)
+You rarely choose a type yourself: your endpoint methods receive the right one, and manual creation always produces an `InternalSession`.
 
 ```dart
-// lib/src/endpoints/example_endpoint.dart
 class ExampleEndpoint extends Endpoint {
   Future<String> hello(Session session, String name) async {
-    // MethodCallSession is created automatically
+    // A MethodCallSession was created for this call, and it closes
+    // automatically when the method returns.
     return 'Hello $name';
-    // Session closes automatically when method returns
   }
 }
 ```
 
-### Example: Manual session (InternalSession)
+## What a session provides
 
-InternalSession is the only session type that requires manual management:
-
-```dart
-Future<void> performMaintenance() async {
-  var session = await Serverpod.instance.createSession();
-  try {
-    // Perform operations
-    await cleanupOldRecords(session);
-    await updateStatistics(session);
-  } finally {
-    await session.close(); // Must close manually!
-  }
-}
-```
-
-**Important**: Always use try-finally with InternalSession to prevent memory leaks.
+| Member                      | What it is                                                                                      |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| `db`                        | Database access. See the [database docs](../data-and-the-database/database/connection).         |
+| `caches`                    | Local and distributed caching. See [caching](../operations/caching).                            |
+| `storage`                   | File storage. See [file uploads](./file-uploads).                                               |
+| `messages`                  | Server events for real-time communication. See [server events](./server-events).                |
+| `passwords`                 | Secrets from config and environment. See [configuration](../server-fundamentals/configuration). |
+| `authenticated`             | The current user's authentication info. See [authentication](../authentication/basics).         |
+| `log(...)`                  | Write a log entry tied to this session. See [logging](#logging).                                |
+| `addWillCloseListener(...)` | Register a cleanup callback that runs before the session closes.                                |
+| `serverpod`                 | The running Serverpod instance, for example for [future calls](../scheduling/setup).            |
 
 ## Session lifecycle
 
-```mermaid
-flowchart TB
-    Request([Request/Trigger]) --> Create[Session Created]
-    Create --> Init[Initialize]
-    Init --> Active[Execute Method]
-    Active --> Close[Close Session]
-    Close --> End([Request Complete])
-```
+Serverpod creates the session when the request or task starts and closes it when the work completes. Closing finalizes the session's log and releases its resources. The exception is `InternalSession`: you [create it yourself](#create-a-session-for-background-work), so you close it yourself.
 
-When a client makes a request, Serverpod creates the appropriate session type (see table above) and tears it down when the operation completes. Most sessions close automatically; `InternalSession` is the exception.
+### Run cleanup when a session closes
 
-### Internal Sessions
-
-The only exception is `InternalSession`, which you create manually for background tasks. Manual sessions require explicit closure with `session.close()`. Forgetting to close these sessions causes memory leaks as logs accumulate indefinitely. Always use try-finally blocks to ensure proper cleanup. After any session closes, attempting to use it throws a `StateError`.
-
-### Session cleanup callbacks
-
-You can register callbacks that execute just before a session closes using `addWillCloseListener`. This is useful for cleanup operations, releasing resources, or performing final operations:
+Register callbacks that execute just before a session closes with `addWillCloseListener`. This is useful for releasing resources or performing final operations:
 
 ```dart
 Future<void> processData(Session session) async {
   var tempFile = File('/tmp/processing_data.tmp');
 
-  // Register cleanup callback
   session.addWillCloseListener((session) async {
     if (await tempFile.exists()) {
       await tempFile.delete();
@@ -106,198 +70,82 @@ Future<void> processData(Session session) async {
     }
   });
 
-  // Process data using temp file
   await tempFile.writeAsString('processing...');
-  // Session closes automatically, cleanup callback runs
+  // The session closes automatically after the method returns,
+  // and the cleanup callback runs.
 }
 ```
 
-Cleanup callbacks run in the order they were registered and are called for all session types, including manual sessions when you call `session.close()`.
+Cleanup callbacks run in the order they were registered and fire for all session types, including manual sessions when you call `session.close()`.
 
-## Logging
+## Create a session for background work
 
-Log entries are written to the database when the session closes. Streaming sessions (`MethodStreamSession` and `StreamingSession`) write logs continuously to avoid memory buildup during long connections.
-
-:::warning
-
-If you forget to close a manual session (`InternalSession`), logs remain in memory indefinitely and are never persisted - this is a common cause of both memory leaks and missing debug information.
-
-:::
-
-## Common pitfalls and solutions
-
-### Pitfall 1: Using session after method returns
-
-**Problem:** Using a session after it's closed throws a `StateError`
+Inside an endpoint method, use the session you were given. It is already managed for you. When code runs outside a call, such as startup work in `run()` or a background job, create a session with `withSession`, which builds an `InternalSession`, runs your callback, and closes the session afterwards:
 
 ```dart
-Future<void> processUser(Session session, int userId) async {
-  var user = await User.db.findById(session, userId);
-
-  // Schedule async work
-  Timer(Duration(seconds: 5), () async {
-    // ❌ Session is already closed!
-    // This will throw: StateError: Session is closed
-    await user.updateLastSeen(session);
-  });
-
-  return; // Session closes here
-}
+await pod.withSession((session) async {
+  await cleanupOldRecords(session);
+  await updateStatistics(session);
+});
 ```
 
-**Solution 1 - Use FutureCalls:**
+If the callback throws, the session is closed with the error and stack trace attached, so they reach the logs, and the error is rethrown.
 
-```dart
-Future<void> processUser(Session session, int userId) async {
-  var user = await User.db.findById(session, userId);
-
-  // Schedule through Serverpod
-  await session.serverpod.futureCallWithDelay(
-    'updateLastSeen',
-    UserIdData(userId: userId),
-    Duration(seconds: 5),
-  );
-
-  return;
-}
-```
-
-**Solution 2 - Create manual session:**
-
-```dart
-Future<void> processUser(Session session, int userId) async {
-  var user = await User.db.findById(session, userId);
-
-  Timer(Duration(seconds: 5), () async {
-    // Create new session for async work
-    var newSession = await Serverpod.instance.createSession();
-    try {
-      await user.updateLastSeen(newSession);
-    } finally {
-      await newSession.close();
-    }
-  });
-
-  return;
-}
-```
-
-### Pitfall 2: Forgetting to close manual sessions
-
-**Problem:**
-
-```dart
-// ❌ Memory leak!
-var session = await Serverpod.instance.createSession();
-var users = await User.db.find(session);
-// Forgot to close - session leaks memory
-```
-
-**Solution - Always use try-finally:**
+If you need to manage the lifetime yourself, create the session manually and close it when done. An unclosed session is never finalized and its resources are not released, so pair `createSession` with a `finally`:
 
 ```dart
 var session = await Serverpod.instance.createSession();
 try {
   var users = await User.db.find(session);
-  // Process users
+  // Process users.
 } finally {
-  await session.close(); // Always runs
+  await session.close();
 }
 ```
 
-## Best practices
+## Run work after the call returns
 
-### 1. Let Serverpod manage sessions when possible
-
-Prefer using the session provided to your endpoint rather than creating new ones:
+The session that an endpoint method receives closes when the method returns, so do not capture it in timers or delayed callbacks:
 
 ```dart
-// ✅ Good - Use provided session
-Future<List<User>> getActiveUsers(Session session) async {
-  return await User.db.find(
-    session,
-    where: (t) => t.isActive.equals(true),
-  );
-}
-
-// ❌ Avoid - Creating unnecessary session
-Future<List<User>> getActiveUsers(Session session) async {
-  var newSession = await Serverpod.instance.createSession();
-  try {
-    return await User.db.find(newSession, ...);
-  } finally {
-    await newSession.close();
-  }
-}
-```
-
-### 2. Use FutureCalls for delayed operations
-
-Instead of managing sessions for async work, use Serverpod's [future call system](../scheduling/setup):
-
-```dart
-// ✅ Good - Let Serverpod manage the session
-await serverpod.futureCallWithDelay(
-  'processPayment',
-  PaymentData(orderId: order.id),
-  Duration(hours: 1),
-);
-
-// ❌ Complex - Manual session management
-Future.delayed(Duration(hours: 1), () async {
-  var session = await Serverpod.instance.createSession();
-  try {
-    await processPayment(session, order.id);
-  } finally {
-    await session.close();
-  }
-});
-```
-
-### 3. Handle errors properly
-
-Always handle exceptions to prevent unclosed sessions:
-
-```dart
-// ✅ Good - Errors won't prevent session cleanup
-Future<void> safeOperation() async {
-  var session = await Serverpod.instance.createSession();
-  try {
-    await riskyOperation(session);
-  } catch (e) {
-    session.log('Operation failed: $e', level: LogLevel.error);
-    // Handle error appropriately
-  } finally {
-    await session.close();
-  }
-}
-```
-
-## Testing
-
-When testing endpoints, the `TestSessionBuilder` can be used to simulate and configure session properties for controlled test scenarios:
-
-```dart
-withServerpod('test group', (sessionBuilder, endpoints) {
-  test('endpoint test', () async {
-    var result = await endpoints.users.getUser(sessionBuilder, 123);
-    expect(result.name, 'John');
+Future<void> processUser(Session session, int userId) async {
+  Timer(Duration(seconds: 5), () async {
+    // Do not do this: this session closed when processUser returned,
+    // and this callback runs outside any managed lifetime.
+    await updateLastSeen(session, userId);
   });
-
-  test('authenticated endpoint test', () async {
-    const int userId = 1234;
-
-    var authenticatedSessionBuilder = sessionBuilder.copyWith(
-      authentication: AuthenticationOverride.authenticationInfo(userId, {Scope('user')}),
-    );
-
-    var result = await endpoints.users.updateProfile(
-      authenticatedSessionBuilder,
-      ProfileData(name: 'Jane')
-    );
-    expect(result.success, isTrue);
-  });
-});
+}
 ```
 
-For detailed testing strategies, see the [testing documentation](../testing/get-started).
+Schedule the work as a [future call](../scheduling/setup) instead. Future calls survive server restarts and receive their own session when they run:
+
+```dart
+Future<void> processUser(Session session, int userId) async {
+  await session.serverpod.futureCalls
+      .callWithDelay(const Duration(seconds: 5))
+      .userMaintenance
+      .updateLastSeen(userId);
+}
+```
+
+For one-off work that can run immediately and does not need to survive a restart, `withSession` inside the callback is the lighter alternative.
+
+## Logging
+
+Use `session.log` to write log entries tied to the session. Entries are persisted according to your [session log configuration](../operations/logging), and closing the session finalizes its log. Sessions for [streaming methods](./streaming) are the exception: they write entries continuously while the stream is open, so a long-lived stream appears in your logs before it ends. This is on by default in the runtime log settings. See [Logging](../operations/logging) for storage, retention, and console output.
+
+```dart
+session.log('Processing started');
+session.log('Something looks off', level: LogLevel.warning);
+```
+
+## Test with sessions
+
+The test tools provide a `sessionBuilder` for calling endpoints in tests and simulating session state such as authentication. See [Get started with testing](../testing/get-started) and [the basics](../testing/the-basics) for the patterns.
+
+## Related
+
+- [Working with endpoints](../endpoints-and-apis): the methods that receive sessions.
+- [Scheduling](../scheduling/setup): future calls, the managed way to run delayed work.
+- [Logging](../operations/logging): where session log entries go.
+- [Authentication](../authentication/basics): what `session.authenticated` holds.
