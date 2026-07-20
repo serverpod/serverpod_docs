@@ -4,10 +4,9 @@ description: Endpoint inheritance lets one endpoint extend another, override beh
 
 # Endpoint inheritance
 
-Endpoints can be based on other endpoints using inheritance, like `class ChildEndpoint extends ParentEndpoint`. If the parent endpoint was marked as `abstract` or `@doNotGenerate`, no client code is generated for it, but a client will be generated for your subclass, as long as it does not opt out again.
-Inheritance gives you the possibility to modify the behavior of `Endpoint` classes defined in other Serverpod modules.
+An endpoint can extend another endpoint, declared like any Dart class: `class ChildEndpoint extends ParentEndpoint`. Use inheritance to share behavior across endpoints, such as [auth requirements](../authentication/basics), to extend or reshape endpoints from modules, and to control what the generated client exposes.
 
-Currently, there are the following possibilities to extend another `Endpoint` class:
+How the parent is marked decides what gets generated for it. An `abstract` parent is not exposed on the server, and a `@doNotGenerate` parent gets no client code. Your concrete subclass always gets a client, unless it opts out itself. The sections below walk through each case.
 
 ## Inheriting from an `Endpoint` class
 
@@ -194,13 +193,13 @@ class MyCalculatorEndpoint extends CalculatorEndpoint {
 }
 ```
 
-Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. `MyCalculatorEndpoint` will expose both the `add` and `addBig` methods, since `addBig` was overridden and thus lost the `@doNotGenerate` annotation.
+Since `CalculatorEndpoint` is `abstract`, it will not be exposed on the server. The generated `MyCalculatorEndpoint` client will expose both the `add` and `addBig` methods, since annotations are not inherited: overriding `addBig` without repeating `@doNotGenerate` re-exposes it.
 
 ## Building base endpoints for behavior
 
-Endpoint subclassing is not just useful to inherit (or hide) methods, it can also be used to pre-configure any other property of the `Endpoint` class.
+Beyond inheriting or hiding methods, endpoint subclassing can pre-configure any other property of the `Endpoint` class.
 
-For example, you could define a base class that requires callers to be logged in:
+For example, you could define a base class that requires callers to be signed in, using the `requireLogin` flag from [authentication on endpoints](../authentication/basics):
 
 ```dart
 abstract class LoggedInEndpoint extends Endpoint {
@@ -211,7 +210,7 @@ abstract class LoggedInEndpoint extends Endpoint {
 
 And now every endpoint that extends `LoggedInEndpoint` will check that the user is logged in.
 
-Similarly, you could wrap up a specific set of required scopes in a base endpoint, which you can then easily use for the app's endpoints instead of repeating the scopes in each:
+Similarly, you could wrap up a specific set of required scopes in a base endpoint, and use it for the app's endpoints instead of repeating the scopes in each:
 
 ```dart
 abstract class AdminEndpoint extends Endpoint {
@@ -220,7 +219,7 @@ abstract class AdminEndpoint extends Endpoint {
 }
 ```
 
-Again, just have your custom endpoint extend `AdminEndpoint` and you can be sure that the user has the appropriate permissions.
+Have your custom endpoint extend `AdminEndpoint`, and the user is guaranteed to hold the appropriate [scopes](../authentication/basics).
 
 ## Client-side endpoint inheritance
 
@@ -328,7 +327,7 @@ var advancedCalc = client.getEndpointOfType<EndpointCalculator>('advancedCalcula
 
 This pattern is especially useful for modules. A module can provide an abstract endpoint that defines an interface, and users of the module can extend it to expose the functionality on their server:
 
-**In a module (e.g., `serverpod_auth`):**
+**In a module:**
 
 Declare an abstract endpoint with common methods on the server:
 
@@ -378,7 +377,7 @@ class UserLoggedInWidget extends StatelessWidget {
 
 **In the user application:**
 
-The user will just have to extend the abstract endpoint to expose it on their server. Then, any client code that depends on the abstract endpoint will work regardless of the concrete class name or location.
+The user extends the abstract endpoint to expose it on their server. Then, any client code that depends on the abstract endpoint will work regardless of the concrete class name or location.
 
 ```dart
 // Extend the module's abstract endpoint to expose it

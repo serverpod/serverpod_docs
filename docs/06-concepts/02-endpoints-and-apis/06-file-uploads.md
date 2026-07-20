@@ -1,14 +1,14 @@
 ---
-description: File upload handling in Serverpod uses cloud storage providers (GCP, S3, Cloudflare R2) or the database, with server-generated upload descriptions and client-side verification.
+description: File uploads in Serverpod go directly to storage via signed upload descriptions, with database, GCP, S3, and Cloudflare R2 backends.
 ---
 
-# Uploading files
+# File uploads
 
-Serverpod has built-in support for handling file uploads. Out of the box, your server is configured to use the database for storing files. This works well for testing but may not be performant in larger-scale applications. You should set up your server to use Google Cloud Storage or S3 in production scenarios.
+Let your users upload avatars, documents, or any other files. The app sends the file straight to storage instead of through your endpoint methods, which keeps large files out of your API calls. Out of the box, your server stores files in the database, which works well for development. In production, configure Google Cloud Storage, AWS S3, or Cloudflare R2 instead.
 
-## How to upload a file
+## Upload a file
 
-A `public` and `private` file storage are set up by default to use the database. You can replace these or add more configurations for other file storages.
+A `public` and a `private` file storage are set up by default. You can replace these or add more configurations for other file storages.
 
 ### Server-side code
 
@@ -30,8 +30,10 @@ The `createDirectFileUploadDescription` method also accepts optional parameters 
 - **`contentLength`** - The exact file size in bytes. When provided, the storage provider validates the upload size against `maxFileSize` and may enforce the exact size server-side (e.g. via signed URLs).
 - **`preventOverwrite`** - When `true`, the upload will fail if a file already exists at the given path. Defaults to `false`.
 
+Whether the options are enforced depends on the provider: the GCP native storage supports `preventOverwrite`, while the HMAC-based interface ignores it.
+
 ```dart
-Future<String?> getUploadDescription(
+Future<String?> getRestrictedUploadDescription(
   Session session,
   String path,
   int fileSize,
@@ -46,7 +48,7 @@ Future<String?> getUploadDescription(
 }
 ```
 
-After the file is uploaded, you should verify that the upload has been completed. If you are uploading a file to a third-party service, such as S3 or Google Cloud Storage, there is no other way of knowing if the file was uploaded or if the upload was canceled.
+After the file is uploaded, verify that the upload completed. With a third-party service such as S3 or Google Cloud Storage, this is the only way to know it was not canceled.
 
 ```dart
 Future<bool> verifyUpload(Session session, String path) async {
@@ -59,20 +61,20 @@ Future<bool> verifyUpload(Session session, String path) async {
 
 ### Client-side code
 
-To upload a file from the app side, first request the upload description. Next, upload the file. You can upload from either a `Stream` or a `ByteData` object. If you are uploading a larger file, using a `Stream` is better because not all of the data must be held in RAM. Finally, you should verify the upload with the server.
+To upload a file from the app side, first request the upload description. Next, upload the file, from either a `Stream` or a `ByteData` object. When uploading from a `Stream`, pass the file length if you know it: without a length, a multipart upload buffers the whole file in memory. The uploader does not report upload progress. Finally, verify the upload with the server.
 
 ```dart
 var uploadDescription = await client.myEndpoint.getUploadDescription('myfile');
 if (uploadDescription != null) {
   var uploader = FileUploader(uploadDescription);
-  await uploader.upload(myStream);
+  await uploader.upload(myStream, myFileLength);
   var success = await client.myEndpoint.verifyUpload('myfile');
 }
 ```
 
 :::info
 
-In a real-world app, you most likely want to create the file paths on your server. For your file paths to be compatible with S3, do not use a leading slash; only use standard characters and numbers. E.g.:
+In a real-world app, you most likely want to create the file paths on your server. For your file paths to be compatible with S3, do not use a leading slash. Only use standard characters and numbers. E.g.:
 
 ```dart
 'profile/$userId/images/avatar.png'
@@ -80,9 +82,9 @@ In a real-world app, you most likely want to create the file paths on your serve
 
 :::
 
-## Accessing stored files
+## Access stored files
 
-You can check if a file exists or retrieve it directly from your server. Files in public storage are also accessible via URL; private files can only be accessed from the server.
+You can check if a file exists or retrieve it directly from your server. Files in public storage are also accessible via URL. Private files can only be accessed from the server.
 
 To check if a file exists, use the `fileExists` method.
 
@@ -111,7 +113,7 @@ var myByteData = await session.storage.retrieveFile(
 );
 ```
 
-To store a file directly from the server, use the `storeFile` method. You can set `preventOverwrite` to `true` to ensure the upload fails if a file already exists at the given path.
+To store a file directly from the server, use the `storeFile` method. You can set `preventOverwrite` to `true` to ensure the write fails if a file already exists at the given path, and `expiration` to give the file an expiry time.
 
 ```dart
 await session.storage.storeFile(
@@ -122,9 +124,9 @@ await session.storage.storeFile(
 );
 ```
 
-## Configuring a storage provider
+To delete a stored file, use `deleteFile` with the same `storageId` and `path`. To look up public URLs for many files at once, use `getPublicUrls`.
 
-By default, Serverpod uses the database for file storage. This works well for testing but is not recommended for production. Instead, you should configure a cloud storage provider. Serverpod supports Google Cloud Storage, AWS S3, and Cloudflare R2.
+## Configure a storage provider
 
 Each storage is identified by a `storageId`. Serverpod comes with two default storages, `public` and `private`. You can replace these with a cloud-backed implementation, or add additional storages with custom IDs. Register your cloud storage with `pod.addCloudStorage()` before starting the server.
 
@@ -144,7 +146,7 @@ You may also want to add the bucket as a backend for your load balancer to give 
 When you have set up your GCP bucket, you need to configure it in Serverpod. Add the GCP package to your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```bash
-$ dart pub add serverpod_cloud_storage_gcp
+dart pub add serverpod_cloud_storage_gcp
 ```
 
 ```dart
@@ -152,7 +154,7 @@ import 'package:serverpod_cloud_storage_gcp/serverpod_cloud_storage_gcp.dart'
     as gcp;
 ```
 
-After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your GCP bucket to be accessible on a custom domain through a load balancer. You should add the cloud storage before starting your pod. The `bucket` parameter refers to the GCP bucket name (you can find it in the console) and the `publicHost` is the domain name used to access the bucket via https.
+The `bucket` parameter is the GCP bucket name (find it in the console), and `publicHost` is the domain used to access the bucket over https when it sits behind a load balancer.
 
 ```dart
 pod.addCloudStorage(
@@ -232,12 +234,12 @@ When using Application Default Credentials, the service account must have the `i
 
 ### AWS S3
 
-This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file (`AWSAccessKeyId` and `AWSAccessKey`) or pass them in as environment variables (`SERVERPOD_AWS_ACCESS_KEY_ID` and `SERVERPOD_AWS_ACCESS_KEY`).
+This section shows how to set up a storage using S3. Before you write your Dart code, you need to set up an S3 bucket. Most likely, you will also want to set up a CloudFront for the bucket, where you can use a custom domain and your own SSL certificate. Finally, you will need to get a set of AWS access keys and add them to your Serverpod password file (`AWSAccessKeyId` and `AWSSecretKey`) or pass them in as environment variables (`SERVERPOD_AWS_ACCESS_KEY_ID` and `SERVERPOD_AWS_SECRET_KEY`).
 
 When you are all set with the AWS setup, include the S3 package in your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```bash
-$ dart pub add serverpod_cloud_storage_s3
+dart pub add serverpod_cloud_storage_s3
 ```
 
 ```dart
@@ -245,7 +247,7 @@ import 'package:serverpod_cloud_storage_s3/serverpod_cloud_storage_s3.dart'
     as s3;
 ```
 
-After creating your Serverpod, you add a storage configuration. If you want to replace the default `public` or `private` storages, set the `storageId` to `public` or `private`. Set the public host if you have configured your S3 bucket to be accessible on a custom domain through CloudFront. You should add the cloud storage before starting your pod.
+Set `publicHost` if your S3 bucket is accessible on a custom domain through CloudFront.
 
 ```dart
 pod.addCloudStorage(
@@ -260,7 +262,7 @@ pod.addCloudStorage(
 );
 ```
 
-For your S3 configuration to work, you will also need to add your AWS credentials to the `passwords.yaml` file. You create the access keys from your AWS console when signed in as the root user.
+For your S3 configuration to work, you will also need to add your AWS credentials to the `passwords.yaml` file. Create the access keys in the AWS console for a dedicated IAM user whose access is limited to the bucket. Avoid root-user access keys.
 
 ```yaml
 shared:
@@ -275,7 +277,7 @@ Serverpod supports Cloudflare R2 as a cloud storage provider. R2 is S3-compatibl
 Add the R2 package to your `pubspec.yaml` file and import it in your `server.dart` file.
 
 ```bash
-$ dart pub add serverpod_cloud_storage_r2
+dart pub add serverpod_cloud_storage_r2
 ```
 
 ```dart
@@ -307,9 +309,3 @@ shared:
 ```
 
 You can also pass credentials via environment variables: `SERVERPOD_R2_ACCESS_KEY_ID` and `SERVERPOD_R2_SECRET_KEY`.
-
-:::info
-
-If you are using the GCP or AWS Terraform scripts that are created with your Serverpod project, the required GCP or S3 buckets will be created automatically. The scripts will also configure your load balancer or Cloudfront and the certificates needed to access the buckets securely.
-
-:::

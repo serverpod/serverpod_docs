@@ -1,24 +1,20 @@
 ---
-description: Handle server errors in Serverpod by defining serializable exceptions that are thrown on the server and caught in your Flutter app.
+description: Errors in Serverpod cross the wire as serializable exceptions defined in model files, caught by type in the app alongside typed HTTP failures.
 ---
 
 # Error handling and exceptions
 
-Serverpod allows you to throw an exception on the server, serialize it, and catch it in your client app.
+Errors on the server reach your app as typed Dart exceptions. You define an exception once, throw it on the server, and catch it by type in your Flutter app. Failures carry structured data instead of strings.
 
 If you throw a normal exception that isn't caught by your code, it will be treated as an internal server error. The exception will be logged together with its stack trace, and a 500 HTTP status (internal server error) will be sent to the client. On the client side, this throws a `ServerpodClientException` with status code 500 (specifically `ServerpodClientInternalServerError`). The error message and stack trace stay on the server, logged to the `serverpod_session_log` table.
 
-:::tip
-Use the Serverpod Insights app to view your logs. It will show any failed or slow calls and will make it easy to pinpoint any errors in your server.
-:::
-
 :::info
-Uncaught exceptions thrown in endpoints are logged in the `serverpod_session_log` table, not in the `serverpod_log` table. To understand more about the differences between these two tables, you can read more about [logging](../operations/logging) in Serverpod.
+Session logs live in `serverpod_session_log`, not `serverpod_log`; see [logging](../operations/logging) for the difference. The Serverpod Insights app shows failed and slow calls.
 :::
 
 ## Serializable exceptions
 
-Serverpod allows adding data to an exception you throw on the server and extracting that data in the client. You use the same YAML files to define the serializable exceptions as you would with any serializable model (see [serialization](../data-and-the-database/models/custom-serialization) for details). The only difference is that you use the keyword `exception` instead of `class`.
+Serverpod allows adding data to an exception you throw on the server and extracting that data in the client. You define them in the same model files as any serializable model (see [Working with models](../data-and-the-database/models) for how model files work). The only difference is that you use the keyword `exception` instead of `class`.
 
 ```yaml
 exception: MyException
@@ -27,7 +23,7 @@ fields:
   errorType: MyEnum
 ```
 
-After you run `serverpod generate`, you can throw that exception when processing a call to the server.
+Once the code is generated, you can throw that exception when processing a call to the server.
 
 ```dart
 class ExampleEndpoint extends Endpoint {
@@ -104,10 +100,10 @@ The `SerializableException` interface marks the exception as safe to serialize t
 
 ### Default values in exceptions
 
-Serverpod allows you to specify default values for fields in exceptions, similar to how it's done in models using the `default` and `defaultModel` keywords. If you're unfamiliar with how these keywords work, you can refer to the [Default Values](../data-and-the-database/models#default-values) section in the [Working with Models](../data-and-the-database/models) documentation.
+Serverpod allows you to specify default values for fields in exceptions, similar to models: `default` sets the value when the field is omitted, and `defaultModel` sets it on the Dart side. See [default values](../data-and-the-database/models#default-values) in Working with models.
 
 :::info
-Since exceptions are not persisted in the database, the `defaultPersist` keyword is not supported. If both `default` and `defaultModel` are specified, `defaultModel` will always take precedence, making it unnecessary to use both.
+Since exceptions are not persisted in the database, the `defaultPersist` keyword is not supported. If both `default` and `defaultModel` are specified, `defaultModel` takes precedence.
 :::
 
 ```yaml
@@ -117,13 +113,15 @@ fields:
   errorCode: int, default=1001
 ```
 
-## Handling errors on the client
+## Handle errors in your app
 
 A call from the client can fail in three ways, and you usually handle each one differently:
 
-- A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the reader what happened.
+- A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the user what happened. (On the wire, it travels as an HTTP 400 with a typed payload.)
 - A **`ServerpodClientException`**: something went wrong in the communication or on the server. Its typed subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500).
-- A **connection failure**: when the app cannot reach the server (offline, wrong URL, or a timeout), it throws a `ServerpodClientException` with a `statusCode` of `-1`.
+- A **connection failure**: when the app cannot reach the server (offline, wrong URL, or a timeout), it throws a `ServerpodClientException` with a `statusCode` of `-1`. A call that exceeds the [request size limit](../endpoints-and-apis#pass-and-return-data) fails with a generic `ServerpodClientException` with status code 413.
+
+Calls to [streaming methods](./streaming) fail with their own connection-level exception family; see [error handling in streams](./streaming#error-handling).
 
 Catch the specific cases first, then fall back to the general one:
 
@@ -151,6 +149,6 @@ try {
 
 Only the serializable exceptions you define reach the client, and every field on them is sent as-is. An uncaught exception becomes a generic 500 with no details, so internal errors never leak on their own. The risk is what you put on the exceptions you do send.
 
-- Don't put stack traces, secrets, database IDs, or internal messages into serializable exception fields. Send only what the reader should see.
+- Don't put stack traces, secrets, database IDs, or internal messages into serializable exception fields. Send only what the user should see.
 - Write user-facing messages, and keep the diagnostic detail in your server logs where you can look it up later.
 - Validate and sanitize input before acting on it, so a bad request fails cleanly instead of surfacing an internal error.

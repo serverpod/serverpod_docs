@@ -50,7 +50,7 @@ Start your project before you begin building. With `serverpod start` already run
 
 ## Write an endpoint
 
-In Serverpod, endpoints are the entry points your app calls to run code on the server. You define one as a class that extends `Endpoint`, with async methods that each take a [`Session`](./concepts/endpoints-and-apis/sessions) as their first argument and return a typed `Future`:
+In Serverpod, endpoints are the entry points your app calls to run code on the server. You define one as a class that extends `Endpoint`, with async methods that each take a [`Session`](./concepts/endpoints-and-apis/sessions) as their first argument and return a typed `Future` (or a `Stream`, for live updates):
 
 ```dart
 class ExampleEndpoint extends Endpoint {
@@ -70,7 +70,7 @@ On the app side, the generated client turns each endpoint method into what looks
 final greeting = await client.example.hello('World');
 ```
 
-The client handles the request, the response, and the JSON in between. Most calls follow this request-and-response shape. For live updates, Serverpod also has [streaming endpoints](./concepts/endpoints-and-apis/streaming) that keep a connection open so the server and app can push data to each other.
+The client handles the request, the response, and the JSON in between. Most calls follow this request-and-response shape. For live updates, Serverpod also has [streaming methods](./concepts/endpoints-and-apis/streaming) that keep a connection open so the server and app can push data to each other.
 
 ## Define your data models
 
