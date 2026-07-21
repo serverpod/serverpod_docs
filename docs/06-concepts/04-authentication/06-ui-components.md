@@ -133,67 +133,70 @@ All text shown by the authentication widgets is in English by default. To replac
 - `PasswordRequirementTexts` for the labels of the built-in password requirement widgets.
 - One text object per provider for the sign-in buttons: `AppleSignInTexts`, `GoogleSignInTexts`, `GitHubSignInTexts`, `MicrosoftSignInTexts`, `FacebookSignInTexts`, and `AnonymousSignInTexts`.
 
-The example below translates the full set into Brazilian Portuguese:
+:::note
+The Firebase provider has no texts because it only supplies a controller rather than a finished UI.
+:::
+
+The example below shows how to pass every text object explicitly:
 
 ```dart
 const basicTexts = BasicSignInTexts(
   noAuthenticationProvidersConfigured:
-      'Nenhum provedor de autenticação configurado',
-  orContinueWith: 'ou continue com',
+      'No authentication providers configured',
+  orContinueWith: 'or continue with',
 );
 
 const emailTexts = EmailSignInTexts(
-  title: 'Entrar com e-mail',
-  forgotPassword: 'Esqueceu sua senha?',
-  signIn: 'Entrar',
-  dontHaveAnAccount: 'Não tem uma conta?',
-  signUp: 'Criar conta',
-  signUpTitle: 'Criar conta com e-mail',
-  continueAction: 'Continuar',
-  alreadyHaveAnAccount: 'Já tem uma conta?',
-  verifyAccountTitle: 'Verificar conta',
-  verifyResetCodeTitle: 'Verificar código de redefinição',
+  title: 'Sign In with email',
+  forgotPassword: 'Forgot password?',
+  signIn: 'Sign in',
+  dontHaveAnAccount: "Don't have an account?",
+  signUp: 'Sign up',
+  signUpTitle: 'Sign Up with email',
+  continueAction: 'Continue',
+  alreadyHaveAnAccount: 'Already have an account?',
+  verifyAccountTitle: 'Verify account',
+  verifyResetCodeTitle: 'Verify reset code',
   verificationMessage:
-      'Enviamos um e-mail de verificação. Confira sua caixa de entrada e '
-      'digite o código abaixo.',
-  verify: 'Verificar',
-  setAccountPasswordTitle: 'Definir senha da conta',
-  passwordLabel: 'Senha',
-  backToSignUp: 'Voltar para criar conta',
-  setNewPasswordTitle: 'Definir nova senha',
-  newPasswordLabel: 'Nova senha',
-  resetPasswordTitle: 'Redefinir senha',
-  resetPasswordDescription:
-      'Digite o endereço de e-mail para redefinir sua senha.',
-  requestPasswordReset: 'Solicitar redefinição de senha',
-  resetPassword: 'Redefinir senha',
-  backToSignIn: 'Voltar para entrar',
-  emailLabel: 'E-mail',
-  termsIntro: 'Li e aceito os ',
-  termsAndConditions: 'Termos e Condições',
-  andText: ' e a ',
-  privacyPolicy: 'Política de Privacidade',
+      'A verification email has been sent. Please check your email and '
+      'enter the verification code below.',
+  verify: 'Verify',
+  setAccountPasswordTitle: 'Set account password',
+  passwordLabel: 'Password',
+  backToSignUp: 'Back to sign up',
+  setNewPasswordTitle: 'Set new password',
+  newPasswordLabel: 'New Password',
+  resetPasswordTitle: 'Reset password',
+  resetPasswordDescription: 'Enter the email address to reset password.',
+  requestPasswordReset: 'Request password reset',
+  resetPassword: 'Reset password',
+  backToSignIn: 'Back to sign in',
+  emailLabel: 'Email',
+  termsIntro: 'I have read and accept the ',
+  termsAndConditions: 'Terms and Conditions',
+  andText: ' and ',
+  privacyPolicy: 'Privacy Policy',
 );
 
 const passwordTexts = PasswordRequirementTexts(
-  minLengthTemplate: 'Pelo menos {length} caracteres',
-  maxLengthTemplate: 'No máximo {length} caracteres',
-  containsLowercase: 'Contém pelo menos uma letra minúscula',
-  containsUppercase: 'Contém pelo menos uma letra maiúscula',
-  containsNumber: 'Contém pelo menos um número',
-  containsSpecialCharacter: 'Contém pelo menos um caractere especial',
+  minLengthTemplate: 'At least {length} characters',
+  maxLengthTemplate: 'At most {length} characters',
+  containsLowercase: 'Contains at least one lowercase letter',
+  containsUppercase: 'Contains at least one uppercase letter',
+  containsNumber: 'Contains at least one number',
+  containsSpecialCharacter: 'Contains at least one special character',
 );
 
 SignInLocalizationProvider(
   basic: basicTexts,
   email: emailTexts,
   passwordRequirementTexts: passwordTexts,
-  apple: const AppleSignInTexts(signInButton: 'Entrar com Apple'),
-  google: const GoogleSignInTexts(signInButton: 'Entrar com Google'),
-  github: const GitHubSignInTexts(signInButton: 'Entrar com GitHub'),
-  microsoft: const MicrosoftSignInTexts(signInButton: 'Entrar com Microsoft'),
-  facebook: const FacebookSignInTexts(signInButton: 'Entrar com Facebook'),
-  anonymous: const AnonymousSignInTexts(signInButton: 'Entrar como visitante'),
+  apple: const AppleSignInTexts(signInButton: 'Sign in with Apple'),
+  google: const GoogleSignInTexts(signInButton: 'Sign in with Google'),
+  github: const GitHubSignInTexts(signInButton: 'Sign in with GitHub'),
+  microsoft: const MicrosoftSignInTexts(signInButton: 'Sign in with Microsoft'),
+  facebook: const FacebookSignInTexts(signInButton: 'Sign in with Facebook'),
+  anonymous: const AnonymousSignInTexts(signInButton: 'Sign in as guest'),
   child: SignInWidget(
     client: client,
     onAuthenticated: _onAuthenticated,
@@ -211,8 +214,8 @@ Any text object you leave out keeps its built-in English text, so you only need 
 ```dart
 SignInLocalizationProvider(
   email: EmailSignInTexts.defaults.copyWith(
-    title: 'Entrar com e-mail',
-    signIn: 'Entrar',
+    title: 'Sign in with email',
+    signIn: 'Log in',
   ),
   child: signInWidget,
 );
@@ -221,7 +224,3 @@ SignInLocalizationProvider(
 ### Switching locale
 
 `SignInLocalizationProvider` hands the text objects to the widgets below it. It does not read Flutter's current `Locale` or pick a translation for you. In an app that supports several locales, select the text objects with your existing localization setup and rebuild the provider when the locale changes.
-
-:::note
-The Firebase provider is not covered by these text objects. The `serverpod_auth_idp_flutter_firebase` package supplies a controller rather than a finished UI, so translate the widgets you build on top of it.
-:::
