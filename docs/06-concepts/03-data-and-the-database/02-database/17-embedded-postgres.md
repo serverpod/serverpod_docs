@@ -33,6 +33,22 @@ Serverpod starts the database before it opens its connection pool, and connects 
 
 The files under `dataPath` are kept when the server stops, so your data is still there on the next start. After an unclean exit, Serverpod clears the leftover process state and brings the database back up.
 
+## Connect a database tool
+
+`psql`, pgAdmin, and most other database clients connect over TCP, not the Unix socket the server uses. To inspect the data with one of them, start the database on its own while the server is stopped:
+
+```bash
+$ serverpod database start
+```
+
+It boots the database configured for the `development` run mode and keeps it listening on the configured port until you stop it with Ctrl+C. Connect with the `name` and `user` from that run mode's configuration, and the password from `config/passwords.yaml`.
+
+Pass `--mode` to pick another run mode and `--port` to listen somewhere else:
+
+```bash
+$ serverpod database start --mode test --port 9090
+```
+
 ## Reset the database
 
 To start from an empty database, stop the server and delete the directory `dataPath` points at. Serverpod creates a new one on the next start.
@@ -45,4 +61,5 @@ Deleting `dataPath` permanently deletes the database and all local data stored i
 
 - [Connection](./connection): connecting to a PostgreSQL instance you run yourself.
 - [Configuration](../../server-fundamentals/configuration#database-backends): the database section of the run mode configuration.
+- [`serverpod database`](../../cli/commands/database): every option of the command above.
 - [serverpod_embedded_postgres](https://pub.dev/packages/serverpod_embedded_postgres): the package behind this, for tools that need a PostgreSQL process of their own.
