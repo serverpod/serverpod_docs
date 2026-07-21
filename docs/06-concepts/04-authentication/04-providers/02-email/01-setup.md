@@ -1,11 +1,11 @@
 ---
 sidebar_label: Setup
-description: Configure email and password authentication with Serverpod Cloud's email delivery or callbacks for your own email provider.
+description: Configure email and password authentication, using the built-in delivery for apps deployed to Serverpod Cloud or callbacks for your own email provider.
 ---
 
 # Set up email sign-in
 
-Email sign-in sends verification codes during registration and password resets. New projects with authentication enabled are configured to use Serverpod Cloud's email service. You can replace it with your own email provider when self-hosting or when you need custom delivery.
+Email sign-in sends verification codes during registration and password resets. New projects with authentication enabled are set up to have Serverpod Cloud deliver them, which works without configuration once the app is deployed there. Anywhere else, connect your own email provider.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
@@ -15,9 +15,9 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 The identity provider is registered in `pod.initializeAuthServices()` in your main `server.dart` file. Pick the configuration that matches where the emails are sent from, then expose the endpoints as described below.
 
-### Serverpod Cloud email delivery
+### Email delivery on Serverpod Cloud
 
-Newly generated projects come with `ServerpodCloudEmailIdpConfig`, which sends the codes through Serverpod Cloud's transactional email service:
+Newly generated projects come with `ServerpodCloudEmailIdpConfig`, which has Serverpod Cloud deliver the codes for the app deployed there:
 
 ```dart
 pod.initializeAuthServices(
@@ -36,10 +36,14 @@ Set `appDisplayName` to the name recipients should see in the verification email
 
 What happens when a code is sent depends on the run mode:
 
-- In `development` and `test`, the registration and password-reset codes are written to the server log and no email is sent.
-- In `staging` and `production`, the codes are sent through the Serverpod Cloud email service.
+- In `development` and `test`, the registration and password-reset codes are written to the server log and no email is sent. This is how the flow works on your machine.
+- In `staging` and `production`, the codes are sent by Serverpod Cloud.
 
-Deploying to Serverpod Cloud injects the `scloudAuthEmailKey` password the service authenticates with, so there is nothing to configure. The password is read at the moment an email is sent rather than at startup, which is what lets a self-hosted server start without it and keep logging codes in development and test. Self-hosted staging and production environments need their own email provider instead.
+:::warning
+This delivery is part of the Serverpod Cloud platform, not a service you can point a server at from elsewhere. It authenticates with an `scloudAuthEmailKey` password that Serverpod Cloud injects into the running instance on deploy, and that key cannot be obtained or set anywhere else. A self-hosted server in `staging` or `production` therefore sends nothing with this configuration, and needs [its own email provider](#a-custom-email-provider) instead.
+:::
+
+Because the key is only read at the moment an email is sent, and never at startup, a self-hosted server still starts normally and keeps logging codes in `development` and `test`.
 
 Delivery is best-effort. A missing key, an unavailable service, a timeout, or a rejected request is recorded in the session log and never thrown into the authentication flow. Registration therefore continues to the code-entry screen even when the email never went out, and password-reset responses stay the same either way so they do not reveal whether an address belongs to an account. Check your [server logs](../../../operations/logging) when a user reports a missing code.
 
@@ -47,7 +51,7 @@ The configuration also reads `emailSecretHashPepper` through Serverpod's passwor
 
 ### A custom email provider
 
-Replace `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords` to send the verification codes through your own service. The [mailer](https://pub.dev/packages/mailer) package, for example, sends email through SMTP services such as Resend, SendGrid, and Mandrill.
+Anywhere other than Serverpod Cloud, replace `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords` and send the verification codes through your own service. The [mailer](https://pub.dev/packages/mailer) package, for example, sends email through SMTP services such as Resend, SendGrid, and Mandrill.
 
 Pass your own callbacks for the two code-sending steps:
 
