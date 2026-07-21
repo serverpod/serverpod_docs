@@ -48,9 +48,9 @@ If a code cannot be sent, the failure is recorded in the session log and the sig
 
 ### Use your own email provider
 
-Replace `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords` to send the verification codes yourself. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
+Serverpod Cloud delivery is there to get sign-in working quickly, and it sends a standard message carrying your `appDisplayName`. You might prefer using a custom email provider to have full control over the body, layout, and language of the emails. For servers hosted outside of Serverpod Cloud, it is the only option.
 
-Pass your own callbacks for the two codes:
+Changing the email provider is done by replacing `ServerpodCloudEmailIdpConfig` with `EmailIdpConfig`, which requires you to pass your own callbacks for the two codes. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -71,7 +71,9 @@ void run(List<String> args) async {
     identityProviderBuilders: [
       // Configure the Email Identity Provider
       // This is the basic configuration for the Email IDP to work.
-      EmailIdpConfigFromPasswords(
+      EmailIdpConfig(
+        // Secret pepper to hash the password and verification code.
+        secretHashPepper: pod.getPassword('emailSecretHashPepper')!,
         // Callback to send the registration verification code to the user.
         sendRegistrationVerificationCode: _sendRegistrationCode,
         // Callback to send the password reset verification code to the user.
@@ -108,13 +110,17 @@ void _sendPasswordResetCode(
 }
 ```
 
-The configuration takes these values:
+#### Basic configuration options
 
-- `emailSecretHashPepper`: Required. A secret pepper used for hashing passwords and verification codes, read from the `emailSecretHashPepper` key in `config/passwords.yaml` or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable. Must be at least 10 characters long, but the [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
+- `secretHashPepper`: Required. A secret pepper used for hashing passwords and verification codes. Must be at least 10 characters long, but the [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
 - `sendRegistrationVerificationCode`: A callback that will be called to send the registration verification code to the user. Here you should call the email sending service to send the verification code to the user.
 - `sendPasswordResetVerificationCode`: A callback that will be called to send the password reset verification code to the user. Here you should call the email sending service to send the verification code to the user.
 
 For more details on configuration options, such as customizing password requirements, verification code generation, rate limiting, and more, see the [configuration section](./configuration).
+
+:::tip
+If you are using the `config/passwords.yaml` file or environment variables, you can use the `EmailIdpConfigFromPasswords` constructor to automatically load the secret pepper. It will expect the `emailSecretHashPepper` key or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable to be set with the secret pepper value.
+:::
 
 ## Client-side configuration
 
