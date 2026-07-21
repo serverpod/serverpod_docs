@@ -52,9 +52,88 @@ class SignInPage extends StatelessWidget {
 }
 ```
 
-### Localize sign-in text
+### Disabling providers
 
-Wrap `SignInWidget`, or individual authentication widgets, in a `SignInLocalizationProvider` to replace their built-in English text. The following example supplies Brazilian Portuguese text for the common UI, the complete email flow, password requirements, and each supported provider button:
+It is not possible to forcefully enable a provider, since this depends on the configuration of the identity providers, as described in the [setup section](./setup#identity-providers-configuration).
+
+But, even though the `SignInWidget` automatically detects enabled providers, you can disable specific providers if you want to hide them on the client, but still keep them available on the server.
+
+This is useful if you want to gradually disable a provider, but still keep compatibility with older clients.
+
+```dart
+SignInWidget(
+  client: client,
+  disableEmailSignInWidget: false,
+  disableGoogleSignInWidget: false,
+  disableAppleSignInWidget: true, // Disable Apple sign-in
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+)
+```
+
+### Customizing SignInWidget
+
+You can customize individual provider widgets:
+
+```dart
+final signInWidget = SignInWidget(
+  client: client,
+  emailSignInWidget: EmailSignInWidget(
+    client: client,
+    startScreen: EmailFlowScreen.login,
+    // NOTE: When you opt-out of the internal widget, you need to provide your
+    // own `onAuthenticated` and `onError` callbacks.
+    onAuthenticated: _onAuthenticated,
+    onError: _onError,
+    // ... custom configuration
+  ),
+  googleSignInWidget: GoogleSignInWidget(
+    client: client,
+    theme: GSIButtonTheme.filledBlack,
+    scopes: const [
+      ...GoogleAuthController.defaultScopes,
+      'https://www.googleapis.com/auth/youtube',
+    ],
+    onAuthenticated: _onAuthenticated,
+    onError: _onError,
+    // ... custom configuration
+  ),
+  appleSignInWidget: AppleSignInWidget(
+    client: client,
+    style: AppleButtonStyle.black,
+    onAuthenticated: _onAuthenticated,
+    onError: _onError,
+    // ... custom configuration
+  ),
+  onAuthenticated: _onAuthenticated,
+  onError: _onError,
+);
+
+void _onAuthenticated() {
+  // Handle successful authentication
+}
+
+void _onError(Object error) {
+  // Handle errors
+}
+```
+
+For more details on all options of each provider widget, see the "Customizing UI" section of the specific provider documentation. There you will also find information on how to build a custom UI with the controller. For example, see the [Email Provider](./providers/email/customizing-the-ui) documentation.
+
+## Localization
+
+All text shown by the authentication widgets is in English by default. To replace it, wrap `SignInWidget`, or any individual provider widget, in a `SignInLocalizationProvider` and pass the text objects for the parts you want to translate:
+
+- `BasicSignInTexts` for the shared messages and dividers.
+- `EmailSignInTexts` for the email flow: sign-in, registration, account verification, password reset, and the terms and privacy labels.
+- `PasswordRequirementTexts` for the labels of the built-in password requirement widgets.
+- One text object per provider for the sign-in buttons: `AppleSignInTexts`, `GoogleSignInTexts`, `GitHubSignInTexts`, `MicrosoftSignInTexts`, `FacebookSignInTexts`, and `AnonymousSignInTexts`.
+
+The example below translates the full set into Brazilian Portuguese:
 
 ```dart
 const basicTexts = BasicSignInTexts(
@@ -117,95 +196,32 @@ SignInLocalizationProvider(
   anonymous: const AnonymousSignInTexts(signInButton: 'Entrar como visitante'),
   child: SignInWidget(
     client: client,
-    onAuthenticated: onAuthenticated,
-    onError: onError,
+    onAuthenticated: _onAuthenticated,
+    onError: _onError,
   ),
 );
 ```
 
-`BasicSignInTexts` covers shared messages and dividers. `EmailSignInTexts` covers email sign-in, registration, account verification, password reset, and terms and privacy labels. The provider-specific objects cover the Apple, Google, GitHub, Microsoft, Facebook, and anonymous sign-in buttons. `PasswordRequirementTexts` controls the labels shown by built-in password requirement widgets. Keep the `{length}` placeholder in the minimum and maximum length templates.
+The `{length}` placeholder in the two length templates is replaced with the configured limit, so keep it in the translated string.
 
-Every text object has a `defaults` constant with the built-in English text. If you omit an object from `SignInLocalizationProvider`, its default is used. To change only some values, start from the defaults:
+### Translating part of the text
 
-```dart
-email: EmailSignInTexts.defaults.copyWith(
-  title: 'Entrar com e-mail',
-  signIn: 'Entrar',
-),
-```
-
-`SignInLocalizationProvider` supplies text to its descendant widgets. It does not select translations from Flutter's current `Locale`. If your app supports several locales, choose the matching text objects through your app's localization setup and rebuild the provider when the locale changes.
-
-Firebase authentication is not covered by these text objects. The `serverpod_auth_idp_flutter_firebase` package supplies a controller for the Firebase flow, so localize the Flutter UI that you connect to that controller.
-
-### Disable providers
-
-It is not possible to forcefully enable a provider, since this depends on the configuration of the identity providers, as described in the [setup section](./setup#identity-providers-configuration).
-
-But, even though the `SignInWidget` automatically detects enabled providers, you can disable specific providers if you want to hide them on the client, but still keep them available on the server.
-
-This is useful if you want to gradually disable a provider, but still keep compatibility with older clients.
+Any text object you leave out keeps its built-in English text, so you only need to pass the ones you are translating. To change a few values inside an object, start from its `defaults` constant:
 
 ```dart
-SignInWidget(
-  client: client,
-  disableEmailSignInWidget: false,
-  disableGoogleSignInWidget: false,
-  disableAppleSignInWidget: true, // Disable Apple sign-in
-  onAuthenticated: () {
-    // Do something when the user is authenticated.
-    //
-    // NOTE: You should not navigate to the home screen here, otherwise
-    // the user will have to sign in again every time they open the app.
-  },
-)
-```
-
-### Customize SignInWidget
-
-You can customize individual provider widgets:
-
-```dart
-final signInWidget = SignInWidget(
-  client: client,
-  emailSignInWidget: EmailSignInWidget(
-    client: client,
-    startScreen: EmailFlowScreen.login,
-    // NOTE: When you opt-out of the internal widget, you need to provide your
-    // own `onAuthenticated` and `onError` callbacks.
-    onAuthenticated: _onAuthenticated,
-    onError: _onError,
-    // ... custom configuration
+SignInLocalizationProvider(
+  email: EmailSignInTexts.defaults.copyWith(
+    title: 'Entrar com e-mail',
+    signIn: 'Entrar',
   ),
-  googleSignInWidget: GoogleSignInWidget(
-    client: client,
-    theme: GSIButtonTheme.filledBlack,
-    scopes: const [
-      ...GoogleAuthController.defaultScopes,
-      'https://www.googleapis.com/auth/youtube',
-    ],
-    onAuthenticated: _onAuthenticated,
-    onError: _onError,
-    // ... custom configuration
-  ),
-  appleSignInWidget: AppleSignInWidget(
-    client: client,
-    style: AppleButtonStyle.black,
-    onAuthenticated: _onAuthenticated,
-    onError: _onError,
-    // ... custom configuration
-  ),
-  onAuthenticated: _onAuthenticated,
-  onError: _onError,
+  child: signInWidget,
 );
-
-void _onAuthenticated() {
-  // Handle successful authentication
-}
-
-void _onError(Object error) {
-  // Handle errors
-}
 ```
 
-For more details on all options of each provider widget, see the "Customizing UI" section of the specific provider documentation. There you will also find information on how to build a custom UI with the controller. For example, see the [Email Provider](./providers/email/customizing-the-ui) documentation.
+### Switching locale
+
+`SignInLocalizationProvider` hands the text objects to the widgets below it. It does not read Flutter's current `Locale` or pick a translation for you. In an app that supports several locales, select the text objects with your existing localization setup and rebuild the provider when the locale changes.
+
+:::note
+The Firebase provider is not covered by these text objects. The `serverpod_auth_idp_flutter_firebase` package supplies a controller rather than a finished UI, so translate the widgets you build on top of it.
+:::
