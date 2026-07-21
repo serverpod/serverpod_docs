@@ -1,11 +1,11 @@
 ---
 sidebar_label: Setup
-description: Configure email and password authentication, using the built-in delivery for apps deployed to Serverpod Cloud or callbacks for your own email provider.
+description: Sign in with Email lets users authenticate with an email and password. Connect Serverpod to an SMTP service and configure the email identity provider.
 ---
 
 # Set up email sign-in
 
-Email sign-in sends verification codes during registration and password resets. New projects with authentication enabled are set up to have Serverpod Cloud deliver them, which works without configuration once the app is deployed there. Anywhere else, connect your own email provider.
+Sign in with Email verifies the user's address with a code, both when they register and when they reset their password.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
@@ -13,11 +13,7 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 ## Server-side configuration
 
-The identity provider is registered in `pod.initializeAuthServices()` in your main `server.dart` file. Pick the configuration that matches where the emails are sent from, then expose the endpoints as described below.
-
-### Email delivery on Serverpod Cloud
-
-Newly generated projects come with `ServerpodCloudEmailIdpConfig`, which has Serverpod Cloud deliver the codes for the app deployed there:
+Newly generated projects already configure the email identity provider in `pod.initializeAuthServices()` in your main `server.dart` file:
 
 ```dart
 pod.initializeAuthServices(
@@ -32,28 +28,29 @@ pod.initializeAuthServices(
 );
 ```
 
-Set `appDisplayName` to the name recipients should see in the verification emails.
+Set `appDisplayName` to the name recipients should see in the verification emails. In the `development` and `test` run modes the codes are written to the server log instead of being sent, so you can complete the flow locally. Once the app is deployed to Serverpod Cloud, they are sent as email.
 
-What happens when a code is sent depends on the run mode:
-
-- In `development` and `test`, the registration and password-reset codes are written to the server log and no email is sent. This is how the flow works on your machine.
-- In `staging` and `production`, the codes are sent by Serverpod Cloud.
-
-:::warning
-This delivery is part of the Serverpod Cloud platform, not a service you can point a server at from elsewhere. It authenticates with an `scloudAuthEmailKey` password that Serverpod Cloud injects into the running instance on deploy, and that key cannot be obtained or set anywhere else. A self-hosted server in `staging` or `production` therefore sends nothing with this configuration, and needs [its own email provider](#a-custom-email-provider) instead.
+:::info
+`ServerpodCloudEmailIdpConfig` sends email only for apps running on Serverpod Cloud, which injects the key it authenticates with on deploy. If you host the server yourself, switch to [your own email provider](#use-your-own-email-provider) before you go to staging or production.
 :::
 
-Because the key is only read at the moment an email is sent, and never at startup, a self-hosted server still starts normally and keeps logging codes in `development` and `test`.
+Then extend the abstract endpoint to expose the email authentication routes on the server. Create the file anywhere under your server's `lib/` directory (for example, `<project>_server/lib/src/endpoints/`); the generator picks it up:
 
-Delivery is best-effort. A missing key, an unavailable service, a timeout, or a rejected request is recorded in the session log and never thrown into the authentication flow. Registration therefore continues to the code-entry screen even when the email never went out, and password-reset responses stay the same either way so they do not reveal whether an address belongs to an account. Check your [server logs](../../../operations/logging) when a user reports a missing code.
+```dart
+import 'package:serverpod_auth_idp_server/providers/email.dart';
 
-The configuration also reads `emailSecretHashPepper` through Serverpod's password system when it is created. New projects ship this value in their run-mode passwords, and Serverpod Cloud provides it as a platform-managed authentication password.
+class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+```
 
-### A custom email provider
+Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
-Anywhere other than Serverpod Cloud, replace `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords` and send the verification codes through your own service. The [mailer](https://pub.dev/packages/mailer) package, for example, sends email through SMTP services such as Resend, SendGrid, and Mandrill.
+If a code cannot be sent, the failure is recorded in the session log and the sign-in flow continues unchanged, so check your [server logs](../../../operations/logging) when a user reports a missing code.
 
-Pass your own callbacks for the two code-sending steps:
+### Use your own email provider
+
+Replace `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords` to send the verification codes yourself. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
+
+Pass your own callbacks for the two codes:
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -113,23 +110,11 @@ void _sendPasswordResetCode(
 
 The configuration takes these values:
 
-- `emailSecretHashPepper`: Required. `EmailIdpConfigFromPasswords` reads it from the `emailSecretHashPepper` key in `config/passwords.yaml` for each run mode, or from the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable. It must be at least 10 characters long, but the [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
+- `emailSecretHashPepper`: Required. A secret pepper used for hashing passwords and verification codes, read from the `emailSecretHashPepper` key in `config/passwords.yaml` or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable. Must be at least 10 characters long, but the [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
 - `sendRegistrationVerificationCode`: A callback that will be called to send the registration verification code to the user. Here you should call the email sending service to send the verification code to the user.
 - `sendPasswordResetVerificationCode`: A callback that will be called to send the password reset verification code to the user. Here you should call the email sending service to send the verification code to the user.
 
 For more details on configuration options, such as customizing password requirements, verification code generation, rate limiting, and more, see the [configuration section](./configuration).
-
-### Email authentication endpoints
-
-Either configuration needs an endpoint that exposes the email authentication routes. Extend the abstract endpoint in a file anywhere under your server's `lib/` directory, for example, `<project>_server/lib/src/endpoints/`:
-
-```dart
-import 'package:serverpod_auth_idp_server/providers/email.dart';
-
-class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
-```
-
-Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ## Client-side configuration
 

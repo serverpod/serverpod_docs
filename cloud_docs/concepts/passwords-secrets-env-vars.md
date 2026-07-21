@@ -29,8 +29,6 @@ Passwords are the default tier for sensitive values the server reads through the
 
 Serverpod Cloud also provisions a set of platform-managed passwords automatically: database credentials, Insights tokens, `serverpod_auth_idp_server` keys, and keys for the legacy auth module. Run `scloud password list` to see them grouped into four categories: **Custom** (passwords you add), **Services** (database, Insights, and related platform passwords), **Auth** (passwords for `serverpod_auth_idp_server`), and **Legacy Auth** (passwords for the legacy authentication module). The Status column marks platform-managed passwords `AUTO (Platform)` and user-set ones `SET (User)`.
 
-One of those Auth passwords is `scloudAuthEmailKey`, which lets Cloud deliver the registration and password-reset codes for new projects with authentication enabled. It is injected into the running instance on deploy, so email sign-in works with no setup on your side. The delivery it unlocks is part of the platform rather than a service reachable from outside it, so a server hosted elsewhere sends these codes through [its own email provider](/concepts/authentication/providers/email/setup#a-custom-email-provider).
-
 Override a platform-managed password by setting a custom value with the same name. Unset it to restore the platform default.
 
 Set a password by name and value:
