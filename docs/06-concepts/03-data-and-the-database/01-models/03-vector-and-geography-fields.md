@@ -81,12 +81,12 @@ fields:
   hash: Bit(256)
 ```
 
-### Read vector values in Dart
+### Reading vector values in Dart
 
-`Vector`, `HalfVector`, `SparseVector`, and `Bit` are Dart `Iterable` values. You can read their length, access a zero-based index with `[]`, loop over their elements, and use standard iterable methods:
+All four vector types implement `Iterable` and support zero-based indexed access with `[]`. Values read from the database can therefore be inspected directly, without converting them to a list first.
 
 ```dart
-var embedding = const Vector([0.2, 0.4, 0.6]);
+var embedding = Vector([0.2, 0.4, 0.6]);
 
 print(embedding.length); // 3
 print(embedding[1]); // 0.4
@@ -96,19 +96,19 @@ for (var value in embedding) {
 }
 
 var hasLargeValue = embedding.any((value) => value > 0.5);
-var doubled = embedding.map((value) => value * 2).toList();
 var values = embedding.toList();
 ```
 
-`Vector`, `HalfVector`, and `SparseVector` iterate over `double` values. `Bit` iterates over `bool` values:
+The `Vector`, `HalfVector`, and `SparseVector` types iterate over `double` values, while `Bit` iterates over `bool` values.
 
 ```dart
 var flags = Bit([true, false, true]);
-var enabledCount = flags.where((value) => value).length;
-var secondFlag = flags[1]; // false
+
+print(flags[1]); // false
+print(flags.where((value) => value).length); // 2
 ```
 
-A `SparseVector` iterates over every dimension, including dimensions that are not stored internally. Indexed access and `toList()` return `0.0` for those dimensions:
+A `SparseVector` iterates over every dimension, including the zero dimensions it does not store internally. Indexed access and `toList()` return `0.0` for those dimensions.
 
 ```dart
 var sparse = SparseVector([1.5, 0.0, 0.0, 2.5]);
@@ -117,8 +117,6 @@ print(sparse.length); // 4
 print(sparse[1]); // 0.0
 print(sparse.toList()); // [1.5, 0.0, 0.0, 2.5]
 ```
-
-Accessing an index outside `0` through `length - 1` throws a `RangeError` for every vector type.
 
 ## Geography fields
 
