@@ -6,7 +6,7 @@ description: The database connection is defined in Serverpod's configuration and
 
 In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
 
-If using Postgres, the easiest way to get started is to use a Docker container to run your local Postgres server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run Postgres locally yourself.
+New projects run an [embedded PostgreSQL](./embedded-postgres) in development and testing, which Serverpod manages for you. This page covers the alternatives: running Postgres in Docker, and connecting to an instance you host yourself.
 
 ### Connection details
 
@@ -110,7 +110,7 @@ No database password is required when using SQLite.
 
 ## Development database
 
-A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. Run the following command from the root of the `server` package to start the database:
+A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. To use it instead of the [embedded PostgreSQL](./embedded-postgres), remove `dataPath` from the run mode's configuration and run the following command from the root of the `server` package to start the database:
 
 ```bash
 $ docker compose up --build --detach
