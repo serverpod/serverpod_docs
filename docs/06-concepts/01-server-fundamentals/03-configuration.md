@@ -44,51 +44,6 @@ The `test` mode is used by the [test tools](../testing/get-started), which start
 
 Run modes configure the server side. Your Flutter app picks the matching server address per environment on its own; see [Point the client at each environment](../endpoints-and-apis#point-the-client-at-each-environment).
 
-## Resolve files from the server package directory
-
-Serverpod normally resolves its runtime files relative to the process working directory. Generated projects start the process from the server package root, so they do not need any additional configuration.
-
-Pass `serverDirectory` to the `Serverpod` constructor when another launcher starts the process from a different directory. Common examples include a monorepo-level launcher, a test isolate, or a process started by another tool with an inherited working directory.
-
-For example, a launcher running from a monorepo root can point Serverpod at a nested server package:
-
-```dart
-import 'dart:io';
-
-void run(List<String> args) async {
-  var serverDirectory = Directory.fromUri(
-    Directory.current.uri.resolve('apps/my_app_server/'),
-  );
-
-  var pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-    serverDirectory: serverDirectory,
-  );
-
-  await pod.start();
-}
-```
-
-Serverpod converts the directory to an absolute path when it is constructed. It uses that directory to resolve:
-
-- `config/<run-mode>.yaml`.
-- `config/passwords.yaml`.
-- Migration files under `migrations/`, including module migrations.
-- A relative SQLite `database.filePath`.
-- A relative embedded PostgreSQL `database.dataPath`.
-
-Passing a `ServerpodConfig` object can replace the YAML configuration, but `serverDirectory` still anchors migrations and relative database paths. Absolute database paths and SQLite's `:memory:` value are unchanged.
-
-The selected directory is available as `pod.serverDirectory`. Serverpod does not automatically resolve paths opened by your application code, such as templates or custom static files. Anchor those paths explicitly when needed:
-
-```dart
-var template = File.fromUri(
-  pod.serverDirectory.uri.resolve('assets/welcome_email.html'),
-);
-```
-
 ## Configure with YAML files
 
 The `config` directory at the root of the server project holds one file per run mode, created with your project. The server loads the file named after the run mode it starts in: `config/development.yaml` is used when running in the `development` run mode. This is the scaffolded development file for a project named `myproject`, with comments and optional keys removed:
@@ -195,6 +150,47 @@ Serverpod(
       publicScheme: 'http',
     ),
   ),
+);
+```
+
+### Server directory
+
+Serverpod resolves its runtime files relative to the process working directory. A generated project starts the server from the server package root, so it needs no extra configuration. Pass `serverDirectory` to the `Serverpod` constructor when something else starts the process from a different directory, such as a launcher at the root of a monorepo, a test isolate, or a tool that passes on its own working directory.
+
+```dart
+import 'dart:io';
+
+void run(List<String> args) async {
+  var serverDirectory = Directory.fromUri(
+    Directory.current.uri.resolve('apps/my_app_server/'),
+  );
+
+  var pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+    serverDirectory: serverDirectory,
+  );
+
+  await pod.start();
+}
+```
+
+The directory is converted to an absolute path when the server is constructed, and everything Serverpod loads from disk is resolved from it:
+
+- `config/<run-mode>.yaml`.
+- `config/passwords.yaml`.
+- The migrations under `migrations/`, including module migrations.
+- A relative SQLite `database.filePath`.
+- A relative embedded PostgreSQL `database.dataPath`.
+
+A `ServerpodConfig` object replaces the YAML files, but `serverDirectory` still anchors the migrations and the relative database paths. Absolute database paths and SQLite's `:memory:` value are unaffected.
+
+Files your own code opens are not resolved this way. Read `pod.serverDirectory` to anchor them:
+
+```dart
+var template = File.fromUri(
+  pod.serverDirectory.uri.resolve('assets/welcome_email.html'),
 );
 ```
 
