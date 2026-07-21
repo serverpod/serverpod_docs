@@ -1,33 +1,30 @@
 ---
-description: Replace Session.db once per session with a custom database layer for tracing, policy enforcement, tenant scoping, metrics, or tests.
+description: A database interceptor replaces Session.db once per session with a custom database layer for tracing, policy enforcement, tenant scoping, and tests.
 ---
 
-# Intercept database access
+# Database interceptors
 
-Use a database interceptor when every database operation in a session needs the same cross-cutting behavior. The interceptor receives the new `Session` and Serverpod's framework-provided `Database`, then returns the database instance exposed as `session.db`.
+A database interceptor lets you wrap every database operation of a session in the same behavior, such as query tracing, tenant scoping, or a guard that rejects writes in a protected environment. Serverpod calls the interceptor once when it creates a session, passing the session and the framework database, and whatever the interceptor returns becomes `session.db` for the rest of that session.
 
-Configure it when you construct `Serverpod`:
+Register the interceptor when you construct `Serverpod`:
 
 ```dart
-var databaseSessionCount = 0;
-
 var pod = Serverpod(
   args,
   Protocol(),
   Endpoints(),
   databaseInterceptor: (session, inner) {
-    databaseSessionCount++;
     session.log('Created a database layer for this session.');
     return inner;
   },
 );
 ```
 
-This example observes database session creation and keeps the framework database unchanged. Serverpod calls the interceptor once when it creates each session. Repeated reads of `session.db` return the same database instance for that session.
+Returning `inner` leaves the framework database in place, so this example only observes session creation. Repeated reads of `session.db` return the same instance for the lifetime of the session.
 
 ## Return a custom database layer
 
-Return an application-defined `Database` implementation to intercept its operations:
+To intercept the operations themselves, return your own implementation of the `Database` interface exported by `package:serverpod/serverpod.dart`:
 
 ```dart
 var pod = Serverpod(
@@ -43,47 +40,38 @@ var pod = Serverpod(
 );
 ```
 
-In this example, `PolicyDatabase` is your implementation of the `Database` interface exported by `package:serverpod/serverpod.dart`. `Database` does not expose a public constructor for subclassing, so implement its interface and generate the required overrides with your IDE. Keep the supplied `inner` database and delegate every operation that your layer does not change. The returned object becomes `Session.db`, so generated calls such as `User.db.find(session)` also pass through it.
+The `Database` class has no public constructor to subclass, so implement the interface and let your IDE generate the overrides. Hold on to the supplied `inner` database and delegate every operation the layer does not change. The object you return becomes `Session.db`, so generated calls such as `User.db.find(session)` pass through it as well.
 
-Common uses include:
+Typical uses are:
 
 - Recording query traces, timings, and metrics.
-- Applying tenant scope to every supported query.
+- Applying a tenant scope to every supported query.
 - Enforcing read and write policies.
 - Blocking unsafe operations or writes in protected environments.
 - Recording or replacing database behavior in tests.
 
-Forward transaction objects, runtime parameters, ordering, pagination, row locks, and return options without changing their meaning. A policy layer should also account for raw database methods and transactions so callers cannot bypass it through another `Database` method.
-
-Do not retain the session or its inner database after the session closes.
+Pass transaction objects, [runtime parameters](./runtime-parameters), ordering, pagination, [row locks](./row-locking), and return options through without changing their meaning. A layer that enforces a policy also needs to cover [raw access](./raw-access) and transactions, otherwise a caller can reach the database around it. Do not hold on to the session or its inner database after the session closes.
 
 :::warning
-
-Custom database layers depend on the `Database` API from `serverpod_database`. This API may receive breaking changes in a minor Serverpod release. Review and test the complete implementation whenever you upgrade Serverpod.
-
+Custom database layers build on the `Database` API from `serverpod_database`, which can change in a breaking way in a minor Serverpod release. Review and test your implementation whenever you upgrade Serverpod.
 :::
 
-## Use an interceptor in integration tests
+## Use an interceptor in tests
 
-Generated `withServerpod` test helpers accept the same `databaseInterceptor` callback. This lets a test count session creation or return a recording database layer without changing server startup code:
+The generated [`withServerpod`](../../testing/the-basics) test helper takes the same `databaseInterceptor` callback, so a test can install a recording or restricting database layer without touching the server startup code. The callback runs once for every session the helper creates.
 
 ```dart
-var interceptedSessions = 0;
+var recorder = QueryRecorder();
 
 withServerpod(
-  'database policy',
-  databaseInterceptor: (session, inner) {
-    interceptedSessions++;
-    return inner;
-  },
-  (sessionBuilder, _) {
-    test('creates the database layer for a test session', () {
-      var beforeBuild = interceptedSessions;
-      sessionBuilder.build();
-      expect(interceptedSessions, beforeBuild + 1);
+  'Given Companies endpoint',
+  (sessionBuilder, endpoints) {
+    test('then calling `all` records the query', () async {
+      await endpoints.companies.all(sessionBuilder);
+      expect(recorder.queries, isNotEmpty);
     });
   },
+  databaseInterceptor: (session, inner) =>
+      RecordingDatabase(inner: inner, recorder: recorder),
 );
 ```
-
-The callback is also invoked once for every test session created by the helper.
