@@ -63,11 +63,13 @@ This is useful for idempotent operations where you want to insert data without f
 When using `ignoreConflicts` with models that have [non-persistent fields](./tables#non-persistent-fields), each row is inserted individually instead of in a single batch. This is necessary because the database cannot report which rows were skipped in a batch insert, making it impossible to correctly match non-persistent field values back to inserted rows. For large numbers of rows, this can cause performance issues. Consider removing non-persistent fields from the model or inserting in smaller batches.
 :::
 
-## Insert or update rows
+## Upsert
 
-Use an upsert when you want to insert a row unless another row already has the same unique value. If a conflict occurs, the existing row is updated instead. The database performs the check and write as one atomic operation.
+An upsert inserts a row, or updates the row that is already there when the insert would violate a unique constraint. The database runs the check and the write as a single atomic operation, so no other transaction can slip in between them.
 
-Call `upsertRow` to upsert one row. The `conflictColumns` must identify a unique constraint or unique index in your database. In the example model, `name` is unique:
+### Upserting a single row
+
+Call `upsertRow` to upsert one row. The `conflictColumns` parameter names the columns that decide whether a row already exists, and those columns must be covered by a unique constraint or unique index. In the example model, `name` is unique.
 
 ```dart
 var company = await Company.db.upsertRow(
@@ -77,9 +79,9 @@ var company = await Company.db.upsertRow(
 );
 ```
 
-If no company named `Serverpod` exists, a new row is inserted. Otherwise, the existing row keeps its `id`, and its other persistent columns are updated with the values from the supplied object. By default, Serverpod updates every persistent column except the `id` and the columns in `conflictColumns`.
+If no company named `Serverpod` exists, a new row is inserted. Otherwise the existing row keeps its `id` and its remaining persistent columns are overwritten with the values from the supplied object. By default every persistent column is updated except `id` and the columns listed in `conflictColumns`.
 
-The primary `id` column can also be the conflict target. This is useful when a model may represent either an existing row with an `id` or a new row without one:
+The `id` column can be the conflict target as well, which is useful when the same code path handles an object that may or may not already have an id.
 
 ```dart
 var company = await Company.db.upsertRow(
@@ -89,9 +91,9 @@ var company = await Company.db.upsertRow(
 );
 ```
 
-### Choose which columns to update
+### Choosing which columns to update
 
-Use `updateColumns` to limit which columns change when a conflict occurs:
+Pass `updateColumns` to limit which columns change when a conflict occurs.
 
 ```dart
 var company = await Company.db.upsertRow(
@@ -102,9 +104,9 @@ var company = await Company.db.upsertRow(
 );
 ```
 
-This inserts all persistent values for a new row. For an existing row, it updates only `employeeCount`.
+A new row is still inserted with all of its persistent values. An existing row only has its `employeeCount` updated.
 
-Use `updateWhere` to update a conflicting row only when the existing row matches a condition:
+Pass `updateWhere` to update a conflicting row only when the row already in the database matches a [filter](./filtering).
 
 ```dart
 var company = await Company.db.upsertRow(
@@ -115,11 +117,11 @@ var company = await Company.db.upsertRow(
 );
 ```
 
-The return type of `upsertRow` is nullable. If an existing row conflicts but does not match `updateWhere`, the row is left unchanged, and the method returns `null`.
+This is why `upsertRow` returns a nullable value. When a row conflicts but does not match `updateWhere`, it is left untouched and the method returns `null`.
 
-### Upsert several rows
+### Upserting several rows
 
-Call `upsert` to insert or update several rows in a batch:
+Call `upsert` to insert or update several rows in a batch.
 
 ```dart
 var companies = await Company.db.upsert(
@@ -132,11 +134,11 @@ var companies = await Company.db.upsert(
 );
 ```
 
-The batch is atomic. If any write fails, none of the rows are changed. You can also pass a `Transaction` with the `transaction` parameter.
+This is an atomic operation, meaning no rows are written if any row fails. Pass a [transaction](./transactions) with the `transaction` parameter to make it part of a larger unit of work.
 
-The batch method supports the same `updateColumns` and `updateWhere` parameters as `upsertRow`. Rows rejected by `updateWhere` are not returned, so the result can contain fewer rows than the input. Set `noReturn` to `true` if you do not need the resulting rows. The operation still writes the rows but returns an empty list.
+The batch method takes the same `updateColumns` and `updateWhere` parameters as `upsertRow`. Rows rejected by `updateWhere` are left out of the result, so the returned list can be shorter than the input. Set `noReturn` to `true` to write the rows without reading them back.
 
-For models with [non-persistent fields](./tables#non-persistent-fields), Serverpod preserves the input values of those fields on the returned objects. The fields do not participate in conflict detection or database updates. A batch may use individual upsert statements internally to match each non-persistent value with the correct result, while keeping the full operation atomic.
+For models with [non-persistent fields](./tables#non-persistent-fields), the input values of those fields are carried over to the returned objects. They take no part in conflict detection and are never written to the database.
 
 ## Read
 
