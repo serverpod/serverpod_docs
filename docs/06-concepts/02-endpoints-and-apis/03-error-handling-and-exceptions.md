@@ -53,32 +53,29 @@ catch(e) {
 }
 ```
 
-### Group exceptions in a hierarchy
+### Exception hierarchies
 
-Use `extends` to share fields and handling across related serializable exceptions. Add `sealed: true` to the root when all concrete cases are known and clients should handle them exhaustively.
+Related failures often share fields and the same handling in the app. Use [`extends`](../data-and-the-database/models/inheritance-and-polymorphism) to put them in a hierarchy, and mark the root `sealed` when you know every concrete case and want the app to handle all of them.
 
-Define each exception in its own model file. For example, start with a sealed base exception:
+Define each exception in its own model file, starting with the sealed base:
 
-```yaml
-# api_exception.spy.yaml
+```yaml title="api_exception.spy.yaml"
 exception: ApiException
 sealed: true
 fields:
   message: String
 ```
 
-Then extend it with the concrete failures your endpoint can throw:
+Then extend it with the concrete failures the endpoint can throw:
 
-```yaml
-# not_found_exception.spy.yaml
+```yaml title="not_found_exception.spy.yaml"
 exception: NotFoundException
 extends: ApiException
 fields:
   resource: String
 ```
 
-```yaml
-# validation_exception.spy.yaml
+```yaml title="validation_exception.spy.yaml"
 exception: ValidationException
 extends: ApiException
 fields:
@@ -129,11 +126,11 @@ try {
 }
 ```
 
-The Dart analyzer requires every subtype of the sealed exception to be covered. This makes adding another concrete exception an explicit client change instead of silently falling through a general catch.
+Because the base is sealed, the analyzer requires the switch to cover every subtype. Adding another concrete exception then becomes a deliberate change in the app instead of a case that quietly falls through to a general catch.
 
-Exception hierarchies can be defined in a [shared package](../data-and-the-database/models/shared-packages) when several Serverpod projects need the same wire types. Keep every subtype of a sealed shared exception in that same shared package. A consuming project cannot add another subtype to a sealed exception from a different package.
+A hierarchy can live in a [shared package](../data-and-the-database/models/shared-packages) when several Serverpod projects need the same wire types. Every subtype of a sealed exception has to stay in the package that declares the base, so a consuming project cannot add a case of its own.
 
-An exception can only extend another exception, and a regular model class can only extend another regular model class. Serverpod reports a model validation error if a hierarchy mixes the two kinds.
+Exceptions and regular model classes cannot be mixed in the same hierarchy. An exception only extends another exception, and a class only extends another class. Anything else fails validation when you generate the code.
 
 ### Custom serializable exception classes
 
