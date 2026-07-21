@@ -254,31 +254,24 @@ var companiesDeleted = await Company.db.deleteWhere(
 
 The above example will delete any row where the `name` ends in _Ltd_. The `deleteWhere` method returns a `List` of the models deleted, ordered by name in descending order, followed by id in ascending order.
 
-## Skip reading affected rows
+## Skipping returned rows
 
-List-returning write methods normally read the affected rows back from the database. Set `noReturn` to `true` when you only need the operation to succeed and do not need those model objects:
+The batch and filtered write methods read the affected rows back from the database and return them as a list. Pass `noReturn: true` when the write itself is all you need.
 
 ```dart
 await Company.db.updateWhere(
   session,
   columnValues: (t) => [t.name('Archived company')],
-  where: (t) => t.name.like('% Ltd'),
+  where: (t) => t.name.like('%Ltd'),
   noReturn: true,
 );
 ```
 
-The write still runs with the same filters, conflict handling, transaction, and atomicity guarantees, but the method returns an empty list. Skipping the returned data avoids transferring and deserializing affected rows. This is useful for bulk imports, cleanup jobs, and other writes where you do not need generated IDs, database defaults, updated values, or the affected model objects.
+The write runs with the same filters, conflict handling, transaction, and atomicity guarantees, but the method returns an empty list instead of reading the rows back. Skipping that read saves transferring and deserializing every affected row, which is worth it for bulk imports, cleanup jobs, and any write where the generated ids, database defaults, and updated values are not used afterwards.
 
-The `noReturn` parameter is available on these generated methods:
+The `noReturn` parameter is available on `insert`, `update`, `updateWhere`, `upsert`, `delete`, and `deleteWhere`. The single-row methods `insertRow`, `updateRow`, `upsertRow`, and `deleteRow` always return the affected row.
 
-- `insert`.
-- `update` and `updateWhere`.
-- `upsert`.
-- `delete` and `deleteWhere`.
-
-It is not available on single-row methods such as `insertRow`, `updateRow`, `upsertRow`, or `deleteRow`, which return the affected row.
-
-Because the returned list is empty, options that only control the order of returned rows have no observable effect. Ordering can still matter on filtered operations when it determines which rows a `limit` or `offset` selects.
+Since the result is empty, `orderBy` and `orderByList` have no visible effect on it. They still matter on filtered operations, where they decide which rows a `limit` or `offset` selects.
 
 ## Count
 
