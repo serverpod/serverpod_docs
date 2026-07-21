@@ -1,12 +1,12 @@
 ---
-description: Configure Serverpod database connections for embedded PostgreSQL, external PostgreSQL, and SQLite, including passwords and connection pools.
+description: The database connection is defined in Serverpod's configuration and password files, with support for custom Postgres or SQLite instances.
 ---
 
 # Connection
 
-In Serverpod, the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
+In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
 
-New projects use an embedded PostgreSQL database for development and testing. You can instead connect to PostgreSQL running in Docker or on another host, or use SQLite.
+New projects run an [embedded PostgreSQL](./embedded-postgres) in development and testing, which Serverpod manages for you. This page covers the alternatives: running Postgres in Docker, and connecting to an instance you host yourself.
 
 ### Connection details
 
@@ -42,7 +42,7 @@ Note that the same database backend must be used for all run modes. For more inf
 
 #### Configure search paths
 
-If using Postgres, you can customize the search paths for your database connection. This is helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
+If using Postgres, you can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
 
 To override this, use the optional `searchPaths` setting in your configuration:
 
@@ -108,125 +108,9 @@ development:
 
 No database password is required when using SQLite.
 
-## Embedded PostgreSQL
+## Development database
 
-Embedded PostgreSQL runs a real PostgreSQL server as a child process of your Serverpod server, so local development and testing get the same PostgreSQL dialect as production without Docker or a separately installed database.
-
-New projects already enable it in the `development` and `test` run modes through the `dataPath` setting:
-
-```yaml
-database:
-  host: localhost
-  port: 8090
-  name: my_project
-  user: postgres
-  dataPath: .serverpod/development/pgdata
-```
-
-Leave the other PostgreSQL settings in place. Serverpod uses `name` and `user` when it creates the cluster and reads the password from `config/passwords.yaml`, the same as for an external instance. See [Database backends](../../server-fundamentals/configuration#database-backends) for how the setting fits into the rest of the configuration.
-
-### Storage and platform support
-
-A relative `dataPath` is resolved from the root of the server package, and every run mode needs its own directory, for example `.serverpod/test/pgdata` in `config/test.yaml`. Each directory holds a complete PostgreSQL cluster, so keep it out of version control.
-
-The first start downloads the PostgreSQL binaries for the current operating system and architecture into a per-user cache, which every later start and every other project reuses:
-
-- Linux: `$XDG_CACHE_HOME/serverpod`, or `~/.cache/serverpod` when `XDG_CACHE_HOME` is not set.
-- macOS: `~/Library/Caches/serverpod`.
-- Windows: `%LOCALAPPDATA%\serverpod\Cache`.
-
-Binaries are available for Linux and macOS on x64 and Arm64, and for Windows on x64. On any other platform the server throws an `UnsupportedPlatformException` instead of starting.
-
-### Lifecycle and recovery
-
-Serverpod starts the embedded database before it opens the connection pool, and connects to it over a Unix domain socket instead of a TCP port. That way several projects can run at the same time without competing for ports. When another Serverpod process already manages the same `dataPath`, the new process attaches to the running database rather than starting a second one.
-
-The files under `dataPath` are kept when the server stops, so your development data is still there on the next start. If the server exits uncleanly, Serverpod clears the leftover process state on the next start and brings the database back up.
-
-### Resetting the database
-
-To start from an empty database, stop the Serverpod server and delete the directory configured by `dataPath`. Serverpod initializes a new PostgreSQL cluster the next time it starts.
-
-:::warning
-Deleting `dataPath` permanently deletes the database and all local data stored in it.
-:::
-
-### Moving to an external PostgreSQL
-
-Embedded PostgreSQL is for development and testing. It provides no backups, replication, high availability, or process supervision, so staging and production should connect to a managed or separately operated PostgreSQL instance.
-
-Remove `dataPath` from the run mode's configuration to connect to the `host` and `port` instead. The `SERVERPOD_DATABASE_DATA_PATH` [environment variable](../../lookups/configuration-reference) overrides the setting, so make sure it is unset as well.
-
-### Using the package directly
-
-Configuring `dataPath` and letting Serverpod manage the lifecycle covers most projects. Use the `serverpod_embedded_postgres` package directly when a Dart tool or test harness needs a PostgreSQL process of its own.
-
-Add the embedded package and the PostgreSQL client package as direct dependencies:
-
-```bash
-dart pub add serverpod_embedded_postgres postgres
-```
-
-Start the database, connect through the returned endpoint, and stop it when the process no longer needs it:
-
-```dart
-import 'dart:io';
-
-import 'package:postgres/postgres.dart';
-import 'package:serverpod_embedded_postgres/serverpod_embedded_postgres.dart';
-
-Future<void> main() async {
-  final postgres = await EmbeddedPostgres.start(
-    EmbeddedPostgresOptions(
-      dataDir: Directory('.serverpod/tool/pgdata'),
-      databaseName: 'tool_database',
-    ),
-  );
-
-  try {
-    final connection = await Connection.open(postgres.endpoint);
-    try {
-      await connection.execute('SELECT 1');
-    } finally {
-      await connection.close();
-    }
-  } finally {
-    await postgres.stop();
-  }
-}
-```
-
-The default transport is `UnixTransport`, which uses a Unix domain socket. Switch to `TcpTransport` when another process or tool has to connect over TCP:
-
-```dart
-final postgres = await EmbeddedPostgres.start(
-  EmbeddedPostgresOptions(
-    dataDir: Directory('.serverpod/tool/pgdata'),
-    databaseName: 'tool_database',
-    transport: const TcpTransport(port: 0),
-  ),
-);
-
-print(postgres.connectionString);
-```
-
-Port `0` selects an available loopback port. Besides `connectionString`, the returned handle exposes `connectionUri`, `endpoint`, `version`, `pid`, and `isRunning`.
-
-Set `detach: true` in `EmbeddedPostgresOptions` when the PostgreSQL process has to outlive the Dart process that started it. A later process picks the handle back up with `EmbeddedPostgres.attach(dataDir)`, and is then responsible for stopping it.
-
-In CI environments that cannot download binaries while the tests run, fill the binary cache in a separate step:
-
-```bash
-dart run serverpod_embedded_postgres:prefetch
-```
-
-Everything the package throws is an `EmbeddedPostgresException`. The type is sealed, so a `switch` over it covers every case: download and verification failures, unsupported platforms, initialization failures, startup timeouts, crashes, failed attachments, a cluster that is already busy, and an incompatible PostgreSQL data directory.
-
-Calling `stop()` leaves `dataDir` intact. Calling `reset()` stops PostgreSQL and deletes the cluster, its run directory, and its logs, so the next start initializes a new cluster.
-
-## PostgreSQL with Docker
-
-Serverpod projects include a Docker Compose configuration that you can use instead of embedded PostgreSQL. Remove `dataPath` from the selected run mode's configuration, then run the following command from the root of the server package:
+A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. To use it instead of the [embedded PostgreSQL](./embedded-postgres), remove `dataPath` from the run mode's configuration and run the following command from the root of the `server` package to start the database:
 
 ```bash
 $ docker compose up --build --detach
