@@ -214,7 +214,7 @@ The location of the test tools can be changed by changing the `server_test_tools
 
 :::
 
-Before the test can be run the Postgres and Redis also have to be started:
+The test server runs an [embedded PostgreSQL](../data-and-the-database/database/embedded-postgres) in a temporary directory that is removed afterwards, so there is no database to start first. If you removed `dataPath` from `config/test.yaml` to run Postgres yourself, or your tests need Redis, start those services before the tests:
 
 ```bash
 docker compose up --build --detach

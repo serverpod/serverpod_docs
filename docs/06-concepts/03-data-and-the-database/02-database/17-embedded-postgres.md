@@ -35,7 +35,7 @@ The files under `dataPath` are kept when the server stops, so your data is still
 
 ## Connect a database tool
 
-`psql`, pgAdmin, and most other database clients connect over TCP, not the Unix socket the server uses. To inspect the data with one of them, start the database on its own while the server is stopped:
+Most clients like `psql` and `pgAdmin` connect over TCP, not the Unix socket the server uses. To inspect the data with one of them, start the database on its own while the server is stopped:
 
 ```bash
 $ serverpod database start
@@ -48,6 +48,16 @@ Pass `--mode` to pick another run mode and `--port` to listen somewhere else:
 ```bash
 $ serverpod database start --mode test --port 9090
 ```
+
+## Run integration tests
+
+Integration tests bring their own database, so there is nothing to install or start first:
+
+```bash
+$ dart test
+```
+
+Each test gets an isolated temporary data directory that is deleted on teardown, so tests cannot see each other's data or leave anything behind between runs. See [Get started with testing](../../testing/get-started) for the rest of the setup.
 
 ## Reset the database
 
