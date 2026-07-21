@@ -14,7 +14,7 @@ Your app's `Cache-Control` header decides, per response, where a file may be cac
 
 - **The visitor's browser:** Keeps its own copy of a file for up to the `max-age` you set. No deploy can clear it, so keep this lifetime short.
 - **The CDN at the edge:** Stores cacheable files for up to `s-maxage`, or `max-age` when `s-maxage` is not set. Every successful deploy clears it, and it refills on its own: the first request for a file at each edge location fetches it from your server and stores it back. There is no manual purge command. To clear the edge on demand, deploy again.
-- **Your server:** Serves everything else: responses marked `no-cache`, `private`, or `no-store`, responses with no cache header, responses that set a cookie, and all calls from your Flutter app to your endpoints. The CDN never stores any of these responses, so they always reach your server.
+- **Your server:** Serves everything else: responses marked `no-cache`, `private`, or `no-store`, responses with no cache header, responses that set a cookie, and all calls from your Flutter app to your endpoints. Every request for these reaches your server. For `no-cache`, the CDN may keep a copy, but it checks with your server before serving it.
 
 What the common header patterns do at each layer:
 
