@@ -4,9 +4,9 @@ description: A many-to-many relationship connects multiple records on each side 
 
 # Many-to-many
 
-Many-to-many (n:m) relationships describes a scenario where multiple records from a table can relate to multiple records in another table. An example of this would be the relationship between students and courses, where a single student can enroll in multiple courses, and a single course can have multiple students.
+Many-to-many (n:m) relationships describe a scenario where multiple records from a table can relate to multiple records in another table. An example of this would be the relationship between students and courses, where a single student can enroll in multiple courses, and a single course can have multiple students.
 
-The Serverpod framework supports these relationships by explicitly creating a separate model, often called a junction or bridge table, that records the relation.
+Serverpod models these relationships with a separate model you define, called a junction table, that records the relation: neither table references the other directly, and the junction table holds the foreign keys of both.
 
 ## When to use a junction table
 
@@ -14,15 +14,9 @@ Reach for a many-to-many relation when records on both sides can each relate to 
 
 A junction model also gives you a place to store data about the relationship itself. If the link between two records needs a date, a grade, or a status, those fields live on the junction model. A relationship that carries its own data always needs an explicit junction table, even when a plainer relation might otherwise do.
 
-## Overview
-
-In the context of many-to-many relationships, neither table contains a direct reference to the other. Instead, a separate table holds the foreign keys of both tables. This setup allows for a flexible and normalized approach to represent n:m relationships.
-
-Modeling the relationship between `Student` and `Course`, we would create an `Enrollment` model as a junction table to store the relationship explicitly.
-
 ## Defining the relationship
 
-In the following examples we show how to configure a n:m relationship between `Student` and `Course`.
+In the following examples we show how to configure an n:m relationship between `Student` and `Course`, with an `Enrollment` model as the junction table that stores the relationship explicitly.
 
 ### Many tables
 
@@ -46,7 +40,7 @@ fields:
   enrollments: List<Enrollment>?, relation(name=student_enrollments)
 ```
 
-Note that the `name` argument is different, `course_enrollments` and `student_enrollments`, for the many tables. This is because each row in the junction table holds a relation to both many tables, `Course` and `Student`.
+Note that the `name` argument is different, `course_enrollments` and `student_enrollments`, for the many tables. This is because each row in the junction table holds a relation to each of the two related tables, `Course` and `Student`.
 
 ### Junction table
 
@@ -85,7 +79,7 @@ The `studentId` and `courseId` fields are the foreign keys Serverpod generated f
 await Enrollment.db.deleteRow(session, enrollment);
 ```
 
-Because `Student` and `Course` each hold a one-to-many relation to `Enrollment`, the generated `attach` and `detach` methods also operate on those relations. See [relation queries](../relation-queries#update) for the attach and detach API.
+Because `Student` and `Course` each hold a one-to-many relation to `Enrollment`, the generated `attach` and `detach` methods also operate on those relations. See [relation queries](../relation-queries#attach-and-detach-relations) for the attach and detach API.
 
 ## Common errors
 

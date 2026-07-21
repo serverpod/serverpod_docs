@@ -4,11 +4,11 @@ description: A one-to-one relationship links two tables through Serverpod's rela
 
 # One-to-one
 
-One-to-one (1:1) relationships represent a unique association between two entities, there is at most one model that can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
+One-to-one (1:1) relationships represent a unique association between two entities. At most one model can be connected on either side of the relation. This means we have to set a **unique index** on the foreign key in the database. Without the unique index the relation would be considered a one-to-many (1:n) relation.
 
-## Defining the Relationship
+## Defining the relationship
 
-In the following examples we show how to configure a 1:1 relationship between  `User` and `Address`.
+In the following examples we show how to configure a 1:1 relationship between `User` and `Address`.
 
 ### With an id field
 
@@ -25,16 +25,17 @@ fields:
 class: User
 table: user
 fields:
-  addressId: int, relation(parent=address) // Foreign key field
+  # The foreign key field.
+  addressId: int, relation(parent=address)
 indexes:
   user_address_unique_idx:
     fields: addressId
     unique: true
 ```
 
-In the example, the `relation` keyword annotates the `addressId` field to hold the foreign key. The field needs to be of type `int` and the relation keyword needs to specify the `parent` parameter. The `parent` parameter defines which table the relation is towards, in this case the `Address` table.
+In the example, the `relation` keyword annotates the `addressId` field to hold the foreign key. The field's type must match the parent table's id type: `int` here, or `UuidValue` when the parent model uses a UUID id. The relation keyword needs to specify the `parent` parameter. The `parent` parameter defines which table the relation is towards, in this case the `Address` table.
 
-The addressId is **required** in this example because the field is not nullable. That means that each `User` must have a related `Address`. If you want to make the relation optional, change the datatype from `int` to `int?`.
+The addressId is **required** in this example because the field is not nullable. That means that each `User` must have a related `Address`. If you want to make the relation optional, make the datatype nullable (`int?`).
 
 When fetching a `User` from the database the `addressId` field will automatically be populated with the related `Address` object `id`.
 
@@ -53,7 +54,8 @@ fields:
 class: User
 table: user
 fields:
-  address: Address?, relation // Object relation field
+  # The object relation field.
+  address: Address?, relation
 indexes:
   user_address_unique_idx:
     fields: addressId
@@ -113,13 +115,13 @@ The following code block shows how to set up the same relation with raw SQL. Ser
 
 ```sql
 CREATE TABLE "address" (
-    "id" serial PRIMARY KEY,
+    "id" bigserial PRIMARY KEY,
     "street" text NOT NULL
 );
 
 CREATE TABLE "user" (
-    "id" serial PRIMARY KEY,
-    "addressId" integer NOT NULL
+    "id" bigserial PRIMARY KEY,
+    "addressId" bigint NOT NULL
 );
 
 
@@ -132,6 +134,8 @@ ALTER TABLE ONLY "user"
     ON DELETE CASCADE
     ON UPDATE NO ACTION;
 ```
+
+The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential actions. The defaults per relation style are covered in [Referential actions](./referential-actions).
 
 ## Independent relations defined on both sides
 
