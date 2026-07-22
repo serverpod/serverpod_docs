@@ -29,7 +29,7 @@ fields:
 
 This will generate a class with both `name` and `age` fields.
 
-In the generated class, inherited fields come first. To place a field at the end of the combined field list instead, mark it with the `tail` keyword, e.g. `notes: String?, tail`. Tail fields from child classes appear before tail fields from parent classes, and the keyword is not allowed on the `id` field.
+In the generated class, inherited fields come first. To change that for a field, mark it with the `tail` keyword. See [Ordering inherited fields](#ordering-inherited-fields).
 
 #### Inheritance on table models
 
@@ -72,6 +72,51 @@ As the example shows, indexes can be defined on inherited fields in a child clas
 - Child classes cannot redefine fields that exist in parent classes.
 
 To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](./shared-packages).
+
+### Ordering inherited fields
+
+Inherited fields are ordered from the root class down to the child class. Since a base class is declared first, its audit fields end up in front of the fields that describe the child. Mark a field with the `tail` keyword to push it behind every normal field in the hierarchy instead.
+
+Add `tail` after the field type and any other keywords:
+
+```yaml
+class: BaseEntity
+fields:
+  ownerId: UuidValue
+  createdAt: DateTime, default=now, tail
+  updatedAt: DateTime, default=now, tail
+```
+
+Tail ordering applies across the whole hierarchy. Normal fields keep their root-to-child order, and the tail fields follow, starting from the most specific child and working back toward the root parent:
+
+```yaml
+class: Document
+extends: BaseEntity
+fields:
+  authorName: String
+  archivedAt: DateTime?, tail
+```
+
+```yaml
+class: Article
+extends: Document
+fields:
+  title: String
+  publishedAt: DateTime?, tail
+```
+
+The generated `Article` class orders its fields like this:
+
+1. `ownerId`, a normal field from the root class.
+2. `authorName`, a normal field from the parent class.
+3. `title`, a normal field from the child class.
+4. `publishedAt`, a tail field from the child class.
+5. `archivedAt`, a tail field from the parent class.
+6. `createdAt` and `updatedAt`, tail fields from the root class, in the order they are declared.
+
+The same order applies to the generated constructor parameters and the serialized output. For table models it also determines the generated table definition, where the primary `id` column always comes first. The `tail` keyword cannot be used on `id`.
+
+Adding or removing `tail` only affects generated code. It does not rename a database column, and it does not produce a migration that reorders the columns of an existing table.
 
 ### Sealed classes
 
