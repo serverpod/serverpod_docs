@@ -81,6 +81,43 @@ fields:
   hash: Bit(256)
 ```
 
+### Reading vector values in Dart
+
+All four vector types implement `Iterable` and support zero-based indexed access with `[]`. Values read from the database can therefore be inspected directly, without converting them to a list first.
+
+```dart
+var embedding = Vector([0.2, 0.4, 0.6]);
+
+print(embedding.length); // 3
+print(embedding[1]); // 0.4
+
+for (var value in embedding) {
+  print(value);
+}
+
+var hasLargeValue = embedding.any((value) => value > 0.5);
+var values = embedding.toList();
+```
+
+The `Vector`, `HalfVector`, and `SparseVector` types iterate over `double` values, while `Bit` iterates over `bool` values.
+
+```dart
+var flags = Bit([true, false, true]);
+
+print(flags[1]); // false
+print(flags.where((value) => value).length); // 2
+```
+
+A `SparseVector` iterates over every dimension, including the zero dimensions it does not store internally. Indexed access and `toList()` return `0.0` for those dimensions.
+
+```dart
+var sparse = SparseVector([1.5, 0.0, 0.0, 2.5]);
+
+print(sparse.length); // 4
+print(sparse[1]); // 0.0
+print(sparse.toList()); // [1.5, 0.0, 0.0, 2.5]
+```
+
 ## Geography fields
 
 Geography types are used for storing geospatial data on the surface of the Earth. They are stored as PostGIS geography columns in PostgreSQL using the WGS 84 coordinate system (SRID 4326), which is the standard used by GPS. The SRID is fixed to `4326`, available in Dart as `Geography.defaultSrid`; configuring a different SRID per column is not yet supported.
