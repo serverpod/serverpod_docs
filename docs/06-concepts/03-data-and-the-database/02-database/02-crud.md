@@ -227,7 +227,7 @@ var product = await Product.db.upsertRow(
 );
 ```
 
-If no row with that `sku` exists, the row is inserted. If one exists, it keeps its `id` and its remaining persistent columns are overwritten with the supplied values: every persistent column is updated except `id` and the columns in `conflictColumns`. The method returns the stored row.
+If no row with that `sku` exists, the row is inserted. If one exists, it keeps its `id`, and every persistent column except `id` and the `conflictColumns` is overwritten with the supplied values. The method returns the stored row.
 
 The `id` column can be the conflict target as well, which is useful when the same code path handles an object that may or may not already have an id:
 
@@ -267,7 +267,7 @@ The literal `500.0` matches the `double` column type. Comparison operators check
 
 ### Upsert several rows
 
-The batch `upsert` inserts and updates rows in a single atomic operation:
+The batch `upsert` inserts and updates rows in a single atomic operation, so no rows are written if any row fails:
 
 ```dart
 var products = await Product.db.upsert(
@@ -282,7 +282,7 @@ var products = await Product.db.upsert(
 
 The batch method takes the same `updateColumns` and `updateWhere` parameters as `upsertRow`. The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. For large batches, the read-back can be skipped entirely. See [Skipping returned rows](#skipping-returned-rows).
 
-Like the other batch operations, `upsert` runs atomically and accepts a `transaction` parameter to join a larger [transaction](transactions). For models with [non-persistent fields](tables#non-persistent-fields), the input values of those fields are carried over to the returned objects. They take no part in conflict detection and are never written to the database, and such batches are upserted row by row internally, which can be slow for large inputs.
+Like the other batch operations, `upsert` accepts a `transaction` parameter to join a larger [transaction](transactions). For models with [non-persistent fields](tables#non-persistent-fields), the input values of those fields are carried over to the returned objects. They take no part in conflict detection and are never written to the database, and such batches are upserted row by row internally, which can be slow for large inputs.
 
 A single-row upsert that unexpectedly matches multiple rows throws a `DatabaseUpsertRowException`. See [exceptions](exceptions).
 
