@@ -27,7 +27,7 @@ A schedule takes snapshots for you at a fixed frequency. Each database has one s
 scloud db schedule set --frequency weekly --day 1 --hour 3 --retention 30d
 ```
 
-Use `--day` to pick the day of the week (1-7) for a weekly schedule or the day of the month (1-31) for a monthly one; it defaults to 1 and does not apply to a daily schedule. Use `--hour` for the hour of the day (0-23, in UTC); it defaults to 0. Use `--retention` (for example `30d`) to set how long each scheduled snapshot is kept before it is deleted automatically. Without `--retention`, scheduled snapshots are kept for the platform's default retention.
+Use `--day` to pick the day of the week (1-7) for a weekly schedule or the day of the month (1-31) for a monthly one; it defaults to 1 and does not apply to a daily schedule. Use `--hour` for the hour of the day (0-23, in UTC); it defaults to 0. Use `--retention` (for example `30d`) to set how long each scheduled snapshot is kept before it is deleted automatically. Without `--retention`, scheduled snapshots are kept for 24 hours.
 
 Cloud confirms the schedule it stored:
 
@@ -106,7 +106,7 @@ Backup storage is billed separately from your regular database storage, as its o
 ## Limits
 
 - **Up to 100 manual snapshots per project.** Scheduled snapshots do not count towards this limit. When you reach it, creating another manual snapshot returns a clear error; delete snapshots you no longer need to make room.
-- **Retention defaults.** A manual snapshot created without `--expire-in` is kept until you delete it. A scheduled snapshot created without `--retention` is kept for the platform's default retention, then deleted automatically.
+- **Retention defaults.** A manual snapshot created without `--expire-in` is kept until you delete it. A scheduled snapshot created without `--retention` is kept for 24 hours, then deleted automatically.
 - **Downgrading with stored backups.** A project that still has backups stored cannot move from the Growth plan to a smaller plan. Delete the backups first, then change the plan.
 
 ## Related
