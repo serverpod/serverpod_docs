@@ -4,11 +4,7 @@ description: Routing in Serverpod's web server supports HTTP method filtering, p
 
 # Routing
 
-Routes are the foundation of your web server, directing incoming HTTP requests
-to the right handlers. While simple routes work well for basic APIs, Serverpod
-provides routing features for complex applications: HTTP method
-filtering, path parameters, wildcards, and fallback handling. Understanding
-these patterns helps you build clean, maintainable APIs.
+Routing decides which of your `Route` classes answers an incoming HTTP request. This page covers the matching rules, HTTP method filtering, path parameters, wildcards, fallback handling, and virtual hosts.
 
 ## Route classes
 
@@ -62,10 +58,13 @@ The examples in this documentation omit error handling for brevity.
 
 :::
 
+## How requests are matched
+
+Requests are matched by specificity, not by the order routes were registered. A literal path segment such as `/users/list` wins over a dynamic one such as `/users/:id` or a wildcard. Registering two routes with the same method and path throws at startup with `Invalid argument(s): Conflicting values`, so conflicts surface immediately rather than silently shadowing each other.
+
 ## HTTP methods
 
-Routes can specify which HTTP methods they respond to using the `methods`
-parameter.
+Routes answer GET requests only by default. Use the `methods` parameter to specify which HTTP methods a route responds to:
 
 ```dart
 class UserRoute extends Route {
@@ -75,6 +74,8 @@ class UserRoute extends Route {
   // ...
 }
 ```
+
+A request whose method is not in the set gets an automatic `405 Method Not Allowed` response with an `Allow` header listing the accepted methods.
 
 ## Path parameters
 
@@ -120,7 +121,7 @@ Future<Result> handleCall(Session session, Request request) async {
   final remainingPath = request.remainingPath;
 
   // Access query parameters
-  final query = request.url.queryParameters['query'];
+  final query = request.queryParameters.raw['query'];
 
   return Response.ok(
     body: Body.fromString('Path: $remainingPath, Query: $query'),
@@ -146,6 +147,8 @@ class NotFoundRoute extends Route {
 pod.webServer.fallbackRoute = NotFoundRoute();
 ```
 
+The fallback runs only when no route matches the request. If a route matches but its handler returns a 404, the fallback is not invoked. To rewrite those responses, use [`FallbackMiddleware`](single-page-apps#using-fallbackmiddleware-directly) instead.
+
 :::tip Advanced: Grouping routes into modules
 
 As your web server grows, managing dozens of individual route registrations can
@@ -165,9 +168,14 @@ class UserCrudModule extends Route {
       ..get('/:id', _get);
   }
 
+  // Not used when injectIn registers its own handlers.
+  @override
+  Future<Result> handleCall(Session session, Request request) =>
+      throw UnimplementedError();
+
   // Handler methods
   Future<Result> _list(Request request) async {
-    final session = request.session;
+    final session = await request.session;
     final users = await User.db.find(session);
 
     return Response.ok(
@@ -203,17 +211,15 @@ class UserCrudModule extends Route {
 pod.webServer.addRoute(UserCrudModule(), '/api/users');
 ```
 
-This creates `GET /api/users` and `GET /api/users/:id` endpoints.
+This creates `GET /api/users` and `GET /api/users/:id` routes.
 
-Handlers receive only a `Request` parameter. To access the `Session`,
-use `request.session` (unlike `Route.handleCall()` which receives both as
-explicit parameters).
+Handlers receive only a `Request` parameter. To access the `Session`, use `request.session`, which returns a `Future<Session>` that must be awaited. The `handleCall()` override is still required by the base class, but it is never called when `injectIn` registers its own handlers, so throwing `UnimplementedError` is the expected pattern. Typed path parameter accessors such as `IntPathParam` are covered in [Request data](request-data).
 
 :::
 
 ## Virtual host routing
 
-Virtual host routing allows you to serve different content based on the `Host` header of incoming requests. This is useful for multi-tenant applications or serving different front-ends from distinct subdomains using a single server instance - like an API on `api.example.com`, a web app on `www.example.com`, and an admin panel on `admin.example.com`.
+Virtual host routing allows you to serve different content based on the `Host` header of incoming requests. This is useful for multi-tenant applications, or for serving different front-ends from distinct subdomains with a single server instance, such as an API on `api.example.com`, a web app on `www.example.com`, and an admin panel on `admin.example.com`.
 
 ### How it works
 
@@ -262,7 +268,11 @@ pod.webServer.addRoute(ApiRoute(), '/v1');
 
 // Route that only responds to www.example.com
 pod.webServer.addRoute(
-  SpaRoute(webDir, fallback: index, host: 'www.example.com'),
+  SpaRoute(
+    Directory('web/app'),
+    fallback: File('web/app/index.html'),
+    host: 'www.example.com',
+  ),
   '/',
 );
 
@@ -276,8 +286,8 @@ All route types support virtual host routing:
 
 - **Custom routes** - Pass `host` to the `Route` constructor
 - **StaticRoute** - Use `host` parameter in `StaticRoute.directory()` or `StaticRoute.file()`
-- **SpaRoute** - Use `host` parameter in the `SpaRoute` constructor
-- **FlutterRoute** - Use `host` parameter in the `FlutterRoute` constructor
+- **[SpaRoute](single-page-apps)** - Use `host` parameter in the `SpaRoute` constructor
+- **[FlutterRoute](flutter-web)** - Use `host` parameter in the `FlutterRoute` constructor
 
 ```dart
 // Static files for a specific host
@@ -302,7 +312,7 @@ pod.webServer.addRoute(
 
 ## Next steps
 
-- **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
+- **[Request data](request-data)** - Access path parameters, query parameters, headers, and body
 - **[Middleware](./web-server-middleware)** - Intercept and transform requests and responses
-- **[Static Files](static-files)** - Serve static assets
-- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
+- **[Static files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML on the server
