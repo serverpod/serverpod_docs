@@ -239,7 +239,7 @@ var product = await Product.db.upsertRow(
 );
 ```
 
-To limit which columns an update touches, pass `updateColumns`. Columns outside the selection keep their stored values:
+To limit which columns an update touches, pass `updateColumns`. A new row is still inserted with all of its values, and an existing row only has the selected columns updated:
 
 ```dart
 var product = await Product.db.upsertRow(
@@ -280,7 +280,7 @@ var products = await Product.db.upsert(
 );
 ```
 
-The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. For large batches, the read-back can be skipped entirely. See [Skipping returned rows](#skipping-returned-rows).
+The batch method takes the same `updateColumns` and `updateWhere` parameters as `upsertRow`. The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. For large batches, the read-back can be skipped entirely. See [Skipping returned rows](#skipping-returned-rows).
 
 Like the other batch operations, `upsert` runs atomically and accepts a `transaction` parameter to join a larger [transaction](transactions). For models with [non-persistent fields](tables#non-persistent-fields), the input values of those fields are carried over to the returned objects. They take no part in conflict detection and are never written to the database, and such batches are upserted row by row internally, which can be slow for large inputs.
 
