@@ -7,7 +7,7 @@ description: 'Start building with Serverpod. Learn how to add endpoints, call th
 
 # How Serverpod works
 
-With Serverpod, you write type-safe Dart on both your Flutter app and the backend. With hot reload, all the changes immediately take effect. Edit a file, hit save, and your running server, your Flutter app, your database, and the generated code that connects them update together. No manual rebuilds or restarts, no Docker to wire up, and no API code to write by hand.
+With Serverpod, you write type-safe Dart on both your Flutter app and the backend. With hot reload, all the changes immediately take effect. Edit a file, hit save, and your running server, your Flutter app, your database, and the generated code that connects them update together. No manual rebuilds or restarts, no Docker to set up, and no API code to write by hand.
 
 Serverpod is a full backend. It manages your database, authentication, file uploads, caching, real-time communication, scheduling, and logging. You can focus on building features instead of wiring together separate services. A project is a single workspace of Dart packages, and a code generator keeps the types shared between your server and app in sync. If you rename a field or use an incorrect type, they will show up as compile-time errors rather than a surprise when you run the app.
 
@@ -106,7 +106,7 @@ These run on the same `session` your endpoint method receives. When you change a
 
 That database runs without setup on your part: Serverpod manages an embedded Postgres for you, with no Docker to configure. If you would rather manage Postgres yourself, you can change the configuration in the server's `config` directory.
 
-See [Working with the database](./concepts/data-and-the-database/database/crud) for building queries, relations, and transactions.
+See [CRUD](./concepts/data-and-the-database/database/crud) for the generated query methods, [relations](./concepts/data-and-the-database/database/relations) for linking tables, and [transactions](./concepts/data-and-the-database/database/transactions) for atomic operations.
 
 ## Build with an AI agent
 
