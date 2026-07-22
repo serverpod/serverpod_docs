@@ -16,12 +16,12 @@ When specifying vector types, the dimension is required between parentheses (e.g
 - 768 (many sentence transformers)
 - 384 (smaller models)
 
-All vector types support specialized distance operations for similarity search and filtering. See the [Vector distance operators](../database/filtering#vector-distance-operators) section for details.
+All vector types support specialized distance operations for similarity search and filtering. See the [Vector distance operators](./filtering#vector-distance-operators) section for details.
 
-To ensure optimal performance with vector similarity searches, consider creating specialized vector indexes on your vector fields. See the [Vector indexes](../database/indexing#vector-indexes) section for more details.
+To ensure optimal performance with vector similarity searches, consider creating specialized vector indexes on your vector fields. See the [Vector indexes](./indexing#vector-indexes) section for more details.
 
 :::info
-The usage of Vector fields requires a Postgres database with the `pgvector` extension installed. The extension comes by default on new Serverpod projects. To upgrade an existing project, see the [Upgrade to pgvector](../../../upgrading/archive/upgrade-to-pgvector) guide.
+Vector fields require a PostgreSQL database with the `pgvector` extension installed. Support depends on how your database runs: the Docker Postgres setup ships a pgvector-enabled image, the embedded PostgreSQL used in development does not include the extension yet, and SQLite does not support vector queries. To add the extension to an older Docker project or an external Postgres, see the [Upgrade to pgvector](../../../upgrading/archive/upgrade-to-pgvector) guide.
 :::
 
 ### Vector
@@ -81,18 +81,55 @@ fields:
   hash: Bit(256)
 ```
 
+### Reading vector values in Dart
+
+All four vector types implement `Iterable` and support zero-based indexed access with `[]`. Values read from the database can therefore be inspected directly, without converting them to a list first.
+
+```dart
+var embedding = Vector([0.2, 0.4, 0.6]);
+
+print(embedding.length); // 3
+print(embedding[1]); // 0.4
+
+for (var value in embedding) {
+  print(value);
+}
+
+var hasLargeValue = embedding.any((value) => value > 0.5);
+var values = embedding.toList();
+```
+
+The `Vector`, `HalfVector`, and `SparseVector` types iterate over `double` values, while `Bit` iterates over `bool` values.
+
+```dart
+var flags = Bit([true, false, true]);
+
+print(flags[1]); // false
+print(flags.where((value) => value).length); // 2
+```
+
+A `SparseVector` iterates over every dimension, including the zero dimensions it does not store internally. Indexed access and `toList()` return `0.0` for those dimensions.
+
+```dart
+var sparse = SparseVector([1.5, 0.0, 0.0, 2.5]);
+
+print(sparse.length); // 4
+print(sparse[1]); // 0.0
+print(sparse.toList()); // [1.5, 0.0, 0.0, 2.5]
+```
+
 ## Geography fields
 
 Geography types are used for storing geospatial data on the surface of the Earth. They are stored as PostGIS geography columns in PostgreSQL using the WGS 84 coordinate system (SRID 4326), which is the standard used by GPS. The SRID is fixed to `4326`, available in Dart as `Geography.defaultSrid`; configuring a different SRID per column is not yet supported.
 
 Like other fields, geography fields can be made optional by appending `?` to the type, for example `location: GeographyPoint?`.
 
-All geography types support spatial filter operations such as proximity search, intersection, containment, and distance-based ordering. See the [Geography operators](../database/filtering#geography-operators) section for details.
+All geography types support spatial filter operations such as proximity search, intersection, containment, and distance-based ordering. See the [Geography operators](./filtering#geography-operators) section for details.
 
-To ensure optimal performance with spatial queries, consider creating a spatial index on your geography fields. See the [Geography indexes](../database/indexing#geography-indexes) section for more details.
+To ensure optimal performance with spatial queries, consider creating a spatial index on your geography fields. See the [Geography indexes](./indexing#geography-indexes) section for more details.
 
 :::info
-The usage of Geography fields requires the PostGIS PostgreSQL extension to be installed. To set up PostGIS in a new or existing project, see the [Upgrading to PostGIS support](../../../upgrading/upgrade-to-postgis) guide.
+Geography fields require the PostGIS PostgreSQL extension. Unlike pgvector, PostGIS is not included in the default Docker image, and the embedded PostgreSQL does not include it either. To set it up on a Docker or external Postgres project, see the [Upgrading to PostGIS support](../../../upgrading/upgrade-to-postgis) guide.
 :::
 
 :::warning

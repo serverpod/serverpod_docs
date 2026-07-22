@@ -1,13 +1,13 @@
 ---
 sidebar_label: Custom serialization
-description: Custom serialization passes your own classes through Serverpod endpoints and models with toJson/fromJson, Freezed, and ProtocolSerialization for server-only fields.
+description: Custom serialization passes your own classes through Serverpod endpoints and models with toJson/fromJson, Freezed, and ProtocolSerialization.
 ---
 
 # Custom serialization
 
-For most purposes, you will want to use Serverpod's native serialization. However, there may be cases where you want to serialize more advanced objects. With Serverpod, you can pass any serializable objects as long as they conform to the following rules:
+Custom serialization lets you pass your own hand-written Dart classes, such as value types from your codebase or classes from a third-party package, through endpoints and models. Serverpod can serialize any class that follows three rules:
 
-1. Your objects must have a method called `toJson()` which returns a JSON serialization of the object.
+1. The class must have a method called `toJson()` which returns a JSON serialization of the object.
 
    ```dart
    Map<String, dynamic> toJson() {
@@ -29,11 +29,9 @@ For most purposes, you will want to use Serverpod's native serialization. Howeve
    }
    ```
 
-3. You must declare your custom serializable objects in the `config/generator.yaml` file in the server project, the path needs to be accessible from both the server package and the client package.
+3. The class must be declared in the `config/generator.yaml` file in the server project. The path needs to be accessible from both the server package and the client package.
 
    ```yaml
-
-   ...
    extraClasses:
      - package:my_project_shared/my_project_shared.dart:ClassName
    ```
@@ -56,30 +54,13 @@ ClassName copyWith({
 In the framework, `copyWith()` is implemented as a deep copy to ensure immutability. We recommend following this approach when implementing it for custom classes to avoid unintentional side effects caused by shared mutable references.
 :::
 
-## Setup example
+When a custom class is used as a field on a table model, it is stored as a `json` or `jsonb` column. See [Storing serializable fields as JSONB](../database/tables#storing-serializable-fields-as-jsonb).
 
-We recommend creating a new dart package specifically for sharing these types of classes and importing it into the server and client `pubspec.yaml`. This can easily be done by running `$ dart create -t package <my_project>_shared` in the root folder of your project.
+## Where custom classes live
 
-Your folder structure should then look like this:
+Custom classes must live where both the server and the client package can import them, typically a [shared package](shared-packages). See that page for creating one and wiring it into the server and client `pubspec.yaml` files. The same package can carry both generated models and hand-written custom classes. A plain Dart package works too, since `extraClasses` puts no Serverpod dependency requirements on the class.
 
-```text
-├── my_project_client
-├── my_project_flutter
-├── my_project_server
-├── my_project_shared
-```
-
-Then you need to update both your `my_project_server/pubspec.yaml` and `my_project_client/pubspec.yaml` and add the new package as a dependency.
-
-```yaml
-dependencies:
-  ...
-  my_project_shared:
-    path: ../my_project_shared
-  ...
-```
-
-Now you can create your custom class in your new shared package:
+A minimal custom class looks like this:
 
 ```dart
 class ClassName {
@@ -102,7 +83,7 @@ class ClassName {
 }
 ```
 
-After adding a new serializable class, you must run `serverpod generate`. You are now able to use this class in your endpoints with the full serialization and deserialization management that comes with Serverpod.
+After declaring the class in `extraClasses`, save with `serverpod start` running, or run `serverpod generate`. The class can now be used in your endpoints with the full serialization and deserialization management that comes with Serverpod.
 
 In your server project, you can create an endpoint returning your custom object.
 
@@ -130,7 +111,7 @@ part 'freezed_custom_class.freezed.dart';
 part 'freezed_custom_class.g.dart';
 
 @freezed
-class FreezedCustomClass with _$FreezedCustomClass {
+abstract class FreezedCustomClass with _$FreezedCustomClass {
   const factory FreezedCustomClass({
     required String firstName,
     required String lastName,
@@ -144,7 +125,7 @@ class FreezedCustomClass with _$FreezedCustomClass {
 }
 ```
 
-In the config/generator.yaml, you declare the package and the class:
+In the `config/generator.yaml`, you declare the package and the class:
 
 ```yaml
 extraClasses:
@@ -169,7 +150,7 @@ class CustomClass implements ProtocolSerialization {
   // Serializes fields specifically for protocol communication
   Map<String, dynamic> toJsonForProtocol() {
     return {
-      "value":value,
+      "value": value,
     };
   }
 
@@ -183,6 +164,4 @@ class CustomClass implements ProtocolSerialization {
 }
 ```
 
-This structure ensures that sensitive or server-only data is not exposed to the client, enhancing security and data integrity.
-
-Importantly, this implementation is not required for client-side custom models.
+Client-side classes never need `toJsonForProtocol()`. Only the server uses it, to leave out fields that should not reach the client. The client always serializes with `toJson()`.
