@@ -17,6 +17,10 @@ This guide walks you through that, then shows how to test signing up and signing
 - The Flutter SDK installed, so you can run the app.
 - Docker installed and running, if your project uses a Docker Postgres. Projects on the embedded Postgres option don't need Docker.
 
+:::note
+If you run on macOS (`flutter run -d macos`), add the Keychain Sharing entitlement before testing sign-in. See [Set up authentication on macOS](./macos-authentication).
+:::
+
 ## Show the sign-in screen
 
 Your app already includes a sign-in screen. It is turned off by default. Turn it on with two small edits to your app's `main.dart`.
