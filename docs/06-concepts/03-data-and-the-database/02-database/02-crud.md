@@ -213,7 +213,7 @@ var updatedCompanies = await Company.db.updateWhere(
 
 ## Upsert
 
-An upsert inserts a row, or updates the existing row when it collides with one that is already stored. The collision is decided by `conflictColumns`, which must be covered by a unique index (or be the primary key); without one, the call throws a `DatabaseQueryException`. The examples below use a `Product` model whose `sku` field has a [unique index](indexing#make-fields-unique).
+An upsert inserts a row, or updates the existing row when it collides with one that is already stored. The database runs the check and the write as a single atomic operation, so no other transaction can slip in between them. The collision is decided by `conflictColumns`, which must be covered by a unique index (or be the primary key); without one, the call throws a `DatabaseQueryException`. The examples below use a `Product` model whose `sku` field has a [unique index](indexing#make-fields-unique).
 
 ### Upsert a single row
 
@@ -227,9 +227,19 @@ var product = await Product.db.upsertRow(
 );
 ```
 
-If no row with that `sku` exists, the row is inserted. If one exists, it is updated in place and keeps its original `id`. The method returns the stored row.
+If no row with that `sku` exists, the row is inserted. If one exists, it keeps its `id`, and every persistent column except `id` and the `conflictColumns` is overwritten with the supplied values. The method returns the stored row.
 
-To limit which columns an update touches, pass `updateColumns`. Columns outside the selection keep their stored values:
+The `id` column can be the conflict target as well, which is useful when the same code path handles an object that may or may not already have an id:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(id: productId, sku: 'chair-01', name: 'Office chair', price: 199.00),
+  conflictColumns: (t) => [t.id],
+);
+```
+
+To limit which columns an update touches, pass `updateColumns`. A new row is still inserted with all of its values, and an existing row only has the selected columns updated:
 
 ```dart
 var product = await Product.db.upsertRow(
@@ -257,7 +267,7 @@ The literal `500.0` matches the `double` column type. Comparison operators check
 
 ### Upsert several rows
 
-The batch `upsert` inserts and updates rows in a single atomic operation:
+The batch `upsert` inserts and updates rows in a single atomic operation, so no rows are written if any row fails:
 
 ```dart
 var products = await Product.db.upsert(
@@ -270,7 +280,9 @@ var products = await Product.db.upsert(
 );
 ```
 
-The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. For large batches, the read-back can be skipped entirely; see [Skipping returned rows](#skipping-returned-rows).
+The batch method takes the same `updateColumns` and `updateWhere` parameters as `upsertRow`. The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. For large batches, the read-back can be skipped entirely. See [Skipping returned rows](#skipping-returned-rows).
+
+Like the other batch operations, `upsert` accepts a `transaction` parameter to join a larger [transaction](transactions). For models with [non-persistent fields](tables#non-persistent-fields), the input values of those fields are carried over to the returned objects. They take no part in conflict detection and are never written to the database, and such batches are upserted row by row internally, which can be slow for large inputs.
 
 A single-row upsert that unexpectedly matches multiple rows throws a `DatabaseUpsertRowException`. See [exceptions](exceptions).
 
