@@ -1,5 +1,5 @@
 ---
-description: The generated db methods on each model class create, read, update, and delete database rows in Serverpod.
+description: The generated db methods on each model class create, read, update, upsert, and delete database rows in Serverpod, in single-row and batch variants.
 ---
 
 # CRUD
@@ -210,6 +210,69 @@ var updatedCompanies = await Company.db.updateWhere(
   offset: 5,
 );
 ```
+
+## Upsert
+
+An upsert inserts a row, or updates the existing row when it collides with one that is already stored. The collision is decided by `conflictColumns`, which must be covered by a unique index (or be the primary key); without one, the call throws a `DatabaseQueryException`. The examples below use a `Product` model whose `sku` field has a [unique index](indexing#make-fields-unique).
+
+### Upsert a single row
+
+To insert-or-update a single row, use the `upsertRow` method:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(sku: 'chair-01', name: 'Office chair', price: 199.00),
+  conflictColumns: (t) => [t.sku],
+);
+```
+
+If no row with that `sku` exists, the row is inserted. If one exists, it is updated in place and keeps its original `id`. The method returns the stored row.
+
+To limit which columns an update touches, pass `updateColumns`. Columns outside the selection keep their stored values:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(sku: 'chair-01', name: 'Renamed chair', price: 249.00),
+  conflictColumns: (t) => [t.sku],
+  updateColumns: (t) => [t.price],
+);
+```
+
+To update only rows in a certain state, pass `updateWhere`. When the existing row does not match the expression, nothing is changed and `upsertRow` returns `null`:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(sku: 'chair-01', name: 'Office chair v2', price: 249.00),
+  conflictColumns: (t) => [t.sku],
+  updateWhere: (t) => t.price > 500.0,
+);
+```
+
+:::info
+The literal `500.0` matches the `double` column type. Comparison operators check value types at runtime, so `t.price > 500` compiles but throws. See [comparison operators](filtering#comparison-operators).
+:::
+
+### Upsert several rows
+
+The batch `upsert` inserts and updates rows in a single atomic operation:
+
+```dart
+var products = await Product.db.upsert(
+  session,
+  [
+    Product(sku: 'chair-01', name: 'Office chair v2', price: 249.00),
+    Product(sku: 'desk-01', name: 'Standing desk', price: 599.00),
+  ],
+  conflictColumns: (t) => [t.sku],
+);
+```
+
+The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. Pass `noReturn: true` to skip returning rows entirely for large batches.
+
+A single-row upsert that unexpectedly matches multiple rows throws a `DatabaseUpsertRowException`. See [exceptions](exceptions).
 
 ## Delete
 
