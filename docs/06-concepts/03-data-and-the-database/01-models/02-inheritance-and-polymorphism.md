@@ -4,13 +4,11 @@ description: Model inheritance defines class hierarchies with extends and sealed
 
 # Inheritance and polymorphism
 
+Model inheritance lets you define fields once in a parent class and share them across child classes with `extends`, or model a closed set of variants with `sealed`. Polymorphism builds on this: endpoints can take and return the parent type, and the actual subtype survives the round trip between client and server. When old and new app versions run side by side, unknown subtypes can fall back to their base class. See [Handling unknown class names](#handling-unknown-class-names) and the [backward compatibility](../../endpoints-and-apis/backward-compatibility) rules.
+
 ## Inheritance
 
-Serverpod models support inheritance, which allows you to define class hierarchies that share fields between parent and child classes. This simplifies class structures and promotes consistency by avoiding duplicate field definitions. Generated classes will maintain the same type hierarchy as the model files.
-
-:::warning
-Adding a new subtype to a class hierarchy may introduce breaking changes for older clients. Ensure client compatibility when expanding class hierarchies to avoid deserialization issues.
-:::
+Serverpod models support inheritance, which allows you to define class hierarchies that share fields between parent and child classes. Common fields, such as audit timestamps, are defined once in a parent class, and every child gets them. Generated classes will maintain the same type hierarchy as the model files.
 
 ### Extending a class
 
@@ -31,15 +29,17 @@ fields:
 
 This will generate a class with both `name` and `age` fields.
 
+In the generated class, inherited fields come first. To place a field at the end of the combined field list instead, mark it with the `tail` keyword, e.g. `notes: String?, tail`. Tail fields from child classes appear before tail fields from parent classes, and the keyword is not allowed on the `id` field.
+
 #### Inheritance on table models
 
-Inheritance can also be used with table models. However, **only one class** in an inheritance hierarchy can have a `table` property defined. The table can be placed at any level in the inheritance chain (top, middle or bottom).
+Inheritance can also be used with table models. However, a class cannot define a `table` if another class above it in its inheritance chain already has one. The table can be placed at any level in the chain (top, middle or bottom). Separate branches of a hierarchy can each define their own table, so a parent without a table can have several child classes that each have one, as in the [polymorphism example](#polymorphism) below.
 
 :::info
-This is a current limitation due to the parent class implementing the `table` getter and other table-related fields, so classes that `extends` the parent cannot override such properties with different types. This might be lifted with a future implementation of `interface` support for table models.
+This is a current limitation due to the parent class implementing the `table` getter and other table-related fields, so classes that `extends` the parent cannot override such properties with different types.
 :::
 
-When a class in the hierarchy has a table, all inherited fields are stored as columns in that table. The `id` field is automatically added to table classes and inherited by child classes. You can customize the `id` type in a parent class, and children will inherit it.
+When a class in the hierarchy has a table, all inherited fields are stored as columns in that table. The `id` field is automatically added to table classes and inherited by child classes. You can customize the [`id` type](../database/tables#choosing-an-id-strategy) in a parent class, and children will inherit it.
 
 A common use case for inheritance on table models is to have a base class that defines a custom `id` type, audit fields and other common properties that must be present on several table models. Below is an example:
 
@@ -63,18 +63,19 @@ indexes:
     fields: createdAt # Index on inherited field
 ```
 
-**ServerOnly Inheritance**: If a parent class is marked as `serverOnly`, all child classes must also be marked as `serverOnly`. A non-serverOnly class cannot extend a serverOnly class, but a serverOnly child can extend a non-serverOnly parent.
+As the example shows, indexes can be defined on inherited fields in a child class that has a table. Relations also work normally with inherited table classes.
 
-**Additional Restrictions**:
+#### Restrictions
 
+- If a parent class is marked as `serverOnly`, all child classes must also be marked as `serverOnly`. A non-serverOnly class cannot extend a serverOnly class, but a serverOnly child can extend a non-serverOnly parent.
 - You can only extend classes from your own project or from [shared packages](./shared-packages), not from modules.
 - Child classes cannot redefine fields that exist in parent classes.
 
-Indexes can be defined on inherited fields in a child class with a table, and relations work normally with inherited table classes. To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](./shared-packages).
+To use a base model that is shared between server and client and extend it on the server with a table, see [Shared packages](./shared-packages).
 
 ### Sealed classes
 
-In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies, enabling exhaustive type checking. With sealed classes, the compiler knows all subclasses, ensuring that every possible case is handled when working with the model.
+In addition to the `extends` keyword, you can also use the `sealed` keyword to create sealed class hierarchies. The compiler then knows all subclasses, so a `switch` over the model is exhaustive and every possible case must be handled.
 
 :::info
 If a class is sealed, it cannot have a table property. This is because a sealed class is abstract and cannot be instantiated, so it cannot represent a table row.
@@ -94,7 +95,7 @@ fields:
   age: int
 ```
 
-This will generate the following classes:
+This generates classes equivalent to:
 
 ```dart
 sealed class ParentClass {
@@ -110,7 +111,7 @@ class ChildClass extends ParentClass {
 
 Serverpod supports polymorphism for models that use inheritance. When you define a class hierarchy you can use parent types as parameters and return types in your endpoints, and Serverpod will automatically serialize and deserialize the correct subtype based on the runtime type.
 
-Below is an example of a polymorphic model hierarchy. The `EmailNotification` and `SMSNotification` classes extend the `Notification` sealed class. Each notification type has its own table and specific fields for delivery. Note that it is not possible to define relations towards the `Notification` class, since it does not have a table.
+Below is an example of a polymorphic model hierarchy. The `EmailNotification` and `SMSNotification` classes extend the `Notification` sealed class. Each notification type has its own table and specific fields for delivery. Note that it is not possible to define relations to the `Notification` class, since it does not have a table.
 
 ```yaml
 class: Notification
@@ -142,7 +143,7 @@ fields:
 
 ### Using polymorphic types in endpoints
 
-Polymorphic types can be used as parameters and return types in endpoint methods and streaming endpoints. The runtime type is preserved through serialization and deserialization:
+Polymorphic types can be used as parameters and return types in endpoint methods and streaming endpoints. The runtime type is preserved through serialization and deserialization, including inside Lists, Maps, Sets, Records, and nullable contexts:
 
 ```dart
 class NotificationEndpoint extends Endpoint {
@@ -180,8 +181,6 @@ class NotificationEndpoint extends Endpoint {
 }
 ```
 
-Polymorphic types also work in Lists, Maps, Sets, Records, and nullable contexts.
-
 ### Handling unknown class names
 
 When deserializing polymorphic types, Serverpod uses the class name encoded in the serialized data to determine which concrete subtype to instantiate. However, there are situations where the class name in the incoming data may not correspond to any known class on the server or client:
@@ -190,7 +189,7 @@ When deserializing polymorphic types, Serverpod uses the class name encoded in t
 - An older client is receiving data from a class that was recently added on the server.
 - A newer client is sending data with a class that hasn't been deployed to the server yet.
 
-If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking [backward compatibility](./backward-compatibility).
+If the missing class is a subclass of a known class, Serverpod will try to deserialize the model as the known class. This makes it safe to replace base classes with subclasses on endpoints without breaking [backward compatibility](../../endpoints-and-apis/backward-compatibility).
 
 :::info
 This will only work for non-streaming endpoints. Streaming endpoints will always throw an exception if the class name is not known.
