@@ -4,7 +4,7 @@ description: Serverpod's unsafe query methods run raw SQL directly against the d
 
 # Raw access
 
-The library provides methods to execute raw SQL queries directly on the database for advanced scenarios.
+Serverpod provides methods to execute raw SQL queries directly on the database for advanced scenarios. They are available on `session.db`.
 
 ## `unsafeQuery`
 
@@ -55,6 +55,10 @@ int result = await session.db.unsafeSimpleExecute(
 );
 ```
 
+:::info
+Raw SQL is passed to the database as-is, so write your statements in the dialect of the [backend](../../server-fundamentals/configuration#database-backends) your server runs against, PostgreSQL or SQLite. SQLite has no separate simple query protocol, and there the simple methods behave like their regular counterparts without parameter binding.
+:::
+
 ## Query parameters
 
 To protect against SQL injection attacks, always use query parameters when passing values into raw SQL queries. The library provides two types of query parameters:
@@ -64,22 +68,48 @@ To protect against SQL injection attacks, always use query parameters when passi
 
 ```dart
 // Named parameters
-var result = await db.unsafeQuery(
+var result = await session.db.unsafeQuery(
   r'SELECT id FROM apparel WHERE color = @color AND size = @size',
-  QueryParameters.named({
+  parameters: QueryParameters.named({
     'color': 'green',
     'size': 'XL',
-  }));
+  }),
+);
 
 // Positional parameters
-var result = await db.unsafeQuery(
+var result = await session.db.unsafeQuery(
   r'SELECT id FROM apparel WHERE color = $1 AND size = $2',
-  QueryParameters.positional(['green', 'XL']),
+  parameters: QueryParameters.positional(['green', 'XL']),
 );
 ```
 
 :::danger
 Always sanitize your input when using raw query methods. For the `unsafeQuery` and `unsafeExecute` methods, use query parameters to prevent SQL injection. Avoid using `unsafeSimpleQuery` and `unsafeSimpleExecute` unless the simple query protocol is strictly required.
 :::
+
+## Working with results
+
+The query methods return a `DatabaseResult`, a read-only list of rows. Each row is itself a read-only list of column values, in the order the query selected them. Call `toColumnMap()` on a row to get the values keyed by column name instead.
+
+```dart
+var result = await session.db.unsafeQuery(
+  r'SELECT id, name FROM company WHERE id = @id',
+  parameters: QueryParameters.named({'id': 1}),
+);
+
+for (var row in result) {
+  var id = row[0] as int;
+  var map = row.toColumnMap(); // {'id': 1, 'name': 'Serverpod'}
+}
+```
+
+Beyond the rows, the result exposes two properties:
+
+- `affectedRowCount`: the number of rows affected by the query.
+- `schema`: the columns of the result, each with a `columnName`.
+
+When a query selects multiple columns with the same name, `toColumnMap()` keeps the last value for that name.
+
+## Intercept database access
 
 To apply tracing, metrics, tenant scoping, or policy enforcement across every database operation of a session, including the raw methods above, see [Database interceptors](./database-interceptors).

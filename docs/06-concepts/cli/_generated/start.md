@@ -9,7 +9,7 @@ Usage: serverpod start [-- <server-args>]
                       (defaults to on)
 -d, --directory       The server directory (defaults to auto-detect from current directory).
                       (defaults to "")
-    --[no-]docker     Start Docker Compose services if a docker-compose.yaml exists. Default off; pass --docker to opt in to compose-managed services (typically Redis when running PostgreSQL separately).
+    --[no-]docker     Start Docker Compose services if a Docker Compose file exists. Defaults to on if the project has a Docker Compose file and the database is configured to PostgreSQL without a dataPath. Otherwise, defaults to off. Pass --docker or --no-docker to override the default behavior.
     --[no-]tui        Show interactive terminal UI.
                       (defaults to on)
     --[no-]flutter    Auto-launch the companion Flutter apps as configured on the server pubspec.yaml with `auto_launch: true`. Use --no-flutter to disable auto-launch. Apps can still be started on demand from the TUI.

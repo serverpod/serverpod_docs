@@ -36,7 +36,7 @@ fields:
 Save the file. The regenerated `Recipe` class now exposes database methods through `Recipe.db`.
 
 :::info
-See the [database models](../concepts/data-and-the-database/models#keywords-1) reference for all the keywords you can use in a table.
+See the [Model reference](../concepts/lookups/model-reference) for all the keywords you can use in a table.
 :::
 
 ## Create and apply the migration
@@ -63,7 +63,7 @@ Now that `Recipe` is a table, you can write rows. In `recipe_endpoint.dart`, sav
     return Recipe.db.insertRow(session, recipe);
 ```
 
-`insertRow` returns the saved row with its `id` populated by the database.
+The `insertRow` method returns the saved row with its `id` populated by the database.
 
 ## List past recipes
 
@@ -77,7 +77,7 @@ Add a second method to the endpoint that returns every saved recipe, newest firs
 ```
 
 :::info
-`insertRow` and `find` are Serverpod's typed database methods. See [CRUD](../concepts/data-and-the-database/database/crud) for the full set of operations.
+Both `insertRow` and `find` are Serverpod's typed database methods. See [CRUD](../concepts/data-and-the-database/database/crud) for the full set of operations.
 :::
 
 ## Show the saved recipes in your app
