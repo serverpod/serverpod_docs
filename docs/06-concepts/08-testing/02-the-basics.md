@@ -135,7 +135,6 @@ The following optional configuration options are available to pass as named argu
 |:-----|:-----|:---:|
 |`applyMigrations`|Whether pending migrations should be applied when starting Serverpod.|`true`|
 |`configOverride`|A function that overrides values in the loaded Serverpod config before the test server starts.|`null`|
-|`databaseInterceptor`|A callback that returns the database used as `Session.db` for each test session. See [Database interceptors](../data-and-the-database/database/database-interceptors).|`null`|
 |`enableSessionLogging`|Whether session logging should be enabled.|`false`|
 |`experimentalFeatures`|Optionally specify experimental features used by Serverpod.|`null`|
 |`rollbackDatabase`|Options for when to rollback the database during the test lifecycle (or disable it). See detailed description [here](#rollback-database-configuration).|`RollbackDatabase.afterEach`|

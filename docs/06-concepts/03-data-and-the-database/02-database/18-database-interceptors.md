@@ -1,5 +1,5 @@
 ---
-description: A database interceptor replaces Session.db once per session with a custom database layer for tracing, policy enforcement, tenant scoping, and tests.
+description: A database interceptor replaces session.db once per session with a custom database layer for tracing, policy enforcement, and tenant scoping.
 ---
 
 # Database interceptors
@@ -40,7 +40,7 @@ var pod = Serverpod(
 );
 ```
 
-The `Database` class has no public constructor to subclass, so implement the interface and let your IDE generate the overrides. Hold on to the supplied `inner` database and delegate every operation the layer does not change. The object you return becomes `Session.db`, so generated calls such as `User.db.find(session)` pass through it as well.
+The `Database` class has no public constructor to subclass, so implement the interface and let your IDE generate the overrides. Hold on to the supplied `inner` database and delegate every operation the layer does not change. The object you return becomes `session.db`, so generated calls such as `User.db.find(session)` pass through it as well.
 
 Typical uses are:
 
@@ -48,30 +48,9 @@ Typical uses are:
 - Applying a tenant scope to every supported query.
 - Enforcing read and write policies.
 - Blocking unsafe operations or writes in protected environments.
-- Recording or replacing database behavior in tests.
 
 Pass transaction objects, [runtime parameters](./runtime-parameters), ordering, pagination, [row locks](./row-locking), and return options through without changing their meaning. A layer that enforces a policy also needs to cover [raw access](./raw-access) and transactions, otherwise a caller can reach the database around it. Do not hold on to the session or its inner database after the session closes.
 
 :::warning
 Custom database layers build on the `Database` API from `serverpod_database`, which can change in a breaking way in a minor Serverpod release. Review and test your implementation whenever you upgrade Serverpod.
 :::
-
-## Use an interceptor in tests
-
-The generated [`withServerpod`](../../testing/the-basics) test helper takes the same `databaseInterceptor` callback, so a test can install a recording or restricting database layer without touching the server startup code. The callback runs once for every session the helper creates.
-
-```dart
-var recorder = QueryRecorder();
-
-withServerpod(
-  'Given Companies endpoint',
-  (sessionBuilder, endpoints) {
-    test('then calling `all` records the query', () async {
-      await endpoints.companies.all(sessionBuilder);
-      expect(recorder.queries, isNotEmpty);
-    });
-  },
-  databaseInterceptor: (session, inner) =>
-      RecordingDatabase(inner: inner, recorder: recorder),
-);
-```
