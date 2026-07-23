@@ -37,7 +37,7 @@ The following types can be used as field types:
 - **Geography types**: [GeographyPoint](./database/vector-and-geography-fields#geographypoint), [GeographyLineString](./database/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./database/vector-and-geography-fields#geographypolygon), and [GeographyGeometryCollection](./database/vector-and-geography-fields#geographygeometrycollection).
 - **Your own types**: other serializable [classes](#class), [exceptions](#exception), and [enums](#enum).
 - **Collections**: [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s, and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, with the type arguments specified. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s.
-- **dynamic**: holds any serializable value when the type is not known at compile time.
+- **[dynamic](./models/dynamic-fields)**: holds any serializable value when the type is not known at compile time.
 
 Null safety is supported: append `?` to any type to make the field nullable. Once your classes are generated, you can use them as parameters or return types to [endpoint methods](../endpoints-and-apis).
 

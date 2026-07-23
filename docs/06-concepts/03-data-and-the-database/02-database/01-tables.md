@@ -58,7 +58,7 @@ All fields are persisted by default and have an implicit `persist` set on each f
 
 ## Data representation
 
-A field with a primitive / core Dart type is stored as its respective column type. Complex types, such as another model, a `List`, or a `Map`, are stored as a `json` column in the database by default. Fields of type `dynamic` are stored the same way, and can always hold null.
+A field with a primitive / core Dart type is stored as its respective column type. Complex types, such as another model, a `List`, or a `Map`, are stored as a `json` column in the database by default. Fields of type [`dynamic`](../models/dynamic-fields) are stored the same way, and can always hold null.
 
 ```yaml
 class: Company
@@ -85,7 +85,7 @@ For a complete guide on how to work with relations, see the [Relations](relation
 By default, complex types are stored as `json` in the database. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes) for PostgreSQL.
 
 :::info
-The `serializationDataType` keyword is only valid on serializable field types (models, Lists, Maps). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
+The `serializationDataType` keyword is only valid on serializable field types (models, Lists, Maps, and `dynamic`). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
 :::
 
 You can set `serializationDataType` at three levels, each overriding the one above it:
