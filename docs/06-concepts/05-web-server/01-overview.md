@@ -157,7 +157,7 @@ When you deploy, the web server ships with the rest of your project. On [Serverp
 
 - **[Routing](routing)** - Match requests to handlers by method and URL pattern
 - **[Request data](request-data)** - Access path parameters, query parameters, headers, and body
-- **[Middleware](./web-server-middleware)** - Intercept and transform requests and responses
+- **[Web server middleware](./web-server-middleware)** - Intercept and transform requests and responses
 - **[Static files](static-files)** - Serve static assets
 - **[Server-side HTML](server-side-html)** - Render HTML on the server with templates or Jaspr
 - **[Single-page apps](single-page-apps)** - Serve SPAs with client-side routing

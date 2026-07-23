@@ -118,7 +118,7 @@ class DataRoute extends WidgetRoute {
 
 [Jaspr](https://jaspr.site) lets you build server-rendered pages from components, with a `build` method and composition model much like Flutter's. It works with the web server through a plain `Route`: your route renders a component to HTML and returns it as the response.
 
-Add the dependency to your server package:
+Add the dependency to your server package (the example on this page uses jaspr 0.23):
 
 ```bash
 $ dart pub add jaspr
@@ -173,7 +173,7 @@ pod.webServer.addRoute(JasprHelloRoute(), '/jaspr');
 The `initializeApp()` call is required. Without it, the first render kills the whole server process instead of failing the single request.
 :::
 
-Two details make this example work. Both `package:jaspr/server.dart` and `package:jaspr/dom.dart` are imported under one alias, because `server.dart` exports names that collide with the web server's `Request` and `Response`, and the HTML components (`div`, `h1`, `p`) live in `dom.dart`. And `renderComponent` returns a result record whose `body` is bytes, which `utf8.decode` turns into the HTML string. The example was verified against jaspr 0.23.
+Two details make this example work. Both `package:jaspr/server.dart` and `package:jaspr/dom.dart` are imported under one alias, because `server.dart` exports names that collide with the web server's `Request` and `Response`, and the HTML components (`div`, `h1`, `p`) live in `dom.dart`. And `renderComponent` returns a result record whose `body` is bytes, which `utf8.decode` turns into the HTML string.
 
 ## Next steps
 
