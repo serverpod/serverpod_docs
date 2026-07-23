@@ -19,11 +19,11 @@ fields:
   value: dynamic
 ```
 
-Run `serverpod generate` to update the generated Dart classes.
+Save the file with `serverpod start` running (or run `serverpod generate`) to update the generated Dart classes.
 
 ### Nullability
 
-The `dynamic` type is already nullable, so it is written without a `?`. Writing `dynamic?` or `List<dynamic?>` is invalid Dart syntax and will be rejected by the code generation.
+The `dynamic` type is already nullable, so it is written without a `?`. Writing `dynamic?` or `List<dynamic?>` is rejected by code generation, since the `?` mark is redundant.
 
 ## Supported values
 
@@ -42,14 +42,14 @@ class: DynamicExample
 table: dynamic_example
 fields:
   payload: dynamic
-  jsonbPayload: dynamic
+  jsonbPayload: dynamic, serializationDataType=jsonb
   payloadList: List<dynamic>
   payloadMap: Map<String, dynamic>
   payloadSet: Set<dynamic>
   payloadMapWithDynamicKeys: Map<dynamic, dynamic>
 ```
 
-In Dart, assign values directly:
+In Dart, assign values directly. In this example, `SimpleData` is a generated model:
 
 ```dart
 var object = DynamicExample(
@@ -78,7 +78,7 @@ class UtilityEndpoint extends Endpoint {
 }
 ```
 
-The generated client preserves the runtime type when it sends and receives supported values. Endpoints also support using `dynamic` on collections, maps and sets.
+The generated client preserves the runtime type when it sends and receives supported values. Collections (`List`, `Map`, and `Set`) with `dynamic` type arguments are also supported.
 
 ## Store dynamic fields in the database
 
@@ -100,13 +100,7 @@ After adding or changing `dynamic` fields on a table model, run `serverpod creat
 
 ## Copy models with dynamic fields
 
-Generated `copyWith` methods distinguish between omitting a dynamic field and explicitly passing `null`. Omitting the argument preserves its current value:
-
-```dart
-var updated = object.copyWith(id: 2);
-```
-
-Passing `null` clears the field:
+The generated [copyWith](../models#copywith) method keeps its standard behavior on dynamic fields: omitting the argument preserves the current value, and passing `null` explicitly clears the field:
 
 ```dart
 var cleared = object.copyWith(payload: null);
