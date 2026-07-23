@@ -1,18 +1,18 @@
 ---
-description: Shared packages in Serverpod let you define models usable in both server and client code, depending only on serverpod_serialization with no server-only dependencies.
+description: Shared packages in Serverpod define models usable in both server and client code, depending only on serverpod_serialization with no server-only dependencies.
 ---
 
 # Shared packages
 
 Shared packages let you define models and logic that can be safely imported in both server and client code. They contain the models and the protocol file, depend exclusively on the `serverpod_serialization` package, and have no server-only dependencies. This makes them ideal for data structures that need to be used across your full stack, for example DTOs, API request/response shapes, or domain models that flow between Flutter and your Serverpod backend with their custom logic.
 
-Models and the protocol file are generated in the shared package's own directory when you run `serverpod generate` from your server project. The shared package is tied to the project through the `shared_packages` field in `config/generator.yaml`.
+Models and the protocol file are generated in the shared package's own directory when your server project's code generation runs. The shared package is tied to the project through the `shared_packages` field in `config/generator.yaml`.
 
 ## Setup
 
 ### Create the shared package
 
-Create a new Dart package (e.g., `my_shared_package`) with a minimal `pubspec.yaml`:
+Create a new Dart package, for example with `dart create -t package my_shared_package`, and give it a minimal `pubspec.yaml`:
 
 ```yaml
 name: my_shared_package
@@ -70,11 +70,7 @@ Paths are relative to the server project directory. You can list multiple shared
 
 ### Generate the code
 
-Run `serverpod generate` from your server directory.
-
-```bash
-$ serverpod generate
-```
+With `serverpod start` running, saving the model files generates the code. Outside a session, run `serverpod generate` from your server directory.
 
 This generates the Dart classes and protocol in the shared package's `lib/src/generated/` directory. After generation, a typical shared package looks like:
 

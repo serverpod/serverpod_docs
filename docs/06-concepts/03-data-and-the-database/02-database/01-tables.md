@@ -2,9 +2,9 @@
 description: Table models map serializable classes to database tables in Serverpod, with custom ID types, non-persistent fields, JSONB storage, and column name overrides.
 ---
 
-# Models
+# Tables
 
-It's possible to map serializable models to tables in your database. To do this, add the `table` key to your yaml file:
+Storing a [data model](../models) in the database takes one line: add the `table` key to its model file, and the class gains a generated `db` field with typed methods for reading and writing rows. From there the path is short: create and apply a [migration](migrations) (press **M** then **A** in the `serverpod start` terminal), then call the [CRUD methods](crud) from your endpoints. The rest of this page covers what the table definition itself can do.
 
 ```yaml
 class: Company
@@ -13,7 +13,7 @@ fields:
   name: String
 ```
 
-When the `table` keyword is added to the model, Serverpod generates new methods for [interacting](crud) with the database. The keyword is also picked up by the `serverpod create-migration` command, which generates the [migrations](migrations) needed to update the database.
+When the `table` keyword is added to the model, Serverpod generates new methods for [interacting](crud) with the database. The keyword is also picked up when a migration is created, which generates the [migrations](migrations) needed to update the database.
 
 For the full list of keywords you can use in a model file, see the [Model reference](../../lookups/model-reference).
 
@@ -21,15 +21,9 @@ For the full list of keywords you can use in a model file, see the [Model refere
 When you add a `table` to a serializable class, Serverpod will automatically add an `id` field of type `int?` to the class. You should not define this field yourself. The `id` is set when you interact with an object stored in the database.
 :::
 
-## Client-side database
+## Choosing where a table lives
 
-Models with the `table` keyword can also generate a client-side database with the `database` keyword:
-
-```yaml
-class: Company
-table: company
-database: client
-```
+By default, a table model generates its table on the server, and the client package gets the same class as a plain model without database bindings. The `database` keyword changes this. It accepts three values:
 
 | Value | Description |
 | ------- | ----------- |
@@ -37,7 +31,17 @@ database: client
 | `client` | Generates tables only on the client, and a non-table model on the server package. |
 | `all` | Generates table models on both server and client. |
 
-For how to use the client-side database, see the [Client-side database](client-side-database) section.
+For example, to store the table only on the device:
+
+```yaml
+class: Company
+table: company
+database: client
+```
+
+A client table lives in a SQLite database on the device, which is useful for local caches and offline data. It gets its own SQLite [migrations](migrations) in the client package. With `all`, the server and client tables are separate databases, and data does not move between them automatically.
+
+For how to use the database on the device, see [Client-side database](client-side-database).
 
 ## Non persistent fields
 
@@ -54,7 +58,7 @@ All fields are persisted by default and have an implicit `persist` set on each f
 
 ## Data representation
 
-Storing a field with a primitive / core dart type will be handled as its respective type. However, if you use a complex type, such as another model, a `List`, a `Map`, or a [dynamic](../models/dynamic-fields) value, these will be stored as a `json` column in the database by default.
+A field with a primitive / core Dart type is stored as its respective column type. Complex types, such as another model, a `List`, or a `Map`, are stored as a `json` column in the database by default. Fields of type [`dynamic`](../models/dynamic-fields) are stored the same way, and can always hold null.
 
 ```yaml
 class: Company
@@ -74,7 +78,7 @@ fields:
   address: Address?, relation
 ```
 
-For a complete guide on how to work with relations see the [relation section](relations/one-to-one).
+For a complete guide on how to work with relations, see the [Relations](relations/) section.
 
 ### Storing serializable fields as JSONB
 
@@ -148,7 +152,7 @@ The following types are supported for the `id` field:
 | **int**       | serial  | serial (optional)       | -                     | 64-bit serial integer. |
 | **UuidValue** | random  | random                  | random                | UUID v4 value.         |
 
-### Declaring a Custom ID Type
+### Declaring a custom ID type
 
 To declare a custom type for the `id` field in a table model file, use the following syntax:
 

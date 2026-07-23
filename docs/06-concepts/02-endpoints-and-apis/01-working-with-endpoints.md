@@ -103,9 +103,9 @@ For how users sign in and how scopes work, see [Authentication](./authentication
 
 ## Pass and return data
 
-Parameters and return values can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, [`dynamic`](./data-and-the-database/models/dynamic-fields), [vector and geography types](./data-and-the-database/models/vector-and-geography-fields), or generated serializable objects ([data models](./data-and-the-database/models)). You can also use `List`, `Map`, `Record`, and `Set`, strictly typed with the types above. Null safety is supported, and return types follow the same rules as parameters. A `DateTime` is always converted to UTC when passed.
+Parameters and return values can be of type `bool`, `int`, `double`, `String`, `UuidValue`, `Duration`, `DateTime`, `ByteData`, `Uri`, `BigInt`, [`dynamic`](./data-and-the-database/models/dynamic-fields), [vector and geography types](./data-and-the-database/database/vector-and-geography-fields), or generated serializable objects ([data models](./data-and-the-database/models)). You can also use `List`, `Map`, `Record`, and `Set`, strictly typed with the types above. Null safety is supported, and return types follow the same rules as parameters. A `DateTime` is always converted to UTC when passed.
 
-Parameters are sent by name in the request between app and server, so renaming an endpoint method's parameters breaks older app builds. See [backward compatibility](./data-and-the-database/models/backward-compatibility) before changing a published API.
+Parameters are sent by name in the request between app and server, so renaming an endpoint method's parameters breaks older app builds. See [backward compatibility](./endpoints-and-apis/backward-compatibility) before changing a published API.
 
 Binary data over a method call is capped by the request size limit, 512 KiB by default (an oversized call fails with an HTTP 413 error). The limit is the `maxRequestSize` key in the [Configuration reference](./lookups/configuration-reference). For transferring files, use the [file upload](./endpoints-and-apis/file-uploads) interface instead.
 
@@ -154,7 +154,7 @@ The generated test tools call your endpoints the same way production code does, 
 ## Related
 
 - [Sessions](./endpoints-and-apis/sessions): the object every endpoint method receives.
-- [Error handling and exceptions](./endpoints-and-apis/error-handling-and-exceptions): typed errors across the wire.
+- [Error handling and exceptions](./endpoints-and-apis/error-handling-and-exceptions): typed errors between server and app.
 - [Streaming](./endpoints-and-apis/streaming): push live data to your app.
 - [File uploads](./endpoints-and-apis/file-uploads): direct-to-storage uploads.
 - [Endpoint inheritance](./endpoints-and-apis/endpoint-inheritance): share behavior across endpoints and reshape module endpoints.

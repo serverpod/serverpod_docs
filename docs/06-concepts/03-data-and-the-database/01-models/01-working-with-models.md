@@ -6,13 +6,17 @@ description: Serverpod model files define serializable classes, exceptions, and 
 
 # Working with models
 
-Models are Yaml files used to define serializable classes in Serverpod. They are used to generate Dart code for the server and client, and, if a database table is defined, to generate database code for the server and/or client.
+A data model is a YAML definition that becomes a typed Dart class on both the server and the client, and, with a [table](./database/tables) key, a database table as well. Models are the unit of data your endpoints pass and your database stores.
 
-Using regular `.yaml` files within `lib/src/models` is supported, but it is recommended to use `.spy.yaml` (.spy stands for "Serverpod YAML"). Using this file type allows placing the model files anywhere in your server's `lib` directory and enables syntax highlighting provided by the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code.
+The recommended file extension is `.spy.yaml` (.spy stands for "Serverpod YAML"), with `.spy` and `.spy.yml` accepted as well. These files can be placed anywhere in your server's `lib` directory, and the extension enables syntax highlighting through the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code. Regular `.yaml` files are also supported, but only within `lib/src/models` (or the legacy `lib/src/protocol` directory).
 
-The files are analyzed by the Serverpod CLI when generating the project and creating migrations.
+The Serverpod CLI reads the model files when generating code and creating migrations. With `serverpod start` running, saving a model file regenerates the code. Outside a session, run `serverpod generate`.
 
-Run `serverpod generate` to generate dart classes from the model files.
+This page covers the model file format: classes, exceptions, enums, default values, and the generated Dart code. The other pages in this group build on it:
+
+- [Inheritance and polymorphism](./models/inheritance-and-polymorphism): share fields between models with `extends` and `sealed`, and use parent types in endpoints.
+- [Custom serialization](./models/custom-serialization): pass hand-written Dart classes through endpoints and models.
+- [Shared packages](./models/shared-packages): define models in a package that both the server and the app depend on.
 
 ## Class
 
@@ -24,21 +28,47 @@ fields:
   employees: List<Employee>
 ```
 
-Supported types are [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), [BigInt](https://api.dart.dev/dart-core/BigInt-class.html), [dynamic](./models/dynamic-fields), [Vector](./models/vector-and-geography-fields#vector), [HalfVector](./models/vector-and-geography-fields#halfvector), [SparseVector](./models/vector-and-geography-fields#sparsevector), [Bit](./models/vector-and-geography-fields#bit), [GeographyPoint](./models/vector-and-geography-fields#geographypoint), [GeographyLineString](./models/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./models/vector-and-geography-fields#geographypolygon), [GeographyGeometryCollection](./models/vector-and-geography-fields#geographygeometrycollection) and other serializable [classes](#class), [exceptions](#exception) and [enums](#enum). You can also use [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, just make sure to specify the types. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s. Null safety is supported. Once your classes are generated, you can use them as parameters or return types to endpoint methods.
+### Supported types
+
+The following types can be used as field types:
+
+- **Core Dart types**: [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), and [BigInt](https://api.dart.dev/dart-core/BigInt-class.html).
+- **Vector types**: [Vector](./database/vector-and-geography-fields#vector), [HalfVector](./database/vector-and-geography-fields#halfvector), [SparseVector](./database/vector-and-geography-fields#sparsevector), and [Bit](./database/vector-and-geography-fields#bit).
+- **Geography types**: [GeographyPoint](./database/vector-and-geography-fields#geographypoint), [GeographyLineString](./database/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./database/vector-and-geography-fields#geographypolygon), and [GeographyGeometryCollection](./database/vector-and-geography-fields#geographygeometrycollection).
+- **Your own types**: other serializable [classes](#class), [exceptions](#exception), and [enums](#enum).
+- **Collections**: [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s, and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, with the type arguments specified. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s.
+- **[dynamic](./models/dynamic-fields)**: holds any serializable value when the type is not known at compile time.
+
+Null safety is supported: append `?` to any type to make the field nullable. Once your classes are generated, you can use them as parameters or return types to [endpoint methods](../endpoints-and-apis).
+
+When values are sent between the server and the client, some types are converted to a specific JSON form:
+
+| Type | Sent as |
+| --- | --- |
+| `DateTime` | ISO 8601 string, converted to UTC |
+| `Duration` | Integer, in milliseconds |
+| `ByteData` | Base64-encoded string |
+| `UuidValue` | UUID string |
+| `Uri` | String |
+| `BigInt` | String |
 
 ### Required fields
 
-Nullable types are supported by adding a `?` after the type. E.g., `String?` or `List<Employee>?`. The optional `required` keyword makes the generated field a required constructor parameter.
+Whether a field is required follows from its nullability. Non-nullable fields are always required constructor parameters. Append `?` to the type, e.g. `String?` or `List<Employee>?`, to make a field optional. The `required` keyword can only be used on nullable fields, and makes the field a required constructor parameter while keeping its type nullable.
 
 ```yaml
 class: Person
 fields:
-  name: String
-  nickname: String?, required
-  age: int?
+  name: String              # Required, cannot be null
+  nickname: String?, required # Required, but can be set to null
+  age: int?                 # Optional
 ```
 
-In the example above, `nickname` will be a required constructor parameter.
+In the example above, `name` and `nickname` are both required constructor parameters, and only `nickname` accepts null.
+
+:::tip
+Once your app is in users' hands, changing or removing a model's fields can break older app versions. Adding new fields is safe when they are nullable or have a default value. See [backward compatibility](../endpoints-and-apis/backward-compatibility).
+:::
 
 ### Limiting visibility of a generated class
 
@@ -56,7 +86,7 @@ fields:
 It is also possible to set a `scope` on a per-field basis. By default all fields are visible to both the server and the client. The available scopes are `all`, `serverOnly`, `none`. A field with a scope other than `all` must be nullable.
 
 :::info
-**none** is not typically used in serverpod apps. It is intended for the serverpod framework, itself.
+The `none` scope is not typically used in Serverpod apps. It is intended for the Serverpod framework itself.
 :::
 
 ```yaml
@@ -67,7 +97,7 @@ fields:
 ```
 
 :::info
-Serverpod's models can easily be saved to or read from the database. You can read more about this in the [Database](./database/tables) section.
+Models can be saved to and read from the database. See the [Database](./database/tables) section.
 :::
 
 ### JSON key aliasing
@@ -104,7 +134,7 @@ This is particularly helpful when:
 
 - Consuming external APIs that use snake_case or other naming conventions
 - Working with legacy systems that have specific JSON field requirements
-- Integrating with third-party services like MongoDB (e.g., mapping `id` to `_id`)
+- Working with databases or services that reserve key names, such as mapping `id` to `_id` for MongoDB
 
 :::info
 The `jsonKey` property affects JSON serialization and deserialization. It does not affect the database column name. To customize the database column name, use the [`column` property](./database/tables#column-name-override) instead.
@@ -147,9 +177,65 @@ print(user3.name); // Bob
 print(user3.email); // alice@example.com
 ```
 
+## Default values
+
+Fields can be given default values with three keywords that determine where the default applies:
+
+- **default**: sets the default value for both the model (code) and the database (persisted data). It acts as the fallback when the more specific keywords are absent.
+- **defaultModel**: sets the default value for the model only, overriding `default` on the code side.
+- **defaultPersist**: sets the default value for the database column only, overriding `default` on the persisted side. It is only meaningful on models with a [table](./database/tables).
+
+You can use the keywords individually or in combination.
+
+:::info
+A database default only applies when an insert omits a value for the column. A field with `default` or `defaultModel` always has a value when the row is written, so its `defaultPersist` never fires. `defaultPersist` only comes into play when the model does not provide a value, for example on a nullable field without a model-side default.
+:::
+
+### Supported default values
+
+| Type | Allowed values | Example |
+| --- | --- | --- |
+| `bool` | `true` or `false` | `boolDefault: bool, default=true` |
+| `int` | Any integer value | `intDefault: int, default=10` |
+| `double` | Any double value | `doubleDefault: double, default=10.5` |
+| `String` | Any string value | `stringDefault: String, default='This is a string'` |
+| `DateTime` | `now`, or a UTC string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | `dateTimeDefault: DateTime, default=2024-05-01T22:00:00.000Z` |
+| `Duration` | A duration in the format `Xd Xh Xmin Xs Xms` | `durationDefault: Duration, default=1d 2h 10min 30s 100ms` |
+| `UuidValue` | `random`, `random_v7`, or a UUID string such as `'550e8400-e29b-41d4-a716-446655440000'` | `uuidDefault: UuidValue, default=random` |
+| `Uri` | Any valid URI string | `uriDefault: Uri, default='https://serverpod.dev'` |
+| `BigInt` | Any integer value, as a string | `bigIntDefault: BigInt, default='1234567890'` |
+| Enums | Any of the enum's values | `enumDefault: ByNameEnum, default=byName1` |
+
+For `UuidValue`, `random` generates a UUID v4 (`Uuid().v4obj()` in Dart, `gen_random_uuid()` in the database), and `random_v7` generates a UUID v7 (`Uuid().v7obj()` in Dart, a generated `gen_random_uuid_v7()` function in the database).
+
+For enums, the persisted value follows the enum's serialization mode. A `byName` enum default is stored as the value's name, and a `byIndex` enum default is stored as its index, e.g. `0` for the first value.
+
+:::info
+On an [immutable class](#immutable-classes), or a class extending one, `default` and `defaultModel` cannot use the non-constant values `now`, `random`, or `random_v7`. On a persisted model, use `defaultPersist` for those instead.
+:::
+
+### Example
+
+```yaml
+class: DefaultValue
+table: default_value
+fields:
+  ### Sets the current date and time as the default value.
+  dateTimeDefault: DateTime, default=now
+
+  ### Defaults to false in code and true in the database.
+  boolDefault: bool, defaultModel=false, defaultPersist=true
+
+  ### Sets the database-side default value for an integer field.
+  intDefault: int, defaultPersist=20
+
+  ### Defaults to 10.5 in code, with a separate database default.
+  doubleDefault: double, default=10.5, defaultPersist=20.5
+```
+
 ## Exception
 
-The Serverpod models supports creating exceptions that can be thrown in endpoints by using the `exception` keyword. For more in-depth description on how to work with exceptions see [Error handling and exceptions](../endpoints-and-apis/error-handling-and-exceptions).
+Model files can define exceptions that can be thrown in endpoints, by using the `exception` keyword. For a more in-depth description of how to work with exceptions, see [Error handling and exceptions](../endpoints-and-apis/error-handling-and-exceptions).
 
 ```yaml
 exception: MyException
@@ -160,7 +246,7 @@ fields:
 
 ## Enum
 
-It is easy to add custom enums with serialization support by using the `enum` keyword.
+The `enum` keyword defines a custom enum with serialization support.
 
 ```yaml
 enum: Animal
@@ -189,7 +275,7 @@ Using `byIndex` is fragile: adding, removing, or reordering enum values silently
 
 :::
 
-### Default value
+### Handling unknown enum values
 
 A default value is used when an unknown value is deserialized. This can happen, for example, if a new enum option is added and older clients receive it from the server, or if an enum option is removed but the database still contains the old value.
 
@@ -316,18 +402,20 @@ Serverpod generates some convenience methods on the Dart classes.
 
 ### copyWith
 
-The `copyWith` method allows for efficient object copying with selective field updates and is available on all generated classes. Here's how it operates:
+The `copyWith` method creates a copy of an object with selective field updates and is available on all generated classes:
 
 ```dart
+// User has a nullable age field: age: int?
 var john = User(name: 'John Doe', age: 25);
-var jane = john.copyWith(name: 'Jane Doe');
+var jane = john.copyWith(name: 'Jane Doe'); // age stays 25
+var ageless = john.copyWith(age: null);     // age is explicitly set to null
 ```
 
-The `copyWith` method generates a deep copy of an object, preserving all original fields unless explicitly modified. It can distinguish between a field set to `null` and a field left unspecified (undefined). When using `copyWith`, any field you don't update remains unchanged in the new object.
+The `copyWith` method generates a deep copy of an object, preserving all original fields unless explicitly modified. As the example shows, it distinguishes between a nullable field set to `null` and a field left unspecified.
 
 ### toJson / fromJson
 
-The `toJson` and `fromJson` methods are generated on all models to help with serialization. Serverpod manages all serialization for you out of the box and you will rarely have to use these methods by your self. See the [Serialization](./models/custom-serialization) section for more info.
+The `toJson` and `fromJson` methods are generated on all models to help with serialization. Serverpod manages all serialization for you out of the box and you will rarely have to use these methods yourself. See [Custom serialization](./models/custom-serialization) for more info. On the server, models also get a `toJsonForProtocol` method that produces the JSON sent to clients. It leaves out fields whose [scope](#limiting-visibility-of-a-generated-class) hides them from the client.
 
 ### Custom methods
 
@@ -341,184 +429,8 @@ extension MyExtension on MyClass {
 }
 ```
 
-## Default values
+## Related
 
-Serverpod supports defining default values for fields in your models. These default values can be specified using three different keywords that determine how and where the defaults are applied:
-
-### Keywords
-
-- **default**: This keyword sets a default value for both the model (code) and the database (persisted data). It acts as a general fallback if more specific defaults aren't provided.
-- **defaultModel**: This keyword sets a default value specifically for the model (the code side). If `defaultModel` is not provided, the model will use the value specified by `default` if it's available.
-- **defaultPersist**: This keyword sets a default value specifically for the database. If `defaultPersist` is not provided, the database will use the value specified by `default` if it's available.
-
-### How priorities work
-
-- **For the model (code side):** If both `defaultModel` and `default` are provided, the model will use the `defaultModel` value. If `defaultModel` is not provided, it will fall back to using the `default` value.
-- **For the database (persisted data):** If both `defaultPersist` and `default` are provided, the database will use the `defaultPersist` value. If `defaultPersist` is not provided, it will fall back to using the `default` value.
-
-You can use these default values individually or in combination as needed. It is not required to use all default types for a field.
-
-:::info
-
-When using `default` or `defaultModel` in combination with `defaultPersist`, it's important to understand how the interaction between these keywords affects the final value in the database.
-
-If you set a `default` or `defaultModel` value, the model's field or variable will have a value when it's passed to the database, so it will not be `null`. Because of this, the SQL query will not use the `defaultPersist` value since the field already has a value assigned by the model. In essence, assigning a `default` or `defaultModel` is like directly providing a value to the field, and the database will use this provided value instead of its own default.
-
-This means that `defaultPersist` only comes into play when the model does not provide a value, allowing the database to apply its own default setting.
-
-:::
-
-### Supported default values
-
-#### Boolean
-
-| Type        | Keyword           | Description                                                  |
-| ----------- | ----------------- | ------------------------------------------------------------ |
-| **Boolean** | `true` or `false` | Sets the field to a boolean value, either `true` or `false`. |
-
-**Example:**
-
-```yaml
-boolDefault: bool, default=true
-```
-
-#### DateTime
-
-| Type                      | Keyword                                                          | Description                                  |
-| ------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
-| **Current Date and Time** | `now`                                                            | Sets the field to the current date and time. |
-| **Specific UTC DateTime** | UTC DateTime string in the format `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` | Sets the field to a specific date and time.  |
-
-**Example:**
-
-```yaml
-dateTimeDefaultNow: DateTime, default=now
-dateTimeDefaultUtc: DateTime, default=2024-05-01T22:00:00.000Z
-```
-
-#### Double
-
-| Type       | Keyword          | Description                                |
-| ---------- | ---------------- | ------------------------------------------ |
-| **Double** | Any double value | Sets the field to a specific double value. |
-
-**Example:**
-
-```yaml
-doubleDefault: double, default=10.5
-```
-
-#### Duration
-
-| Type                  | Keyword                                            | Description                                                                                                                                                |
-| --------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Specific Duration** | A valid duration in the format `Xd Xh Xmin Xs Xms` | Sets the field to a specific duration value. For example, `1d 2h 10min 30s 100ms` represents 1 day, 2 hours, 10 minutes, 30 seconds, and 100 milliseconds. |
-
-**Example:**
-
-```yaml
-durationDefault: Duration, default=1d 2h 10min 30s 100ms
-```
-
-#### Enum
-
-| Type     | Keyword              | Description                              |
-| -------- | -------------------- | ---------------------------------------- |
-| **Enum** | Any valid enum value | Sets the field to a specific enum value. |
-
-**Example:**
-
-```yaml
-enum: ByNameEnum
-serialized: byName
-values:
-  - byName1
-  - byName2
-```
-
-```yaml
-enum: ByIndexEnum
-serialized: byIndex
-values:
-  - byIndex1
-  - byIndex2
-```
-
-```yaml
-class: EnumDefault
-table: enum_default
-fields:
-  byNameEnumDefault: ByNameEnum, default=byName1
-  byIndexEnumDefault: ByIndexEnum, default=byIndex1
-```
-
-In this example:
-
-- The `byNameEnumDefault` field will default to `'byName1'` in the database.
-- The `byIndexEnumDefault` field will default to `0` (the index of `byIndex1`).
-
-#### Integer
-
-| Type        | Keyword           | Description                                 |
-| ----------- | ----------------- | ------------------------------------------- |
-| **Integer** | Any integer value | Sets the field to a specific integer value. |
-
-**Example:**
-
-```yaml
-intDefault: int, default=10
-```
-
-#### String
-
-| Type       | Keyword          | Description                                |
-| ---------- | ---------------- | ------------------------------------------ |
-| **String** | Any string value | Sets the field to a specific string value. |
-
-**Example:**
-
-```yaml
-stringDefault: String, default='This is a string'
-```
-
-#### UuidValue
-
-| Type              | Keyword                                                                                                                                                                                                   | Description                                                                                                                                       |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Random UUID**   | `random`                                                                                                                                                                                                  | Generates a random UUID. On the Dart side, `Uuid().v4obj()` is used. On the database side, `gen_random_uuid()` is used.                           |
-| **Random UUIDv7** | `random_v7`                                                                                                                                                                                               | Generates a random UUIDv7. On the Dart side, `Uuid().v7obj()` is used. On the database side, a generated `gen_random_uuid_v7()` function is used. |
-| **UUID String**   | Valid UUID in the format 'xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx' where M is the UUID version field. The upper two or three bits of digit N encode the variant. E.g. '550e8400-e29b-41d4-a716-446655440000' | Assigns a specific UUID to the field.                                                                                                             |
-
-**Example:**
-
-```yaml
-uuidDefaultRandom: UuidValue, default=random
-uuidDefaultUuid: UuidValue, default='550e8400-e29b-41d4-a716-446655440000'
-uuidDefaultRandomUuidV7: UuidValue, default=random_v7
-```
-
-### Example
-
-```yaml
-class: DefaultValue
-table: default_value
-fields:
-  ### Sets the current date and time as the default value.
-  dateTimeDefault: DateTime, default=now
-
-  ### Sets the default value for a boolean field.
-  boolDefault: bool, defaultModel=false, defaultPersist=true
-
-  ### Sets the default value for an integer field.
-  intDefault: int, defaultPersist=20
-
-  ### Sets the default value for a double field.
-  doubleDefault: double, default=10.5, defaultPersist=20.5
-
-  ### Sets the default value for a string field.
-  stringDefault: String, default="This is a string", defaultModel="This is a string"
-```
-
-## Keywords
-
-For every keyword available in a model file, and whether it applies to a `class`, `exception`, or `enum`, see the [Model reference](../lookups/model-reference).
+- [Model reference](../lookups/model-reference): every keyword available in a model file, and whether it applies to a `class`, `exception`, or `enum`.
+- [Tables](./database/tables): store a model in the database.
+- [Backward compatibility](../endpoints-and-apis/backward-compatibility): evolve models without breaking older app versions.

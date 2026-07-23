@@ -1,5 +1,5 @@
 ---
-description: The generated db methods on each model class create, read, update, and delete database rows in Serverpod.
+description: The generated db methods on each model class create, read, update, upsert, and delete database rows in Serverpod, in single-row and batch variants.
 ---
 
 # CRUD
@@ -211,6 +211,81 @@ var updatedCompanies = await Company.db.updateWhere(
 );
 ```
 
+## Upsert
+
+An upsert inserts a row, or updates the existing row when it collides with one that is already stored. The database runs the check and the write as a single atomic operation, so no other transaction can slip in between them. The collision is decided by `conflictColumns`, which must be covered by a unique index (or be the primary key); without one, the call throws a `DatabaseQueryException`. The examples below use a `Product` model whose `sku` field has a [unique index](indexing#make-fields-unique).
+
+### Upsert a single row
+
+To insert-or-update a single row, use the `upsertRow` method:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(sku: 'chair-01', name: 'Office chair', price: 199.00),
+  conflictColumns: (t) => [t.sku],
+);
+```
+
+If no row with that `sku` exists, the row is inserted. If one exists, it keeps its `id`, and every persistent column except `id` and the `conflictColumns` is overwritten with the supplied values. The method returns the stored row.
+
+The `id` column can be the conflict target as well, which is useful when the same code path handles an object that may or may not already have an id:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(id: productId, sku: 'chair-01', name: 'Office chair', price: 199.00),
+  conflictColumns: (t) => [t.id],
+);
+```
+
+To limit which columns an update touches, pass `updateColumns`. A new row is still inserted with all of its values, and an existing row only has the selected columns updated:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(sku: 'chair-01', name: 'Renamed chair', price: 249.00),
+  conflictColumns: (t) => [t.sku],
+  updateColumns: (t) => [t.price],
+);
+```
+
+To update only rows in a certain state, pass `updateWhere`. When the existing row does not match the expression, nothing is changed and `upsertRow` returns `null`:
+
+```dart
+var product = await Product.db.upsertRow(
+  session,
+  Product(sku: 'chair-01', name: 'Office chair v2', price: 249.00),
+  conflictColumns: (t) => [t.sku],
+  updateWhere: (t) => t.price > 500.0,
+);
+```
+
+:::info
+The literal `500.0` matches the `double` column type. Comparison operators check value types at runtime, so `t.price > 500` compiles but throws. See [comparison operators](filtering#comparison-operators).
+:::
+
+### Upsert several rows
+
+The batch `upsert` inserts and updates rows in a single atomic operation, so no rows are written if any row fails:
+
+```dart
+var products = await Product.db.upsert(
+  session,
+  [
+    Product(sku: 'chair-01', name: 'Office chair v2', price: 249.00),
+    Product(sku: 'desk-01', name: 'Standing desk', price: 599.00),
+  ],
+  conflictColumns: (t) => [t.sku],
+);
+```
+
+The batch method takes the same `updateColumns` and `updateWhere` parameters as `upsertRow`. The result contains one row per input, in the same order. When `updateWhere` is set, conflicting rows that do not match are skipped and left out of the result, so the list can be shorter than the input. For large batches, the read-back can be skipped entirely. See [Skipping returned rows](#skipping-returned-rows).
+
+Like the other batch operations, `upsert` accepts a `transaction` parameter to join a larger [transaction](transactions). For models with [non-persistent fields](tables#non-persistent-fields), the input values of those fields are carried over to the returned objects. They take no part in conflict detection and are never written to the database, and such batches are upserted row by row internally, which can be slow for large inputs.
+
+A single-row upsert that unexpectedly matches multiple rows throws a `DatabaseUpsertRowException`. See [exceptions](exceptions).
+
 ## Delete
 
 Deleting rows from the database is done in a similar way to updating rows. However, there are three delete operations available.
@@ -253,6 +328,25 @@ var companiesDeleted = await Company.db.deleteWhere(
 ```
 
 The above example will delete any row where the `name` ends in _Ltd_. The `deleteWhere` method returns a `List` of the models deleted, ordered by name in descending order, followed by id in ascending order.
+
+## Skipping returned rows
+
+The batch and filtered write methods read the affected rows back from the database and return them as a list. Pass `noReturn: true` when the write itself is all you need.
+
+```dart
+await Company.db.updateWhere(
+  session,
+  columnValues: (t) => [t.name('Archived company')],
+  where: (t) => t.name.like('%Ltd'),
+  noReturn: true,
+);
+```
+
+The write runs with the same filters, conflict handling, transaction, and atomicity guarantees, but the method returns an empty list instead of reading the rows back. Skipping that read saves transferring and deserializing every affected row, which is worth it for bulk imports, cleanup jobs, and any write where the generated ids, database defaults, and updated values are not used afterwards.
+
+The `noReturn` parameter is available on `insert`, `update`, `updateWhere`, `upsert`, `delete`, and `deleteWhere`. The single-row methods `insertRow`, `updateRow`, `upsertRow`, and `deleteRow` always return the affected row.
+
+Since the result is empty, `orderBy` and `orderByList` have no visible effect on it. They still matter on filtered operations, where they decide which rows a `limit` or `offset` selects.
 
 ## Count
 
