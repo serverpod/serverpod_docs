@@ -112,19 +112,4 @@ When a query selects multiple columns with the same name, `toColumnMap()` keeps 
 
 ## Intercept database access
 
-To add cross-cutting behavior around every database call, such as logging, tracing, metrics, tenant scoping, or safety guards, you can replace the `Database` object that sessions use. Pass a `databaseInterceptor` callback to the `Serverpod` constructor in your server's `lib/server.dart`. It is called once per session with the framework-provided `Database`, and the `Database` you return becomes `session.db` for that session.
-
-```dart
-var pod = Serverpod(
-  args,
-  Protocol(),
-  Endpoints(),
-  databaseInterceptor: (session, inner) => AuditingDatabase(inner),
-);
-```
-
-In this example, `AuditingDatabase` is your own `Database` implementation that wraps `inner`, adds behavior around the calls you care about, and forwards the rest.
-
-:::warning
-The `Database` class is part of the internal `serverpod_database` package, and its API may change in minor version bumps.
-:::
+To apply tracing, metrics, tenant scoping, or policy enforcement across every database operation of a session, including the raw methods above, see [Database interceptors](./database-interceptors).
