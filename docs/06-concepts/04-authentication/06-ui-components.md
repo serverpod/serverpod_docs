@@ -52,7 +52,7 @@ class SignInPage extends StatelessWidget {
 }
 ```
 
-### Disabling Providers
+### Disabling providers
 
 It is not possible to forcefully enable a provider, since this depends on the configuration of the identity providers, as described in the [setup section](./setup#identity-providers-configuration).
 
@@ -123,3 +123,104 @@ void _onError(Object error) {
 ```
 
 For more details on all options of each provider widget, see the "Customizing UI" section of the specific provider documentation. There you will also find information on how to build a custom UI with the controller. For example, see the [Email Provider](./providers/email/customizing-the-ui) documentation.
+
+## Localization
+
+All text shown by the authentication widgets is in English by default. To replace it, wrap `SignInWidget`, or any individual provider widget, in a `SignInLocalizationProvider` and pass the text objects for the parts you want to translate:
+
+- `BasicSignInTexts` for the shared messages and dividers.
+- `EmailSignInTexts` for the email flow: sign-in, registration, account verification, password reset, and the terms and privacy labels.
+- `PasswordRequirementTexts` for the labels of the built-in password requirement widgets.
+- One text object per provider for the sign-in buttons: `AppleSignInTexts`, `GoogleSignInTexts`, `GitHubSignInTexts`, `MicrosoftSignInTexts`, `FacebookSignInTexts`, and `AnonymousSignInTexts`.
+
+:::note
+The Firebase provider has no texts because it only supplies a controller rather than a finished UI.
+:::
+
+The example below shows how to pass every text object explicitly:
+
+```dart
+const basicTexts = BasicSignInTexts(
+  noAuthenticationProvidersConfigured:
+      'No authentication providers configured',
+  orContinueWith: 'or continue with',
+);
+
+const emailTexts = EmailSignInTexts(
+  title: 'Sign In with email',
+  forgotPassword: 'Forgot password?',
+  signIn: 'Sign in',
+  dontHaveAnAccount: "Don't have an account?",
+  signUp: 'Sign up',
+  signUpTitle: 'Sign Up with email',
+  continueAction: 'Continue',
+  alreadyHaveAnAccount: 'Already have an account?',
+  verifyAccountTitle: 'Verify account',
+  verifyResetCodeTitle: 'Verify reset code',
+  verificationMessage:
+      'A verification email has been sent. Please check your email and '
+      'enter the verification code below.',
+  verify: 'Verify',
+  setAccountPasswordTitle: 'Set account password',
+  passwordLabel: 'Password',
+  backToSignUp: 'Back to sign up',
+  setNewPasswordTitle: 'Set new password',
+  newPasswordLabel: 'New Password',
+  resetPasswordTitle: 'Reset password',
+  resetPasswordDescription: 'Enter the email address to reset password.',
+  requestPasswordReset: 'Request password reset',
+  resetPassword: 'Reset password',
+  backToSignIn: 'Back to sign in',
+  emailLabel: 'Email',
+  termsIntro: 'I have read and accept the ',
+  termsAndConditions: 'Terms and Conditions',
+  andText: ' and ',
+  privacyPolicy: 'Privacy Policy',
+);
+
+const passwordTexts = PasswordRequirementTexts(
+  minLengthTemplate: 'At least {length} characters',
+  maxLengthTemplate: 'At most {length} characters',
+  containsLowercase: 'Contains at least one lowercase letter',
+  containsUppercase: 'Contains at least one uppercase letter',
+  containsNumber: 'Contains at least one number',
+  containsSpecialCharacter: 'Contains at least one special character',
+);
+
+SignInLocalizationProvider(
+  basic: basicTexts,
+  email: emailTexts,
+  passwordRequirementTexts: passwordTexts,
+  apple: const AppleSignInTexts(signInButton: 'Sign in with Apple'),
+  google: const GoogleSignInTexts(signInButton: 'Sign in with Google'),
+  github: const GitHubSignInTexts(signInButton: 'Sign in with GitHub'),
+  microsoft: const MicrosoftSignInTexts(signInButton: 'Sign in with Microsoft'),
+  facebook: const FacebookSignInTexts(signInButton: 'Sign in with Facebook'),
+  anonymous: const AnonymousSignInTexts(signInButton: 'Sign in as guest'),
+  child: SignInWidget(
+    client: client,
+    onAuthenticated: _onAuthenticated,
+    onError: _onError,
+  ),
+);
+```
+
+The `{length}` placeholder in the two length templates is replaced with the configured limit, so keep it in the translated string.
+
+### Translating part of the text
+
+Any text object you leave out keeps its built-in English text, so you only need to pass the ones you are translating. To change a few values inside an object, start from its `defaults` constant:
+
+```dart
+SignInLocalizationProvider(
+  email: EmailSignInTexts.defaults.copyWith(
+    title: 'Sign in with email',
+    signIn: 'Log in',
+  ),
+  child: signInWidget,
+);
+```
+
+### Switching locale
+
+`SignInLocalizationProvider` hands the text objects to the widgets below it. It does not read Flutter's current `Locale` or pick a translation for you. In an app that supports several locales, select the text objects with your existing localization setup and rebuild the provider when the locale changes.

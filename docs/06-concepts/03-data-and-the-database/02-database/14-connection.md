@@ -4,11 +4,9 @@ description: The database connection is defined in Serverpod's configuration and
 
 # Connection
 
-In Serverpod the connection details and password for the database are stored inside the `config` directory in your server package. Serverpod automatically establishes a connection to the database instance by using these configuration details when you start the server.
+The connection details and password for the database live in the `config` directory of your server package, and Serverpod connects using them when the server starts. For local development, no setup is needed by default: the server runs an [embedded PostgreSQL](../../server-fundamentals/configuration#database-backends) and manages it for you. This page is for connecting to a database you run yourself: a local or Docker Postgres, a remote server, or a managed instance such as Cloud SQL or RDS.
 
-If using Postgres, the easiest way to get started is to use a Docker container to run your local Postgres server, and this is how Serverpod is set up out of the box. This page contains more detailed information if you want to connect to another database instance or run Postgres locally yourself.
-
-### Connection details
+## Connection details
 
 Each environment configuration contains a `database` keyword that specifies the connection details.
 For your development build you can find the connection details in the `config/development.yaml` file.
@@ -26,23 +24,14 @@ database:
 The `name` refers to the database name, `host` is the domain name or IP address pointing to your Postgres instance, `port` is the port that Postgres is listening to, and `user` is the username that is used to connect to the database.
 
 :::caution
-By default, Postgres is listening for connections on port 5432. However, the Docker container shipped with Serverpod uses port 8090 to avoid conflicts. If you host your own instance, double-check that the correct port is specified in your configuration files.
+By default, Postgres listens on port 5432. Serverpod's development setups use port 8090 to avoid conflicts. If you host your own instance, double-check that the correct port is specified in your configuration files.
 :::
 
-Serverpod also supports SQLite as a database backend:
+SQLite projects need no connection details beyond a file path, and no password; see [Database backends](../../server-fundamentals/configuration#database-backends) for choosing and configuring a backend.
 
-```yaml
-...
-database:
-  filePath: server.db
-...
-```
+### Configure search paths
 
-Note that the same database backend must be used for all run modes. For more information, see the [configuration documentation](../../server-fundamentals/configuration#database-backends).
-
-#### Configure search paths
-
-If using Postgres, you can customize the search paths for your database connection—helpful if you're working with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
+If using Postgres, you can customize the search paths for your database connection, which helps when you work with multiple schemas. By default, Postgres uses the `public` schema unless otherwise specified.
 
 To override this, use the optional `searchPaths` setting in your configuration:
 
@@ -57,13 +46,13 @@ database:
 ...
 ```
 
-In this example, Postgres will look for tables in the `custom` schema first, and then fall back to `public` if needed. This gives you more control over where your data lives and how it's accessed.
+In this example, Postgres looks for tables in the `custom` schema first, and falls back to `public` if needed.
 
 :::tip
-It is also possible to set the search paths using [runtime parameters](runtime-parameters) directly on the server startup (or on a specific transaction). If the paths are set on both the configuration file and as runtime parameters, the runtime parameters will take precedence.
+It is also possible to set the search paths using [runtime parameters](runtime-parameters) directly on the server startup (or on a specific transaction). If the paths are set on both the configuration file and as runtime parameters, the runtime parameters take precedence.
 :::
 
-#### Configure connection pool size
+### Configure connection pool size
 
 By default, Serverpod uses a connection pool with a maximum of 10 connections to the database. You can customize this limit using the `maxConnectionCount` setting:
 
@@ -78,24 +67,11 @@ database:
 ...
 ```
 
-To allow unlimited connections, set `maxConnectionCount` to `0` or a negative value:
+To allow unlimited connections, set `maxConnectionCount` to `0` or a negative value. You can also configure this setting via the environment variable `SERVERPOD_DATABASE_MAX_CONNECTION_COUNT`.
 
-```yaml
-...
-database:
-  host: localhost
-  port: 8090
-  name: <YOUR_PROJECT_NAME>
-  user: postgres
-  maxConnectionCount: 0  # Unlimited connections
-...
-```
+On SQLite, this setting controls the number of read-only transactions that can run concurrently. Only one write transaction can run at a time.
 
-You can also configure this setting via the environment variable `SERVERPOD_DATABASE_MAX_CONNECTION_COUNT`.
-
-On SQLite, this configuration sets the number of read-only transactions that can run concurrently. Only one write transaction can run at a time.
-
-### Database password
+## Database password
 
 The database password is stored in a separate file called `passwords.yaml` in the same `config` directory. The password for each environment is stored under the `database` keyword in the file.
 
@@ -106,11 +82,11 @@ development:
 ...
 ```
 
-No database password is required when using SQLite.
+## The development database
 
-## Development database
+By default, the development database is an embedded PostgreSQL, started and stopped with the server; see [Running your server](../../server-fundamentals/running-your-server). Nothing on this page is needed for it.
 
-A newly created Serverpod project has a preconfigured Docker instance with a Postgres database set up. Run the following command from the root of the `server` package to start the database:
+Projects set up with the Docker alternative instead run their development database from the server package's `docker-compose.yaml`. Start it from the root of the `server` package:
 
 ```bash
 $ docker compose up --build --detach
@@ -128,18 +104,18 @@ To remove the database and __delete__ all associated data, run:
 $ docker compose down -v
 ```
 
-## Connecting to a custom Postgres instance
+## Connect to a custom Postgres instance
 
-Just like you can connect to the Postgres database inside the Docker container, you can connect to any other Postgres instance. There are a few things you need to take into consideration:
+You can connect to any Postgres instance you run or rent. There are a few things to take into consideration:
 
 - Make sure that your Postgres instance is up and running and is reachable from your Serverpod server.
 - You will need to create a user with a password, and a database.
 
-### Connecting to a local Postgres server
+### Connect to a local Postgres server
 
-If you want to connect to a local Postgres Server (with the default setup) then the `development.yaml` will work fine if you set the correct port, user, database, and update the password in the `passwords.yaml` file.
+If you want to connect to a local Postgres server (with the default setup), the `development.yaml` works fine if you set the correct port, user, and database, and update the password in the `passwords.yaml` file.
 
-### Connecting to a remote Postgres server
+### Connect to a remote Postgres server
 
 To connect to a remote Postgres server (that you have installed on a VPS or VDS), you need to follow a couple of steps:
 
@@ -147,7 +123,7 @@ To connect to a remote Postgres server (that you have installed on a VPS or VDS)
 - You may need to open the database port on the machine. This may include configuring its firewall.
 - Update your Serverpod `database` config to use the public network address, database name, port, user, and password.
 
-### Connecting to Google Cloud SQL
+### Connect to Google Cloud SQL
 
 You can connect to a Google Cloud SQL Postgres instance in two ways:
 
@@ -160,7 +136,7 @@ The next step is to update the database password in `passwords.yaml` and the con
 If you are using the `isUnixSocket` don't forget to add __"/.s.PGSQL.5432"__ to the end of the `host` IP address. Otherwise, your Google Cloud Run instance will not be able to connect to the database.
 :::
 
-### Connecting to AWS RDS
+### Connect to AWS RDS
 
 You can connect to an AWS RDS Instance in two ways:
 

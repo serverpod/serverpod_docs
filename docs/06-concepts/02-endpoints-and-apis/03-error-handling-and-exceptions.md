@@ -1,5 +1,5 @@
 ---
-description: Errors in Serverpod cross the wire as serializable exceptions defined in model files, caught by type in the app alongside typed HTTP failures.
+description: Errors in Serverpod reach the app as serializable exceptions defined in model files, caught by type alongside typed HTTP failures.
 ---
 
 # Error handling and exceptions
@@ -82,7 +82,7 @@ fields:
   field: String
 ```
 
-After running `serverpod generate`, throw the concrete exceptions from an endpoint:
+Save with `serverpod start` running (or run `serverpod generate`), then throw the concrete exceptions from an endpoint:
 
 ```dart
 class UserEndpoint extends Endpoint {
@@ -128,7 +128,7 @@ try {
 
 Because the base is sealed, the analyzer requires the switch to cover every subtype. Adding another concrete exception then becomes a deliberate change in the app instead of a case that quietly falls through to a general catch.
 
-A hierarchy can live in a [shared package](../data-and-the-database/models/shared-packages) when several Serverpod projects need the same wire types. Every subtype of a sealed exception has to stay in the package that declares the base, so a consuming project cannot add a case of its own.
+A hierarchy can live in a [shared package](../data-and-the-database/models/shared-packages) when several Serverpod projects need the same exception types. Every subtype of a sealed exception has to stay in the package that declares the base, so a consuming project cannot add a case of its own.
 
 Exceptions and regular model classes cannot be mixed in the same hierarchy. An exception only extends another exception, and a class only extends another class. Anything else fails validation when you generate the code.
 
@@ -196,7 +196,7 @@ fields:
 
 A call from the client can fail in three ways, and you usually handle each one differently:
 
-- A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the user what happened. (On the wire, it travels as an HTTP 400 with a typed payload.)
+- A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the user what happened. (It is sent as an HTTP 400 response with a typed payload.)
 - A **`ServerpodClientException`**: something went wrong in the communication or on the server. Its typed subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500).
 - A **connection failure**: when the app cannot reach the server (offline, wrong URL, or a timeout), it throws a `ServerpodClientException` with a `statusCode` of `-1`. A call that exceeds the [request size limit](../endpoints-and-apis#pass-and-return-data) fails with a generic `ServerpodClientException` with status code 413.
 
@@ -231,3 +231,7 @@ Only the serializable exceptions you define reach the client, and every field on
 - Don't put stack traces, secrets, database IDs, or internal messages into serializable exception fields. Send only what the user should see.
 - Write user-facing messages, and keep the diagnostic detail in your server logs where you can look it up later.
 - Validate and sanitize input before acting on it, so a bad request fails cleanly instead of surfacing an internal error.
+
+## Related
+
+- [Database exceptions](../data-and-the-database/database/exceptions): the typed exceptions that database operations throw on the server.
