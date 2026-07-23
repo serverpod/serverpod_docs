@@ -5,7 +5,7 @@ description: Sign in with Email lets users authenticate with an email and passwo
 
 # Set up email sign-in
 
-To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
+Sign in with Email verifies the user's address with a code, both when they register and when they reset their password.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
@@ -13,7 +13,44 @@ You need to install the auth module before you continue, see [Setup](../../setup
 
 ## Server-side configuration
 
-In your main `server.dart` file, configure the email identity provider using the `EmailIdpConfig` object and add it to your `pod.initializeAuthServices()` configuration:
+Newly generated projects already configure the email identity provider in `pod.initializeAuthServices()` in your main `server.dart` file:
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [
+    JwtConfigFromPasswords(),
+  ],
+  identityProviderBuilders: [
+    ServerpodCloudEmailIdpConfig(
+      appDisplayName: 'My App',
+    ),
+  ],
+);
+```
+
+Set `appDisplayName` to the name recipients should see in the verification emails. In the `development` and `test` run modes the codes are written to the server log instead of being sent, so you can complete the flow locally. Once the app is deployed to Serverpod Cloud, they are sent as email.
+
+:::info
+`ServerpodCloudEmailIdpConfig` sends email only for apps running on Serverpod Cloud, which injects the key it authenticates with on deploy. If you host the server yourself, switch to [your own email provider](#use-your-own-email-provider) before you go to staging or production.
+:::
+
+Then extend the abstract endpoint to expose the email authentication routes on the server. Create the file anywhere under your server's `lib/` directory (for example, `<project>_server/lib/src/endpoints/`); the generator picks it up:
+
+```dart
+import 'package:serverpod_auth_idp_server/providers/email.dart';
+
+class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+```
+
+Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+
+If a code cannot be sent, the failure is recorded in the session log and the sign-in flow continues unchanged, so check your [server logs](../../../operations/logging) when a user reports a missing code.
+
+### Use your own email provider
+
+Serverpod Cloud delivery is there to get sign-in working quickly, and it sends a standard message carrying your `appDisplayName`. You might prefer using a custom email provider to have full control over the body, layout, and language of the emails. For servers hosted outside of Serverpod Cloud, it is the only option.
+
+Changing the email provider is done by replacing `ServerpodCloudEmailIdpConfig` with `EmailIdpConfig`, which requires you to pass your own callbacks for the two codes. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, Sendgrid or Mandrill, support SMTP.
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -73,17 +110,7 @@ void _sendPasswordResetCode(
 }
 ```
 
-Then extend the abstract endpoint to expose the email authentication routes on the server. Create the file anywhere under your server's `lib/` directory (for example, `<project>_server/lib/src/endpoints/`); the generator picks it up:
-
-```dart
-import 'package:serverpod_auth_idp_server/providers/email.dart';
-
-class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
-```
-
-Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
-
-### Basic configuration options
+#### Basic configuration options
 
 - `secretHashPepper`: Required. A secret pepper used for hashing passwords and verification codes. Must be at least 10 characters long, but the [recommended pepper length](https://www.ietf.org/archive/id/draft-ietf-kitten-password-storage-04.html#name-storage-2) is 32 bytes.
 - `sendRegistrationVerificationCode`: A callback that will be called to send the registration verification code to the user. Here you should call the email sending service to send the verification code to the user.
@@ -122,6 +149,7 @@ EmailSignInWidget(
 ```
 
 The widget automatically handles:
+
 - Login with email and password.
 - Registration with terms acceptance and email verification.
 - Password reset flow with email verification.
