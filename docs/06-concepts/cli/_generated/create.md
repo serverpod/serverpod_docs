@@ -25,10 +25,8 @@ Usage: serverpod create [arguments]
                                    Can also be specified as the first argument.
 
 Project Template
-    --mini                         Shortcut for --template mini.
 -t, --template                     Template to use when creating a new project
 
-          [mini]                   Mini project with minimal features and no database
           [fullstack] (default)    Fullstack project including a server and a companion Flutter app
           [server]                 Server project with standard features including database
           [module]                 Serverpod Module project
