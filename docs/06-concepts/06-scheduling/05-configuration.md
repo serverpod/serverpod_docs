@@ -26,7 +26,7 @@ futureCall:
 
 ### Enable or disable execution
 
-`futureCallExecutionEnabled` turns future call execution on or off for a server. It is `true` by default. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
+The `futureCallExecutionEnabled` option turns future call execution on or off for a server. It is `true` by default. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
 
 ```yaml
 futureCallExecutionEnabled: false
@@ -34,7 +34,7 @@ futureCallExecutionEnabled: false
 
 ### Concurrency limit
 
-`concurrencyLimit` sets how many future calls may run at the same time. The default is `1`, meaning calls run one after another. Raise it to run more calls in parallel, or keep it small so future calls do not crowd out other work on a busy server.
+The `concurrencyLimit` option sets how many future calls may run at the same time. The default is `1`, meaning calls run one after another. Raise it to run more calls in parallel, or keep it small so future calls do not crowd out other work on a busy server.
 
 Set it to `0` or a negative number to remove the limit entirely, allowing unlimited concurrent calls. Use this with care, since a burst of due calls can then exhaust the server's resources.
 
@@ -45,7 +45,7 @@ futureCall:
 
 ### Scan interval
 
-`scanInterval` sets how often, in milliseconds, the server checks the database for calls that are due. The default is `5000` (5 seconds). A shorter interval runs calls closer to their scheduled time. A longer one reduces database load.
+The `scanInterval` option sets how often, in milliseconds, the server checks the database for calls that are due. The default is `5000` (5 seconds). A shorter interval runs calls closer to their scheduled time. A longer one reduces database load.
 
 ```yaml
 futureCall:

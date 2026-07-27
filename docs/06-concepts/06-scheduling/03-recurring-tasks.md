@@ -30,15 +30,17 @@ await pod.futureCalls
     .cleanUp();
 ```
 
-Pass `start` to set when the first run happens. The `start` value is itself the first run time, and later runs follow one interval apart from it, so use a time at or near now rather than one far in the future:
+Pass `start` to set when the first run happens. Later runs follow one interval apart from it:
 
 ```dart
 await pod.futureCalls
     .callRecurring(identifier: 'nightly-cleanup')
-    .every(const Duration(hours: 24), start: DateTime.utc(2026, 1, 1, 2))
+    .every(const Duration(hours: 24), start: DateTime.now().toUtc())
     .example
     .cleanUp();
 ```
+
+A `start` in the past runs the call at the next scan, then continues on the interval from there. To pin a task to a wall-clock time such as 02:00 every day, use a cron expression instead.
 
 If the server is down when a run is due, that run happens once when the server is back, then the schedule jumps ahead to the next interval boundary. The intervals missed while the server was down do not pile up and fire all at once.
 

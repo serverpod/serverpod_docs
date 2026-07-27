@@ -26,7 +26,7 @@ class MyGreeter extends Greeter {
 }
 ```
 
-`Greeter` exposes `hello`. `MyGreeter` exposes both the inherited `hello` and its own `bye`.
+The `Greeter` class exposes `hello`, and `MyGreeter` exposes both the inherited `hello` and its own `bye`.
 
 ## Expose future calls from a module
 
@@ -81,6 +81,6 @@ class ExcitedGreeter extends Greeter {
 }
 ```
 
-`ExcitedGreeter` exposes a single `hello` that logs `Hello $name!!!`. To build on the parent's behavior instead of replacing it, call `super.hello(session, name)` from inside the override.
+Here `ExcitedGreeter` exposes a single `hello` that logs `Hello $name!!!`. To build on the parent's behavior instead of replacing it, call `super.hello(session, name)` from inside the override.
 
 The override must keep a signature compatible with the base method, following Dart's own rules: you can add optional parameters, but you cannot add required parameters or change the return type.

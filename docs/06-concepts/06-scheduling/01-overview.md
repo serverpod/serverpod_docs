@@ -14,7 +14,7 @@ You write a future call as a method on a class, generate the type-safe code, and
 
 - **After a delay**, for example one hour from now.
 - **At a specific time**, for example a fixed date and time in the future.
-- **On a repeating schedule**, either a fixed interval (every 20 minutes) or a [cron](https://en.wikipedia.org/wiki/Cron) expression (every day at 02:00). Cron is a standard text format for describing repeating schedules.
+- **On a repeating schedule**, either a fixed interval (every 20 minutes) or a [cron](https://en.wikipedia.org/wiki/Cron) expression (every day at 02:00 UTC). Cron is a standard text format for describing repeating schedules.
 
 ## Execution guarantees
 
