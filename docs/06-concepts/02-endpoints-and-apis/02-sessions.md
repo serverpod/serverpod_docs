@@ -22,7 +22,7 @@ Serverpod creates a session for every unit of work it runs, and the type reflect
 | **WebCallSession**      | [Web server](../web-server/overview) routes                                                                   | Single request      | Web pages, form submissions  |
 | **MethodStreamSession** | [Streaming methods](./streaming)                                                                              | Stream duration     | Real-time updates, chat      |
 | **StreamingSession**    | WebSocket connections of the [deprecated streaming endpoints API](./streaming#streaming-endpoints-deprecated) | Connection duration | Legacy real-time code        |
-| **FutureCallSession**   | [Scheduled tasks](../scheduling/setup)                                                                        | Task execution      | Email sending, batch jobs    |
+| **FutureCallSession**   | [Scheduled tasks](../scheduling/overview)                                                                        | Task execution      | Email sending, batch jobs    |
 | **InternalSession**     | [Manual creation](#create-a-session-for-background-work)                                                      | Until closed        | Background work, migrations  |
 
 You rarely choose a type yourself: your endpoint methods receive the right one, and manual creation always produces an `InternalSession`.
@@ -49,7 +49,7 @@ class ExampleEndpoint extends Endpoint {
 | `authenticated`             | The current user's authentication info. See [authentication](../authentication/basics).         |
 | `log(...)`                  | Write a log entry tied to this session. See [logging](#logging).                                |
 | `addWillCloseListener(...)` | Register a cleanup callback that runs before the session closes.                                |
-| `serverpod`                 | The running Serverpod instance, for example for [future calls](../scheduling/setup).            |
+| `serverpod`                 | The running Serverpod instance, for example for [future calls](../scheduling/overview).            |
 
 ## Session lifecycle
 
@@ -117,7 +117,7 @@ Future<void> processUser(Session session, int userId) async {
 }
 ```
 
-Schedule the work as a [future call](../scheduling/setup) instead. Future calls survive server restarts and receive their own session when they run:
+Schedule the work as a [future call](../scheduling/future-calls) instead. Future calls survive server restarts and receive their own session when they run:
 
 ```dart
 Future<void> processUser(Session session, int userId) async {
@@ -146,6 +146,6 @@ The test tools provide a `sessionBuilder` for calling endpoints in tests and sim
 ## Related
 
 - [Working with endpoints](../endpoints-and-apis): the methods that receive sessions.
-- [Scheduling](../scheduling/setup): future calls, the managed way to run delayed work.
+- [Scheduling](../scheduling/overview): future calls, the managed way to run delayed work.
 - [Logging](../operations/logging): where session log entries go.
 - [Authentication](../authentication/basics): what `session.authenticated` holds.
