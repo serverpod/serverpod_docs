@@ -4,11 +4,11 @@ description: Indexes on Serverpod database tables improve query performance, inc
 
 # Indexing
 
-For performance reasons, you may want to add indexes to your database tables. These are added in the YAML-files defining the serializable objects.
+Queries that [filter](filtering) or [sort](sorting) a large table slow down as rows accumulate, because the database has to scan every row. An index lets the database look up the matching rows directly instead. You declare indexes in the model file, and the next [migration](migrations) creates them in the database.
 
 ## Add an index
 
-To add an index, add an `indexes` section to the YAML-file. The `indexes` section is a map where the key is the name of the index and the value is a map with the index details.
+To add an index, add an `indexes` section to the model file. The `indexes` section is a map where the key is the name of the index and the value is a map with the index details.
 
 ```yaml
 class: Company
@@ -33,9 +33,18 @@ indexes:
     fields: name, foundedAt
 ```
 
-## Making fields unique
+## Make fields unique
 
-Adding a unique index ensures that the value or combination of values stored in the fields are unique for the table. This can be useful for example if you want to make sure that no two companies have the same name.
+A unique index ensures that no two rows store the same value in the indexed fields. This is useful for example if you want to make sure that no two companies have the same name. For a single field, mark it with the `unique` keyword directly on the field definition:
+
+```yaml
+class: Company
+table: company
+fields:
+  name: String, unique
+```
+
+To make a combination of fields unique, or to name the index yourself, declare the index in the `indexes` section and set `unique: true`:
 
 ```yaml
 class: Company
@@ -48,16 +57,7 @@ indexes:
     unique: true
 ```
 
-The `unique` keyword is a bool that can toggle the index to be unique, the default is set to false. If the `unique` keyword is applied to a multi-column index, the index will be unique for the combination of the fields.
-
-Alternatively, for single-column indexes, marking a column as unique can be simplified by using the `unique` keyword directly on the field definition:
-
-```yaml
-class: Company
-table: company
-fields:
-  name: String, unique
-```
+The `unique` keyword on an index is a bool that defaults to false. When it is applied to a multi-column index, the combination of the fields must be unique.
 
 ### Composite unique constraints
 
@@ -99,9 +99,9 @@ indexes:
     unique: true
 ```
 
-## Specifying index type
+## Specify an index type
 
-It is possible to add a type key to specify the index type.
+Add a `type` key to specify the index type.
 
 ```yaml
 class: Company
@@ -114,10 +114,10 @@ indexes:
     type: brin
 ```
 
-If no type is specified the default is `btree`. All [Postgres index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported, `btree`, `hash`, `gist`, `spgist`, `gin`, `brin`.
+If no type is specified, the default is `btree`. All [Postgres index types](https://www.postgresql.org/docs/current/indexes-types.html) are supported: `btree`, `hash`, `gist`, `spgist`, `gin`, and `brin`.
 
 :::info
-Index types are only supported for Postgres. On SQLite, only `btree` indexes are supported. Indexes declared with different types on the models will be skipped when creating a migration and a warning will be logged.
+Index types other than `btree` are Postgres-only, including the GIN, vector, and geography indexes described below. On SQLite, indexes declared with other types are skipped when a migration is created, and a warning is logged.
 :::
 
 ## GIN indexes
@@ -164,14 +164,14 @@ indexes:
 | `tsvectorOps`  | For full-text search                               | Text search with `tsvector` columns                             |
 
 :::tip
-If you only need containment queries (`@>`), use `jsonbPathOps` — it produces a smaller and faster index than the default `jsonbOps`.
+If you only need containment queries (`@>`), use `jsonbPathOps`: it produces a smaller and faster index than the default `jsonbOps`.
 :::
 
 For details on configuring JSONB storage on your model fields, see [Storing serializable fields as JSONB](./tables#storing-serializable-fields-as-jsonb).
 
 ## Vector indexes
 
-To enhance the performance of vector similarity search, it is possible to create specialized vector indexes on vector fields (`Vector`, `HalfVector`, `SparseVector`, `Bit`). Serverpod supports both `hnsw` and `ivfflat` index types with full parameter specification.
+Vector similarity searches benefit from specialized indexes on vector fields (`Vector`, `HalfVector`, `SparseVector`, `Bit`). Serverpod supports the `hnsw` and `ivfflat` index types.
 
 :::info
 Each vector index can only be created on a single vector field. It is not possible to create a vector index on multiple fields of any kind.
@@ -217,6 +217,8 @@ Available HNSW parameters:
 
 - `m`: Maximum number of bidirectional links for each node (default: 16)
 - `ef_construction`: Size of the dynamic candidate list (default: 64)
+
+Serverpod validates that `ef_construction` is at least `2 * m`, and rejects the model file otherwise.
 
 ### IVFFLAT indexes
 
@@ -264,9 +266,9 @@ Different vector types have specific limitations when creating indexes:
 If more than one distance function is going to be frequently used on the same vector field, consider creating one index for each distance function to ensure optimal performance.
 :::
 
-For more details on vector indexes and its configuration, refer to the [pgvector extension documentation](https://github.com/pgvector/pgvector/tree/master?tab=readme-ov-file#indexing).
+For more details on vector indexes and their configuration, refer to the [pgvector extension documentation](https://github.com/pgvector/pgvector/tree/master?tab=readme-ov-file#indexing).
 
-### Geography indexes
+## Geography indexes
 
 Geography columns benefit from spatial indexes, which significantly improve the performance of spatial queries such as proximity searches, intersection tests, and containment checks. Two index types are available for geography fields:
 
@@ -305,8 +307,11 @@ indexes:
 A spatial index accelerates all spatial operations (`intersects`, `distanceWithin`, `distance`, `contains`, `within`). For tables with many rows and frequent spatial queries, adding one is strongly recommended.
 :::
 
-Geography fields only support the `gist` and `spgist` index types. Specifying any other type fails code generation with `The "type" property must be one of: gist, spgist.` An index may cover several geography columns, but it cannot mix geography and non-geography fields. Doing so fails with `Mixing geography and non-geography fields in the same index is not allowed.`
+Two restrictions apply to geography indexes:
+
+- Geography fields only support the `gist` and `spgist` index types. Specifying any other type fails code generation with `The "type" property must be one of: gist, spgist.`
+- An index may cover several geography columns, but it cannot mix geography and non-geography fields. Doing so fails with `Mixing geography and non-geography fields in the same index is not allowed.`
 
 :::info
-`spgist` indexes on the geography type require a recent version of PostGIS. If your PostgreSQL instance ships an older PostGIS, use `gist` instead.
+Indexes of type `spgist` on the geography type require a recent version of PostGIS. If your PostgreSQL instance ships an older PostGIS, use `gist` instead.
 :::

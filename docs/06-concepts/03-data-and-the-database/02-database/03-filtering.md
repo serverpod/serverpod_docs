@@ -4,15 +4,13 @@ description: Database filter expressions in Serverpod are type-safe, built from 
 
 # Filter
 
-Serverpod makes it easy to build expressions that are statically type-checked. Columns and relational fields are referenced using table descriptor objects. The table descriptors, `t`, are accessible from each model and are passed as an argument to a model specific expression builder function. A callback is then used as argument to the `where` parameter when fetching data from the database.
+Filters narrow which rows a query returns. You build them in the `where` callback that most database methods accept, and they are statically type-checked. The callback receives a table descriptor, by convention named `t`, which exposes each column of the table as a typed field. Filtering happens in the database, so only the matching rows are sent to the server.
+
+This page covers filtering on column values, on logical combinations, and on related rows. To include related data in the result instead of filtering by it, see [Relation queries](relation-queries).
 
 ## Column operations
 
-The following column operations are supported in Serverpod, each column datatype supports a different set of operations that make sense for that type.
-
-:::info
-When using the operators, it's a good practice to place them within a set of parentheses as the precedence rules are not always what would be expected.
-:::
+Each column datatype supports the set of operations that makes sense for that type.
 
 ### Equals
 
@@ -40,7 +38,7 @@ In the example we fetch all users with a name that is not Bob. If a non-`null` v
 
 ### Comparison operators
 
-Compare a column to a value, these operators are support for `int`, `double`, `Duration`, and `DateTime`.
+The `>`, `>=`, `<`, and `<=` operators compare a column to a value. They are supported for `int`, `double`, `Duration`, `DateTime`, `String`, and `UuidValue` columns.
 
 ```dart
 await User.db.find(
@@ -49,38 +47,15 @@ await User.db.find(
 );
 ```
 
-In the example we fetch all users that are older than 25 years old.
+In the example we fetch all users that are older than 25.
 
-```dart
-await User.db.find(
-  session,
-  where: (t) => t.age >= 25
-);
-```
-
-In the example we fetch users that are 25 years old or older.
-
-```dart
-await User.db.find(
-  session,
-  where: (t) => t.age < 25
-);
-```
-
-In the example we fetch all users that are younger than 25 years old.
-
-```dart
-await User.db.find(
-  session,
-  where: (t) => t.age <= 25
-);
-```
-
-In the example we fetch all users that are 25 years old or younger.
+:::info
+Comparison operators check value types at runtime. Comparing a `double` column against an `int` literal, such as `t.price > 500`, compiles but throws. Write the literal to match the column type, `t.price > 500.0`.
+:::
 
 ### Between
 
-The between method takes two values and checks if the columns value is between the two input variables _inclusively_.
+The between method takes two values and checks if the column's value is between them, inclusive of the boundaries. It is available on `int`, `double`, `Duration`, and `DateTime` columns.
 
 ```dart
 await User.db.find(
@@ -91,7 +66,7 @@ await User.db.find(
 
 In the example we fetch all users between 18 and 65 years old. This can also be expressed as `(t.age >= 18) & (t.age <= 65)`.
 
-The 'not between' operation functions similarly to 'between' but it negates the condition. It also works inclusively with the boundaries.
+The `notBetween` operation negates the condition. The boundaries are still inclusive.
 
 ```dart
 await User.db.find(
@@ -104,7 +79,7 @@ In the example we fetch all users that are not between 18 and 65 years old. This
 
 ### In set
 
-In set can be used to match with several values at once. This method functions the same as equals but for multiple values, `inSet` will make an exact comparison.
+In set can be used to match with several values at once. The `inSet` method makes an exact comparison, like equals, but against every value in the set.
 
 ```dart
 await User.db.find(
@@ -115,7 +90,7 @@ await User.db.find(
 
 In the example we fetch all users with a name matching either Alice or Bob. If an empty set is used as an argument for the inSet comparison, no rows will be included in the result.
 
-The 'not in set' operation functions similarly to `inSet`, but it negates the condition.
+The `notInSet` operation negates the condition.
 
 ```dart
 await User.db.find(
@@ -128,12 +103,12 @@ In the example we fetch all users with a name not matching Alice or Bob. Rows wi
 
 ### Like
 
-Like can be used to perform match searches against `String` entries in the database, this matcher is case-sensitive. This is useful when matching against partial entries.
+Like performs pattern matching against `String` columns. The matcher is case-sensitive.
 
-Two special characters enables matching against partial entries.
+Two special characters match partial entries:
 
-- **`%`** Matching any sequence of character.
-- **`_`** Matching any single character.
+- **`%`** matches any sequence of characters.
+- **`_`** matches any single character.
 
 | String | Matcher | Is matching |
 | ------ | ------- | ----------- |
@@ -164,9 +139,9 @@ await User.db.find(
 
 In the example we fetch all users with a name that does not start with B.
 
-### ilike
+### Ilike
 
-`ilike` works the same as `like` but is case-insensitive.
+The `ilike` method works the same as `like` but is case-insensitive.
 
 ```dart
 await User.db.find(
@@ -177,7 +152,7 @@ await User.db.find(
 
 In the example we fetch all users with a name that starts with a or A.
 
-There is a negated version of `ilike` that can be used to exclude rows from the result.
+There is a negated version, `notIlike`, that can be used to exclude rows from the result.
 
 ```dart
 await User.db.find(
@@ -188,7 +163,11 @@ await User.db.find(
 
 In the example we fetch all users with a name that does not start with b or B.
 
-### Logical operators
+:::info
+On SQLite, both `like` and `ilike` use SQLite's `LIKE` operator, which is case-insensitive for ASCII characters. This means `like` is not case-sensitive on SQLite the way it is on Postgres.
+:::
+
+## Logical operators
 
 Logical operators are also supported when filtering, allowing you to chain multiple statements together to create more complex queries.
 
@@ -212,7 +191,7 @@ await User.db.find(
 );
 ```
 
-In the example we fetch all users that has a name that starts with A _or_ B.
+In the example we fetch all users that have a name that starts with A _or_ B.
 
 The `~` operator is used to negate an expression with a `not` operation.
 
@@ -230,13 +209,17 @@ The `~` operator can also be used with more complex expressions:
 ```dart
 await User.db.find(
   session,
-  where: (t) => ~(t.name.like('A%') | t.age > 25)
+  where: (t) => ~(t.name.like('A%') | (t.age > 25))
 );
 ```
 
 In the example we fetch all users that do _not_ have a name starting with "A" _and_ are _not_ older than 25.
 
-### Vector distance operators
+:::info
+Place each operand within parentheses, as in the examples above. Dart's operator precedence binds `&` and `|` tighter than comparisons, so an expression like `t.name.like('A%') | t.age > 25` does not compile without the parentheses around `(t.age > 25)`.
+:::
+
+## Vector distance operators
 
 All vector field types support specialized distance operations for similarity search. Available vector distance operations:
 
@@ -252,45 +235,31 @@ All vector field types support specialized distance operations for similarity se
 - `distanceHamming` - Hamming distance.
 - `distanceJaccard` - Jaccard distance.
 
-You can use vector distance operations with numeric comparisons for filtering and ordering:
+A distance operation returns a numeric value, so you can compare it in `where`, order by it, and combine it with other filters. The canonical similarity search orders by distance and limits the result:
 
 ```dart
-// The vector to compare against
+// The vector to compare against.
 var queryVector = Vector([0.1, 0.2, 0.3, ...]);
-var sparseQuery = SparseVector([0.0, 1.0, 0.0, 2.5, ...]);
-var binaryQuery = Bit([1, 0, 1, 1, 0, ...]);
 
-// Find top documents similar to a query vector
+// Find the ten documents most similar to the query vector.
 var similarDocs = await Document.db.find(
   session,
   where: (t) => t.embedding.distanceCosine(queryVector) < 0.5,
   orderBy: (t) => t.embedding.distanceCosine(queryVector),
   limit: 10,
 );
+```
 
-// Search using sparse vectors
-var keywordMatches = await Document.db.find(
-  session,
-  where: (t) => t.keywords.distanceInnerProduct(sparseQuery) < 0.3,
-  orderBy: (t) => t.keywords.distanceInnerProduct(sparseQuery),
-  limit: 5,
-);
+The same shape works for every distance operation, such as `distanceInnerProduct` against a `SparseVector` query or `distanceHamming` against a `Bit` query. The distance can also be range-filtered or combined with regular column filters:
 
-// Search using binary vectors with Hamming distance
-var binaryMatches = await Document.db.find(
-  session,
-  where: (t) => t.hash.distanceHamming(binaryQuery) < 10,
-  orderBy: (t) => t.hash.distanceHamming(binaryQuery),
-  limit: 5,
-);
-
-// Filter by distance range
+```dart
+// Filter by distance range.
 var mediumSimilarity = await Document.db.find(
   session,
   where: (t) => t.embedding.distanceL2(queryVector).between(0.3, 0.8),
 );
 
-// Combine with other filters
+// Combine with other filters.
 var filteredSimilarity = await Document.db.find(
   session,
   where: (t) => t.category.equals('article') &
@@ -306,7 +275,7 @@ For optimal performance with vector similarity searches, consider creating speci
 
 ## Relation operations
 
-If a relation between two models is defined a [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relation, then relation operations are supported in Serverpod.
+When two models are connected with a [one-to-one](relations/one-to-one) or [one-to-many](relations/one-to-many) object relation, you can filter on the related rows directly.
 
 ### One-to-one
 
@@ -319,15 +288,15 @@ await User.db.find(
 );
 ```
 
-In the example each user has a relation to an address that has a street field. Using relation operations we then fetch all users where the related address has a street that contains the word "road".
+In the example each user has a relation to an address with a street field. The query fetches all users whose related address has a street containing the word "road".
 
 ### One-to-many
 
-For 1:n relations, there are special filter methods where you can create sub-filters on all the related data. With them, you can answer questions on the aggregated result on many relations.
+For 1:n relations, special filter methods let you filter on properties of the related rows as a group: how many there are, whether any or none exist, or whether all of them match a condition.
 
 #### Count
 
-Count can be used to count the number of related entries in a 1:n relation. The `count` always needs to be compared with a static value.
+Count can be used to count the number of related entries in a 1:n relation. The `count` always needs to be compared with a constant value.
 
 ```dart
 await User.db.find(
@@ -338,7 +307,7 @@ await User.db.find(
 
 In the example we fetch all users with more than three orders.
 
-We can apply a sub-filter to the `count` operator filter the related entries before they are counted.
+We can apply a sub-filter to the `count` operator to filter the related entries before they are counted.
 
 ```dart
 await User.db.find(
@@ -351,7 +320,7 @@ In the example we fetch all users with more than three "book" orders.
 
 #### None
 
-None can be used to retrieve rows that have no related entries in a 1:n relation. Meaning if there exists a related entry then the row is omitted from the result. The operation is useful if you want to ensure that a many relation does not contain any related rows.
+None can be used to retrieve rows that have no related entries in a 1:n relation. If a related entry exists, the row is omitted from the result.
 
 ```dart
 await User.db.find(
@@ -362,12 +331,12 @@ await User.db.find(
 
 In the example we fetch all users that have no orders.
 
-We can apply a sub-filter to the `none` operator to filter the related entries. Meaning if there is a match in the sub-filter the row will be omitted from the result.
+We can apply a sub-filter to the `none` operator to filter the related entries. If any related entry matches the sub-filter, the row is omitted from the result.
 
 ```dart
 await User.db.find(
   session,
-  where:((t) => t.orders.none((o) => o.itemType.equals('book')))
+  where: (t) => t.orders.none((o) => o.itemType.equals('book'))
 );
 ```
 
@@ -386,12 +355,12 @@ await User.db.find(
 
 In the example we fetch all users that have any order.
 
-We can apply a sub-filter to the `any` operator to filter the related entries. Meaning if there is a match in the sub-filter the row will be included in the result.
+We can apply a sub-filter to the `any` operator to filter the related entries. If any related entry matches the sub-filter, the row is included in the result.
 
 ```dart
 await User.db.find(
   session,
-  where:((t) => t.orders.any((o) => o.itemType.equals('book')))
+  where: (t) => t.orders.any((o) => o.itemType.equals('book'))
 );
 ```
 

@@ -1,5 +1,5 @@
 ---
-description: Serverpod paginates query results with limit and offset, or cursor-based pagination for frequently updated datasets.
+description: Serverpod paginates large query results with limit and offset, or with cursor-based pagination for frequently updated datasets.
 ---
 
 # Pagination
@@ -76,35 +76,28 @@ In cursor-based pagination, the client provides a cursor as a reference point, a
     int recordsPerPage = 10;
 
     var companies = await Company.db.find(
-    session,
-    orderBy: (t) => t.id,
-    limit: recordsPerPage,
+      session,
+      orderBy: (t) => t.id,
+      limit: recordsPerPage,
     );
     ```
 
 2. **Subsequent requests**:
-    For the subsequent requests, use the cursor (for example, the last `id` from the previous result) to fetch the next set of records:
+    For the subsequent requests, use the cursor (for example, the last `id` from the previous result, typically sent by the client) to fetch the next set of records:
 
     ```dart
-    int cursor = lastCompanyIdFromPreviousPage; // This is typically sent by the client
+    int cursor = lastCompanyIdFromPreviousPage;
 
     var companies = await Company.db.find(
-    session,
-    where: Company.t.id > cursor,
-    orderBy: (t) => t.id,
-    limit: recordsPerPage,
+      session,
+      where: (t) => t.id > cursor,
+      orderBy: (t) => t.id,
+      limit: recordsPerPage,
     );
     ```
 
 3. **Returning the cursor**:
-    When returning data to the client, also return the cursor, so it can be used to compute the starting point for the next page.
-
-    ```dart
-    return {
-    'data': companies,
-    'lastCursor': companies.last.id,
-    };
-    ```
+    When returning data to the client, also return the last row's `id`, so the client can send it back as the cursor for the next page. Define a small model that carries the page of rows together with its cursor, for example a `CompanyPage` with a `List<Company>` field and a nullable `lastCursor` field.
 
 ### Tips
 

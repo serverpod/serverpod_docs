@@ -103,3 +103,21 @@ Future<UserData> getUserData(Session session, int userId) async {
 ```
 
 If the `CacheMissHandler` returns `null`, no object will be stored in the cache.
+
+## Sending custom Redis commands
+
+Redis supports operations that the global cache does not expose, such as atomic counters and sorted sets. If you want to use these operations, you can borrow the connection Serverpod already manages and send the command using `getConnection`:
+
+```dart
+Future<int?> incrementCounter(Session session, String counterName) async {
+  var command = await session.serverpod.redisController?.getConnection();
+  if (command == null) return null;
+
+  var result = await command.send_object(['INCR', 'my_app:$counterName']);
+  return result is int ? result : null;
+}
+```
+
+The connection is `null` when Redis is disabled or unreachable, including when the global cache is running on its in-memory development fallback. Responses come back in the shape Redis defines for the command, so check the result before casting it.
+
+The returned `RedisCommand` is Serverpod's own connection. Do not close it or replace `Serverpod.redisController`. It is also a good practice to namespace your keys so they cannot collide with Serverpod's cache entries.

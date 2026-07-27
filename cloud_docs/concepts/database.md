@@ -46,7 +46,7 @@ To undo a migration that already applied successfully, create a repair migration
 
 ## Backups
 
-Cloud takes regular backups of the managed database. Backup behavior is handled by the platform and doesn't require any configuration from you.
+Cloud can back up the managed database on demand or on a schedule, and restore it to any snapshot in one step. See [Database backups](/cloud/concepts/database-backups) for how to set up scheduled backups, take manual snapshots, and restore.
 
 ## Access the database directly
 
