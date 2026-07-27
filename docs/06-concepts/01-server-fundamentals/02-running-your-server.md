@@ -74,7 +74,7 @@ The server accepts arguments that control how it starts: `--mode` selects the ru
 
 In production, the `--role` argument controls which parts of the server run:
 
-- **`monolith`** (default) runs everything: the API, Insights, and web servers, plus [future calls](../scheduling/setup) and [health checks](../operations/health-checks).
+- **`monolith`** (default) runs everything: the API, Insights, and web servers, plus [future calls](../scheduling/overview) and [health checks](../operations/health-checks).
 - **`serverless`** serves requests only. Future calls and health checks are disabled, which fits platforms that start and stop instances on demand.
 - **`maintenance`** starts no servers. It performs one-shot work, applying migrations when passed `--apply-migrations` and running any due future calls, then exits. The exit code reports success or failure, which makes it fit for CI jobs and scheduled maintenance tasks.
 
