@@ -45,7 +45,7 @@ services:
       - <projectname>_test_data:/var/lib/postgresql/data
 ```
 
-If your project also uses [vector fields](../concepts/data-and-the-database/models/vector-and-geography-fields), you need both pgvector and PostGIS. Create a custom `Dockerfile` instead:
+If your project also uses [vector fields](../concepts/data-and-the-database/database/vector-and-geography-fields), you need both pgvector and PostGIS. Create a custom `Dockerfile` instead:
 
 ```dockerfile
 FROM pgvector/pgvector:pg16

@@ -4,9 +4,9 @@ description: A one-to-many relationship links a parent row to many child rows th
 
 # One-to-many
 
-One-to-many (1:n) relationships describes a scenario where multiple records from one table can relate to a single record in another table. An example of this would the relationship between a company and its employees, where multiple employees can be employed at a single company.
+One-to-many (1:n) relationships describe a scenario where multiple records from one table can relate to a single record in another table. An example would be the relationship between a company and its employees, where multiple employees can be employed at a single company.
 
-The Serverpod framework provides versatility in establishing these relations. Depending on the specific use case and clarity desired, you can define the model relationship either from the 'many' side (like `Employee`) or the 'one' side (like `Company`).
+You can define the relation from the 'many' side (like `Employee`), from the 'one' side (like `Company`), or on both. Defining it from the 'one' side hides the foreign key from your class, which keeps the model minimal; defining it from the 'many' side gives you the foreign key as a field you can read and filter on directly.
 
 ## Defining the relationship
 
@@ -33,15 +33,15 @@ fields:
 
 In the example, we define a 1:n relation between `Company` and `Employee` by using the `List<Employee>` type on the `employees` field together with the `relation` keyword.
 
-The corresponding foreign key field is automatically integrated into the 'many' side (e.g., `Employee`) as a concealed column.
+Serverpod adds the corresponding foreign key column to the 'many' side's table (e.g., `employee`), but it does not appear as a field on the class.
 
-When fetching companies it now becomes possible to include any or all employees in the query. 1:n relations also enables additional [filtering](../filtering#one-to-many) and [sorting](../sorting#sort-on-relations) operations for [relational queries](../relation-queries).  
+When fetching companies, you can now include any or all employees in the query. 1:n relations also enable additional [filtering](../filtering#one-to-many) and [sorting](../sorting#sort-on-relations) operations for [relational queries](../relation-queries).  
 
 ### Explicit definition
 
 In an explicit definition, you directly specify the relationship in a one-to-many relation.
 
-This can be done by through an [object relation](one-to-one#with-an-object):
+This can be done through an [object relation](one-to-one#with-an-object):
 
 ```yaml
 # company.yaml
@@ -72,7 +72,7 @@ class: Employee
 table: employee
 fields:
   name: String
-  companyId: int, relation
+  companyId: int, relation(parent=company)
 ```
 
 The examples are 1:n relations because there is **no** unique index constraint on the foreign key field. This means that multiple employees can reference the same company.

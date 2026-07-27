@@ -2,7 +2,7 @@
 description: Middleware in Serverpod's web server lets you apply cross-cutting concerns like authentication, logging, and CORS globally or to specific path prefixes.
 ---
 
-# Middleware
+# Web server middleware
 
 Routes handle the core logic of your application, but many concerns cut across
 multiple routes: logging every request, validating API keys, handling CORS
@@ -11,9 +11,9 @@ middleware lets you apply it globally or to specific path prefixes.
 
 Middleware functions are wrappers that sit between the incoming request and your
 route handler. They can inspect or modify requests before they reach your
-routes, and transform responses before they're sent back to the client. This
-makes middleware perfect for authentication, logging, error handling, and any
-other cross-cutting concern in your web server.
+routes, and transform responses before they're sent back to the client.
+
+The middleware on this page applies only to web server routes. For middleware around your endpoint methods, see [Endpoint middleware](../endpoints-and-apis/endpoint-middleware).
 
 ## Adding middleware
 
@@ -76,22 +76,19 @@ pod.webServer.addMiddleware(apiKeyMiddleware, '/api');
 ```
 
 :::info
-For user authentication, use Serverpod's built-in authentication system which
-integrates with the `Session` object. The middleware examples here are for
+For user authentication, use Serverpod's built-in [authentication](../authentication/basics) system, which
+integrates with the `Session` object your route's `handleCall` receives. The middleware examples here are for
 additional web-specific validations like API keys, rate limiting, or request
 validation.
-
 :::
 
 ## Middleware execution order
 
-Middleware is applied based on path hierarchy, with more specific paths taking
-precedence. Within the same path, middleware executes in the order it was
-registered:
+Middleware wraps your routes in layers based on path hierarchy. Middleware registered on a broader path runs first, and middleware on a more specific path runs closer to the route handler. Within the same path, middleware executes in the order it was registered:
 
 ```dart
-pod.webServer.addMiddleware(rateLimitMiddleware, '/api/users'); // Executes last for /api (inner)
-pod.webServer.addMiddleware(apiKeyMiddleware, '/api');          // Executes first for /api (outer)
+pod.webServer.addMiddleware(rateLimitMiddleware, '/api/users'); // Runs second for /api/users/list
+pod.webServer.addMiddleware(apiKeyMiddleware, '/api');          // Runs first for /api/users/list
 ```
 
 For a request to `/api/users/list`, the execution order is:
@@ -129,11 +126,10 @@ subdomain, or a logging middleware might generate a request ID for tracing.
 Since `Request` objects are immutable, you can't just add properties to them.
 This is where `ContextProperty` comes in.
 
-`ContextProperty<T>` provides a type-safe way to attach data to a `Request`
+A `ContextProperty<T>` provides a type-safe way to attach data to a `Request`
 object without modifying it. Think of it as a side channel for request-scoped
 data that middleware can write to and routes can read from. The data is
-automatically cleaned up when the request completes, making it perfect for
-per-request state. For more details, see the [Relic documentation](https://docs.dartrelic.dev/).
+automatically cleaned up when the request completes. For more details, see the [Relic documentation](https://docs.dartrelic.dev/).
 
 :::info
 
@@ -154,8 +150,8 @@ final _tenantProperty = ContextProperty<String>('tenant');
 
 // Create a public getter extension to allow handlers and other middleware to
 // read, but not modify the context property.
-extension tenantPropertyEx on Request {
-  String get tenant => _tenantProperty.get(this); // get throw on null, [] doesn't  
+extension TenantRequestEx on Request {
+  String get tenant => _tenantProperty.get(this); // get() throws when unset; [] returns null instead.
 }
 ```
 
@@ -165,15 +161,13 @@ Middleware can set values on the context property, making them available to all
 downstream handlers:
 
 ```dart
-// in same file
- 
 // Tenant identification middleware (extracts from subdomain)
 Handler tenantMiddleware(Handler next) {
   return (Request request) async {
     final host = request.headers.host;
 
     // Validate tenant exists (implement your own logic)
-    final session = request.session;
+    final session = await request.session;
     final tenant = await extractAndValidateTenant(session, host);
 
     if (tenant == null) {
@@ -202,8 +196,9 @@ class TenantDataRoute extends Route {
     final tenant = request.tenant; // using the previously defined extension
 
     // Fetch tenant-specific data
-    final data = await session.db.find<Product>(
-      where: (p) => p.tenantId.equals(tenant),
+    final data = await Product.db.find(
+      session,
+      where: (t) => t.tenantId.equals(tenant),
     );
 
     return Response.ok(
@@ -218,6 +213,6 @@ class TenantDataRoute extends Route {
 
 ## Next steps
 
-- **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
-- **[Static Files](static-files)** - Serve static assets
-- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
+- **[Request data](request-data)** - Access path parameters, query parameters, headers, and body
+- **[Static files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML on the server

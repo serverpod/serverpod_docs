@@ -4,9 +4,7 @@ description: Static file serving in Serverpod supports automatic content-type de
 
 # Static files
 
-Static assets like images, CSS, and JavaScript files are essential for web
-applications. The `StaticRoute.directory()` method makes it easy to serve entire
-directories with automatic content-type detection for common file formats.
+The `StaticRoute` class serves files from disk: images, CSS, JavaScript, fonts, or any other asset, with automatic content-type detection for common file formats. This page covers serving directories and single files, cache headers, and cache busting.
 
 ## Serving static files
 
@@ -24,35 +22,47 @@ pod.webServer.addRoute(
 This serves all files from the `web/static` directory at the `/static` path.
 For example, `web/static/logo.png` becomes accessible at `/static/logo.png`.
 
+To serve one specific file instead of a directory, use `StaticRoute.file(File('web/pages/landing.html'))`.
+
 :::info
-
-`StaticRoute.directory()` automatically handles tail matching, so you don't need
+The `StaticRoute.directory()` factory automatically handles tail matching, so you don't need
 to add `**` to the path. The route will serve all files under the given prefix.
-
 :::
 
 ## Cache control
 
-Control how browsers and CDNs cache your static files using the
-`cacheControlFactory` parameter:
+By default, `StaticRoute` sends no `Cache-Control` header at all. Responses still carry `ETag` and `Last-Modified` headers, so browsers revalidate with [conditional requests](#conditional-requests-etags-and-last-modified) and receive a `304 Not Modified` when the file is unchanged.
+
+To set a caching policy, pass one of the cache-control helpers as the `cacheControlFactory` parameter:
+
+| Helper | Resulting header | Use when |
+| --- | --- | --- |
+| `StaticRoute.public(maxAge: ...)` | `public, max-age=N` | Assets that change occasionally. Caches keep them for the given lifetime |
+| `StaticRoute.publicImmutable(maxAge: ...)` | `immutable, public, max-age=N` | Cache-busted assets whose URL changes with the content. Use a long lifetime |
+| `StaticRoute.privateNoCache()` | `no-cache, private` | Per-user content that must be revalidated on every request |
+| `StaticRoute.noStore()` | `no-store` | Content that must never be cached |
 
 ```dart
 pod.webServer.addRoute(
   StaticRoute.directory(
     staticDir,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(minutes: 5)),
+    cacheControlFactory: StaticRoute.public(maxAge: const Duration(minutes: 5)),
   ),
   '/static/',
 );
 ```
 
+Reserve `publicImmutable` for [cache-busted](#static-file-cache-busting) assets: `immutable` tells caches to never revalidate, which is only safe when a changed file also gets a new URL.
+
+On [Serverpod Cloud](/cloud/concepts/cdn), a CDN sits in front of the web server and honors these headers, and its cache is cleared on every deploy.
+
 ## Static file cache-busting
 
-When deploying static assets, browsers and CDNs (like CloudFront) cache files
+When deploying static assets, browsers and CDNs cache files
 aggressively for performance. This means updated files may not be served to
 users unless you implement a cache-busting strategy.
 
-Serverpod provides `CacheBustingConfig` to automatically version your static
+Relic provides `CacheBustingConfig` to automatically version your static
 files. For more details, see the [Relic documentation](https://docs.dartrelic.dev/).
 
 ```dart
@@ -68,11 +78,13 @@ pod.webServer.addRoute(
   StaticRoute.directory(
     staticDir,
     cacheBustingConfig: cacheBustingConfig,
-    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(minutes: 5)),
+    cacheControlFactory: StaticRoute.publicImmutable(maxAge: const Duration(days: 365)),
   ),
   '/static/',
 );
 ```
+
+With cache busting, a changed file gets a new URL, so caches can safely keep each version for a long time. This is the setup where `publicImmutable` with a long lifetime belongs.
 
 ### Generating versioned URLs
 
@@ -95,10 +107,10 @@ The cache-busting system:
 - Works transparently - requesting `/static/logo@abc123.png` serves
   `/static/logo.png`
 
-## Conditional requests (`Etags` and `Last-Modified`)
+## Conditional requests (ETags and Last-Modified)
 
-`StaticRoute` automatically supports HTTP conditional requests through Relic's
-`StaticHandler`. This provides efficient caching without transferring file
+Every `StaticRoute` automatically supports HTTP conditional requests through Relic's
+`StaticHandler`, along with `Range` requests for partial downloads. This provides efficient caching without transferring file
 content when unchanged:
 
 **Supported features:**
@@ -139,8 +151,6 @@ ETag: "abc123"
 [no body - saves bandwidth]
 ```
 
-When combined with cache-busting, conditional requests provide a fallback
-validation mechanism even for cached assets, ensuring efficient delivery while
-maintaining correctness.
+Conditional requests do the caching work in the default setup and with `public(maxAge:)`, where clients revalidate once a file's lifetime expires. With cache-busted `immutable` assets, clients skip revalidation entirely by design, since a changed file gets a new URL instead.
 
 For dynamic content that changes per request, see [Server-side HTML](server-side-html).

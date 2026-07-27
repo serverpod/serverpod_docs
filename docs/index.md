@@ -3,7 +3,7 @@ sidebar_position: -1
 sidebar_label: Introduction
 sidebar_class_name: sidebar-introduction-icon
 title: Introduction
-description: Serverpod is an open-source backend framework for Flutter developers. Write your server in Dart and call it from your Flutter app through generated, type-safe code.
+description: Serverpod is an open-source backend framework for Flutter developers. Write your server in Dart and call it from your app through generated, type-safe code.
 ---
 
 # Introduction
@@ -52,4 +52,4 @@ Serverpod covers all common backend needs out of the box:
 - **File uploads:** Store in Amazon S3, Google Cloud Storage, or your database.
 - **Task scheduling:** Schedule a method to run later with type-safe future calls. They persist across server restarts.
 - **Caching:** Cache primitives and serializable models in-memory or in Redis.
-- **Web server:** Serve REST APIs, webhooks, and web pages with the built-in [Relic](https://docs.dartrelic.dev/) web server.
+- **Web server:** Serve REST APIs, webhooks, and web pages with the built-in [web server](./06-concepts/05-web-server/01-overview.md), based on [Relic](https://docs.dartrelic.dev/).

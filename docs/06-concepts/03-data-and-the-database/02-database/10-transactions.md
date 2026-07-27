@@ -4,13 +4,13 @@ description: Transactions group database operations into an atomic unit in Serve
 
 # Transactions
 
-The essential point of a database transaction is that it bundles multiple steps into a single, all-or-nothing operation. The intermediate states between the steps are not visible to other concurrent transactions, and if some failure occurs that prevents the transaction from completing, then none of the steps affect the database at all.
+A transaction bundles several database operations into one unit that either fully succeeds or fully fails. Other concurrent operations never see the intermediate states. If any step fails, none of the steps affect the database.
 
 Serverpod handles database transactions through the `session.db.transaction` method. The method takes a callback function that receives a transaction object.
 
 The transaction is committed when the callback function returns, and rolled back if an exception is thrown. Any return value of the callback function is returned by the `transaction` method.
 
-Simply pass the transaction object to each database operation method to include them in the same atomic operation:
+Pass the transaction object to each database operation method to include them in the same atomic operation:
 
 ```dart
 var result = await session.db.transaction((transaction) async {
@@ -25,6 +25,29 @@ var result = await session.db.transaction((transaction) async {
 
 In the example we insert a company and an employee in the same transaction. If any of the operations fail, the entire transaction will be rolled back and no changes will be made to the database. If the transaction is successful, the return value will be `true`.
 
+:::tip
+The Serverpod test tools use this rollback behavior to isolate test cases: by default, each test runs inside a transaction that is rolled back when the test ends. See [rollback configuration](../../testing/the-basics#rollback-database-configuration) in the testing docs.
+:::
+
+## Cancel a transaction
+
+To roll back a transaction deliberately, without throwing an exception, call `cancel` on the transaction object:
+
+```dart
+var result = await session.db.transaction((transaction) async {
+  await Company.db.insertRow(session, company, transaction: transaction);
+
+  if (companyLimitReached) {
+    await transaction.cancel();
+    return false;
+  }
+
+  return true;
+});
+```
+
+Cancelling rolls back all of the transaction's changes, while the `transaction` method still returns the callback's return value. Database calls made after the cancel have no effect and might throw, depending on the database driver.
+
 ## Transaction isolation
 
 The transaction isolation level can be configured when initiating a transaction. The isolation level determines how the transaction interacts with concurrent database operations. If no isolation level is supplied, the level is determined by the database engine.
@@ -34,7 +57,7 @@ The default isolation level for the Postgres database engine is `IsolationLevel.
 :::
 
 :::info
-Transaction isolation is only supported for Postgres. SQLite uses `serializable` by default and currently does not support changing the transaction level to `readUncommitted`.
+Setting an isolation level is only supported on Postgres. On SQLite, the `isolationLevel` setting is ignored, and transactions always run serialized.
 :::
 
 To set the isolation level, configure the `isolationLevel` property of the `TransactionSettings` object:
