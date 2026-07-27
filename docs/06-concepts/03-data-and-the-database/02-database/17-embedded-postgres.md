@@ -57,7 +57,13 @@ Integration tests bring their own database, so there is nothing to install or st
 $ dart test
 ```
 
-Each test gets an isolated temporary data directory that is deleted on teardown, so tests cannot see each other's data or leave anything behind between runs. See [Get started with testing](../../testing/get-started) for the rest of the setup.
+The started database server will be held open until the test process exits. Every suite in a test process shares the same database server, but each `withServerpod` group creates a randomly named database of its own on it that will be dropped on teardown. That is where the isolation comes from: groups run in parallel without seeing each other's data or leaving anything behind between runs.
+
+The data directory is not temporary. Like the one for `development`, it stays after the tests, and only the server process is reclaimed when the test process exits. See [Get started with testing](../../testing/get-started) for the rest of the setup.
+
+:::note
+If a test process is hard-killed, the database server will not be stopped and data can be left behind. This data won't harm future runs because of the named database isolation, but it can occupy disk space. If the directory happens to grow too large, it is fully safe to delete it and let the next test recreate it from scratch.
+:::
 
 ## Reset the database
 
