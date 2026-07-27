@@ -1,229 +1,63 @@
 ---
 sidebar_label: Get started
-description: Integration testing in Serverpod uses the withServerpod helper to call endpoints directly, seed the database, and simulate authenticated sessions without running a separate server.
+description: Test Serverpod endpoints by calling them like ordinary Dart functions, with a real server and a real database that resets between tests.
 ---
 
 # Get started with testing
 
-Serverpod's test tools let you call endpoints directly, seed the database, and simulate authenticated sessions, all without spinning up a separate server.
+Serverpod generates test tools that let you call your endpoints from a test the same way your app calls them, as ordinary Dart functions. Behind that call the tools run a real server against a real database, so a test exercises your endpoint, your models, and your queries together.
 
-<!-- markdownlint-disable MD029 -->
-<details>
-<summary>Project created with Serverpod 2.1 or earlier? Complete these steps first.</summary>
-<p>
-If your project was created with Serverpod 2.1 or earlier, the test infrastructure is not yet set up. Complete these steps before continuing:
-1. Add the `server_test_tools_path` key with the value `test/integration/test_tools` to `config/generator.yaml`:
+That means no separate server to start, no HTTP client to write, and no mocked database. It also means these are integration tests: they check your code end to end rather than one class in isolation. Plain unit tests still work as they always do, and they need none of this.
 
-```yaml
-server_test_tools_path: test/integration/test_tools
-```
+Two things follow from that:
 
- Without this key, the test tools file is not generated. With the above config the location of the test tools file is `test/integration/test_tools/serverpod_test_tools.dart`, but this can be set to any folder (though should be outside of `lib` as per Dart's test conventions).
+- **Tests stay independent.** Anything a test writes to the database is rolled back once that test finishes, so tests never see each other's data and you do not clean up after yourself.
+- **Each test sets its own scene.** A session builder decides what the server state looks like for a call, such as who is signed in.
 
-2. New projects now come with a test postgres and redis instance in `docker-compose.yaml`. This is not strictly mandatory, but is recommended to ensure that the testing state is never polluted. Add the snippet below to the `docker-compose.yaml` file in the server directory:
+## Set up
 
-```yaml
-# Add to the existing services
-postgres_test:
-  image: pgvector/pgvector:pg16
-  ports:
-    - '9090:5432'
-  environment:
-    POSTGRES_USER: postgres
-    POSTGRES_DB: <projectname>_test
-    POSTGRES_PASSWORD: "<insert database test password>"
-  volumes:
-    - <projectname>_test_data:/var/lib/postgresql/data
-redis_test:
-  image: redis:6.2.6
-  ports:
-    - '9091:6379'
-  command: redis-server --requirepass 'REDIS_TEST_PASSWORD'
-  environment:
-    - REDIS_REPLICATION_MODE=master
-volumes:
-  # ...
-  <projectname>_test_data:
-```
+New projects are ready to test. If you have `test/integration/test_tools/serverpod_test_tools.dart` in your server package, skip to [writing a test](#write-a-test).
 
-<details>
-<summary>Or copy the complete file here.</summary>
-<p>
+:::info
+Projects created with Serverpod 2.1 or earlier need a few one-time setup steps first. See [Upgrade to 2.2](../../upgrading/archive/upgrade-to-two-point-two).
+:::
 
-```yaml
-services:
-  # Development services
-  postgres:
-    image: pgvector/pgvector:pg16
-    ports:
-      - '8090:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: <projectname>
-      POSTGRES_PASSWORD: "<insert database development password>"
-    volumes:
-      - <projectname>_data:/var/lib/postgresql/data
-  redis:
-    image: redis:6.2.6
-    ports:
-      - '8091:6379'
-    command: redis-server --requirepass "<insert redis development password>"
-    environment:
-      - REDIS_REPLICATION_MODE=master
+The test tools are generated along with the rest of your code. With `serverpod start` running, saving a file regenerates them. Outside a session, run `serverpod generate` from your server directory.
 
-  # Test services
-  postgres_test:
-    image: pgvector/pgvector:pg16
-    ports:
-      - '9090:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: <projectname>_test
-      POSTGRES_PASSWORD: "<insert database test password>"
-    volumes:
-      - <projectname>_test_data:/var/lib/postgresql/data
-  redis_test:
-    image: redis:6.2.6
-    ports:
-      - '9091:6379'
-    command: redis-server --requirepass "<insert redis test password>"
-    environment:
-      - REDIS_REPLICATION_MODE=master
+Either way you get `test/integration/test_tools/serverpod_test_tools.dart`. The `test/integration` folder keeps these apart from your unit tests, which makes a project easier to navigate. Running the two groups separately is a different mechanism: `withServerpod` tags its tests `integration`, and you filter on that tag. To generate the file somewhere else, change `server_test_tools_path` in `config/generator.yaml`.
 
-volumes:
-  <projectname>_data:
-  <projectname>_test_data:
-```
+## Write a test
 
-</p>
-</details>
-3. Create a `test.yaml` file and add it to the `config` directory:
-
-```yaml
-# This is the configuration file for your test environment.
-# All ports are set to zero in this file which makes the server find the next available port.
-# This is needed to enable running tests concurrently. To set up your server, you will
-# need to add the name of the database you are connecting to and the user name.
-# The password for the database is stored in the config/passwords.yaml.
-
-# Configuration for the main API test server.
-apiServer:
-  port: 0
-  publicHost: localhost
-  publicPort: 0
-  publicScheme: http
-
-# Configuration for the Insights test server.
-insightsServer:
-  port: 0
-  publicHost: localhost
-  publicPort: 0
-  publicScheme: http
-
-# Configuration for the web test server.
-webServer:
-  port: 0
-  publicHost: localhost
-  publicPort: 0
-  publicScheme: http
-
-# This is the database setup for your test server.
-database:
-  host: localhost
-  port: 9090
-  name: <projectname>_test
-  user: postgres
-  dataPath: .serverpod/test/pgdata
-
-# This is the setup for your Redis test instance.
-redis:
-  enabled: false
-  host: localhost
-  port: 9091
-
-sessionLogs:
-  persistentEnabled: true
-  consoleEnabled: true
-```
-
-4. Add this entry to `config/passwords.yaml`
-
-```yaml
-test:
-  database: '<insert database test password>'
-  redis: '<insert redis test password>'
-```
-
-5. Add a `dart_test.yaml` file to the `server` directory (next to `pubspec.yaml`) with the following contents:
-
-```yaml
-tags:
-  integration: {}
-
-```
-
-6. Finally, add the `test` and `serverpod_test` packages as dev dependencies in `pubspec.yaml`:
-
-```yaml
-dev_dependencies:
-  serverpod_test: <serverpod version> # Should be same version as the `serverpod` package
-  test: ^1.24.2
-```
-
-That's it, the project setup should be ready to start using the test tools!
-</p>
-</details>
-<!-- markdownlint-enable MD029 -->
-
-Go to the server directory and generate the test tools:
-
-```bash
-serverpod generate
-```
-
-The default location for the generated file is `test/integration/test_tools/serverpod_test_tools.dart`. The folder name `test/integration` is chosen to differentiate from unit tests (see the [best practices section](./best-practises#unit-and-integration-tests) for more information on this).
-
-The generated file exports a `withServerpod` helper that enables you to call your endpoints directly like regular functions:
+Import the generated file rather than the `serverpod_test` package: it carries the helpers and your endpoints together.
 
 ```dart
 import 'package:test/test.dart';
 
-// Import the generated file, it contains everything you need.
 import 'test_tools/serverpod_test_tools.dart';
 
 void main() {
-  withServerpod('Given Example endpoint', (sessionBuilder, endpoints) {
-    test('when calling `hello` then should return greeting', () async {
-      final greeting = await endpoints.example.hello(sessionBuilder, 'Michael');
-      expect(greeting, 'Hello Michael');
+  withServerpod('Given Greeting endpoint', (sessionBuilder, endpoints) {
+    test('when calling `hello` then it returns a greeting', () async {
+      final greeting = await endpoints.greeting.hello(sessionBuilder, 'Bob');
+      expect(greeting.message, 'Hello Bob');
     });
   });
 }
 ```
 
-A few things to note from the above example:
+The `withServerpod` callback gives you the two things every test uses. The `sessionBuilder` describes the server state a call runs under, and `endpoints` holds your endpoints.
 
-- The test tools should be imported from the generated test tools file and not the `serverpod_test` package.
-- The `withServerpod` callback takes two parameters: `sessionBuilder` and `endpoints`.
-  - `sessionBuilder` is used to build a `session` object that represents the server state during an endpoint call and is used to set up scenarios.
-  - `endpoints` contains all your Serverpod endpoints and lets you call them.
-
-:::tip
-
-The location of the test tools can be changed by changing the `server_test_tools_path` key in `config/generator.yaml`. If you remove the `server_test_tools_path` key, the test tools will stop being generated.
-
-:::
-
-Before the test can be run the Postgres and Redis also have to be started:
-
-```bash
-docker compose up --build --detach
-```
-
-Now the test is ready to be run:
+Run it:
 
 ```bash
 dart test
 ```
 
-Happy testing!
+New projects set `dataPath` under `database` in `config/test.yaml`, which makes the test server start and manage its own PostgreSQL. There is nothing to launch first. If your `test.yaml` has no `dataPath`, the server connects to the database that file points at, and that one has to be running.
+
+## Next
+
+- [Writing tests](writing-tests): the session builder, authentication, and seeding data.
+- [Configuration](configuration): the options `withServerpod` accepts.
+- [Advanced examples](advanced-examples): streams, future calls, and business logic.
+- [Best practices](best-practices): conventions worth following.

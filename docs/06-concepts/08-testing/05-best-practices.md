@@ -7,12 +7,12 @@ toc_max_heading_level: 2
 
 ## Imports
 
-While it's possible to import types and test helpers from the `serverpod_test` package, it's completely redundant. The generated file exports everything that is needed. Adding an additional import is unnecessary noise and will likely also be flagged as duplicated imports by the Dart linter.
+The generated test tools file re-exports the test helpers, so importing `serverpod_test` as well brings in the same names twice and adds noise for no gain.
 
 ### Don't
 
 ```dart
-import 'serverpod_test_tools.dart';
+import 'test_tools/serverpod_test_tools.dart';
 // Don't import `serverpod_test` directly.
 import 'package:serverpod_test/serverpod_test.dart'; ❌
 ```
@@ -20,14 +20,15 @@ import 'package:serverpod_test/serverpod_test.dart'; ❌
 ### Do
 
 ```dart
-// Only import the generated test tools file.
-// It re-exports all helpers and types that are needed.
-import 'serverpod_test_tools.dart'; ✅
+// The generated file carries the test helpers and your endpoints.
+import 'test_tools/serverpod_test_tools.dart'; ✅
 ```
+
+Serverpod's own types are a separate matter. The generated file does not re-export them, so a test that uses `Session`, `Scope`, `Constant`, `ServerpodRunMode`, `ExperimentalFeatures`, or a Serverpod exception type needs `package:serverpod/serverpod.dart` as well. Your own models come from your project's generated protocol.
 
 ## Database clean up
 
-Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](./the-basics#rollback-database-configuration) for more info on this behavior).
+Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](./configuration#rollbackdatabase) for more info on this behavior).
 
 ### Don't
 
@@ -75,9 +76,9 @@ While it's technically possible to instantiate an endpoint class and call its me
 ```dart
 void main() {
   // ❌ Don't instantiate endpoints directly
-  var exampleEndpoint = ExampleEndpoint();
+  var greetingEndpoint = GreetingEndpoint();
 
-  withServerpod('Given Example endpoint', (
+  withServerpod('Given Greeting endpoint', (
     sessionBuilder,
     _ /* not using the provided endpoints */,
   ) {
@@ -85,8 +86,8 @@ void main() {
 
     test('when calling `hello` then should return greeting', () async {
       // ❌ Don't call an endpoint method directly on the endpoint class.
-      final greeting = await exampleEndpoint.hello(session, 'Michael');
-      expect(greeting, 'Hello, Michael!');
+      final greeting = await greetingEndpoint.hello(session, 'Bob');
+      expect(greeting.message, 'Hello Bob');
     });
   });
 }
@@ -96,12 +97,11 @@ void main() {
 
 ```dart
 void main() {
-  withServerpod('Given Example endpoint', (sessionBuilder, endpoints) {
+  withServerpod('Given Greeting endpoint', (sessionBuilder, endpoints) {
     test('when calling `hello` then should return greeting', () async {
       // ✅ Use the provided `endpoints` to call the endpoint that should be tested.
-      final greeting =
-          await endpoints.example.hello(sessionBuilder, 'Michael');
-      expect(greeting, 'Hello, Michael!');
+      final greeting = await endpoints.greeting.hello(sessionBuilder, 'Bob');
+      expect(greeting.message, 'Hello Bob');
     });
   });
 }
@@ -121,3 +121,9 @@ It is significantly easier to navigate a project if the different types of tests
 
 - `test/unit`: Unit tests.
 - `test/integration`: Tests for endpoints or business logic modules using the `withServerpod` helper.
+
+## Related
+
+- [Advanced examples](advanced-examples): patterns for streams, future calls, and business logic.
+- [Configuration](configuration): the options `withServerpod` accepts.
+- [Deploy to Serverpod Cloud](../../deployments/deploy-to-serverpod-cloud): ship the server your tests cover.

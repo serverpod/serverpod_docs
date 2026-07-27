@@ -1,10 +1,10 @@
 ---
-description: Advanced Serverpod testing examples, run integration and unit tests separately, test business logic with sessions, test multi-user stream interactions, and manage database connections.
+description: Advanced Serverpod testing examples, separate unit and integration runs, test business logic, shared streams, future calls, and exception monitoring.
 ---
 
 # Advanced examples
 
-These examples build on [the basics](./the-basics) and cover less common testing needs: separating unit and integration tests, testing business logic directly, multi-user stream interactions, and managing database connections.
+These examples build on [Writing tests](writing-tests) and cover less common needs: separating unit and integration tests, testing business logic directly, multi-user stream interactions, future calls, connection limits, and exception monitoring.
 
 ## Run unit and integration tests separately
 
@@ -21,7 +21,7 @@ dart test -t integration
 dart test -x integration
 ```
 
-To change the name of this tag, see the [`testGroupTagsOverride`](./the-basics#configuration) configuration option.
+To change the name of this tag, see the [`testGroupTagsOverride`](configuration#test-tags) configuration option.
 
 ## Test business logic that depends on `Session`
 
@@ -120,43 +120,44 @@ withServerpod('Given CommunicationExampleEndpoint', (sessionBuilder, endpoints) 
 });
 ```
 
-## Optimizing the number of database connections
+## Run a future call
 
-By default, Dart's test runner runs tests concurrently. The number of concurrent tests depends on the running hosts' available CPU cores. If the host has a lot of cores it could trigger a case where the number of connections to the database exceeds the maximum connections limit set for the database, which will cause tests to fail.
+The generated test tools expose your [future calls](../scheduling/future-calls) alongside your endpoints, so a test can invoke one immediately instead of waiting for its scheduled time.
 
-Each `withServerpod` call will lazily create its own Serverpod instance which will connect to the database. Specifically, the code that causes the Serverpod instance to be created is `sessionBuilder.build()`, which happens at the latest in an endpoint call if not called by the test before.
-
-If a test needs a session before the endpoint call (e.g. to seed the database), `sessionBuilder.build()` has to be called which then triggers a database connection attempt.
-
-If the max connection limit is hit, there are two options:
-
-- Raise the max connections limit on the database.
-- Build out the session in `setUp`/`setUpAll` instead of the top level scope:
+Given a future call class named `ReminderFutureCall` with a `send` method, the accessor is `reminder`, following the same [naming rule](../scheduling/future-calls#schedule-a-call) as scheduling:
 
 ```dart
-withServerpod('Given example test', (sessionBuilder, endpoints) {
-  // Instead of this
-  var session = sessionBuilder.build();
-
-
-  // Do this to postpone connecting to the database until the test group is running
+withServerpod('Given the reminder future call', (sessionBuilder, endpoints) {
   late Session session;
-  setUpAll(() {
+
+  setUp(() {
     session = sessionBuilder.build();
   });
-  // ...
+
+  test('when invoked then it records a reminder', () async {
+    await endpoints.futureCalls.reminder.send(sessionBuilder, 'user-42');
+
+    final reminders = await Reminder.db.find(session);
+    expect(reminders, hasLength(1));
+  });
 });
 ```
 
-:::info
+This runs the future call's method directly. It does not exercise scheduling, so use it to test what the call does rather than when it runs.
 
-This case should be rare and the above example is not a recommended best practice unless this problem is anticipated, or it has started happening.
+## Too many database connections
 
-:::
+Dart's test runner runs test files in parallel, and each `withServerpod` group starts its own server with its own connection pool. On a machine with many cores, enough files running at once can exceed the database's connection limit and fail the run.
+
+This is uncommon, and worth addressing only once you hit it. When you do, raise the limit on the database or cap how many files run at once:
+
+```bash
+dart test -t integration --concurrency=4
+```
 
 ## Testing exception monitoring
 
-`withServerpod` accepts the same `experimentalFeatures` argument as the server, so you can register a [diagnostic event handler](../operations/exception-monitoring) in a test and assert that your code reports the exceptions you expect.
+The `withServerpod` helper accepts the same `experimentalFeatures` argument as the server, so you can register a [diagnostic event handler](../operations/exception-monitoring) in a test and assert that your code reports the exceptions you expect.
 
 Write a handler that records what it receives, so the test can wait for an event:
 
@@ -221,3 +222,9 @@ void main() {
 ```
 
 Handlers run asynchronously and are not awaited by the code that triggers them, so wait for the event rather than asserting immediately after the call.
+
+## Related
+
+- [Writing tests](writing-tests): the pieces these examples build on.
+- [Configuration](configuration): the options used above, such as `experimentalFeatures` and `rollbackDatabase`.
+- [Best practices](best-practices): conventions worth following.

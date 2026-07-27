@@ -26,7 +26,7 @@ var result = await session.db.transaction((transaction) async {
 In the example we insert a company and an employee in the same transaction. If any of the operations fail, the entire transaction will be rolled back and no changes will be made to the database. If the transaction is successful, the return value will be `true`.
 
 :::tip
-The Serverpod test tools use this rollback behavior to isolate test cases: by default, each test runs inside a transaction that is rolled back when the test ends. See [rollback configuration](../../testing/the-basics#rollback-database-configuration) in the testing docs.
+The Serverpod test tools use this rollback behavior to isolate test cases: by default, each test runs inside a transaction that is rolled back when the test ends. See [rollback configuration](../../testing/configuration#rollbackdatabase) in the testing docs.
 :::
 
 ## Cancel a transaction
