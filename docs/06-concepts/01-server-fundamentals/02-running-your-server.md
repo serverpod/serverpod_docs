@@ -75,8 +75,32 @@ The server accepts arguments that control how it starts: `--mode` selects the ru
 In production, the `--role` argument controls which parts of the server run:
 
 - **`monolith`** (default) runs everything: the API, Insights, and web servers, plus [future calls](../scheduling/setup) and [health checks](../operations/health-checks).
-- **`serverless`** serves requests only. Future calls and health checks are disabled, which fits platforms that start and stop instances on demand.
+- **`serverless`** serves requests only. Future calls and [health metric collection](../operations/health-checks#health-metrics) are disabled, which fits platforms that start and stop instances on demand. The health probes still answer.
 - **`maintenance`** starts no servers. It performs one-shot work, applying migrations when passed `--apply-migrations` and running any due future calls, then exits. The exit code reports success or failure, which makes it fit for CI jobs and scheduled maintenance tasks.
+
+## Run code on shutdown
+
+Register a shutdown task to do cleanup work when the server stops, such as flushing state or releasing an external resource. Tasks run after the server stops accepting requests but before the database and Redis connections close, so they can still use them.
+
+:::warning
+Shutdown tasks are an experimental API and can change in a breaking way in any minor release.
+:::
+
+Register them on the `Serverpod` instance in `lib/server.dart`, where you create it:
+
+```dart
+pod.experimental.shutdownTasks.addTask(#taskIdentifier, () async {
+  // Your shutdown logic here.
+});
+```
+
+Each task is registered under an identifier you choose, used in log messages and to remove the task again. Any object works; `#taskIdentifier` above is a Dart symbol, which is a convenient way to write a constant name.
+
+```dart
+pod.experimental.shutdownTasks.removeTask(#taskIdentifier);
+```
+
+Registering two tasks under the same identifier throws a `StateError`. All tasks run concurrently, and the server waits for them all before shutting down. A task that throws does not stop the shutdown, but the error is logged and the process exits with a non-zero code, which a host reading exit status will treat as a failed shutdown.
 
 ## Related
 

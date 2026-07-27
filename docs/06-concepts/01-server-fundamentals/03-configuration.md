@@ -338,7 +338,7 @@ experimental_features:
   all: true
 ```
 
-See the [experimental features documentation](../operations/experimental-features) for details.
+See [Exception monitoring](../operations/exception-monitoring) for the experimental features Serverpod currently exposes.
 
 :::warning
 Experimental features may change or be removed in future versions.

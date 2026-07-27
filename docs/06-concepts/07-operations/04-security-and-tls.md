@@ -1,23 +1,18 @@
 ---
-description: Security configuration in Serverpod lets you enable TLS/SSL directly on the server or configure the client to trust a certificate, using SecurityContextConfig.
+description: How traffic to a Serverpod server is encrypted, when something else handles that for you, and how to serve HTTPS directly from the server instead.
 ---
 
 # Security and TLS
 
-Serverpod can terminate TLS/SSL directly on the server and configure the client to trust your certificate.
+Traffic between your app and your server should be encrypted, which on the web means HTTPS. HTTPS is HTTP wrapped in TLS, and somewhere in the chain a piece of software has to hold your certificate and do the encrypting. That job is called terminating TLS.
 
-:::info
+Most of the time it is not your server doing it. On Serverpod Cloud, TLS is handled for you and there is nothing to configure. On your own infrastructure it is normally handled in front of the server, by a load balancer or reverse proxy such as Nginx, a cloud load balancer, or Cloudflare, which forwards plain HTTP to Serverpod on an internal network.
 
-In a production environment, TLS termination is normally handled by a load balancer or reverse proxy (e.g., Nginx, AWS ALB, or Cloudflare).
-However, Serverpod also supports setting up TLS/SSL directly on the server, allowing you to provide your own certificates if needed.
+Serverpod can also terminate TLS itself, which is useful when there is nothing in front of it to do the job.
 
-:::
+## Serve HTTPS from the server
 
-## Server security configuration
-
-To enable TLS/SSL, pass a `SecurityContextConfig` to the `Serverpod` constructor.
-
-### Dart configuration example
+Pass a `SecurityContextConfig` when you create the server, with a certificate chain and private key for each server you want to secure:
 
 ```dart
 final securityContext = SecurityContext()
@@ -36,13 +31,13 @@ Serverpod(
 );
 ```
 
-## Client security configuration
+A Serverpod instance runs [three servers](../server-fundamentals/your-serverpod-project#the-three-servers), and each takes its own context, so you can secure them independently.
 
-When connecting to a Serverpod server over HTTPS, the client must be configured to trust the server's certificate.
+## Trust the server's certificate from your app
 
-### Dart configuration example
+Your app only needs configuring when it cannot verify your certificate on its own. Certificates from a public authority, including the ones Serverpod Cloud provisions, are trusted automatically and need nothing here.
 
-To enable SSL/TLS, pass a `SecurityContext` to the `Client` constructor.
+Self-signed certificates and private certificate authorities are the exception. There, name the certificate you want trusted by passing a `SecurityContext` to the generated `Client`:
 
 ```dart
 final securityContext = SecurityContext()
@@ -51,15 +46,14 @@ final securityContext = SecurityContext()
 final client = Client(
   'https://yourserver.com',
   securityContext: securityContext,
-  ...
 );
 ```
 
-#### Using `SecurityContext` with `httpClientOverride`
+### With an HTTP client override
 
-If you use the [`httpClientOverride` parameter](../endpoints-and-apis/configure-http-calls), provide the security context through the HTTP client you pass in. You cannot set `securityContext` and `httpClientOverride` on the same `Client` instance.
+The `securityContext` and [`httpClientOverride`](../endpoints-and-apis/configure-http-calls) parameters cannot both be set on the same `Client`, since the override replaces the HTTP client the security context would have configured. Supply the certificates through the client you pass in instead.
 
-For example, on `dart:io` platforms you can create an `HttpClient` with your trusted certificates and wrap it in an `IOClient`:
+On `dart:io` platforms, build an `HttpClient` with your trusted certificates and wrap it:
 
 ```dart
 import 'dart:io';
@@ -76,3 +70,9 @@ final client = Client(
   ),
 );
 ```
+
+## Related
+
+- [Configure HTTP calls](../endpoints-and-apis/configure-http-calls): certificates and HTTP client overrides on the app side.
+- [Configuration](../server-fundamentals/configuration): request size limits and header settings.
+- [Custom hosting](../../deployments/custom-hosting/choosing-a-strategy): where a proxy fits when you host it yourself.
