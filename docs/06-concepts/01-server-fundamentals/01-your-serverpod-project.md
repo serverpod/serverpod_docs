@@ -94,7 +94,7 @@ void run(List<String> args) async {
 }
 ```
 
-Endpoints need no registration: the generated `Endpoints` object passed to the constructor carries them all. Web routes, by contrast, are registered imperatively on `pod.webServer`, which is why the scaffolded `run()` contains route setup. When `pod.start()` runs, the server connects to the database, applies pending migrations when started with `--apply-migrations`, connects to Redis if enabled, brings up its servers, and starts background work such as [future calls](../scheduling/setup) and [health checks](../operations/health-checks).
+Endpoints need no registration: the generated `Endpoints` object passed to the constructor carries them all. Web routes, by contrast, are registered imperatively on `pod.webServer`, which is why the scaffolded `run()` contains route setup. When `pod.start()` runs, the server connects to the database, applies pending migrations when started with `--apply-migrations`, connects to Redis if enabled, brings up its servers, and starts background work such as [future calls](../scheduling/overview) and [health checks](../operations/health-checks).
 
 ## The three servers
 
