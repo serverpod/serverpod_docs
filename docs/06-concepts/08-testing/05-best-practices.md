@@ -28,7 +28,7 @@ Serverpod's own types are a separate matter. The generated file does not re-expo
 
 ## Database clean up
 
-Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](./configuration#rollbackdatabase) for more info on this behavior).
+Unless configured otherwise, by default `withServerpod` does all database operations inside a transaction that is rolled back after each `test` (see [the configuration options](configuration#rollbackdatabase) for more info on this behavior).
 
 ### Don't
 

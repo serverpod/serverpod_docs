@@ -1,6 +1,6 @@
 ---
 sidebar_label: Get started
-description: Test Serverpod endpoints by calling them like ordinary Dart functions, with a real server and a real database that resets between tests.
+description: The Serverpod test tools call your endpoints like ordinary Dart functions, running a real server and a real database that resets between tests.
 ---
 
 # Get started with testing
@@ -24,7 +24,7 @@ Projects created with Serverpod 2.1 or earlier need a few one-time setup steps f
 
 The test tools are generated along with the rest of your code. With `serverpod start` running, saving a file regenerates them. Outside a session, run `serverpod generate` from your server directory.
 
-Either way you get `test/integration/test_tools/serverpod_test_tools.dart`. The `test/integration` folder keeps these apart from your unit tests, which makes a project easier to navigate. Running the two groups separately is a different mechanism: `withServerpod` tags its tests `integration`, and you filter on that tag. To generate the file somewhere else, change `server_test_tools_path` in `config/generator.yaml`.
+Either way you get `test/integration/test_tools/serverpod_test_tools.dart`. The `test/integration` folder keeps these apart from your unit tests, which makes a project easier to navigate. To generate the file somewhere else, change `server_test_tools_path` in `config/generator.yaml`.
 
 ## Write a test
 

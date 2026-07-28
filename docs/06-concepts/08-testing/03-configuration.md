@@ -6,7 +6,7 @@ description: Every option withServerpod accepts, including run mode, database ro
 
 The `withServerpod` helper takes optional named arguments that control how the test server starts and how tests are isolated from each other.
 
-Some of the values below, such as `ServerpodRunMode` and `Constant`, come from `package:serverpod/serverpod.dart` rather than the generated test tools, so import it when you use them.
+Some of the values below, such as `ServerpodRunMode` and `Constant`, come from `package:serverpod/serverpod.dart` rather than the generated test tools, so import it when you use them. The `serverDirectory` option takes a `Directory` from `dart:io`.
 
 ```dart
 withServerpod(
