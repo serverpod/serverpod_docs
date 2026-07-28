@@ -1,5 +1,5 @@
 ---
-description: Report exceptions from your code and from the framework to a monitoring service as they happen, using diagnostic event handlers.
+description: Diagnostic event handlers report exceptions from your code and from the framework to a monitoring service as they happen.
 ---
 
 # Exception monitoring
@@ -9,7 +9,7 @@ When something throws in production you want to hear about it without reading lo
 This works for exceptions thrown in your own code and for exceptions the framework raises itself, including failures during startup and shutdown.
 
 :::warning
-This is an experimental feature. Its API can change in a breaking way in any minor release, so pin your Serverpod version if you depend on it and re-check this page when you upgrade.
+This is an experimental feature, reached through `serverpod.experimental`. Its API can change in a breaking way in any minor release, so pin your Serverpod version if you depend on it and re-check this page when you upgrade. Experimental APIs move to `Serverpod` proper once they settle.
 :::
 
 ## Add a handler
@@ -59,14 +59,10 @@ class OrderEndpoint extends Endpoint {
 
 The `ExceptionEvent` class is the built-in event for a thrown exception and a stack trace. Passing the session attaches its context to the event, so the handler knows which call the exception came from. This works anywhere you have a session, including endpoint methods, web calls, and future calls.
 
-## Experimental APIs in general
-
-Experimental features are opt-in additions whose APIs are not yet stable. Runtime ones live under the `experimental` member of the `Serverpod` class, and graduate to `Serverpod` proper once they settle. Where possible the experimental version stays available as deprecated for a while before it is removed.
-
-Serverpod currently exposes two: the diagnostic event handlers on this page, and [shutdown tasks](../server-fundamentals/running-your-server#run-code-on-shutdown). Both are reached through `serverpod.experimental`. Nothing in this version is gated behind the `--experimental-features` command-line flag or the `experimental_features` config key, though both exist for when a feature needs them. See [Configuration](../server-fundamentals/configuration#experimental-features).
-
 ## Related
 
 - [Logging](logging): what the server records without any handler.
 - [Error handling and exceptions](../endpoints-and-apis/error-handling-and-exceptions): how exceptions reach your app.
+- [Run code on shutdown](../server-fundamentals/running-your-server#run-code-on-shutdown): the other experimental API Serverpod exposes.
+- [Configuration](../server-fundamentals/configuration#experimental-features): opting in to experimental features.
 - [Testing](../testing/advanced-examples): testing that your handlers receive the events you expect.

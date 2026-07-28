@@ -1,5 +1,5 @@
 ---
-description: Cache objects in server memory or in Redis through session.caches to avoid repeating expensive database work, with lifetimes, groups, and explicit invalidation.
+description: A cache stores a result under a key so the next request can read it back, held in server memory or in Redis and reached through session.caches.
 ---
 
 # Caching

@@ -70,9 +70,8 @@ Session logging is configured under `sessionLogs:` in your config file for the r
 | `persistentEnabled` | `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED` | `true` when a database is configured |
 | `consoleEnabled` | `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` | `true` in `development` or when there is no database, otherwise `false` |
 | `consoleLogFormat` | `SERVERPOD_SESSION_CONSOLE_LOG_FORMAT` | `text` in `development`, otherwise `json` |
-| `cleanupInterval` | `SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL` | `24h`, but see [Purge old records](#purge-old-records) |
-| `retentionPeriod` | `SERVERPOD_SESSION_LOG_RETENTION_PERIOD` | `90d`, but see [Purge old records](#purge-old-records) |
-| `retentionCount` | `SERVERPOD_SESSION_LOG_RETENTION_COUNT` | `100000`, but see [Purge old records](#purge-old-records) |
+
+Three more settings control [purging](#purge-old-records), which behaves differently enough to be worth reading before you rely on it.
 
 ```yaml
 sessionLogs:
@@ -87,8 +86,10 @@ Durations use the same format as [model default values](../data-and-the-database
 
 :::warning
 Setting `persistentEnabled` to `true` without a configured database throws a `StateError` on startup. Persistent logging needs somewhere to persist to.
+:::
 
-Persistent logging is also unavailable on SQLite, which cannot handle the concurrent writes it needs. The server warns and skips it. Nothing takes its place automatically, so enable `consoleEnabled` if you want records in the run modes where it defaults to off.
+:::warning
+Persistent logging is unavailable on SQLite, which cannot handle the concurrent writes it needs. The server warns and skips it, and nothing takes its place, so enable `consoleEnabled` if you want records in the run modes where it defaults to off.
 :::
 
 :::info
@@ -99,15 +100,21 @@ Every environment variable in the table takes a real value. Setting one to an em
 
 Log tables grow with every call your server handles, so Serverpod can delete old records for you. Cleanup runs on the `cleanupInterval`, and removes session rows that are either older than `retentionPeriod` or beyond the newest `retentionCount`, whichever applies first. Deleting a session row takes its query, message, and log rows with it.
 
+| Setting | Environment variable | Default |
+| --- | --- | --- |
+| `cleanupInterval` | `SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL` | Unset, so no purging |
+| `retentionPeriod` | `SERVERPOD_SESSION_LOG_RETENTION_PERIOD` | Unset, so no age limit |
+| `retentionCount` | `SERVERPOD_SESSION_LOG_RETENTION_COUNT` | Unset, so no count limit |
+
+:::warning
+These three fall back to `24h`, `90d`, and `100000` only when `sessionLogs` is absent from your config entirely. Set any one session-log key, in the file or through an environment variable, and the ones you did not set resolve to unset rather than to those values, switching that policy off with no warning.
+
+Generated projects ship a `sessionLogs` block in the `development`, `test`, and `production` configs, so purging is off in those run modes until you set all three explicitly. Set `cleanupInterval`, `retentionPeriod`, and `retentionCount` together whenever you configure any part of `sessionLogs`.
+:::
+
 The `cleanupInterval` setting is the switch for the whole job. With no interval set, nothing is purged whatever the two retention values say. Purging also requires `persistentEnabled`, since there is nothing to delete otherwise.
 
 Cleanup is triggered by log writes rather than by a timer, so a server that is not logging anything does not purge. A single pass gives up after an hour, and the next interval starts a fresh one.
-
-:::warning
-The three cleanup settings only fall back to their defaults when `sessionLogs` is absent from your config entirely. If you set any one session-log key, in the config file or through an environment variable, the settings you did not set resolve to null rather than to the defaults in the table above, and that policy is switched off with no warning.
-
-This affects new projects: the generated `development`, `test`, and `production` configs each contain a `sessionLogs` block, so purging is off in those run modes until you set the three values explicitly. Set `cleanupInterval`, `retentionPeriod`, and `retentionCount` together whenever you configure any part of `sessionLogs`.
-:::
 
 ## Related
 
