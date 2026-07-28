@@ -1,5 +1,5 @@
 ---
-description: Define a future call, schedule it after a delay or at a specific time with the type-safe API, and cancel scheduled calls by identifier.
+description: A future call is a method Serverpod runs later, scheduled after a delay or at a specific time, and cancellable by identifier.
 ---
 
 # Future calls
@@ -52,7 +52,11 @@ void run(List<String> args) async {
 ```
 
 :::note
-The `pod.futureCalls` accessor exists only once you have defined at least one future call and generated the code. Scheduling a call before the server has started throws an exception.
+The `pod.futureCalls` accessor exists only once you have defined at least one future call and generated the code.
+:::
+
+:::warning
+Scheduling a call before the server has started throws an exception, so schedule from an endpoint or after `pod.start()` rather than while building the server.
 :::
 
 ## Schedule a call
@@ -126,3 +130,9 @@ Scheduled calls are stored in the `serverpod_future_call` database table. You ca
 ## Execution timeout
 
 Future calls have no execution timeout: a call runs until its method returns. If a call needs a time limit, enforce it inside the method yourself, for example with `Future.timeout` around the work.
+
+## Related
+
+- [Recurring tasks](recurring-tasks): run a call on a repeating schedule.
+- [Configuration](configuration): concurrency, scan interval, and broken-call handling.
+- [Sessions](../endpoints-and-apis/sessions): the session a future call receives when it runs.
