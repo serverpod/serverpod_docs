@@ -42,7 +42,7 @@ class ExampleEndpoint extends Endpoint {
 | Member                      | What it is                                                                                      |
 | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | `db`                        | Database access. See the [CRUD docs](../data-and-the-database/database/crud).                   |
-| `caches`                    | Local and distributed caching. See [caching](../operations/caching).                            |
+| `caches`                    | Local and distributed caching. See [caching](./caching).                                        |
 | `storage`                   | File storage. See [file uploads](./file-uploads).                                               |
 | `messages`                  | Server events for real-time communication. See [server events](./server-events).                |
 | `passwords`                 | Secrets from config and environment. See [configuration](../server-fundamentals/configuration). |

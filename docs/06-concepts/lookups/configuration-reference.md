@@ -75,7 +75,7 @@ These options have no environment variable or config-file key. Set them on the `
 | ServerpodConfig field                | Default | Description                                                                                            |
 | ------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------ |
 | healthCheckInterval                  | 1m      | How often the server collects health metrics. Set to zero to disable health checks.                    |
-| experimentalDiagnosticHandlerTimeout | 30s     | The timeout for [diagnostic event handlers](../operations/experimental-features#exception-monitoring). |
+| experimentalDiagnosticHandlerTimeout | 30s     | The timeout for [diagnostic event handlers](../operations/exception-monitoring). |
 
 ### Password environment variables
 

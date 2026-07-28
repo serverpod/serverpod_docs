@@ -153,3 +153,71 @@ withServerpod('Given example test', (sessionBuilder, endpoints) {
 This case should be rare and the above example is not a recommended best practice unless this problem is anticipated, or it has started happening.
 
 :::
+
+## Testing exception monitoring
+
+`withServerpod` accepts the same `experimentalFeatures` argument as the server, so you can register a [diagnostic event handler](../operations/exception-monitoring) in a test and assert that your code reports the exceptions you expect.
+
+Write a handler that records what it receives, so the test can wait for an event:
+
+```dart
+import 'dart:async';
+
+import 'package:serverpod/serverpod.dart';
+
+class TestExceptionHandler extends ExceptionHandler {
+  final eventsStreamController =
+      StreamController<DiagnosticEventRecord<ExceptionEvent>>();
+
+  Stream<DiagnosticEventRecord<ExceptionEvent>> get events =>
+      eventsStreamController.stream;
+
+  @override
+  Future<void> handleTypedEvent(
+    ExceptionEvent event, {
+    required OriginSpace space,
+    required DiagnosticEventContext context,
+  }) async {
+    eventsStreamController.add(DiagnosticEventRecord(event, space, context));
+  }
+}
+```
+
+Then register it for the test run:
+
+```dart
+void main() {
+  var exceptionHandler = TestExceptionHandler();
+
+  withServerpod(
+    'Given withServerpod with a diagnostic event handler',
+    experimentalFeatures: ExperimentalFeatures(
+      diagnosticEventHandlers: [exceptionHandler],
+    ),
+    (sessionBuilder, endpoints) {
+      test(
+          'when calling an endpoint method that submits an exception event '
+          'then the diagnostic event handler gets called', () async {
+        final result = await endpoints.order.placeOrder(sessionBuilder);
+        expect(result, 'success');
+
+        final record =
+            await exceptionHandler.events.first.timeout(Duration(seconds: 1));
+        expect(record.event.exception, isA<Exception>());
+        expect(record.space, equals(OriginSpace.application));
+        expect(record.context, isA<DiagnosticEventContext>());
+        expect(
+          record.context.toJson(),
+          allOf([
+            containsPair('serverId', 'default'),
+            containsPair('serverRunMode', 'test'),
+            containsPair('serverName', 'Server default'),
+          ]),
+        );
+      });
+    },
+  );
+}
+```
+
+Handlers run asynchronously and are not awaited by the code that triggers them, so wait for the event rather than asserting immediately after the call.
