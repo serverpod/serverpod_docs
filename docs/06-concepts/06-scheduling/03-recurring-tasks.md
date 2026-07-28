@@ -1,5 +1,5 @@
 ---
-description: Run a future call on a repeating schedule with callRecurring, using either a fixed interval or a cron expression.
+description: A recurring task runs a future call on a repeating schedule, set with callRecurring using either a fixed interval or a cron expression.
 ---
 
 # Recurring tasks
@@ -46,7 +46,7 @@ If the server is down when a run is due, that run happens once when the server i
 
 ## Repeat on a cron schedule
 
-Use `cron` for calendar-based schedules that a fixed interval cannot express, such as "every day at 02:00" or "every Monday". A cron expression is a short text format of five fields, `minute hour day-of-month month day-of-week`, where `*` means "every".
+Use `cron` for calendar-based schedules that a fixed interval cannot express, such as "every day at 02:00" or "every Monday". A cron expression is a short text format of five fields, `minute hour day-of-month month day-of-week`, where `*` means "every". Serverpod also accepts a sixth field, written first, for seconds.
 
 ```dart
 await pod.futureCalls
@@ -95,3 +95,9 @@ class ExampleFutureCall extends FutureCall {
 ```
 
 Because this pattern reschedules from inside the method, a run that throws before it schedules the next one stops the loop. Prefer `callRecurring` for fixed schedules.
+
+## Related
+
+- [Future calls](future-calls): defining a call and scheduling one-off runs.
+- [Configuration](configuration): how often the server checks for due calls.
+- [Server roles](../server-fundamentals/running-your-server#choose-a-server-role): which roles run scheduled work.

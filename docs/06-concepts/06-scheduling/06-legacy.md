@@ -77,3 +77,8 @@ Cancel every not-yet-run call scheduled with that identifier:
 ```dart
 await session.serverpod.cancelFutureCall('an-identifying-string');
 ```
+
+## Related
+
+- [Future calls](future-calls): the type-safe API to use instead.
+- [Models](../data-and-the-database/models): defining the data a legacy call receives.
