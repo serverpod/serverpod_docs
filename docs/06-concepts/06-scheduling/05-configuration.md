@@ -1,5 +1,5 @@
 ---
-description: Configure future call execution, concurrency, the scan interval, and broken-call handling through config files or environment variables.
+description: Future call settings cover execution, concurrency, the scan interval, and broken-call handling, set in config files or environment variables.
 ---
 
 # Configuration
@@ -79,10 +79,14 @@ futureCall:
 The `maintenance` role also runs this check. Started in that role, the server checks for broken calls, runs every currently-due future call once, and then exits. This is how future calls get processed in environments that do not run a persistent server, such as serverless hosting. See [server roles](../server-fundamentals/running-your-server#choose-a-server-role).
 
 ```bash
-$ dart run bin/main.dart --role maintenance
+dart run bin/main.dart --role maintenance
 ```
 
-Because it executes due calls, do not run this as a dry check against a production database. The process exits normally whether or not broken calls are found, so read the result from the logs.
+The process exits normally whether or not broken calls are found, so read the result from the logs.
+:::
+
+:::warning
+This role executes every due future call, so it is not a dry check. Do not run it against a production database to see what would happen.
 :::
 
 ### Delete broken calls
@@ -93,3 +97,9 @@ When the check finds broken calls it logs a warning but does not delete them. Se
 futureCall:
   deleteBrokenCalls: true
 ```
+
+## Related
+
+- [Future calls](future-calls): defining and scheduling a call.
+- [Configuration reference](../lookups/configuration-reference): every key with its environment variable.
+- [Server roles](../server-fundamentals/running-your-server#choose-a-server-role): the maintenance role used above.

@@ -26,10 +26,16 @@ If the method itself throws an exception, Serverpod logs the error and does not 
 
 Which servers run future calls depends on their role, the mode a server is started in. Servers in the default `monolith` role run them, and future calls need a database. A server started in the `serverless` role does not run them. If you host in a serverless environment, run a separate scheduled process in the `maintenance` role to execute due calls. See [server roles](../server-fundamentals/running-your-server#choose-a-server-role) and [hosting elsewhere](../../deployments/custom-hosting/hosting-elsewhere).
 
-## In this section
+## What each page covers
 
 - **[Future calls](future-calls)**: define a future call, schedule it after a delay or at a time, and cancel scheduled calls.
 - **[Recurring tasks](recurring-tasks)**: run a call on a repeating cron or interval schedule.
 - **[Inheritance](inheritance)**: extend future calls from other classes and modules.
 - **[Configuration](configuration)**: set concurrency, the scan interval, and broken-call handling.
 - **[Legacy](legacy)**: the older string-based API, kept for existing code.
+
+## Related
+
+- [Sessions](../endpoints-and-apis/sessions): the session a future call receives when it runs.
+- [Server roles](../server-fundamentals/running-your-server#choose-a-server-role): which roles run scheduled work.
+- [Configuration reference](../lookups/configuration-reference): every future-call key with its environment variable.

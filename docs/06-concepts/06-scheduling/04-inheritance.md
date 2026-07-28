@@ -1,5 +1,5 @@
 ---
-description: Share future call methods by extending another FutureCall class, expose them from modules with an abstract base, and override inherited methods.
+description: FutureCall inheritance shares methods between classes, exposes a module’s future calls through an abstract base, and allows overrides.
 ---
 
 # Inheritance
@@ -84,3 +84,8 @@ class ExcitedGreeter extends Greeter {
 Here `ExcitedGreeter` exposes a single `hello` that logs `Hello $name!!!`. To build on the parent's behavior instead of replacing it, call `super.hello(session, name)` from inside the override.
 
 The override must keep a signature compatible with the base method, following Dart's own rules: you can add optional parameters, but you cannot add required parameters or change the return type.
+
+## Related
+
+- [Future calls](future-calls): defining and scheduling a call.
+- [Modules](../server-fundamentals/modules): sharing code between projects.
