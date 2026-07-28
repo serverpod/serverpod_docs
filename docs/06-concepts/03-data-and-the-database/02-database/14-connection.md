@@ -4,7 +4,7 @@ description: The database connection is defined in Serverpod's configuration and
 
 # Connection
 
-The connection details and password for the database live in the `config` directory of your server package, and Serverpod connects using them when the server starts. For local development, no setup is needed by default: the server runs an [embedded PostgreSQL](../../server-fundamentals/configuration#database-backends) and manages it for you. This page is for connecting to a database you run yourself: a local or Docker Postgres, a remote server, or a managed instance such as Cloud SQL or RDS.
+The connection details and password for the database live in the `config` directory of your server package, and Serverpod connects using them when the server starts. For local development, no setup is needed by default: the server runs an [embedded PostgreSQL](./embedded-postgres) and manages it for you. This page is for connecting to a database you run yourself: a local or Docker Postgres, a remote server, or a managed instance such as Cloud SQL or RDS.
 
 ## Connection details
 
@@ -84,9 +84,9 @@ development:
 
 ## The development database
 
-By default, the development database is an embedded PostgreSQL, started and stopped with the server; see [Running your server](../../server-fundamentals/running-your-server). Nothing on this page is needed for it.
+By default, the development database is an [embedded PostgreSQL](./embedded-postgres), started and stopped with the server; see [Running your server](../../server-fundamentals/running-your-server). Nothing on this page is needed for it.
 
-Projects set up with the Docker alternative instead run their development database from the server package's `docker-compose.yaml`. Start it from the root of the `server` package:
+Projects set up with the Docker alternative instead run their development database from the server package's `docker-compose.yaml`. To use it in a project configured for the embedded PostgreSQL, first remove `dataPath` from the run mode's configuration. Start the database from the root of the `server` package:
 
 ```bash
 $ docker compose up --build --detach
