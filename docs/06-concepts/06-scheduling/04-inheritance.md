@@ -1,5 +1,5 @@
 ---
-description: FutureCall inheritance shares methods between classes, exposes a module’s future calls through an abstract base, and allows overrides.
+description: FutureCall inheritance shares methods between classes, exposes a module's future calls through an abstract base, and allows overrides.
 ---
 
 # Inheritance
