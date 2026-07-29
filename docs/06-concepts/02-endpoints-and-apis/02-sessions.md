@@ -141,7 +141,7 @@ session.log('Something looks off', level: LogLevel.warning);
 
 ## Test with sessions
 
-The test tools provide a `sessionBuilder` for calling endpoints in tests and simulating session state such as authentication. See [Get started with testing](../testing/get-started) and [the basics](../testing/the-basics) for the patterns.
+The test tools provide a `sessionBuilder` for calling endpoints in tests and simulating session state such as authentication. See [Get started with testing](../testing/get-started) and [Writing tests](../testing/writing-tests) for the patterns.
 
 ## Related
 
