@@ -415,6 +415,10 @@ body: SignInScreen(
 ),
 ```
 
+:::warning
+The `initializeGoogleSignIn` call lives in `main()`, and hot reload does not re-run `main()`. After making these changes, hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. Until then, the Google button stays hidden.
+:::
+
 The `SignInWidget` renders the standard Google sign-in button:
 
 ![Google sign-in button](/img/authentication/providers/google/3-button.png)

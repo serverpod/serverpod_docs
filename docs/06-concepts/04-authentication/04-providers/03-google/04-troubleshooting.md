@@ -201,6 +201,18 @@ On the Android emulator, `10.0.2.2` maps to the host machine. On a physical devi
 
 **Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
 
+## Google sign-in button does not appear
+
+**Problem:** `SignInWidget` renders, but the Google button is missing.
+
+**Cause:** `SignInWidget` shows the Google button when the client has a registered `GoogleIdpEndpoint` and the Google sign-in service is initialized. The common misses:
+
+- The app was hot reloaded after adding `initializeGoogleSignIn` to `main.dart`. Hot reload does not re-run `main()`, so the service is never initialized.
+- `GoogleIdpEndpoint` is missing on the server, or the client was not regenerated after adding it.
+- On web, `initializeGoogleSignIn` was called without `clientId` and `redirectUri`. The widget renders nothing without them.
+
+**Resolution:** Hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. If the button is still missing, confirm `GoogleIdpEndpoint` exists on the server and run `serverpod generate`, and on web confirm `initializeGoogleSignIn` receives `clientId` and `redirectUri` per [Web setup](./setup#web).
+
 ## Lightweight sign-in (One Tap) not appearing
 
 **Problem:** You enabled `attemptLightweightSignIn: true` but the One Tap prompt never appears on Web, or the silent sign-in doesn't trigger on mobile.
