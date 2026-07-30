@@ -47,6 +47,6 @@
   },
   "devDependencies": {
     "docusaurus-plugin-snipsync": "^1.0.0",
-    "snipsync": "^1.12.0"
+    "snipsync": "^1.13.0"
   }
 }
