@@ -151,7 +151,9 @@ SimpleAuthKeyProvider get authProvider =>
 
 ## Authentication schemes
 
-The token travels from the app to the server in the HTTP `authorization` header. Serverpod does not pick a scheme for you. Whatever your auth key provider returns from `authHeaderValue` is sent as the header value.
+The token travels from the app to the server in the HTTP `authorization` header. Anyone who reads that header can use the token, so serve your production API over HTTPS. See [Security and TLS](../operations/security-and-tls).
+
+Serverpod does not pick a scheme for you. Whatever your auth key provider returns from `authHeaderValue` is sent as the header value.
 
 The server accepts three schemes: `Bearer`, `Basic`, and `Digest`. The scheme name is matched case-sensitively, and a header in any other scheme is rejected with a 400 response before your `AuthenticationHandler` runs. Set `validateHeaders` to `false` in your server configuration to turn that check off and receive the raw header value instead.
 
@@ -169,7 +171,7 @@ See:
 - [HTTP Authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
 - [RFC 9110, 11.6.2. Authorization](https://httpwg.org/specs/rfc9110.html#field.authorization)
 
-The example below adapts the earlier code to bearer tokens.
+The example below adapts the earlier code to bearer tokens, the scheme OAuth2 uses.
 
 Client side:
 
