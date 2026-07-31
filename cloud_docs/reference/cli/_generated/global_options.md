@@ -23,6 +23,7 @@ Global options:
 
 Available commands:
   completion   Command line completion commands
+  context      Manage the global project context.
   settings     Manage local CLI user settings.
   version      Prints the version of the Serverpod Cloud CLI.
 

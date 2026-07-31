@@ -7,8 +7,10 @@ Usage: scloud log [arguments]
 -h, --help                                                       Print this usage information.
 -p, --project (mandatory)                                        The ID of the project.
                                                                  Can be omitted for existing
-                                                                 projects that are linked. See
-                                                                 `scloud project link --help`.
+                                                                 projects that are linked or if a
+                                                                 global project context is set. See
+                                                                 `scloud project link --help` and
+                                                                 `scloud context set --help`.
     --limit=<integer>                                            The maximum number of log records
                                                                  to fetch.
                                                                  (defaults to "50")

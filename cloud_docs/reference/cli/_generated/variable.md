@@ -27,8 +27,9 @@ Lists all environment variables for the project.
 Usage: scloud variable list [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
 
 Run "scloud help" to see global options.
 
@@ -44,8 +45,9 @@ Set an environment variable (create or update).
 Usage: scloud variable set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --name (mandatory)       The name of the environment variable. Can be passed as the first
                              argument.
 
@@ -80,8 +82,9 @@ Remove an environment variable.
 Usage: scloud variable unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --name (mandatory)       The name of the environment variable. Can be passed as the first
                              argument.
 

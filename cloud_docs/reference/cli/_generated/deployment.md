@@ -28,8 +28,9 @@ Show the status of a deployment.
 Usage: scloud deployment show [arguments]
 -h, --help                       Print this usage information.
 -p, --project (mandatory)        The ID of the project.
-                                 Can be omitted for existing projects that are linked. See `scloud
-                                 project link --help`.
+                                 Can be omitted for existing projects that are linked or if a global
+                                 project context is set. See `scloud project link --help` and
+                                 `scloud context set --help`.
 -u, --[no-]utc                   Display timestamps in UTC timezone instead of local.
     --deploy=<<uuid|integer>>    View a specific deployment, with uuid or sequence number, 0 for
                                  latest. Can be passed as the first argument.
@@ -76,8 +77,9 @@ List recent deployments.
 Usage: scloud deployment list [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --limit=<integer>        The maximum number of records to fetch.
                              (defaults to "10")
 -u, --[no-]utc               Display timestamps in UTC timezone instead of local.
@@ -109,8 +111,9 @@ View a deployment's build log.
 Usage: scloud deployment build-log [arguments]
 -h, --help                       Print this usage information.
 -p, --project (mandatory)        The ID of the project.
-                                 Can be omitted for existing projects that are linked. See `scloud
-                                 project link --help`.
+                                 Can be omitted for existing projects that are linked or if a global
+                                 project context is set. See `scloud project link --help` and
+                                 `scloud context set --help`.
 -u, --[no-]utc                   Display timestamps in UTC timezone instead of local.
     --deploy=<<uuid|integer>>    View a specific deployment, with uuid or sequence number, 0 for
                                  latest. Can be passed as the first argument.

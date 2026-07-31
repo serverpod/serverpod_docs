@@ -6,11 +6,13 @@ Deploy a Serverpod project to the cloud.
 Usage: scloud deploy [arguments]
 -h, --help                     Print this usage information.
 -p, --project (mandatory)      The ID of the project. Can be passed as the first argument.
-                               Can be omitted for existing projects that are linked. See `scloud
-                               project link --help`.
+                               Can be omitted for existing projects that are linked or if a global
+                               project context is set. See `scloud project link --help` and `scloud
+                               context set --help`.
 -c, --concurrency=<integer>    Number of concurrent files processed when zipping the project.
                                (defaults to "5")
-    --dry-run                  Do not actually deploy, just print the deployment steps.
+    --wet-run                  Perform every step except the deployment, leaving the hosted
+                               application untouched. Local files may still be modified.
     --show-files               Display the file tree that will be uploaded.
 -o, --output                   Save the deployment zip file to the specified path. Must end with
                                .zip
@@ -35,15 +37,15 @@ Examples
   (marked with "(ignored)").
 
   This is useful for verifying that your .gitignore and .scloudignore files are working as expected.
-  You can combine it with --dry-run to preview the file tree without actually deploying:
+  You can combine it with --wet-run to preview the file tree without actually deploying:
 
-    $ scloud deploy --dry-run --show-files
+    $ scloud deploy --wet-run --show-files
 
   Save the deployment zip file locally
 
-    $ scloud deploy --output deployment.zip --dry-run
+    $ scloud deploy --output deployment.zip --wet-run
 
-  Save the deployment zip and still upload it (unless --dry-run is set)
+  Save the deployment zip and still upload it (unless --wet-run is set)
 
     $ scloud deploy --output deployment.zip
 
