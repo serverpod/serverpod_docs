@@ -19,7 +19,9 @@ Usage: scloud launch [arguments]
 Deployment options
 -c, --concurrency=<integer>      Number of concurrent files processed when zipping the project.
                                  (defaults to "5")
-    --dry-run                    Do not actually deploy, just print the deployment steps.
+    --wet-run                    Perform every step except the deployment, leaving the hosted
+                                 application untouched. Local files and the cloud project setup may
+                                 still be modified.
     --show-files                 Display the file tree that will be uploaded.
 -o, --output                     Save the deployment zip file to the specified path. Must end with
                                  .zip

@@ -27,8 +27,9 @@ Set a secret (create or update).
 Usage: scloud secret set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --name (mandatory)       The name of the secret. Can be passed as the first argument.
 
 Value
@@ -49,8 +50,9 @@ List all secrets.
 Usage: scloud secret list [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
 
 Run "scloud help" to see global options.
 
@@ -66,8 +68,9 @@ Remove a secret.
 Usage: scloud secret unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --name (mandatory)       The name of the secret. Can be passed as the first argument.
 
 Run "scloud help" to see global options.

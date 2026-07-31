@@ -42,8 +42,9 @@ List all passwords, both user-set and platform-managed.
 Usage: scloud password list [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
 
 Run "scloud help" to see global options.
 
@@ -63,8 +64,9 @@ Set a password.
 Usage: scloud password set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --name (mandatory)       The name of the password (without SERVERPOD_PASSWORD_ prefix). Can be
                              passed as the first argument.
 
@@ -86,8 +88,9 @@ Unset a password, can only unset user-set passwords.
 Usage: scloud password unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked. See `scloud
-                             project link --help`.
+                             Can be omitted for existing projects that are linked or if a global
+                             project context is set. See `scloud project link --help` and `scloud
+                             context set --help`.
     --name (mandatory)       The name of the password (without SERVERPOD_PASSWORD_ prefix). Can be
                              passed as the first argument.
 
