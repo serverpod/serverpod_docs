@@ -241,6 +241,10 @@ This is equivalent to calling `restore()` followed by `validateAuthentication()`
 
 See [Client-side authentication](./basics#client-side-authentication) for more details on how to interact with the authentication state from the client.
 
+:::note
+macOS apps need a Keychain Sharing entitlement before authentication sessions can be stored. See [Set up authentication on macOS](./macos-authentication).
+:::
+
 ### Web callback page (`auth.html`)
 
 :::note

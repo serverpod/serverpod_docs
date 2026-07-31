@@ -231,6 +231,10 @@ When access is denied, Serverpod returns:
 
 On the client side, authentication state is managed through the `FlutterAuthSessionManager`, which is accessible via `client.auth`.
 
+:::note
+On macOS, the `FlutterAuthSessionManager` stores tokens in the Keychain. New projects need a Keychain Sharing entitlement before sign-in works. See [Set up authentication on macOS](./macos-authentication).
+:::
+
 :::info
 If you are building a pure Dart application using Serverpod, you can use the `ClientAuthSessionManager` declared in the `serverpod_auth_core_client` package instead of the `FlutterAuthSessionManager`. It has the same functionality, with the exception of a `authInfoListenable` getter that is tied to the Flutter framework.
 :::
