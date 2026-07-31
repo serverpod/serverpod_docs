@@ -1,18 +1,20 @@
 ---
-description: Serverpod's built-in web server, built on the Relic framework, lets you serve web pages, REST APIs, webhooks, and static files alongside your application server.
+description: Serverpod's built-in web server serves REST APIs, webhooks, static files, server-rendered HTML, and Flutter web apps alongside the API server.
 ---
 
 # Overview
 
-In addition to the application server, Serverpod comes with a built-in web server. The web server allows you to access your database and business layer the same way you would from a method call from an app. This makes it simple to share data for applications that need both an app and traditional web pages. You can also use the web server to create webhooks or define custom REST APIs to communicate with third-party services.
+Serverpod comes with a built-in web server that runs beside the API server. It serves anything that speaks plain HTTP: REST APIs and webhooks, static files, server-rendered HTML with templates or [Jaspr](https://jaspr.site), and single-page apps including Flutter web. Web requests get the same [`Session`](../endpoints-and-apis/sessions) your endpoint methods receive, with full access to your database and business logic. The web server is built on the [Relic](https://github.com/serverpod/relic) framework, and its routing engine, middleware system, and typed headers are available directly.
 
-Serverpod's web server is built on the [Relic](https://github.com/serverpod/relic) framework, giving you access to its routing engine, middleware system, and typed headers. This means you get the benefits of Serverpod's database integration and business logic alongside Relic's web server capabilities.
+The web server and the API server answer different callers. [Endpoints](../endpoints-and-apis) are the typed methods your own app calls through the generated client. Web server **routes** serve everyone else: browsers, webhooks, third-party services, and anything that needs a URL. If you are building a feature for your Flutter app, write an endpoint. If something outside your app needs to reach your server over HTTP, write a route.
 
 ## Your first route
 
-When you create a new Serverpod project, it sets up a web server by default. Here's how to add a simple API endpoint:
+New Serverpod projects set up the web server by default, with working web code in `lib/src/web/` and assets in `web/`. Here's how to add a simple JSON route:
 
 ```dart
+import 'dart:convert';
+
 import 'package:serverpod/serverpod.dart';
 
 class HelloRoute extends Route {
@@ -35,13 +37,17 @@ pod.webServer.addRoute(HelloRoute(), '/api/hello');
 await pod.start();
 ```
 
-Visit `http://localhost:8082/api/hello` to see your API response.
+Visit `http://localhost:8082/api/hello` to see your response. Port 8082 is the web server's default development port, configured per run mode in the [server configuration](../server-fundamentals/configuration).
+
+:::info
+If your project was created with the "None" web server option, the first use of `pod.webServer` throws `Bad state: Web server is disabled`. To enable it, add the `webServer` section to your `config/<run mode>.yaml` files and register at least one route before `pod.start()`. With a configuration but no routes, the web server simply does not start.
+:::
 
 ## Core concepts
 
 ### Routes and handlers
 
-A **Route** is a destination in your web server that handles requests and generates responses. Routes extend the `Route` base class and implement the `handleCall()` method:
+A **route** is a destination in your web server that handles requests and generates responses. Routes extend the `Route` base class and implement the `handleCall()` method:
 
 ```dart
 class ApiRoute extends Route {
@@ -55,25 +61,41 @@ class ApiRoute extends Route {
 
 The `handleCall()` method receives:
 
-- **Session** - Access to your database, logging, and authenticated user
-- **Request** - The HTTP request with headers, body, and URL information
+- **Session** - Access to your database, logging, and authenticated user. The web server creates a `WebCallSession` for each request and closes it when the response is sent.
+- **Request** - The HTTP request with headers, body, and URL information.
+
+By default, a route answers GET requests only. Pass `methods:` to the constructor to accept others:
+
+```dart
+class FormRoute extends Route {
+  FormRoute() : super(methods: {Method.get, Method.post});
+  // ...
+}
+```
+
+A request with a method the route does not accept gets an automatic `405 Method Not Allowed` response.
 
 ### Response types
 
-Return different response types based on your needs:
+Each named `Response` constructor maps to an HTTP status code:
 
-```dart
-// Success responses
-return Response.ok(body: Body.fromString('Success'));
-return Response.created(body: Body.fromString('Created'));
-return Response.noContent();
+| Constructor | Status |
+| --- | --- |
+| `Response.ok` | 200 |
+| `Response.noContent` | 204 |
+| `Response.movedPermanently` | 301 |
+| `Response.found` | 302 |
+| `Response.seeOther` | 303 |
+| `Response.notModified` | 304 |
+| `Response.badRequest` | 400 |
+| `Response.unauthorized` | 401 |
+| `Response.forbidden` | 403 |
+| `Response.notFound` | 404 |
+| `Response.contentTooLarge` | 413 |
+| `Response.internalServerError` | 500 |
+| `Response.notImplemented` | 501 |
 
-// Error responses
-return Response.badRequest(body: Body.fromString('Invalid input'));
-return Response.unauthorized(body: Body.fromString('Not authenticated'));
-return Response.notFound(body: Body.fromString('Not found'));
-return Response.internalServerError(body: Body.fromString('Server error'));
-```
+Status codes without a named constructor, such as `201 Created`, use the generic form: `Response(201, body: ...)`.
 
 ### Adding routes
 
@@ -83,47 +105,25 @@ Routes are added with a path pattern:
 // Exact path
 pod.webServer.addRoute(UserRoute(), '/api/users');
 
-// Path with wildcard
+// Serve a directory (tail matching is automatic)
 pod.webServer.addRoute(StaticRoute.directory(Directory('web')), '/static/');
 ```
 
-Routes are matched in the order they were added.
+Paths can contain parameters and wildcards, and requests are matched by specificity rather than registration order. See [Routing](routing) for the matching rules.
+
+### Built-in routes
+
+Every web server automatically answers the health probe paths `/livez`, `/readyz`, and `/startupz`. A healthy server responds with an empty `200 OK`, and deployment platforms use these paths to check that the server is alive. These paths are reserved, so avoid registering your own routes on them.
 
 ## When to use what
 
-### REST APIs → custom routes
-
-For REST APIs, webhooks, or custom HTTP handlers, use custom `Route` classes:
-
-```dart
-class UsersApiRoute extends Route {
-  UsersApiRoute() : super(methods: {Method.get, Method.post});
-  
-  @override
-  Future<Result> handleCall(Session session, Request request) async {
-    if (request.method == Method.get) {
-      // List users
-    } else {
-      // Create user
-    }
-  }
-}
-```
-
-See [Routing](routing) for details.
-
-### Static files → `StaticRoute`
-
-For serving CSS, JavaScript, images, or other static assets:
-
-```dart
-pod.webServer.addRoute(
-  StaticRoute.directory(Directory('web/static')),
-  '/static/',
-);
-```
-
-See [Static Files](static-files) for cache-busting and optimization.
+| You want to serve | Route type | Page |
+| --- | --- | --- |
+| REST APIs, webhooks, custom HTTP handlers | Your own `Route` subclass | [Routing](routing) |
+| Static assets: CSS, JavaScript, images | `StaticRoute` | [Static files](static-files) |
+| Server-rendered HTML, with templates or Jaspr | `WidgetRoute`, or a route rendering Jaspr | [Server-side HTML](server-side-html) |
+| A single-page app with client-side routing | `SpaRoute` | [Single-page apps](single-page-apps) |
+| Your Flutter app compiled for the web | `FlutterRoute` | [Flutter web](flutter-web) |
 
 ## Database access
 
@@ -135,10 +135,10 @@ class UserRoute extends Route {
   Future<Result> handleCall(Session session, Request request) async {
     // Query database
     final users = await User.db.find(session);
-    
+
     // Use logging
     session.log('Retrieved ${users.length} users');
-    
+
     return Response.ok(
       body: Body.fromString(
         jsonEncode(users.map((u) => u.toJson()).toList()),
@@ -149,12 +149,16 @@ class UserRoute extends Route {
 }
 ```
 
+## Going to production
+
+When you deploy, the web server ships with the rest of your project. On [Serverpod Cloud](../../deployments/deploy-to-serverpod-cloud), it is served through a CDN that honors the cache headers your routes set. See [Content delivery and caching](/cloud/concepts/cdn) for how the two interact.
+
 ## Next steps
 
 - **[Routing](routing)** - Match requests to handlers by method and URL pattern
-- **[Request Data](request-data)** - Access path parameters, query parameters, headers, and body
-- **[Middleware](./web-server-middleware)** - Intercept and transform requests and responses
-- **[Static Files](static-files)** - Serve static assets
-- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
-- **[Single Page Apps](single-page-apps)** - Serve SPAs with client-side routing
-- **[Flutter Web Apps](flutter-web)** - Serve Flutter web applications
+- **[Request data](request-data)** - Access path parameters, query parameters, headers, and body
+- **[Web server middleware](./web-server-middleware)** - Intercept and transform requests and responses
+- **[Static files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML on the server with templates or Jaspr
+- **[Single-page apps](single-page-apps)** - Serve SPAs with client-side routing
+- **[Flutter web](flutter-web)** - Serve Flutter web applications

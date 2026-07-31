@@ -220,5 +220,5 @@ await TokenMetadata.db.insertRow(
 When using the `JwtTokenManager` in the server, no extra configuration is needed on the client. It will automatically include the access token in requests to the server and eagerly refresh the token when it is 30 seconds away from expiring. In case the refresh token expires, the client will automatically sign the user out and redirect to the login page.
 
 :::warning
-The deprecated `client.openStreamingConnection()` interface is not compatible with JWT authentication. If you are using JWT tokens, migrate to [streaming endpoints](../../endpoints-and-apis/streaming) instead.
+The deprecated `client.openStreamingConnection()` interface is not compatible with JWT authentication. If you are using JWT tokens, migrate to [streaming methods](../../endpoints-and-apis/streaming) instead.
 :::

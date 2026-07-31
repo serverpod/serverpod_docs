@@ -30,10 +30,10 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Client
 
-- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`. On web, pass `clientId` and `redirectUri` (the full callback URL, either the route URL or the `auth.html` URL, depending on your [Web setup](./setup#web)).
+- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`. On web, pass `clientId` and `redirectUri` (the full callback URL, either the route URL or the `auth.html` URL, depending on your [Web setup](./setup#web)). On Android, pass `serverClientId` (the Web client's ID) unless your app uses the Firebase Gradle plugin.
 - [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
 - [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app; set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
-- [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run; place `google-services.json` in `android/app/` (*Android only*).
+- [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run (*Android only*).
 - [ ] Set up the web callback (*Web only*). Pick one:
   - **Standard:** Register `FlutterWebAuth2CallbackRoute` on `pod.webServer` in `server.dart` before `pod.start()` per [Web setup](./setup#web).
   - **Separately-hosted fallback:** Create `web/auth.html` in your Flutter project as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) and run Flutter on a **fixed** `--web-port` so the origin does not change every run. See [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web).
@@ -59,6 +59,7 @@ Common mistakes:
 - Trailing slashes, port differences, or `http` vs `https`.
 - Forgetting the callback path on the redirect URI; the bare origin is not enough.
 - For separately-hosted Flutter web, the Flutter dev server running on a random port. Pass `--web-port=<port>` to `flutter run` so the origin is stable.
+- A stale build on the standard [Web setup](./setup#web) flow. The app served at `/app` is a compiled snapshot, so a `redirectUri` change in `main.dart` takes effect only after re-running `flutter build web`. Rebuild and hard-reload the browser; the service worker can cache the old bundle.
 
 ## Production redirect URIs rejected by Google
 
@@ -152,13 +153,37 @@ Every line of the JSON must be indented by at least one level more than `googleC
 
 **Resolution:** Register the SHA-1 fingerprint from your release keystore as an additional fingerprint in the Google Auth Platform. You can add multiple SHA-1 fingerprints to the same Android OAuth client, or create separate clients for debug and release.
 
-## Missing web client entry in google-services.json
+## Sign-in fails on Android with "serverClientId must be provided"
 
-**Problem:** Sign-in fails on Android with an error about a missing server client ID, or `serverClientId` is null.
+**Problem:** Sign-in fails on Android with `GoogleSignInException(code GoogleSignInExceptionCode.clientConfigurationError, serverClientId must be provided on Android, null)`.
 
-**Cause:** The `google-services.json` file does not contain a web OAuth client entry. This happens when no Web application OAuth client exists in the same Google Cloud project.
+**Cause:** On Android, the `google_sign_in` SDK requires the server (Web application) client ID, and nothing supplies it. A plain Flutter project does not read `google-services.json`: that file is consumed by the `com.google.gms.google-services` Gradle plugin, which only Firebase-based projects apply.
 
-**Resolution:** Make sure you have created a Web application OAuth client in the same project as your Android OAuth client. Re-download `google-services.json` after creating the Web client. Alternatively, provide client IDs programmatically as described on the [customizations page](./customizations#configuring-client-ids-on-the-app).
+**Resolution:** Pass the Web application client ID when initializing, as shown in [Initialize the Google sign-in service](./setup#initialize-the-google-sign-in-service):
+
+```dart
+client.auth.initializeGoogleSignIn(
+  serverClientId: '<web_client_id>.apps.googleusercontent.com',
+);
+```
+
+You can also supply it at build time with `--dart-define=GOOGLE_SERVER_CLIENT_ID=...`; see [Configuring Client IDs on the App](./customizations#configuring-client-ids-on-the-app).
+
+For Firebase-based projects using the Gradle plugin, make sure a Web application OAuth client exists in the same Google Cloud project and re-download `google-services.json` so it includes the web client entry.
+
+## Endpoint calls fail on Android with connection refused
+
+**Problem:** Sign-in completes at Google, but the app then fails with `ServerpodClientException: ... Connection refused ... uri=http://localhost:8080/...`.
+
+**Cause:** On Android, `localhost` is the emulator or device itself, not the machine running your server. The project template's `assets/config.json` sets `apiUrl` to `http://localhost:8080`, and that value takes precedence over the framework's platform-aware default (see [server URL resolution](../../../endpoints-and-apis)).
+
+**Resolution:** Point the app at your server explicitly when running on Android:
+
+```bash
+flutter run --dart-define=SERVER_URL=http://10.0.2.2:8080/
+```
+
+On the Android emulator, `10.0.2.2` maps to the host machine. On a physical device, use your computer's LAN IP address instead (e.g., `http://192.168.1.20:8080/`), with the phone on the same network.
 
 ## People API not enabled
 
@@ -175,6 +200,18 @@ Every line of the JSON must be indented by at least one level more than `googleC
 **Cause:** The database migration that creates the provider's tables was never created or applied.
 
 **Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+
+## Google sign-in button does not appear
+
+**Problem:** `SignInWidget` renders, but the Google button is missing.
+
+**Cause:** `SignInWidget` shows the Google button when the client has a registered `GoogleIdpEndpoint` and the Google sign-in service is initialized. The common misses:
+
+- The app was hot reloaded after adding `initializeGoogleSignIn` to `main.dart`. Hot reload does not re-run `main()`, so the service is never initialized.
+- `GoogleIdpEndpoint` is missing on the server, or the client was not regenerated after adding it.
+- On web, `initializeGoogleSignIn` was called without `clientId` and `redirectUri`. The widget renders nothing without them.
+
+**Resolution:** Hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. If the button is still missing, confirm `GoogleIdpEndpoint` exists on the server and run `serverpod generate`, and on web confirm `initializeGoogleSignIn` receives `clientId` and `redirectUri` per [Web setup](./setup#web).
 
 ## Lightweight sign-in (One Tap) not appearing
 

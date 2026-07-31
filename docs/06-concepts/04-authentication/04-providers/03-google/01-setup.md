@@ -233,26 +233,36 @@ Without the URL scheme, the OAuth callback never returns to your app and sign-in
    ./gradlew signingReport
    ```
 
-4. Click **Create** and download the JSON file.
+4. Click **Create**. This registers your app's package name and signing key with Google.
 
    ![Create Android OAuth client](/img/authentication/providers/google/9-android-client-create.png)
 
-5. Place the file inside your Flutter project's `android/app/` directory (e.g., `my_project_flutter/android/app/`) and rename it to `google-services.json`.
+5. On Android, the sign-in SDK also needs to know your server's client ID. Pass the [Web application OAuth client](#create-the-server-oauth-client-web-application)'s ID as `serverClientId` when you initialize the client (covered in [Initialize the Google sign-in service](#initialize-the-google-sign-in-service) below). You can also pass it at build time with `--dart-define`; see [Configuring Client IDs on the App](./customizations#configuring-client-ids-on-the-app).
+
+:::note
+If your app uses Firebase (the `com.google.gms.google-services` Gradle plugin), you can skip step 5: the plugin supplies the server client ID from `google-services.json`. Re-download that file after creating the Web application client so it includes the web client entry.
+:::
 
 :::warning
-The downloaded `google-services.json` may not include a web OAuth client entry, which is required for Google Sign-In to resolve the server client ID. If sign-in fails, provide the client IDs programmatically as described on the [customizations](./customizations#configuring-client-ids-on-the-app) page.
+When testing against a local server, the Android emulator cannot reach `localhost`: sign-in completes, but the endpoint call fails with a connection error. See [troubleshooting](./troubleshooting#endpoint-calls-fail-on-android-with-connection-refused) for pointing the app at your machine.
 :::
 
 ### Web
 
-On web, Google completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** as the callback route. To test locally, build your Flutter web app into Serverpod's `web/app/` directory:
+On web, Google completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** (same scheme, host, and port) as the callback route.
+
+:::warning
+The web flow only works from the **built** app served by Serverpod (`http://localhost:8082/app` locally). Running the app with `flutter run -d chrome` fails, because Flutter's dev server is a different origin than Serverpod and the browser blocks the sign-in callback; see [troubleshooting](./troubleshooting#sign-in-callback-fails-locally-with-flutter-run--d-chrome). For a hot-reload workflow, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+:::
+
+To test locally, build your Flutter web app into Serverpod's `web/app/` directory and start the server:
 
 ```bash
-flutter build web --output ../my_project_server/web/app  # from your Flutter project
-serverpod start                                          # from your server project
+flutter build web --base-href /app/ --output ../my_project_server/web/app  # from your Flutter project
+serverpod start                                                            # from your server project
 ```
 
-Open `http://localhost:8082/app` to test. `flutter run -d chrome` won't work here because Flutter's dev server runs on a different port from Serverpod: for hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+Replace `my_project_server` with your server package directory. Open `http://localhost:8082/app` to test.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -310,7 +320,7 @@ client.auth.initialize();
 client.auth.initializeGoogleSignIn();
 ```
 
-**On web**, the call needs `clientId` and `redirectUri` (matching the route from [Web](#web)). On mobile, leave them unset so the SDK reads its config from `Info.plist` / `google-services.json`:
+**On web**, the call needs `clientId` and `redirectUri` (matching the route from [Web](#web)). **On Android**, it needs `serverClientId` from [Android](#android). On iOS, the SDK reads its config from `Info.plist`, and passing `serverClientId` is fine since it holds the same value as `GIDServerClientID`:
 
 ```dart
 if (kIsWeb) {
@@ -319,11 +329,17 @@ if (kIsWeb) {
     redirectUri: 'http://localhost:8082/auth/callback',
   );
 } else {
-  client.auth.initializeGoogleSignIn();
+  client.auth.initializeGoogleSignIn(
+    serverClientId: '<web_client_id>.apps.googleusercontent.com',
+  );
 }
 ```
 
 Swap the redirect URI for your production URL when deploying. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) to avoid hard-coding it per environment.
+
+:::warning
+On web, the app served at `/app` is the build you created in [Web setup](#web). After changing `main.dart` (for example the `redirectUri`), run the build command again and hard-reload the browser. A stale build keeps sending the old values, and sign-in fails with [redirect_uri_mismatch](./troubleshooting#sign-in-fails-with-redirect_uri_mismatch).
+:::
 
 ### Show the Google sign-in button
 
@@ -398,6 +414,10 @@ body: SignInScreen(
   ),
 ),
 ```
+
+:::warning
+The `initializeGoogleSignIn` call lives in `main()`, and hot reload does not re-run `main()`. After making these changes, hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. Until then, the Google button stays hidden.
+:::
 
 The `SignInWidget` renders the standard Google sign-in button:
 

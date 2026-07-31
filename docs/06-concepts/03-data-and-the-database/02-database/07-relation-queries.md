@@ -43,7 +43,7 @@ The example above returns an employee including the related company object that 
 Any relational object can be included or not when making a query but only the includes that are explicitly defined will be included in the result.
 
 ```dart
-var user = await Employee.db.findById(
+var employee = await Employee.db.findById(
   session,
   employeeId,
   include: Employee.include(
@@ -62,9 +62,9 @@ The example above includes several different objects configured by specifying th
 Including a list of objects (1:n relation) can be done with the special `includeList` method. In the simplest case, the entire list is included.
 
 ```dart
-var user = await Company.db.findById(
+var company = await Company.db.findById(
   session,
-  employeeId,
+  companyId,
   include: Company.include(
     employees: Employee.includeList(),
   ),
@@ -78,9 +78,9 @@ The example above returns a company with all related employees included.
 The `includeList` method works slightly differently from a normal `include` and to include nested objects the `includes` field must be used. When including something on a list it means that every entry in the list will each have access to the nested object.
 
 ```dart
-var user = await Company.db.findById(
+var company = await Company.db.findById(
   session,
-  employeeId,
+  companyId,
   include: Company.include(
     employees: Employee.includeList(
       includes: Employee.include(
@@ -96,9 +96,9 @@ The example above returns a company with all related employees included. Each em
 It is even possible to include lists within lists.
 
 ```dart
-var user = await Company.db.findById(
+var company = await Company.db.findById(
   session,
-  employeeId,
+  companyId,
   include: Company.include(
     employees: Employee.includeList(
       includes: Employee.include(
@@ -124,9 +124,9 @@ When working with large datasets, it's often necessary to [filter](./filtering) 
 Use the `where` clause to filter the results based on certain conditions.
 
 ```dart
-var user = await Company.db.findById(
+var company = await Company.db.findById(
   session,
-  employeeId,
+  companyId,
   include: Company.include(
     employees: Employee.includeList(
       where: (t) => t.name.ilike('a%')
@@ -142,9 +142,9 @@ The example above retrieves only employees whose names start with the letter 'a'
 The orderBy clause lets you sort the results based on a specific field.
 
 ```dart
-var user = await Company.db.findById(
+var company = await Company.db.findById(
   session,
-  employeeId,
+  companyId,
   include: Company.include(
     employees: Employee.includeList(
       orderBy: (t) => t.name,
@@ -160,9 +160,9 @@ The example above sorts the employees by their names in ascending order.
 [Paginate](pagination) results by specifying a limit on the number of records and an offset.
 
 ```dart
-var user = await Company.db.findById(
+var company = await Company.db.findById(
   session,
-  employeeId,
+  companyId,
   include: Company.include(
     employees: Employee.includeList(
       limit: 10,
@@ -176,7 +176,7 @@ The example above retrieves the next 10 employees starting from the 11th record:
 
 Combined, these methods let you query, filter, and sort relational data efficiently.
 
-## Update
+## Attach and detach relations
 
 Managing relationships between tables is a common task. Serverpod provides methods to link (attach) and unlink (detach) related records:
 

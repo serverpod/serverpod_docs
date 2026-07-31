@@ -39,19 +39,20 @@ The command reads the database schema from the last migration, then compares it 
 
 If no previous migration exists it will create a migration assuming there is no initial state.
 
+If the project has [client-side database](client-side-database) tables, matching SQLite migrations are also generated in the client package's `lib/migrations/` directory. They are applied on the device when the client database session opens.
+
 See the [Pre-migration project upgrade path](../../../upgrading/archive/upgrade-to-one-point-two) section for more information on how to get started with migrations for any project created before migrations were introduced in Serverpod.
 
 ### Force create migration
 
-The migration command aborts and displays an error under two conditions:
+The command stops without creating a migration in two situations, and each has its own override flag:
 
-1. When no changes are identified between the database schema in the latest migration and the schema required by the project.
-2. When there is a risk of data loss.
-
-To override these safeguards and force the creation of a migration, use the `--force` flag.
+- When no changes are detected between the latest migration and the schema the project requires, the command skips creating a migration. Pass `--empty` to create the migration anyway, for example as a starting point for [custom SQL](#writing-custom-sql).
+- When the change carries a risk of destroying data, the command aborts with a warning. Pass `--force` to override the warning and create the migration.
 
 ```bash
 $ serverpod create-migration --force
+$ serverpod create-migration --empty
 ```
 
 ### Tag migration
@@ -107,10 +108,13 @@ For each migration, five files are created:
 
 ### During development
 
-The `serverpod start` command applies your migrations for you. With its terminal focused:
+The `serverpod start` command handles migrations for you. Pending migrations are applied automatically on the first boot of a session. While the session runs, with its terminal focused:
 
-- Pending migrations are applied automatically on the first boot.
-- Press **A** to apply new migrations as you create them.
+- Press **M** to create a migration from your model changes.
+- Press **A** to apply pending migrations.
+- Press **P** to create a repair migration.
+
+Hold **Shift** with **M** or **P** to force the migration. See [Running your server](../../server-fundamentals/running-your-server#manage-migrations-from-the-terminal) for the full set of shortcuts.
 
 ### In production or CI
 
@@ -120,13 +124,11 @@ To apply migrations explicitly, start the server runtime with the `--apply-migra
 $ dart run bin/main.dart --apply-migrations
 ```
 
-Migrations can also be applied using the maintenance role. In maintenance, after migrations are applied, the server exits with an exit code indicating if migrations were successfully applied, zero for success or non-zero for failure.
+Migrations can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role). The server applies the migrations and then exits, with an exit code that reports success or failure. This suits CI jobs and other automated processes.
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-migrations
 ```
-
-This is useful if migrations are applied as part of an automated process.
 
 If migrations are applied at the same time as repair migration, the repair migration is applied first.
 
@@ -197,19 +199,19 @@ Repair migrations can be tagged just like regular migrations. Tags are appended 
 $ serverpod create-repair-migration --tag "reset-migrations"
 ```
 
-This would create a repair migration named `<timestamp>-reset-migrations` in the `repair` directory:
+This would create a repair migration named `<timestamp>-reset-migrations` in the `repair-migration` directory:
 
 ```text
-├── repair
-│    └── 20230821135718-v1-0-0.sql
+├── repair-migration
+│    └── 20230821135718-reset-migrations.sql
 ```
 
 ### Repair migrations directory structure
 
-The `repair` directory only exists if a repair migration has been created and contains a single SQL file containing statements to repair the database schema.
+The `repair-migration` directory only exists if a repair migration has been created and contains a single SQL file containing statements to repair the database schema.
 
 ```text
-├── repair
+├── repair-migration
 │    └── 20230821135718-v1-0-0.sql
 ```
 
@@ -221,7 +223,7 @@ The repair migration is applied using the server runtime. To apply a repair migr
 $ dart run bin/main.dart --apply-repair-migration
 ```
 
-The repair migration can also be applied using the maintenance role. In maintenance, after migrations are applied, the server exits with an exit code indicating if migrations were successfully applied, zero for success or non-zero for failure.
+The repair migration can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role), where the server exits after applying it.
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-repair-migration

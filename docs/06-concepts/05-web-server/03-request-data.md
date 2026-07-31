@@ -2,7 +2,7 @@
 description: Request data in Serverpod's web server is accessible via Relic's type-safe accessors for path parameters, query parameters, headers, and the request body.
 ---
 
-# Request Data
+# Request data
 
 Once a route matches, you'll need to extract data from the request. Relic
 provides type-safe accessors for path parameters, query parameters, headers,
@@ -35,9 +35,7 @@ class UserRoute extends Route {
 }
 ```
 
-The `IntPathParam` combines the symbol (`#id`) with a parser, throwing if the
-parameter is missing or not a valid integer. You can also access raw unparsed
-values with `request.pathParameters.raw[#id]`.
+The `IntPathParam` combines a symbol with a parser, throwing if the parameter is missing or not a valid integer. The `#id` is a Dart Symbol literal naming the `:id` segment from the route's path pattern. You can also access raw unparsed values with `request.pathParameters.raw[#id]`.
 
 ## Query parameters
 
@@ -55,6 +53,8 @@ class SearchRoute extends Route {
   }
 }
 ```
+
+Like the path accessors, `get()` throws when the parameter is missing. Query parameters are often optional, so use raw access with a default for those, e.g. `int.tryParse(request.queryParameters.raw['page'] ?? '') ?? 1`.
 
 ## Headers
 
@@ -91,21 +91,13 @@ Relic also exposes typed setters for standard headers. See the [Relic documentat
 
 ## Body
 
-Read the request body using the appropriate method for your content type:
+Read the request body as a string for JSON or form data:
 
 ```dart
 @override
 Future<Result> handleCall(Session session, Request request) async {
-  // Read as string (for JSON, form data, etc.)
   final body = await request.readAsString();
   final data = jsonDecode(body);
-
-  // Or read as stream for large uploads
-  final stream = request.read();
-  await for (final chunk in stream) {
-    // Process chunk
-  }
-
   // ...
 }
 ```
@@ -115,11 +107,36 @@ The body can only be read once. Attempting to read it again will throw a
 `StateError`.
 :::
 
+### Streaming bodies
+
+For large payloads, stream instead of buffering the whole body in memory. On the request side, `request.read()` gives you the body as a stream of chunks, which suits large uploads:
+
+```dart
+final stream = request.read();
+await for (final chunk in stream) {
+  // Process chunk
+}
+```
+
+On the response side, `Body.fromDataStream` streams data to the client as it is produced, for example when serving a large file:
+
+```dart
+Stream<Uint8List> dataStream = getFileStream();
+
+return Response.ok(
+  body: Body.fromDataStream(
+    dataStream,
+    contentLength: fileSize,
+    mimeType: MimeType.octetStream,
+  ),
+);
+```
+
 For more details on typed parameters and headers, see the
 [Relic documentation](https://docs.dartrelic.dev/).
 
 ## Next steps
 
 - **[Middleware](./web-server-middleware)** - Intercept and transform requests and responses
-- **[Static Files](static-files)** - Serve static assets
-- **[Server-side HTML](server-side-html)** - Render HTML dynamically on the server
+- **[Static files](static-files)** - Serve static assets
+- **[Server-side HTML](server-side-html)** - Render HTML on the server

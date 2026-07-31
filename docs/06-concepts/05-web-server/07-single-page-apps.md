@@ -1,10 +1,10 @@
 ---
-description: Single page apps in Serverpod use SpaRoute to serve static files and fall back to index.html for client-side routing.
+description: Single-page apps in Serverpod use SpaRoute to serve the app's static files and fall back to index.html so client-side routing works.
 ---
 
-# Single page apps
+# Single-page apps
 
-Single Page Applications (SPAs) handle routing on the client side, which requires special server configuration. When users navigate to a route like `/dashboard` or `/settings`, the browser requests that path from the server. Since these aren't real files, the server needs to return the main `index.html` file so the client-side router can handle the route.
+Single-page applications (SPAs) handle routing on the client side, which requires special server configuration. When users navigate to a route like `/dashboard` or `/settings`, the browser requests that path from the server. Since these aren't real files, the server needs to return the main `index.html` file so the client-side router can handle the route.
 
 Serverpod provides `SpaRoute` to handle this pattern automatically.
 
@@ -37,7 +37,7 @@ This configuration:
 
 When a request comes in:
 
-1. `SpaRoute` first tries to serve a matching static file from the directory
+1. The `SpaRoute` first tries to serve a matching static file from the directory
 2. If no file exists (404 response), it serves the fallback file instead
 3. The client-side JavaScript then handles routing based on the URL
 
@@ -52,14 +52,14 @@ pod.webServer.addRoute(
   SpaRoute(
     webDir,
     fallback: File('web/app/index.html'),
-    cacheControlFactory: StaticRoute.publicImmutable(
+    cacheControlFactory: StaticRoute.public(
       maxAge: const Duration(minutes: 5),
     ),
   ),
 );
 ```
 
-See [Static Files](static-files#cache-control) for more on cache control.
+See [Static files](static-files#cache-control) for more on cache control, including why `publicImmutable` belongs only with cache-busted assets.
 
 ## Cache busting
 
@@ -79,13 +79,13 @@ pod.webServer.addRoute(
     fallback: File('web/app/index.html'),
     cacheBustingConfig: cacheBustingConfig,
     cacheControlFactory: StaticRoute.publicImmutable(
-      maxAge: const Duration(minutes: 5),
+      maxAge: const Duration(days: 365),
     ),
   ),
 );
 ```
 
-See [Static Files](static-files#static-file-cache-busting) for more on cache busting.
+See [Static files](static-files#static-file-cache-busting) for more on cache busting.
 
 ## Using FallbackMiddleware directly
 
@@ -99,7 +99,8 @@ pod.webServer.addMiddleware(
   FallbackMiddleware(
     fallback: StaticRoute.file(indexFile),
     on: (response) => response.statusCode == 404,
-  ),
+  ).call,
+  '/',
 );
 
 pod.webServer.addRoute(StaticRoute.directory(webDir), '/');
@@ -111,7 +112,7 @@ This gives you flexibility to customize the fallback condition. For example, you
 FallbackMiddleware(
   fallback: StaticRoute.file(indexFile),
   on: (response) => response.statusCode >= 400 && response.statusCode < 500,
-)
+).call
 ```
 
 ## Serving from a sub-path
