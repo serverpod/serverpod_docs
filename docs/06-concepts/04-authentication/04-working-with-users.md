@@ -8,25 +8,25 @@ The authentication module provides convenient ways to work with your authenticat
 
 ## Authenticated users
 
-All authenticated users have an authentication identifier, that uniquely identifies them across the server. This can be retrieved from the `session` object as a `String` through the `userIdentifier` property or as a `UuidValue` from the `authUserId` extension provided by the authentication module.
+All authenticated users have an authentication identifier that uniquely identifies them across the server. This can be retrieved from the `session` object as a `String` through the `userIdentifier` property or as a `UuidValue` from the `authUserId` extension provided by the authentication module.
 
 ```dart
 var userIdString = session.authenticated?.userIdentifier;
 // requires `import 'package:serverpod_auth_idp_server/core.dart';`
-var userIdUuidValue = session.authenticated?.authUserId;
+var userIdUuidValue = session.authenticated!.authUserId;
 ```
 
 Further operations on the authenticated user can be performed using the `AuthUsers` class which is provided by the `AuthServices` instance.
 
 ```dart
-await AuthServices.instance.authUsers.delete(session, userIdUuidValue);
+await AuthServices.instance.authUsers.delete(session, authUserId: userIdUuidValue);
 ```
 
 For the full list of operations, see the [AuthUsers](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/AuthUsers-class.html) class documentation.
 
 ## Blocking users
 
-You can block users to prevent them from signing in to your application. When a blocked user attempts to authenticate, an `AuthUserBlockedException` will be thrown, and the authentication will fail.
+You can block users to prevent them from signing in to your app. When a blocked user attempts to authenticate, an `AuthUserBlockedException` will be thrown, and the authentication will fail.
 
 ### Blocking or unblocking a user
 
@@ -41,6 +41,7 @@ await AuthServices.instance.authUsers.update(
 ```
 
 Users can also be created with the blocked status set from the start:
+
 ```dart
 await AuthServices.instance.authUsers.create(
   session,
@@ -49,7 +50,7 @@ await AuthServices.instance.authUsers.create(
 ```
 
 :::note
-When a user is blocked, they will not be able to sign in until they are unblocked. However, blocking a user does not automatically revoke their existing sessions. Be sure to revoke existing sessions for a complete block operation. See [Revoking tokens](./token-managers/managing-tokens#revoking-tokens) for more details.
+When a user is blocked, they will not be able to sign in until they are unblocked. However, blocking a user does not automatically revoke their existing tokens. Be sure to revoke existing sessions for a complete block operation. See [Revoking tokens](./token-managers/managing-tokens#revoking-tokens) for more details.
 :::
 
 ## User creation callbacks
@@ -77,7 +78,7 @@ pod.initializeAuthServices(
 
 ### Setting default scopes and blocked status
 
-Use the `onBeforeAuthUserCreated` callback to set default scopes or blocked status for new auth users. The callback receives the session, the scopes and blocked value that would be used by default, and the transaction. Return a record with the `scopes` and `blocked` values you want to apply; you can add or remove scopes or force the user to be blocked.
+Use the `onBeforeAuthUserCreated` callback to set default scopes or blocked status for new auth users. The callback receives the session, the scopes and blocked value that would be used by default, and the transaction. Return a record with the `scopes` and `blocked` values you want to apply. You can add or remove scopes, or force the user to be blocked.
 
 ```dart
 pod.initializeAuthServices(
@@ -93,13 +94,15 @@ pod.initializeAuthServices(
 
 ## User profiles
 
-By default, all authenticated users have a `UserProfile` object that contains information about the signed-in user. To access the `UserProfile` object, you can use the `userProfile` extension on the `AuthenticationInfo` object.
+Authenticated users get a profile with information about the signed-in user. Read it with the `userProfile` extension on `AuthenticationInfo`. The extension returns a `UserProfileModel`, which is the read model sent to the app. The `UserProfile` class itself is only used for database access.
 
 ```dart
 var userProfile = await session.authenticated?.userProfile(session);
 ```
 
-The `UserProfile` contains a basic set of information about the user, such as their full name, email address, and profile picture.
+The result is `null` only when no user is signed in. If the user is signed in but has no profile, the call throws `UserProfileNotFoundException`.
+
+The profile contains a basic set of information about the user, such as their full name, email address, and profile picture.
 
 This information is automatically populated when the user signs in. Based on the authentication method used, different data may be available.
 
@@ -147,11 +150,9 @@ To access the user profile from your Flutter app, you can use the `userProfileIn
 final userProfile = await client.modules.serverpod_auth_core.userProfileInfo.get();
 ```
 
-This returns a `UserProfileModel` object containing the logged-in user's profile information such as their name, email, and profile picture.
+This returns a `UserProfileModel` object containing the signed-in user's profile information such as their name, email, and profile picture.
 
 ### Extending the user profile edit endpoint
-
-For a step-by-step guide covering upload, display, validation, and storage, see [Manage user profile photos](./profile-photos).
 
 The authentication module provides a `UserProfileEditBaseEndpoint` abstract class that you can extend to expose user profile editing functionality to your app. This base endpoint includes methods for:
 
@@ -159,6 +160,8 @@ The authentication module provides a `UserProfileEditBaseEndpoint` abstract clas
 - Setting user images
 - Changing user names
 - Changing full names
+
+For a step-by-step guide to profile photo upload, display, and storage, see [Manage user profile photos](./profile-photos).
 
 To enable profile editing in your app, create a concrete endpoint class on your server by extending `UserProfileEditBaseEndpoint`:
 
@@ -209,32 +212,11 @@ class UserProfileEditEndpoint extends UserProfileEditBaseEndpoint {
 
 ### Setting a default user image
 
-When logging in from some providers, the user image is automatically fetched and set as the user's profile picture - such as with Google Sign In. However, when an image is not found or the provider does not expose the picture, you can set a default user image using the `onAfterUserProfileCreated` callback in `UserProfileConfig` (see [User profile callbacks](#user-profile-callbacks) for the full set of callbacks).
-
-```dart
-  pod.initializeAuthServices(
-    userProfileConfig: UserProfileConfig(
-      // NOTE: The `userImageGenerator` parameter is optional and defaults to
-      // the value below - which generates Gmail-style images. You can change
-      // this parameter to generate any kind of placeholder image. The function
-      // will be called when invoking the `setDefaultUserImage` method.
-      userImageGenerator: defaultUserImageGenerator,
-      onAfterUserProfileCreated:
-          (session, userProfile, {required transaction}) async {
-            await AuthServices.instance.userProfiles.setDefaultUserImage(
-              session,
-              userProfile.authUserId,
-              transaction: transaction,
-            );
-          },
-    ),
-  ...
-  );
-```
+Some providers, such as Google, expose the user's picture. In that case it is fetched and set as the profile picture automatically. When no picture is available, you can generate a default image with the `onAfterUserProfileCreated` callback in `UserProfileConfig` (see [User profile callbacks](#user-profile-callbacks) for the full set). For the configuration example and the image settings, see [Profile photos](./profile-photos#configure-image-size-and-format).
 
 ## Attaching additional information
 
-The recommended way to attach additional information to an authenticated user is to use a relation in the Database. This makes it easy to query the data later based on the user's authentication identifier.
+The recommended way to attach additional information to an authenticated user is to use a relation in the database. This makes it easy to query the data later based on the user's authentication identifier.
 
 ```yaml
 class: MyDomainData
@@ -250,8 +232,10 @@ indexes:
     unique: true
 ```
 
+The model above creates a relation to the `AuthUser` table and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
+
 :::note
-Note that the `AuthUser` model is declared in the `serverpod_auth_core` module, which is automatically included in your project as a dependency of the `serverpod_auth_idp` module. If you are not ignoring the generated files in your `analysis_options.yaml`, you might need to explicitly add the `serverpod_auth_core` module to your project to prevent `depend_on_referenced_packages` lint errors. The general recommendation, however, is to ignore linting on generated files:
+The `AuthUser` model is declared in the `serverpod_auth_core` module, which is automatically included in your project as a dependency of the `serverpod_auth_idp` module. If you are not ignoring the generated files in your `analysis_options.yaml`, you might need to explicitly add the `serverpod_auth_core` module to your project to prevent `depend_on_referenced_packages` lint errors. The general recommendation, however, is to ignore linting on generated files:
 
 ```yaml
 # analysis_options.yaml
@@ -259,16 +243,14 @@ analyzer:
   exclude:
     - lib/src/generated/**
 ```
+
 :::
 
 :::tip
 When referencing module classes in your model files, you can use a nickname for the module instead of the full module name. See the [modules documentation](../server-fundamentals/modules) for more information.
 :::
 
-
-The model above creates a relation to the `AuthUser` table and ensures that each user can only have one `MyDomainData` object. The `onDelete=Cascade` ensures that when the `AuthUser` is deleted, the `MyDomainData` object is also deleted.
-
-This makes it easy to query the additional information later based on the user's `authUserId`.
+Query the additional information with the user's `authUserId`:
 
 ```dart
 final authUserId = session.authenticated?.authUserId;
@@ -277,3 +259,9 @@ final additionalInfo = await MyDomainData.db.findFirstRow(
     where: (t) => t.authUserId.equals(authUserId!),
 );
 ```
+
+## Related
+
+- [The basics](./basics): authentication state, scopes, and endpoint access control.
+- [Profile photos](./profile-photos): upload, display, and default profile images.
+- [Setup](./setup): configure the authentication services these callbacks hook into.

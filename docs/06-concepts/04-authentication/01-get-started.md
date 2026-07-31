@@ -13,7 +13,7 @@ This guide walks you through that, then shows how to test signing up and signing
 
 ## Prerequisites
 
-- A project created with `serverpod create` on Serverpod 4.0 or later. For older projects, see [Setup](./setup) first to add the auth module.
+- A project created with `serverpod create` on Serverpod 4.0 or later. For older projects, see [Setup](./setup) first to add the authentication module manually.
 - The Flutter SDK installed, so you can run the app.
 - Docker installed and running, if your project uses a Docker Postgres. Projects on the embedded Postgres option don't need Docker.
 
@@ -62,7 +62,7 @@ The app opens on the sign-in screen. To create an account:
 2. Look in the server console for the verification code. While testing, it is logged instead of emailed:
 
    ```text
-   [EmailIdp] Registration code (you@example.com): 12345678
+   Registration code for you@example.com: <12345678>
    ```
 
 3. Enter the code, then set a password to finish.
@@ -71,8 +71,9 @@ Once you are signed in, the app shows your content with a sign-out button.
 
 ## Next steps
 
-- Send real verification emails through an email service. See [Email provider setup](./providers/email/setup).
-- Customize the sign-in screen or build your own. See [Customizing the UI](./providers/email/customizing-the-ui).
+- Send verification emails from your own email service instead of the default. See [Email provider setup](./providers/email/setup).
+- Customize the sign-in screen. See [UI components](./ui-components).
+- Build your own sign-in UI with the email controller. See [Customizing the UI](./providers/email/customizing-the-ui).
 - Change password rules, code length, and rate limits. See [Email configuration](./providers/email/configuration).
 - Require sign-in on your endpoints. See [The basics](./basics#requiring-authentication-on-endpoints).
 - Add more sign-in options, like Google or Apple. See [Identity providers configuration](./setup#identity-providers-configuration).
