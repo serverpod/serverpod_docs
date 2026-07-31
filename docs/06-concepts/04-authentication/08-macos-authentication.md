@@ -27,7 +27,7 @@ Add the following to both entitlements files in your Flutter app:
 
 Copy the same block into `macos/Runner/Release.entitlements`.
 
-The empty array enables Keychain access without creating a shared App Group. Leave the array empty unless you have a specific reason to add a group identifier.
+The empty array enables Keychain access without sharing keychain items with other apps. Leave the array empty unless you have a specific reason to add a group identifier.
 
 Rebuild and run your app:
 
@@ -60,8 +60,7 @@ Xcode writes the same Keychain Sharing entry (`keychain-access-groups`) into you
 If you run unsigned macOS builds locally and want to avoid Keychain Sharing entitlements entirely, configure secure storage to use the login keychain instead of the Data Protection Keychain. In your app's `main.dart`, override the session manager storage:
 
 ```dart
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:serverpod_auth_core_flutter/serverpod_auth_core_flutter.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
 client = Client(serverUrl)
   ..connectivityMonitor = FlutterConnectivityMonitor()
@@ -76,12 +75,7 @@ client = Client(serverUrl)
   );
 ```
 
-This path requires `flutter_secure_storage` 10.3.1 or later. Projects created with `serverpod create` pin an earlier version in `pubspec.yaml` dependency overrides, so bump the override before using this option:
-
-```yaml title="pubspec.yaml"
-dependency_overrides:
-  flutter_secure_storage: ^10.3.1
-```
+This path requires `flutter_secure_storage` 10.3.0 or later, where `usesDataProtectionKeychain: false` started taking effect. Projects created with `serverpod create` already resolve a compatible version. If your project was created earlier, run `flutter pub upgrade flutter_secure_storage` to update the lockfile.
 
 The login keychain works for local development. For production macOS builds, prefer the Keychain Sharing entitlement in [Add the Keychain Sharing entitlement](#add-the-keychain-sharing-entitlement) above.
 
