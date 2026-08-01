@@ -71,7 +71,7 @@ Once you are signed in, the app shows your content with a sign-out button.
 
 ## Next steps
 
-- Send verification emails from your own email service instead of the default. See [Email provider setup](./providers/email/setup).
+- Send verification emails from your own email service instead of the default. See [Use your own email provider](./providers/email/setup#use-your-own-email-provider).
 - Customize the sign-in screen. See [UI components](./ui-components).
 - Build your own sign-in UI with the email controller. See [Customizing the UI](./providers/email/customizing-the-ui).
 - Change password rules, code length, and rate limits. See [Email configuration](./providers/email/configuration).
