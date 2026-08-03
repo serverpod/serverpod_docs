@@ -13,13 +13,13 @@ All authenticated users have an authentication identifier that uniquely identifi
 ```dart
 var userIdString = session.authenticated?.userIdentifier;
 // requires `import 'package:serverpod_auth_idp_server/core.dart';`
-var userIdUuidValue = session.authenticated!.authUserId;
+var userIdUuidValue = session.authenticated?.authUserId;
 ```
 
 Further operations on the authenticated user can be performed using the `AuthUsers` class which is provided by the `AuthServices` instance.
 
 ```dart
-await AuthServices.instance.authUsers.delete(session, authUserId: userIdUuidValue);
+await AuthServices.instance.authUsers.delete(session, authUserId: userIdUuidValue!);
 ```
 
 For the full list of operations, see the [AuthUsers](https://pub.dev/documentation/serverpod_auth_core_server/latest/serverpod_auth_core_server/AuthUsers-class.html) class documentation.

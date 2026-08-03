@@ -63,7 +63,7 @@ void run(List<String> args) async {
 }
 ```
 
-The pepper in the example is a secret string mixed into values before they are hashed. The [storing secrets](#storing-secrets) section explains peppers and where to keep them.
+See [storing secrets](#storing-secrets) for what the pepper in the example is and where to keep it.
 
 JWT-based authentication also needs a refresh endpoint. The app calls it to renew expired access tokens without asking the user to sign in again. Extend the abstract endpoint to expose it on the server. Create the file anywhere under your server's `lib/` directory, for example `<project>_server/lib/src/endpoints/`. The generator picks it up:
 
@@ -161,7 +161,7 @@ export SERVERPOD_PASSWORD_googleClientSecret='{"web":{"client_id":"...","client_
 ```
 
 :::info
-Builders that need secrets have a `FromPasswords` variant that reads them from well-known key names, so you do not need to call `pod.getPassword()` yourself. Any other configuration options are still passed as parameters. The examples below are a few of them:
+Builders that need secrets have a `FromPasswords` variant that reads them from well-known key names, so you do not need to call `pod.getPassword()` yourself. Any other configuration options are still passed as parameters. For example:
 
 ```dart
 final jwtConfig = JwtConfigFromPasswords();
@@ -261,7 +261,11 @@ When the user finishes signing in at the provider's page (for example, `accounts
 
 You create one `auth.html` and share it across every identity provider that needs it.
 
-You have two ways to deliver it. If Serverpod also serves your Flutter web app, register the `FlutterWebAuth2CallbackRoute` from `serverpod_auth_idp_server` on your web server and point the provider at that route. The page hands the result back with `postMessage` aimed at its own origin, so the browser only delivers it when your app is served from the same origin (same scheme, host, and port). Otherwise, host the file yourself: in your Flutter project's `web/` folder, add a file named `auth.html` with this content, which is identical to what the route serves:
+You have two ways to deliver it.
+
+If Serverpod serves your Flutter web app, register the `FlutterWebAuth2CallbackRoute` from `serverpod_auth_idp_server` on your web server and point the provider at that route. The page posts the result back to its own origin, so the browser only delivers it when your app is served from that same origin (same scheme, host, and port).
+
+Otherwise, host the file yourself. In your Flutter project's `web/` folder, add a file named `auth.html` with this content, which is identical to what the route serves:
 
 ```html
 <!DOCTYPE html>
