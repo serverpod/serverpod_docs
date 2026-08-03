@@ -1,64 +1,34 @@
 ---
-sidebar_label: UI Components
-description: Authentication UI components and controllers let you build sign-in, registration, and password flows, including the all-in-one SignInWidget.
+sidebar_label: UI components
+description: The SignInWidget is an all-in-one sign-in UI that detects the providers you configured. Control which providers it shows, style its buttons, and translate its texts.
 ---
 
 # Authentication UI components
 
-The authentication system provides a comprehensive set of UI components and controllers for building authentication interfaces. These components handle the complete authentication flow, including sign-in, registration, and password management.
-
-## Overview
-
-The UI component architecture consists of:
-
-- **Common widgets**: Reusable widgets for building custom authentication interfaces.
-- **Provider-specific widgets**: Pre-built UI components that are used in specific providers.
-- **Controllers**: Business logic classes that can be used with custom UI.
+The authentication module ships with UI components and controllers for building sign-in interfaces. This page covers the all-in-one `SignInWidget`: how to control which providers it shows, how to style its buttons, and how to translate its texts. Each provider also has its own widgets and controllers for building a custom UI, covered on the provider pages.
 
 ## SignInWidget
 
-The `SignInWidget` is an all-in-one widget that automatically detects available authentication providers and displays the appropriate sign-in options.
+The `SignInWidget` is an all-in-one widget that automatically detects available authentication providers and displays the appropriate sign-in options. The [setup page](./setup#present-the-authentication-ui) shows the full wiring. In short:
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-import 'package:your_client/your_client.dart';
-
-class SignInPage extends StatelessWidget {
-  final Client client;
-
-  const SignInPage({required this.client, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SignInWidget(
-        client: client,
-        onAuthenticated: () {
-          // Do something when the user is authenticated.
-          //
-          // NOTE: You should not navigate to the home screen here, otherwise
-          // the user will have to sign in again every time they open the app.
-        },
-        onError: (error) {
-          // Handle errors
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $error')),
-          );
-        },
-      ),
-    );
-  }
-}
+SignInWidget(
+  client: client,
+  onAuthenticated: () {
+    // Runs after a successful sign-in. Do not navigate here; listen to
+    // authentication state changes instead.
+  },
+  onError: (error) {
+    // Show the error to the user.
+  },
+)
 ```
 
 ### Disabling providers
 
-It is not possible to forcefully enable a provider, since this depends on the configuration of the identity providers, as described in the [setup section](./setup#identity-providers-configuration).
+You can hide specific providers in the app while keeping them available on the server. This is useful when you want to phase out a provider but keep compatibility with older app versions.
 
-But, even though the `SignInWidget` automatically detects enabled providers, you can disable specific providers if you want to hide them on the client, but still keep them available on the server.
-
-This is useful if you want to gradually disable a provider, but still keep compatibility with older clients.
+The reverse is not possible. A provider only appears when it is configured on the server, as described in [identity providers configuration](./setup#identity-providers-configuration).
 
 ```dart
 SignInWidget(
@@ -77,7 +47,7 @@ SignInWidget(
 
 ### Customizing SignInWidget
 
-You can customize individual provider widgets:
+The `SignInWidget` builds a default widget for each identity provider it detects. Pass your own widget for a provider to replace the default one:
 
 ```dart
 final signInWidget = SignInWidget(
@@ -93,18 +63,10 @@ final signInWidget = SignInWidget(
   ),
   googleSignInWidget: GoogleSignInWidget(
     client: client,
-    theme: GSIButtonTheme.filledBlack,
     scopes: const [
       ...GoogleAuthController.defaultScopes,
       'https://www.googleapis.com/auth/youtube',
     ],
-    onAuthenticated: _onAuthenticated,
-    onError: _onError,
-    // ... custom configuration
-  ),
-  appleSignInWidget: AppleSignInWidget(
-    client: client,
-    style: AppleButtonStyle.black,
     onAuthenticated: _onAuthenticated,
     onError: _onError,
     // ... custom configuration
@@ -122,7 +84,25 @@ void _onError(Object error) {
 }
 ```
 
-For more details on all options of each provider widget, see the "Customizing UI" section of the specific provider documentation. There you will also find information on how to build a custom UI with the controller. For example, see the [Email Provider](./providers/email/customizing-the-ui) documentation.
+### Styling the buttons
+
+Inside `SignInWidget`, every provider button shares one neutral, theme-aware appearance. To change it, pass a `SignInButtonStyle` as `buttonStyle`:
+
+```dart
+SignInWidget(
+  client: client,
+  buttonStyle: const SignInButtonStyle(
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+  ),
+  onAuthenticated: _onAuthenticated,
+  onError: _onError,
+)
+```
+
+Fields set on `buttonStyle` apply to the provider buttons. Brand style presets, such as `GoogleButtonStyle.filledBlack`, only apply when a provider widget is used on its own, outside `SignInWidget`.
+
+For all options of each provider widget, see the "Customizing the UI" page for that provider, which also covers building a custom UI with the provider's controller. For example, see [the email provider](./providers/email/customizing-the-ui).
 
 ## Localization
 
@@ -223,4 +203,10 @@ SignInLocalizationProvider(
 
 ### Switching locale
 
-`SignInLocalizationProvider` hands the text objects to the widgets below it. It does not read Flutter's current `Locale` or pick a translation for you. In an app that supports several locales, select the text objects with your existing localization setup and rebuild the provider when the locale changes.
+The `SignInLocalizationProvider` widget hands the text objects to the widgets below it. It does not read Flutter's current `Locale` or pick a translation for you. In an app that supports several locales, select the text objects with your existing localization setup and rebuild `SignInLocalizationProvider` when the locale changes.
+
+## Related
+
+- [Setup](./setup): wire the sign-in UI into your app.
+- [The basics](./basics): react to authentication state changes.
+- [Custom overrides](./custom-overrides): replace the built-in UI and endpoints entirely.

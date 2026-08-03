@@ -1,19 +1,19 @@
 ---
 sidebar_label: Profile photos
-description: Upload, update, and display user profile photos with Serverpod's auth module, including server setup, Flutter client code, and storage configuration.
+description: User profile photos are handled by the authentication module and served from public storage. Expose the upload endpoint, display photos in your app, and configure image size, format, and storage.
 ---
 
 # Manage user profile photos
 
 Add profile photo upload and display to your Serverpod app using the authentication module's built-in image handling. When you're done, signed-in users can upload a photo from Flutter, and your app displays it from a public URL.
 
-Profile photos are stored in **public** storage, square-cropped and resized on the server, and exposed as a public HTTP URL on `UserProfileModel.imageUrl`. The auth module registers a read-only `userProfileInfo` endpoint by default; you expose upload methods yourself.
+Profile photos are stored in **public** storage, square-cropped and resized on the server, and exposed as a public HTTP URL on `UserProfileModel.imageUrl`. The authentication module registers a read-only `userProfileInfo` endpoint by default. You expose the upload methods yourself.
 
 ## Before you start
 
 - [Authentication is set up](./setup) and users can sign in.
 - Users have a `UserProfile` (created automatically by most identity providers on first sign-in).
-- You have run `serverpod generate` at least once.
+- You have run `serverpod generate` at least once, or started the server with `serverpod start`.
 
 For the upload UI, add these Flutter dependencies:
 
@@ -21,13 +21,13 @@ For the upload UI, add these Flutter dependencies:
 dependencies:
   image_picker: ^1.0.0
   image: ^4.0.15
-  file_picker: '>=8.1.0 <11.0.0'  # web
-  image_cropper: '>=7.0.0 <13.0.0'  # mobile, optional
+  file_picker: '>=8.1.0 <11.0.0' # web
+  image_cropper: '>=7.0.0 <13.0.0' # mobile, optional
 ```
 
 ## Expose the profile edit endpoint
 
-The auth module registers `userProfileInfo` (read-only `get()`). Upload methods live on `UserProfileEditBaseEndpoint`, which you must expose on your server.
+The authentication module registers `userProfileInfo` (read-only `get()`). Upload methods live on `UserProfileEditBaseEndpoint`, which you must expose on your server.
 
 Create a concrete endpoint:
 
@@ -39,15 +39,15 @@ import 'package:serverpod_auth_idp_server/core.dart';
 class UserProfileEndpoint extends UserProfileEditBaseEndpoint {}
 ```
 
-Run `serverpod generate`. Your Flutter client exposes methods on `client.userProfile` (the accessor matches your endpoint class name):
+Run `serverpod generate`, or let `serverpod start` do it for you. Your app then calls the methods on `client.userProfile` (the accessor matches your endpoint class name):
 
-| Method | Returns | Auth required |
-| ------ | ------- | ------------- |
-| `get()` | `UserProfileModel` | Yes |
-| `setUserImage(ByteData image)` | `UserProfileModel` | Yes |
-| `removeUserImage()` | `UserProfileModel` | Yes |
-| `changeUserName(String? userName)` | `UserProfileModel` | Yes |
-| `changeFullName(String? fullName)` | `UserProfileModel` | Yes |
+| Method                             | Returns            | Auth required |
+| ---------------------------------- | ------------------ | ------------- |
+| `get()`                            | `UserProfileModel` | Yes           |
+| `setUserImage(ByteData image)`     | `UserProfileModel` | Yes           |
+| `removeUserImage()`                | `UserProfileModel` | Yes           |
+| `changeUserName(String? userName)` | `UserProfileModel` | Yes           |
+| `changeFullName(String? fullName)` | `UserProfileModel` | Yes           |
 
 ```dart
 final profile = await client.userProfile.setUserImage(byteData);
@@ -62,7 +62,7 @@ final profile = await client.modules.serverpod_auth_core.userProfileInfo.get();
 
 ### Restrict who can edit
 
-There is no built-in `userCanEditUserImage` flag in `serverpod_auth_idp` (legacy `serverpod_auth` had this). Override the endpoint to restrict uploads:
+The built-in endpoint always acts on the signed-in user, so any signed-in user can edit their own photo. To add your own rules, override the method on your endpoint class. The legacy `serverpod_auth` module had a `userCanEditUserImage` flag for this; `serverpod_auth_idp` does not.
 
 ```dart
 class UserProfileEndpoint extends UserProfileEditBaseEndpoint {
@@ -78,7 +78,7 @@ class UserProfileEndpoint extends UserProfileEditBaseEndpoint {
 
 ## Upload a profile photo from Flutter
 
-There is no built-in upload widget in the authentication module. Pick an image on the client, convert it to `ByteData`, and pass it to `setUserImage`.
+There is no built-in upload widget in the authentication module. Pick an image in the app, convert it to `ByteData`, and pass it to `setUserImage`.
 
 The server decodes the image, crops it to a square, resizes it, and stores it. The format you send does not affect the stored format.
 
@@ -134,12 +134,12 @@ On iOS and Android, use `image_cropper` with a circular crop before upload for b
 
 ### Error handling
 
-| Failure | What happens |
-| ------- | ------------ |
-| User not signed in | `ServerpodUnauthenticatedException` |
-| No profile exists | `UserProfileNotFoundException` |
-| Invalid or corrupt image bytes | Server throws when image decode fails |
-| User cancels picker | Return `null` on the client; no server call |
+| Failure                        | What happens                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| User not signed in             | The call fails and surfaces as `ServerpodClientUnauthorized` in the app               |
+| No profile exists              | The server throws `UserProfileNotFoundException`. The app sees a generic server error |
+| Invalid or corrupt image bytes | Server throws when image decode fails                                                 |
+| User cancels picker            | Return `null` in the app. No server call is made                                      |
 
 ## Display the profile photo
 
@@ -159,7 +159,7 @@ CircleAvatar(
 
 For caching, use `cached_network_image` or `extended_image`.
 
-The `imageUrl` field is public. If you fetch another user's `UserProfileModel` from your own endpoint, display `imageUrl` the same way. Only upload endpoints are scoped to the signed-in user.
+The built-in endpoint methods always act on the signed-in user, including the read-only `get`. To show another user's photo, fetch their `UserProfileModel` from your own endpoint and display its `imageUrl` the same way. The URL itself is not access-controlled, so anything holding it can load the image.
 
 ## Remove or replace a photo
 
@@ -177,13 +177,13 @@ Replace a photo by calling `setUserImage` again with new bytes. The server creat
 
 Pass `UserProfileConfig` to `initializeAuthServices` in `server.dart`:
 
-| Setting | Default | Description |
-| ------- | ------- | ----------- |
-| `userImageSize` | `256` | Output width and height in pixels (square) |
-| `userImageFormat` | `UserProfileImageType.jpg` | Stored format (`.jpg` or `.png`) |
-| `userImageQuality` | `70` | JPG quality (ignored for PNG) |
-| `userImageGenerator` | `defaultUserImageGenerator` | Used by `setDefaultUserImage()` |
-| `imageFetchFunc` | `http.get` | Used when importing from a URL (social sign-in) |
+| Setting              | Default                     | Description                                     |
+| -------------------- | --------------------------- | ----------------------------------------------- |
+| `userImageSize`      | `256`                       | Output width and height in pixels (square)      |
+| `userImageFormat`    | `UserProfileImageType.jpg`  | Stored format (`.jpg` or `.png`)                |
+| `userImageQuality`   | `70`                        | JPG quality (ignored for PNG)                   |
+| `userImageGenerator` | `defaultUserImageGenerator` | Used by `setDefaultUserImage()`                 |
+| `imageFetchFunc`     | `http.get`                  | Used when importing from a URL (social sign-in) |
 
 ```dart
 pod.initializeAuthServices(
@@ -205,17 +205,17 @@ pod.initializeAuthServices(
 );
 ```
 
-The `defaultUserImageGenerator` function produces a colored circle with the first letter of the user name.
+The `defaultUserImageGenerator` function produces a solid-colored square with the first letter of the user name. It looks circular when you display it in a circular widget such as `CircleAvatar`.
 
 The server automatically validates and optimizes uploads: it decodes bytes (must be a valid image), square-crops to `userImageSize`, re-encodes as JPG or PNG per config, and stores the file in public storage.
 
-Recommended client-side checks (not enforced by the server):
+Recommended checks in the app (not enforced by the server):
 
 - Allow only JPG and PNG extensions.
 - Reject files over roughly 5 to 10 MB before upload.
 - Verify `decodeImage` succeeds before calling `setUserImage`.
 
-Google and similar providers automatically import a profile photo on first sign-in when the provider returns one and the user has no image yet.
+Providers such as Google import a profile photo whenever the user signs in, the provider returns a photo, and the user has no image set. This is not limited to the first sign-in, so a photo the user removed can come back on their next sign-in with that provider.
 
 ## Configure storage for production
 
@@ -229,7 +229,7 @@ http://localhost:8080/serverpod_cloud_storage?method=file&path=serverpod/user_im
 
 Set `publicHost`, `publicPort`, and `publicScheme` in `config/development.yaml` to match how clients reach your API server.
 
-For production, configure object storage (S3, GCP, or R2) for `storageId: 'public'`. See [Uploading files](../endpoints-and-apis/file-uploads). Profile images require publicly accessible URLs because clients load them directly over HTTP.
+For production, configure object storage (S3, Google Cloud Storage, or R2) for `storageId: 'public'`. See [Uploading files](../endpoints-and-apis/file-uploads). Profile images require publicly accessible URLs because clients load them directly over HTTP.
 
 ## Use server-side APIs for custom logic
 
@@ -265,7 +265,7 @@ final profile = await session.authenticated!.userProfile(session);
 3. Confirm the returned `imageUrl` is non-null and starts with your server's public host.
 4. Open `imageUrl` in a browser. The image loads.
 5. Confirm your UI updates after upload.
-6. Call `removeUserImage()`. `imageUrl` becomes `null` and your placeholder appears.
+6. Call `removeUserImage()`. The `imageUrl` field becomes `null` and your placeholder appears.
 
 ## Troubleshooting
 
@@ -273,13 +273,13 @@ final profile = await session.authenticated!.userProfile(session);
 
 Create `UserProfileEndpoint extends UserProfileEditBaseEndpoint` and run `serverpod generate`.
 
-### `UserProfileNotFoundException`
+### `UserProfileNotFoundException` in the server logs
 
-The signed-in user has no profile yet. Ensure your identity provider creates one on first sign-in.
+The signed-in user has no profile yet. Ensure your identity provider creates one on first sign-in. The app only sees a generic server error, so check the server logs for this exception.
 
 ### Image URL does not load
 
-Check `publicHost`, `publicPort`, and `publicScheme` in your server config match how clients reach the API server.
+Check that `publicHost`, `publicPort`, and `publicScheme` under `apiServer` in your server config match how apps reach the API server.
 
 ### Invalid image error
 
@@ -296,6 +296,6 @@ The `file_picker` package may return null bytes. Ensure you read bytes correctly
 ## Related
 
 - [Working with users](./working-with-users): profiles, names, and the edit endpoint overview
-- [Authentication setup](./setup): initial auth module configuration
+- [Authentication setup](./setup): initial configuration of the authentication module
 - [Uploading files](../endpoints-and-apis/file-uploads): cloud storage for production
 - [Legacy: displaying or editing user images](./legacy/working-with-users): legacy `serverpod_auth` widgets

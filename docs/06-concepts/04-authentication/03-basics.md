@@ -5,9 +5,9 @@ description: Authentication tokens are handled automatically by Serverpod. Learn
 
 # Authentication basics
 
-Serverpod automatically checks if the user is logged in and if the user has the right privileges to access each endpoint. When using the Serverpod Authentication modules, you will not have to worry about keeping track of tokens, refreshing them or even including them in requests as this all happens automatically under the hood.
+Serverpod automatically checks if the user is signed in and if the user has the right privileges to access each endpoint. When using the authentication module, tokens are tracked, refreshed, and included in requests for you.
 
-The `Session` object provides information about the current user. Access the current authentication through the synchronous `authenticated` getter of the `Session` object. It exposes a `userIdentifier`, a `String` that uniquely identifies the signed-in user. Use this id whenever you refer to a user.
+The `Session` object provides information about the current user. A `Session` is the request context that every endpoint method receives. It is not the user's login session. Access the current authentication through the synchronous `authenticated` getter of the `Session` object. It exposes a `userIdentifier`, a `String` that uniquely identifies the signed-in user. Use this id whenever you refer to a user.
 
 ```dart
 Future<void> myMethod(Session session) async {
@@ -28,7 +28,7 @@ Future<void> myMethod(Session session) async {
 
 ## Requiring authentication on endpoints
 
-It is common to want to restrict access to an endpoint to users that have signed in. You can do this by overriding the `requireLogin` property of the `Endpoint` class.
+To restrict an endpoint to signed-in users, override the `requireLogin` property of the `Endpoint` class.
 
 ```dart
 class MyEndpoint extends Endpoint {
@@ -49,11 +49,7 @@ In some cases, you may want to explicitly allow certain endpoints or methods to 
 When an endpoint or method is annotated with `@unauthenticatedClientCall`:
 
 - No authentication will be added to the header on the client when calling it.
-- The server will receive calls as if there is no user signed in.
-
-:::info
-Under the hood, the `@unauthenticatedClientCall` annotation makes the client omit authentication headers for calls to the annotated endpoint or method. On the server side, it ensures that the session is treated as unauthenticated for those calls, regardless of any existing authentication state.
-:::
+- The server will treat the call as unauthenticated, regardless of any existing authentication state.
 
 You can use this annotation in two ways:
 
@@ -87,10 +83,10 @@ You can use this annotation in two ways:
     }
     ```
 
-This is particularly useful for endpoints that must not receive authentication, such as JWT refresh endpoints.
+This is particularly useful for endpoints that must not receive authentication, such as the [JWT refresh endpoint](./token-managers/jwt-token-manager).
 
 :::warning
-Using `@unauthenticatedClientCall` on an endpoint or method that also has `requireLogin` set to true will lead to a conflict. Since the client will suppress sending authentication information, but the server will expect it, calls to such endpoints or methods will always fail with an authentication error.
+Using `@unauthenticatedClientCall` on an endpoint or method that also has `requireLogin` set to true will lead to a conflict. The client suppresses the authentication header, but the server expects it, so calls to such endpoints or methods always fail with an authentication error.
 :::
 
 ## Authorization on endpoints
@@ -156,7 +152,7 @@ Keep scope names stable once deployed, as renaming a scope will revoke it from a
 You can also define shared scope requirements in a base endpoint class. See [Endpoint inheritance](../endpoints-and-apis/endpoint-inheritance) for details.
 
 :::caution
-Keep in mind that a scope is merely an arbitrary string and can be written in any format you prefer. However, it's crucial to use unique strings for each scope, as duplicated scope strings may lead to unintentional data exposure.
+A scope is identified by its string name only. If two scope constants share the same string, granting one also grants the other, since the server cannot tell them apart. Give every scope a unique string.
 :::
 
 ### How scopes combine
@@ -188,23 +184,11 @@ class UserEditEndpoint extends Endpoint {
 }
 ```
 
-An admin user with only `Scope.admin` can call `UserAnalyticsEndpoint` but not `UserEditEndpoint`. To allow editing, grant both scopes:
-
-```dart
-import 'package:serverpod_auth_idp_server/core.dart';
-
-await AuthServices.instance.authUsers.update(
-  session,
-  authUserId: authUserId,
-  scopes: {Scope.admin, CustomScope.userWrite},
-);
-```
-
-This lets you compose capabilities at the endpoint level instead of building nested roles.
+An admin user with only `Scope.admin` can call `UserAnalyticsEndpoint` but not `UserEditEndpoint`. To allow editing, grant the user both scopes, as shown in [Managing scopes](#managing-scopes) below. This lets you compose capabilities at the endpoint level instead of building nested roles.
 
 ### Managing scopes
 
-New users are created without any scopes. Scope changes take effect only for new sign-ins. Existing sessions and tokens reflect the scopes that were set when the user last signed in.
+New users are created without any scopes.
 
 To update a user's scopes, use the `update` method from `AuthServices.instance.authUsers`. This method replaces all previously stored scopes:
 
@@ -236,7 +220,7 @@ On macOS, the `FlutterAuthSessionManager` stores tokens in the Keychain. New pro
 :::
 
 :::info
-If you are building a pure Dart application using Serverpod, you can use the `ClientAuthSessionManager` declared in the `serverpod_auth_core_client` package instead of the `FlutterAuthSessionManager`. It has the same functionality, with the exception of a `authInfoListenable` getter that is tied to the Flutter framework.
+If you are building a pure Dart application, use the `ClientAuthSessionManager` from the `serverpod_auth_core_client` package instead. It works the same way, except it has no `authInfoListenable` getter, which is tied to the Flutter framework.
 :::
 
 ### Check authentication state
@@ -271,7 +255,7 @@ This will persist the authentication information and refresh any open streaming 
 
 ### Monitor authentication changes
 
-The `FlutterAuthSessionManager` exposes an `authInfoListenable` that is a `ValueListenable<AuthSuccess?>` to be used for listening to changes. This is useful for updating the UI when the authentication state changes:
+The `FlutterAuthSessionManager` exposes `authInfoListenable`, a `ValueListenable<AuthSuccess?>`. Listen to it to update the UI whenever the user signs in or out:
 
 ```dart
 @override
@@ -308,31 +292,23 @@ Call `validateAuthentication` to check the current session against the server an
 await client.auth.validateAuthentication(); // throws on transient errors; retry if needed
 ```
 
-The method force-refreshes the token and confirms with the server that the user is still signed in. If the session is no longer valid, it signs the user out on the current device. A transient problem, such as a network error or timeout, does not sign the user out; the exception is thrown instead, so you can catch it and retry.
+The method force-refreshes the token and confirms with the server that the user is still signed in. If the session is no longer valid, it signs the user out on the current device. A transient problem, such as a network error or timeout, does not sign the user out. The exception is thrown instead, so you can catch it and retry.
 
 At app startup, use `initialize` to restore a stored session and validate it in one step:
 
 ```dart
-bool validated = await client.auth.initialize();
+await client.auth.initialize();
 ```
 
-The `initialize` method runs `restore` followed by `validateAuthentication`. If the stored session has expired, the user is signed out. If validation cannot complete for a transient reason (network error, server error, or timeout), `initialize` returns `false` and leaves the stored session in place so you can retry later, which keeps offline users signed in.
+The `initialize` method runs `restore` followed by `validateAuthentication`. It returns `true` when validation completed, which is not the same as the user being signed in. Read `client.auth.isAuthenticated` for that. If the stored session has expired, the user is signed out. If validation cannot complete because of a network or server error, `initialize` returns `false` and leaves the stored session in place so you can retry later, which keeps offline users signed in. If the validation call times out, the timeout is thrown instead, so catch it if you want the same retry behavior.
 
 Because signing out updates the authentication state, a listener registered on `authInfoListenable` (see [Monitor authentication changes](#monitor-authentication-changes)) fires when a session expires, so you can route the user back to a sign-in screen from one place.
 
-## User authentication
+## Signing out users
 
-### Signing out users
+The `FlutterAuthSessionManager` provides methods for handling user sign-outs, whether from a single device or all devices. They call the `StatusEndpoint` methods under the hood, which are also directly accessible on the client through the `client.modules.serverpod_auth_core.status` getter. For revoking authentication across devices from the server, see [Managing tokens](./token-managers/managing-tokens#revoking-tokens).
 
-The `FlutterAuthSessionManager` provides methods for handling user sign-outs, whether from a single device or all devices.
-
-:::info
-The below methods use the `StatusEndpoint` methods under the hood, which are also directly accessible on the client using the `client.modules.auth.status` getter. In addition to these methods, Serverpod provides more comprehensive tools for managing user authentication and sign-out processes across multiple devices.
-
-For more detailed information on managing and revoking authentication keys, please refer to the [Managing tokens](./token-managers/managing-tokens#revoking-tokens) section.
-:::
-
-#### Sign out current device
+### Sign out current device
 
 To sign the user out from the current device:
 
@@ -340,9 +316,9 @@ To sign the user out from the current device:
 await client.auth.signOutDevice();
 ```
 
-Returns `true` if the sign-out is successful, or `false` if it fails. Either way, the sign-out will be performed on the application and update the authentication state.
+Returns `true` if the server call succeeds, or `false` if it fails. Either way, the app clears its local authentication state.
 
-#### Sign out all devices
+### Sign out all devices
 
 To sign the user out across all devices:
 
@@ -350,4 +326,11 @@ To sign the user out across all devices:
 await client.auth.signOutAllDevices();
 ```
 
-Returns `true` if the user is successfully signed out from all devices, or `false` if it fails. Also proceed with the sign-out on the application regardless of the result of the operation on the server.
+Returns `true` if the user is successfully signed out from all devices, or `false` if it fails. Either way, the app clears its local authentication state.
+
+## Related
+
+- [Setup](./setup): install and configure the authentication module.
+- [Working with users](./working-with-users): user profiles, callbacks, and admin operations.
+- [Token managers](./token-managers/managing-tokens): how tokens are issued, validated, and revoked.
+- [Custom overrides](./custom-overrides): replace the built-in authentication with your own.
