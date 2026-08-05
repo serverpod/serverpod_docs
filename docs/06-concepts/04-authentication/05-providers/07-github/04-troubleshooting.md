@@ -25,7 +25,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Added `githubClientId` and `githubClientSecret` to `config/passwords.yaml` under the matching environment (`development:` for local, `production:` for prod), or set the matching `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWORD_githubClientSecret` environment variables.
 - [ ] Added `GitHubIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Created a `GitHubIdpEndpoint` file in `lib/src/auth/`.
-- [ ] Started the server with `serverpod start`, then created and applied the migration (pressed **M**, then **A**).
+- [ ] Started the server with `serverpod start`, then created and applied the migration (pressed **M**).
 
 #### Client
 
@@ -59,14 +59,14 @@ Common mistakes:
 
 **Resolution:**
 
-- **Web (Serverpod-hosted Flutter)**: Confirm `pod.webServer.addRoute(FlutterWebAuth2CallbackRoute(host: ...), '/auth/callback')` is called in `server.dart` and that `host` matches the domain serving your Flutter web app. Open `https://your-domain.com/auth/callback` directly in a browser tab; you should see the "Authentication complete" page. Also confirm Flutter web and the route share scheme + host + port (`postMessage` is blocked across origins).
-- **Web (separately-hosted Flutter)**: Confirm `web/auth.html` exists in your Flutter project and contains the script shown in [Web](./setup#web). Open the redirect URL directly in a browser tab; you should see the "Authentication complete" page.
+- **Web (Serverpod-hosted Flutter)**: Confirm `FlutterWebAuth2CallbackRoute` is registered on `pod.webServer` and the provider redirects to that route's URL.
+- **Web (separately-hosted Flutter)**: Confirm `web/auth.html` exists in your Flutter project and contains the callback script from [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml).
 - **Android**: Verify the `<data android:scheme="..."/>` value in `AndroidManifest.xml` matches the scheme in your callback URL exactly.
 - **iOS / macOS**: Universal Links require HTTPS callback URLs and associated-domain entitlements. Standard custom-scheme callbacks work without extra configuration.
 
 ## Sign-in succeeds but the user has no email
 
-**Problem:** The user signs in successfully on the client, but the server-side `GitHubAccountDetails.email` value is `null`.
+**Problem:** The user signs in successfully in the app, but the server-side `GitHubAccountDetails.email` value is `null`.
 
 **Cause:** GitHub users can keep their email private, and the OAuth response will return `null` for `email` in that case. Your app may have a custom validator that rejects accounts without an email and blocks the sign-in.
 
@@ -87,7 +87,7 @@ Common mistakes:
 ```dart
 await client.auth.initializeGitHubSignIn(
   clientId: 'your-github-client-id',
-  redirectUri: Uri.parse('myapp://auth'),
+  redirectUri: 'myapp://auth',
 );
 ```
 
@@ -110,7 +110,7 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 **Resolution:**
 
 1. Open your GitHub App's settings and confirm the production callback URL is listed under **Callback URL** alongside the development one. Both should remain registered so dev and prod work simultaneously.
-2. Confirm your production Flutter build is initialized with the production `redirectUri`. The simplest way is to read it from `--dart-define` and pass the production value in your CI/CD or `flutter_build` step. See [Publishing to production](./setup#publishing-to-production).
+2. Confirm your production Flutter build is initialized with the production `redirectUri`. The simplest way is to read it from `--dart-define` and pass the production value in your CI/CD or `flutter build` step. See [Publishing to production](./setup#publishing-to-production).
 
 ## Sign-in works for you but not for other users
 
@@ -124,7 +124,7 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 **Problem:** A user tries to sign in but sees a GitHub message about the organization restricting access to third-party applications, or the sign-in flow returns with no authorization.
 
-**Cause:** The user's GitHub organization has **OAuth App access restrictions** enabled, and your app has not been approved for that organization. This is independent of your app's own settings; the org controls it.
+**Cause:** The user's GitHub organization has **OAuth App access restrictions** enabled, and your app has not been approved for that organization. This is independent of your app's own settings. The organization controls it.
 
 **Resolution:** The user (or an organization owner) needs to request approval for your GitHub App in the organization's **Settings > Third-party Access** page on GitHub. There is nothing you can do server-side to bypass this. Surface a clear error message to the user explaining the org policy.
 
@@ -138,7 +138,7 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 - Make sure the OAuth callback fires only once. Refreshing the `auth.html` page or navigating back to it after authorization re-sends the now-spent code.
 - If the user genuinely took too long to complete sign-in, the code expired. Have them start the flow again from your sign-in button.
-- This is a transient error if it only happens occasionally. Investigate the client only if it reproduces consistently.
+- This is a transient error if it only happens occasionally. Investigate the app only if it reproduces consistently.
 
 ## GitHub API calls from getExtraGitHubInfoCallback fail or rate-limit
 
@@ -148,9 +148,9 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 **Resolution:**
 
-- Cache the data you fetch instead of calling the API on every sign-in. `getExtraGitHubInfoCallback` runs on **every** authentication attempt; if you fetch the same data every time, you will burn through rate limits quickly.
-- For long-lived background work, store the access token (encrypted) and refresh it on demand rather than re-running expensive fetches on every sign-in.
-- If a single user triggers many sign-ins (e.g., dev iteration), expect to hit the per-user limit; wait an hour or test with a different account.
+- Cache the data you fetch instead of calling the API on every sign-in. The `getExtraGitHubInfoCallback` runs on **every** authentication attempt, so fetching the same data every time burns through rate limits quickly.
+- Serverpod does not keep the GitHub access token after sign-in, so fetch what you need inside `getExtraGitHubInfoCallback` and store the results, rather than re-fetching on every sign-in.
+- If a single user triggers many sign-ins (e.g., dev iteration), expect to hit the per-user limit. Wait an hour or test with a different account.
 
 ## Permission changes on the GitHub App do not take effect
 
@@ -174,7 +174,7 @@ development:
   githubClientSecret: 'your-github-client-secret'
 ```
 
-Quotes are required because the values are strings; YAML interprets unquoted values that look like numbers or booleans differently.
+Quoting the values is a safeguard. YAML parses unquoted values that look like numbers or booleans as those types instead of strings.
 
 ## Server crashes on first GitHub sign-in with "no such table"
 
@@ -182,7 +182,7 @@ Quotes are required because the values are strings; YAML interprets unquoted val
 
 **Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+**Resolution:** In the running `serverpod start` terminal, press **M** to create and apply the migration.
 
 ## Android sign-in opens GitHub but the callback never fires
 

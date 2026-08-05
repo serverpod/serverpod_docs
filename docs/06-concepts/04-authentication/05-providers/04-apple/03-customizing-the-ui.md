@@ -15,8 +15,12 @@ SignInWidget(
   client: client,
   appleSignInWidget: AppleSignInWidget(
     client: client,
-    // Customize the widget
-    style: AppleButtonStyle.black,
+    // Shape and label survive inside SignInWidget. Brand colors do not.
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
   ),
 )
 ```
@@ -29,18 +33,23 @@ The `AppleSignInWidget` handles the complete Apple Sign-In flow for iOS, macOS, 
 You can customize the widget's appearance and behavior:
 
 ```dart
+// AppleIDAuthorizationScopes comes from the sign_in_with_apple package.
+// Add it to your app's dependencies to import it.
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 AppleSignInWidget(
   client: client,
-  // Button customization
-  type: AppleButtonText.signIn, // or signInWith, continue, signUp
-  style: AppleButtonStyle.black, // or white
-  size: AppleButtonSize.large, // or small, medium
-  shape: AppleButtonShape.rectangular, // or pill
-  logoAlignment: AppleButtonLogoAlignment.left, // or center
-  minimumWidth: 200, // or null for automatic width
+  // Button customization. The values shown are the defaults.
+  style: AppleButtonStyle.black, // or white, whiteOutlined
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
 
-  // Scopes to request from Apple
-  // These are the default, and the only ones supported by Apple Sign-In.
+  // Scopes to request from Apple.
+  // These are the default, and the only ones Sign in with Apple supports.
   scopes: const [
     AppleIDAuthorizationScopes.email,
     AppleIDAuthorizationScopes.fullName,
@@ -65,6 +74,7 @@ For more control over the UI, you can use the `AppleAuthController` class, which
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
+// Also import sign_in_with_apple here for AppleIDAuthorizationScopes.
 final controller = AppleAuthController(
   client: client,
   onAuthenticated: () {
@@ -86,7 +96,7 @@ final controller = AppleAuthController(
 await controller.signIn();
 ```
 
-### AppleAuthController State Management
+### AppleAuthController state management
 
 Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
 
@@ -111,7 +121,7 @@ controller.addListener(() {
 });
 ```
 
-#### AppleAuthController States
+#### AppleAuthController states
 
 - `AppleAuthState.idle` - Ready for user interaction.
 - `AppleAuthState.loading` - Processing a sign-in request.

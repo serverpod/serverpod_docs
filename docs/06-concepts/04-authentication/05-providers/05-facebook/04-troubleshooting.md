@@ -24,7 +24,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Added `facebookAppId` and `facebookAppSecret` to `config/passwords.yaml` under the matching environment (`development:` for local, `production:` for prod), or set the matching `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWORD_facebookAppSecret` environment variables.
 - [ ] Added `FacebookIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Created a `FacebookIdpEndpoint` file in `lib/src/auth/`.
-- [ ] Started the server with `serverpod start`, then created and applied the migration (pressed **M**, then **A**).
+- [ ] Started the server with `serverpod start`, then created and applied the migration (pressed **M**).
 
 #### Client
 
@@ -126,7 +126,7 @@ Quotes are required because the values are strings. On Serverpod Cloud, set them
 
 **Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it. See [Start the server](./setup#start-the-server).
+**Resolution:** In the running `serverpod start` terminal, press **M** to create and apply the migration. See [Start the server](./setup#start-the-server).
 
 ## Sign-in works in dev but fails after deploy
 

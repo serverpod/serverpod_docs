@@ -18,17 +18,19 @@ The `FacebookSignInWidget` handles the complete Facebook Sign-In flow for iOS, A
 You can customize the widget's appearance and behavior:
 
 ```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
 
 FacebookSignInWidget(
   client: client,
-  // Button customization
-  type: FacebookButtonText.continueWith, // or signinWith, signupWith, signIn
+  // Button customization. The values shown are the defaults.
   style: FacebookButtonStyle.blue, // or white
-  size: FacebookButtonSize.large, // or medium, small
-  shape: FacebookButtonShape.pill, // or rectangular
-  logoAlignment: FacebookButtonLogoAlignment.center, // or left
-  minimumWidth: 240, // in pixels, max 400
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
 
   // Permissions to request from Facebook
   // These are the default permissions.
@@ -51,6 +53,7 @@ FacebookSignInWidget(
 For more control over the UI, you can use the `FacebookAuthController` class, which provides all the authentication logic without any UI components. This allows you to build a completely custom authentication interface.
 
 ```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
 
 final controller = FacebookAuthController(

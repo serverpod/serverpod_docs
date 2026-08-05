@@ -25,16 +25,6 @@ All platforms require a Web application OAuth client (used by the server). iOS a
 
 2. Enter a **Project name** (e.g. `My Serverpod App`) and click **Create**.
 
-### Enable People API
-
-The People API is required for Serverpod to access basic user profile data during sign-in.
-
-1. Navigate to the [People API page](https://console.cloud.google.com/apis/library/people.googleapis.com) in your project.
-
-2. Click **Enable**.
-
-![Enable People API](/img/authentication/providers/google/6-people-api.png)
-
 ### Configure Google Auth Platform
 
 1. Navigate to the [Google Auth Platform overview](https://console.cloud.google.com/auth/overview) and click **Get started** if you haven't enabled it yet.
@@ -107,7 +97,7 @@ Replace `your-client-id` and `your-client-secret` with the values from the Googl
 For production, add the same `googleClientSecret` entry to the `production:` section of `passwords.yaml` (with your production redirect URI), or set the `SERVERPOD_PASSWORD_googleClientSecret` environment variable on your production server.
 
 :::note
-**Carefully maintain correct indentation for YAML block scalars.** The `googleClientSecret` block uses a `|`; any indentation error will silently break the JSON, resulting in authentication failures.
+**Carefully maintain correct indentation for YAML block scalars.** The `googleClientSecret` block uses a `|`. Any indentation error makes the JSON fail to parse, and the server throws at startup when `GoogleIdpConfigFromPasswords()` loads the secret.
 :::
 
 ## Server-side configuration
@@ -142,7 +132,7 @@ If you need more control over how the client secret is loaded, you can use `Goog
 
 ### Create the endpoint
 
-Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/google_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/google_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so your app can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/google.dart';
@@ -158,7 +148,7 @@ Start the server from your server project directory (e.g., `my_project_server/`)
 serverpod start
 ```
 
-Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create and apply the migration.
 
 :::warning
 Skipping the migration will cause the server to crash at runtime when the Google provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -237,7 +227,7 @@ Without the URL scheme, the OAuth callback never returns to your app and sign-in
 
    ![Create Android OAuth client](/img/authentication/providers/google/9-android-client-create.png)
 
-5. On Android, the sign-in SDK also needs to know your server's client ID. Pass the [Web application OAuth client](#create-the-server-oauth-client-web-application)'s ID as `serverClientId` when you initialize the client (covered in [Initialize the Google sign-in service](#initialize-the-google-sign-in-service) below). You can also pass it at build time with `--dart-define`; see [Configuring Client IDs on the App](./customizations#configuring-client-ids-on-the-app).
+5. On Android, the sign-in SDK also needs to know your server's client ID. Pass the [Web application OAuth client](#create-the-server-oauth-client-web-application)'s ID as `serverClientId` when you initialize the client (covered in [Initialize the Google sign-in service](#initialize-the-google-sign-in-service) below). You can also pass it at build time with `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app).
 
 :::note
 If your app uses Firebase (the `com.google.gms.google-services` Gradle plugin), you can skip step 5: the plugin supplies the server client ID from `google-services.json`. Re-download that file after creating the Web application client so it includes the web client entry.
@@ -252,7 +242,7 @@ When testing against a local server, the Android emulator cannot reach `localhos
 On web, Google completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** (same scheme, host, and port) as the callback route.
 
 :::warning
-The web flow only works from the **built** app served by Serverpod (`http://localhost:8082/app` locally). Running the app with `flutter run -d chrome` fails, because Flutter's dev server is a different origin than Serverpod and the browser blocks the sign-in callback; see [troubleshooting](./troubleshooting#sign-in-callback-fails-locally-with-flutter-run--d-chrome). For a hot-reload workflow, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+The web flow only works from the **built** app served by Serverpod (`http://localhost:8082/app` locally). Running the app with `flutter run -d chrome` fails, because Flutter's dev server is a different origin than Serverpod and the browser blocks the sign-in callback. See [troubleshooting](./troubleshooting#sign-in-callback-fails-locally-with-flutter-run--d-chrome). For a hot-reload workflow, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 :::
 
 To test locally, build your Flutter web app into Serverpod's `web/app/` directory and start the server:
@@ -306,7 +296,7 @@ The examples below use port `8082` (Serverpod's default from `config/development
 3. Pass the same URL to `initializeGoogleSignIn` via the `redirectUri` argument when you initialize the client (covered in [Initialize the Google sign-in service](#initialize-the-google-sign-in-service) below).
 
    :::tip
-   You can also pass the redirect URI via `--dart-define`. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
+   You can also pass the redirect URI via `--dart-define`. See [Configuring the web redirect URI](./customizations#configuring-the-web-redirect-uri) for the pattern.
    :::
 
 ## Present the authentication UI
@@ -335,7 +325,7 @@ if (kIsWeb) {
 }
 ```
 
-Swap the redirect URI for your production URL when deploying. See [Configuring the Web redirect URI](./customizations#configuring-the-web-redirect-uri) to avoid hard-coding it per environment.
+Swap the redirect URI for your production URL when deploying. See [Configuring the web redirect URI](./customizations#configuring-the-web-redirect-uri) to avoid hard-coding it per environment.
 
 :::warning
 On web, the app served at `/app` is the build you created in [Web setup](#web). After changing `main.dart` (for example the `redirectUri`), run the build command again and hard-reload the browser. A stale build keeps sending the old values, and sign-in fails with [redirect_uri_mismatch](./troubleshooting#sign-in-fails-with-redirect_uri_mismatch).
@@ -343,7 +333,7 @@ On web, the app served at `/app` is the build you created in [Web setup](#web). 
 
 ### Show the Google sign-in button
 
-The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and the client code has been regenerated, the Google button appears inside it.
+New projects include a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. The version below is trimmed to the essentials. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. The `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GoogleIdpEndpoint` is exposed and the client code has been regenerated, the Google button appears inside it.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -489,7 +479,7 @@ Use `https://<project-id>.serverpod.space/auth/callback` as the redirect URI in 
 scloud password set googleClientSecret --from-file path/to/google-client-secret.json
 ```
 
-Run this from your linked server project directory, or pass `--project <project-id>` on the call. See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and other options.
+Run this from your linked server project directory, or pass `--project <project-id>` on the call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.
 
 ### 4. Update the Android OAuth client with the release SHA-1
 
@@ -506,7 +496,7 @@ keytool -list -v -keystore your-release-key.jks -alias your-key-alias
 Once you have the SHA-1, go back to your Android OAuth client in the Google Auth Platform and add it under **SHA-1 certificate fingerprint**.
 
 :::warning
-Forgetting this step is one of the most common reasons Google Sign-In works in debug builds but silently fails after publishing to the Play Store.
+Forgetting this step is one of the most common reasons Google sign-in works in debug builds but silently fails after publishing to the Play Store.
 :::
 
 ### 5. Publish the OAuth consent screen

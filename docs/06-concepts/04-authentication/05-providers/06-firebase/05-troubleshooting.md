@@ -26,7 +26,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Confirm the `project_id` inside `firebaseServiceAccountKey` matches the Firebase project the client is using.
 - [ ] Add `FirebaseIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 - [ ] Create a `FirebaseIdpEndpoint` file in `lib/src/auth/` extending `FirebaseIdpBaseEndpoint`.
-- [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**, then **A**).
+- [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**).
 
 #### Client
 
@@ -43,18 +43,21 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+**Resolution:** In the running `serverpod start` terminal, press **M** to create and apply the migration.
 
 ## Token verification fails with "invalid signature"
 
 **Problem:** The server rejects Firebase ID tokens with a signature verification error.
 
-**Cause:** The service account key in `passwords.yaml` does not belong to the same Firebase project that the client is using, or the YAML indentation broke the JSON.
+**Cause:** The ID token itself failed verification against Google's public certificates. The token was truncated or corrupted in transit, or what was sent is not a Firebase ID token.
+
+A project mismatch produces `Invalid issuer` or `Audience does not match` instead, and broken JSON in `passwords.yaml` fails at startup (see the parse-error entry below).
 
 **Resolution:**
 
-1. Verify the `project_id` in your `firebaseServiceAccountKey` matches the project in `firebase_options.dart`.
-2. Check that the JSON in `passwords.yaml` is properly indented under the `|` block scalar. All lines must be indented consistently.
+1. Log the token length in the app before sending it, and confirm the server receives the same value.
+2. Confirm the app sends the Firebase **ID token** (`getIdToken()`), not an access token or a custom token.
+3. For `Invalid issuer` or `Audience does not match`, verify the `project_id` in your `firebaseServiceAccountKey` matches the project in `firebase_options.dart`.
 
 ## Token verification fails with "token expired"
 
@@ -108,22 +111,22 @@ If you haven't run `flutterfire configure`, do so to generate the `firebase_opti
 
 1. **Missing service account key:** The `firebaseServiceAccountKey` is not present in `passwords.yaml`, or the JSON is invalid.
 2. **Missing endpoint:** You did not create the endpoint class extending `FirebaseIdpBaseEndpoint`. Without it, the client has no endpoint to call.
-3. **Missing migration:** The provider's database tables don't exist yet. In the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+3. **Missing migration:** The provider's database tables don't exist yet. In the `serverpod start` terminal, press **M** to create and apply the migration.
 4. **Project mismatch:** The service account key belongs to a different Firebase project than the one configured in your Flutter app. Compare `project_id` in `firebaseServiceAccountKey` against the project in `firebase_options.dart`.
 5. **App Check enabled prematurely:** If you enabled Firebase App Check before the client integration is in place, every request will be rejected with an App Check assertion error. Disable App Check until the client is wired up.
 
 ## Email validation rejects phone-only users
 
-**Problem:** Users who sign in with phone authentication are rejected with a `FirebaseUserInfoMissingDataException`.
+**Problem:** Users who sign in with phone authentication are rejected. The app receives `FirebaseEmailNotVerifiedException`, or a generic `FirebaseIdTokenVerificationException` when the validator throws a plain exception.
 
-**Cause:** A custom `firebaseAccountDetailsValidation` callback requires a verified email, but phone-only users don't have an email. The default validation allows phone-only authentication. If you overrode the default with a stricter check, you need to account for phone-only sign-in.
+**Cause:** A custom `firebaseAccountDetailsValidation` callback requires a verified email, but phone-only users don't have an email. The default validation accepts phone-only authentication, so this only happens with a custom validator.
 
-**Resolution:** Update your validation to allow phone-only authentication by checking for the presence of an email before requiring verification:
+**Resolution:** Guard on the presence of an email before requiring verification. The built-in `FirebaseIdpConfig.requireVerifiedEmail` does exactly this, or write it yourself:
 
 ```dart
 firebaseAccountDetailsValidation: (accountDetails) {
   if (accountDetails.email != null && accountDetails.verifiedEmail != true) {
-    throw FirebaseUserInfoMissingDataException();
+    throw FirebaseEmailNotVerifiedException();
   }
 },
 ```

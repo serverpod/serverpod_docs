@@ -79,7 +79,7 @@ Save your changes after completing the configuration.
    - **Client token**
 
 :::tip
-The **App secret** is sensitive. Keep it confidential and never commit it to version control. The **Client token** is required for some platforms (especially mobile and web).
+The **App secret** is sensitive. Keep it confidential and never commit it to version control. The **Client token** is used by the mobile SDKs on Android and iOS. Web and macOS initialize with the App ID alone.
 :::
 
 ## Server-side configuration
@@ -131,7 +131,7 @@ If you need more control over how the credentials are loaded, use `FacebookIdpCo
 
 ### Create the endpoint
 
-Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/facebook_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/facebook_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so your app can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/facebook.dart';
@@ -147,7 +147,7 @@ Start the server from your server project directory (e.g., `my_project_server/`)
 serverpod start
 ```
 
-Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create and apply the migration.
 
 :::warning
 Skipping the migration will cause the server to crash at runtime when the Facebook provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -459,6 +459,7 @@ For more detailed macOS setup instructions, refer to the [flutter_facebook_auth 
 Initialize the service in your app's `main()` function using the `initializeFacebookSignIn()` extension method on `FlutterAuthSessionManager`, on the line after `client.auth.initialize()`.
 
 ```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
 import 'package:your_client/your_client.dart';
 

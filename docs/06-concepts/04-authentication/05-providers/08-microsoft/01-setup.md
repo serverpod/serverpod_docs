@@ -8,10 +8,10 @@ description: Sign in with Microsoft uses a Microsoft Entra ID app registration. 
 To set up **Sign in with Microsoft**, you must create an app registration on [Microsoft Entra ID (formerly Azure AD)](https://portal.azure.com/) and configure your Serverpod application accordingly.
 
 :::caution
-You need to install the auth module before you continue, see [Setup](../../setup).
+Install the authentication module before you continue. See [Setup](../../setup).
 :::
 
-## Create your Microsoft Entra ID App
+## Create your Microsoft Entra ID app
 
 1. Go to [Microsoft Azure Portal](https://portal.azure.com/) and log in with your Microsoft account.
 2. Navigate to **Microsoft Entra ID** from the portal menu.
@@ -57,7 +57,7 @@ After registration, you'll be redirected to the app overview page where you can 
 The client secret value is only shown once. Store it securely immediately after creation. Never commit this value to version control.
 :::
 
-### Get the tenant ID (Optional)
+### Get the tenant ID (optional)
 
 If you're restricting authentication to a specific tenant, you'll need your **Directory (tenant) ID**, which is also shown on the app overview page. For most applications, you can use one of these common values:
 
@@ -131,7 +131,7 @@ development:
 Keep your Client Secret confidential. Never commit this value to version control. Store it securely using environment variables or secret management.
 :::
 
-### Configure the Microsoft Identity Provider
+### Configure the Microsoft identity provider
 
 In your main `server.dart` file, configure the Microsoft identity provider:
 
@@ -187,7 +187,7 @@ class MicrosoftIdpEndpoint extends MicrosoftIdpBaseEndpoint {}
 
 ### Generate and migrate
 
-Finally, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Finally, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

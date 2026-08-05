@@ -9,5 +9,5 @@ Serverpod's authentication module lets you implement custom authentication provi
 :::note
 This section is under development and will be updated soon.
 
-The package also provides general-purpose utilities to facilitate building IDPs. See [OAuth2 Utility](./oauth2-utility/setup).
+The package also provides general-purpose utilities to support building IDPs. See [OAuth2 Utility](./oauth2-utility/setup).
 :::

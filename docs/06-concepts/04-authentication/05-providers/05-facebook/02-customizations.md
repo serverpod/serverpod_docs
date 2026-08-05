@@ -57,7 +57,9 @@ The `facebookAccountDetailsValidation` callback receives a `FacebookAccountDetai
 | -------- | ---- | ----------- |
 | `userIdentifier` | `String` | The Facebook user's unique identifier (UID) |
 | `email` | `String?` | The user's email address (may be null) |
-| `name` | `String?` | The user's display name from Facebook |
+| `fullName` | `String?` | The user's full name from Facebook |
+| `firstName` | `String?` | The user's first name |
+| `lastName` | `String?` | The user's last name |
 | `image` | `Uri?` | URL to the user's profile image |
 
 Example of accessing these properties:
@@ -66,7 +68,7 @@ Example of accessing these properties:
 facebookAccountDetailsValidation: (accountDetails) {
   print('Facebook UID: ${accountDetails.userIdentifier}');
   print('Email: ${accountDetails.email}');
-  print('Display name: ${accountDetails.name}');
+  print('Display name: ${accountDetails.fullName}');
   print('Profile image: ${accountDetails.image}');
 
   // Custom validation logic
@@ -101,6 +103,10 @@ Adding additional permissions may require App Review depending on the sensitivit
 :::
 
 ### Accessing Facebook APIs on the server
+
+:::caution
+The `getExtraFacebookInfoCallback` below runs on **every** sign-in, not only the first. Cache what you fetch, and guard external calls with `try`/`catch` so a provider outage does not block sign-in.
+:::
 
 On the server side, you can access Facebook APIs using the access token. The `getExtraFacebookInfoCallback` in `FacebookIdpConfig` receives the access token and can be used to call Facebook Graph APIs:
 
@@ -149,7 +155,7 @@ This callback runs inside the same database transaction as the account creation.
 :::
 
 :::caution
-If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraFacebookInfoCallback` to fetch and store the data you need before the auth user is created.
+Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To assign scopes at creation time instead, use `onBeforeAuthUserCreated` together with `getExtraFacebookInfoCallback`, which runs before the auth user is created.
 :::
 
 ### Configuring Facebook sign-in on the app
@@ -183,7 +189,7 @@ flutter run -d <device> \
 
 This approach is useful when you need to:
 
-- Manage separate App IDs for different platforms (Android, iOS, Web, macOS) in a centralized way.
+- Set the App ID for web and macOS builds, where it is read from Dart. On Android and iOS the Facebook SDK reads it from the native configuration files instead.
 - Avoid committing App IDs to version control.
 - Configure different credentials for different build environments (development, staging, production).
 

@@ -36,14 +36,14 @@ The callback URL is where GitHub redirects the user after they authorize your ap
 
 1. In the **Callback URL** field, enter the redirect URI for your app. GitHub Apps accept up to 10 entries, one per line. Add every platform you target:
 
-   - **iOS and Android**: `com.example.yourapp://auth` (a custom scheme registered in `AndroidManifest.xml` and `Info.plist`).
+   - **iOS and Android**: `com.example.yourapp://auth`, a custom scheme registered in `AndroidManifest.xml`. iOS and macOS need no special configuration.
    - **Web**: `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production.
 
    ![Callback URL field](/img/authentication/providers/github/2-callback-url.png)
 
-2. Leave **Expire user authorization tokens** enabled (GitHub's default). Token expiration is recommended for sign-in flows so leaked tokens have a short useful lifetime. Serverpod handles refreshing the token; you do not need to write any refresh logic.
+2. Leave **Expire user authorization tokens** enabled (GitHub's default). Token expiration is recommended for sign-in flows so leaked tokens have a short useful lifetime. Serverpod uses the access token once during sign-in and does not store or refresh it, so expiry does not affect signed-in users.
 
-3. Leave **Request user authorization (OAuth) during installation** unchecked unless you need the installation of your Flutter app to immediately trigger an OAuth sign-in.
+3. Leave **Request user authorization (OAuth) during installation** unchecked unless you need users to authorize immediately when they install the GitHub App on their account or organization.
 
 ### Disable webhooks
 
@@ -137,7 +137,7 @@ If you need more control over how the credentials are loaded, use `GitHubIdpConf
 
 ### Create the endpoint
 
-Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/github_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so the Flutter client can call them to complete the authentication flow:
+Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/github_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so your app can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/github.dart';
@@ -153,7 +153,7 @@ Start the server from your server project directory (e.g., `my_project_server/`)
 serverpod start
 ```
 
-Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create and apply the migration.
 
 :::warning
 Skipping the migration will cause the server to crash at runtime when the GitHub provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -202,11 +202,11 @@ The scheme in `AndroidManifest.xml` must exactly match the scheme in your GitHub
 On web, GitHub completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** as the callback route. To test locally, build your Flutter web app into Serverpod's `web/app/` directory:
 
 ```bash
-flutter build web --output ../my_project_server/web/app  # from your Flutter project
+flutter build web --base-href / --output ../my_project_server/web/app  # from your Flutter project
 serverpod start --no-flutter                             # from your server project
 ```
 
-Open `http://localhost:8082/app` to test. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app instead of launching a separate `flutter run -d chrome` instance, which runs on a different port and would not share Serverpod's origin. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app instead of launching a separate `flutter run -d chrome` instance, which runs on a different port and would not share Serverpod's origin. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -261,7 +261,7 @@ void main() async {
   await client.auth.initialize();
   await client.auth.initializeGitHubSignIn(
     clientId: 'your-github-client-id',
-    redirectUri: Uri.parse('com.example.yourapp://auth'),
+    redirectUri: 'com.example.yourapp://auth',
   );
 
   runApp(const MyApp());
@@ -276,7 +276,7 @@ To keep these values out of `main.dart` and vary them per build, read them from 
 
 ### Show the GitHub sign-in button
 
-The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GitHubIdpEndpoint` is exposed and the client code has been regenerated, the GitHub button appears inside it.
+The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. The `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GitHubIdpEndpoint` is exposed and the client code has been regenerated, the GitHub button appears inside it.
 
 To customize the GitHub button or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
 
@@ -293,7 +293,7 @@ Go back to your GitHub App's settings and add your production callback URL to **
 
 ### 2. Set production credentials
 
-Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones, both stay in place and Serverpod picks the right set based on the run mode.
+Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones. Both stay in place, and Serverpod picks the right set based on the run mode.
 
 If you use the same GitHub App for development and production, you can reuse the same `githubClientId` and `githubClientSecret`. For separate environments, [register a second GitHub App](https://github.com/settings/apps/new) first and use its values.
 
@@ -319,7 +319,7 @@ scloud password set githubClientId your-github-client-id
 scloud password set githubClientSecret --from-file path/to/github-client-secret.txt
 ```
 
-Run these from your linked server project directory, or pass `--project <project-id>` on each call (the flag is required unless the project is linked). See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and other options.
+Run these from your linked server project directory, or pass `--project <project-id>` on each call (the flag is required unless the project is linked). See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.
 
 ### 3. Verify the redirect URI in the Flutter build
 

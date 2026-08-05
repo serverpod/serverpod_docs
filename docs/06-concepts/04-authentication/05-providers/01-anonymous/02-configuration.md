@@ -36,7 +36,7 @@ AnonymousSignInWidget(
 )
 ```
 
-### Configuring the Server
+### Configuring the server
 
 In `onBeforeAnonymousAccountCreated`, receive the optional `token` and verify it with your app-check provider. If verification fails or the token is missing (when you require it), throw an `AnonymousAccountBlockedException` with reason `denied` to block account creation.
 
@@ -69,7 +69,7 @@ For Firebase App Check, you can verify the token from a custom backend using the
 
 ## Reacting to anonymous account creation
 
-Beside the `onBeforeAnonymousAccountCreated` callback to allow or deny creation, you can also use the `onAfterAnonymousAccountCreated` callback to run logic after a new anonymous account has been created (e.g. analytics or side effects).
+Besides the `onBeforeAnonymousAccountCreated` callback to allow or deny creation, you can also use the `onAfterAnonymousAccountCreated` callback to run logic after a new anonymous account has been created (e.g. analytics or side effects).
 
 ```dart
 AnonymousIdpConfig(

@@ -36,7 +36,18 @@ final appleIdpConfig = AppleIdpConfig(
 
 ### Reacting to account creation
 
-The Apple provider does not expose its own account-creation callback. To run logic after a user signs in with Apple for the first time, use the user-level [`onAfterAuthUserCreated`](../../working-with-users#reacting-to-the-user-created-event) callback on `AuthUsersConfig`. It fires the first time any provider creates an auth user, including Apple.
+For Apple-specific logic, use `onAfterAppleAccountCreated` on `AppleIdpConfig`. It receives the created `AppleAccount` row, so you can read the Apple identifier and the name Apple returned on first sign-in.
+
+```dart
+AppleIdpConfigFromPasswords(
+  onAfterAppleAccountCreated:
+      (session, authUser, appleAccount, {required transaction}) async {
+    session.log('Apple account created: ${appleAccount.userIdentifier}');
+  },
+)
+```
+
+For logic that should run whichever provider the user signed in with, use [`onAfterAuthUserCreated`](../../working-with-users#reacting-to-the-user-created-event) on `AuthUsersConfig` instead. It fires the first time any provider creates an auth user.
 
 ```dart
 pod.initializeAuthServices(
@@ -66,11 +77,7 @@ This callback runs inside the same database transaction as the auth user creatio
 
 ### Web routes configuration
 
-Sign in with Apple requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server.
-
-The `revokedNotificationRoutePath` is the path that Apple will call when a user revokes their authorization. The `webAuthenticationCallbackRoutePath` is the path that Apple will call when a user completes the sign-in process.
-
-These routes are configured in the `pod.configureAppleIdpRoutes()` method:
+Sign in with Apple requires web routes for handling callbacks and notifications. These routes must be configured both on Apple's side and in your Serverpod server, using the `pod.configureAppleIdpRoutes()` method:
 
 ```dart
 pod.configureAppleIdpRoutes(
@@ -80,15 +87,15 @@ pod.configureAppleIdpRoutes(
 ```
 
 - `revokedNotificationRoutePath` (default: `'/hooks/apple-notification'`): The path Apple calls when a user revokes authorization. Register this URL in your Apple Developer Portal for server-to-server notifications.
-- `webAuthenticationCallbackRoutePath` (default: `'/auth/callback'`): The path Apple redirects to after the user completes web-based sign-in. Must match the return URL registered on your Service ID.
+- `webAuthenticationCallbackRoutePath` (default: `'/auth/apple/callback'`): The path Apple redirects to after the user completes web-based sign-in. Must match the return URL registered on your Service ID.
 
 :::note
-When a user revokes access from their Apple ID settings, Apple sends a notification to `revokedNotificationRoutePath`. You are responsible for invalidating any active sessions for that user in your own application logic.
+When a user revokes access from their Apple ID settings, Apple sends a notification to `revokedNotificationRoutePath`. Registering the route is enough: Serverpod revokes the Apple authorization and the tokens it issued through Apple sign-in for that user. Clean up only your own derived records.
 :::
 
 ### Configuring Sign in with Apple on the app
 
-On web and Android, the Flutter client needs the Service ID and the server callback URL. The setup guide passes them via `--dart-define`. If you would rather hardcode them or resolve them at runtime, pass them directly to `initializeAppleSignIn()` instead:
+Your app needs the Service ID and the server callback URL. The setup guide passes them via `--dart-define`. If you would rather hardcode them or resolve them at runtime, pass them directly to `initializeAppleSignIn()` instead:
 
 ```dart
 client.auth.initializeAppleSignIn(
@@ -100,12 +107,12 @@ client.auth.initializeAppleSignIn(
 When both are passed, they take precedence over the `APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` build variables. The `redirectUri` must match the **Return URL** registered on your Apple Service ID and the value used by `pod.configureAppleIdpRoutes()`.
 
 :::note
-These parameters are only used on web and Android. On native Apple platforms (iOS/macOS), the values come from your Xcode capability and are ignored here.
+Only the web and Android flow consumes these values, but `initializeAppleSignIn` requires them on every platform. Pass them (or the matching dart-defines) even in an iOS-only app, or initialization throws.
 :::
 
 #### Using environment variables
 
-The build variables `APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` are read by `initializeAppleSignIn()` on web and Android:
+The build variables `APPLE_SERVICE_IDENTIFIER` and `APPLE_REDIRECT_URI` are read by `initializeAppleSignIn()` whenever you do not pass the values as parameters:
 
 - `APPLE_SERVICE_IDENTIFIER`: your Services ID identifier (e.g. `com.example.service`)
 - `APPLE_REDIRECT_URI`: the server callback URL (e.g. `https://example.com/auth/callback`)
@@ -132,11 +139,11 @@ You can set `--dart-define` values in your IDE run configuration or CI/CD pipeli
 
 | Parameter | Type | Required | `passwords.yaml` key | Description |
 | --- | --- | --- | --- | --- |
-| `serviceIdentifier` | `String` | Yes (Android/Web) | `appleServiceIdentifier` | The Services ID identifier (e.g. `com.example.service`). Used as the OAuth client ID for Android and Web. |
+| `serviceIdentifier` | `String` | Yes | `appleServiceIdentifier` | The Services ID identifier (e.g. `com.example.service`). Required on every platform, though only the Android and web OAuth flow uses it. |
 | `bundleIdentifier` | `String` | Yes | `appleBundleIdentifier` | The App ID bundle identifier (e.g. `com.example.app`). Used as the client ID for native Apple platform sign-in. |
-| `redirectUri` | `String` | Yes (Android/Web) | `appleRedirectUri` | The server callback route Apple redirects to after sign-in. Must be HTTPS and match the return URL registered on your Service ID. |
+| `redirectUri` | `String` | Yes | `appleRedirectUri` | The server callback route Apple redirects to after sign-in. Sent with every authorization-code exchange, and validated by Apple in the Android and web flow. Must be HTTPS and match the return URL registered on your Service ID. |
 | `teamId` | `String` | Yes | `appleTeamId` | The 10-character Team ID from your Apple Developer account. Used to sign the client secret JWT. |
 | `keyId` | `String` | Yes | `appleKeyId` | The Key ID of the Sign in with Apple private key. |
 | `key` | `String` | Yes | `appleKey` | The raw contents of the `.p8` private key file, including the `-----BEGIN PRIVATE KEY-----` header and footer. Do not pre-generate the JWT yourself. |
 | `webRedirectUri` | `String?` | Web only | `appleWebRedirectUri` | The web app URL the browser is redirected to after the server receives Apple's callback. |
-| `androidPackageIdentifier` | `String?` | Android only | `appleAndroidPackageIdentifier` | The Android package name (e.g. `com.example.app`). When set, the callback route redirects Android clients back to the app via an intent URI. |
+| `androidPackageIdentifier` | `String?` | Android only | `appleAndroidPackageIdentifier` | The Android package name (e.g. `com.example.app`). When set, the callback route redirects Android sign-ins back to the app via an intent URI. |

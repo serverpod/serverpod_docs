@@ -100,7 +100,7 @@ SignInWidget(
 )
 ```
 
-Fields set on `buttonStyle` apply to the provider buttons. Brand style presets, such as `GoogleButtonStyle.filledBlack`, only apply when a provider widget is used on its own, outside `SignInWidget`.
+Fields set on `buttonStyle` apply to the provider buttons, and they also override the same-named arguments on a custom provider widget you pass to `SignInWidget`. Fields left unset fall through to the widget's own arguments. Brand style presets, such as `GoogleButtonStyle.filledBlack`, only apply when a provider widget is used on its own, outside `SignInWidget`.
 
 For all options of each provider widget, see the "Customizing the UI" page for that provider, which also covers building a custom UI with the provider's controller. For example, see [the email provider](./providers/email/customizing-the-ui).
 
