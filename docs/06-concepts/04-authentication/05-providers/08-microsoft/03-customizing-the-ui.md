@@ -15,7 +15,8 @@ SignInWidget(
   client: client,
   microsoftSignInWidget: MicrosoftSignInWidget(
     client: client,
-    // Shape and label survive inside SignInWidget. Brand colors do not.
+    // Shape and label survive inside SignInWidget, unless its buttonStyle
+    // sets them. Brand colors do not.
     shape: SignInButtonShape.rounded,
     text: SignInButtonTextVariant.signInWith,
     // A custom widget replaces the built-in handling, so pass your own callbacks.

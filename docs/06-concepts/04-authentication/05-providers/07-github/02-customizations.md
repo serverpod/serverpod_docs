@@ -144,7 +144,7 @@ This callback runs inside the same database transaction as the account creation.
 :::
 
 :::caution
-Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To force them sooner, revoke the user's tokens so they sign in again. The `onBeforeAuthUserCreated` hook cannot help for GitHub, because `getExtraGitHubInfoCallback` runs after the auth user is created.
+Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To force them sooner, revoke the user's tokens so they sign in again. The `onBeforeAuthUserCreated` hook, covered below, assigns scopes at creation time, but it cannot use GitHub data, because `getExtraGitHubInfoCallback` runs after the auth user is created.
 :::
 
 ### Reacting to auth user creation

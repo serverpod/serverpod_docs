@@ -36,7 +36,7 @@ The callback URL is where GitHub redirects the user after they authorize your ap
 
 1. In the **Callback URL** field, enter the redirect URI for your app. GitHub Apps accept up to 10 entries, one per line. Add every platform you target:
 
-   - **iOS and Android**: `com.example.yourapp://auth`, a custom scheme registered in `AndroidManifest.xml`. iOS and macOS need no special configuration.
+   - **iOS, macOS, and Android**: `com.example.yourapp://auth`. Register the custom scheme in `AndroidManifest.xml`. iOS and macOS need no special configuration.
    - **Web**: `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production.
 
    ![Callback URL field](/img/authentication/providers/github/2-callback-url.png)

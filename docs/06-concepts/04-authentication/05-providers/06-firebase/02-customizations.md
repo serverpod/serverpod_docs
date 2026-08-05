@@ -155,8 +155,26 @@ pod.initializeAuthServices(
 );
 ```
 
+For the Firebase-specific hook, pass `onAfterFirebaseAccountCreated` to the provider config. It receives the created `FirebaseAccount`, so it can read the phone number or the Firebase UID:
+
+```dart
+FirebaseIdpConfigFromPasswords(
+  onAfterFirebaseAccountCreated:
+      (session, authUser, firebaseAccount, {required transaction}) async {
+    if (firebaseAccount.phone != null) {
+      await AuthServices.instance.authUsers.update(
+        session,
+        authUserId: authUser.id,
+        scopes: {...authUser.scopes, Scope('phone-verified')},
+        transaction: transaction,
+      );
+    }
+  },
+)
+```
+
 :::warning
-Both callbacks run inside the same database transaction as the account creation. Throwing an exception inside either callback aborts the sign-up. Wrap external side-effects (email sending, analytics) in `try`/`catch` so a third-party outage does not block new sign-ups.
+These callbacks run inside the same database transaction as the account creation. Throwing an exception inside a callback aborts the sign-up. Wrap external side-effects (email sending, analytics) in `try`/`catch` so a third-party outage does not block new sign-ups.
 :::
 
 ## FirebaseIdpConfig parameter reference
