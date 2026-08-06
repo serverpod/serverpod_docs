@@ -242,17 +242,17 @@ When testing against a local server, the Android emulator cannot reach `localhos
 On web, Google completes sign-in by redirecting the browser to a callback URL you control. This flow requires Serverpod to serve your Flutter web app on the **same origin** (same scheme, host, and port) as the callback route.
 
 :::warning
-The web flow only works from the **built** app served by Serverpod (`http://localhost:8082/app` locally). Running the app with `flutter run -d chrome` fails, because Flutter's dev server is a different origin than Serverpod and the browser blocks the sign-in callback. See [troubleshooting](./troubleshooting#sign-in-callback-fails-locally-with-flutter-run--d-chrome). For a hot-reload workflow, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+The web flow only works from the **built** app served by Serverpod (`http://localhost:8082/` locally on default projects). Running the app with `flutter run -d chrome` fails, because Flutter's dev server is a different origin than Serverpod and the browser blocks the sign-in callback. See [troubleshooting](./troubleshooting#sign-in-callback-fails-locally-with-flutter-run--d-chrome). For a hot-reload workflow, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
 :::
 
 To test locally, build your Flutter web app into Serverpod's `web/app/` directory and start the server:
 
 ```bash
-flutter build web --base-href /app/ --output ../my_project_server/web/app  # from your Flutter project
+flutter build web --base-href / --output ../my_project_server/web/app  # from your Flutter project
 serverpod start                                                            # from your server project
 ```
 
-Replace `my_project_server` with your server package directory. Open `http://localhost:8082/app` to test.
+Replace `my_project_server` with your server package directory. Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -328,7 +328,7 @@ if (kIsWeb) {
 Swap the redirect URI for your production URL when deploying. See [Configuring the web redirect URI](./customizations#configuring-the-web-redirect-uri) to avoid hard-coding it per environment.
 
 :::warning
-On web, the app served at `/app` is the build you created in [Web setup](#web). After changing `main.dart` (for example the `redirectUri`), run the build command again and hard-reload the browser. A stale build keeps sending the old values, and sign-in fails with [redirect_uri_mismatch](./troubleshooting#sign-in-fails-with-redirect_uri_mismatch).
+On web, the app Serverpod serves is the build you created in [Web setup](#web). After changing `main.dart` (for example the `redirectUri`), run the build command again and hard-reload the browser. A stale build keeps sending the old values, and sign-in fails with [redirect_uri_mismatch](./troubleshooting#sign-in-fails-with-redirect_uri_mismatch).
 :::
 
 ### Show the Google sign-in button
@@ -413,7 +413,7 @@ The `SignInWidget` renders the standard Google sign-in button:
 
 ![Google sign-in button](/img/authentication/providers/google/3-button.png)
 
-To change the button's theme or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
+To change the button's theme or build a fully custom UI, see [Customizations](./customizations#customize-the-sign-in-button).
 
 :::tip
 If you run into issues, see the [troubleshooting guide](./troubleshooting).

@@ -1,13 +1,17 @@
 ---
 sidebar_label: Customizations
-description: Sign in with GitHub can be configured through GitHubIdpConfig, including how to load credentials and use the available callbacks.
+description: Configuration options for GitHub sign-in, including credential loading, server callbacks, app-side client IDs, and custom UIs built with GitHubSignInWidget and GitHubAuthController.
 ---
 
 # Customize GitHub sign-in
 
-This page covers additional configuration options for the GitHub identity provider beyond the basic setup.
+This page covers additional configuration options for the GitHub identity provider beyond the basic setup. On the server, you can control how credentials are loaded and hook into the sign-in flow with callbacks. In your app, you can configure client IDs and redirect URIs, and customize the sign-in UI. Use the `GitHubSignInWidget` to display the GitHub Sign-In flow in your own custom UI, or the `GitHubAuthController` to build a completely custom authentication interface.
 
-## Configuration options
+## Server configuration
+
+The options in this section are set on the server when you register the GitHub identity provider.
+
+### Configuration options
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `GitHubIdpConfig` in-code documentation.
 
@@ -20,7 +24,7 @@ The `GitHubIdpConfigFromPasswords` class is a convenience wrapper around `GitHub
 
 Both classes accept the same optional callbacks shown in the sections below. The examples on this page use `GitHubIdpConfigFromPasswords` unless the section specifically demonstrates manual credential loading.
 
-### Load credentials using GitHubIdpConfig
+#### Load credentials using GitHubIdpConfig
 
 When using `GitHubIdpConfig`, you must provide the client ID and secret explicitly. Read them from any source you want:
 
@@ -40,7 +44,7 @@ final githubIdpConfig = GitHubIdpConfig(
 );
 ```
 
-### Custom account validation
+#### Custom account validation
 
 You can customize the validation for GitHub account details before allowing sign-in. By default, the validation only checks that the received account details contain a non-empty `userIdentifier`.
 
@@ -59,7 +63,7 @@ final githubIdpConfig = GitHubIdpConfigFromPasswords(
 GitHub users can keep their email private, so `email` may be `null` even for valid accounts. Similarly, `name` is optional on GitHub profiles. To avoid blocking real users with private profiles from signing in, adjust your validation function with care.
 :::
 
-#### GitHubAccountDetails
+##### GitHubAccountDetails
 
 The `githubAccountDetailsValidation` callback receives a `GitHubAccountDetails` record with the following properties:
 
@@ -86,7 +90,7 @@ githubAccountDetailsValidation: (accountDetails) {
 },
 ```
 
-### Accessing GitHub APIs on the server
+#### Accessing GitHub APIs on the server
 
 On the server side, you can call GitHub's REST API using the access token returned by sign-in. The `getExtraGitHubInfoCallback` on `GitHubIdpConfig` receives the access token on every authentication attempt and can be used to fetch and store additional user data:
 
@@ -117,10 +121,10 @@ final githubIdpConfig = GitHubIdpConfigFromPasswords(
 :::
 
 :::info
-This callback runs on **every** sign-in, not just the first. Keep operations lightweight or guard expensive work behind a check for whether the data already exists.
+This callback runs on **every** sign-in, not only the first. Keep operations lightweight or guard expensive work behind a check for whether the data already exists. Guard external calls with `try`/`catch`, because an uncaught exception in the callback makes the sign-in fail.
 :::
 
-### Reacting to GitHub account creation
+#### Reacting to GitHub account creation
 
 Use the `onAfterGitHubAccountCreated` callback to run logic after a new GitHub account has been created and linked to an auth user. This callback only fires for new accounts, not returning users.
 
@@ -147,42 +151,23 @@ This callback runs inside the same database transaction as the account creation.
 Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To force them sooner, revoke the user's tokens so they sign in again. The `onBeforeAuthUserCreated` hook, covered below, assigns scopes at creation time, but it cannot use GitHub data, because `getExtraGitHubInfoCallback` runs after the auth user is created.
 :::
 
-### Reacting to auth user creation
+#### Reacting to auth user creation
 
-The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to GitHub. They fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
+The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to GitHub. They fire for every identity provider. See [user creation callbacks](../../working-with-users#user-creation-callbacks) for full details on both hooks.
 
-The `onBeforeAuthUserCreated` callback receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
+### GitHubIdpConfig parameter reference
 
-```dart
-pod.initializeAuthServices(
-  tokenManagerBuilders: [
-    JwtConfigFromPasswords(),
-  ],
-  identityProviderBuilders: [
-    GitHubIdpConfigFromPasswords(),
-  ],
-  authUsersConfig: AuthUsersConfig(
-    onBeforeAuthUserCreated: (
-      session,
-      scopes,
-      blocked, {
-      required transaction,
-    }) {
-      return (
-        scopes: {...scopes, Scope('user')},
-        blocked: blocked,
-      );
-    },
-    onAfterAuthUserCreated: (
-      session,
-      authUser, {
-      required transaction,
-    }) async {
-      // e.g. send a welcome email, log for analytics
-    },
-  ),
-);
-```
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `clientId` | `String` | Yes | The Client ID from your GitHub App or OAuth App. |
+| `clientSecret` | `String` | Yes | The Client Secret generated for your GitHub App or OAuth App. |
+| `githubAccountDetailsValidation` | `GitHubAccountDetailsValidation` | No | Custom validation callback for GitHub account details before allowing sign-in. Throws an exception to reject the account. Defaults to validating only that `userIdentifier` is non-empty. |
+| `getExtraGitHubInfoCallback` | `GetExtraGitHubInfoCallback?` | No | Callback that receives the access token after sign-in, allowing you to call additional GitHub APIs and store extra user data. Runs on every sign-in. |
+| `onAfterGitHubAccountCreated` | `AfterGitHubAccountCreatedFunction?` | No | Callback invoked after a new GitHub account is created and linked to an auth user. Fires only for new accounts. |
+
+## App configuration
+
+The options in this section are set in your Flutter app when you initialize the GitHub Sign-In service.
 
 ### Configuring client IDs on the app
 
@@ -248,12 +233,129 @@ Use this flow when your Flutter web app and Serverpod are on different origins. 
 
 4. Pass the same URL to `initializeGitHubSignIn` via the `redirectUri` argument instead of the route URL.
 
-## GitHubIdpConfig parameter reference
+## Customize the sign-in button
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `clientId` | `String` | Yes | The Client ID from your GitHub App or OAuth App. |
-| `clientSecret` | `String` | Yes | The Client Secret generated for your GitHub App or OAuth App. |
-| `githubAccountDetailsValidation` | `GitHubAccountDetailsValidation` | No | Custom validation callback for GitHub account details before allowing sign-in. Throws an exception to reject the account. Defaults to validating only that `userIdentifier` is non-empty. |
-| `getExtraGitHubInfoCallback` | `GetExtraGitHubInfoCallback?` | No | Callback that receives the access token after sign-in, allowing you to call additional GitHub APIs and store extra user data. Runs on every sign-in. |
-| `onAfterGitHubAccountCreated` | `AfterGitHubAccountCreatedFunction?` | No | Callback invoked after a new GitHub account is created and linked to an auth user. Fires only for new accounts. |
+See [Styling the buttons](../../ui-components#styling-the-buttons) for how a `buttonStyle` set on `SignInWidget` takes precedence over the appearance arguments shown below.
+
+:::info
+The `SignInWidget` uses the `GitHubSignInWidget` internally to display the GitHub Sign-In flow. You can also supply a custom `GitHubSignInWidget` to the `SignInWidget` to override the default behavior.
+
+```dart
+SignInWidget(
+  client: client,
+  githubSignInWidget: GitHubSignInWidget(
+    client: client,
+    // Shape and label survive inside SignInWidget, unless its buttonStyle
+    // sets them. Brand colors do not.
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
+  ),
+)
+```
+
+:::
+
+### Using the `GitHubSignInWidget`
+
+The `GitHubSignInWidget` handles the complete GitHub Sign-In flow for your Flutter app.
+
+You can customize the widget's appearance and behavior:
+
+```dart
+GitHubSignInWidget(
+  client: client,
+  // Button customization. The values shown are the defaults.
+  style: GitHubButtonStyle.black, // or white
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
+
+  // Scopes to request from GitHub
+  // These are the default.
+  scopes: const ['user', 'user:email', 'read:user'],
+
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+  },
+)
+```
+
+:::note
+The `scopes` argument applies to **OAuth Apps**. For a **GitHub App**, the App's [Permissions](./setup#set-permissions) configured on the GitHub side control access and the `scopes` argument is ignored.
+:::
+
+## Build a custom UI with GitHubAuthController
+
+For more control over the UI, you can use the `GitHubAuthController` class, which provides all the authentication logic without any UI components. This allows you to build a completely custom authentication interface.
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+
+final controller = GitHubAuthController(
+  client: client,
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+  },
+  scopes: const ['user', 'user:email', 'read:user'],
+);
+
+// Initiate sign-in
+await controller.signIn();
+```
+
+### GitHubAuthController state management
+
+Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
+
+```dart
+// Check current state
+final state = controller.state; // GitHubAuthState enum
+
+// Check if loading
+final isLoading = controller.isLoading;
+
+// Check if authenticated
+final isAuthenticated = controller.isAuthenticated;
+
+// Get error message
+final errorMessage = controller.errorMessage;
+
+// Listen to state changes
+controller.addListener(() {
+  setState(() {
+    // Rebuild UI when controller state changes
+  });
+});
+```
+
+#### GitHubAuthController states
+
+- `GitHubAuthState.idle` - Ready for user interaction.
+- `GitHubAuthState.loading` - Processing a sign-in request.
+- `GitHubAuthState.error` - An error occurred.
+- `GitHubAuthState.authenticated` - Authentication was successful.
+
+## Related
+
+- [Setup](./setup): configure GitHub sign-in on the server and in your app.
+- [Troubleshooting](./troubleshooting): fix common GitHub sign-in errors.
+- [UI components](../../ui-components): style the sign-in buttons and localize the built-in UI.
+- [Working with users](../../working-with-users): manage auth users and react to account events.

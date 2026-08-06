@@ -92,7 +92,7 @@ GitHub users can keep their email private. Even with the **Email addresses** per
 
 ### Store your credentials
 
-Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add `githubClientId` and `githubClientSecret` to the `development:` section using the values you just copied:
+Your server's `config/passwords.yaml` already has `development:`, `staging:`, and `production:` sections from the project template. Add `githubClientId` and `githubClientSecret` to the `development:` section using the values you copied above:
 
 ```yaml
 development:
@@ -278,7 +278,7 @@ To keep these values out of `main.dart` and vary them per build, read them from 
 
 The Serverpod template ships with a `SignInScreen` widget at `lib/screens/sign_in_screen.dart`. It listens to `client.auth.authInfoListenable` and swaps between `SignInWidget` while the user is signed out and the `child` you pass it once they sign in. The `SignInWidget` auto-detects which identity provider endpoints are registered on the server, so once `GitHubIdpEndpoint` is exposed and the client code has been regenerated, the GitHub button appears inside it.
 
-To customize the GitHub button or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
+To customize the GitHub button or build a fully custom UI, see [Customizations](./customizations#customize-the-sign-in-button).
 
 ## Publishing to production
 

@@ -145,11 +145,11 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 
 ## User email is `null` after sign-in
 
-**Problem:** The user's email is missing or `null` after sign in, or it's present on first sign-in but missing after that.
+**Problem:** The user's email is missing or `null` after sign-in, or it's present on first sign-in but missing after that.
 
-**Cause:** Apple sends the email address and name only once, during initial authorization. After that, only the `sub` claim is provided. If you didn't save the email the first time, you can't get it again unless the user disconnects and reconnects your app.
+**Cause:** Apple sends the email address and name only once, during the initial authorization. Later sign-ins carry only the stable `sub` identifier. Serverpod stores both values on the `AppleAccount` row when it first creates the account. The usual reason they are missing is that the first authorization never completed on your server, for example because the endpoint was added afterwards.
 
-**Resolution:** Make sure your server stores the user's email on their first sign-in. Use `sub` as the main user identifier, not email (which can change if the user updates Hide My Email). See [Authenticating users with Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple/authenticating-users-with-sign-in-with-apple).
+**Resolution:** The module does not backfill these fields on later sign-ins. Ask the user for their email in your app. If the user removes your app in their Apple ID settings (**Sign in with Apple > Stop Using Apple ID**) and signs in again, Apple resends the values, but the module keeps the old account row. Sign-in itself is unaffected either way, since accounts are keyed by Apple's stable identifier, not the email. See [Authenticating users with Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple/authenticating-users-with-sign-in-with-apple).
 
 ## iOS sign-in prompt doesn't show
 
@@ -204,3 +204,9 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 **Cause:** Apple's revocation notification never reaches your server. Once it does, Serverpod revokes the Apple authorization and the tokens it issued through Apple sign-in automatically.
 
 **Resolution:** Check that `pod.configureAppleIdpRoutes()` registers a `revokedNotificationRoutePath`, that the route's public HTTPS URL is registered as the server-to-server notification endpoint in the Apple Developer Portal, and that the URL is reachable from the internet. See [Processing changes for Sign in with Apple accounts](https://developer.apple.com/documentation/signinwithapple/processing-changes-for-sign-in-with-apple-accounts) for how the notification works.
+
+## Related
+
+- [Setup](./setup): configure Sign in with Apple on the server and in your app.
+- [Customizations](./customizations): configuration options and sign-in UI customization.
+- [UI components](../../ui-components): the sign-in widgets and how to compose them.

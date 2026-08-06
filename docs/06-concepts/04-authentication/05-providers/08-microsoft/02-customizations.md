@@ -1,17 +1,21 @@
 ---
-sidebar_label: Configuration
-description: Microsoft identity provider options include which account types can sign in through the tenant setting. Configure them beyond the basic setup.
+sidebar_label: Customizations
+description: Microsoft identity provider options beyond the basic setup, from tenant and account validation on the server to client IDs and a custom sign-in UI in the app.
 ---
 
-# Configure Microsoft sign-in
+# Customize Microsoft sign-in
 
-This page covers configuration options for the Microsoft identity provider beyond the basic setup.
+This page covers configuration options for the Microsoft identity provider beyond the basic setup, on both the server and the app. It also shows how to customize the sign-in UI. You can use the `MicrosoftSignInWidget` to display the Microsoft Sign-In flow in your own custom UI, or the `MicrosoftAuthController` to build a completely custom authentication interface.
 
-## Configuration options
+## Server configuration
+
+These options are set on the `MicrosoftIdpConfig` in your server code.
+
+### Configuration options
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `MicrosoftIdpConfig` in-code documentation.
 
-### Tenant configuration
+#### Tenant configuration
 
 The `tenant` parameter determines which accounts can sign in to your application:
 
@@ -32,7 +36,7 @@ final microsoftIdpConfig = MicrosoftIdpConfig(
 Use `'common'` for the widest user base. Use a specific tenant ID when building internal applications for a single organization.
 :::
 
-### Custom account validation
+#### Custom account validation
 
 You can customize the validation for Microsoft account details before allowing sign-in. By default, the validation checks that the received account details contain a non-empty userIdentifier.
 
@@ -56,7 +60,7 @@ final microsoftIdpConfig = MicrosoftIdpConfigFromPasswords(
 Users may choose not to share their email or other information during the Microsoft login flow. Adjust your validation function carefully to avoid blocking legitimate users.
 :::
 
-### MicrosoftAccountDetails
+#### MicrosoftAccountDetails
 
 The `microsoftAccountDetailsValidation` callback receives a `MicrosoftAccountDetails` record with the following properties:
 
@@ -87,30 +91,7 @@ microsoftAccountDetailsValidation: (accountDetails) {
 The properties available depend on the scopes requested and what the user consented to share.
 :::
 
-### Accessing Microsoft APIs
-
-The default setup allows access to basic user information, such as `name`, `email`. You may require additional access scopes to access other Microsoft APIs, such as accessing a user's calendar, mail, or OneDrive files.
-
-The default scopes requested are:
-
-- `openid`: Required for OpenID Connect authentication.
-- `profile`: Access to user's basic profile information.
-- `email`: Access to user's email address.
-- `offline_access`: Allows refresh tokens for long-lived sessions.
-- `https://graph.microsoft.com/User.Read`: Access to user's Microsoft Graph profile.
-
-To request additional scopes, you will need to:
-
-- Ensure the required API permissions are configured in your Microsoft Entra ID app registration (navigate to **API permissions** in the [Azure Portal](https://portal.azure.com/)).
-- Request access to the scopes when signing in. Do this by setting the `scopes` parameter of the `MicrosoftSignInWidget` or `MicrosoftAuthController`.
-
-A full list of available scopes and Microsoft Graph API permissions can be found in the [Microsoft Graph permissions reference](https://learn.microsoft.com/en-us/graph/permissions-reference).
-
-:::info
-Adding additional scopes may require admin consent depending on your tenant configuration and the sensitivity of the requested permissions.
-:::
-
-### Accessing Microsoft APIs on the server
+#### Accessing Microsoft APIs on the server
 
 :::caution
 The `getExtraMicrosoftInfoCallback` below runs on **every** sign-in, not only the first. Cache what you fetch, and guard external calls with `try`/`catch` so a provider outage does not block sign-in.
@@ -139,7 +120,7 @@ final microsoftIdpConfig = MicrosoftIdpConfigFromPasswords(
 );
 ```
 
-## Reacting to account creation
+### Reacting to account creation
 
 You can use the `onAfterMicrosoftAccountCreated` callback to run logic after a new Microsoft account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
@@ -166,9 +147,38 @@ This callback runs inside the same database transaction as the account creation.
 Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To assign scopes at creation time instead, use `onBeforeAuthUserCreated` together with `getExtraMicrosoftInfoCallback`, which runs before the auth user is created.
 :::
 
-## Configuring client IDs on the app
+## App configuration
 
-### Passing client IDs in code
+These options configure Microsoft sign-in in your Flutter app.
+
+### Requesting additional Microsoft scopes
+
+The default setup allows access to basic user information, such as `name`, `email`. You may require additional access scopes to access other Microsoft APIs, such as accessing a user's calendar, mail, or OneDrive files.
+
+The default scopes requested are:
+
+- `openid`: Required for OpenID Connect authentication.
+- `profile`: Access to user's basic profile information.
+- `email`: Access to user's email address.
+- `offline_access`: Allows refresh tokens for long-lived sessions.
+- `https://graph.microsoft.com/User.Read`: Access to user's Microsoft Graph profile.
+
+To request additional scopes, you will need to:
+
+- Ensure the required API permissions are configured in your Microsoft Entra ID app registration (navigate to **API permissions** in the [Azure Portal](https://portal.azure.com/)).
+- Request access to the scopes when signing in. Do this by setting the `scopes` parameter of the `MicrosoftSignInWidget` or `MicrosoftAuthController`.
+
+A full list of available scopes and Microsoft Graph API permissions can be found in the [Microsoft Graph permissions reference](https://learn.microsoft.com/en-us/graph/permissions-reference).
+
+:::info
+Adding additional scopes may require admin consent depending on your tenant configuration and the sensitivity of the requested permissions.
+:::
+
+To use the granted scopes from the server with the access token, see [Accessing Microsoft APIs on the server](#accessing-microsoft-apis-on-the-server).
+
+### Configuring client IDs on the app
+
+#### Passing client IDs in code
 
 You can pass the `clientId`, `redirectUri`, and `tenant` directly when initializing the Microsoft Sign-In service:
 
@@ -182,7 +192,7 @@ await client.auth.initializeMicrosoftSignIn(
 
 This approach is useful when you need different client IDs per platform and want to manage them in your Dart code.
 
-### Using environment variables
+#### Using environment variables
 
 Alternatively, you can pass client configuration during build time using the `--dart-define` option. The Microsoft Sign-In provider supports the following environment variables:
 
@@ -208,3 +218,138 @@ This approach is useful when you need to:
 :::tip
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
+
+## Customize the sign-in button
+
+Inside `SignInWidget`, fields set on its `buttonStyle` take precedence over the settings below, as described in [Styling the buttons](../../ui-components#styling-the-buttons).
+
+:::info
+The `SignInWidget` uses the `MicrosoftSignInWidget` internally to display the Microsoft Sign-In flow. You can also supply a custom `MicrosoftSignInWidget` to the `SignInWidget` to override the default behavior.
+
+```dart
+SignInWidget(
+  client: client,
+  microsoftSignInWidget: MicrosoftSignInWidget(
+    client: client,
+    // Shape and label survive inside SignInWidget, unless its buttonStyle
+    // sets them. Brand colors do not.
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
+  ),
+)
+```
+
+:::
+
+### Using the `MicrosoftSignInWidget`
+
+The `MicrosoftSignInWidget` handles the complete Microsoft Sign-In flow for your Flutter app.
+
+You can customize the widget's appearance and behavior:
+
+```dart
+MicrosoftSignInWidget(
+  client: client,
+  // Button customization. The values shown are the defaults.
+  style: MicrosoftButtonStyle.light, // or dark
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
+
+  // Scopes to request from Microsoft
+  // These are the default scopes.
+  scopes: const [
+    'openid',
+    'profile',
+    'email',
+    'offline_access',
+    'https://graph.microsoft.com/User.Read',
+  ],
+
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+  },
+)
+```
+
+## Build a custom UI with MicrosoftAuthController
+
+For more control over the UI, you can use the `MicrosoftAuthController` class, which provides all the authentication logic without any UI components. This allows you to build a completely custom authentication interface.
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+
+final controller = MicrosoftAuthController(
+  client: client,
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+  },
+  scopes: const [
+    'openid',
+    'profile',
+    'email',
+    'offline_access',
+    'https://graph.microsoft.com/User.Read',
+  ],
+);
+
+// Initiate sign-in
+await controller.signIn();
+```
+
+### MicrosoftAuthController state management
+
+Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
+
+```dart
+// Check current state
+final state = controller.state; // MicrosoftAuthState enum
+
+// Check if loading
+final isLoading = controller.isLoading;
+
+// Check if authenticated
+final isAuthenticated = controller.isAuthenticated;
+
+// Get error message
+final errorMessage = controller.errorMessage;
+
+// Listen to state changes
+controller.addListener(() {
+  setState(() {
+    // Rebuild UI when controller state changes
+  });
+});
+```
+
+#### MicrosoftAuthController states
+
+- `MicrosoftAuthState.idle` - Ready for user interaction.
+- `MicrosoftAuthState.loading` - Processing a sign-in request.
+- `MicrosoftAuthState.error` - An error occurred.
+- `MicrosoftAuthState.authenticated` - Authentication was successful.
+
+## Related
+
+- [Setup](./setup): set up Microsoft sign-in on the server and in your app.
+- [Troubleshooting](./troubleshooting): fix common Microsoft sign-in errors.
+- [UI components](../../ui-components): use and style the built-in sign-in UI.
+- [Working with users](../../working-with-users): manage auth users and react to user events.

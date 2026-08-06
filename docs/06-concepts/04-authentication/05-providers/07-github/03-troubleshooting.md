@@ -41,7 +41,7 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Cause:** The `redirectUri` your Flutter app sent to GitHub does not exactly match any of the **Callback URL** entries on your GitHub App.
 
-**Resolution:** Open your GitHub App's settings and verify the **Callback URL** entries match your client's `redirectUri` exactly. The match is strict: scheme, host, port, path, casing, and trailing slashes all count.
+**Resolution:** Open your GitHub App's settings and verify the **Callback URL** entries match your app's `redirectUri` exactly. The match is strict: scheme, host, port, path, casing, and trailing slashes all count.
 
 Common mistakes:
 
@@ -160,7 +160,7 @@ See [Configuring client IDs on the app](./customizations#configuring-client-ids-
 
 **Resolution:** Have affected users sign out and sign in again. GitHub will prompt them to approve the updated permissions. For users who never signed in before the change, the new permissions apply immediately.
 
-## Server fails to parse githubClientSecret from passwords.yaml
+## Server crashes on startup with a missing password
 
 **Problem:** The server crashes on startup with an error about a missing `githubClientId` or `githubClientSecret` key.
 
@@ -193,3 +193,9 @@ Quoting the values is a safeguard. YAML parses unquoted values that look like nu
 **Resolution:** Open `android/app/src/main/AndroidManifest.xml` and confirm the `CallbackActivity` block exists with `android:exported="true"` and the `<data android:scheme="..."/>` value matches the scheme in your callback URL exactly. The block is shown in [Android setup](./setup#android).
 
 After editing the manifest, run `flutter clean` and rebuild.
+
+## Related
+
+- [Setup](./setup): configure GitHub sign-in on the server and in your app.
+- [Customizations](./customizations): configuration options and sign-in UI customization.
+- [UI components](../../ui-components): the sign-in widgets and how to compose them.

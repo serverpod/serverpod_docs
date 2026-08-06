@@ -118,7 +118,7 @@ development:
   facebookAppSecret: 'your-facebook-app-secret'
 ```
 
-Quotes are required because the values are strings. On Serverpod Cloud, set them with `scloud password set` instead. See [Publishing to production](./setup#publishing-to-production).
+Quoting the values is a safeguard. YAML parses unquoted values that look like numbers as numbers instead of strings. Facebook App IDs are numeric, so an unquoted `facebookAppId` crashes startup with an "Invalid password entries" error instead of this one. On Serverpod Cloud, set them with `scloud password set` instead. See [Publishing to production](./setup#publishing-to-production).
 
 ## Server crashes on first Facebook sign-in with "no such table"
 
@@ -139,3 +139,9 @@ Quotes are required because the values are strings. On Serverpod Cloud, set them
 1. Add your production domain to **Allowed Domains for the JavaScript SDK** (web and macOS) and register the release key hash (Android).
 2. Switch the app to **Live** mode.
 3. Confirm the production server has `facebookAppId` and `facebookAppSecret` set, and that the production web build passes `--dart-define=FACEBOOK_APP_ID=...`. See [Publishing to production](./setup#publishing-to-production).
+
+## Related
+
+- [Setup](./setup): set up the Facebook identity provider on the server and in your app.
+- [Customizations](./customizations): configuration options and sign-in UI customization.
+- [UI components](../../ui-components): the sign-in widgets and how to compose them.
