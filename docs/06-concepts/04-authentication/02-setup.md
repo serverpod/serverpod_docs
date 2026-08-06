@@ -103,6 +103,9 @@ By default, endpoints for all providers are disabled. To enable a provider:
 
     ```dart
     pod.initializeAuthServices(
+      tokenManagerBuilders: [
+        JwtConfigFromPasswords(),
+      ],
       identityProviderBuilders: [
         EmailIdpConfig( /* configuration options */ ),
       ],
@@ -127,7 +130,7 @@ By default, endpoints for all providers are disabled. To enable a provider:
     $ serverpod start
     ```
 
-4. Create and apply the migration that initializes the database for the provider. In the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+4. Create and apply the migration that initializes the database for the provider. In the `serverpod start` terminal, press **M**. The migration is created and applied in one step. If applying fails, press **A** to retry it.
 
     :::info
     If this is the first time creating migrations after adding the module, besides the provider tables, all authentication module tables will also be created. More detailed migration instructions can be found in the [migration guide](../data-and-the-database/database/migrations).

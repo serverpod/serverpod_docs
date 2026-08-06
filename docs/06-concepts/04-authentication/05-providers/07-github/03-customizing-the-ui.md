@@ -15,8 +15,13 @@ SignInWidget(
   client: client,
   githubSignInWidget: GitHubSignInWidget(
     client: client,
-    // Customize the widget
-    style: GitHubButtonStyle.black,
+    // Shape and label survive inside SignInWidget, unless its buttonStyle
+    // sets them. Brand colors do not.
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
   ),
 )
 ```
@@ -32,14 +37,14 @@ You can customize the widget's appearance and behavior:
 ```dart
 GitHubSignInWidget(
   client: client,
-  // Button customization
-  text: GitHubButtonText.continueWith, // or signIn, signUp
-  type: GitHubButtonType.standard, // or icon
+  // Button customization. The values shown are the defaults.
   style: GitHubButtonStyle.black, // or white
-  size: GitHubButtonSize.large, // or medium
-  shape: GitHubButtonShape.pill, // or rectangular, rounded
-  logoAlignment: GitHubButtonLogoAlignment.left, // or center
-  minimumWidth: 240, // or null for automatic width
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
 
   // Scopes to request from GitHub
   // These are the default.

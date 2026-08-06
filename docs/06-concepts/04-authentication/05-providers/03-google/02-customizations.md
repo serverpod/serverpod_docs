@@ -62,9 +62,9 @@ final googleIdpConfig = GoogleIdpConfig(
 );
 ```
 
-### Custom Account Validation
+### Custom account validation
 
-You can customize the validation for Google account details before allowing sign-in. By default, the validation checks that the received account details contains `name`, `fullName`, and `verifiedEmail` set to true.
+You can customize the validation for Google account details before allowing sign-in. The default validation rejects sign-in unless `verifiedEmail` is true and both `name` and `fullName` are present.
 
 ```dart
 final googleIdpConfig = GoogleIdpConfigFromPasswords(
@@ -72,7 +72,7 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
   googleAccountDetailsValidation: (accountDetails) {
     // Throw an exception if account doesn't meet custom requirements
     if (accountDetails.verifiedEmail != true ||
-        !accountDetails.email!.endsWith('@example.com')) {
+        !accountDetails.email.endsWith('@example.com')) {
       throw GoogleUserInfoMissingDataException();
     }
   },
@@ -92,7 +92,7 @@ For a full list of available scopes, see the [Google OAuth 2.0 Scopes reference]
 Adding additional scopes may require approval by Google. On the OAuth consent screen, you can see which of your scopes are considered sensitive.
 :::
 
-### Accessing Google APIs on the Server
+### Accessing Google APIs on the server
 
 On the server side, you can access Google APIs using the access token. The `getExtraGoogleInfoCallback` in `GoogleIdpConfig` receives the access token and can be used to call Google APIs:
 
@@ -109,7 +109,10 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
     // Use accessToken to call Google APIs and store additional info
     // Example: Access YouTube API
     final response = await http.get(
-      Uri.https('www.googleapis.com', '/youtube/v3/channels?part=snippet&mine=true'),
+      Uri.https('www.googleapis.com', '/youtube/v3/channels', {
+        'part': 'snippet',
+        'mine': 'true',
+      }),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
     // Process response and store additional info in the database
@@ -119,7 +122,7 @@ final googleIdpConfig = GoogleIdpConfigFromPasswords(
 
 ### Reacting to auth user creation
 
-The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to Google; they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
+The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to Google. They fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
 
 The `onBeforeAuthUserCreated` callback receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
 
@@ -154,7 +157,7 @@ pod.initializeAuthServices(
 );
 ```
 
-### Lightweight Sign-In on the Flutter app
+### Lightweight sign-in on the Flutter app
 
 Lightweight sign-in is a feature that attempts to authenticate users previously logged in with Google automatically with minimal or no user interaction. When enabled, the Google authentication controller will try to sign the user in using platform-specific lightweight authentication methods. This feature is disabled by default, but can be enabled from the `GoogleSignInWidget` or `GoogleAuthController`.
 
@@ -170,15 +173,17 @@ GoogleSignInWidget(
 
 :::note
 Lightweight sign-in runs automatically when the controller is initialized (typically at app launch). If it fails (no previous session, or the user dismisses the prompt), the regular sign-in button remains available.
+
+On web, the option has no effect in this version. It only applies to Android and iOS.
 :::
 
-### Configuring Client IDs on the App
+### Configuring client IDs on the app
 
 If no client IDs are provided programmatically, the underlying `google_sign_in` package falls back to reading from platform-specific configuration files (e.g., `GoogleService-Info.plist` for iOS, `google-services.json` for Android). To set them programmatically, you can use the following methods.
 
-#### Passing Client IDs in Code
+#### Passing client IDs in code
 
-You can pass the client IDs directly when initializing the Google Sign-In service:
+You can pass the client IDs directly when initializing the Google sign-in service:
 
 ```dart
 client.auth.initializeGoogleSignIn(
@@ -189,9 +194,9 @@ client.auth.initializeGoogleSignIn(
 
 This approach is useful when you need different client IDs per platform and want to manage them in your Dart code.
 
-#### Using Environment Variables
+#### Using environment variables
 
-Alternatively, you can pass client IDs during build time using the `--dart-define` option. The Google Sign-In provider supports the following environment variables:
+Alternatively, you can pass client IDs during build time using the `--dart-define` option. The Google sign-in provider supports the following environment variables:
 
 - `GOOGLE_CLIENT_ID`: The platform-specific OAuth client ID
 - `GOOGLE_SERVER_CLIENT_ID`: The server (web application) OAuth client ID
@@ -217,15 +222,15 @@ This approach is useful when you need to:
 You can also set these environment variables in your IDE's run configuration or CI/CD pipeline to avoid passing them manually each time.
 :::
 
-### Configuring the Web redirect URI
+### Configuring the web redirect URI
 
 You can pass the web redirect URI to `initializeGoogleSignIn` via `--dart-define`. This is useful when building for different environments (development, staging, production) without changing `main.dart`:
 
 ```dart
 if (kIsWeb) {
   client.auth.initializeGoogleSignIn(
-    clientId: String.fromEnvironment('GOOGLE_CLIENT_ID'),
-    redirectUri: String.fromEnvironment('GOOGLE_WEB_REDIRECT_URI'),
+    clientId: const String.fromEnvironment('GOOGLE_CLIENT_ID'),
+    redirectUri: const String.fromEnvironment('GOOGLE_WEB_REDIRECT_URI'),
   );
 } else {
   client.auth.initializeGoogleSignIn();
@@ -238,7 +243,7 @@ flutter run -d chrome \
   --dart-define="GOOGLE_WEB_REDIRECT_URI=<your_redirect_uri>"
 ```
 
-Use the redirect URI that matches the environment you are building for (e.g., `http://localhost:8082/auth/callback` for local development with the integrated route, or `https://my-awesome-project.serverpod.space/auth/callback` for production).
+Use the redirect URI that matches the environment you are building for: the integrated-route URL (e.g., `http://localhost:8082/auth/callback`) when Serverpod serves your web app, or your production URL (e.g., `https://my-awesome-project.serverpod.space/auth/callback`). For `flutter run -d chrome`, where the app runs on its own origin, use the [separately-hosted flow](#separately-hosted-flutter-web) instead.
 
 ### Separately-hosted Flutter web
 
@@ -264,5 +269,7 @@ Use this flow when your Flutter web app and Serverpod are on different origins. 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `clientSecret` | `GoogleClientSecret` | Yes | The Google OAuth client secret loaded from JSON. Can be loaded via `fromJsonString`, `fromJsonFile`, or `fromJson`. |
-| `googleAccountDetailsValidation` | `GoogleAccountDetailsValidation?` | No | Custom validation callback for Google account details before allowing sign-in. Throws an exception to reject the account. |
+| `googleAccountDetailsValidation` | `GoogleAccountDetailsValidation` | No | Custom validation callback for Google account details before allowing sign-in. Throws an exception to reject the account. |
 | `getExtraGoogleInfoCallback` | `GetExtraGoogleInfoCallback?` | No | Callback that receives the access token after sign-in, allowing you to call additional Google APIs and store extra user data. |
+| `onAfterGoogleAccountCreated` | `AfterGoogleAccountCreatedFunction?` | No | Callback invoked after a new Google account has been created and linked to an auth user. Runs inside the same transaction as account creation. |
+| `clockSkewTolerance` | `Duration` | No | Tolerance for clock skew when validating Google ID token timestamps. Defaults to the framework's default tolerance. |

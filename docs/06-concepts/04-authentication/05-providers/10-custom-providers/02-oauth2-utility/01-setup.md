@@ -95,8 +95,24 @@ Using the previously created `config` object, create the `OAuth2PkceUtil` on you
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 
+import '../generated/protocol.dart';
+
 class MyProviderIdpEndpoint extends IdpBaseEndpoint {
   final oauth2Util = OAuth2PkceUtil(config: config);
+
+  /// Required by IdpBaseEndpoint: report whether the signed-in user already
+  /// has an account with this provider. Query the account model your provider
+  /// defines (see the full walkthrough for the model definition).
+  @override
+  Future<bool> hasAccount(Session session) async {
+    final authUserId = session.authenticated?.authUserId;
+    if (authUserId == null) return false;
+    return await MyProviderAccount.db.findFirstRow(
+          session,
+          where: (t) => t.authUserId.equals(authUserId),
+        ) !=
+        null;
+  }
 
   Future<AuthSuccess> authenticate(
     Session session, {
@@ -143,12 +159,12 @@ class MyProviderIdpEndpoint extends IdpBaseEndpoint {
     // Fetch user data from provider's API using the access token
   }
 
-  Future<AccountResult> _authenticate(
+  Future<_AccountResult> _authenticate(
     Session session,
     Map<String, dynamic> userInfo,
   ) async {
-    // Find existing provider account or create new user based on provider user info
-    // Returns provider account (e.g., GoogleAccount, GitHubAccount) with authUserId linked to AuthUser
+    // Find the existing provider account or create a new auth user from the
+    // provider's user info, and return its authUserId with the scopes to grant.
   }
 
   Future<AuthSuccess> _issueToken(
@@ -159,6 +175,9 @@ class MyProviderIdpEndpoint extends IdpBaseEndpoint {
     // Issue Serverpod authentication token for the authenticated user
   }
 }
+
+/// What _authenticate resolves: the linked auth user and the scopes to grant.
+typedef _AccountResult = ({UuidValue authUserId, Set<Scope> scopes});
 ```
 
 ### Exception handling
@@ -232,15 +251,22 @@ try {
   // The PKCE code verifier (required for token exchange)
   final codeVerifier = result.codeVerifier;
 
-  // Send both to your backend
-  await client.myProviderIdp.authenticate(
+  // Send both to your backend. codeVerifier is null when the provider does
+  // not use PKCE, so guard it before calling an endpoint that requires it.
+  if (codeVerifier == null) {
+    throw StateError('The provider did not return a PKCE code verifier.');
+  }
+
+  // The generated client drops the Endpoint suffix:
+  // MyProviderIdpEndpoint becomes client.myProviderIdp.
+  final authSuccess = await client.myProviderIdp.authenticate(
     code: code,
     codeVerifier: codeVerifier,
     redirectUri: config.redirectUri,
   );
-} on OAuth2PkceUserCancelledException catch (e) {
-  // User cancelled the authorization flow
-  print('User cancelled: ${e.message}');
+
+  // Register the session, otherwise the app is never actually signed in.
+  await client.auth.updateSignedInUser(authSuccess);
 } on OAuth2PkceStateMismatchException catch (e) {
   // Possible CSRF attack detected
   print('Security error: ${e.message}');
@@ -262,11 +288,10 @@ The client-side utility throws specific exceptions to help you handle different 
 
 | Exception | Description | Typical Cause |
 | ----------- | ------------- | --------------- |
-| `OAuth2PkceUserCancelledException` | User cancelled authorization | User closed browser/denied access |
 | `OAuth2PkceStateMismatchException` | State validation failed | Possible CSRF attack or browser issue |
 | `OAuth2PkceMissingAuthorizationCodeException` | No authorization code received | Provider didn't return expected code |
 | `OAuth2PkceProviderErrorException` | Provider returned error response | Invalid credentials, rate limiting |
-| `OAuth2PkceUnknownException` | Unexpected error occurred | Network issues, unknown problems |
+| `OAuth2PkceUnknownException` | Unexpected error occurred | Network issues, unknown problems, and a cancelled sign-in |
 
 ### Platform-specific configuration
 
@@ -274,7 +299,7 @@ The OAuth2 utility uses the [flutter_web_auth_2](https://pub.dev/packages/flutte
 
 #### iOS and macOS
 
-There is no special configuration needed for iOS and MacOS for "normal" authentication flows.
+There is no special configuration needed for iOS and macOS for "normal" authentication flows.
 However, if you are using **Universal Links** on iOS, they require redirect URIs to use **https**.
 Follow the instructions in the [flutter_web_auth_2](https://pub.dev/packages/flutter_web_auth_2#ios) documentation.
 
@@ -350,7 +375,7 @@ For a full end-to-end implementation of a custom OAuth2 provider (server configu
 2. **Validate State Parameter**: Keep `enableState: true` to prevent CSRF attacks. The state parameter ensures the authorization response matches your request.
 3. **Secure Client Secret**: Never expose your client secret in client-side code. Store it securely in `passwords.yaml` or environment variables on the server.
 4. **Use HTTPS**: Always use HTTPS URLs for production endpoints. Only use HTTP for local development.
-5. **Validate Redirect URIs**: Ensure redirect URIs in your code exactly match those registered with your OAuth provider.
+5. **Validate Redirect URIs**: Ensure redirect URIs in your code exactly match those registered with your OAuth2 provider.
 
 ### Error handling
 

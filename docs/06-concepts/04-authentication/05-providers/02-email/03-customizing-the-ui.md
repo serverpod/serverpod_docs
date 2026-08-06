@@ -15,8 +15,11 @@ SignInWidget(
   client: client,
   emailSignInWidget: EmailSignInWidget(
     client: client,
-    // Change the initial screen to start registration
-    startScreen: EmailFlowScreen.startRegistration,
+    // Open on the login screen instead of the default registration screen
+    startScreen: EmailFlowScreen.login,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
   ),
 )
 ```
@@ -37,14 +40,15 @@ EmailSignInWidget(
   verificationCodeConfig: VerificationCodeConfig(
     length: 6,
     keyboardType: TextInputType.number,
-    allowedLetterCase: LetterCase.lowercase,
     allowedCharactersPattern: RegExp(r'[0-9]'),
+    // The wait before the user can request a new code.
     resendCountdownDuration: Duration(minutes: 1),
   ),
-  // Custom email validation function
+  // Custom email validation function. Throw InvalidEmailException so the
+  // widget shows the message. Other exceptions block sign-in silently.
   emailValidation: (email) {
     if (!email.contains('@example.com')) {
-      throw FormatException('Only @example.com emails allowed');
+      throw const InvalidEmailException('Only @example.com emails allowed');
     }
   },
   // Customize the password requirements
@@ -71,27 +75,24 @@ EmailSignInWidget(
   onError: (error) {
     // Handle errors
   },
-  // Change the wait time before a user can request a new verification code
-  resendCountdownDuration: Duration(minutes: 2),
 )
 ```
 
-Optionally, you can provide an externally managed `EmailAuthController` instance to the widget, which will ignore all other configuration options in favor of the controller's state. The controller contains all options above - with the exception of the `verificationCodeConfig` option, which is only used by the widget.
+Optionally, you can provide an externally managed `EmailAuthController` instance to the widget. A controller and a `client` are mutually exclusive, and `onAuthenticated` and `onError` belong on the controller in that case. Passing either alongside a controller trips an assertion, so a debug build throws. The controller carries the sign-in options, while `verificationCodeConfig`, `onTermsAndConditionsPressed`, and `onPrivacyPolicyPressed` stay on the widget.
 
 ```dart
 EmailSignInWidget(
-  client: client,
   controller: controller,
 )
 ```
 
 :::info
-The terms and conditions and privacy policy checkbox on the registration screen are optional and disabled by default. The checkbox will only be shown if you provide both `onTermsAndConditionsPressed` and `onPrivacyPolicyPressed` callbacks.
+The terms and conditions and privacy policy checkbox on the registration screen are optional and disabled by default. The checkbox is shown as soon as you provide either `onTermsAndConditionsPressed` or `onPrivacyPolicyPressed`.
 :::
 
 ### Customizing the default widget's appearance
 
-Since the `EmailSignInWidget` uses the material design system, it will react to your app's material theme. You can also wrap it in a `Theme` widget to apply a custom theme.
+Since the `EmailSignInWidget` uses the Material Design system, it will react to your app's Material theme. You can also wrap it in a `Theme` widget to apply a custom theme.
 
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
@@ -101,10 +102,8 @@ Theme(
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
     // Use the AuthIdpTheme to customize the verification code input look
     extensions: <ThemeExtension<dynamic>>[
-      AuthIdpTheme(
-        defaultPinTheme: PinTheme(...),
+      AuthIdpTheme.defaultTheme(
         errorPinTheme: PinTheme(...),
-        successPinTheme: PinTheme(...),
       ),
     ],
   ),
@@ -134,7 +133,7 @@ final controller = EmailAuthController(
 );
 ```
 
-### EmailAuthController State Management
+### EmailAuthController state management
 
 Your widget should render the appropriate screen based on the `currentScreen` property of the controller. You can also use the below state properties to build your UI:
 
@@ -185,7 +184,7 @@ if (controller.canNavigateBack) {
 }
 ```
 
-### EmailAuthController Methods
+### EmailAuthController methods
 
 The controller provides methods for each step of the authentication flow:
 
@@ -204,7 +203,7 @@ controller.passwordController.text = 'password123';
 await controller.login();
 ```
 
-#### Registration Flow
+#### Registration flow
 
 The registration flow consists of three steps:
 
@@ -232,7 +231,7 @@ await controller.finishRegistration();
 // User is now authenticated
 ```
 
-#### Password Reset Flow
+#### Password reset flow
 
 The password reset flow also consists of three steps:
 
@@ -260,7 +259,7 @@ await controller.finishPasswordReset();
 // User is authenticated with new password
 ```
 
-### Resending Verification Codes
+### Resending verification codes
 
 To resend a verification code:
 

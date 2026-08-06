@@ -42,7 +42,8 @@ final accountByAuthUser = await admin.findAccountByAuthUserId(
   authUserId: authUserId,
 );
 
-final userId = await admin.findUserByFirebaseUserId(
+// findUserByFirebaseUserId is static, unlike the instance methods above.
+final userId = await FirebaseIdpAdmin.findUserByFirebaseUserId(
   session,
   userIdentifier: 'firebase-uid',
 );
@@ -91,7 +92,7 @@ Deleting a Firebase account only removes the link between Firebase authenticatio
 
 ## FirebaseIdpUtils
 
-The `FirebaseIdpUtils` class provides a lower-level `authenticate` method for when you need to verify a Firebase ID token and create or update the associated Serverpod user in custom endpoint logic (outside the normal sign-in flow):
+The `FirebaseIdpUtils` class provides a lower-level `authenticate` method for when you need to verify a Firebase ID token and find or create the associated Serverpod user in custom endpoint logic (outside the normal sign-in flow):
 
 ```dart
 final utils = firebaseIdp.utils;

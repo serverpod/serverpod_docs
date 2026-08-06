@@ -144,12 +144,12 @@ This callback runs inside the same database transaction as the account creation.
 :::
 
 :::caution
-If you need to assign Serverpod scopes based on provider account data, updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. Token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well. For scope assignment at creation time, use [`onBeforeAuthUserCreated`](#reacting-to-auth-user-creation) in combination with `getExtraGitHubInfoCallback` to fetch and store the data you need before the auth user is created.
+Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To force them sooner, revoke the user's tokens so they sign in again. The `onBeforeAuthUserCreated` hook, covered below, assigns scopes at creation time, but it cannot use GitHub data, because `getExtraGitHubInfoCallback` runs after the auth user is created.
 :::
 
 ### Reacting to auth user creation
 
-The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to GitHub; they fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
+The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global callbacks configured on `AuthUsersConfig` in `initializeAuthServices`. They are not specific to GitHub. They fire for every identity provider. See the [working with users](../../working-with-users#reacting-to-the-user-created-event) page for full details.
 
 The `onBeforeAuthUserCreated` callback receives the default scopes and blocked status for the new user and must return the final values. Use it to assign custom scopes at creation time:
 
@@ -193,7 +193,7 @@ You can pass the `clientId` and `redirectUri` directly when initializing the Git
 ```dart
 await client.auth.initializeGitHubSignIn(
   clientId: 'your-github-client-id',
-  redirectUri: Uri.parse('com.example.yourapp://auth'),
+  redirectUri: 'com.example.yourapp://auth',
 );
 ```
 

@@ -5,18 +5,23 @@ description: Google sign-in UI can be customized with the GoogleSignInWidget and
 
 # Customize the Google sign-in UI
 
-When using the Google identity provider, you can customize the UI to your liking. You can use the `GoogleSignInWidget` to display the Google Sign-In flow in your own custom UI, or you can use the `GoogleAuthController` to build a completely custom authentication interface.
+When using the Google identity provider, you can customize the UI to your liking. You can use the `GoogleSignInWidget` to display the Google sign-in flow in your own custom UI, or you can use the `GoogleAuthController` to build a completely custom authentication interface.
 
 :::info
-The `SignInWidget` uses the `GoogleSignInWidget` internally to display the Google Sign-In flow. You can also supply a custom `GoogleSignInWidget` to the `SignInWidget` to override the default behavior.
+The `SignInWidget` uses the `GoogleSignInWidget` internally to display the Google sign-in flow. You can also supply a custom `GoogleSignInWidget` to the `SignInWidget` to override the default behavior.
 
 ```dart
 SignInWidget(
   client: client,
   googleSignInWidget: GoogleSignInWidget(
     client: client,
-    // Customize the widget theme
-    theme: GSIButtonTheme.filledBlack,
+    // Shape and label survive inside SignInWidget, unless its buttonStyle
+    // sets them. Brand colors do not.
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
   ),
 )
 ```
@@ -32,14 +37,14 @@ You can customize the widget's appearance and behavior:
 ```dart
 GoogleSignInWidget(
   client: client,
-  // Button customization
-  type: GSIButtonType.standard, // or icon
-  theme: GSIButtonTheme.outlined, // or filledBlue, filledBlack, etc.
-  size: GSIButtonSize.large, // or medium
-  text: GSIButtonText.signIn, // or continueWith, signinWith, signUpWith
-  shape: GSIButtonShape.pill, // or rectangular
-  logoAlignment: GSIButtonLogoAlignment.left, // or center
-  minimumWidth: 200, // or null for automatic width
+  // Button customization. The values shown are the defaults.
+  style: GoogleButtonStyle.outline, // or filledBlue, filledBlack
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
 
   // Scopes to request from Google
   // These are the default scopes, you can add additional scopes as needed.
@@ -48,7 +53,7 @@ GoogleSignInWidget(
     'https://www.googleapis.com/auth/userinfo.profile',
   ],
 
-  // Whether to attempt lightweight sign-in (One Tap, FedCM)
+  // Whether to attempt lightweight sign-in (Android and iOS only)
   attemptLightweightSignIn: false,
 
   onAuthenticated: () {
@@ -93,10 +98,10 @@ await controller.signIn();
 ```
 
 :::note
-On web, the button you can customize depends on which web sign-in mode you use. If you pass `redirectUri` to `initializeGoogleSignIn`, sign-in runs through the OAuth2 redirect flow and your custom widget renders directly. If you do not pass `redirectUri`, the underlying `google_sign_in` package renders Google's built-in button instead and most visual customizations have no effect. Set up `redirectUri` as described in the [Web setup](./setup#web) to control the button yourself.
+On web, sign-in always runs through the OAuth2 redirect flow, and your customized widget renders directly. Both `clientId` and `redirectUri` must be passed to `initializeGoogleSignIn`, or the button does not render at all. Set them up as described in [Web setup](./setup#web).
 :::
 
-### GoogleAuthController State Management
+### GoogleAuthController state management
 
 Your widget should render the appropriate UI based on the `state` property of the controller. You can also use the below state properties to build your UI:
 
@@ -121,7 +126,7 @@ controller.addListener(() {
 });
 ```
 
-#### GoogleAuthController States
+#### GoogleAuthController states
 
 - `GoogleAuthState.initializing` - Controller is initializing.
 - `GoogleAuthState.idle` - Ready for user interaction.

@@ -22,6 +22,9 @@ In your main `server.dart` file, configure the anonymous identity provider using
 ```dart
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
+
+import 'src/generated/endpoints.dart';
+import 'src/generated/protocol.dart';
 import 'package:serverpod_auth_idp_server/providers/anonymous.dart';
 
 void run(List<String> args) async {
@@ -53,7 +56,7 @@ import 'package:serverpod_auth_idp_server/providers/anonymous.dart';
 class AnonymousIdpEndpoint extends AnonymousIdpBaseEndpoint {}
 ```
 
-Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**, then **A**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
+Then, start the server with `serverpod start` to generate the client code, then create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
 
 ### Basic configuration options
 

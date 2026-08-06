@@ -14,8 +14,8 @@ Go through this before investigating a specific error. Most problems come from a
 #### Apple Developer Portal
 
 * [ ] Enable **Sign in with Apple** on your App ID at [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list).
-* [ ] Create a **Service ID** for OAuth (*Android and Web only*).
-* [ ] On the Service ID, check **Sign in with Apple**, click **Configure**, and select your **Primary App ID** (*Android and Web only*).
+* [ ] Create a **Service ID** for OAuth.
+* [ ] On the Service ID, check **Sign in with Apple**, click **Configure**, and select your **Primary App ID**.
 * [ ] Add your **Domains and Subdomains** (e.g. `example.com`) and **Return URLs** on the Service ID.
 * [ ] Confirm the **return URL** on the Service ID uses `https://` (not `http://` or `localhost`).
 * [ ] Create a **Sign in with Apple key** and download the `.p8` file.
@@ -28,7 +28,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Add `AppleIdpConfigFromPasswords()` to `identityProviderBuilders` in `server.dart`.
 * [ ] Call **`pod.configureAppleIdpRoutes(...)`** on the server before the pod starts.
 * [ ] Create an `AppleIdpEndpoint` file in `lib/src/auth/`.
-* [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**, then **A**).
+* [ ] Start the server with `serverpod start`, then create and apply the migration (press **M**).
 
 #### Client
 
@@ -36,7 +36,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
 * [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
 * [ ] Add the **Apple JS SDK** script to `web/index.html` (*Web only*).
-* [ ] Pass **`APPLE_SERVICE_IDENTIFIER`** and **`APPLE_REDIRECT_URI`** via `--dart-define` (*Web and Android only*).
+* [ ] Pass **`APPLE_SERVICE_IDENTIFIER`** and **`APPLE_REDIRECT_URI`** via `--dart-define`. Initialization throws an `ArgumentError` without them, on every platform.
 * [ ] Add the **`signinwithapple`** intent filter to `AndroidManifest.xml` (*Android only*).
 * [ ] Add **Apple's mail servers** to your SPF record if you email users who might use Hide My Email.
 
@@ -61,7 +61,7 @@ Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment 
 
 **Problem:** Sign-in was working for months, then suddenly fails with `invalid_client` and you haven't changed code.
 
-**Cause:** `appleKey` has a pre-generated client secret JWT, not the raw `.p8` key. Apple makes JWTs expire after six months. When it expires, all sign-ins fail.
+**Cause:** The `appleKey` value holds a pre-generated client secret JWT, not the raw `.p8` key. Apple makes JWTs expire after six months. When it expires, all sign-ins fail.
 
 **Resolution:** Replace any JWT in `appleKey` with the raw `.p8` private key (include the full header and footer). Serverpod will create fresh short-lived JWTs automatically. No need to handle JWTs yourself. See [Creating a client secret](https://developer.apple.com/documentation/accountorganizationaldatasharing/creating-a-client-secret).
 
@@ -69,17 +69,15 @@ Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment 
 
 **Problem:** Authentication fails with an `invalid_grant` error from Apple.
 
-**Cause:** Apple's authorization codes are single-use and expire after approximately 10 minutes. This error occurs when:
+**Cause:** Apple's authorization codes are single-use and expire after five minutes. This error occurs when:
 
 * The authorization code was already exchanged (e.g. the request was retried after a network failure).
 * The server clock is significantly out of sync, causing the client secret JWT to appear expired before Apple processes it.
-* The identity token nonce does not match what the server expects.
 
 **Resolution:**
 
 * Do not retry requests that carry an Apple authorization code. If the flow fails, restart it from the beginning.
 * Ensure your server's system clock is synchronized via NTP. A drift of more than a few seconds will cause JWT validation to fail on Apple's side.
-* If the nonce mismatch is the cause, verify that the nonce generated on the client matches what the server uses during token validation.
 
 ## Wrong identifier passed for web or Android sign-in
 
@@ -109,13 +107,14 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 
 ```xml
 <activity
-  android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
+  android:name="com.aboutyou.dart_packages.sign_in_with_apple.SignInWithAppleCallback"
   android:exported="true">
-  <intent-filter android:label="flutter_web_auth_2">
+  <intent-filter>
     <action android:name="android.intent.action.VIEW" />
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
     <data android:scheme="signinwithapple" />
+    <data android:path="callback" />
   </intent-filter>
 </activity>
 ```
@@ -126,7 +125,7 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 
 **Cause:** The database migration that creates the provider's tables was never created or applied.
 
-**Resolution:** In the running `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+**Resolution:** In the running `serverpod start` terminal, press **M** to create and apply the migration.
 
 ## Apple rejects the redirect URI with `invalid_request`
 
@@ -184,7 +183,6 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" crossorigin="anonymous"></script>
 ```
 
-The `crossorigin="anonymous"` attribute is needed because Flutter's service worker sets a strict Cross-Origin Embedder Policy that blocks scripts without it.
 
 ## macOS sign-in shows "Sign Up Not Completed"
 
@@ -203,6 +201,6 @@ The `crossorigin="anonymous"` attribute is needed because Flutter's service work
 
 **Problem:** A user removes your app from Apple ID settings (`Settings > [your name] > Sign-In & Security > Sign in with Apple > Stop Using Apple ID`) but is still logged in to your app.
 
-**Cause:** Your server receives Apple's revocation notification but doesn't terminate the user's active sessions.
+**Cause:** Apple's revocation notification never reaches your server. Once it does, Serverpod revokes the Apple authorization and the tokens it issued through Apple sign-in automatically.
 
-**Resolution:** When you receive a revocation notification at the route set using `pod.configureAppleIdpRoutes(revokedNotificationRoutePath: ...)`, look up the user by the `sub` value in the payload and invalidate all their sessions. See [Processing changes for Sign in with Apple accounts](https://developer.apple.com/documentation/signinwithapple/processing-changes-for-sign-in-with-apple-accounts) for how the notification works.
+**Resolution:** Check that `pod.configureAppleIdpRoutes()` registers a `revokedNotificationRoutePath`, that the route's public HTTPS URL is registered as the server-to-server notification endpoint in the Apple Developer Portal, and that the URL is reachable from the internet. See [Processing changes for Sign in with Apple accounts](https://developer.apple.com/documentation/signinwithapple/processing-changes-for-sign-in-with-apple-accounts) for how the notification works.

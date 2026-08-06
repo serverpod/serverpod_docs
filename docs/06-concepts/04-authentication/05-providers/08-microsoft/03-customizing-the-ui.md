@@ -15,8 +15,13 @@ SignInWidget(
   client: client,
   microsoftSignInWidget: MicrosoftSignInWidget(
     client: client,
-    // Customize the widget
-    style: MicrosoftButtonStyle.dark,
+    // Shape and label survive inside SignInWidget, unless its buttonStyle
+    // sets them. Brand colors do not.
+    shape: SignInButtonShape.rounded,
+    text: SignInButtonTextVariant.signInWith,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
   ),
 )
 ```
@@ -32,14 +37,14 @@ You can customize the widget's appearance and behavior:
 ```dart
 MicrosoftSignInWidget(
   client: client,
-  // Button customization
-  text: MicrosoftButtonText.continueWith, // or signIn, signUp
-  type: MicrosoftButtonType.standard, // or icon
+  // Button customization. The values shown are the defaults.
   style: MicrosoftButtonStyle.light, // or dark
-  size: MicrosoftButtonSize.large, // or medium
-  shape: MicrosoftButtonShape.pill, // or rectangular, rounded
-  logoAlignment: MicrosoftButtonLogoAlignment.left, // or center
-  minimumWidth: 240, // or null for automatic width
+  size: SignInButtonSize.large, // or medium, small
+  text: SignInButtonTextVariant.continueWith, // or signInWith, signUpWith, signIn
+  shape: SignInButtonShape.pill, // or rounded, rectangular
+  logoAlignment: SignInButtonLogoAlignment.center, // or left
+  minimumWidth: 240, // at most 400
+  textStyle: null, // TextStyle for the label
 
   // Scopes to request from Microsoft
   // These are the default scopes.

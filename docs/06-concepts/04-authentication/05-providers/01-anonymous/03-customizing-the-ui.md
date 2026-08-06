@@ -16,8 +16,11 @@ SignInWidget(
   anonymousSignInWidget: AnonymousSignInWidget(
     client: client,
     createAnonymousToken: () async => await getAppCheckToken(),
-    size: AnonymousButtonSize.medium,
-    shape: AnonymousButtonShape.rectangular,
+    size: SignInButtonSize.medium,
+    shape: SignInButtonShape.rectangular,
+    // A custom widget replaces the built-in handling, so pass your own callbacks.
+    onAuthenticated: () { /* ... */ },
+    onError: (error) { /* ... */ },
   ),
 )
 ```
@@ -45,40 +48,38 @@ AnonymousSignInWidget(
   onError: (error) {
     // Handle errors
   },
-  size: AnonymousButtonSize.large, // large (default), medium, or small
-  shape: AnonymousButtonShape.pill, // pill (default) or rectangular
+  // Button customization. The values shown are the defaults.
+  size: SignInButtonSize.large, // or medium, small
+  shape: SignInButtonShape.pill, // or rounded, rectangular
 )
 ```
 
-Optionally, you can provide an externally managed `AnonymousAuthController` instance to the widget. When a controller is provided, `client`, `onAuthenticated`, and `onError` are ignored in favor of the controller's configuration.
+Optionally, you can provide an externally managed `AnonymousAuthController` instance to the widget. A controller and a `client` are mutually exclusive, and `onAuthenticated` and `onError` belong on the controller in that case. Passing them alongside a controller trips an assertion, so a debug build throws.
 
 ```dart
 AnonymousSignInWidget(
   controller: controller,
-  size: AnonymousButtonSize.medium,
-  shape: AnonymousButtonShape.rectangular,
+  size: SignInButtonSize.medium,
+  shape: SignInButtonShape.rectangular,
 )
 ```
 
 ### Customizing the button appearance
 
-The widget renders a single **TextButton** with the label "Continue without account". The button uses Flutter's material design system, so it reacts to your app's `Theme`. You can wrap the widget in a `Theme` (or `ThemeData`) to change colors and typography:
+The button renders flat, with no background fill and no border, and follows your app's theme brightness for its label color. It sets its own colors and corner radius, so a `TextButtonThemeData` does not reach it and an `ElevatedButtonThemeData` cannot change those. Properties the button leaves unset, such as `side` and `textStyle`, still fall through from that theme.
+
+To change the label's text style, pass `textStyle` to the widget:
 
 ```dart
-Theme(
-  data: Theme.of(context).copyWith(
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.blue,
-      ),
-    ),
-  ),
-  child: AnonymousSignInWidget(client: client),
+AnonymousSignInWidget(
+  client: client,
+  textStyle: const TextStyle(fontWeight: FontWeight.w600),
 )
 ```
 
-The widget constrains the button to a minimum width of 240 and maximum width of 400; you can place it in a `SizedBox`, `Expanded`, or `Flex` to control layout.
+Inside a `SignInWidget`, style every provider button at once with `buttonStyle` instead. See [Styling the buttons](../../ui-components#styling-the-buttons).
+
+The button is at least 240 pixels wide and at most 400. Place it in a `SizedBox`, `Expanded`, or `Flex` to control layout.
 
 ## Building a custom UI with the `AnonymousAuthController`
 

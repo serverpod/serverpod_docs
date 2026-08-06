@@ -96,7 +96,7 @@ Production credentials are covered in [Publishing to production](#publishing-to-
 :::
 
 :::warning
-**Indent the JSON consistently under the `|` block scalar.** Any indentation error will silently break the JSON parser, and authentication will fail at runtime. Mixing tabs and spaces is a common cause.
+**Indent the JSON consistently under the `|` block scalar.** Any indentation error makes the JSON fail to parse, so the server throws at startup when the credentials load. Mixing tabs and spaces is a common cause.
 :::
 
 ## Server-side configuration
@@ -147,7 +147,7 @@ Start the server from your server project directory (e.g., `my_project_server/`)
 serverpod start
 ```
 
-Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+Then create and apply the migration for the provider's tables: in the `serverpod start` terminal, press **M** to create and apply the migration.
 
 :::note
 Skipping the migration will cause the server to crash at runtime when the Firebase provider tries to read or write user data. More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -199,6 +199,7 @@ In your Flutter app's `main.dart` file (e.g., `my_project_flutter/lib/main.dart`
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
 import 'package:your_client/your_client.dart';
 import 'firebase_options.dart';
@@ -270,6 +271,22 @@ class _SignInScreenState extends State<SignInScreen> {
         backgroundColor: Colors.red,
       ),
     );
+
+    // Rebuild when the controller's state changes, so the gate swaps to the
+    // app once login() succeeds. The controller does not notify on sign-out.
+    // Listen to client.auth.authInfoListenable as well if you need that.
+    controller.addListener(_onControllerChanged);
+  }
+
+  void _onControllerChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_onControllerChanged);
+    controller.dispose();
+    super.dispose();
   }
 
   /// Handle changes in authentication state: Log in a new Firebase user with Serverpod, if any.
@@ -354,7 +371,7 @@ Use `scloud password set` and pass the JSON file with `--from-file`:
 scloud password set firebaseServiceAccountKey --from-file ./firebase-service-account.json
 ```
 
-Run this from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](https://docs.serverpod.dev/cloud/guides/passwords) for project linking and the [passwords vs secrets vs variables](https://docs.serverpod.dev/cloud/guides/passwords#passwords-vs-secrets-vs-variables) note for when to use each.
+Run this from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and when to use passwords, secrets, or variables.
 
 ### 3. Authorize your production domain
 

@@ -1,5 +1,5 @@
 ---
-sidebar_label: Admin Operations
+sidebar_label: Admin operations
 description: Email admin operations manage email accounts and clean up expired or dangling verification requests through the EmailIdpAdmin server-side API.
 ---
 
@@ -22,11 +22,11 @@ final emailIdp = AuthServices.instance.emailIdp;
 final admin = emailIdp.admin;
 ```
 
-## Account Management
+## Account management
 
 The admin API provides methods for managing email accounts:
 
-### Finding Accounts
+### Finding accounts
 
 ```dart
 // Find an account by email
@@ -36,7 +36,7 @@ final account = await admin.findAccount(
 );
 ```
 
-### Creating Accounts
+### Creating accounts
 
 ```dart
 // Create an email authentication account
@@ -48,7 +48,7 @@ final emailAccountId = await admin.createEmailAuthentication(
 );
 ```
 
-### Deleting Accounts
+### Deleting accounts
 
 ```dart
 // Delete an account by email
@@ -64,7 +64,7 @@ await admin.deleteEmailAccountByAuthUserId(
 );
 ```
 
-### Setting Passwords
+### Setting passwords
 
 ```dart
 // Set or update a password for an account
@@ -79,7 +79,7 @@ await admin.setPassword(
 The `setPassword` method does not validate the password against the configured password policy. Make sure to validate the password before calling this method if needed.
 :::
 
-## Finding Active Account Requests
+## Finding active account requests
 
 You can also check for active account requests:
 
@@ -92,11 +92,11 @@ final accountRequest = await admin.findActiveEmailAccountRequest(
 
 This is useful for checking the status of a registration request or verifying if a request is still valid.
 
-## Cleanup Operations
+## Cleanup operations
 
 Over time, expired account requests, password reset requests, and failed login attempts can accumulate in the database, leading to database bloat and potential performance issues. It's important to periodically clean these up to prevent database bloat. Such requests are not automatically cleaned up since they can be useful for auditing purposes, so it is up to each application to decide when to clean them up.
 
-### Cleaning Up Expired Account Requests
+### Cleaning up expired account requests
 
 Account requests that have expired (users who started registration but never completed it) should be cleaned up:
 
@@ -107,11 +107,11 @@ await admin.deleteExpiredAccountRequests(session);
 // Delete a specific account request
 await admin.deleteEmailAccountRequestById(
   session,
-  accountRequestId: requestId,
+  requestId,
 );
 ```
 
-### Cleaning Up Expired Password Reset Requests
+### Cleaning up expired password reset requests
 
 Password reset requests that have expired (users who requested a password reset but never completed it) should be cleaned up:
 
@@ -128,7 +128,7 @@ await admin.deletePasswordResetRequestsAttemptsForEmail(
 );
 ```
 
-### Cleaning Up Failed Login Attempts
+### Cleaning up failed login attempts
 
 Failed login attempts, tracked for rate limiting, should also be cleaned up when no longer useful for auditing purposes:
 

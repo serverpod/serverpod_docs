@@ -65,7 +65,7 @@ The `microsoftAccountDetailsValidation` callback receives a `MicrosoftAccountDet
 | `userIdentifier` | `String` | The Microsoft user's unique identifier (Object ID) |
 | `email` | `String?` | The user's email address (may be null) |
 | `name` | `String?` | The user's display name from Microsoft |
-| `image` | `Uri?` | URL to the user's profile image |
+| `imageBytes` | `Uint8List?` | The user's profile photo. Always `null` during validation, because the photo is fetched afterwards, and only when the `fetchProfilePhoto` option on `MicrosoftIdpConfig` is enabled (the default) |
 
 Example of accessing these properties:
 
@@ -74,7 +74,7 @@ microsoftAccountDetailsValidation: (accountDetails) {
   print('Microsoft Object ID: ${accountDetails.userIdentifier}');
   print('Email: ${accountDetails.email}');
   print('Display name: ${accountDetails.name}');
-  print('Profile image: ${accountDetails.image}');
+  // imageBytes is always null here. The photo is fetched after validation.
 
   // Custom validation logic
   if (accountDetails.email == null) {
@@ -112,6 +112,10 @@ Adding additional scopes may require admin consent depending on your tenant conf
 
 ### Accessing Microsoft APIs on the server
 
+:::caution
+The `getExtraMicrosoftInfoCallback` below runs on **every** sign-in, not only the first. Cache what you fetch, and guard external calls with `try`/`catch` so a provider outage does not block sign-in.
+:::
+
 On the server side, you can access Microsoft APIs using the access token. The `getExtraMicrosoftInfoCallback` in `MicrosoftIdpConfig` receives the access token and can be used to call Microsoft Graph APIs:
 
 ```dart
@@ -139,7 +143,7 @@ final microsoftIdpConfig = MicrosoftIdpConfigFromPasswords(
 
 You can use the `onAfterMicrosoftAccountCreated` callback to run logic after a new Microsoft account has been created and linked to an auth user. This callback is only invoked for new accounts, not for returning users.
 
-This callback is complimentary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event) to perform side-effects that are specific to a login on this provider - like storing analytics, sending a welcome email, or storing additional data.
+This callback is complementary to the [core `onAfterAuthUserCreated` callback](../../working-with-users#reacting-to-the-user-created-event). Use it for side effects specific to a Microsoft login, like storing analytics, sending a welcome email, or storing additional data.
 
 ```dart
 final microsoftIdpConfig = MicrosoftIdpConfigFromPasswords(
@@ -159,7 +163,7 @@ This callback runs inside the same database transaction as the account creation.
 :::
 
 :::caution
-If you need to assign Serverpod scopes based on provider account data, note that updating the database alone (via `AuthServices.instance.authUsers.update()`) is **not enough** for the current login session. The token issuance uses the in-memory `authUser.scopes`, which is already set before this callback runs. You would need to update `authUser.scopes` as well for the scopes to be reflected in the issued tokens. For assigning scopes at creation time, consider using `onBeforeAuthUserCreated` in combination with `getExtraMicrosoftInfoCallback` to fetch and store the data you need before the auth user is created.
+Scopes you assign here with `AuthServices.instance.authUsers.update()` do not apply to the login that is already in progress, because token issuance uses the scopes loaded before this callback runs. They take effect the next time the user signs in. To assign scopes at creation time instead, use `onBeforeAuthUserCreated` together with `getExtraMicrosoftInfoCallback`, which runs before the auth user is created.
 :::
 
 ## Configuring client IDs on the app
@@ -190,9 +194,10 @@ Alternatively, you can pass client configuration during build time using the `--
 ```bash
 flutter run -d <device> \
   --dart-define="MICROSOFT_CLIENT_ID=your_client_id" \
-  --dart-define="MICROSOFT_REDIRECT_URI=msauth://auth" \
-  --dart-define="MICROSOFT_TENANT=common"
+  --dart-define="MICROSOFT_REDIRECT_URI=msauth://auth"
 ```
+
+The tenant has no environment variable. Pass it as an argument when you initialize Microsoft sign-in.
 
 This approach is useful when you need to:
 
