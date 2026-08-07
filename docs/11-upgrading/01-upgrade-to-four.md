@@ -22,7 +22,7 @@ This guide walks through the upgrade and should take about 15 minutes.
 Install the 4.0 CLI:
 
 ```bash
-$ dart install serverpod_cli 4.0.0-beta.0
+$ dart install serverpod_cli 4.0.0-beta.1
 ```
 
 Verify the version:
@@ -37,9 +37,9 @@ In each package's `pubspec.yaml` (`<project>_server`, `<project>_client`, `<proj
 
 ```yaml
 dependencies:
-  serverpod: 4.0.0-beta.0
-  serverpod_client: 4.0.0-beta.0      # in the client and Flutter packages
-  serverpod_flutter: 4.0.0-beta.0     # in the Flutter package
+  serverpod: 4.0.0-beta.1
+  serverpod_client: 4.0.0-beta.1      # in the client and Flutter packages
+  serverpod_flutter: 4.0.0-beta.1     # in the Flutter package
 ```
 
 Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to match the 4.0 minimum:
@@ -48,6 +48,27 @@ Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_serv
 environment:
   sdk: '^3.10.3'
 ```
+
+### If you use the legacy auth module
+
+The legacy `serverpod_auth` packages ship 4.0 releases. Bump every `serverpod_auth` package your project uses to the same version as Serverpod itself, in the same `pubspec.yaml` files:
+
+```yaml
+dependencies:
+  serverpod_auth_server: 4.0.0-beta.1          # in the server package
+  serverpod_auth_client: 4.0.0-beta.1          # in the client package
+  serverpod_auth_shared_flutter: 4.0.0-beta.1  # in the Flutter package
+```
+
+The `authenticationKeyManager` parameter on the generated `Client` is deprecated in 4.0 and will be removed in an upcoming release. Assign the key manager to the `authKeyProvider` field instead:
+
+```dart
+client = Client('http://$ipAddress:8080/')
+  ..authKeyProvider = FlutterAuthenticationKeyManager()
+  ..connectivityMonitor = FlutterConnectivityMonitor();
+```
+
+The module keeps working on 4.0, so this can be done independently of moving to the new authentication framework. To make that move, see [Migrate from legacy auth](./migrate-from-legacy-auth) after completing this upgrade.
 
 From the project's root folder, refresh dependencies. Dart workspaces (used by projects created with the 3.3+ scaffold) resolve all sub-packages in one command:
 

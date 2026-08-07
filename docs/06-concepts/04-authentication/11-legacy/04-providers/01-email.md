@@ -5,6 +5,10 @@ description: Sign in with Email in the legacy serverpod_auth module connects Ser
 
 # Email sign-in
 
+:::info
+This page documents the legacy `serverpod_auth` module. To move an existing app to the current authentication framework, see [Migrate from legacy auth](../../../../upgrading/migrate-from-legacy-auth).
+:::
+
 To properly configure Sign in with Email, you must connect your Serverpod to an external service that can send the emails. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Sendgrid or Mandrill, support SMTP.
 
 A comprehensive tutorial covering email/password sign-in complete with sending the validation code via email is available [here](https://medium.com/serverpod/getting-started-with-serverpod-authentication-part-1-72c25280e6e9).
@@ -18,7 +22,7 @@ You need to install the auth module before you continue, see [Setup](../setup).
 In your main `server.dart` file,  import the `serverpod_auth_server` module, and set up the authentication configuration:
 
 ```dart
-import 'package:serverpod_auth_server/module.dart' as auth;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 
 auth.AuthConfig.set(auth.AuthConfig(
   sendValidationEmail: (session, email, validationCode) async {
@@ -50,7 +54,7 @@ Add the dependencies to your `pubspec.yaml` in your **client** project.
 ```yaml
 dependencies:
   ...
-  serverpod_auth_client: ^1.x.x
+  serverpod_auth_client: 4.0.0-beta.1
 ```
 
 Add the dependencies to your `pubspec.yaml` in your **Flutter** project.
@@ -58,8 +62,8 @@ Add the dependencies to your `pubspec.yaml` in your **Flutter** project.
 ```yaml
 dependencies:
   ...
-  serverpod_auth_email_flutter: ^1.x.x
-  serverpod_auth_shared_flutter: ^1.x.x
+  serverpod_auth_email_flutter: 4.0.0-beta.1
+  serverpod_auth_shared_flutter: 4.0.0-beta.1
 ```
 
 ### Prebuilt sign in button
@@ -99,7 +103,7 @@ To let a user signup first call the `createAccountRequest` method which will tri
 await authController.createAccountRequest(userName, email, password);
 ```
 
-Then let the user type in the code and send it to the backend with the `validateAccount` method. This method will create the user and sign them in if the code is valid.
+Then let the user type in the code and send it to the backend with the `validateAccount` method. This method creates the user and returns the new `UserInfo` if the code is valid. Call `signIn` afterwards to sign the user in.
 
 ```dart
 await authController.validateAccount(email, verificationCode);
@@ -123,7 +127,7 @@ Let the user type in the verification code along with the new password and send 
 await authController.resetPassword(email, verificationCode, password);
 ```
 
-After the password has been reset you have to call the `signIn` method to log in. This can be achieved by either letting the user type in the details again or simply chaining the `resetPassword` method and the `singIn` method for a seamless UX.
+After the password has been reset you have to call the `signIn` method to log in. This can be achieved by either letting the user type in the details again or chaining the `resetPassword` and `signIn` methods for a seamless UX.
 
 ## Password storage security
 
@@ -156,37 +160,36 @@ If the pepper is changed, all passwords in the database will need to be re-hashe
 
 ### Secure random
 
-Serverpod uses the `dart:math` library to generate random salts for password hashing. By default, if no secure random number generator is available, a cryptographically unsecure random number is used.
+Serverpod uses the `dart:math` library to generate random salts for password hashing. By default, the server throws an exception if no secure random number generator is available (the `allowUnsecureRandom` property in the `AuthConfig` defaults to `false`).
 
-It is possible to prevent this fallback by setting the `allowUnsecureRandom` property in the `AuthConfig` to `false`. If the `allowUnsecureRandom` property is false, the server will throw an exception if a secure random number generator is unavailable.
+To fall back to a cryptographically unsecure random number instead, set the `allowUnsecureRandom` property to `true`.
 
 ```dart
 auth.AuthConfig.set(auth.AuthConfig(
-  allowUnsecureRandom: false,
+  allowUnsecureRandom: true,
 ));
 ```
 
 ## Custom password hash generator
 
-It is possible to override the default password hash generator. The `AuthConfig` class allows you to provide a custom hash generator using the field `passwordHashGenerator` and a custom hash validator through the field `passwordHashValidator`.
+It is possible to override the default password hash generator. The `AuthConfig` class allows you to provide a custom hash generator using the field `passwordHashGenerator` and a custom hash validator through the field `passwordHashValidator`. The validator receives named parameters and must return a `PasswordValidationResult`, either `PasswordValidationSuccess` or `PasswordValidationFailed`.
 
 ```dart
 AuthConfig(
-  passwordHashValidator: (
-    password,
-    email,
-    hash, {
-      onError,
-      onValidationFailure,
-    },
-  ) {
-  // Custom hash validator.
+  passwordHashValidator: ({
+    required password,
+    required email,
+    required hash,
+  }) async {
+    // Custom hash validation. Return PasswordValidationSuccess() if the
+    // password matches the hash.
+    return const PasswordValidationSuccess();
   },
-  passwordHashGenerator: (password) {
-  // Custom hash generator.
+  passwordHashGenerator: (password) async {
+    // Custom hash generation. Return the generated hash.
+    return myHashFunction(password);
   },
 )
-
 ```
 
 It could be useful if you already have stored passwords that should be preserved or migrated.
