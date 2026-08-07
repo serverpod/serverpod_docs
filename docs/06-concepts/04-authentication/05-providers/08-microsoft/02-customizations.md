@@ -5,7 +5,7 @@ description: Microsoft identity provider options beyond the basic setup, from te
 
 # Customize Microsoft sign-in
 
-This page covers configuration options for the Microsoft identity provider beyond the basic setup, on both the server and the app. It also shows how to customize the sign-in UI. You can use the `MicrosoftSignInWidget` to display the Microsoft Sign-In flow in your own custom UI, or the `MicrosoftAuthController` to build a completely custom authentication interface.
+This page covers configuration options for the Microsoft identity provider beyond the basic setup, on both the server and the app. It also shows how to customize the sign-in UI. You can use the `MicrosoftSignInWidget` to display the Microsoft sign-in flow in your own custom UI, or the `MicrosoftAuthController` to build a completely custom authentication interface.
 
 ## Server configuration
 
@@ -180,7 +180,7 @@ To use the granted scopes from the server with the access token, see [Accessing 
 
 #### Passing client IDs in code
 
-You can pass the `clientId`, `redirectUri`, and `tenant` directly when initializing the Microsoft Sign-In service:
+You can pass the `clientId`, `redirectUri`, and `tenant` directly when initializing the Microsoft sign-in service:
 
 ```dart
 await client.auth.initializeMicrosoftSignIn(
@@ -194,7 +194,7 @@ This approach is useful when you need different client IDs per platform and want
 
 #### Using environment variables
 
-Alternatively, you can pass client configuration during build time using the `--dart-define` option. The Microsoft Sign-In provider supports the following environment variables:
+Alternatively, you can pass client configuration during build time using the `--dart-define` option. The Microsoft sign-in provider supports the following environment variables:
 
 - `MICROSOFT_CLIENT_ID`: Your Microsoft Application (client) ID
 - `MICROSOFT_REDIRECT_URI`: The callback URI
@@ -224,7 +224,7 @@ You can also set these environment variables in your IDE's run configuration or 
 Inside `SignInWidget`, fields set on its `buttonStyle` take precedence over the settings below, as described in [Styling the buttons](../../ui-components#styling-the-buttons).
 
 :::info
-The `SignInWidget` uses the `MicrosoftSignInWidget` internally to display the Microsoft Sign-In flow. You can also supply a custom `MicrosoftSignInWidget` to the `SignInWidget` to override the default behavior.
+The `SignInWidget` uses the `MicrosoftSignInWidget` internally to display the Microsoft sign-in flow. You can also supply a custom `MicrosoftSignInWidget` to the `SignInWidget` to override the default behavior.
 
 ```dart
 SignInWidget(
@@ -246,7 +246,7 @@ SignInWidget(
 
 ### Using the `MicrosoftSignInWidget`
 
-The `MicrosoftSignInWidget` handles the complete Microsoft Sign-In flow for your Flutter app.
+The `MicrosoftSignInWidget` handles the complete Microsoft sign-in flow for your Flutter app.
 
 You can customize the widget's appearance and behavior:
 

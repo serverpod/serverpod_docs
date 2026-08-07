@@ -117,7 +117,7 @@ The tenant has no environment variable. Pass it as an argument when you initiali
 
 **Cause:** Initialization is idempotent. Only the first call in the app's lifetime stores the configuration, and later calls return without changing it. A hot reload keeps the old configuration alive.
 
-**Resolution:** After changing any initialization value, do a hot restart or fully restart the app. Either one re-runs initialization with the new values. Only hot reload keeps the old configuration alive.
+**Resolution:** After changing any initialization value, do a hot restart or fully restart the app. Either one re-runs initialization with the new values.
 
 ## Sign-in breaks after changing the scopes parameter
 
@@ -240,7 +240,7 @@ Quoting the values is a safeguard. YAML parses unquoted values that look like nu
 
 **Cause:** The `CallbackActivity` in `AndroidManifest.xml` is missing, has a wrong scheme or host, or `android:exported` is not set to `true`.
 
-**Resolution:** Open `android/app/src/main/AndroidManifest.xml` and confirm the `CallbackActivity` block exists with `android:exported="true"` and the `<data android:scheme="..." android:host="..."/>` values matching your callback URL exactly. The block is shown in [Client-side configuration](./setup#client-side-configuration).
+**Resolution:** Open `android/app/src/main/AndroidManifest.xml` and confirm the `CallbackActivity` block exists with `android:exported="true"` and the `<data android:scheme="..." android:host="..."/>` values matching your callback URL exactly. The block is shown in [Android setup](./setup#android).
 
 After editing the manifest, run `flutter clean` and rebuild.
 

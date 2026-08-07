@@ -241,7 +241,7 @@ Web sign-in needs the shared callback page that hands the OAuth2 result back to 
 
 ### Initializing the `MicrosoftSignInService`
 
-Before presenting any sign-in UI, initialize the Microsoft Sign-In service. This step is necessary to configure the service with your Microsoft app credentials.
+Before presenting any sign-in UI, initialize the Microsoft sign-in service. This step is necessary to configure the service with your Microsoft app credentials.
 
 ```dart
 await client.auth.initializeMicrosoftSignIn(
@@ -282,9 +282,9 @@ MicrosoftSignInWidget(
 
 The widget automatically handles:
 
-- Microsoft Sign-In flow for iOS, Android, Web, and macOS.
+- Microsoft sign-in flow for iOS, Android, web, and macOS.
 - OAuth2 authentication flow.
 - Token management.
 - Underlying OAuth2 package error handling.
 
-For details on how to customize the Microsoft Sign-In UI in your Flutter app, see the [customizations page](./customizations#customize-the-sign-in-button).
+For details on how to customize the Microsoft sign-in UI in your Flutter app, see the [customizations page](./customizations#customize-the-sign-in-button).

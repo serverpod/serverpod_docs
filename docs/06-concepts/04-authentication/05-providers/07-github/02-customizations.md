@@ -5,7 +5,7 @@ description: Configuration options for GitHub sign-in, including credential load
 
 # Customize GitHub sign-in
 
-This page covers additional configuration options for the GitHub identity provider beyond the basic setup. On the server, you can control how credentials are loaded and hook into the sign-in flow with callbacks. In your app, you can configure client IDs and redirect URIs, and customize the sign-in UI. Use the `GitHubSignInWidget` to display the GitHub Sign-In flow in your own custom UI, or the `GitHubAuthController` to build a completely custom authentication interface.
+This page covers additional configuration options for the GitHub identity provider beyond the basic setup. On the server, you can control how credentials are loaded and hook into the sign-in flow with callbacks. In your app, you can configure client IDs and redirect URIs, and customize the sign-in UI. Use the `GitHubSignInWidget` to display the GitHub sign-in flow in your own custom UI, or the `GitHubAuthController` to build a completely custom authentication interface.
 
 ## Server configuration
 
@@ -167,13 +167,13 @@ The `onBeforeAuthUserCreated` and `onAfterAuthUserCreated` hooks are global call
 
 ## App configuration
 
-The options in this section are set in your Flutter app when you initialize the GitHub Sign-In service.
+The options in this section are set in your Flutter app when you initialize the GitHub sign-in service.
 
 ### Configuring client IDs on the app
 
 #### Passing client IDs in code
 
-You can pass the `clientId` and `redirectUri` directly when initializing the GitHub Sign-In service:
+You can pass the `clientId` and `redirectUri` directly when initializing the GitHub sign-in service:
 
 ```dart
 await client.auth.initializeGitHubSignIn(
@@ -186,7 +186,7 @@ This approach is useful when you need different `redirectUri` values per platfor
 
 #### Using environment variables
 
-Alternatively, pass them at build time using `--dart-define`. The GitHub Sign-In provider supports the following environment variables:
+Alternatively, pass them at build time using `--dart-define`. The GitHub sign-in provider supports the following environment variables:
 
 - `GITHUB_CLIENT_ID`: Your GitHub OAuth client ID.
 - `GITHUB_REDIRECT_URI`: The callback URI. Use the value matching the platform you build for: a reverse-DNS scheme for mobile, `https://your-domain.com/auth/callback` for Serverpod-hosted Flutter web, or the full `auth.html` URL for separately-hosted Flutter web.
@@ -238,7 +238,7 @@ Use this flow when your Flutter web app and Serverpod are on different origins. 
 See [Styling the buttons](../../ui-components#styling-the-buttons) for how a `buttonStyle` set on `SignInWidget` takes precedence over the appearance arguments shown below.
 
 :::info
-The `SignInWidget` uses the `GitHubSignInWidget` internally to display the GitHub Sign-In flow. You can also supply a custom `GitHubSignInWidget` to the `SignInWidget` to override the default behavior.
+The `SignInWidget` uses the `GitHubSignInWidget` internally to display the GitHub sign-in flow. You can also supply a custom `GitHubSignInWidget` to the `SignInWidget` to override the default behavior.
 
 ```dart
 SignInWidget(
@@ -260,7 +260,7 @@ SignInWidget(
 
 ### Using the `GitHubSignInWidget`
 
-The `GitHubSignInWidget` handles the complete GitHub Sign-In flow for your Flutter app.
+The `GitHubSignInWidget` handles the complete GitHub sign-in flow for your Flutter app.
 
 You can customize the widget's appearance and behavior:
 

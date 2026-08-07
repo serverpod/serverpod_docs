@@ -280,7 +280,7 @@ SignInWidget(
 
 ### Using the `GoogleSignInWidget`
 
-The `GoogleSignInWidget` handles the complete Google Sign-In flow for iOS, Android, and Web.
+The `GoogleSignInWidget` handles the complete Google sign-in flow for iOS, Android, and web.
 
 You can customize the widget's appearance and behavior:
 

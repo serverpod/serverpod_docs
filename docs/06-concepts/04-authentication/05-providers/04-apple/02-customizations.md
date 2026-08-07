@@ -157,7 +157,7 @@ You can set `--dart-define` values in your IDE run configuration or CI/CD pipeli
 For the `buttonStyle` precedence rules that apply to all built-in buttons, see [Styling the buttons](../../ui-components#styling-the-buttons).
 
 :::info
-The `SignInWidget` uses the `AppleSignInWidget` internally to display the Apple Sign-In flow. You can also supply a custom `AppleSignInWidget` to the `SignInWidget` to override the default behavior.
+The `SignInWidget` uses the `AppleSignInWidget` internally to display the Apple sign-in flow. You can also supply a custom `AppleSignInWidget` to the `SignInWidget` to override the default behavior.
 
 ```dart
 SignInWidget(
@@ -178,7 +178,7 @@ SignInWidget(
 
 ### Using the `AppleSignInWidget`
 
-The `AppleSignInWidget` handles the complete Apple Sign-In flow for iOS, macOS, Android, and Web.
+The `AppleSignInWidget` handles the complete Apple sign-in flow for iOS, macOS, Android, and web.
 
 You can customize the widget's appearance and behavior:
 
