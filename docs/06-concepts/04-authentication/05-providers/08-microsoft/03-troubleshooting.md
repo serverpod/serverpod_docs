@@ -32,7 +32,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] The `tenant` passed on initialization matches the server's `tenant` setting. Both default to `common`.
 - [ ] On **Android**, added the `flutter_web_auth_2` `CallbackActivity` to `AndroidManifest.xml` with the **exact** scheme and host used in your callback URL.
 - [ ] On **Web**, created `web/auth.html` in your Flutter project with the callback script from [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml).
-- [ ] On **Web**, ran Flutter on a fixed `--web-port` matching the port in the registered redirect URI.
+- [ ] On **web**, ran Flutter on a fixed `--web-port` matching the port in the registered redirect URI.
 
 ## Sign-in fails with a redirect URI error
 

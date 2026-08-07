@@ -5,13 +5,17 @@ description: Authentication tokens in the legacy serverpod_auth module are handl
 
 # Legacy authentication basics
 
+:::info
+This page documents the legacy `serverpod_auth` module. To move an existing app to the current authentication framework, see [Migrate from legacy auth](../../../upgrading/migrate-from-legacy-auth).
+:::
+
 Serverpod automatically checks if the user is logged in and if the user has the right privileges to access the endpoint. When using the `serverpod_auth` module you will not have to worry about keeping track of tokens, refreshing them or, even including them in requests as this all happens automatically under the hood.
 
-The `Session` object provides information about the current user. A unique `userIdentifier` identifies a user. You should use this id whenever you a referring to a user. Access the id of a signed-in user through the `authenticated` asynchronous getter of the `Session` object. Since the default implementation of `serverpod_auth` uses numeric IDs for the users, there is a convenience getter `userId` on the `AuthenticationInfo`, which returns the integer value.
+The `Session` object provides information about the current user. A unique `userIdentifier` identifies a user. You should use this id whenever you are referring to a user. Access the id of a signed-in user through the `authenticated` getter of the `Session` object. Since the default implementation of `serverpod_auth` uses numeric IDs for the users, there is a convenience getter `userId` on the `AuthenticationInfo`, which returns the integer value.
 
 ```dart
 Future<void> myMethod(Session session) async {
-  final authenticationInfo = await session.authenticated;
+  final authenticationInfo = session.authenticated;
   final userIdentifier = authenticationInfo?.userIdentifier;
   final userId = authenticationInfo?.userId;
   ...
@@ -22,7 +26,7 @@ You can also use the Session object to check if a user is authenticated:
 
 ```dart
 Future<void> myMethod(Session session) async {
-  var isSignedIn = await session.isUserSignedIn;
+  var isSignedIn = session.isUserSignedIn;
   ...
 }
 ```
@@ -68,7 +72,7 @@ class UnauthenticatedEndpoint extends Endpoint {
   }
 
   Stream<bool> someStream(Session session) async* {
-    yield await session.isUserSignedIn; // Will always return false
+    yield session.isUserSignedIn; // Will always return false
   }
 }
 ```
@@ -188,11 +192,5 @@ await client.modules.auth.status.signOutAllDevices();
 This status endpoint retrieves the user ID from session's authentication information, then revokes all authentication keys related to that user.
 
 :::info
-The `signOut` status endpoint is deprecated. Use `signOutDevice` or `signOutAllDevices` instead.
-
-```dart
-await client.modules.auth.status.signOut();  // Deprecated
-```
-
-The behavior of `signOut` is controlled by `legacyUserSignOutBehavior`, which you can adjust in the [configure authentication](setup#configure-authentication) section. This allows you to control the signout behaviour of already shipped clients.
+The `signOut` status endpoint was removed in the 3.0 release of the module. Use `signOutDevice` or `signOutAllDevices` instead.
 :::

@@ -1,6 +1,6 @@
 ---
 sidebar_label: Setup
-description: Sign in with Apple requires Apple credentials and platform setup. Register them and add the provider to your Serverpod app across iOS, macOS, Android, and Web.
+description: Sign in with Apple requires Apple credentials and platform setup. Register them and add the provider to your Serverpod app across iOS, macOS, Android, and web.
 ---
 
 # Set up Apple sign-in
@@ -237,7 +237,7 @@ This intent filter is required. Without it, the OAuth callback never returns to 
 
 ### Web
 
-Sign in with Apple on Web requires the Apple JS SDK. Add the following script to your Flutter app's `web/index.html` inside the `<head>` tag:
+Sign in with Apple on web requires the Apple JS SDK. Add the following script to your Flutter app's `web/index.html` inside the `<head>` tag:
 
 ```html
 <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" crossorigin="anonymous"></script>
@@ -301,7 +301,7 @@ This renders a Sign in with Apple button like this:
 
 The widget automatically handles:
 
-- Sign in with Apple flow for iOS, macOS, Android, and Web.
+- Sign in with Apple flow for iOS, macOS, Android, and web.
 - Token management.
 - Underlying `sign_in_with_apple` package error handling.
 

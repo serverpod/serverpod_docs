@@ -203,7 +203,7 @@ flutter run \
 
 This approach is useful when you need to:
 
-- Manage separate client IDs for different platforms (Android, iOS, Web) in a centralized way
+- Manage separate client IDs for different platforms (Android, iOS, web) in a centralized way
 - Avoid committing client IDs to version control
 - Configure different credentials for different build environments (development, staging, production)
 

@@ -1,16 +1,20 @@
 ---
 sidebar_label: Google
-description: Sign in with Google in the legacy serverpod_auth module uses Google credentials added to your app and server across iOS, Android, and Web.
+description: Sign in with Google in the legacy serverpod_auth module uses Google credentials added to your app and server across iOS, Android, and web.
 ---
 
 # Google sign-in
+
+:::info
+This page documents the legacy `serverpod_auth` module. To move an existing app to the current authentication framework, see [Migrate from legacy auth](../../../../upgrading/migrate-from-legacy-auth).
+:::
 
 To set up Sign in with Google, you will need a Google account for your organization and set up a new project. For the project, you need to set up _Credentials_ and _Oauth consent screen_. You will also need to add the `serverpod_auth_google_flutter` package to your app and do some additional setup depending on each platform.
 
 A comprehensive tutorial covering everything about google sign in is available [here](https://medium.com/serverpod/integrating-google-sign-in-with-serverpod-authentication-part-2-6fade3099baf).
 
 :::note
-Right now, we have official support for iOS, Android, and Web for Google Sign In.
+Right now, we have official support for iOS, Android, and web for Google Sign In.
 :::
 
 :::caution
@@ -159,7 +163,7 @@ For development inside `Authorized redirect URIs` add `http://localhost:8082/goo
 Register the Google Sign In route inside `server.dart`.
 
 ```dart
-import 'package:serverpod_auth_server/module.dart' as auth
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 
 
 void run(List<String> args) async {
@@ -231,7 +235,7 @@ SignInWithGoogleButton(
 On the server, you can utilize the [googleapis](https://pub.dev/packages/googleapis) package to access the Youtube API by first creating a client, then calling the API.
 
 ```dart
-import 'package:serverpod_auth_server/module.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 import 'package:googleapis/youtube/v3.dart';
 
 

@@ -5,6 +5,10 @@ description: Firebase authentication in the legacy serverpod_auth module uses Fi
 
 # Firebase authentication
 
+:::info
+This page documents the legacy `serverpod_auth` module. To move an existing app to the current authentication framework, see [Migrate from legacy auth](../../../../upgrading/migrate-from-legacy-auth).
+:::
+
 Serverpod uses [Firebase UI auth](https://pub.dev/packages/firebase_ui_auth) to handle authentication through Firebase. It allows you to add social sign-in types that Serverpod doesn't directly support.
 
 :::warning
