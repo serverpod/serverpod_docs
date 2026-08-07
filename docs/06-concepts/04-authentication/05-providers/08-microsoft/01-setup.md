@@ -195,7 +195,7 @@ Finally, start the server with `serverpod start` to generate the client code, th
 - `clientSecret`: Required. The Client Secret generated for your Microsoft Entra ID app.
 - `tenant`: Optional. Defaults to `'common'`. Can be `'common'`, `'organizations'`, `'consumers'`, or a specific tenant ID.
 
-For more details on configuration options, see the [configuration section](./configuration).
+For more details on configuration options, see the [customizations page](./customizations).
 
 ## Client-side configuration
 
@@ -235,43 +235,13 @@ In order to capture the callback URL, add the following activity to your `Androi
 
 ### Web
 
-On the web, you need a specific endpoint to capture the OAuth2 callback. To set this up, create an HTML file (e.g., `auth.html`) inside your project's `./web` folder and add the following content:
-
-```html
-<!DOCTYPE html>
-<title>Authentication complete</title>
-<p>Authentication is complete. If this does not happen automatically, please close the window.</p>
-<script>
-  function postAuthenticationMessage() {
-    const message = {
-      'flutter-web-auth-2': window.location.href
-    };
-
-    if (window.opener) {
-      window.opener.postMessage(message, window.location.origin);
-      window.close();
-    } else if (window.parent && window.parent !== window) {
-      window.parent.postMessage(message, window.location.origin);
-    } else {
-      localStorage.setItem('flutter-web-auth-2', window.location.href);
-      window.close();
-    }
-  }
-
-  postAuthenticationMessage();
-</script>
-```
-
-:::note
-You only need a single callback file (e.g. `auth.html`) in your `./web` folder.
-This file is shared across all IDPs that use the OAuth2 utility, as long as your redirect URIs point to it.
-:::
+Web sign-in needs the shared callback page that hands the OAuth2 result back to your app. Set it up once as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml), and point your redirect URI at it, for example `https://yourdomain.com/auth.html`. The same page serves every provider that uses the OAuth2 flow.
 
 ## Present the authentication UI
 
 ### Initializing the `MicrosoftSignInService`
 
-Before presenting any sign-in UI, initialize the Microsoft Sign-In service. This step is necessary to configure the service with your Microsoft app credentials.
+Before presenting any sign-in UI, initialize the Microsoft sign-in service. This step is necessary to configure the service with your Microsoft app credentials.
 
 ```dart
 await client.auth.initializeMicrosoftSignIn(
@@ -281,7 +251,7 @@ await client.auth.initializeMicrosoftSignIn(
 ```
 
 :::info
-For more information on configuration options and environment variables, see the [configuration section](./configuration).
+For more information on configuration options and environment variables, see the [customizations page](./customizations).
 :::
 
 ### Using the `MicrosoftSignInWidget`
@@ -312,9 +282,9 @@ MicrosoftSignInWidget(
 
 The widget automatically handles:
 
-- Microsoft Sign-In flow for iOS, Android, Web, and macOS.
+- Microsoft sign-in flow for iOS, Android, web, and macOS.
 - OAuth2 authentication flow.
 - Token management.
 - Underlying OAuth2 package error handling.
 
-For details on how to customize the Microsoft Sign-In UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
+For details on how to customize the Microsoft sign-in UI in your Flutter app, see the [customizations page](./customizations#customize-the-sign-in-button).

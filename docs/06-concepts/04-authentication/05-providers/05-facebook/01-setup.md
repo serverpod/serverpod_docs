@@ -351,17 +351,17 @@ You can skip the remaining steps (1, 3, 5-9) as they are not required for Flutte
 
 On iOS, Facebook may issue **limited access tokens** when App Tracking Transparency (ATT) permission is not granted. These limited tokens cannot be validated by the server or used to retrieve user profile data, which will cause authentication to fail.
 
-To ensure full Facebook authentication functionality on iOS, you should request ATT permissions before initiating Facebook Sign In. You can use the [`app_tracking_transparency`](https://pub.dev/packages/app_tracking_transparency) package to handle this:
+To ensure full Facebook authentication functionality on iOS, you should request ATT permissions before initiating Facebook sign-in. You can use the [`app_tracking_transparency`](https://pub.dev/packages/app_tracking_transparency) package to handle this:
 
 ```dart
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
-// Request tracking authorization before showing Facebook Sign In
+// Request tracking authorization before showing Facebook sign-in
 final status = await AppTrackingTransparency.requestTrackingAuthorization();
 ```
 
 :::warning
-Without ATT permission granted, Facebook authentication fails on iOS. Consider requesting this permission early in your app's flow or before showing the Facebook Sign In button.
+Without ATT permission granted, Facebook authentication fails on iOS. Consider requesting this permission early in your app's flow or before showing the Facebook sign-in button.
 :::
 
 For more detailed iOS setup instructions, refer to the [flutter_facebook_auth iOS documentation](https://facebook.meedu.app/docs/7.x.x/ios).
@@ -488,7 +488,7 @@ For iOS and Android, the App ID is not required as the SDK reads credentials fro
 
 If you use the template's `SignInWidget` (see [Present the authentication UI](../../setup#present-the-authentication-ui)), the Facebook button is detected and shown automatically once the `serverpod_auth_idp_flutter_facebook` package is installed and the service is initialized. It handles the full sign-in flow, token management, and error handling on iOS, Android, web, and macOS.
 
-To customize the button or build a fully custom UI, see [Customizing the UI](./customizing-the-ui).
+To customize the button or build a fully custom UI, see [Customizations](./customizations#customize-the-sign-in-button).
 
 ## Publishing to production
 
@@ -505,7 +505,7 @@ Going Live requires a valid **Privacy Policy URL** (**App settings** > **Basic**
 ### 2. Add your production domains and platforms
 
 - **Web and macOS**: In **Use cases** > **Customize** > **Settings**, confirm **Login with the JavaScript SDK** is **Yes** and add your production domain to **Allowed Domains for the JavaScript SDK** (e.g., `https://yourdomain.com`) alongside your development domain. Both can stay registered so dev and prod work at the same time.
-- **Android**: Add your **release key hash** (not just the debug one) to the Android platform in the Facebook app. Generate it from your release keystore:
+- **Android**: Add your **release key hash** (not only the debug one) to the Android platform in the Facebook app. Generate it from your release keystore:
 
   ```bash
   keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
@@ -515,7 +515,7 @@ Going Live requires a valid **Privacy Policy URL** (**App settings** > **Basic**
 
 ### 3. Set production credentials
 
-Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones; both stay in place and Serverpod picks the right set based on the run mode.
+Production runs out of the `production:` section of `passwords.yaml`, which is separate from the `development:` section you populated during setup. Adding production credentials does not replace your development ones. Both stay in place, and Serverpod picks the right set based on the run mode.
 
 You can reuse the same Facebook app for development and production, or [create a separate app](https://developers.facebook.com/apps/creation/) per environment and use its credentials.
 

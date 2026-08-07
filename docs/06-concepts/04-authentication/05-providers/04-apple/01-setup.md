@@ -112,7 +112,7 @@ development:
 Paste the raw `.p8` file contents as-is. Do not pre-generate a JWT. Serverpod handles that internally. If sign-in fails, see the [troubleshooting guide](./troubleshooting).
 :::
 
-When you are ready to ship, see [Going to production](#going-to-production) for the production credential setup.
+When you are ready to ship, see [Publishing to production](#publishing-to-production) for the production credential setup.
 
 ## Server-side configuration
 
@@ -305,13 +305,13 @@ The widget automatically handles:
 - Token management.
 - Underlying `sign_in_with_apple` package error handling.
 
-For details on how to customize the Sign in with Apple UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
+For details on how to customize the Sign in with Apple UI in your Flutter app, see the [customizations page](./customizations#customize-the-sign-in-button).
 
 :::warning
-Apple sends the user's email and name only on the **first sign-in**. If your server does not persist them during that first authentication, they cannot be retrieved later.
+Apple sends the user's email and name only on the **first sign-in**. Serverpod stores them automatically during that first authentication. If the first sign-in never reaches your server, they cannot be retrieved later. See [User email is null after sign-in](./troubleshooting#user-email-is-null-after-sign-in).
 :::
 
-## Going to production
+## Publishing to production
 
 ### Update the Apple Developer Portal
 

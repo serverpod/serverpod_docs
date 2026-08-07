@@ -255,3 +255,9 @@ flutter run --dart-define=GOOGLE_CLIENT_ID=your-web-client-id.apps.googleusercon
 **Cause:** Google access tokens expire after 3,600 seconds (one hour). Serverpod captures the token during sign-in for the `getExtraGoogleInfoCallback`, and does not refresh it afterwards.
 
 **Resolution:** Fetch what you need inside `getExtraGoogleInfoCallback` while the token is fresh. For ongoing access, ask the user to sign in again, or run your own token exchange in a custom endpoint so you control the refresh token.
+
+## Related
+
+- [Setup](./setup): configure the Google Auth Platform and register the identity provider.
+- [Customizations](./customizations): configuration options and sign-in UI customization.
+- [UI components](../../ui-components): the sign-in widgets and how to compose them.

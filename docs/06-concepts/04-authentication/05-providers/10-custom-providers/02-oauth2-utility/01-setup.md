@@ -13,7 +13,7 @@ The OAuth2 utility consists of client-side and server-side components that work 
 - **Server-side (`OAuth2PkceUtil`)**: Exchanges authorization codes for access tokens on your backend.
 
 :::info
-The [GitHub IDP](../../github/setup) is built using these utilities, serving as a reference implementation for developers creating custom providers.
+The [GitHub provider](../../github/setup) is built using these utilities, serving as a reference implementation for developers creating custom providers.
 :::
 
 ## Understanding OAuth2 with PKCE
@@ -329,39 +329,7 @@ Add the callback activity to your `AndroidManifest.xml`:
 
 #### Web
 
-Create an HTML callback page in your `./web` folder (e.g., `auth.html`):
-
-```html
-<!DOCTYPE html>
-<title>Authentication complete</title>
-<p>Authentication is complete. If this does not happen automatically, please close the window.</p>
-<script>
-  function postAuthenticationMessage() {
-    const message = {
-      'flutter-web-auth-2': window.location.href
-    };
-
-    if (window.opener) {
-      window.opener.postMessage(message, window.location.origin);
-      window.close();
-    } else if (window.parent && window.parent !== window) {
-      window.parent.postMessage(message, window.location.origin);
-    } else {
-      localStorage.setItem('flutter-web-auth-2', window.location.href);
-      window.close();
-    }
-  }
-
-  postAuthenticationMessage();
-</script>
-```
-
-:::note
-You only need a single callback file (e.g. `auth.html`) in your `./web` folder.
-This file is shared across all IDPs that use the OAuth2 utility, as long as your redirect URIs point to it.
-:::
-
-Make sure your redirect URI points to the callback file, e.g. `https://yourdomain.com/auth.html`
+Web sign-in needs the shared callback page that hands the OAuth2 result back to your app. Set it up once as described in [Web callback page (`auth.html`)](../../../setup#web-callback-page-authhtml). The same page serves every provider built on the OAuth2 utility, as long as your redirect URIs point to it, for example `https://yourdomain.com/auth.html`.
 
 ## Complete example of a custom provider
 

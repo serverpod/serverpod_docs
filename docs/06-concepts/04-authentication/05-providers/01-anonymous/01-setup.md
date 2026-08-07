@@ -6,10 +6,10 @@ description: Anonymous authentication lets users access your app without creatin
 # Set up anonymous sign-in
 
 :::warning
-The Anonymous identity provider is **experimental** and can not be completely used yet due to the missing support for account linking. The missing parts will be added in the next releases.
+The anonymous identity provider is **experimental** and can not be completely used yet due to the missing support for account linking. The missing parts will be added in the next releases.
 :::
 
-To properly configure Anonymous authentication, you must allow anonymous access in your Serverpod auth configuration.
+To properly configure anonymous authentication, you must allow anonymous access in your Serverpod auth configuration.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
@@ -22,10 +22,10 @@ In your main `server.dart` file, configure the anonymous identity provider using
 ```dart
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
+import 'package:serverpod_auth_idp_server/providers/anonymous.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
-import 'package:serverpod_auth_idp_server/providers/anonymous.dart';
 
 void run(List<String> args) async {
   final pod = Serverpod(
@@ -39,7 +39,7 @@ void run(List<String> args) async {
       JwtConfigFromPasswords(),
     ],
     identityProviderBuilders: [
-      // Configure the Anonymous Identity Provider
+      // Configure the anonymous identity provider
       AnonymousIdpConfig(),
     ],
   );
@@ -60,13 +60,13 @@ Then, start the server with `serverpod start` to generate the client code, then 
 
 ### Basic configuration options
 
-Although the Anonymous IDP can be used directly with no other configuration, it is recommended to add some form of app attestation to prevent abuse on production environments. See the [Using a token for app attestation section](./configuration#using-a-token-for-app-attestation) for more details.
+Although the anonymous identity provider can be used directly with no other configuration, it is recommended to add some form of app attestation to prevent abuse in production environments. See the [Using a token for app attestation section](./customizations#using-a-token-for-app-attestation) for more details.
 
-For other configuration options such as callbacks (before/after account creation) and rate limiting, see the [configuration section](./configuration).
+For other configuration options such as callbacks (before/after account creation) and rate limiting, see the [customizations page](./customizations).
 
 ## Client-side configuration
 
-If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Anonymous identity provider will be automatically detected and displayed in the sign-in widget as a "Continue without account" option.
+If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the anonymous identity provider will be automatically detected and displayed in the sign-in widget as a "Continue without account" option.
 
 You can also use the `AnonymousSignInWidget` to include anonymous sign-in in your own custom UI:
 
@@ -90,4 +90,4 @@ AnonymousSignInWidget(
 )
 ```
 
-The widget displays a "Continue without account" button that creates an anonymous session when pressed. For details on customizing the button (size, shape), using a custom widget with `SignInWidget`, or building a fully custom UI with `AnonymousAuthController`, see the [customizing the UI section](./customizing-the-ui).
+The widget displays a "Continue without account" button that creates an anonymous session when pressed. For details on customizing the button (size, shape), using a custom widget with `SignInWidget`, or building a fully custom UI with `AnonymousAuthController`, see the [customizations page](./customizations#customize-the-sign-in-button).
