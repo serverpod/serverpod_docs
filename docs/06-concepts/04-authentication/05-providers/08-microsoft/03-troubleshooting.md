@@ -170,7 +170,7 @@ See [Requesting additional Microsoft scopes](./customizations#requesting-additio
 
 **Problem:** The user signs in successfully, but the server-side `MicrosoftAccountDetails.email` value is `null`, or the stored email is not an address the user recognizes.
 
-**Cause:** Microsoft Graph does not always return a mail address. The provider reads the `mail` field first and falls back to `userPrincipalName`, then stores the result in lower case. The `mail` field can be empty for accounts without a mailbox, and `userPrincipalName` is a sign-in identifier that is not always a real address, especially for guest accounts. A custom validator that requires an email will block these users, and the app then shows the access token verification error.
+**Cause:** Microsoft Graph does not always return a mail address. The provider reads the `mail` field first and falls back to `userPrincipalName`, then stores the result in lowercase. The `mail` field can be empty for accounts without a mailbox, and `userPrincipalName` is a sign-in identifier that is not always a real address, especially for guest accounts. A custom validator that requires an email will block these users, and the app then shows the access token verification error.
 
 **Resolution:**
 
