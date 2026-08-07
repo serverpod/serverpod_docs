@@ -103,7 +103,7 @@ When a user revokes access from their Apple ID settings, Apple sends a notificat
 | `teamId` | `String` | Yes | `appleTeamId` | The 10-character Team ID from your Apple Developer account. Used to sign the client secret JWT. |
 | `keyId` | `String` | Yes | `appleKeyId` | The Key ID of the Sign in with Apple private key. |
 | `key` | `String` | Yes | `appleKey` | The raw contents of the `.p8` private key file, including the `-----BEGIN PRIVATE KEY-----` header and footer. Do not pre-generate the JWT yourself. |
-| `webRedirectUri` | `String?` | Web only | `appleWebRedirectUri` | The web app URL the browser is redirected to after the server receives Apple's callback. |
+| `webRedirectUri` | `String?` | web only | `appleWebRedirectUri` | The web app URL the browser is redirected to after the server receives Apple's callback. |
 | `androidPackageIdentifier` | `String?` | Android only | `appleAndroidPackageIdentifier` | The Android package name (e.g. `com.example.app`). When set, the callback route redirects Android sign-ins back to the app via an intent URI. |
 
 ## App configuration
@@ -144,7 +144,7 @@ flutter run \
 
 This approach is useful when you need to:
 
-- Manage configuration separately for different platforms (Android, Web) in a centralized way
+- Manage configuration separately for different platforms (Android, web) in a centralized way
 - Avoid committing sensitive configuration to version control
 - Configure different credentials for different build environments (development, staging, production)
 

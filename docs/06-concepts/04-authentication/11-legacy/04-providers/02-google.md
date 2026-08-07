@@ -1,6 +1,6 @@
 ---
 sidebar_label: Google
-description: Sign in with Google in the legacy serverpod_auth module uses Google credentials added to your app and server across iOS, Android, and Web.
+description: Sign in with Google in the legacy serverpod_auth module uses Google credentials added to your app and server across iOS, Android, and web.
 ---
 
 # Google sign-in
@@ -14,7 +14,7 @@ To set up Sign in with Google, you will need a Google account for your organizat
 A comprehensive tutorial covering everything about google sign in is available [here](https://medium.com/serverpod/integrating-google-sign-in-with-serverpod-authentication-part-2-6fade3099baf).
 
 :::note
-Right now, we have official support for iOS, Android, and Web for Google Sign In.
+Right now, we have official support for iOS, Android, and web for Google Sign In.
 :::
 
 :::caution

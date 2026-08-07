@@ -211,7 +211,7 @@ The tenant has no environment variable. Pass it as an argument when you initiali
 
 This approach is useful when you need to:
 
-- Manage separate client IDs for different platforms (Android, iOS, Web, macOS) in a centralized way
+- Manage separate client IDs for different platforms (Android, iOS, web, macOS) in a centralized way
 - Avoid committing client IDs to version control
 - Configure different credentials for different build environments (development, staging, production)
 
