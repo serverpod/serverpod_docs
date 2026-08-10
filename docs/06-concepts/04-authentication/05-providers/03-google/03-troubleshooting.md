@@ -33,7 +33,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
 - [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app. Set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
 - [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run (*Android only*).
-- [ ] Set up the web callback (*Web only*). Pick one:
+- [ ] Set up the web callback (*web only*). Pick one:
   - **Standard:** Register `FlutterWebAuth2CallbackRoute` on `pod.webServer` in `server.dart` before `pod.start()` per [Web setup](./setup#web).
   - **Separately-hosted fallback:** Create `web/auth.html` in your Flutter project as described in [Web callback page (`auth.html`)](../../setup#web-callback-page-authhtml) and run Flutter on a **fixed** `--web-port` so the origin does not change every run. See [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web).
 

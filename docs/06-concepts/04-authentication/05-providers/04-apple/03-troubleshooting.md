@@ -35,7 +35,7 @@ Go through this before investigating a specific error. Most problems come from a
 * [ ] Add `serverpod_auth_idp_flutter` to your Flutter app's `pubspec.yaml`.
 * [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
 * [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
-* [ ] Add the **Apple JS SDK** script to `web/index.html` (*Web only*).
+* [ ] Add the **Apple JS SDK** script to `web/index.html` (*web only*).
 * [ ] Pass **`APPLE_SERVICE_IDENTIFIER`** and **`APPLE_REDIRECT_URI`** via `--dart-define`. Initialization throws an `ArgumentError` without them, on every platform.
 * [ ] Add the **`signinwithapple`** intent filter to `AndroidManifest.xml` (*Android only*).
 * [ ] Add **Apple's mail servers** to your SPF record if you email users who might use Hide My Email.
@@ -81,7 +81,7 @@ Alternatively, set `appleKey` via the `SERVERPOD_PASSWORD_appleKey` environment 
 
 ## Wrong identifier passed for web or Android sign-in
 
-**Problem:** Sign-in on Android or Web fails immediately, or Apple returns `invalid_client` / `invalid_request` even though credentials look correct.
+**Problem:** Sign-in on Android or web fails immediately, or Apple returns `invalid_client` / `invalid_request` even though credentials look correct.
 
 **Cause:** There are two separate identifiers in Apple's system and they are easy to mix up:
 
@@ -173,7 +173,7 @@ If you use `--dart-define`, confirm `APPLE_SERVICE_IDENTIFIER` is the Services I
 
 ## Web sign-in fails with `TypeError: type ... is not a subtype of type 'JSObject'`
 
-**Problem:** Clicking the Apple button on Web throws a `TypeError` mentioning `JSObject` or a minified type like `minified:CM`.
+**Problem:** Clicking the Apple button on web throws a `TypeError` mentioning `JSObject` or a minified type like `minified:CM`.
 
 **Cause:** The Apple JS SDK is not loaded. The `sign_in_with_apple` package calls `AppleID.auth.init()` on the page, but that function only exists after Apple's script is loaded in the HTML.
 

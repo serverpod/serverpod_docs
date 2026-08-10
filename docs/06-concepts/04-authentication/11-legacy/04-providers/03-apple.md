@@ -5,6 +5,10 @@ description: Sign in with Apple in the legacy serverpod_auth module is supported
 
 # Apple sign-in
 
+:::info
+This page documents the legacy `serverpod_auth` module. To move an existing app to the current authentication framework, see [Migrate from legacy auth](../../../../upgrading/migrate-from-legacy-auth).
+:::
+
 Sign-in with Apple, requires that you have a subscription to the [Apple developer program](https://developer.apple.com/programs/), even if you only want to test the feature in development mode.
 
 A comprehensive tutorial covering Sign in with Apple is available [here](https://medium.com/serverpod/integrating-apple-sign-in-with-serverpod-authentication-part-3-f5a49d006800).
@@ -28,7 +32,7 @@ Add the dependency to your `pubspec.yaml` in your flutter project.
 ```yaml
 dependencies:
   ...
-  serverpod_auth_apple_flutter: ^1.x.x
+  serverpod_auth_apple_flutter: 4.0.0-beta.1
 ```
 
 ### Config
@@ -44,7 +48,7 @@ Enable the sign-in with Apple capability in your Xcode project, this is the same
 `serverpod_auth_apple_flutter` package comes with the widget `SignInWithAppleButton` that renders a nice Sign in with Apple button and triggers the native sign-in UI.
 
 ```dart
-import 'package:serverpod_auth_email_flutter/serverpod_auth_email_flutter.dart';
+import 'package:serverpod_auth_apple_flutter/serverpod_auth_apple_flutter.dart';
 
 SignInWithAppleButton(
   caller: client.modules.auth,

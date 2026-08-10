@@ -127,7 +127,7 @@ pod.initializeAuthServices(
 );
 ```
 
-The `FirebaseIdpConfigFromPasswords()` constructor automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Customizations](./customizations) page.
+The `FirebaseIdpConfigFromPasswords()` constructor automatically loads the service account key from the `firebaseServiceAccountKey` key in `config/passwords.yaml` (or the `SERVERPOD_PASSWORD_firebaseServiceAccountKey` environment variable). For loading credentials from other sources (file, JSON map, project ID only), see the [Configuration](./configuration) page.
 
 ### 2. Create the endpoint
 

@@ -33,7 +33,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Both `clientId` and `redirectUri` match values registered on the GitHub App.
 - [ ] On **Android**, added the `flutter_web_auth_2` `CallbackActivity` to `AndroidManifest.xml` with the **exact** scheme used in your callback URL.
 - [ ] On **Web (Serverpod-hosted Flutter)**, registered `FlutterWebAuth2CallbackRoute` via `pod.webServer.addRoute(...)` in `server.dart` before `pod.start()`. On **Web (separately-hosted Flutter)**, created `web/auth.html` in your Flutter project. See [Web](./setup#web) for both flows.
-- [ ] On **Web**, ran Flutter on a fixed `--web-port` matching the port registered in the GitHub App's callback URL.
+- [ ] On **web**, ran Flutter on a fixed `--web-port` matching the port registered in the GitHub App's callback URL.
 
 ## Sign-in fails with redirect_uri_mismatch
 
