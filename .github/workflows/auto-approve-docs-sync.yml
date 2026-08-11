@@ -1,0 +1,25 @@
+name: 'Auto-approve CLI docs sync PRs'
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  pull-requests: write
+
+jobs:
+  auto-approve:
+    name: Auto-approve
+    runs-on: ubuntu-latest
+    if: >
+      github.event.pull_request.user.login == 'serverpod-cloud-docs-sync[bot]' &&
+      contains(fromJSON('["auto/cli-docs-sync", "auto/framework-cli-docs-sync"]'), github.event.pull_request.head.ref)
+    steps:
+      - name: Approve PR
+        run: gh pr review "$PR_URL" --approve --body 'Auto-approved CLI reference docs sync PR.'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
