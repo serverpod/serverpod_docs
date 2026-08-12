@@ -33,3 +33,5 @@ jobs:
               run: npm ci 
             - name: Build
               run: npm run build
+            - name: Verify markdown export
+              run: node util/verify_markdown_export.js

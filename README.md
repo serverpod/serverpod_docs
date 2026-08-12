@@ -76,6 +76,17 @@ To maintain link integrity when relocating or renaming documentation pages, it's
 
 Once a PR is merged into the `main` branch of this repository, a GitHub action is triggered that builds the documentation and pushes the build to the `docs` directory within the `serverpod.github.io` repository. The built documentation is committed as a new commit to the `main` branch and is then deployed to Github pages by the `serverpod.github.io` repository.
 
+### Markdown export (llms.txt and per-page .md)
+
+The local plugin in `plugins/markdown-export` publishes a clean markdown version of every doc page at its page URL with `.md` appended, plus `llms.txt`, `llms-full.txt`, and `cloud/llms-full.txt` at the site root. The "Copy as Markdown" button on every page fetches these files. Things to know:
+
+- The llms files always describe the current stable version, derived from `versions.json`; nothing needs updating when a new version is cut. The plugin logs the export size and duration on every build.
+- Links between doc pages inside the exports point at the target's `.md` version, so an agent reading one page can follow links to more markdown.
+- Renamed pages keep their HTML redirect only. The old `.md` URL becomes a one-line "moved to" stub, generated from `redirects.js`.
+- `static/robots.txt` disallows crawling of `*.md` to keep the duplicates out of search engines; `llms.txt` stays crawlable on purpose.
+- `node util/verify_markdown_export.js` checks the export after a build. CI runs it on every PR.
+- GitHub Pages only serves the `.md` files raw because Jekyll is disabled via `.nojekyll`; the deploy workflow copies that file explicitly.
+
 ### Formatting
 
 To ensure consistent formatting, we use markdownlint [(VS Code Extension)](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)

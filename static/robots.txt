@@ -1,0 +1,11 @@
+# Keep the .md duplicates of every docs page out of search results. Scoped
+# to search engine crawlers only: AI agent fetchers must stay able to follow
+# llms.txt links to the markdown endpoints.
+User-agent: Googlebot
+Disallow: /*.md$
+
+User-agent: Bingbot
+Disallow: /*.md$
+
+User-agent: *
+Disallow:
