@@ -6,7 +6,7 @@ description: Serverpod model files define serializable classes, exceptions, and 
 
 # Working with models
 
-A data model is a YAML definition that becomes a typed Dart class on both the server and the client, and, with a [table](./database/tables) key, a database table as well. Models are the unit of data your endpoints pass and your database stores.
+A data model is a YAML definition that becomes a typed Dart class on both the server and the client, and, with a [table](./database/tables) key, a database table as well. Models are the unit of data your endpoints pass and your database stores. You can also [define models that you only use in Flutter](#using-models-on-the-client-only).
 
 The recommended file extension is `.spy.yaml` (.spy stands for "Serverpod YAML"), with `.spy` and `.spy.yml` accepted as well. These files can be placed anywhere in your server's `lib` directory, and the extension enables syntax highlighting through the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code. Regular `.yaml` files are also supported, but only within `lib/src/models` (or the legacy `lib/src/protocol` directory).
 
@@ -99,6 +99,29 @@ fields:
 :::info
 Models can be saved to and read from the database. See the [Database](./database/tables) section.
 :::
+
+### Using models on the client only
+
+You can define models that you only use in the Flutter app, for example to hold local UI state or form data. Leave `serverOnly` unset so the class is generated for the client. There is no separate `clientOnly` flag.
+
+Place the `.spy.yaml` file anywhere in the server's `lib` directory. With `serverpod start` running, saving the file regenerates the code; otherwise run `serverpod generate`. Then import the class from the client package.
+
+```yaml
+class: CartItem
+fields:
+  productId: String
+  quantity: int
+```
+
+```dart
+import 'package:your_client/your_client.dart';
+
+var item = CartItem(productId: 'sku-1', quantity: 2);
+```
+
+The class is also generated on the server, which is harmless: without a `table` key no database table is created, and nothing requires you to use the class in an endpoint. Set `immutable: true` if you want value equality for Flutter state management. See [Immutable classes](#immutable-classes).
+
+If you want the YAML and generated classes in a package that both the server and the app depend on, use a [shared package](./models/shared-packages).
 
 ### JSON key aliasing
 
