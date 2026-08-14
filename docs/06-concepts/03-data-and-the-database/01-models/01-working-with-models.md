@@ -104,23 +104,22 @@ Models can be saved to and read from the database. See the [Database](./database
 
 You can define models that you only use in the Flutter app, for example to hold local UI state or form data. Leave `serverOnly` unset so the class is generated for the client. There is no separate `clientOnly` flag.
 
-Place the `.spy.yaml` file anywhere in the server's `lib` directory, run code generation, and import the class from the client package.
+Place the `.spy.yaml` file anywhere in the server's `lib` directory. With `serverpod start` running, saving the file regenerates the code; otherwise run `serverpod generate`. Then import the class from the client package.
 
 ```yaml
 class: CartItem
-immutable: true
 fields:
   productId: String
   quantity: int
 ```
 
 ```dart
-import 'package:my_project_client/my_project_client.dart';
+import 'package:your_client/your_client.dart';
 
 var item = CartItem(productId: 'sku-1', quantity: 2);
 ```
 
-The class is also generated on the server. That is harmless: omit the `table` key so no database table is created, and you do not need to use the class in any endpoint. Set `immutable: true` if you want value equality for Flutter state management. See [Immutable classes](#immutable-classes).
+The class is also generated on the server, which is harmless: without a `table` key no database table is created, and nothing requires you to use the class in an endpoint. Set `immutable: true` if you want value equality for Flutter state management. See [Immutable classes](#immutable-classes).
 
 If you want the YAML and generated classes in a package that both the server and the app depend on, use a [shared package](./models/shared-packages).
 
