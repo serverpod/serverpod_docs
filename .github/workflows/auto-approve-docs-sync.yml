@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event.pull_request.user.login == 'serverpod-cloud-docs-sync[bot]' &&
-      contains(fromJSON('["auto/cli-docs-sync", "auto/framework-cli-docs-sync"]'), github.event.pull_request.head.ref)
+      contains(fromJSON('["auto/cli-docs-sync", "auto/framework-cli-docs-sync", "auto/dart-versions-sync"]'), github.event.pull_request.head.ref)
     steps:
       - name: Approve PR
-        run: gh pr review "$PR_URL" --approve --body 'Auto-approved CLI reference docs sync PR.'
+        run: gh pr review "$PR_URL" --approve --body 'Auto-approved docs sync PR.'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
