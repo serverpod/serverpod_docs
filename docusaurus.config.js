@@ -258,11 +258,8 @@ const config = {
             to: '/cloud/reference/private-dependencies',
           },
           {
-            from: [
-              '/cloud/reference/deployment/dart-sdk-versions',
-              '/cloud/reference/dart-sdk-versions',
-            ],
-            to: '/cloud/guides/deployment/dart-sdk-versions',
+            from: ['/cloud/reference/deployment/dart-sdk-versions'],
+            to: '/cloud/reference/dart-sdk-versions',
           },
           {
             from: ['/cloud/reference/project-id'],
