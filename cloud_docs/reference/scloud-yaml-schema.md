@@ -50,7 +50,7 @@ project:
 
 **Type:** string. **Optional.**
 
-Pins the Dart SDK version used for builds. When unset, scloud reads `environment.sdk` from your `pubspec.yaml` and uses the lowest version in the supported range. See [Dart SDK versions](/cloud/reference/dart-sdk-versions) for the supported versions.
+Pins the Dart SDK version used for builds. When unset, scloud falls back to your `.tool-versions` file and then the `environment.sdk` constraint in your `pubspec.yaml`. See [Dart SDK versions](/cloud/reference/dart-sdk-versions) for the supported versions and the full selection order.
 
 ```yaml title="scloud.yaml"
 project:

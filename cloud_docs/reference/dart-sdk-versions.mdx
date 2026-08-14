@@ -1,0 +1,75 @@
+---
+sidebar_position: 1
+title: Dart SDK versions
+description: Which Dart SDK versions Serverpod Cloud supports, and how to select the version your deploy builds with using the --dart-version flag, scloud.yaml, .tool-versions, or your pubspec constraint.
+---
+
+import versionData from './dart-sdk-versions.json';
+
+# Dart SDK versions
+
+Serverpod Cloud builds your server with one of a fixed set of Dart SDK versions. This page lists the supported versions and shows how to select the one your deploy uses.
+
+## Supported versions
+
+<ul>
+  {versionData.supportedVersions.map((version) => (
+    <li key={version}>
+      Dart {version}
+      {version === versionData.defaultVersion ? ' (default)' : ''}
+    </li>
+  ))}
+</ul>
+
+## How the version is selected
+
+The `scloud deploy` command reads the Dart SDK version from the first of these sources that sets one:
+
+1. The `--dart-version` flag.
+2. The `dartSdk` field in `scloud.yaml`.
+3. The `dart` entry in a `.tool-versions` file, in the project directory first and then the workspace root.
+4. The `environment.sdk` constraint in `pubspec.yaml`.
+
+Every source accepts an exact version or a pub-style version constraint, such as `3.10`, `^3.9.0`, or `>=3.9.0 <4.0.0`. Serverpod Cloud builds with the highest supported version the constraint allows. If the constraint allows no supported version, the deploy fails with an error that lists the supported versions.
+
+When no source sets a version, your server builds with Dart {versionData.defaultVersion}.
+
+### Pass the flag
+
+```bash
+# Deploy with a one-off Dart SDK version override
+scloud deploy --dart-version 3.10
+```
+
+### Set the version in scloud.yaml
+
+```yaml title="scloud.yaml"
+project:
+  projectId: "my-app"
+  dartSdk: "3.10"
+```
+
+### Use your version manager's pin
+
+Version managers such as mise and asdf pin tool versions in a `.tool-versions` file. Serverpod Cloud reads the `dart` entry:
+
+```text title=".tool-versions"
+dart 3.10.4
+```
+
+### Use the pubspec constraint
+
+Without any of the sources above, the SDK constraint in your `pubspec.yaml` decides:
+
+```yaml title="pubspec.yaml"
+environment:
+  sdk: ">=3.9.0 <4.0.0"
+```
+
+This example builds with the highest supported version, since the constraint allows all of them from 3.9 up.
+
+## Related documentation
+
+- [scloud.yaml schema](/cloud/reference/scloud-yaml-schema) - The `dartSdk` field and how scloud commands preserve it.
+- [Deployments](/cloud/concepts/deployments) - Deploy operations, status checks, and package validation.
+- [`scloud deploy`](/cloud/reference/cli/commands/deploy) - The deploy command and its flags.
