@@ -85,6 +85,22 @@ The available isolation levels are:
 
 For a detailed explanation of the different isolation levels, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/transaction-iso.html).
 
+## Deferred constraint checking
+
+Foreign keys are checked at the end of every statement, so a transaction that inserts a child row before its parent fails on the child insert. Set `deferConstraints` to postpone the check until the transaction commits, which lets the rows be written in any order:
+
+```dart
+await session.db.transaction(
+  (transaction) async {
+    await Employee.db.insertRow(session, employee, transaction: transaction);
+    await Company.db.insertRow(session, company, transaction: transaction);
+  },
+  settings: TransactionSettings(deferConstraints: true),
+);
+```
+
+On Postgres this only affects relations declared with the `deferrable` or `deferred` keyword. On SQLite every foreign key in the transaction is deferred. See [Deferrable constraints](relations/deferrable-constraints) for the model syntax.
+
 ## Transaction failure exceptions
 
 When the database rejects a query inside the transaction, Serverpod throws a `DatabaseQueryException`. This can happen, for example, when concurrent writes conflict with the selected transaction isolation level, or when Postgres detects a deadlock.
