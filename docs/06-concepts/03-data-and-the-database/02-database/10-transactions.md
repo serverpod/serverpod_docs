@@ -87,19 +87,22 @@ For a detailed explanation of the different isolation levels, see the [PostgreSQ
 
 ## Deferred constraint checking
 
-Foreign keys are checked at the end of every statement, so a transaction that inserts a child row before its parent fails on the child insert. Set `deferConstraints` to postpone the check until the transaction commits, which lets the rows be written in any order:
+Foreign keys are checked at the end of every statement, so a transaction that inserts a child row before its parent fails on the child insert. This can be avoided by marking a constraint as [deferrable](relations/deferrable-constraints) and setting `deferConstraints` to postpone the check until the transaction commits.
 
 ```dart
 await session.db.transaction(
+  settings: TransactionSettings(deferConstraints: true),
   (transaction) async {
+    // Child Employee row inserted before Parent Company row.
     await Employee.db.insertRow(session, employee, transaction: transaction);
     await Company.db.insertRow(session, company, transaction: transaction);
   },
-  settings: TransactionSettings(deferConstraints: true),
 );
 ```
 
-On Postgres this only affects relations declared with the `deferrable` or `deferred` keyword. On SQLite every foreign key in the transaction is deferred. See [Deferrable constraints](relations/deferrable-constraints) for the model syntax.
+With constraints deferred, rows be written in any order, as long as all foreign key constraints are met when the transaction commits.
+
+This affects only relations declared with the `deferrable` keyword. Relations declared with the `deferred` keyword are already configured to be checked by the end of the transaction by default.
 
 ## Transaction failure exceptions
 
