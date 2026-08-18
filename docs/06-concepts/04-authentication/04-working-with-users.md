@@ -260,8 +260,57 @@ final additionalInfo = await MyDomainData.db.findFirstRow(
 );
 ```
 
+## Merging accounts
+
+When a user adds a sign-in method that already belongs to a different account, the two accounts have to become one. Serverpod does not merge them on its own: you decide when to offer the merge, and run it once the user accepts.
+
+A merge moves the identity provider records, tokens, server-side sessions, scopes, and the user profile from one `AuthUser` to the other, then deletes the account that was merged away. All of it runs in one transaction, so a failure at any step leaves both accounts untouched.
+
+### Configure the merge
+
+Your application's own data is the part Serverpod cannot move for you. Pass an `applicationMergeHandler` to `pod.initializeAuthServices()` that reassigns your rows from the removed user to the kept one:
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [...],
+  accountMergeConfig: AccountMergeConfig(
+    applicationMergeHandler:
+        (
+          Session session, {
+          required UuidValue userToKeepId,
+          required UuidValue userToRemoveId,
+          required Transaction transaction,
+        }) async {
+          await MyDomainData.db.updateWhere(
+            session,
+            where: (t) => t.authUserId.equals(userToRemoveId),
+            columnValues: (t) => [t.authUserId(userToKeepId)],
+            transaction: transaction,
+          );
+        },
+  ),
+);
+```
+
+Without a handler, merging throws. That is the default for applications that never merge accounts.
+
+To reorder the built-in steps or replace one of them, use `AccountMergeConfig.custom` and pass the full list of `mergeHooks` yourself.
+
+### Merge two users
+
+```dart
+await AuthServices.instance.accountMerger.merge(
+  session,
+  userToKeepId: userToKeepId,
+  userToRemoveId: userToRemoveId,
+);
+```
+
+Both users must exist and be different from each other, otherwise the call throws.
+
 ## Related
 
 - [The basics](./basics): authentication state, scopes, and endpoint access control.
 - [Profile photos](./profile-photos): upload, display, and default profile images.
 - [Setup](./setup): configure the authentication services these callbacks hook into.
+- [Creating an OAuth2-based identity provider](./providers/custom-providers/oauth2-utility/creating-an-oauth2-based-identity-provider): implement `mergeAuthUsers` so a custom provider takes part in a merge.
