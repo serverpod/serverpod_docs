@@ -99,6 +99,28 @@ indexes:
     unique: true
 ```
 
+### Null values in unique indexes
+
+A unique index treats null values as distinct, so any number of rows can hold null in an indexed field without colliding. Set `nulls_distinct: false` to make them collide instead, which is what turns a nullable column into a "one row per key" constraint:
+
+```yaml
+class: Product
+table: product
+fields:
+  tenantId: int
+  sku: String
+  deletedAt: DateTime?
+indexes:
+  product_active_sku_idx:
+    fields: tenantId, sku, deletedAt
+    unique: true
+    nulls_distinct: false
+```
+
+In this example, a tenant can have at most one product with a given `sku` and no `deletedAt`. Deleted rows carry a timestamp, so they no longer collide with each other.
+
+The key is only allowed on unique indexes, and leaving it out keeps the database default. SQLite cannot express `nulls_distinct: false`, so creating a migration for it fails on that dialect.
+
 ## Specify an index type
 
 Add a `type` key to specify the index type.
