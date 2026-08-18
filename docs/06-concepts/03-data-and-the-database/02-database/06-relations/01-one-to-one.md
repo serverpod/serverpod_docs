@@ -90,14 +90,13 @@ With the introduction of the `optional` keyword in the relation, the automatical
 
 ### Custom foreign key field
 
-Serverpod also provides a way to customize the name of the foreign key field used in an object relation.
+The `field` parameter names the foreign key field used by an object relation.
 
 ```yaml
 # user.yaml
 class: User
 table: user
 fields:
-  customIdField: int
   address: Address?, relation(field=customIdField)
 indexes:
   user_address_unique_idx:
@@ -105,9 +104,26 @@ indexes:
     unique: true
 ```
 
-In this example, we define a custom foreign key field with the `field` parameter. The argument defines what field that is used as the foreign key field. In this case, `customIdField` is used instead of the default auto-generated name.
+In this example, `customIdField` holds the foreign key instead of the auto-generated `addressId`. The field does not have to be declared in `fields`. Serverpod generates it with the id type of the related model, just like it does for a relation without the `field` parameter, and the `optional` keyword makes it nullable:
 
-If you want the custom foreign key to be nullable, simply define its type as `int?`. Note that the `field` keyword cannot be used in conjunction with the `optional` keyword. Instead, directly mark the field as nullable.
+```yaml
+  address: Address?, relation(optional, field=customIdField)
+```
+
+Declare the field yourself when you need control over it, for example to give it a [column name override](../tables#column-name-override) or a [scope](../../models#limiting-visibility-of-a-generated-class). A declared field must be nullable if the relation is `optional`:
+
+```yaml
+# user.yaml
+class: User
+table: user
+fields:
+  customIdField: int?, column=fk_user_address_id
+  address: Address?, relation(optional, field=customIdField)
+indexes:
+  user_address_unique_idx:
+    fields: customIdField
+    unique: true
+```
 
 ### Generated SQL
 
@@ -175,7 +191,6 @@ If access to the same relation is desired from both sides, a bidirectional relat
 class: User
 table: user
 fields:
-  addressId: int
   address: Address?, relation(name=user_address, field=addressId)
 indexes:
   user_address_unique_idx:
@@ -196,6 +211,6 @@ Using the `name` parameter, we define a shared name for the relationship. It ser
 
 Without specifying the `name` parameter, you'd end up with two unrelated relationships.
 
-When the relationship is defined on both sides, it's **required** to specify the `field` keyword. This is because Serverpod cannot automatically determine which side should hold the foreign key field. You decide which side is most logical for your data.
+When the relationship is defined on both sides, it's **required** to specify the `field` keyword. This is because Serverpod cannot automatically determine which side should hold the foreign key field. You decide which side is most logical for your data. As with any [custom foreign key field](#custom-foreign-key-field), `addressId` itself is generated and only needs to be declared if you want control over it.
 
 In a relationship where there is an object on both sides a unique index is always **required** on the foreign key field.
