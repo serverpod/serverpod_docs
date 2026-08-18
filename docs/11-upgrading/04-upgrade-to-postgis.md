@@ -16,12 +16,12 @@ If trying to use geography fields without upgrading, you will encounter an error
 
 ## For Docker-based environments
 
-1. Update your `docker-compose.yml` to use a PostgreSQL image with PostGIS (e.g., `postgis/postgis:16-3.5`):
+1. Update your `docker-compose.yml` to use `ghcr.io/serverpod/postgres:16`, the Serverpod PostgreSQL image. It ships with [PostGIS and pgvector](../concepts/data-and-the-database/database/vector-and-geography-fields) already installed:
 
 ```yaml
 services:
   postgres:
-    image: postgis/postgis:16-3.5  # <-- Change from postgres image here
+    image: ghcr.io/serverpod/postgres:16  # <-- Change from postgres image here
     ports:
       - '8090:5432'
     environment:
@@ -34,7 +34,7 @@ services:
 # Other services...
 
   postgres_test:
-    image: postgis/postgis:16-3.5  # <-- Change from postgres image here
+    image: ghcr.io/serverpod/postgres:16  # <-- Change from postgres image here
     ports:
       - '9090:5432'
     environment:
@@ -45,32 +45,7 @@ services:
       - <projectname>_test_data:/var/lib/postgresql/data
 ```
 
-If your project also uses [vector fields](../concepts/data-and-the-database/database/vector-and-geography-fields), you need both pgvector and PostGIS. Create a custom `Dockerfile` instead:
-
-```dockerfile
-FROM pgvector/pgvector:pg16
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends postgresql-16-postgis-3 \
-    && rm -rf /var/lib/apt/lists/*
-```
-
-Then reference it in your `docker-compose.yml`:
-
-```yaml
-services:
-  postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '8090:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: <projectname>
-      POSTGRES_PASSWORD: <DB_PASSWORD>
-    volumes:
-      - <projectname>_data:/var/lib/postgresql/data
-```
+Projects created with Serverpod 4.0 already reference this image, so there is nothing to change for them.
 
 <!-- markdownlint-disable-next-line MD029-->
 2. Recreate your containers to use the new image:
