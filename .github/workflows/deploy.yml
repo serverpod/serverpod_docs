@@ -26,6 +26,10 @@ jobs:
               cd src
               npm ci
               npm run build
+        - name: Verify markdown export
+          run: |
+              cd src
+              node util/verify_markdown_export.js
         - uses: actions/checkout@v4
           with:
               path: target
@@ -36,9 +40,13 @@ jobs:
           run: |
               git config --global user.email "serverpod_docs@serverpod.dev"
               git config --global user.name "serverpod_docs"
-              rm -rf target/docs/*
+              # Dotfiles must deploy too (.nojekyll keeps GitHub Pages from
+              # running Jekyll over the generated .md files), so copy the
+              # directory contents rather than a dotfile-skipping glob.
+              rm -rf target/docs
+              mkdir -p target/docs
               cp target/CNAME target/docs
-              cp -r src/build/* target/docs
+              cp -a src/build/. target/docs
               cd target
               git add .
               if git diff --cached --quiet; then

@@ -1,0 +1,17 @@
+.actionsRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.actionsEnd {
+  display: inline-flex;
+  margin-left: auto;
+}
+
+/* The original badge carries its own bottom margin; the row owns it now. */
+.actionsRow > :global(.badge) {
+  margin-bottom: 0;
+}
