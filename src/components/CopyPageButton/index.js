@@ -128,13 +128,13 @@ export default function CopyPageButton({permalink, docsVersion}) {
   const [state, setState] = useState('idle');
   const resetTimer = useRef(undefined);
   const mounted = useRef(true);
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
       mounted.current = false;
       window.clearTimeout(resetTimer.current);
-    },
-    [],
-  );
+    };
+  }, []);
 
   const handleClick = useCallback(() => {
     if (state === 'loading') {

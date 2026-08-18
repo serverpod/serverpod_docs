@@ -298,6 +298,9 @@ module.exports = function markdownExportPlugin(context) {
             {
               directory: genDir,
               publicPath: context.baseUrl,
+              // The export rewrites every page on each rebuild; watching
+              // the directory would force a full reload on top of each edit.
+              watch: false,
             },
           ],
         },
