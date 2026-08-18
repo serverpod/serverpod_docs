@@ -86,6 +86,14 @@ pod.webServer.addRoute(
 A custom factory applies to all files served from the directory. The fallback-served `index.html` (a client-side route like `/dashboard`) always gets no-cache headers, but a direct request to `/index.html` follows your factory, so exclude `index.html` from long-lived caching in a custom strategy.
 :::
 
+To set the header per environment instead of in code, set `SERVERPOD_WEB_SERVER_FLUTTER_CACHE_CONTROL` to the `Cache-Control` value the route should send:
+
+```bash
+SERVERPOD_WEB_SERVER_FLUTTER_CACHE_CONTROL="public, max-age=3600"
+```
+
+The environment variable applies to every `FlutterRoute` that does not pass a `cacheControlFactory` of its own, and the same warning applies to it.
+
 See [Static files](static-files#cache-control) for more on cache control.
 
 ### Cache busting
