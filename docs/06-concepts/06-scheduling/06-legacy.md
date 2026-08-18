@@ -27,11 +27,7 @@ Register the call in the `run` function in your `server.dart` file with `registe
 
 ```dart
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   pod.registerFutureCall(MyFutureCall(), 'myFutureCall');
 

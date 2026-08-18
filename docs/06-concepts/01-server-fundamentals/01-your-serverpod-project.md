@@ -71,7 +71,7 @@ The scaffolded project follows the same pattern beyond the greeting example: `li
 
 From those, `serverpod generate` produces the bridge between server and app:
 
-- On the server, `lib/src/generated/` gets the endpoint dispatch code, the protocol description, and a Dart class per model.
+- On the server, `lib/src/generated/` gets the endpoint dispatch code, the protocol description, the pre-configured `Serverpod` class the server starts from, and a Dart class per model.
 - In the client package, `lib/src/protocol/` gets the `Client` class with its typed endpoint methods, plus the same model classes for the app's side.
 - In `test/integration/test_tools/`, the generated [test tools](../testing/get-started).
 
@@ -79,12 +79,13 @@ Generated code is overwritten on every run, so never edit it; the scaffolded ana
 
 ## The server entry point
 
-The server starts in `bin/main.dart`, which only calls the `run` function in `lib/server.dart`. That function creates the server, wires it to your generated code, registers everything that is not an endpoint, and starts it:
+The server starts in `bin/main.dart`, which only calls the `run` function in `lib/server.dart`. That function creates the server from the generated `Serverpod` class, registers everything that is not an endpoint, and starts it:
 
 ```dart
 void run(List<String> args) async {
-  // Connect the server with your generated code.
-  final pod = Serverpod(args, Protocol(), Endpoints());
+  // The generated Serverpod class comes pre-connected with your
+  // generated code.
+  final pod = Serverpod(args);
 
   // Registrations go here: authentication services and web routes
   // in the scaffolded project, and anything else you add.
@@ -94,7 +95,7 @@ void run(List<String> args) async {
 }
 ```
 
-Endpoints need no registration: the generated `Endpoints` object passed to the constructor carries them all. Web routes, by contrast, are registered imperatively on `pod.webServer`, which is why the scaffolded `run()` contains route setup. When `pod.start()` runs, the server connects to the database, applies pending migrations when started with `--apply-migrations`, connects to Redis if enabled, brings up its servers, and starts background work such as [future calls](../scheduling/overview) and [health checks](../operations/health-checks).
+Endpoints need no registration: the generated `Serverpod` class already carries them all. Web routes, by contrast, are registered imperatively on `pod.webServer`, which is why the scaffolded `run()` contains route setup. When `pod.start()` runs, the server connects to the database, applies pending migrations when started with `--apply-migrations`, connects to Redis if enabled, brings up its servers, and starts background work such as [future calls](../scheduling/overview) and [health checks](../operations/health-checks).
 
 ## The three servers
 

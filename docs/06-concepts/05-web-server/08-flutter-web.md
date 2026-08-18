@@ -166,13 +166,10 @@ Here's a `server.dart` excerpt serving a Flutter web app, following the pattern 
 ```dart
 import 'dart:io';
 
-import 'package:serverpod/serverpod.dart';
-
-import 'src/generated/protocol.dart';
-import 'src/generated/endpoints.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(args, Protocol(), Endpoints());
+  final pod = Serverpod(args);
 
   final flutterAppDir = Directory('web/app');
 

@@ -136,16 +136,13 @@ Keep your Client Secret confidential. Never commit this value to version control
 In your main `server.dart` file, configure the Microsoft identity provider:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/microsoft.dart';
 
+import 'src/generated/serverpod.dart';
+
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   pod.initializeAuthServices(
     tokenManagerBuilders: [

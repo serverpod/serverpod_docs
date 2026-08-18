@@ -115,8 +115,6 @@ Register it through `healthConfig` when you create the server, choosing the list
 ```dart
 final pod = Serverpod(
   args,
-  Protocol(),
-  Endpoints(),
   healthConfig: HealthConfig(
     cacheTtl: Duration(seconds: 2),
     additionalReadinessIndicators: [StripeApiIndicator()],
@@ -167,8 +165,6 @@ Register the handler on the server:
 ```dart
 final pod = Serverpod(
   args,
-  Protocol(),
-  Endpoints(),
   healthCheckHandler: myHealthCheckHandler,
 );
 ```

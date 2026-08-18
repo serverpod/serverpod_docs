@@ -21,8 +21,6 @@ final securityContext = SecurityContext()
 
 Serverpod(
   args,
-  Protocol(),
-  Endpoints(),
   securityContextConfig: SecurityContextConfig(
     apiServer: securityContext,
     webServer: securityContext,
