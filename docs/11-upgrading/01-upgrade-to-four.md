@@ -60,7 +60,7 @@ dependencies:
   serverpod_auth_shared_flutter: 4.0.0-beta.1  # in the Flutter package
 ```
 
-The `authenticationKeyManager` parameter on the generated `Client` is gone in 4.0. Assign the key manager to the `authKeyProvider` field instead:
+The `authenticationKeyManager` parameter on the generated `Client` was removed in 4.0. Assign the key manager to the `authKeyProvider` field instead:
 
 ```dart
 client = Client('http://$ipAddress:8080/')
