@@ -78,7 +78,7 @@ session.messages.addListener('user_updates', (message) {
 });
 ```
 
-In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. Listeners receive both local and global messages.
+In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. Listeners receive every message that reaches this server, whatever its scope.
 
 #### Listener lifecycle
 
