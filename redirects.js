@@ -39,6 +39,11 @@ module.exports = [{
     to: '/concepts/scheduling/setup',
   },
   {
+    // Removed in version 4.0 together with the string-based future call API
+    from: ['/concepts/scheduling/legacy'],
+    to: '/concepts/scheduling/setup',
+  },
+  {
     from: ['/cloud/reference/deployment/deploying-your-application'],
     to: '/cloud/concepts/deployments',
   },
