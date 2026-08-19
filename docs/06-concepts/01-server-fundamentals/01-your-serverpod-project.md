@@ -83,8 +83,7 @@ The server starts in `bin/main.dart`, which only calls the `run` function in `li
 
 ```dart
 void run(List<String> args) async {
-  // The generated Serverpod class comes pre-connected with your
-  // generated code.
+  // The generated Serverpod class.
   final pod = Serverpod(args);
 
   // Registrations go here: authentication services and web routes
