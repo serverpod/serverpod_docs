@@ -21,20 +21,22 @@ In the example above, the message is published on the `user_updates` channel. An
 
 Serverpod uses Redis to pass messages between servers. A message is sent to every server connected to the same Redis instance when [Redis is enabled](../server-fundamentals/configuration), and stays on the current server when it is not. Set the `scope` parameter to choose the delivery explicitly.
 
-```dart
-var message = UserUpdate(); // Model that represents changes to user data.
-await session.messages.postMessage(
-  'user_updates',
-  message,
-  scope: MessageScope.global,
-);
-```
-
 | Scope | Delivery |
 | --- | --- |
 | `MessageScope.auto` | Cluster-wide if Redis is enabled, otherwise local. This is the default. |
 | `MessageScope.global` | Cluster-wide. Throws a `StateError` if Redis is not enabled. |
 | `MessageScope.local` | Only to subscribers on the current server. |
+
+The default already goes cluster-wide when Redis is enabled. Pass `MessageScope.local` to keep a message on the current server:
+
+```dart
+var message = UserUpdate(); // Model that represents changes to user data.
+await session.messages.postMessage(
+  'user_updates',
+  message,
+  scope: MessageScope.local,
+);
+```
 
 ## Receive messages
 
