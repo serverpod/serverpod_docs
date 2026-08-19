@@ -17,22 +17,26 @@ await session.messages.postMessage('user_updates', message);
 
 In the example above, the message is published on the `user_updates` channel. Any subscriber to this channel in the server will receive the message.
 
-### Global messages
+### Message scope
 
-Serverpod uses Redis to pass messages between servers. To send a message to another server, [enable Redis](../server-fundamentals/configuration) and then set the `global` parameter to `true` when posting a message.
+Serverpod uses Redis to pass messages between servers. A message is sent to every server connected to the same Redis instance when [Redis is enabled](../server-fundamentals/configuration), and stays on the current server when it is not. Set the `scope` parameter to choose the delivery explicitly.
+
+| Scope | Delivery |
+| --- | --- |
+| `MessageScope.auto` | Cluster-wide if Redis is enabled, otherwise local. This is the default. |
+| `MessageScope.global` | Cluster-wide. Throws a `StateError` if Redis is not enabled. |
+| `MessageScope.local` | Only to subscribers on the current server. |
+
+The default already goes cluster-wide when Redis is enabled. Pass `MessageScope.local` to keep a message on the current server:
 
 ```dart
 var message = UserUpdate(); // Model that represents changes to user data.
-await session.messages.postMessage('user_updates', message, global: true);
+await session.messages.postMessage(
+  'user_updates',
+  message,
+  scope: MessageScope.local,
+);
 ```
-
-In the example above, the message is published to the `user_updates` channel and will be received by all servers connected to the same Redis instance.
-
-:::warning
-
-If Redis is not enabled, sending global messages throws a `StateError`.
-
-:::
 
 ## Receive messages
 
@@ -74,7 +78,7 @@ session.messages.addListener('user_updates', (message) {
 });
 ```
 
-In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. Listeners receive both local and global messages.
+In the above example, the listener will be called whenever a message is posted to the `user_updates` channel. Listeners receive every message that reaches this server, whatever its scope.
 
 #### Listener lifecycle
 
