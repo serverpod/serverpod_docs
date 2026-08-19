@@ -26,7 +26,7 @@ fields:
 | `deferrable` | `DEFERRABLE INITIALLY IMMEDIATE` | After each statement, unless the transaction defers it. |
 | `deferred` | `DEFERRABLE INITIALLY DEFERRED` | At commit. |
 
-The two keywords are mutually exclusive. Without either one the constraint is not deferrable and cannot be deferred at runtime.
+The two keywords are mutually exclusive. On PostgreSQL a relation declared with neither keyword cannot be deferred at runtime.
 
 Both work on [id relations](one-to-one#with-an-id-field) and [object relations](one-to-one#with-an-object). Like `onUpdate` and `onDelete`, they can only be set on the side holding the foreign key:
 
