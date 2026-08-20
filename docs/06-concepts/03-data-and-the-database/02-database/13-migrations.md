@@ -112,7 +112,7 @@ The `serverpod start` command handles migrations for you. Pending migrations are
 
 - Press **M** to create a migration from your model changes and apply it.
 - Press **P** to create a repair migration and apply it.
-- Press **A** to retry applying pending migrations, if applying them failed.
+- Press **A** to retry when applying a migration fails.
 
 Hold **Shift** with **M** or **P** to force the migration. See [Running your server](../../server-fundamentals/running-your-server#manage-migrations-from-the-terminal) for the full set of shortcuts.
 
