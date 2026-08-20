@@ -30,9 +30,9 @@ To start without watching, pass `--no-watch`. Nothing reloads on save; there, **
 
 On the first boot of a session, `serverpod start` applies any pending migrations. While it runs, you handle further schema changes from the terminal without leaving the session:
 
-- **M** creates a migration from your current model changes.
-- **A** applies pending migrations to the database.
-- **P** creates a repair migration to reconcile a database that has drifted from your migrations. This shortcut is not shown in the bottom bar; press **H** to see it listed.
+- **M** creates a migration from your current model changes and applies it.
+- **P** creates a repair migration to reconcile a database that has drifted from your migrations, and applies it. This shortcut is not shown in the bottom bar; press **H** to see it listed.
+- **A** applies pending migrations. Use it to retry after a failed apply.
 
 Hold **Shift** with **M** or **P** to force the migration: it is created even when there are no changes to record, and even when Serverpod warns that information may be destroyed, so force deliberately. For how migrations work, see [Migrations](../data-and-the-database/database/migrations).
 

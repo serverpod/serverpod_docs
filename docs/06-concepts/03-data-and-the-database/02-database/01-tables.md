@@ -4,7 +4,7 @@ description: Table models map serializable classes to database tables in Serverp
 
 # Tables
 
-Storing a [data model](../models) in the database takes one line: add the `table` key to its model file, and the class gains a generated `db` field with typed methods for reading and writing rows. From there the path is short: create and apply a [migration](migrations) (press **M** then **A** in the `serverpod start` terminal), then call the [CRUD methods](crud) from your endpoints. The rest of this page covers what the table definition itself can do.
+Storing a [data model](../models) in the database takes one line: add the `table` key to its model file, and the class gains a generated `db` field with typed methods for reading and writing rows. From there the path is short: create and apply a [migration](migrations) (press **M** in the `serverpod start` terminal), then call the [CRUD methods](crud) from your endpoints. The rest of this page covers what the table definition itself can do.
 
 ```yaml
 class: Company

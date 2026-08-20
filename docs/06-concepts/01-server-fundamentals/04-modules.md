@@ -47,7 +47,7 @@ Start the server, which regenerates your code so the module's endpoints and mode
 serverpod start
 ```
 
-The module adds tables to your database, so create and apply a migration: in the `serverpod start` terminal, press **M** to create the migration, then **A** to apply it.
+The module adds tables to your database, so create and apply a migration: in the `serverpod start` terminal, press **M**.
 
 ### Add the client package
 
