@@ -107,6 +107,7 @@ indexes:
 In this example, `customIdField` holds the foreign key instead of the default auto-generated name `addressId`. The field does not have to be declared in `fields`. Serverpod generates it with the id type of the related model, just like it does for a relation without the `field` parameter, and the `optional` keyword makes it nullable:
 
 ```yaml
+fields:
   address: Address?, relation(optional, field=customIdField)
 ```
 
@@ -117,8 +118,12 @@ Declare the field yourself when you need control over it, for example to give it
 class: User
 table: user
 fields:
-  customIdField: int?, column=fk_user_address_id, unique
+  customIdField: int?, column=fk_user_address_id
   address: Address?, relation(optional, field=customIdField)
+indexes:
+  user_address_unique_idx:
+    fields: customIdField
+    unique: true
 ```
 
 ### Generated SQL
