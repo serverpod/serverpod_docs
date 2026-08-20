@@ -72,22 +72,16 @@ In `<project>_server/lib/server.dart`, call `pod.initializeAuthServices` before 
 `serverpod_auth_bridge_server` exports its own `Endpoints` and `Protocol` classes from its generated code, which clash with your project's. Use a `show` clause to bring only the symbols you need into scope:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_bridge_server/serverpod_auth_bridge_server.dart'
     show LegacySessionTokenManager, LegacyClientSupport;
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/email.dart';
 import 'package:serverpod_auth_idp_server/providers/google.dart';
 
-import 'src/generated/protocol.dart';
-import 'src/generated/endpoints.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   pod.initializeAuthServices(
     tokenManagerBuilders: [

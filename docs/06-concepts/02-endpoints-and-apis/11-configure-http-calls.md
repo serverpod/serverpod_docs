@@ -26,18 +26,12 @@ On the server, Serverpod adds CORS headers to API responses by default through `
 Credential-aware requests require `Access-Control-Allow-Credentials: true` and a specific origin instead of the wildcard. Override the defaults in your `lib/server.dart` (or wherever you construct `Serverpod`):
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-
-import 'src/generated/protocol.dart';
-import 'src/generated/endpoints.dart';
+import 'src/generated/serverpod.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
-  // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(
     args,
-    Protocol(),
-    Endpoints(),
     httpResponseHeaders: Headers.build((mh) {
       mh.accessControlAllowOrigin = AccessControlAllowOriginHeader.origin(
         origin: Uri.parse('http://localhost:49660'), // Your Flutter web app origin

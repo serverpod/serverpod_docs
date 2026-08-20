@@ -30,18 +30,12 @@ In your main `server.dart` file, configure the authentication system using the `
 The configuration needs at least one token manager. A token manager issues and validates the tokens that keep users signed in after they authenticate. The example below uses JWT tokens and reads its secrets from your password store. The [token manager configuration](#token-manager-configuration) section explains the options.
 
 ```dart
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 
-import 'src/generated/protocol.dart';
-import 'src/generated/endpoints.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   // Set up authentication services
   // The `pod.getPassword()` will get the value from `config/passwords.yaml`.

@@ -20,19 +20,13 @@ You need to install the auth module before you continue, see [Setup](../../setup
 In your main `server.dart` file, configure the anonymous identity provider using the `AnonymousIdpConfig` object and add it to your `pod.initializeAuthServices()` configuration:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/anonymous.dart';
 
-import 'src/generated/endpoints.dart';
-import 'src/generated/protocol.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   pod.initializeAuthServices(
     tokenManagerBuilders: [
