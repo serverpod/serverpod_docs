@@ -223,7 +223,7 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 
 ## What's new in 4.0
 
-- **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create a migration, **A** to apply migrations, **P** to apply a repair migration.
+- **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create and apply a migration, **P** to create and apply a repair migration.
 - **Simplified server initialization** with the generated `Serverpod` class that pre-wires `Protocol` and `Endpoints`, so `server.dart` needs only `Serverpod(args)`. Projects that keep their existing imports can stay on `Serverpod(args, Protocol(), Endpoints())`.
 - **Flutter app spawning** from `serverpod start` so the Flutter app runs alongside the server in the same TUI.
 - **AI agent skills and MCP servers** scaffolded during `serverpod create`; existing projects opt in by running `serverpod create .`.

@@ -16,15 +16,14 @@ table: post
 fields:
   content: String
   previous: Post?, relation(name=next_previous_post)
-  nextId: int?
-  next: Post?, relation(name=next_previous_post, field=nextId, onDelete=SetNull)
+  next: Post?, relation(name=next_previous_post, optional, field=nextId, onDelete=SetNull)
 indexes:
   next_unique_idx:
     fields: nextId
     unique: true
 ```
 
-In this example, there is a named relation holding the data on both sides of the relation. The field `nextId` is a nullable field that stores the id of the next post. It is nullable because the first post has nothing to point to. The next post represents the object on "this" side while the previous post is the corresponding object on the "other" side. The previous post is the one whose `nextId` points at this post. The `onDelete` behavior is covered in [Referential actions](referential-actions).
+In this example, there is a named relation holding the data on both sides of the relation. Serverpod generates the `nextId` field named by `field=`, which stores the id of the next post. The `optional` keyword makes it nullable, because the first post has nothing to point to. The next post represents the object on "this" side while the previous post is the corresponding object on the "other" side. The previous post is the one whose `nextId` points at this post. The `onDelete` behavior is covered in [Referential actions](referential-actions).
 
 ## One-to-many
 
