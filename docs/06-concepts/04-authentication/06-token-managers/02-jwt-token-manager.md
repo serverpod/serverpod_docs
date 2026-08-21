@@ -11,6 +11,10 @@ The `JwtTokenManager` uses JWT (JSON Web Tokens) for stateless authentication. I
 - Refresh tokens for long-term authentication.
 - Automatic token rotation.
 
+:::info Web apps
+With [cookie-based web authentication](../web-authentication) enabled, browsers keep the access token in memory only and receive the refresh token as an `httpOnly` cookie.
+:::
+
 ## Server-side configuration
 
 The `JwtTokenManager` is created by passing a `JwtConfig` object in the `tokenManagerBuilders` list of `pod.initializeAuthServices()`:
