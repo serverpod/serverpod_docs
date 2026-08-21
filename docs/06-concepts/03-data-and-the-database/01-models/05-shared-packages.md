@@ -164,6 +164,17 @@ fields:
   sharedModels: List<SharedModel>
 ```
 
+## Shared packages in a module
+
+A [module](../../server-fundamentals/modules) declares its shared packages the same way, in its own `config/generator.yaml`:
+
+```yaml
+shared_packages:
+  - ../my_module_shared
+```
+
+Projects that install the module reach those models through `my_module_server` and `my_module_client`, so they need no dependency on the shared package itself.
+
 ## Restrictions
 
 Shared models support most Serverpod model features, with these exceptions:
