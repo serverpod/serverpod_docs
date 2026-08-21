@@ -84,6 +84,12 @@ Then refresh the generated server and client code:
 $ serverpod generate
 ```
 
+## If you use the legacy streaming endpoints API
+
+Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed in 4.0. Endpoints that use the `StreamingSession` type no longer compile, and all the related server and client methods (e.g. `streamOpened`, `streamClosed`, `handleStreamMessage`, `sendStreamMessage`, `getUserObject`, `setUserObject`, `openStreamingConnection`) are gone.
+
+Port that code to [streaming methods](../concepts/endpoints-and-apis/streaming), where the endpoint declares `Stream` parameters and return types, and Serverpod manages the connection. State that used to live in a user object becomes a local variable in the streaming method, which stays alive as long as the stream is open. The old API stays documented in [Streaming endpoints](./archive/streaming-endpoints) while you port.
+
 ## Generate the 4.0 migration
 
 Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:

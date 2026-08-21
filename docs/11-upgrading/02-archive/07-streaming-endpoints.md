@@ -1,11 +1,11 @@
 ---
-description: The deprecated streaming endpoints API (streamOpened, handleStreamMessage, sendStreamMessage, openStreamingConnection). Use streaming methods instead.
+description: The streaming endpoints API removed in Serverpod 4.0 (streamOpened, handleStreamMessage, openStreamingConnection). Use streaming methods instead.
 ---
 
-# Streaming endpoints (deprecated)
+# Streaming endpoints (removed in 4.0)
 
 :::warning
-Streaming endpoints are deprecated and will be removed in a future version of Serverpod. Use [streaming methods](../../concepts/endpoints-and-apis/streaming#streaming-methods) instead for a simpler and more reliable streaming experience. This page is kept for projects still on the old API.
+Streaming endpoints were deprecated in Serverpod 3.0 and removed in 4.0. Use [streaming methods](../../concepts/endpoints-and-apis/streaming#streaming-methods) instead. This page documents the old API for projects that have not ported off it yet.
 :::
 
 Streaming endpoints were Serverpod's first attempt at streaming data. This approach is more manual, requiring you to manage the WebSocket connection to the server.
