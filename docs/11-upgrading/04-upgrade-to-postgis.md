@@ -45,7 +45,7 @@ services:
       - <projectname>_test_data:/var/lib/postgresql/data
 ```
 
-Projects created with Serverpod 4.0 already reference this image, so there is nothing to change for them.
+If your `docker-compose.yaml` came from Serverpod 4.0.0-beta.2 or later, it already references this image and needs no change.
 
 <!-- markdownlint-disable-next-line MD029-->
 2. Recreate your containers to use the new image:
