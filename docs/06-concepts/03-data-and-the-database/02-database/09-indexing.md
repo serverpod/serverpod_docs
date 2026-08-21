@@ -119,7 +119,7 @@ indexes:
 
 In this example, a tenant can have at most one product with a given `sku` and no `deletedAt`. Deleted rows carry a timestamp, so they no longer collide with each other.
 
-The key is only allowed on unique indexes, and leaving it out keeps the database default. SQLite cannot express `nulls_distinct: false`, so creating a migration for SQLite with models that use it will fail.
+The key is only allowed on unique indexes, and leaving it out keeps the database default. SQLite cannot express `nulls_distinct: false`, so creating a SQLite migration for a model that sets it fails. Setting it to `true` is accepted, since that matches what SQLite already does.
 
 ## Specify an index type
 
