@@ -84,7 +84,7 @@ Then refresh the generated server and client code:
 $ serverpod generate
 ```
 
-## If you use the legacy streaming endpoints API
+### If you use the legacy streaming endpoints API
 
 Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed in 4.0. Endpoints that use the `StreamingSession` type no longer compile, and all the related server and client methods (e.g. `streamOpened`, `streamClosed`, `handleStreamMessage`, `sendStreamMessage`, `getUserObject`, `setUserObject`, `openStreamingConnection`) are gone.
 
