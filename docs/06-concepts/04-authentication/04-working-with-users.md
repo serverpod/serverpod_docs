@@ -269,7 +269,7 @@ A merge runs as an ordered list of hooks (declared in `mergeHooks`). All hooks r
 | Hook | What it does |
 | --- | --- |
 | `defaultIdpMergeHandler` | Calls `mergeAuthUsers` on every initialized identity provider (e.g. Email, Google, Apple, etc.). |
-| `defaultCoreDataMergeHandler` | Merges the scopes of the `AuthUser` records, and moves the tokens, server-side sessions, and user profile. |
+| `defaultCoreDataMergeHandler` | Merges the scopes and the blocked flag of the `AuthUser` records, moves the refresh tokens and server-side sessions, and merges the user profiles. A user blocked on either account stays blocked after the merge. |
 | `applicationMergeHandler` | Moves your application's own data. **This is the one you write.** |
 | `defaultMergeCleanupHandler` | Deletes the `AuthUser` that was merged away. |
 
