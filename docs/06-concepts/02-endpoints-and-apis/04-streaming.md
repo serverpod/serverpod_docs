@@ -190,7 +190,3 @@ await client.chat.postToRoom(roomId, 'Hello, room!');
 ```
 
 Because the channel name includes the `roomId`, each client receives updates only for the room it is watching. The same pattern works for any filter: scope the channel by the id or query you care about, and post to it whenever the data changes. To fan the updates out across multiple server instances, enable Redis (see [Message scope](./server-events#message-scope)).
-
-## Streaming endpoints (deprecated)
-
-Serverpod's original streaming API (`streamOpened`, `handleStreamMessage`, `sendStreamMessage`, `openStreamingConnection`) is deprecated and will be removed in a future version. Use [streaming methods](#streaming-methods) instead. The old API is kept for reference in [Streaming endpoints (deprecated)](../../upgrading/archive/streaming-endpoints).
