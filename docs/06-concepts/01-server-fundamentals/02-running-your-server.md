@@ -56,7 +56,11 @@ serverpod start --no-flutter
 
 You can still launch an app on demand: press **Ctrl+R** in the terminal to open the app launch panel.
 
-If your project has a `docker-compose.yaml` and its database is a Postgres on localhost without a [`dataPath`](../data-and-the-database/database/embedded-postgres), `serverpod start` starts the Compose services with the session. Otherwise it leaves them alone. Pass `--docker` or `--no-docker` to decide yourself.
+If your project runs auxiliary services from a `docker-compose.yaml`, such as Redis, pass `--docker` to start them with the session.
+
+:::info
+Passing the `--docker` flag is not needed if using PostgreSQL from a Docker Compose stack (no `dataPath` in the config). In such cases, `serverpod start` will automatically start and teardown the existing `docker-compose.yaml`, in case it was not already running.
+:::
 
 To run without the interactive terminal, pass `--no-tui`. When the output is not a terminal, for example in CI, `serverpod start` falls back to plain output on its own.
 
