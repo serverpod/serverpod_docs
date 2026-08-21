@@ -108,7 +108,7 @@ You have two paths. Pick the one that fits where you are today; both work with `
 
 If you've been developing against a Docker Postgres on 3.4, you can keep it without changing your config.
 
-On projects configured to use a regular PostgreSQL (no `dataPath` in the config), `serverpod start` brings up Docker if it isn't running, and tears down the compose stack on exit if the command brought it up.
+On projects whose config points at a Postgres on `localhost` with no `dataPath`, `serverpod start` brings up the `docker-compose` stack if it isn't running, and tears it down on exit if the command brought it up.
 
 #### Switch to the embedded Postgres (recommended for new development)
 
