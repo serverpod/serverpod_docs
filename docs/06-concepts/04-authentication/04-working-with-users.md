@@ -264,11 +264,18 @@ final additionalInfo = await MyDomainData.db.findFirstRow(
 
 When a user adds a sign-in method that already belongs to a different account, the two accounts have to become one. Serverpod does not merge them on its own: you decide when to offer the merge, and run it once the user accepts.
 
-A merge moves the identity provider records, tokens, server-side sessions, scopes, and the user profile from one `AuthUser` to the other, then deletes the account that was merged away. All of it runs in one transaction, so a failure at any step leaves both accounts untouched.
+A merge runs as an ordered list of hooks (declared in `mergeHooks`). All hooks run inside one transaction, so a failure at any step leaves both accounts untouched. By default, `AccountMergeConfig` fills the list with these hooks:
+
+| Hook | What it does |
+| --- | --- |
+| `defaultIdpMergeHandler` | Calls `mergeAuthUsers` on every initialized identity provider (e.g. Email, Google, Apple, etc.). |
+| `defaultCoreDataMergeHandler` | Merges the scopes of the `AuthUser` records, and moves the tokens, server-side sessions, and user profile. |
+| `applicationMergeHandler` | Moves your application's own data. **This is the one you write.** |
+| `defaultMergeCleanupHandler` | Deletes the `AuthUser` that was merged away. |
 
 ### Configure the merge
 
-Your application's own data is the part Serverpod cannot move for you. Pass an `applicationMergeHandler` to `pod.initializeAuthServices()` that reassigns your rows from the removed user to the kept one:
+Your application's own data is the part Serverpod cannot move for you. Pass the `applicationMergeHandler` to `pod.initializeAuthServices()` that reassigns your rows from the removed user to the kept one:
 
 ```dart
 pod.initializeAuthServices(
@@ -292,9 +299,11 @@ pod.initializeAuthServices(
 );
 ```
 
+Your handler only needs to move data over. The `defaultMergeCleanupHandler` runs after it and deletes the removed `AuthUser`, which cascades to all rows that reference it with `onDelete=Cascade`.
+
 Without a handler, merging throws. That is the default for applications that never merge accounts.
 
-To reorder the built-in steps or replace one of them, use `AccountMergeConfig.custom` and pass the full list of `mergeHooks` yourself.
+To reorder the built-in hooks or replace one of them, use `AccountMergeConfig.custom` and pass the full list yourself.
 
 ### Merge two users
 
