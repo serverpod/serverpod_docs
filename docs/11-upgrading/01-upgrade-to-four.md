@@ -106,13 +106,9 @@ You have two paths. Pick the one that fits where you are today; both work with `
 
 #### Keep your Docker Postgres (easiest upgrade)
 
-If you've been developing against a Docker Postgres on 3.4, you can keep it without changing your config. Pass `--docker` to `serverpod start` so it uses your existing `docker-compose.yaml`:
+If you've been developing against a Docker Postgres on 3.4, you can keep it without changing your config.
 
-```bash
-$ serverpod start --docker
-```
-
-With `--docker`, `serverpod start` brings up Docker if it isn't running, and tears down the compose stack on exit if the command brought it up.
+On projects whose config points at a Postgres on `localhost` with no `dataPath`, `serverpod start` brings up the `docker-compose` stack if it isn't running, and tears it down on exit if the command brought it up.
 
 #### Switch to the embedded Postgres (recommended for new development)
 
