@@ -233,6 +233,15 @@ For `UuidValue`, `random` generates a UUID v4 (`Uuid().v4obj()` in Dart, `gen_ra
 
 For enums, the persisted value follows the enum's serialization mode. A `byName` enum default is stored as the value's name, and a `byIndex` enum default is stored as its index, e.g. `0` for the first value.
 
+On an `int` field, `defaultPersist=serial` hands the value over to a database sequence, the same mechanism behind an `int` `id` column, though each serial column gets its own sequence. Because only the database can produce it, `serial` is rejected with `default` and `defaultModel`. On SQLite, it is only supported on the `id` column due to dialect limitations.
+
+```yaml
+class: Invoice
+table: invoice
+fields:
+  invoiceNumber: int?, defaultPersist=serial
+```
+
 :::info
 On an [immutable class](#immutable-classes), or a class extending one, `default` and `defaultModel` cannot use the non-constant values `now`, `random`, or `random_v7`. On a persisted model, use `defaultPersist` for those instead.
 :::
@@ -250,7 +259,7 @@ fields:
   boolDefault: bool, defaultModel=false, defaultPersist=true
 
   ### Sets the database-side default value for an integer field.
-  intDefault: int, defaultPersist=20
+  intDefault: int?, defaultPersist=20
 
   ### Defaults to 10.5 in code, with a separate database default.
   doubleDefault: double, default=10.5, defaultPersist=20.5
