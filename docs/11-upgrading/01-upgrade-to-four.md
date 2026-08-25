@@ -90,6 +90,21 @@ Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed 
 
 Port that code to [streaming methods](../concepts/endpoints-and-apis/streaming), where the endpoint declares `Stream` parameters and return types, and Serverpod manages the connection. State that used to live in a user object becomes a local variable in the streaming method, which stays alive as long as the stream is open. The old API stays documented in [Streaming endpoints](./archive/streaming-endpoints) while you port.
 
+### If you use Insights database access
+
+The Insights endpoints that give database access (`fetchDatabaseBulkData`, `runQueries`, `getDatabaseRowCount`, and `executeSql`) are disabled by default in 4.0 and throw an `AccessDeniedException` until enabled. If you rely on them, for example to browse tables from the Insights app, opt in per environment with `enableDatabaseAccess` in the `insightsServer` block of the config file (or the `SERVERPOD_INSIGHTS_SERVER_ENABLE_DATABASE_ACCESS` environment variable):
+
+```yaml
+insightsServer:
+  port: 8081
+  publicHost: localhost
+  publicPort: 8081
+  publicScheme: http
+  enableDatabaseAccess: true
+```
+
+The `hotReload`, `getOpenSessionLog`, and `shutdown` Insights methods are removed. See [Insights](../tools/insights#database-access) for details.
+
 ## Generate the 4.0 migration
 
 Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:

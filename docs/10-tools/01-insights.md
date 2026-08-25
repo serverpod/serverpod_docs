@@ -13,3 +13,18 @@ Serverpod has a companion app. It is currently available for Mac and Windows, bu
 | Serverpod 1.2.0      | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.2.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-1.2.0.zip) |
 | Serverpod 1.1.0      | [Download](https://downloads.serverpod.dev/macos/Serverpod-1.1.0.zip) | [Download](https://downloads.serverpod.dev/windows/serverpod-1.1.0.zip) |
 | Serverpod 1.0.0      | [Download](https://serverpod.dev/insights/Serverpod-1.0.0.zip)        | n/a                                                                     |
+
+## Database access
+
+Insights can browse tables and run SQL queries against your database, but that access is disabled by default. The endpoints that serve it (`fetchDatabaseBulkData`, `runQueries`, `getDatabaseRowCount`, and `executeSql`) return an `AccessDeniedException` unless you explicitly enable them in the server configuration:
+
+```yaml
+insightsServer:
+  port: 8081
+  publicHost: localhost
+  publicPort: 8081
+  publicScheme: http
+  enableDatabaseAccess: true
+```
+
+The same setting is available as the `SERVERPOD_INSIGHTS_SERVER_ENABLE_DATABASE_ACCESS` environment variable. Since the flag gives anyone holding the service secret full read and write access to the database, keep it off in production unless you need it.
