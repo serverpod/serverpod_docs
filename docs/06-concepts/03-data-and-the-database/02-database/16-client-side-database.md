@@ -85,3 +85,4 @@ var companies = await Company.db.find(
 - Transaction isolation levels are ignored, and transactions always run serialized. See [transactions](transactions#transaction-isolation).
 - [Row locking](row-locking) calls do nothing, since SQLite allows only one write transaction at a time.
 - [Vector](vector-and-geography-fields#vector-fields) queries are not supported, and [geography](vector-and-geography-fields#geography-fields) values round-trip through CRUD but throw on spatial query operations.
+- Column types and encodings differ from Postgres. See [Field types](../models/field-types#postgres-vs-sqlite).
