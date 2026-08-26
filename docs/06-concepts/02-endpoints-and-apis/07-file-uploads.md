@@ -250,6 +250,19 @@ shared:
   gcpServiceAccount: '{"type":"service_account","project_id":"...","private_key":"...",...}'
 ```
 
+To pass the JSON directly instead, use `fromServiceAccountJson`:
+
+```dart
+pod.addCloudStorage(
+  await gcp.NativeGoogleCloudStorage.fromServiceAccountJson(
+    storageId: 'public',
+    public: true,
+    bucket: 'my-bucket-name',
+    serviceAccountJson: myServiceAccountJson,
+  ),
+);
+```
+
 On Google Compute Engine or Cloud Run, use Application Default Credentials instead:
 
 ```dart
@@ -270,7 +283,7 @@ When using Application Default Credentials, the service account must have the `i
 
 ### Configure AWS S3
 
-Create an S3 bucket and an IAM user whose access is limited to that bucket. Put CloudFront in front of the bucket if you want a custom domain and TLS certificate. Add the access keys to `config/passwords.yaml`, or pass them as `SERVERPOD_AWS_ACCESS_KEY_ID` and `SERVERPOD_AWS_SECRET_KEY`.
+Create an S3 bucket and an IAM user whose access is limited to that bucket. Avoid root-user access keys. Put CloudFront in front of the bucket if you want a custom domain and TLS certificate. Add the access keys to `config/passwords.yaml`, or pass them as `SERVERPOD_AWS_ACCESS_KEY_ID` and `SERVERPOD_AWS_SECRET_KEY`.
 
 ```yaml title="config/passwords.yaml"
 shared:
