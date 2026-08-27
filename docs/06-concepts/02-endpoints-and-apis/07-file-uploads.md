@@ -15,44 +15,54 @@ A `public` and a `private` file storage are set up by default. You can replace t
 There are a few steps required to upload a file. First, you must create an upload description on the server and pass it to your app. The upload description grants access to the app to upload the file. If you want to grant access to any file, you can add the following code to one of your endpoints. However, in most cases, you may want to restrict which files can be uploaded.
 
 ```dart
-Future<String?> getUploadDescription(Session session, String path) async {
-  return await session.storage.createDirectFileUploadDescription(
+Future<String> getUploadDescription(Session session, String path) async {
+  return await session.storage.createUploadDescription(
     storageId: 'public',
     path: path,
   );
 }
 ```
 
-The `createDirectFileUploadDescription` method also accepts optional parameters to control the upload:
+The `createUploadDescription` method also accepts an optional `UploadOptions` object to control the upload:
 
-- **`expirationDuration`** - How long the upload URL is valid. Defaults to 10 minutes.
-- **`maxFileSize`** - Maximum allowed file size in bytes. Defaults to 10 MB.
-- **`contentLength`** - The exact file size in bytes. When provided, the storage provider validates the upload size against `maxFileSize` and may enforce the exact size server-side (e.g. via signed URLs).
-- **`preventOverwrite`** - When `true`, the upload will fail if a file already exists at the given path. Defaults to `false`.
+- **`UploadOptions.expirationDuration`**: How long the upload URL is valid. Defaults to 10 minutes.
+- **`UploadOptions.maxFileSize`**: Maximum allowed file size in bytes. Defaults to 10 MB.
+- **`UploadOptions.contentLength`**: The exact file size in bytes. When provided, the storage provider validates the upload size against `maxFileSize`.
+- **`UploadOptions.preventOverwrite`**: When `true`, the upload will fail if a file already exists at the given path. Defaults to `false`.
+- **`UploadOptions.metadata`**: HTTP metadata and custom key-value data to store with the file.
 
-Whether the options are enforced depends on the provider: the GCP native storage supports `preventOverwrite`, while the HMAC-based interface ignores it.
+Upload metadata is represented by `FileMetadata`. It supports `contentType`, `cacheControl`, `contentDisposition`, `contentEncoding`, and a `custom` map. Serverpod includes these values in the signed upload request so the storage provider can attach them to the file.
 
 ```dart
-Future<String?> getRestrictedUploadDescription(
+Future<String> getRestrictedUploadDescription(
   Session session,
   String path,
   int fileSize,
 ) async {
-  return await session.storage.createDirectFileUploadDescription(
+  return await session.storage.createUploadDescription(
     storageId: 'public',
     path: path,
-    maxFileSize: 50 * 1024 * 1024, // 50 MB
-    contentLength: fileSize,
-    preventOverwrite: true,
+    options: UploadOptions(
+      maxFileSize: 50 * 1024 * 1024, // 50 MB
+      contentLength: fileSize,
+      preventOverwrite: true,
+      metadata: const FileMetadata(
+        contentType: 'image/jpeg',
+        cacheControl: 'public, max-age=3600',
+        custom: {'source': 'profile-image'},
+      ),
+    ),
   );
 }
 ```
+
+An option may not be supported by every storage provider. Serverpod throws an exception when an unsupported or invalid option is used.
 
 After the file is uploaded, verify that the upload completed. With a third-party service such as S3 or Google Cloud Storage, this is the only way to know it was not canceled.
 
 ```dart
 Future<bool> verifyUpload(Session session, String path) async {
-  return await session.storage.verifyDirectFileUpload(
+  return await session.storage.verifyUpload(
     storageId: 'public',
     path: path,
   );
@@ -64,12 +74,10 @@ Future<bool> verifyUpload(Session session, String path) async {
 To upload a file from the app side, first request the upload description. Next, upload the file, from either a `Stream` or a `ByteData` object. When uploading from a `Stream`, pass the file length if you know it: without a length, a multipart upload buffers the whole file in memory. The uploader does not report upload progress. Finally, verify the upload with the server.
 
 ```dart
-var uploadDescription = await client.myEndpoint.getUploadDescription('myfile');
-if (uploadDescription != null) {
-  var uploader = FileUploader(uploadDescription);
-  await uploader.upload(myStream, myFileLength);
-  var success = await client.myEndpoint.verifyUpload('myfile');
-}
+final uploadDescription = await client.myEndpoint.getUploadDescription('myfile');
+final uploader = FileUploader(uploadDescription);
+final uploaded = await uploader.upload(myStream, myFileLength);
+final success = await client.myEndpoint.verifyUpload('myfile');
 ```
 
 :::info
@@ -84,12 +92,12 @@ In a real-world app, you most likely want to create the file paths on your serve
 
 ## Access stored files
 
-You can check if a file exists or retrieve it directly from your server. Files in public storage are also accessible via URL. Private files can only be accessed from the server.
+You can check if a file exists or retrieve it directly from your server. Files in public storage are also accessible via URL.
 
 To check if a file exists, use the `fileExists` method.
 
 ```dart
-var exists = await session.storage.fileExists(
+final exists = await session.storage.fileExists(
   storageId: 'public',
   path: 'my/file/path',
 );
@@ -98,33 +106,76 @@ var exists = await session.storage.fileExists(
 If the file is in a public storage, you can access it through its URL.
 
 ```dart
-var url = await session.storage.getPublicUrl(
+final url = await session.storage.publicDownloadUrl(
   storageId: 'public',
   path: 'my/file/path',
 );
 ```
 
-You can also directly retrieve or store a file from your server.
+To access public URLs for many files at once, use `publicDownloadUrls`.
 
 ```dart
-var myByteData = await session.storage.retrieveFile(
+final urls = await session.storage.publicDownloadUrls(
+  storageId: 'public',
+  paths: const ['my/file/path', 'my/other-file/path'],
+);
+```
+
+A private storage can provide temporary, signed URLs when you want an authorized user to download a specific file without making the whole storage public. First confirm that the caller is allowed to access the file. Then create a signed URL that grants temporary access to the file:
+
+```dart
+final url = await session.storage.temporaryDownloadUrl(
+  storageId: 'private',
+  path: 'my/private/file/path',
+  options: const TemporaryDownloadUrlOptions(
+    expirationDuration: Duration(minutes: 5),
+    downloadFileName: 'private.pdf',
+    contentType: 'application/pdf',
+  ),
+);
+```
+
+Anyone who has the signed URL can download that one file until the URL expires. Return it only after your endpoint has authenticated and authorized the caller. `downloadFileName` asks the browser to download the response under that name, and `contentType` overrides the response content type.
+
+Use `statFile` to retrieve the file size, last-modified time, content headers, provider entity tag, and custom metadata:
+
+```dart
+final stat = await session.storage.statFile(
   storageId: 'public',
   path: 'my/file/path',
 );
 ```
 
-To store a file directly from the server, use the `storeFile` method. You can set `preventOverwrite` to `true` to ensure the write fails if a file already exists at the given path, and `expiration` to give the file an expiry time.
+You can also retrieve a file directly from your server:
+
+```dart
+final myByteData = await session.storage.retrieveFile(
+  storageId: 'public',
+  path: 'my/file/path',
+);
+```
+
+To store a file directly from the server, use `storeFile` with `StoreFileOptions`. You can set `preventOverwrite` to `true` to ensure the write fails if a file already exists at the given path.
 
 ```dart
 await session.storage.storeFile(
   storageId: 'public',
   path: 'my/file/path',
   byteData: myByteData,
-  preventOverwrite: true,
+  options: const StoreFileOptions(
+    preventOverwrite: true,
+    metadata: FileMetadata(
+      contentType: 'application/pdf',
+      cacheControl: 'private, max-age=300',
+      custom: {'document-type': 'invoice'},
+    ),
+  ),
 );
 ```
 
-To delete a stored file, use `deleteFile` with the same `storageId` and `path`. To look up public URLs for many files at once, use `getPublicUrls`.
+`StoreFileOptions` also has an optional `expiration` timestamp. Storage providers that cannot expire individual files throw an exception when it is set.
+
+To delete a stored file, use `deleteFile` with the same `storageId` and `path`.
 
 ## Configure a storage provider
 
@@ -171,7 +222,7 @@ pod.addCloudStorage(
 
 ### GCP (native)
 
-As an alternative to the HMAC approach, you can use Google Cloud Storage's native JSON API with service account credentials. This provides full GCP feature support including `preventOverwrite`.
+As an alternative to the HMAC approach, you can use Google Cloud Storage's native JSON API with service account credentials. This provides full GCP feature support including custom metadata, conditional writes with `preventOverwrite`, and signed temporary download URLs.
 
 The native implementation is available from the same `serverpod_cloud_storage_gcp` package:
 
