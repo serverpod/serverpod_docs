@@ -173,7 +173,7 @@ await session.storage.storeFile(
 );
 ```
 
-`StoreFileOptions` also has an optional `expiration` date. Storage providers that cannot expire individual files throw an exception when it is set.
+`StoreFileOptions` also has an optional `expiration` timestamp. Storage providers that cannot expire individual files throw an exception when it is set.
 
 To delete a stored file, use `deleteFile` with the same `storageId` and `path`.
 
