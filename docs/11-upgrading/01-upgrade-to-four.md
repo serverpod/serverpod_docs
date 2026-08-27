@@ -90,9 +90,9 @@ Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed 
 
 Port that code to [streaming methods](../concepts/endpoints-and-apis/streaming), where the endpoint declares `Stream` parameters and return types, and Serverpod manages the connection. State that used to live in a user object becomes a local variable in the streaming method, which stays alive as long as the stream is open. The old API stays documented in [Streaming endpoints](./archive/streaming-endpoints) while you port.
 
-### If you use Insights database access
+### If you use the Insights database endpoints from a service client
 
-The Insights endpoints that give database access (`fetchDatabaseBulkData`, `runQueries`, `getDatabaseRowCount`, and `executeSql`) are disabled by default in 4.0 and throw an `AccessDeniedException` until enabled. If you rely on them, for example to browse tables from the Insights app, opt in per environment with `enableDatabaseAccess` in the `insightsServer` block of the config file (or the `SERVERPOD_INSIGHTS_SERVER_ENABLE_DATABASE_ACCESS` environment variable):
+The Insights server endpoints that give direct database access (`fetchDatabaseBulkData`, `runQueries`, `getDatabaseRowCount`, and `executeSql`) are disabled by default in 4.0 and throw an `AccessDeniedException` until enabled. The Insights app doesn't use these endpoints, so most projects need no change. If you have custom tooling that calls them through the `serverpod_service_client` package, opt in per environment with `enableDatabaseAccess` in the `insightsServer` block of the config file (or the `SERVERPOD_INSIGHTS_SERVER_ENABLE_DATABASE_ACCESS` environment variable):
 
 ```yaml
 insightsServer:
