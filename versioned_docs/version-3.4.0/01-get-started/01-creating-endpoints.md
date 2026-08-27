@@ -106,6 +106,10 @@ $ serverpod generate
 
 `serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
 
+:::tip Endpoint names become client properties
+In the next section you'll call `client.recipe.generateRecipe(...)` — not `client.recipeEndpoint.generateRecipe(...)` or `client.generateRecipe(...)`. That's not a typo: Serverpod derives the property name from your endpoint's class name by dropping the `Endpoint` suffix and lowercasing the first letter, so `RecipeEndpoint` becomes `client.recipe`. Every method you add inside the class shows up under that property, e.g. `client.recipe.generateRecipe(...)`. This mapping is generated automatically by `serverpod generate` above — there's nothing to configure by hand, but it's worth knowing the rule so the client code doesn't feel like it's coming out of nowhere.
+:::
+
 :::note
 When writing server-side code, in most cases, you want it to be _stateless_. This means you avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status messages to your client. If you want to run more complex computations, you can return a `Stream` to yield progress updates as your task progresses.
 :::
