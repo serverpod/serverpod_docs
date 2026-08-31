@@ -31,6 +31,8 @@ jobs:
                   cache: npm
             - name: Install dependencies
               run: npm ci 
+            - name: Test Open Graph images
+              run: npm run test:open-graph
             - name: Build
               run: npm run build
             - name: Verify markdown export

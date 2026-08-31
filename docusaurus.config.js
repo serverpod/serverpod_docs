@@ -137,6 +137,7 @@ const config = {
     async: true,
   }, ],
   plugins: [
+    './plugins/open-graph-images',
     [
       '@docusaurus/plugin-content-docs',
       {
