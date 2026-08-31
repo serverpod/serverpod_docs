@@ -1,5 +1,4 @@
 // @ts-check
-// Note: type annotations allow type checking and IDEs autocompletion
 
 import {
   themes
@@ -17,8 +16,8 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
   favicon: 'img/favicon.png',
-  organizationName: 'serverpod', // Usually your GitHub org/user name.
-  projectName: 'serverpod.github.io', // Usually your repo name.
+  organizationName: 'serverpod',
+  projectName: 'serverpod.github.io',
   trailingSlash: false,
 
   markdown: {
@@ -37,7 +36,6 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
           editUrl: 'https://github.com/serverpod/serverpod_docs/tree/main/',
           breadcrumbs: false,
         },
@@ -64,7 +62,6 @@ const config = {
         disableSwitch: true,
       },
       navbar: {
-        // title: 'My Site',
         logo: {
           alt: 'Serverpod Logo',
           src: 'img/logo-horizontal.svg',
@@ -112,7 +109,7 @@ const config = {
         ],
       },
       algolia: {
-        // Algolia DocSearch configuration. `apiKey` is safe to commit.
+        // The search-only `apiKey` is safe to commit.
         appId: '6LZRX3JBXY',
         indexName: 'Serverpod docs',
         apiKey: '2f0125e1ff6fe9469eac332ea47423d6',
