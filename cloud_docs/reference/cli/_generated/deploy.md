@@ -6,9 +6,8 @@ Deploy a Serverpod project to the cloud.
 Usage: scloud deploy [arguments]
 -h, --help                     Print this usage information.
 -p, --project (mandatory)      The ID of the project. Can be passed as the first argument.
-                               Can be omitted for existing projects that are linked or if a global
-                               project context is set. See `scloud project link --help` and `scloud
-                               context set --help`.
+                               Can be omitted for existing projects that are linked (see the
+                               "project link" command).
 -c, --concurrency=<integer>    Number of concurrent files processed when zipping the project.
                                (defaults to "5")
     --wet-run                  Perform every step except the deployment, leaving the hosted

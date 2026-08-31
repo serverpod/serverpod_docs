@@ -28,9 +28,9 @@ Show the status of a deployment.
 Usage: scloud deployment show [arguments]
 -h, --help                       Print this usage information.
 -p, --project (mandatory)        The ID of the project.
-                                 Can be omitted for existing projects that are linked or if a global
-                                 project context is set. See `scloud project link --help` and
-                                 `scloud context set --help`.
+                                 Can be omitted for existing projects that are linked (see the
+                                 "project link" command) or if a global project context is set (see
+                                 the "context set" command).
 -u, --[no-]utc                   Display timestamps in UTC timezone instead of local.
     --deploy=<<uuid|integer>>    View a specific deployment, with uuid or sequence number, 0 for
                                  latest. Can be passed as the first argument.
@@ -75,14 +75,16 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 List recent deployments.
 
 Usage: scloud deployment list [arguments]
--h, --help                   Print this usage information.
--p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
-    --limit=<integer>        The maximum number of records to fetch.
-                             (defaults to "10")
--u, --[no-]utc               Display timestamps in UTC timezone instead of local.
+-h, --help                       Print this usage information.
+-p, --project (mandatory)        The ID of the project.
+                                 Can be omitted for existing projects that are linked (see the
+                                 "project link" command) or if a global project context is set (see
+                                 the "context set" command).
+    --limit=<integer>            The maximum number of records to fetch.
+                                 (defaults to "10")
+-u, --[no-]utc                   Display timestamps in UTC timezone instead of local.
+    --format=<text|json|yaml>    Selects the command output format.
+                                 (defaults to "text")
 
 Run "scloud help" to see global options.
 
@@ -111,9 +113,9 @@ View a deployment's build log.
 Usage: scloud deployment build-log [arguments]
 -h, --help                       Print this usage information.
 -p, --project (mandatory)        The ID of the project.
-                                 Can be omitted for existing projects that are linked or if a global
-                                 project context is set. See `scloud project link --help` and
-                                 `scloud context set --help`.
+                                 Can be omitted for existing projects that are linked (see the
+                                 "project link" command) or if a global project context is set (see
+                                 the "context set" command).
 -u, --[no-]utc                   Display timestamps in UTC timezone instead of local.
     --deploy=<<uuid|integer>>    View a specific deployment, with uuid or sequence number, 0 for
                                  latest. Can be passed as the first argument.
@@ -152,8 +154,8 @@ Build secrets are used to securely store sensitive information that needs to be
 available when building your server, for example SSH keys.
 
 Build secrets are not available at runtime.
-(See `scloud secret` for managing runtime secrets:
-https://docs.serverpod.dev/cloud/reference/cli/commands/secret)
+(See `scloud variable set --secret` for managing runtime secrets:
+https://docs.serverpod.dev/cloud/reference/cli/commands/variable)
 
 Usage: scloud deployment build-secret <subcommand> [arguments]
 -h, --help    Print this usage information.

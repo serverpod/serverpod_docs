@@ -61,8 +61,10 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 List the Serverpod Cloud projects.
 
 Usage: scloud project list [arguments]
--h, --help    Print this usage information.
-    --all     Include deleted projects.
+-h, --help                       Print this usage information.
+    --all                        Include deleted projects.
+    --format=<text|json|yaml>    Selects the command output format.
+                                 (defaults to "text")
 
 Run "scloud help" to see global options.
 
