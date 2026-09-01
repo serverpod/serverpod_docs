@@ -21,7 +21,7 @@ Relations are declared in the model file with the `relation` keyword. There are 
 | [Self-relations](relations/self-relations) | Rows relate to rows in the same table. | A `Cat` linking to its mother and kittens. |
 | [Relations with modules](relations/modules) | Your tables relate to a module's tables, such as the signed-in user. | A `UserProfile` attached to an `AuthUser`. |
 
-Whatever the shape, [Referential actions](relations/referential-actions) control what happens to related rows when the row they point to is deleted or its id changes.
+Whatever the shape, [Referential actions](relations/referential-actions) control what happens to related rows when the row they point to is deleted or its id changes, and [Deferrable constraints](relations/deferrable-constraints) control when the foreign key is checked.
 
 ## Related
 

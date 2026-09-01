@@ -16,11 +16,8 @@ With a custom override you decide how users are stored and how tokens are issued
 The token validation is performed by providing a custom `AuthenticationHandler` callback when initializing Serverpod. The callback should return an `AuthenticationInfo` object if the token is valid, otherwise `null`.
 
 ```dart
-// Initialize Serverpod and connect it with your generated code.
 final pod = Serverpod(
   args,
-  Protocol(),
-  Endpoints(),
   authenticationHandler: (Session session, String token) async {
     /// Custom validation handler
     if (token != 'valid') return null;
@@ -204,11 +201,8 @@ var client = Client('http://localhost:8080/')
 Server side:
 
 ```dart
-// Initialize Serverpod and connect it with your generated code.
 final pod = Serverpod(
   args,
-  Protocol(),
-  Endpoints(),
   authenticationHandler: (Session session, String token) async {
     /// Bearer token validation handler
     var (uid, scopes) = myBearerTokenValidator(token);

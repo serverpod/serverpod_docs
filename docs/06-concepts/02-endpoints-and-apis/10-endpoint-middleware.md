@@ -12,14 +12,10 @@ Middleware wraps every request to the API server, before and after your endpoint
 Add middleware to your server in the `run` function before starting the server:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   // Add middleware before starting
   pod.server.addMiddleware(myCustomMiddleware());

@@ -395,19 +395,13 @@ class MyProviderIdpEndpoint extends IdpBaseEndpoint {
 Register the provider in `server.dart`:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 
-import 'src/generated/endpoints.dart';
-import 'src/generated/protocol.dart';
+import 'src/generated/serverpod.dart';
 import 'my_provider_idp_config.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   final myProviderConfig = MyProviderIdpConfig(
     clientId: pod.getPassword('myProviderClientId')!,

@@ -66,6 +66,30 @@ template. Mustache escapes HTML in `{{value}}` tags, so to embed HTML produced b
 
 Templates are loaded from `web/templates` when the server starts. Constructing a `TemplateWidget` whose template file is missing throws a `StateError` naming the widget class, e.g. `Template my_page.html missing for MyPageWidget`, and the request fails with a 500. While `serverpod start` runs, templates reload on save and the browser refreshes automatically. With a plain `dart run bin/main.dart`, restart the server to pick up template changes.
 
+### Cache-busted asset URLs
+
+A template can refer to a stylesheet or an image by its [cache-busted](static-files#static-file-cache-busting) URL with the `{{{@/path}}}` tag, so the browser picks up a new version of the file as soon as it changes. Write the asset's served path after the `@`:
+
+```html title="web/templates/my_page.html"
+<link rel="stylesheet" href="{{{@/static/css/style.css}}}">
+<img src="{{{@/static/images/logo.svg}}}">
+```
+
+Pass the same `CacheBustingConfig` as the `StaticRoute` serving the directory to the route that renders the template:
+
+```dart
+class MyRoute extends WidgetRoute {
+  MyRoute() : super(cacheBustingConfig: cacheBustingConfig);
+
+  @override
+  Future<WebWidget?> build(Session session, Request request) async {
+    return MyPageWidget(title: 'Home page');
+  }
+}
+```
+
+To build the versioned URL in Dart instead and pass it in as a template value, use [`assetPath()`](static-files#generating-versioned-urls).
+
 ## Built-in widgets
 
 Serverpod provides several built-in widgets for common use cases:

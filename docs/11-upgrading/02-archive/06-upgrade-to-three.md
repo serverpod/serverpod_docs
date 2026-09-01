@@ -294,7 +294,7 @@ final auth = session.authenticated;
 
 ### Client auth key provider
 
-The `authKeyProvider` interface replaces the previous `authenticationKeyManager`. This interface has been simplified to make it more explicit what the client needs—it now only requires something that can provide an auth key wrapped as a header.
+The `authKeyProvider` interface replaces the previous `authenticationKeyManager`. This interface has been simplified to make it more explicit what the client needs. It now only requires something that can provide an auth key wrapped as a header.
 
 **Before:**
 

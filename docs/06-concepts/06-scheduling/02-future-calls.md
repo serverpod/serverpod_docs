@@ -35,17 +35,10 @@ Generate the code for your future calls. With `serverpod start` running, saving 
 This creates a type-safe interface in your server's `lib/src/generated/future_calls.dart` file, reachable from the `Serverpod` object as `pod.futureCalls`. You do not register these calls yourself. Serverpod does it for you when the server starts, so your `server.dart` needs no future-call setup:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-
-import 'src/generated/protocol.dart';
-import 'src/generated/endpoints.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   await pod.start();
 }
