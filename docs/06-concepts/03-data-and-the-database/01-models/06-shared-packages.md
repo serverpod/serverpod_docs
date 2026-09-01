@@ -125,9 +125,21 @@ final profile = UserProfile(
 );
 ```
 
+### Table models
+
+A shared model can declare a `table`, as long as it also sets [`database: all`](../database/tables#choosing-where-a-table-lives). A shared package is used from both the server and the client, so its tables have to be declared for both.
+
+```yaml
+class: SharedRecord
+table: shared_record
+database: all
+fields:
+  name: String
+```
+
 ### Extending shared models
 
-You can define a base model in a shared package and extend it on the server to add database persistence. Shared packages cannot define table models, but the server can extend a shared model and add a `table` property.
+You can also define a base model in a shared package and extend it on the server, which keeps the table definition out of the shared package.
 
 **In the shared package** (`lib/src/shared/vehicle.spy.yaml`):
 
@@ -170,10 +182,10 @@ Shared models support most Serverpod model features, with these exceptions:
 
 | Restriction | Reason |
 | ----------- | ------ |
-| No `table` property | Shared packages are not tied to a database. Use a server model that extends the shared model to add persistence. |
+| A `table` requires `database: all` | The package is used on both sides, so its tables cannot be limited to the server or the client. |
 | No `serverOnly` on the class | Models must be usable on both server and client. |
 | No `scope: serverOnly` on fields | All fields must be serializable for the client. |
 
-If you need tables or server-only fields, define them in a server model that extends the shared model.
+If you need server-only fields, define them in a server model that extends the shared model.
 
 The shared package can also contain custom serializable classes. Register them in the server's `generator.yaml` under `extraClasses` if they need to be used in protocol serialization. See [Custom serializable classes](../../server-fundamentals/configuration#custom-serializable-classes) for details.
