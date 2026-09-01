@@ -115,6 +115,7 @@ var cleared = object.copyWith(payload: null);
 ## Related
 
 - [Working with models](../models): model file syntax and supported types.
+- [Field types](./field-types): YAML types mapped to Dart, Postgres, SQLite, and JSON.
 - [Working with endpoints](../../endpoints-and-apis): endpoint parameters and return values.
 - [Database tables](../database/tables): how model fields map to columns, including JSONB storage.
 - [Custom serialization](./custom-serialization): registering custom serializable classes.

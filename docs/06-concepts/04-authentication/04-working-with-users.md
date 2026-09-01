@@ -260,8 +260,66 @@ final additionalInfo = await MyDomainData.db.findFirstRow(
 );
 ```
 
+## Merging accounts
+
+When a user adds a sign-in method that already belongs to a different account, the two accounts have to become one. Serverpod does not merge them on its own: you decide when to offer the merge, and run it once the user accepts.
+
+A merge runs as an ordered list of hooks (declared in `mergeHooks`). All hooks run inside one transaction, so a failure at any step leaves both accounts untouched. By default, `AccountMergeConfig` fills the list with these hooks:
+
+| Hook | What it does |
+| --- | --- |
+| `defaultIdpMergeHandler` | Calls `mergeAuthUsers` on every initialized identity provider (e.g. Email, Google, Apple, etc.). |
+| `defaultCoreDataMergeHandler` | Merges the scopes and the blocked flag of the `AuthUser` records, moves the refresh tokens and server-side sessions, and merges the user profiles. A user blocked on either account stays blocked after the merge. |
+| `applicationMergeHandler` | Moves your application's own data. **This is the one you write.** |
+| `defaultMergeCleanupHandler` | Deletes the `AuthUser` that was merged away. |
+
+### Configure the merge
+
+Your application's own data is the part Serverpod cannot move for you. Pass the `applicationMergeHandler` to `pod.initializeAuthServices()` that reassigns your rows from the removed user to the kept one:
+
+```dart
+pod.initializeAuthServices(
+  tokenManagerBuilders: [...],
+  accountMergeConfig: AccountMergeConfig(
+    applicationMergeHandler:
+        (
+          Session session, {
+          required UuidValue userToKeepId,
+          required UuidValue userToRemoveId,
+          required Transaction transaction,
+        }) async {
+          await MyDomainData.db.updateWhere(
+            session,
+            where: (t) => t.authUserId.equals(userToRemoveId),
+            columnValues: (t) => [t.authUserId(userToKeepId)],
+            transaction: transaction,
+          );
+        },
+  ),
+);
+```
+
+Your handler only needs to move data over. The `defaultMergeCleanupHandler` runs after it and deletes the removed `AuthUser`, which cascades to all rows that reference it with `onDelete=Cascade`.
+
+Without a handler, merging throws. That is the default for applications that never merge accounts.
+
+To reorder the built-in hooks or replace one of them, use `AccountMergeConfig.custom` and pass the full list yourself.
+
+### Merge two users
+
+```dart
+await AuthServices.instance.accountMerger.merge(
+  session,
+  userToKeepId: userToKeepId,
+  userToRemoveId: userToRemoveId,
+);
+```
+
+Both users must exist and be different from each other, otherwise the call throws.
+
 ## Related
 
 - [The basics](./basics): authentication state, scopes, and endpoint access control.
 - [Profile photos](./profile-photos): upload, display, and default profile images.
 - [Setup](./setup): configure the authentication services these callbacks hook into.
+- [Creating an OAuth2-based identity provider](./providers/custom-providers/oauth2-utility/creating-an-oauth2-based-identity-provider): implement `mergeAuthUsers` so a custom provider takes part in a merge.

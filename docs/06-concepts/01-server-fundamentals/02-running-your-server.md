@@ -30,9 +30,9 @@ To start without watching, pass `--no-watch`. Nothing reloads on save; there, **
 
 On the first boot of a session, `serverpod start` applies any pending migrations. While it runs, you handle further schema changes from the terminal without leaving the session:
 
-- **M** creates a migration from your current model changes.
-- **A** applies pending migrations to the database.
-- **P** creates a repair migration to reconcile a database that has drifted from your migrations. This shortcut is not shown in the bottom bar; press **H** to see it listed.
+- **M** creates a migration from your current model changes and applies it.
+- **P** creates a repair migration to reconcile a database that has drifted from your migrations, and applies it. This shortcut is not shown in the bottom bar; press **H** to see it listed.
+- **A** applies pending migrations. Use it to retry after a failed apply.
 
 Hold **Shift** with **M** or **P** to force the migration: it is created even when there are no changes to record, and even when Serverpod warns that information may be destroyed, so force deliberately. For how migrations work, see [Migrations](../data-and-the-database/database/migrations).
 
@@ -56,7 +56,7 @@ serverpod start --no-flutter
 
 You can still launch an app on demand: press **Ctrl+R** in the terminal to open the app launch panel.
 
-If your project runs auxiliary services from a `docker-compose.yaml`, such as Redis, pass `--docker` to start them with the session.
+If your project has a `docker-compose.yaml`, `serverpod start` brings it up automatically when your database is a Postgres on `localhost` with no `dataPath`, and tears it down on exit if it was the one that started it. When that does not apply, for example an embedded or remote database with Redis in Compose, pass `--docker` to start the stack anyway, or `--no-docker` to keep it off.
 
 To run without the interactive terminal, pass `--no-tui`. When the output is not a terminal, for example in CI, `serverpod start` falls back to plain output on its own.
 

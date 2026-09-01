@@ -14,6 +14,7 @@ The Serverpod CLI reads the model files when generating code and creating migrat
 
 This page covers the model file format: classes, exceptions, enums, default values, and the generated Dart code. The other pages in this group build on it:
 
+- [Field types](./models/field-types): YAML types mapped to Dart, Postgres, SQLite, and JSON.
 - [Inheritance and polymorphism](./models/inheritance-and-polymorphism): share fields between models with `extends` and `sealed`, and use parent types in endpoints.
 - [Custom serialization](./models/custom-serialization): pass hand-written Dart classes through endpoints and models.
 - [Shared packages](./models/shared-packages): define models in a package that both the server and the app depend on.
@@ -30,18 +31,17 @@ fields:
 
 ### Supported types
 
-The following types can be used as field types:
+The following types can be used as field types. See [Field types](./models/field-types) for the YAML-to-Dart, Postgres, SQLite, and JSON mapping of each type, including defaults and query operators.
 
 - **Core Dart types**: [bool](https://api.dart.dev/dart-core/bool-class.html), [int](https://api.dart.dev/dart-core/int-class.html), [double](https://api.dart.dev/dart-core/double-class.html), [String](https://api.dart.dev/dart-core/String-class.html), [Duration](https://api.dart.dev/dart-core/Duration-class.html), [DateTime](https://api.dart.dev/dart-core/DateTime-class.html), [ByteData](https://api.dart.dev/dart-typed_data/ByteData-class.html), [UuidValue](https://pub.dev/documentation/uuid/latest/uuid_value/UuidValue-class.html), [Uri](https://api.dart.dev/dart-core/Uri-class.html), and [BigInt](https://api.dart.dev/dart-core/BigInt-class.html).
-- **Vector types**: [Vector](./database/vector-and-geography-fields#vector), [HalfVector](./database/vector-and-geography-fields#halfvector), [SparseVector](./database/vector-and-geography-fields#sparsevector), and [Bit](./database/vector-and-geography-fields#bit).
-- **Geography types**: [GeographyPoint](./database/vector-and-geography-fields#geographypoint), [GeographyLineString](./database/vector-and-geography-fields#geographylinestring), [GeographyPolygon](./database/vector-and-geography-fields#geographypolygon), and [GeographyGeometryCollection](./database/vector-and-geography-fields#geographygeometrycollection).
+- **Vector and geography types**: [Vector](./database/vector-and-geography-fields#vector), [HalfVector](./database/vector-and-geography-fields#halfvector), [SparseVector](./database/vector-and-geography-fields#sparsevector), [Bit](./database/vector-and-geography-fields#bit), and the [geography types](./database/vector-and-geography-fields#geography-fields).
 - **Your own types**: other serializable [classes](#class), [exceptions](#exception), and [enums](#enum).
 - **Collections**: [List](https://api.dart.dev/dart-core/List-class.html)s, [Map](https://api.dart.dev/dart-core/Map-class.html)s, and [Set](https://api.dart.dev/dart-core/Set-class.html)s of the supported types, with the type arguments specified. All supported types can also be used inside [Record](https://api.dart.dev/dart-core/Record-class.html)s.
 - **[dynamic](./models/dynamic-fields)**: holds any serializable value when the type is not known at compile time.
 
 Null safety is supported: append `?` to any type to make the field nullable. Once your classes are generated, you can use them as parameters or return types to [endpoint methods](../endpoints-and-apis).
 
-When values are sent between the server and the client, some types are converted to a specific JSON form:
+When values are sent between the server and the client, `bool`, `int`, `double`, and `String` pass through as native JSON. Other types convert:
 
 | Type | Sent as |
 | --- | --- |
@@ -51,6 +51,8 @@ When values are sent between the server and the client, some types are converted
 | `UuidValue` | UUID string |
 | `Uri` | String |
 | `BigInt` | String |
+
+The [Field types](./models/field-types#serialization) catalog lists every mapping, including enums, collections, records, vectors, and geography.
 
 ### Required fields
 
@@ -233,6 +235,15 @@ For `UuidValue`, `random` generates a UUID v4 (`Uuid().v4obj()` in Dart, `gen_ra
 
 For enums, the persisted value follows the enum's serialization mode. A `byName` enum default is stored as the value's name, and a `byIndex` enum default is stored as its index, e.g. `0` for the first value.
 
+On an `int` field, `defaultPersist=serial` hands the value over to a database sequence, the same mechanism behind an `int` `id` column, though each serial column gets its own sequence. Because only the database can produce it, `serial` is rejected with `default` and `defaultModel`. On SQLite, it is only supported on the `id` column due to dialect limitations.
+
+```yaml
+class: Invoice
+table: invoice
+fields:
+  invoiceNumber: int?, defaultPersist=serial
+```
+
 :::info
 On an [immutable class](#immutable-classes), or a class extending one, `default` and `defaultModel` cannot use the non-constant values `now`, `random`, or `random_v7`. On a persisted model, use `defaultPersist` for those instead.
 :::
@@ -250,7 +261,7 @@ fields:
   boolDefault: bool, defaultModel=false, defaultPersist=true
 
   ### Sets the database-side default value for an integer field.
-  intDefault: int, defaultPersist=20
+  intDefault: int?, defaultPersist=20
 
   ### Defaults to 10.5 in code, with a separate database default.
   doubleDefault: double, default=10.5, defaultPersist=20.5
@@ -454,6 +465,7 @@ extension MyExtension on MyClass {
 
 ## Related
 
+- [Field types](./models/field-types): YAML types mapped to Dart, Postgres, SQLite, and JSON.
 - [Model reference](../lookups/model-reference): every keyword available in a model file, and whether it applies to a `class`, `exception`, or `enum`.
 - [Tables](./database/tables): store a model in the database.
 - [Backward compatibility](../endpoints-and-apis/backward-compatibility): evolve models without breaking older app versions.

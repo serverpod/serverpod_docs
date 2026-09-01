@@ -1,6 +1,6 @@
 # Upgrade to pgvector
 
-New Serverpod projects automatically include pgvector support through the `pgvector/pgvector` PostgreSQL Docker image. However, existing projects need to be upgraded to use vector functionality.
+New Serverpod projects automatically included pgvector support through the `pgvector/pgvector` PostgreSQL Docker image. From 4.0.0-beta.2, the compose file uses `ghcr.io/serverpod/postgres:16` instead, which is that image plus PostGIS. Existing projects need to be upgraded to use vector functionality.
 
 :::info
 This upgrade is only necessary if you want to use vector fields in your models. If you do not plan to use vector fields, you can skip this upgrade.

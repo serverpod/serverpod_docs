@@ -28,19 +28,13 @@ The hostname should match the domain where your application is hosted. For devel
 In your main `server.dart` file, configure the Passkey identity provider by setting the `PasskeyIdpConfig` in your `pod.initializeAuthServices()` configuration:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/passkey.dart';
 
-import 'src/generated/endpoints.dart';
-import 'src/generated/protocol.dart';
+import 'src/generated/serverpod.dart';
 
 void run(List<String> args) async {
-  final pod = Serverpod(
-    args,
-    Protocol(),
-    Endpoints(),
-  );
+  final pod = Serverpod(args);
 
   // Configure Passkey identity provider
   pod.initializeAuthServices(

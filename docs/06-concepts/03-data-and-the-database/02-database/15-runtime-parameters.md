@@ -30,18 +30,12 @@ Due to connection pooling, runtime parameters cannot be set at the session level
 To set global runtime parameters that apply to all database sessions, configure them when initializing your Serverpod instance. Add the runtime parameters configuration in the `run` function of your `lib/server.dart` file:
 
 ```dart
-import 'package:serverpod/serverpod.dart';
-
-import 'src/generated/protocol.dart';
-import 'src/generated/endpoints.dart';
+import 'src/generated/serverpod.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
-  // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(
     args,
-    Protocol(),
-    Endpoints(),
     // Set global runtime parameters that apply to all database sessions.
     runtimeParametersBuilder: (params) => [
       params.vectorIndexQuery(enableIndexScan: true),

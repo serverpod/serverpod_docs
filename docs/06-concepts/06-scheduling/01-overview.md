@@ -32,7 +32,6 @@ Which servers run future calls depends on their role, the mode a server is start
 - **[Recurring tasks](recurring-tasks)**: run a call on a repeating cron or interval schedule.
 - **[Inheritance](inheritance)**: extend future calls from other classes and modules.
 - **[Configuration](configuration)**: set concurrency, the scan interval, and broken-call handling.
-- **[Legacy](legacy)**: the older string-based API, kept for existing code.
 
 ## Related
 

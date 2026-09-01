@@ -102,7 +102,7 @@ final company = await Company.db.insertRow(session, Company(name: 'Serverpod'));
 final stored = await Company.db.findById(session, company.id);
 ```
 
-These run on the same `session` your endpoint method receives. When you change a table model, press `M` in the `serverpod start` terminal to create a migration, then `A` to apply it. Pending migrations also apply on startup.
+These run on the same `session` your endpoint method receives. When you change a table model, press `M` in the `serverpod start` terminal to create the migration and apply it. Pending migrations also apply on startup.
 
 That database runs without setup on your part: Serverpod manages an embedded Postgres for you, with no Docker to configure. If you would rather manage Postgres yourself, you can change the configuration in the server's `config` directory.
 

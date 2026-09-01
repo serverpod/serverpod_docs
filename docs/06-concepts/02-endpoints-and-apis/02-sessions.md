@@ -21,7 +21,6 @@ Serverpod creates a session for every unit of work it runs, and the type reflect
 | **MethodCallSession**   | `Future` [endpoint methods](../endpoints-and-apis)                                                            | Single request      | API calls, CRUD operations   |
 | **WebCallSession**      | [Web server](../web-server/overview) routes                                                                   | Single request      | Web pages, form submissions  |
 | **MethodStreamSession** | [Streaming methods](./streaming)                                                                              | Stream duration     | Real-time updates, chat      |
-| **StreamingSession**    | WebSocket connections of the [deprecated streaming endpoints API](./streaming#streaming-endpoints-deprecated) | Connection duration | Legacy real-time code        |
 | **FutureCallSession**   | [Scheduled tasks](../scheduling/overview)                                                                        | Task execution      | Email sending, batch jobs    |
 | **InternalSession**     | [Manual creation](#create-a-session-for-background-work)                                                      | Until closed        | Background work, migrations  |
 

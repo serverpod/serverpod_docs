@@ -69,7 +69,7 @@ Carapace supports fish, PowerShell, elvish, and more. After installing the compl
 
 ## Alternative: Completely
 
-The Serverpod CLI also supports [Completely](https://github.com/bashly-framework/completely), a lightweight alternative to Carapace that supports bash and zsh. Unlike Carapace, Completely does not require a separate tool running in your shell — it generates a standalone bash completion script.
+The Serverpod CLI also supports [Completely](https://github.com/bashly-framework/completely), a lightweight alternative to Carapace that supports bash and zsh. Unlike Carapace, Completely does not require a separate tool running in your shell. It generates a standalone bash completion script.
 
 To generate a Completely spec and create a completion script:
 

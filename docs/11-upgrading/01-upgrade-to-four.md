@@ -60,7 +60,7 @@ dependencies:
   serverpod_auth_shared_flutter: 4.0.0-beta.1  # in the Flutter package
 ```
 
-The `authenticationKeyManager` parameter on the generated `Client` is deprecated in 4.0 and will be removed in an upcoming release. Assign the key manager to the `authKeyProvider` field instead:
+The `authenticationKeyManager` parameter on the generated `Client` was removed in 4.0. Assign the key manager to the `authKeyProvider` field instead:
 
 ```dart
 client = Client('http://$ipAddress:8080/')
@@ -84,6 +84,12 @@ Then refresh the generated server and client code:
 $ serverpod generate
 ```
 
+### If you use the legacy streaming endpoints API
+
+Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed in 4.0. Endpoints that use the `StreamingSession` type no longer compile, and all the related server and client methods (e.g. `streamOpened`, `streamClosed`, `handleStreamMessage`, `sendStreamMessage`, `getUserObject`, `setUserObject`, `openStreamingConnection`) are gone.
+
+Port that code to [streaming methods](../concepts/endpoints-and-apis/streaming), where the endpoint declares `Stream` parameters and return types, and Serverpod manages the connection. State that used to live in a user object becomes a local variable in the streaming method, which stays alive as long as the stream is open. The old API stays documented in [Streaming endpoints](./archive/streaming-endpoints) while you port.
+
 ## Generate the 4.0 migration
 
 Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
@@ -106,13 +112,9 @@ You have two paths. Pick the one that fits where you are today; both work with `
 
 #### Keep your Docker Postgres (easiest upgrade)
 
-If you've been developing against a Docker Postgres on 3.4, you can keep it without changing your config. Pass `--docker` to `serverpod start` so it uses your existing `docker-compose.yaml`:
+If you've been developing against a Docker Postgres on 3.4, you can keep it without changing your config.
 
-```bash
-$ serverpod start --docker
-```
-
-With `--docker`, `serverpod start` brings up Docker if it isn't running, and tears down the compose stack on exit if the command brought it up.
+On projects whose config points at a Postgres on `localhost` with no `dataPath`, `serverpod start` brings up the `docker-compose` stack if it isn't running, and tears it down on exit if the command brought it up.
 
 #### Switch to the embedded Postgres (recommended for new development)
 
@@ -223,7 +225,8 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 
 ## What's new in 4.0
 
-- **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create a migration, **A** to apply migrations, **P** to apply a repair migration.
+- **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create and apply a migration, **P** to create and apply a repair migration.
+- **Simplified server initialization** with the generated `Serverpod` class that pre-wires `Protocol` and `Endpoints`, so `server.dart` needs only `Serverpod(args)`. Projects that keep their existing imports can stay on `Serverpod(args, Protocol(), Endpoints())`.
 - **Flutter app spawning** from `serverpod start` so the Flutter app runs alongside the server in the same TUI.
 - **AI agent skills and MCP servers** scaffolded during `serverpod create`; existing projects opt in by running `serverpod create .`.
 - **Embedded Postgres**: zero-Docker development via `dataPath`.

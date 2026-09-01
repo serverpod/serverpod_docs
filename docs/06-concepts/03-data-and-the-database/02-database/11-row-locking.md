@@ -32,7 +32,7 @@ await session.db.transaction((transaction) async {
     transaction: transaction,
   );
 
-  // Rows are locked — safe to update without conflicts.
+  // Rows are locked. It is safe to update without conflicts.
   for (var company in companies) {
     company.name = 'Updated name';
     await Company.db.updateRow(session, company, transaction: transaction);
@@ -73,7 +73,7 @@ await session.db.transaction((transaction) async {
     transaction: transaction,
   );
 
-  // Rows are locked — perform updates using other methods.
+  // Rows are locked. Perform updates using other methods.
 });
 ```
 

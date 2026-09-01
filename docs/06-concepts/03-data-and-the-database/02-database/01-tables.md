@@ -4,7 +4,7 @@ description: Table models map serializable classes to database tables in Serverp
 
 # Tables
 
-Storing a [data model](../models) in the database takes one line: add the `table` key to its model file, and the class gains a generated `db` field with typed methods for reading and writing rows. From there the path is short: create and apply a [migration](migrations) (press **M** then **A** in the `serverpod start` terminal), then call the [CRUD methods](crud) from your endpoints. The rest of this page covers what the table definition itself can do.
+Storing a [data model](../models) in the database takes one line: add the `table` key to its model file, and the class gains a generated `db` field with typed methods for reading and writing rows. From there the path is short: create and apply a [migration](migrations) (press **M** in the `serverpod start` terminal), then call the [CRUD methods](crud) from your endpoints. The rest of this page covers what the table definition itself can do.
 
 ```yaml
 class: Company
@@ -15,7 +15,7 @@ fields:
 
 When the `table` keyword is added to the model, Serverpod generates new methods for [interacting](crud) with the database. The keyword is also picked up when a migration is created, which generates the [migrations](migrations) needed to update the database.
 
-For the full list of keywords you can use in a model file, see the [Model reference](../../lookups/model-reference).
+For the full list of keywords you can use in a model file, see the [Model reference](../../lookups/model-reference). For how each type is stored in Postgres, SQLite, and JSON, see [Field types](../models/field-types).
 
 :::info
 When you add a `table` to a serializable class, Serverpod will automatically add an `id` field of type `int?` to the class. You should not define this field yourself. The `id` is set when you interact with an object stored in the database.
@@ -58,7 +58,7 @@ All fields are persisted by default and have an implicit `persist` set on each f
 
 ## Data representation
 
-A field with a primitive / core Dart type is stored as its respective column type. Complex types, such as another model, a `List`, or a `Map`, are stored as a `json` column in the database by default. Fields of type [`dynamic`](../models/dynamic-fields) are stored the same way, and can always hold null.
+A field with a primitive / core Dart type is stored as its respective column type. An `int` field is Postgres `bigint` (64-bit), not `integer`. Complex types, such as another model, a `List`, or a `Map`, are stored as a `json` column in the database by default. Fields of type [`dynamic`](../models/dynamic-fields) are stored the same way, and can always hold null. See [Field types](../models/field-types) for the full YAML-to-column mapping, including SQLite.
 
 ```yaml
 class: Company
@@ -85,7 +85,7 @@ For a complete guide on how to work with relations, see the [Relations](relation
 By default, complex types are stored as `json` in the database. You can opt into `jsonb` storage instead using the `serializationDataType` keyword. JSONB is a binary format that supports efficient querying and [GIN indexing](indexing#gin-indexes) for PostgreSQL.
 
 :::info
-The `serializationDataType` keyword is only valid on serializable field types (models, Lists, Maps, and `dynamic`). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
+The `serializationDataType` keyword is only valid on serializable field types (nested models, Lists, Maps, Sets, records, custom classes, and `dynamic`). Primitive types like `String` and `int` have their own native database column types and are not affected by this setting.
 :::
 
 You can set `serializationDataType` at three levels, each overriding the one above it:
@@ -149,8 +149,8 @@ The following types are supported for the `id` field:
 
 | **Type**      | Default | Default Persist options | Default Model options | Description            |
 | :------------ | :------ | :---------------------- | :-------------------- | :--------------------- |
-| **int**       | serial  | serial (optional)       | -                     | 64-bit serial integer. |
-| **UuidValue** | random  | random                  | random                | UUID v4 value.         |
+| **int**       | serial  | serial (optional)       | -                     | 64-bit serial integer (`bigint` / `bigserial`). |
+| **UuidValue** | random  | random, random_v7       | random, random_v7     | UUID v4 (`random`) or v7 (`random_v7`). |
 
 ### Declaring a custom ID type
 
@@ -181,9 +181,9 @@ fields:
   id: UuidValue, defaultModel=random
 ```
 
-When using `defaultModel=random`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
+When using `defaultModel=random` or `defaultModel=random_v7`, the UUID will be generated when the object is created. Since an id is always assigned the `id` field can be non-nullable.
 
-To have the database assign the id on insert instead of generating it when the object is created, use `defaultPersist=random` without `defaultModel`.
+To have the database assign the id on insert instead of generating it when the object is created, use `defaultPersist=random` or `defaultPersist=random_v7` without `defaultModel`.
 
 ## Column name override
 
