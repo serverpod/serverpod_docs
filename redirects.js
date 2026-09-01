@@ -44,6 +44,10 @@ module.exports = [{
     to: '/concepts/scheduling/setup',
   },
   {
+    from: ['/cloud/reference/cli/commands/secret'],
+    to: '/cloud/reference/cli/commands/variable',
+  },
+  {
     from: ['/cloud/reference/deployment/deploying-your-application'],
     to: '/cloud/concepts/deployments',
   },
