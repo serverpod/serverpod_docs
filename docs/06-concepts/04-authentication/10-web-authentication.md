@@ -58,7 +58,7 @@ Everything else is unchanged: sign-in flows, the `client.auth` session manager, 
 ## Verify
 
 1. Sign in from your web app with the browser's developer tools open.
-2. In the **Network** tab, inspect the sign-in response. It carries a `Set-Cookie` header marked `HttpOnly` for the auth cookie (`serverpod_auth` with server-side sessions, `serverpod_auth_refresh` with JWT), and the token no longer appears in the response body.
+2. In the **Network** tab, inspect the sign-in response. It carries an `HttpOnly` `Set-Cookie` header: `serverpod_auth` holding the session token with server-side sessions, or `serverpod_auth_refresh` holding the refresh token with JWT. The cookie's token no longer appears in the response body. With JWT, the body still carries the short-lived access token, which the app keeps in memory.
 3. Confirm no token appears in **Local Storage** for your app's origin.
 4. Reload the page. The user is still signed in.
 
