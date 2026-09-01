@@ -1,15 +1,15 @@
 ## Usage
 
 ```console
-Manage Serverpod Cloud environment variables for a project.
+Manage Serverpod Cloud environment variables and secrets for a project.
 
 Usage: scloud variable <subcommand> [arguments]
 -h, --help    Print this usage information.
 
 Available subcommands:
-  list    Lists all environment variables for the project.
-  set     Set an environment variable (create or update).
-  unset   Remove an environment variable.
+  list    Lists all environment variables and secrets for the project.
+  set     Set an environment variable or secret (create or update).
+  unset   Remove an environment variable or secret.
 
 Run "scloud help" to see global options.
 
@@ -22,14 +22,16 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 #### `list`
 
 ```console
-Lists all environment variables for the project.
+Lists all environment variables and secrets for the project.
 
 Usage: scloud variable list [arguments]
--h, --help                   Print this usage information.
--p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+-h, --help                       Print this usage information.
+-p, --project (mandatory)        The ID of the project.
+                                 Can be omitted for existing projects that are linked (see the
+                                 "project link" command) or if a global project context is set (see
+                                 the "context set" command).
+    --format=<text|json|yaml>    Selects the command output format.
+                                 (defaults to "text")
 
 Run "scloud help" to see global options.
 
@@ -40,16 +42,18 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 #### `set`
 
 ```console
-Set an environment variable (create or update).
+Set an environment variable or secret (create or update).
 
 Usage: scloud variable set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "context
+                             set" command).
     --name (mandatory)       The name of the environment variable. Can be passed as the first
                              argument.
+    --[no-]secret            Store the value as a secret. The value is encrypted and masked. Without
+                             this flag the value is unmasked and visible.
 
 Value
     --value                  The value of the environment variable. Can be passed as the second
@@ -65,6 +69,10 @@ Examples
 
     $ scloud variable set SERVICE_EMAIL support@example.com
 
+  Set a secret environment variable. The value is encrypted and masked.
+
+    $ scloud variable set --secret API_KEY sk-...
+
   To set the variable from a file, use the --from-file option.
   The full content of the file will be used as the value.
 
@@ -77,14 +85,14 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 #### `unset`
 
 ```console
-Remove an environment variable.
+Remove an environment variable or secret.
 
 Usage: scloud variable unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "context
+                             set" command).
     --name (mandatory)       The name of the environment variable. Can be passed as the first
                              argument.
 

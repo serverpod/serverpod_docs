@@ -33,9 +33,9 @@ Show the connection details for a Serverpod Cloud DB.
 Usage: scloud db connection [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "context
+                             set" command).
 
 Run "scloud help" to see global options.
 
@@ -110,9 +110,9 @@ Irreversibly wipe and recreate the database, deleting all data and schema change
 Usage: scloud db wipe [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "context
+                             set" command).
 
 Run "scloud help" to see global options.
 

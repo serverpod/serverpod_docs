@@ -42,8 +42,8 @@ Mission Control
   domain       Bring your own domain to Serverpod Cloud.
   log          Fetch Serverpod Cloud logs.
   password     Manage Serverpod Cloud passwords.
-  secret       Manage Serverpod Cloud secrets.
-  variable     Manage Serverpod Cloud environment variables for a project.
+  status       Show the live status of the project's podlets.
+  variable     Manage Serverpod Cloud environment variables and secrets for a project.
 
 Run "scloud help <command>" for more information about a command.
 
