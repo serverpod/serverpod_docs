@@ -55,12 +55,21 @@ client = Client(serverUrl)
 
 Everything else is unchanged: sign-in flows, the `client.auth` session manager, and endpoint calls work as on other platforms. Setting `cookieAuth` to `true` on a non-web platform throws, since those transports have no browser cookie jar.
 
+## Verify
+
+1. Sign in from your web app.
+2. Open the browser's developer tools and check the cookies for your server's origin (in Chrome, **Application** > **Cookies**). The auth cookie is there and marked `HttpOnly`: `serverpod_auth` with server-side sessions, or `serverpod_auth_refresh` with JWT.
+3. Confirm no token appears in **Local Storage** for your app's origin.
+4. Reload the page. The user is still signed in.
+
+If sign-in fails, check that every browser origin is listed in `allowedOrigins`, and on `http://localhost` that `authCookie.secure` is `false`.
+
 ## How it works
 
 - With **server-side sessions**, the session token is delivered as an `httpOnly` cookie and never appears in the response body.
 - With **JWT**, the access token is kept in memory only, and the refresh token is delivered as an `httpOnly` cookie scoped to the refresh endpoint's path. On page load, the session is restored by refreshing from the cookie. Multiple tabs coordinate their refreshes through the browser's Web Locks API, so a shared refresh token is only rotated by one tab at a time.
 - **Signing out** clears the cookies and revokes the session on the server.
-- **Method streams** authenticate from the cookie at the WebSocket handshake. When the signed-in user changes (sign-in or sign-out), open method streams are closed gracefully — subscriptions receive `onDone` without an error — and new streams connect with the current identity. This applies on every platform, not only the web.
+- **Method streams** authenticate from the cookie at the WebSocket handshake. When the signed-in user changes (sign-in or sign-out), open method streams are closed gracefully (subscriptions receive `onDone` without an error) and new streams connect with the current identity. This applies on every platform, not only the web.
 - **Switching users requires a sign-out first.** Signing in as a different user from an already-authenticated session is rejected with a `SignInWhileAuthenticatedException` on all platforms.
 
 ## Cross-site request protection
