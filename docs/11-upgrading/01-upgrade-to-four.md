@@ -238,6 +238,16 @@ Your production build needs to switch from `dart compile exe` to `dart build cli
 
 Copy the updated Dockerfile from the [4.0 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 4.0 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and bump the Dart SDK base image to 3.10.x or newer.
 
+## Authentication changes
+
+4.0 changes a few authentication behaviors that can affect existing apps:
+
+- **The `?auth=` query parameter is no longer accepted.** Credentials never appear in URLs anymore: HTTP calls authenticate through the `Authorization` header (or an auth cookie on the web), and streaming connections authenticate in-band when the stream opens. Clients from before 4.0 that relied on the query parameter must be upgraded.
+- **Signing in on top of another account is rejected.** Issuing a token for a different user from an already-authenticated session throws a `SignInWhileAuthenticatedException` on every platform; users must sign out before switching accounts. Server code that mints tokens on behalf of another user (such as an admin flow) calls the token manager's `createToken` instead, which skips this policy and returns the secrets in the response body.
+- **Custom token managers extend a base class.** `TokenIssuer` and `TokenManager` are now base classes: implement `createToken` for the actual minting, and leave `issueToken` alone. It is non-virtual and applies the sign-in policy and cookie delivery for every token type.
+- **Method streams close when the signed-in user changes.** On sign-in and sign-out, open method streams are closed gracefully (subscriptions receive `onDone` without an error) on all platforms, and new streams connect with the current identity. A same-identity token refresh keeps streams running.
+- **Opt-in cookie auth for the web.** Enabling the new `authCookie` configuration requires listing every browser origin in `allowedOrigins`; browsers on unlisted origins lose cross-origin access, including to public endpoints. See [web authentication](../concepts/authentication/web-authentication).
+
 ## What's new in 4.0
 
 - **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create and apply a migration, **P** to create and apply a repair migration.
@@ -252,6 +262,7 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 - **`upsert` and `upsertRow`** on the ORM, and **`asc()` / `desc()`** convenience methods on orderable columns.
 - **Recurring future calls** via the new claim-based scheduling.
 - **OAuth2 PKCE Flutter web redirect** for sign-in flows.
+- **httpOnly cookie authentication for the web**, keeping browser sign-in tokens out of JavaScript-readable storage. See [web authentication](../concepts/authentication/web-authentication).
 - **Health endpoints** on the built-in webserver.
 - **IDE and agent selection** in `serverpod create`.
 
