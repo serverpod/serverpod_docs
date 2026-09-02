@@ -1,12 +1,22 @@
+const fontkit = require('fontkit');
 const sharp = require('sharp');
-const opentype = require('opentype.js');
 
 const { CARD_HEIGHT, CARD_WIDTH, normalizeMetadata } = require('./shared');
 
-const TEXT_X = 374;
-const TEXT_MAX_WIDTH = 700;
+// Geometry constants are measured from the serverpod.dev feature-page cards.
+const TEXT_X = 344;
+const TEXT_MAX_WIDTH = 730;
+const TITLE_BASELINE = 325;
+const TITLE_DESCRIPTION_BASELINE_GAP = 69;
+const DESCRIPTION_FONT_SIZE = 38.5;
+const DESCRIPTION_LINE_HEIGHT = 46;
+const ICON_X = 96;
+const ICON_SIZE = 216;
+const ICON_BODY_TOP_FRACTION = 21 / 256;
+const ICON_BODY_BOTTOM_FRACTION = 234 / 256;
+const LOGO_BOX = Object.freeze({ x: 134, y: 96, width: 266, height: 72 });
+const TEXT_COLOR = '#ffffff';
 const JPEG_OPTIONS = Object.freeze({ quality: 88, progressive: true });
-const FONT_OPTIONS = Object.freeze({ kerning: true });
 const parsedFontByBuffer = new WeakMap();
 
 function parseFont(fontBuffer) {
@@ -15,13 +25,56 @@ function parseFont(fontBuffer) {
     return cached;
   }
 
-  const arrayBuffer = fontBuffer.buffer.slice(
-    fontBuffer.byteOffset,
-    fontBuffer.byteOffset + fontBuffer.byteLength
-  );
-  const font = opentype.parse(arrayBuffer);
+  const font = fontkit.create(fontBuffer);
   parsedFontByBuffer.set(fontBuffer, font);
   return font;
+}
+
+function measureText(font, text, fontSize) {
+  return (font.layout(text).advanceWidth * fontSize) / font.unitsPerEm;
+}
+
+function glyphPathData(glyph, x, y, scale) {
+  const fmt = (value) => Math.round(value * 100) / 100;
+  let pathData = '';
+  for (const { command, args } of glyph.path.commands) {
+    if (command === 'closePath') {
+      pathData += 'Z';
+      continue;
+    }
+    const points = [];
+    for (let i = 0; i < args.length; i += 2) {
+      points.push(fmt(x + args[i] * scale), fmt(y - args[i + 1] * scale));
+    }
+    const letter =
+      command === 'moveTo'
+        ? 'M'
+        : command === 'lineTo'
+          ? 'L'
+          : command === 'quadraticCurveTo'
+            ? 'Q'
+            : 'C';
+    pathData += letter + points.join(' ');
+  }
+  return pathData;
+}
+
+function textPathData(font, text, x, baseline, fontSize) {
+  const run = font.layout(text);
+  const scale = fontSize / font.unitsPerEm;
+  let cursor = x;
+  let pathData = '';
+  run.glyphs.forEach((glyph, index) => {
+    const position = run.positions[index];
+    pathData += glyphPathData(
+      glyph,
+      cursor + position.xOffset * scale,
+      baseline - position.yOffset * scale,
+      scale
+    );
+    cursor += position.xAdvance * scale;
+  });
+  return pathData;
 }
 
 function assertFontCoverage(value, font, fieldName) {
@@ -29,7 +82,8 @@ function assertFontCoverage(value, font, fieldName) {
     ...new Set(
       [...normalizeMetadata(value)].filter(
         (character) =>
-          !/\s/.test(character) && font.charToGlyphIndex(character) === 0
+          !/\s/.test(character) &&
+          !font.hasGlyphForCodePoint(character.codePointAt(0))
       )
     ),
   ];
@@ -57,15 +111,23 @@ function ellipsize(text, { measureText, maxWidth }) {
     return '';
   }
 
+  const source = text.trimEnd();
   let prefix = '';
-  for (const character of text.trimEnd()) {
-    const candidate = `${prefix}${character}${ellipsis}`;
-    if (measureText(candidate) > maxWidth) {
+  let cutMidWord = false;
+  for (const character of source) {
+    if (measureText(`${prefix}${character}${ellipsis}`) > maxWidth) {
+      cutMidWord = true;
       break;
     }
     prefix += character;
   }
-  return `${prefix.trimEnd()}${ellipsis}`;
+  if (cutMidWord) {
+    const lastSpace = prefix.lastIndexOf(' ');
+    if (lastSpace > 0) {
+      prefix = prefix.slice(0, lastSpace);
+    }
+  }
+  return `${prefix.replace(/[\s.,;:!?]+$/u, '')}${ellipsis}`;
 }
 
 function wrapText(text, { measureText, maxWidth, maxLines }) {
@@ -79,12 +141,17 @@ function wrapText(text, { measureText, maxWidth, maxLines }) {
 
   const lines = [];
   let currentLine = '';
+  let cutToken = false;
 
   for (const word of words) {
     if (!currentLine) {
       if (measureText(word) > maxWidth) {
         lines.push(ellipsize(word, { measureText, maxWidth }));
-        return { lines, truncated: true };
+        cutToken = true;
+        if (lines.length === maxLines) {
+          return { lines, truncated: true };
+        }
+        continue;
       }
       currentLine = word;
       continue;
@@ -97,6 +164,7 @@ function wrapText(text, { measureText, maxWidth, maxLines }) {
     }
 
     lines.push(currentLine);
+    currentLine = '';
     if (lines.length === maxLines) {
       lines[lines.length - 1] = ellipsize(lines.at(-1), {
         measureText,
@@ -107,30 +175,38 @@ function wrapText(text, { measureText, maxWidth, maxLines }) {
 
     if (measureText(word) > maxWidth) {
       lines.push(ellipsize(word, { measureText, maxWidth }));
-      return { lines, truncated: true };
+      cutToken = true;
+      if (lines.length === maxLines) {
+        return { lines, truncated: true };
+      }
+      continue;
     }
     currentLine = word;
   }
 
-  lines.push(currentLine);
-  return { lines, truncated: false };
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  return { lines, truncated: cutToken };
 }
 
 function fitText(text, { font, fontSizes, maxWidth, maxLines }) {
   for (const fontSize of fontSizes) {
-    const measureText = (value) =>
-      font.getAdvanceWidth(value, fontSize, FONT_OPTIONS);
-    const wrapped = wrapText(text, { measureText, maxWidth, maxLines });
+    const measure = (value) => measureText(font, value, fontSize);
+    const wrapped = wrapText(text, {
+      measureText: measure,
+      maxWidth,
+      maxLines,
+    });
     if (!wrapped.truncated) {
       return { ...wrapped, fontSize };
     }
   }
 
   const fontSize = fontSizes.at(-1);
-  const measureText = (value) =>
-    font.getAdvanceWidth(value, fontSize, FONT_OPTIONS);
+  const measure = (value) => measureText(font, value, fontSize);
   return {
-    ...wrapText(text, { measureText, maxWidth, maxLines }),
+    ...wrapText(text, { measureText: measure, maxWidth, maxLines }),
     fontSize,
   };
 }
@@ -139,8 +215,8 @@ function svgDataUri(svg) {
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
 }
 
-function colorizeIconSvg(svg) {
-  return svg.replaceAll('currentColor', '#f5fbff');
+function pngDataUri(png) {
+  return `data:image/png;base64,${png.toString('base64')}`;
 }
 
 function textPathElements(
@@ -150,10 +226,8 @@ function textPathElements(
   return lines
     .map((line, index) => {
       const baseline = firstBaseline + index * lineHeight;
-      const pathData = font
-        .getPath(line, x, baseline, fontSize, FONT_OPTIONS)
-        .toPathData(2);
-      return `<path d="${pathData}" fill="#ffffff"/>`;
+      const pathData = textPathData(font, line, x, baseline, fontSize);
+      return `<path d="${pathData}" fill="${TEXT_COLOR}"/>`;
     })
     .join('');
 }
@@ -162,39 +236,58 @@ function cardSvg({
   title,
   description,
   logoSvg,
-  iconSvg,
+  iconPng,
   regularFontBuffer,
-  boldFontBuffer,
+  blackFontBuffer,
 }) {
   const regularFont = parseFont(regularFontBuffer);
-  const boldFont = parseFont(boldFontBuffer);
-  assertFontCoverage(title, boldFont, 'title');
+  const blackFont = parseFont(blackFontBuffer);
+  assertFontCoverage(title, blackFont, 'title');
   assertFontCoverage(description, regularFont, 'description');
-  const fittedTitle = fitText(title, {
-    font: boldFont,
-    fontSizes: [62, 56, 50],
+
+  const titleOptions = {
+    font: blackFont,
+    fontSizes: [64, 56, 50],
+    maxWidth: TEXT_MAX_WIDTH,
+  };
+  let fittedTitle = fitText(title, { ...titleOptions, maxLines: 1 });
+  if (fittedTitle.truncated) {
+    fittedTitle = fitText(title, { ...titleOptions, maxLines: 2 });
+  }
+  const fittedDescription = fitText(description, {
+    font: regularFont,
+    fontSizes: [DESCRIPTION_FONT_SIZE],
     maxWidth: TEXT_MAX_WIDTH,
     maxLines: 2,
   });
-  const fittedDescription = fitText(description, {
-    font: regularFont,
-    fontSizes: [38, 35, 32, 29],
-    maxWidth: TEXT_MAX_WIDTH,
-    maxLines: 4,
-  });
 
-  const titleFirstBaseline = fittedTitle.lines.length > 1 ? 289 : 323;
-  const titleLineHeight = Math.round(fittedTitle.fontSize * 1.1);
+  const titleLineHeight = Math.round(fittedTitle.fontSize * 1.11);
+  const titleLastBaseline =
+    TITLE_BASELINE +
+    Math.max(0, fittedTitle.lines.length - 1) * titleLineHeight;
   const descriptionFirstBaseline =
-    titleFirstBaseline +
-    Math.max(0, fittedTitle.lines.length - 1) * titleLineHeight +
-    69;
-  const descriptionLineHeight = Math.round(fittedDescription.fontSize * 1.18);
+    titleLastBaseline + TITLE_DESCRIPTION_BASELINE_GAP;
+
+  const textBlockTop =
+    TITLE_BASELINE -
+    (blackFont.capHeight * fittedTitle.fontSize) / blackFont.unitsPerEm;
+  const textBlockBottom = fittedDescription.lines.length
+    ? descriptionFirstBaseline +
+      (fittedDescription.lines.length - 1) * DESCRIPTION_LINE_HEIGHT +
+      DESCRIPTION_FONT_SIZE * 0.27
+    : titleLastBaseline + fittedTitle.fontSize * 0.05;
+  const iconBodyHeight =
+    (ICON_BODY_BOTTOM_FRACTION - ICON_BODY_TOP_FRACTION) * ICON_SIZE;
+  const iconY = Math.round(
+    (textBlockTop + textBlockBottom) / 2 -
+      iconBodyHeight / 2 -
+      ICON_BODY_TOP_FRACTION * ICON_SIZE
+  );
 
   const titleElements = textPathElements(fittedTitle.lines, {
-    font: boldFont,
+    font: blackFont,
     x: TEXT_X,
-    firstBaseline: titleFirstBaseline,
+    firstBaseline: TITLE_BASELINE,
     lineHeight: titleLineHeight,
     fontSize: fittedTitle.fontSize,
   });
@@ -202,7 +295,7 @@ function cardSvg({
     font: regularFont,
     x: TEXT_X,
     firstBaseline: descriptionFirstBaseline,
-    lineHeight: descriptionLineHeight,
+    lineHeight: DESCRIPTION_LINE_HEIGHT,
     fontSize: fittedDescription.fontSize,
   });
 
@@ -210,29 +303,25 @@ function cardSvg({
 <svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="background" x1="${CARD_WIDTH / 2}" y1="0" x2="${CARD_WIDTH / 2}" y2="${CARD_HEIGHT}" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#091838"/>
-      <stop offset="0.45" stop-color="#003678"/>
-      <stop offset="1" stop-color="#248fd1"/>
+      <stop offset="0" stop-color="#0b1b4f"/>
+      <stop offset="0.3" stop-color="#00256e"/>
+      <stop offset="0.57" stop-color="#004590"/>
+      <stop offset="0.83" stop-color="#1768b7"/>
+      <stop offset="1" stop-color="#247bca"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(751 640) rotate(-90) scale(392 703)" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3db7ff" stop-opacity="0.42"/>
-      <stop offset="1" stop-color="#3db7ff" stop-opacity="0"/>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(80 760) scale(1100 520)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#96b2de" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#96b2de" stop-opacity="0.231"/>
+      <stop offset="1" stop-color="#96b2de" stop-opacity="0"/>
     </radialGradient>
-    <pattern id="grid" width="240" height="96" patternUnits="userSpaceOnUse">
-      <path d="M0 95.5H240M239.5 0V96" stroke="#8acfff" stroke-opacity="0.04"/>
-    </pattern>
-    <filter id="icon-shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#001b43" flood-opacity="0.55"/>
-    </filter>
     <clipPath id="text-area">
-      <rect x="${TEXT_X}" y="200" width="${TEXT_MAX_WIDTH}" height="380"/>
+      <rect x="${TEXT_X - 10}" y="190" width="${TEXT_MAX_WIDTH + 20}" height="420"/>
     </clipPath>
   </defs>
   <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#background)"/>
   <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#glow)"/>
-  <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#grid)"/>
-  <image href="${svgDataUri(logoSvg)}" x="140" y="98" width="266" height="72"/>
-  <image href="${svgDataUri(colorizeIconSvg(iconSvg))}" x="140" y="267" width="158" height="158" filter="url(#icon-shadow)"/>
+  <image href="${svgDataUri(logoSvg)}" x="${LOGO_BOX.x}" y="${LOGO_BOX.y}" width="${LOGO_BOX.width}" height="${LOGO_BOX.height}"/>
+  <image href="${pngDataUri(iconPng)}" x="${ICON_X}" y="${iconY}" width="${ICON_SIZE}" height="${ICON_SIZE}"/>
   <g clip-path="url(#text-area)">
     ${titleElements}
     ${descriptionElements}
@@ -244,18 +333,18 @@ async function renderCard({
   title,
   description,
   logoSvg,
-  iconSvg,
+  iconPng,
   regularFontBuffer,
-  boldFontBuffer,
+  blackFontBuffer,
   outputPath,
 }) {
   const svg = cardSvg({
     title,
     description,
     logoSvg,
-    iconSvg,
+    iconPng,
     regularFontBuffer,
-    boldFontBuffer,
+    blackFontBuffer,
   });
   await sharp(Buffer.from(svg)).jpeg(JPEG_OPTIONS).toFile(outputPath);
 }
@@ -263,6 +352,9 @@ async function renderCard({
 module.exports = {
   JPEG_OPTIONS,
   cardSvg,
+  fitText,
+  measureText,
+  parseFont,
   renderCard,
   wrapText,
 };

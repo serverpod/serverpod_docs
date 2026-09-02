@@ -37,3 +37,5 @@ jobs:
               run: npm run build
             - name: Verify markdown export
               run: node util/verify_markdown_export.js
+            - name: Verify Open Graph images
+              run: node util/verify_open_graph_images.js

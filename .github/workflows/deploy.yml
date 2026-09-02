@@ -25,11 +25,16 @@ jobs:
           run: |
               cd src
               npm ci
+              npm run test:open-graph
               npm run build
         - name: Verify markdown export
           run: |
               cd src
               node util/verify_markdown_export.js
+        - name: Verify Open Graph images
+          run: |
+              cd src
+              node util/verify_open_graph_images.js
         - uses: actions/checkout@v4
           with:
               path: target

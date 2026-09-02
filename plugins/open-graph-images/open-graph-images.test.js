@@ -6,30 +6,18 @@ const test = require('node:test');
 
 const openGraphImagesPlugin = require('./index');
 const {
-  ICON_FILE_BY_CLASS,
-  OG_ICON_FILE_BY_CLASS,
-  cardIdentityForDoc,
+  cardId,
   cardPath,
   normalizeMetadata,
   openGraphImageForDoc,
-  publicPathWithBaseUrl,
+  shouldGenerateCard,
 } = require('./shared');
 
 const SITE_DIR = path.resolve(__dirname, '..', '..');
 const PLUGIN_NAME = 'serverpod-open-graph-images';
 const ASSET_DIRECTORY = `${PLUGIN_NAME}-assets`;
-const FINGERPRINT_DEFINE = '__SERVERPOD_OG_RENDER_FINGERPRINTS_BY_ICON__';
-const OPEN_GRAPH_ICON_FILE_NAMES = Object.freeze([
-  ...new Set(Object.values(OG_ICON_FILE_BY_CLASS)),
-]);
-const TEST_RENDER_FINGERPRINTS = Object.freeze(
-  Object.fromEntries(
-    OPEN_GRAPH_ICON_FILE_NAMES.map((fileName) => [
-      fileName,
-      'render-fingerprint',
-    ])
-  )
-);
+const FINGERPRINT_DEFINE = '__SERVERPOD_OG_RENDER_FINGERPRINT__';
+const TEST_RENDER_FINGERPRINT = 'render-fingerprint';
 
 class TestDefinePlugin {
   static runtimeValue(fn, options) {
@@ -45,7 +33,7 @@ const CONFIGURE_WEBPACK_UTILS = {
   currentBundler: { instance: { DefinePlugin: TestDefinePlugin } },
 };
 
-function temporaryPlugin(t, { baseUrl = '/' } = {}) {
+function temporaryPlugin(t, { baseUrl = '/', siteDir = SITE_DIR } = {}) {
   const temporaryDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'serverpod-og-plugin-')
   );
@@ -55,21 +43,23 @@ function temporaryPlugin(t, { baseUrl = '/' } = {}) {
     generatedFilesDir,
     outDir: path.join(temporaryDir, 'build'),
     plugin: openGraphImagesPlugin({
-      siteDir: SITE_DIR,
+      siteDir,
       generatedFilesDir,
       baseUrl,
     }),
   };
 }
 
-function pluginFingerprints(plugin) {
+function pluginFingerprint(plugin) {
   const config = plugin.configureWebpack(
     undefined,
     false,
     CONFIGURE_WEBPACK_UTILS
   );
   const runtimeValue = config.plugins[0].definitions[FINGERPRINT_DEFINE];
-  return JSON.parse(runtimeValue.fn());
+  const fingerprint = JSON.parse(runtimeValue.fn());
+  assert.equal(runtimeValue.options.version, fingerprint);
+  return fingerprint;
 }
 
 function doc({
@@ -79,8 +69,9 @@ function doc({
   frontMatter = {},
   sidebar = 'docs',
   permalink = `/${id}`,
+  source = `@site/docs/${id}.md`,
 }) {
-  return { id, title, description, frontMatter, sidebar, permalink };
+  return { id, title, description, frontMatter, sidebar, permalink, source };
 }
 
 function docsContent(loadedVersions) {
@@ -91,209 +82,111 @@ function docsContent(loadedVersions) {
   };
 }
 
-test('raw and client sidebars resolve the same nearest category icons', () => {
-  const rawSidebar = [
-    {
-      type: 'category',
-      className: 'menu-class sidebar-icon-getting-started',
-      items: [
-        {
-          type: 'doc',
-          id: 'quickstart',
-          className: 'sidebar-icon-quickstart',
-        },
-        {
-          type: 'category',
-          className: 'sidebar-icon-tools',
-          items: [{ type: 'ref', id: 'nested' }],
-        },
-      ],
-    },
-    {
-      type: 'category',
-      className: 'sidebar-icon-overview',
-      link: { type: 'doc', id: 'introduction' },
-      items: [],
-    },
-  ];
-  const clientSidebar = [
-    {
-      type: 'category',
-      className: 'menu-class sidebar-icon-getting-started',
-      items: [
-        {
-          type: 'link',
-          docId: 'quickstart',
-          href: '/quickstart',
-          className: 'sidebar-icon-quickstart',
-        },
-        {
-          type: 'category',
-          className: 'sidebar-icon-tools',
-          items: [{ type: 'link', docId: 'nested', href: '/nested' }],
-        },
-      ],
-    },
-    {
-      type: 'category',
-      className: 'sidebar-icon-overview',
-      href: '/introduction/',
-      items: [],
-    },
-  ];
-
-  for (const [id, permalink, expected] of [
-    ['quickstart', '/quickstart', 'sidebar-icon-quickstart'],
-    ['nested', '/nested', 'sidebar-icon-tools'],
-    ['introduction', '/introduction', 'sidebar-icon-overview'],
-  ]) {
-    const common = {
-      title: id,
-      description: `${id} description`,
-      docId: id,
-      permalink,
-      renderFingerprintByIconFileName: TEST_RENDER_FINGERPRINTS,
-    };
-    const rawIdentity = cardIdentityForDoc({
-      ...common,
-      sidebarItems: rawSidebar,
-    });
-    const clientIdentity = cardIdentityForDoc({
-      ...common,
-      sidebarItems: clientSidebar,
-    });
-    assert.equal(rawIdentity.iconFileName, ICON_FILE_BY_CLASS[expected]);
-    assert.deepEqual(clientIdentity, rawIdentity);
-  }
-});
-
-test('icon lookup is safe and direct page icons take precedence', () => {
-  const common = {
-    title: 'Quickstart',
-    description: 'Create a Serverpod project.',
-    docId: 'quickstart',
-    permalink: '/quickstart',
-    sidebarItems: [],
-    renderFingerprintByIconFileName: TEST_RENDER_FINGERPRINTS,
-  };
-  assert.equal(
-    cardIdentityForDoc({
-      ...common,
-      directClassName: 'toString constructor',
-    }).iconFileName,
-    ICON_FILE_BY_CLASS['sidebar-icon-reference']
-  );
-  assert.equal(
-    cardIdentityForDoc({
-      ...common,
-      directClassName: 'sidebar-icon-quickstart',
-    }).iconFileName,
-    ICON_FILE_BY_CLASS['sidebar-icon-quickstart']
-  );
-});
-
-test('numbered sidebar steps use standalone semantic icons', () => {
-  const common = {
-    title: 'Build your first app',
-    description: 'Complete one step of the tutorial.',
-    docId: 'step',
-    permalink: '/step',
-    sidebarItems: [],
-    renderFingerprintByIconFileName: TEST_RENDER_FINGERPRINTS,
-  };
-  const expectedByClass = {
-    'sidebar-icon-get-started-step-1': 'sidebar-icon-server.svg',
-    'sidebar-icon-get-started-step-2': 'sidebar-icon-layers.svg',
-    'sidebar-icon-get-started-step-3': 'sidebar-icon-database.svg',
-    'sidebar-icon-get-started-step-4': 'sidebar-icon-rocket.svg',
-  };
-
-  for (const [directClassName, expectedFileName] of Object.entries(
-    expectedByClass
-  )) {
-    assert.equal(
-      cardIdentityForDoc({ ...common, directClassName }).iconFileName,
-      expectedFileName
-    );
-  }
-});
-
-test('icon mappings match the sidebar CSS and point to existing SVGs', () => {
-  const css = fs.readFileSync(
-    path.join(SITE_DIR, 'src', 'css', 'custom.css'),
-    'utf8'
-  );
-  const cssMappings = new Map();
-  const iconRule =
-    /([^{}]+)\{[^{}]*--sidebar-icon-mask:\s*url\('\/img\/([^']+)'\);/g;
-
-  for (const match of css.matchAll(iconRule)) {
-    const [, selectors, fileName] = match;
-    for (const classMatch of selectors.matchAll(
-      /\.(sidebar-(?:icon-[\w-]+|installation-icon|introduction-icon))/g
-    )) {
-      cssMappings.set(classMatch[1], fileName);
-    }
-  }
-
-  assert.deepEqual(
-    Object.fromEntries([...cssMappings].sort()),
-    Object.fromEntries(Object.entries(ICON_FILE_BY_CLASS).sort())
-  );
-  for (const fileName of new Set(Object.values(ICON_FILE_BY_CLASS))) {
-    const filePath = path.join(SITE_DIR, 'static', 'img', fileName);
-    assert.ok(fs.existsSync(filePath));
-    assert.match(fs.readFileSync(filePath, 'utf8'), /currentColor/);
-  }
-  for (const fileName of OPEN_GRAPH_ICON_FILE_NAMES) {
-    const filePath = path.join(SITE_DIR, 'static', 'img', fileName);
-    assert.ok(fs.existsSync(filePath));
-    assert.match(fs.readFileSync(filePath, 'utf8'), /currentColor/);
-  }
-});
-
 test('card IDs normalize whitespace only and produce safe public paths', () => {
-  const common = {
-    docId: 'quickstart',
-    permalink: '/quickstart',
-    directClassName: 'sidebar-icon-quickstart',
-    sidebarItems: [],
-    renderFingerprintByIconFileName: TEST_RENDER_FINGERPRINTS,
-  };
-  const id = cardIdentityForDoc({
-    ...common,
+  const id = cardId({
     title: '  Quickstart\n',
     description: 'Build\twith   Serverpod.',
-  }).id;
+    renderFingerprint: TEST_RENDER_FINGERPRINT,
+  });
   assert.equal(
     id,
-    cardIdentityForDoc({
-      ...common,
+    cardId({
       title: 'Quickstart',
       description: 'Build with Serverpod.',
-    }).id
+      renderFingerprint: TEST_RENDER_FINGERPRINT,
+    })
   );
   assert.notEqual(
     id,
-    cardIdentityForDoc({
-      ...common,
+    cardId({
       title: '**Quickstart**',
       description: 'Build with Serverpod.',
-    }).id
+      renderFingerprint: TEST_RENDER_FINGERPRINT,
+    })
   );
   assert.match(id, /^[a-f0-9]{20}$/);
   assert.equal(cardPath(id), `/img/open-graph/${id}.jpg`);
   assert.equal(normalizeMetadata(' A\n\tB '), 'A B');
+  assert.throws(
+    () => cardId({ title: 'x', description: 'y' }),
+    /render fingerprint is required/
+  );
+});
+
+test('docs with empty titles get no generated card on either side', async (t) => {
+  assert.equal(shouldGenerateCard({ title: 'Quickstart' }), true);
+  assert.equal(shouldGenerateCard({ title: '' }), false);
+  assert.equal(shouldGenerateCard({ title: '  \n ' }), false);
+
+  assert.deepEqual(
+    openGraphImageForDoc({
+      title: '',
+      description: 'Auto-extracted CLI reference text.',
+      renderFingerprint: TEST_RENDER_FINGERPRINT,
+    }),
+    { generatedImage: undefined, image: undefined }
+  );
+  assert.deepEqual(
+    openGraphImageForDoc({
+      title: '',
+      description: 'x',
+      frontMatterImage: '/card.png',
+      renderFingerprint: TEST_RENDER_FINGERPRINT,
+    }),
+    { generatedImage: undefined, image: '/card.png' }
+  );
+
+  const { generatedFilesDir, plugin } = temporaryPlugin(t);
+  await plugin.allContentLoaded({
+    allContent: docsContent([
+      {
+        versionName: 'current',
+        sidebars: {},
+        docs: [doc({ id: 'untitled', title: '' })],
+      },
+    ]),
+  });
+  assert.deepEqual(
+    fs.readdirSync(path.join(generatedFilesDir, ASSET_DIRECTORY)),
+    []
+  );
+});
+
+test('cards generate across multiple docs plugin instances', async (t) => {
+  const { generatedFilesDir, plugin } = temporaryPlugin(t);
+  await plugin.allContentLoaded({
+    allContent: {
+      'docusaurus-plugin-content-docs': {
+        default: {
+          loadedVersions: [
+            {
+              versionName: 'current',
+              sidebars: {},
+              docs: [doc({ id: 'framework' })],
+            },
+          ],
+        },
+        cloud: {
+          loadedVersions: [
+            {
+              versionName: 'current',
+              sidebars: {},
+              docs: [doc({ id: 'cloud' })],
+            },
+          ],
+        },
+      },
+    },
+  });
+  const files = fs.readdirSync(path.join(generatedFilesDir, ASSET_DIRECTORY));
+  assert.equal(files.length, 2);
 });
 
 test('explicit document images take precedence over generated cards', () => {
   const card = {
     title: 'Quickstart',
     description: 'Build with Serverpod.',
-    docId: 'quickstart',
-    permalink: '/quickstart',
-    sidebarItems: [],
-    renderFingerprintByIconFileName: TEST_RENDER_FINGERPRINTS,
+    renderFingerprint: TEST_RENDER_FINGERPRINT,
   };
   assert.deepEqual(
     openGraphImageForDoc({
@@ -324,7 +217,12 @@ test('dev serving respects baseUrl and watches every render asset', (t) => {
     CONFIGURE_WEBPACK_UTILS
   );
   assert.equal(config.devServer.static[0].publicPath, '/docs/img/open-graph');
-  assert.equal(publicPathWithBaseUrl('/docs/'), '/docs/img/open-graph');
+
+  const runtimeValue = config.plugins[0].definitions[FINGERPRINT_DEFINE];
+  assert.deepEqual(
+    runtimeValue.options.fileDependencies,
+    plugin.getPathsToWatch()
+  );
 
   const watched = new Set(plugin.getPathsToWatch());
   assert.ok(
@@ -332,57 +230,71 @@ test('dev serving respects baseUrl and watches every render asset', (t) => {
       path.join(SITE_DIR, 'static', 'img', 'logo-horizontal-dark.svg')
     )
   );
-  for (const fileName of OPEN_GRAPH_ICON_FILE_NAMES) {
-    assert.ok(watched.has(path.join(SITE_DIR, 'static', 'img', fileName)));
-  }
-  const fingerprints = pluginFingerprints(plugin);
-  assert.deepEqual(
-    Object.keys(fingerprints).sort(),
-    [...OPEN_GRAPH_ICON_FILE_NAMES].sort()
-  );
-  for (const fingerprint of Object.values(fingerprints)) {
-    assert.match(fingerprint, /^[a-f0-9]{64}$/);
-  }
+  assert.ok(watched.has(path.join(__dirname, 'assets', 'doc-icon.png')));
+  assert.ok(watched.has(path.join(__dirname, 'fonts', 'Inter-Regular.otf')));
+  assert.ok(watched.has(path.join(__dirname, 'fonts', 'Inter-Black.otf')));
+  assert.match(pluginFingerprint(plugin), /^[a-f0-9]{64}$/);
 });
 
-test('changing one icon invalidates only cards that use that icon', (t) => {
+test('changing the logo invalidates the render fingerprint', (t) => {
   const temporaryDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'serverpod-og-assets-')
   );
   t.after(() => fs.rmSync(temporaryDir, { recursive: true, force: true }));
   const staticImageDir = path.join(temporaryDir, 'static', 'img');
   fs.mkdirSync(staticImageDir, { recursive: true });
-  const assetFileNames = [
-    'logo-horizontal-dark.svg',
-    ...OPEN_GRAPH_ICON_FILE_NAMES,
-  ];
-  for (const fileName of assetFileNames) {
-    fs.copyFileSync(
-      path.join(SITE_DIR, 'static', 'img', fileName),
-      path.join(staticImageDir, fileName)
-    );
-  }
+  fs.copyFileSync(
+    path.join(SITE_DIR, 'static', 'img', 'logo-horizontal-dark.svg'),
+    path.join(staticImageDir, 'logo-horizontal-dark.svg')
+  );
 
   const plugin = openGraphImagesPlugin({
     siteDir: temporaryDir,
     generatedFilesDir: path.join(temporaryDir, 'generated'),
     baseUrl: '/',
   });
-  const before = pluginFingerprints(plugin);
-  const changedIcon = OPEN_GRAPH_ICON_FILE_NAMES[0];
+  const before = pluginFingerprint(plugin);
   fs.appendFileSync(
-    path.join(staticImageDir, changedIcon),
+    path.join(staticImageDir, 'logo-horizontal-dark.svg'),
     '\n<!-- test-only change -->\n'
   );
-  const after = pluginFingerprints(plugin);
+  const after = pluginFingerprint(plugin);
+  assert.notEqual(after, before);
+});
 
-  for (const fileName of Object.keys(before)) {
-    if (fileName === changedIcon) {
-      assert.notEqual(after[fileName], before[fileName]);
-    } else {
-      assert.equal(after[fileName], before[fileName]);
-    }
-  }
+test('changing the icon or a font invalidates the render fingerprint', (t) => {
+  const temporaryDir = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'serverpod-og-assets-')
+  );
+  t.after(() => fs.rmSync(temporaryDir, { recursive: true, force: true }));
+  const staticImageDir = path.join(temporaryDir, 'static', 'img');
+  fs.mkdirSync(staticImageDir, { recursive: true });
+  fs.copyFileSync(
+    path.join(SITE_DIR, 'static', 'img', 'logo-horizontal-dark.svg'),
+    path.join(staticImageDir, 'logo-horizontal-dark.svg')
+  );
+  const iconPath = path.join(temporaryDir, 'doc-icon.png');
+  const regularFontPath = path.join(temporaryDir, 'Inter-Regular.otf');
+  fs.copyFileSync(path.join(__dirname, 'assets', 'doc-icon.png'), iconPath);
+  fs.copyFileSync(
+    path.join(__dirname, 'fonts', 'Inter-Regular.otf'),
+    regularFontPath
+  );
+
+  const plugin = openGraphImagesPlugin(
+    {
+      siteDir: temporaryDir,
+      generatedFilesDir: path.join(temporaryDir, 'generated'),
+      baseUrl: '/',
+    },
+    { iconPath, regularFontPath }
+  );
+  const initial = pluginFingerprint(plugin);
+  fs.appendFileSync(iconPath, Buffer.from([0]));
+  const afterIcon = pluginFingerprint(plugin);
+  assert.notEqual(afterIcon, initial);
+  fs.appendFileSync(regularFontPath, Buffer.from([0]));
+  assert.notEqual(pluginFingerprint(plugin), afterIcon);
 });
 
 test('plugin and theme derivation share IDs without global manifest data', async (t) => {
@@ -402,25 +314,7 @@ test('plugin and theme derivation share IDs without global manifest data', async
     allContent: docsContent([
       {
         versionName: 'current',
-        sidebars: {
-          ignored: [
-            {
-              type: 'category',
-              className: 'sidebar-icon-tools',
-              items: [{ type: 'doc', id: 'quickstart' }],
-            },
-          ],
-          docs: [
-            {
-              type: 'category',
-              className: 'sidebar-icon-getting-started',
-              items: [
-                { type: 'doc', id: 'quickstart' },
-                { type: 'doc', id: 'custom-card' },
-              ],
-            },
-          ],
-        },
+        sidebars: {},
         docs: [
           quickstart,
           doc({
@@ -437,21 +331,11 @@ test('plugin and theme derivation share IDs without global manifest data', async
     },
   });
 
-  const expectedId = cardIdentityForDoc({
+  const expectedId = cardId({
     title: quickstart.title,
     description: quickstart.description,
-    docId: quickstart.id,
-    permalink: quickstart.permalink,
-    directClassName: quickstart.frontMatter.sidebar_class_name,
-    sidebarItems: [
-      {
-        type: 'category',
-        className: 'sidebar-icon-getting-started',
-        items: [{ type: 'doc', id: 'quickstart' }],
-      },
-    ],
-    renderFingerprintByIconFileName: pluginFingerprints(plugin),
-  }).id;
+    renderFingerprint: pluginFingerprint(plugin),
+  });
   assert.equal(globalDataCalls, 0);
   assert.ok(fs.existsSync(path.join(generatedDir, `${expectedId}.jpg`)));
   assert.equal(fs.existsSync(path.join(generatedDir, `${staleId}.jpg`)), false);
@@ -486,7 +370,7 @@ test('serializes reloads and cleans only stale temporary files', async (t) => {
     allContent: docsContent([
       {
         versionName: 'current',
-        sidebars: { docs: [{ type: 'doc', id: 'first' }] },
+        sidebars: {},
         docs: [doc({ id: 'first' })],
       },
     ]),
@@ -514,12 +398,23 @@ test('drains render workers and recovers after a render failure', async (t) => {
       allContent: docsContent([
         {
           versionName: 'current',
-          sidebars: { docs: docs.map(({ id }) => ({ type: 'doc', id })) },
+          sidebars: {},
           docs,
         },
       ]),
     }),
-    /Open Graph title contains unsupported .*U\+1F680/
+    (error) => {
+      assert.match(
+        error.message,
+        /^Card for "Launch 🚀" \(@site\/docs\/failure-0\.md\): Open Graph title contains unsupported .*U\+1F680/
+      );
+      assert.ok(error.cause instanceof Error);
+      assert.match(
+        error.cause.message,
+        /^Open Graph title contains unsupported .*U\+1F680/
+      );
+      return true;
+    }
   );
 
   assert.equal(
@@ -538,15 +433,7 @@ test('archived framework versions render', async (t) => {
       {
         versionName: '1.0.0',
         isLast: false,
-        sidebars: {
-          docs: [
-            {
-              type: 'category',
-              className: 'sidebar-icon-reference',
-              items: [{ type: 'doc', id: 'archived' }],
-            },
-          ],
-        },
+        sidebars: {},
         docs: [doc({ id: 'archived', permalink: '/1.0.0/archived' })],
       },
     ]),
@@ -573,7 +460,7 @@ test('all-explicit content produces zero cards and copies nothing', async (t) =>
     allContent: docsContent([
       {
         versionName: 'current',
-        sidebars: { docs: [{ type: 'doc', id: 'explicit' }] },
+        sidebars: {},
         docs: [
           doc({
             id: 'explicit',

@@ -5,22 +5,26 @@ const path = require('node:path');
 const test = require('node:test');
 const sharp = require('sharp');
 
+const { CARD_HEIGHT, CARD_WIDTH, normalizeMetadata } = require('./shared');
 const {
-  CARD_HEIGHT,
-  CARD_WIDTH,
-  normalizeMetadata,
-  sha256Hex,
-} = require('./shared');
-const { cardSvg, renderCard, wrapText } = require('./render');
+  cardSvg,
+  fitText,
+  measureText,
+  parseFont,
+  renderCard,
+  wrapText,
+} = require('./render');
 
 const LOGO_SVG = '<svg xmlns="http://www.w3.org/2000/svg"/>';
-const ICON_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor"/>';
-const REGULAR_FONT_BUFFER = fs.readFileSync(
-  require.resolve('dejavu-fonts-ttf/ttf/DejaVuSans.ttf')
+const ICON_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAEklEQVQImWNYrGbxHxkzkC4AADdQIAHwHnrCAAAAAElFTkSuQmCC',
+  'base64'
 );
-const BOLD_FONT_BUFFER = fs.readFileSync(
-  require.resolve('dejavu-fonts-ttf/ttf/DejaVuSans-Bold.ttf')
+const REGULAR_FONT_BUFFER = fs.readFileSync(
+  path.join(__dirname, 'fonts', 'Inter-Regular.otf')
+);
+const BLACK_FONT_BUFFER = fs.readFileSync(
+  path.join(__dirname, 'fonts', 'Inter-Black.otf')
 );
 
 function cardSvgFixture(overrides = {}) {
@@ -28,9 +32,9 @@ function cardSvgFixture(overrides = {}) {
     title: 'Database and ORM',
     description: 'Build type-safe database models.',
     logoSvg: LOGO_SVG,
-    iconSvg: ICON_SVG,
+    iconPng: ICON_PNG,
     regularFontBuffer: REGULAR_FONT_BUFFER,
-    boldFontBuffer: BOLD_FONT_BUFFER,
+    blackFontBuffer: BLACK_FONT_BUFFER,
     ...overrides,
   });
 }
@@ -58,21 +62,76 @@ test('ellipsizes an over-width token instead of allowing it to overflow', () => 
   assert.ok(wrapped.lines[0].length < token.length);
 });
 
-test('converts metadata to paths and applies one currentColor transformation', () => {
+test('an over-wide token fills remaining lines instead of ending the text', () => {
+  const measure = (value) => value.length * 10;
+  assert.deepEqual(
+    wrapText('Toolong word fits here', {
+      measureText: (v) => (v.startsWith('Toolong') ? 300 : measure(v)),
+      maxWidth: 240,
+      maxLines: 2,
+    }),
+    { lines: ['Toolon…', 'word fits here'], truncated: true }
+  );
+});
+
+test('shaping applies GPOS kerning', () => {
+  const black = parseFont(BLACK_FONT_BUFFER);
+  const kerned = measureText(black, 'To', 64);
+  const unkerned = measureText(black, 'T', 64) + measureText(black, 'o', 64);
+  assert.ok(
+    unkerned - kerned > 2,
+    `expected a kerned 'To' to be tighter: ${kerned} vs ${unkerned}`
+  );
+});
+
+test('title tiers resolve by measured width', () => {
+  const black = parseFont(BLACK_FONT_BUFFER);
+  const tier = (title) =>
+    fitText(title, {
+      font: black,
+      fontSizes: [64, 56, 50],
+      maxWidth: 730,
+      maxLines: 1,
+    });
+  assert.equal(tier('Database and ORM').fontSize, 64);
+  assert.equal(tier('Authentication providers').fontSize, 56);
+  assert.equal(tier('Creating endpoint methods').fontSize, 50);
+  assert.equal(tier('Creating endpoint methods').lines.length, 1);
+});
+
+test('truncates at word boundaries without stacking punctuation', () => {
+  const measureText = (value) => value.length * 10;
+  assert.deepEqual(
+    wrapText('alpha beta gamma', { measureText, maxWidth: 100, maxLines: 1 }),
+    { lines: ['alpha…'], truncated: true }
+  );
+  assert.deepEqual(
+    wrapText('evolves. and more', { measureText, maxWidth: 90, maxLines: 1 }),
+    { lines: ['evolves…'], truncated: true }
+  );
+});
+
+test('converts metadata to paths and embeds the logo and icon', () => {
   const svg = cardSvgFixture({
     title: 'serverpod_auth<T> & "Dart"',
     description: 'C++',
   });
-  const embeddedSvgs = [...svg.matchAll(/base64,([^"]+)/g)].map((match) =>
-    Buffer.from(match[1], 'base64').toString('utf8')
-  );
 
   assert.doesNotMatch(svg, /serverpod_auth|&lt;T&gt;|<text/);
   assert.match(svg, /<clipPath id="text-area">/);
   assert.match(svg, /<g clip-path="url\(#text-area\)">\s+<path d="/);
-  assert.equal(embeddedSvgs.length, 2);
-  assert.match(embeddedSvgs[1], /stroke="#f5fbff"/);
-  assert.doesNotMatch(embeddedSvgs[1], /currentColor|<svg color=/);
+  const embedded = [
+    ...svg.matchAll(/href="data:image\/(svg\+xml|png);base64,([^"]+)"/g),
+  ];
+  assert.deepEqual(
+    embedded.map((match) => match[1]),
+    ['svg+xml', 'png']
+  );
+  assert.equal(
+    Buffer.from(embedded[0][2], 'base64').toString('utf8'),
+    LOGO_SVG
+  );
+  assert.ok(Buffer.from(embedded[1][2], 'base64').equals(ICON_PNG));
 });
 
 test('reports metadata characters that the pinned font cannot render', () => {
@@ -82,26 +141,75 @@ test('reports metadata characters that the pinned font cannot render', () => {
   );
 });
 
-test('keeps the feature-card visual structure', () => {
+test('keeps the measured feature-card geometry', () => {
   const svg = cardSvgFixture();
 
-  assert.match(svg, /<stop offset="0" stop-color="#091838"\/>/);
-  assert.match(svg, /<stop offset="1" stop-color="#248fd1"\/>/);
+  assert.match(svg, /<stop offset="0" stop-color="#0b1b4f"\/>/);
+  assert.match(svg, /<stop offset="1" stop-color="#247bca"\/>/);
+  assert.match(svg, /stop-color="#96b2de" stop-opacity="0.55"/);
   assert.match(
     svg,
-    /<image href="[^"]+" x="140" y="98" width="266" height="72"\/>/
+    /<image href="data:image\/svg\+xml;base64,[^"]+" x="134" y="96" width="266" height="72"\/>/
   );
   assert.match(
     svg,
-    /<image href="[^"]+" x="140" y="267" width="158" height="158"/
+    /<image href="data:image\/png;base64,[^"]+" x="96" y="234" width="216" height="216"\/>/
   );
-  assert.match(svg, /<g clip-path="url\(#text-area\)">/);
+  assert.match(svg, /<rect x="334" y="190" width="750" height="420"\/>/);
 });
 
-test('matches the feature-card SVG snapshot', () => {
+test('descriptions cap at two rendered lines', () => {
+  const whiteLines = (svg) => [...svg.matchAll(/fill="#ffffff"/g)].length;
   assert.equal(
-    sha256Hex(cardSvgFixture()),
-    'afca99e49b45aa1ba49207b12719d3f5e1ddde109b3aa61b5f350d050c77dade'
+    whiteLines(
+      cardSvgFixture({
+        description:
+          'Serverpod comes bundled with a simple-to-use but powerful migration system that helps you keep your database schema up to date as your project evolves over many releases.',
+      })
+    ),
+    3
+  );
+});
+
+test('the icon centers on the text block across layouts', () => {
+  const iconY = (svg) => svg.match(/y="(-?\d+)" width="216"/)[1];
+  assert.equal(iconY(cardSvgFixture()), '234');
+  assert.equal(
+    iconY(
+      cardSvgFixture({
+        title: 'Serialize objects and share them between server and app',
+      })
+    ),
+    '267'
+  );
+  assert.equal(iconY(cardSvgFixture({ description: '' })), '196');
+  assert.equal(
+    iconY(
+      cardSvgFixture({
+        description:
+          'Serverpod comes bundled with a simple-to-use but powerful migration system that helps you keep your database schema up to date.',
+      })
+    ),
+    '257'
+  );
+});
+
+test('prefers a smaller single-line title over a wrapped one', () => {
+  const whiteLines = (svg) => [...svg.matchAll(/fill="#ffffff"/g)].length;
+  assert.equal(
+    whiteLines(
+      cardSvgFixture({ title: 'Creating endpoint methods', description: '' })
+    ),
+    1
+  );
+  assert.equal(
+    whiteLines(
+      cardSvgFixture({
+        title: 'Serialize objects and share them between server and app',
+        description: '',
+      })
+    ),
+    2
   );
 });
 
@@ -118,9 +226,9 @@ test('renders the expected JPEG dimensions', async (t) => {
     title: 'Quickstart',
     description: 'Create and run a Serverpod project.',
     logoSvg: LOGO_SVG,
-    iconSvg: ICON_SVG,
+    iconPng: ICON_PNG,
     regularFontBuffer: REGULAR_FONT_BUFFER,
-    boldFontBuffer: BOLD_FONT_BUFFER,
+    blackFontBuffer: BLACK_FONT_BUFFER,
     outputPath,
   });
 

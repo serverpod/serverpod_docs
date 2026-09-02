@@ -1,27 +1,31 @@
 const fs = require('fs');
 const path = require('path');
 const { randomUUID } = require('crypto');
+const { normalizeUrl } = require('@docusaurus/utils');
 const sharp = require('sharp');
 
 const { renderCard } = require('./render');
 const {
   CARD_HEIGHT,
   CARD_WIDTH,
-  OG_ICON_FILE_BY_CLASS,
   PUBLIC_PATH,
-  cardIdentityForDoc,
-  publicPathWithBaseUrl,
+  cardId,
   sha256Hex,
+  shouldGenerateCard,
 } = require('./shared');
 
 const PLUGIN_NAME = 'serverpod-open-graph-images';
 const ASSET_DIRECTORY = `${PLUGIN_NAME}-assets`;
 const DOCS_PLUGIN = 'docusaurus-plugin-content-docs';
-const RENDER_FINGERPRINT_DEFINE =
-  '__SERVERPOD_OG_RENDER_FINGERPRINTS_BY_ICON__';
+const RENDER_FINGERPRINT_DEFINE = '__SERVERPOD_OG_RENDER_FINGERPRINT__';
 const RENDER_CONCURRENCY = 6;
 const STALE_TEMP_FILE_AGE_MS = 60 * 60 * 1000;
-const OPENTYPE_VERSION = require('opentype.js/package.json').version;
+const FONTKIT_VERSION = JSON.parse(
+  fs.readFileSync(
+    path.join(path.dirname(require.resolve('fontkit')), '..', 'package.json'),
+    'utf8'
+  )
+).version;
 
 async function mapWithConcurrency(items, concurrency, callback) {
   let nextIndex = 0;
@@ -50,26 +54,25 @@ async function mapWithConcurrency(items, concurrency, callback) {
   }
 }
 
-module.exports = function openGraphImagesPlugin(context) {
+module.exports = function openGraphImagesPlugin(context, options = {}) {
   const generatedDir = path.join(context.generatedFilesDir, ASSET_DIRECTORY);
   const renderSource = fs
     .readFileSync(require.resolve('./render'), 'utf8')
     .replaceAll('\r\n', '\n');
-  const staticImageDir = path.join(context.siteDir, 'static', 'img');
-  const logoPath = path.join(staticImageDir, 'logo-horizontal-dark.svg');
-  const regularFontPath =
-    require.resolve('dejavu-fonts-ttf/ttf/DejaVuSans.ttf');
-  const boldFontPath =
-    require.resolve('dejavu-fonts-ttf/ttf/DejaVuSans-Bold.ttf');
-  const iconFileNames = [
-    ...new Set(Object.values(OG_ICON_FILE_BY_CLASS)),
-  ].sort();
-  const iconPaths = iconFileNames.map((fileName) =>
-    path.join(staticImageDir, fileName)
+  const logoPath = path.join(
+    context.siteDir,
+    'static',
+    'img',
+    'logo-horizontal-dark.svg'
   );
-  // Docusaurus does not reload plugin modules in place. JavaScript and font
-  // dependency changes require a dev-server restart; source assets can reload.
-  const watchedPaths = [logoPath, ...iconPaths];
+  const regularFontPath =
+    options.regularFontPath ??
+    path.join(__dirname, 'fonts', 'Inter-Regular.otf');
+  const blackFontPath =
+    options.blackFontPath ?? path.join(__dirname, 'fonts', 'Inter-Black.otf');
+  const iconPath =
+    options.iconPath ?? path.join(__dirname, 'assets', 'doc-icon.png');
+  const watchedPaths = [logoPath, iconPath, regularFontPath, blackFontPath];
   const fileCache = new Map();
   let referencedCardIds = new Set();
   let publishedCardIds = new Set();
@@ -89,44 +92,29 @@ module.exports = function openGraphImagesPlugin(context) {
 
   function loadRenderAssets() {
     const logoSvg = readFileCached(logoPath, 'utf8');
-    const iconSvgByFileName = new Map(
-      iconFileNames.map((fileName) => [
-        fileName,
-        readFileCached(path.join(staticImageDir, fileName), 'utf8'),
-      ])
-    );
+    const iconPng = readFileCached(iconPath);
     const regularFontBuffer = readFileCached(regularFontPath);
-    const boldFontBuffer = readFileCached(boldFontPath);
-    const sharedInputs = [
-      ['renderSource', renderSource],
-      ['cardDimensions', [CARD_WIDTH, CARD_HEIGHT]],
-      ['logo-horizontal-dark.svg', logoSvg],
-      ['regularFont', sha256Hex(regularFontBuffer)],
-      ['boldFont', sha256Hex(boldFontBuffer)],
-      ['opentypeVersion', OPENTYPE_VERSION],
-      ['sharpVersions', Object.entries(sharp.versions).sort()],
-      ['platform', process.platform],
-      ['arch', process.arch],
-    ];
-    const sharedFingerprint = sha256Hex(JSON.stringify(sharedInputs));
-    const renderFingerprintByIconFileName = Object.fromEntries(
-      iconFileNames.map((fileName) => [
-        fileName,
-        sha256Hex(
-          JSON.stringify([
-            sharedFingerprint,
-            fileName,
-            iconSvgByFileName.get(fileName),
-          ])
-        ),
+    const blackFontBuffer = readFileCached(blackFontPath);
+    const renderFingerprint = sha256Hex(
+      JSON.stringify([
+        ['renderSource', renderSource],
+        ['cardDimensions', [CARD_WIDTH, CARD_HEIGHT]],
+        ['logo-horizontal-dark.svg', logoSvg],
+        ['doc-icon.png', sha256Hex(iconPng)],
+        ['regularFont', sha256Hex(regularFontBuffer)],
+        ['blackFont', sha256Hex(blackFontBuffer)],
+        ['fontkitVersion', FONTKIT_VERSION],
+        ['sharpVersions', Object.entries(sharp.versions).sort()],
+        ['platform', process.platform],
+        ['arch', process.arch],
       ])
     );
     return {
-      iconSvgByFileName,
       logoSvg,
+      iconPng,
       regularFontBuffer,
-      boldFontBuffer,
-      renderFingerprintByIconFileName,
+      blackFontBuffer,
+      renderFingerprint,
     };
   }
 
@@ -141,11 +129,11 @@ module.exports = function openGraphImagesPlugin(context) {
       const operation = contentLoadQueue.then(async () => {
         const startedAt = Date.now();
         const {
-          iconSvgByFileName,
           logoSvg,
+          iconPng,
           regularFontBuffer,
-          boldFontBuffer,
-          renderFingerprintByIconFileName,
+          blackFontBuffer,
+          renderFingerprint,
         } = loadRenderAssets();
         const instances = allContent[DOCS_PLUGIN] || {};
         const cardsById = new Map();
@@ -154,22 +142,14 @@ module.exports = function openGraphImagesPlugin(context) {
         for (const content of Object.values(instances)) {
           for (const version of content.loadedVersions || []) {
             for (const doc of version.docs || []) {
-              if (doc.frontMatter?.image != null) {
+              if (doc.frontMatter?.image != null || !shouldGenerateCard(doc)) {
                 continue;
               }
 
-              const sidebarItems =
-                typeof doc.sidebar === 'string'
-                  ? version.sidebars?.[doc.sidebar] || []
-                  : [];
-              const { id, iconFileName } = cardIdentityForDoc({
+              const id = cardId({
                 title: doc.title,
                 description: doc.description,
-                docId: doc.id,
-                permalink: doc.permalink,
-                directClassName: doc.frontMatter?.sidebar_class_name,
-                sidebarItems,
-                renderFingerprintByIconFileName,
+                renderFingerprint,
               });
               pageCount += 1;
 
@@ -177,10 +157,11 @@ module.exports = function openGraphImagesPlugin(context) {
                 cardsById.set(id, {
                   title: doc.title,
                   description: doc.description,
+                  source: doc.source,
                   logoSvg,
-                  iconSvg: iconSvgByFileName.get(iconFileName),
+                  iconPng,
                   regularFontBuffer,
-                  boldFontBuffer,
+                  blackFontBuffer,
                   outputPath: path.join(generatedDir, `${id}.jpg`),
                 });
               }
@@ -212,6 +193,11 @@ module.exports = function openGraphImagesPlugin(context) {
             try {
               await renderCard({ ...card, outputPath: temporaryPath });
               fs.renameSync(temporaryPath, card.outputPath);
+            } catch (error) {
+              throw new Error(
+                `Card for "${card.title}" (${card.source}): ${error.message}`,
+                { cause: error }
+              );
             } finally {
               fs.rmSync(temporaryPath, { force: true });
             }
@@ -238,9 +224,11 @@ module.exports = function openGraphImagesPlugin(context) {
     configureWebpack(_config, _isServer, { currentBundler }) {
       const { DefinePlugin } = currentBundler.instance;
       const fingerprint = DefinePlugin.runtimeValue(
-        () =>
-          JSON.stringify(loadRenderAssets().renderFingerprintByIconFileName),
-        { fileDependencies: watchedPaths }
+        () => JSON.stringify(loadRenderAssets().renderFingerprint),
+        {
+          fileDependencies: watchedPaths,
+          version: loadRenderAssets().renderFingerprint,
+        }
       );
       return {
         plugins: [
@@ -252,7 +240,7 @@ module.exports = function openGraphImagesPlugin(context) {
           static: [
             {
               directory: generatedDir,
-              publicPath: publicPathWithBaseUrl(context.baseUrl),
+              publicPath: normalizeUrl([context.baseUrl, PUBLIC_PATH]),
               watch: false,
             },
           ],
@@ -274,10 +262,17 @@ module.exports = function openGraphImagesPlugin(context) {
 
       fs.mkdirSync(outputDir, { recursive: true });
       for (const id of [...referencedCardIds].sort()) {
-        fs.copyFileSync(
-          path.join(generatedDir, `${id}.jpg`),
-          path.join(outputDir, `${id}.jpg`)
-        );
+        try {
+          fs.copyFileSync(
+            path.join(generatedDir, `${id}.jpg`),
+            path.join(outputDir, `${id}.jpg`),
+            fs.constants.COPYFILE_EXCL
+          );
+        } catch (error) {
+          if (error.code !== 'EEXIST' || !publishedCardIds.has(id)) {
+            throw error;
+          }
+        }
       }
       publishedCardIds = new Set(referencedCardIds);
     },

@@ -1,28 +1,22 @@
 import React from 'react';
 import { PageMetadata } from '@docusaurus/theme-common';
-import { useDoc, useDocsSidebar } from '@docusaurus/plugin-content-docs/client';
+import { useDoc } from '@docusaurus/plugin-content-docs/client';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
   openGraphImageForDoc,
 } from '@site/plugins/open-graph-images/shared';
 
-/* global __SERVERPOD_OG_RENDER_FINGERPRINTS_BY_ICON__ */
+/* global __SERVERPOD_OG_RENDER_FINGERPRINT__ */
 
 export default function DocItemMetadata() {
   const { metadata, frontMatter, assets } = useDoc();
-  const sidebar = useDocsSidebar();
   const { generatedImage, image } = openGraphImageForDoc({
     assetImage: assets.image,
     frontMatterImage: frontMatter.image,
     title: metadata.title,
     description: metadata.description,
-    docId: metadata.id,
-    permalink: metadata.permalink,
-    directClassName: frontMatter.sidebar_class_name,
-    sidebarItems: sidebar?.items,
-    renderFingerprintByIconFileName:
-      __SERVERPOD_OG_RENDER_FINGERPRINTS_BY_ICON__,
+    renderFingerprint: __SERVERPOD_OG_RENDER_FINGERPRINT__,
   });
 
   return (
