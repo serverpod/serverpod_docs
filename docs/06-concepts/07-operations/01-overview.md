@@ -1,10 +1,10 @@
 ---
-description: Operations covers running a Serverpod server in production, seeing what it is doing through logs, proving it is healthy, securing its traffic, and catching exceptions.
+description: Operations covers running Serverpod in production through logs, health checks, TLS, exception monitoring, and scaling past a single process.
 ---
 
 # Overview
 
-Once your server is written, the work shifts from building features to running them. This section covers what you need after deployment: seeing what the server is doing, proving to a host that it is healthy, securing the traffic it accepts, and finding out when something breaks.
+Once your server is written, the work shifts from building features to running them. This section covers what you need after deployment: seeing what the server is doing, proving to a host that it is healthy, securing the traffic it accepts, finding out when something breaks, and scaling past a single process.
 
 Everything here works the same whether you deploy to [Serverpod Cloud](../../deployments/deploy-to-serverpod-cloud) or [host it yourself](../../deployments/custom-hosting/choosing-a-strategy), though the two differ in how much is set up for you.
 
@@ -14,6 +14,7 @@ Everything here works the same whether you deploy to [Serverpod Cloud](../../dep
 - **[Health checks](health-checks)**: the HTTP endpoints a host calls to decide whether your server is alive and ready for traffic, plus the metrics Serverpod collects about itself.
 - **[Security and TLS](security-and-tls)**: how traffic to your server is encrypted, and when you need to configure that yourself.
 - **[Exception monitoring](exception-monitoring)**: reporting exceptions to a monitoring service as they happen. This one is an experimental API.
+- **[Scalability](scalability)**: roles for scale-out, isolates for CPU work, Postgres and connection pools, Redis, JWT auth, and streaming tradeoffs.
 
 ## Related
 
