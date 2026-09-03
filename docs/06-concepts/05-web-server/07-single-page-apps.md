@@ -59,6 +59,14 @@ pod.webServer.addRoute(
 );
 ```
 
+To set the header per environment instead of in code, set `SERVERPOD_WEB_SERVER_SPA_CACHE_CONTROL` to the `Cache-Control` value the route should send:
+
+```bash
+SERVERPOD_WEB_SERVER_SPA_CACHE_CONTROL="public, max-age=3600"
+```
+
+The environment variable applies to every `SpaRoute` that does not pass a `cacheControlFactory` of its own. Like the factory, it never applies to the fallback file, which is always served without a `Cache-Control` header so a deploy is never masked by a cached app shell. The `SERVERPOD_WEB_SERVER_STATIC_CACHE_CONTROL` variable used by `StaticRoute` does not apply here.
+
 See [Static files](static-files#cache-control) for more on cache control, including why `publicImmutable` belongs only with cache-busted assets.
 
 ## Cache busting

@@ -52,6 +52,14 @@ pod.webServer.addRoute(
 );
 ```
 
+To set the header per environment instead of in code, set `SERVERPOD_WEB_SERVER_STATIC_CACHE_CONTROL` to the `Cache-Control` value the route should send:
+
+```bash
+SERVERPOD_WEB_SERVER_STATIC_CACHE_CONTROL="public, max-age=3600"
+```
+
+The environment variable applies to every `StaticRoute` that does not pass a `cacheControlFactory` of its own.
+
 Reserve `publicImmutable` for [cache-busted](#static-file-cache-busting) assets: `immutable` tells caches to never revalidate, which is only safe when a changed file also gets a new URL.
 
 On [Serverpod Cloud](/cloud/concepts/cdn), a CDN sits in front of the web server and honors these headers, and its cache is cleared on every deploy.
