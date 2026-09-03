@@ -90,6 +90,21 @@ Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed 
 
 Port that code to [streaming methods](../concepts/endpoints-and-apis/streaming), where the endpoint declares `Stream` parameters and return types, and Serverpod manages the connection. State that used to live in a user object becomes a local variable in the streaming method, which stays alive as long as the stream is open. The old API stays documented in [Streaming endpoints](./archive/streaming-endpoints) while you port.
 
+### If you use the Insights database endpoints from a service client
+
+The Insights server endpoints that give direct database access (`fetchDatabaseBulkData`, `runQueries`, `getDatabaseRowCount`, and `executeSql`) are disabled by default in 4.0 and throw an `AccessDeniedException` until enabled. The Insights app doesn't use these endpoints, so most projects need no change. If you have custom tooling that calls them through the `serverpod_service_client` package, opt in per environment with `enableDatabaseAccess` in the `insightsServer` block of the config file (or the `SERVERPOD_INSIGHTS_SERVER_ENABLE_DATABASE_ACCESS` environment variable):
+
+```yaml
+insightsServer:
+  port: 8081
+  publicHost: localhost
+  publicPort: 8081
+  publicScheme: http
+  enableDatabaseAccess: true
+```
+
+The `hotReload`, `getOpenSessionLog`, and `shutdown` Insights methods are removed. See [Insights](../tools/insights#database-access) for details.
+
 ## Generate the 4.0 migration
 
 Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
@@ -223,6 +238,16 @@ Your production build needs to switch from `dart compile exe` to `dart build cli
 
 Copy the updated Dockerfile from the [4.0 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 4.0 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and bump the Dart SDK base image to 3.10.x or newer.
 
+## Authentication changes
+
+4.0 changes a few authentication behaviors that can affect existing apps:
+
+- **The `?auth=` query parameter is no longer accepted.** Credentials never appear in URLs anymore: HTTP calls authenticate through the `Authorization` header (or an auth cookie on the web), and streaming connections authenticate in-band when the stream opens. Clients from before 4.0 that relied on the query parameter must be upgraded.
+- **Signing in on top of another account is rejected.** Issuing a token for a different user from an already-authenticated session throws a `SignInWhileAuthenticatedException` on every platform; users must sign out before switching accounts. Server code that mints tokens on behalf of another user (such as an admin flow) calls the token manager's `createToken` instead, which skips this policy and returns the secrets in the response body.
+- **Custom token managers extend a base class.** `TokenIssuer` and `TokenManager` are now base classes: implement `createToken` for the actual minting, and leave `issueToken` alone. It is non-virtual and applies the sign-in policy and cookie delivery for every token type.
+- **Method streams close when the signed-in user changes.** On sign-in and sign-out, open method streams are closed gracefully (subscriptions receive `onDone` without an error) on all platforms, and new streams connect with the current identity. A same-identity token refresh keeps streams running.
+- **Opt-in cookie auth for the web.** Enabling the new `authCookie` configuration requires listing every browser origin in `allowedOrigins`; browsers on unlisted origins lose cross-origin access, including to public endpoints. See [web authentication](../concepts/authentication/web-authentication).
+
 ## What's new in 4.0
 
 - **`serverpod start` TUI**: hot reload on save, **R** to hot restart, **M** to create and apply a migration, **P** to create and apply a repair migration.
@@ -237,6 +262,7 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 - **`upsert` and `upsertRow`** on the ORM, and **`asc()` / `desc()`** convenience methods on orderable columns.
 - **Recurring future calls** via the new claim-based scheduling.
 - **OAuth2 PKCE Flutter web redirect** for sign-in flows.
+- **httpOnly cookie authentication for the web**, keeping browser sign-in tokens out of JavaScript-readable storage. See [web authentication](../concepts/authentication/web-authentication).
 - **Health endpoints** on the built-in webserver.
 - **IDE and agent selection** in `serverpod create`.
 

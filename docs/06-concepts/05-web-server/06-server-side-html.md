@@ -16,7 +16,7 @@ Create custom routes by extending the `WidgetRoute` class and implementing the
 ```dart
 class MyRoute extends WidgetRoute {
   @override
-  Future<WebWidget> build(Session session, Request request) async {
+  Future<WebWidget?> build(Session session, Request request) async {
     return MyPageWidget(title: 'Home page');
   }
 }
@@ -25,7 +25,7 @@ class MyRoute extends WidgetRoute {
 pod.webServer.addRoute(MyRoute(), '/my/page/address');
 ```
 
-The `build` method returns the widget that renders the page. In this example, that widget is `MyPageWidget`, which the [next section](#creating-a-templatewidget) defines.
+The `build` method returns the widget that renders the page. In this example, that widget is `MyPageWidget`, which the [next section](#creating-a-templatewidget) defines. Return `null` to respond with 404, for example when the requested content does not exist.
 
 Like other routes, a `WidgetRoute` answers GET requests by default. Pass `methods:` to handle form submissions too, e.g. `super(methods: {Method.get, Method.post})`. Rendered responses are sent with `Cache-Control: no-cache, private`, so browsers and CDNs revalidate them on every request. The exception is `RedirectWidget`, whose 303 response carries no cache header.
 
@@ -126,7 +126,7 @@ same way you would in a method call:
 ```dart
 class DataRoute extends WidgetRoute {
   @override
-  Future<WebWidget> build(Session session, Request request) async {
+  Future<WebWidget?> build(Session session, Request request) async {
     // Access the database
     final users = await User.db.find(session);
 

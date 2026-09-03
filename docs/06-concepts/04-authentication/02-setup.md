@@ -228,6 +228,10 @@ void main() async {
 
 The `FlutterAuthSessionManager` provides useful properties and methods for managing authentication state.
 
+:::info Web apps
+On the web, enable [cookie-based authentication](./web-authentication) so sign-in tokens are kept in `httpOnly` cookies instead of JavaScript-readable storage.
+:::
+
 :::tip
 The `client.auth` getter is a shortcut for `client.authSessionManager`. If your project defines its own endpoint class named `AuthEndpoint`, the generated client uses the `auth` name for that endpoint instead. In that case, call `client.authSessionManager.initialize()` in the example above.
 :::
@@ -344,4 +348,5 @@ Do not navigate to another screen from the `onAuthenticated` callback, or the us
 - [Get started](./get-started): the quick path for projects created with `serverpod create`.
 - [The basics](./basics): how authentication works on the server and in the app.
 - [Token managers](./token-managers/managing-tokens): choose between JWT and server-side sessions.
+- [Web setup](./web-authentication): keep web sign-in tokens in httpOnly cookies.
 - [UI components](./ui-components): customize or replace the sign-in UI.
