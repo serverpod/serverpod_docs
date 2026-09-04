@@ -87,7 +87,7 @@ sessionLogs:
   consoleLogFormat: text
 ```
 
-The three server blocks configure Serverpod's three servers: the API server your app talks to, the [Insights](../../tools/insights) server used by Serverpod's tooling, and the [web server](../web-server/overview) for serving web content. The `sessionLogs` block controls how session logs are stored and printed; see [Logging](../operations/logging). Keys not in the scaffolded file cover future calls, websocket ping intervals, and more; see the [Configuration reference](../lookups/configuration-reference) for the full list with defaults.
+The three server blocks configure Serverpod's three servers: the API server your app talks to, the [Insights](../../tools/insights) server used by Serverpod's tooling, and the [web server](../web-server/overview) for serving web content. Redis is optional and ships disabled; see [Redis](./redis) for how to enable it and connect a client. The `sessionLogs` block controls how session logs are stored and printed; see [Logging](../operations/logging). Keys not in the scaffolded file cover future calls, websocket ping intervals, and more; see the [Configuration reference](../lookups/configuration-reference) for the full list with defaults.
 
 ### Database backends
 
@@ -347,4 +347,5 @@ Experimental features may change or be removed in future versions.
 - [Configuration reference](../lookups/configuration-reference): every option with its environment variable, config key, and default.
 - [Running your server](./running-your-server): how the server starts and how `--mode` is passed.
 - [Database connection](../data-and-the-database/database/connection): connecting to your database in depth.
+- [Redis](./redis): enabling Redis, the password, and connecting a GUI.
 - [Configure HTTP calls](../endpoints-and-apis/configure-http-calls): the API server's response headers and CORS defaults.

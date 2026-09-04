@@ -112,4 +112,5 @@ Options for `config/generator.yaml`, which configures `serverpod generate`.
 ## Related
 
 - [Configuration](../server-fundamentals/configuration): how the three configuration sources work, run modes, secrets, and package types.
+- [Redis](../server-fundamentals/redis): enabling Redis, the password, and connecting a GUI.
 - [Running your server](../server-fundamentals/running-your-server): the run mode and files the server loads on start.
