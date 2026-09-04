@@ -122,7 +122,7 @@ The fallback applies in every run mode, production included. It exists so you ca
 The server does not warn you about this at normal logging levels, and the [readiness probe](../operations/health-checks) still passes, so confirm your Redis configuration before running more than one instance. If Redis is configured but unreachable, the readiness probe fails, so that case does get caught.
 :::
 
-Redis counts as configured when your config has a `redis` section that is enabled. A `redis` section that omits `enabled` is treated as enabled. If the section is present but its password is missing, the server fails to start rather than falling back.
+Redis counts as configured when your config has a `redis` section that is enabled. A `redis` section that omits `enabled` is treated as enabled. If the section is present but its password is missing, the server fails to start rather than falling back. See [Redis](../server-fundamentals/redis) for how to enable it, set the password, and connect a client.
 
 Serverpod does not manage the size of the global cache or decide what it evicts. Redis does, according to how you have configured it, so set a memory limit and an eviction policy there if you cache a large number of objects globally.
 
@@ -150,4 +150,4 @@ The returned `RedisCommand` is Serverpod's own connection: do not close it, and 
 
 - [Sessions](./sessions): the object the caches hang off.
 - [Server events](./server-events): the other Redis-backed feature, for messaging between instances.
-- [Configuration](../server-fundamentals/configuration): where the `redis` section lives.
+- [Redis](../server-fundamentals/redis): enabling Redis, the password, and connecting a GUI.

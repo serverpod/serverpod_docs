@@ -19,7 +19,7 @@ In the example above, the message is published on the `user_updates` channel. An
 
 ### Message scope
 
-Serverpod uses Redis to pass messages between servers. A message is sent to every server connected to the same Redis instance when [Redis is enabled](../server-fundamentals/configuration), and stays on the current server when it is not. Set the `scope` parameter to choose the delivery explicitly.
+Serverpod uses Redis to pass messages between servers. A message is sent to every server connected to the same Redis instance when [Redis is enabled](../server-fundamentals/redis), and stays on the current server when it is not. Set the `scope` parameter to choose the delivery explicitly.
 
 | Scope | Delivery |
 | --- | --- |
