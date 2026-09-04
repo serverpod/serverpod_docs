@@ -70,6 +70,24 @@ client = Client('http://$ipAddress:8080/')
 
 The module keeps working on 4.0, so this can be done independently of moving to the new authentication framework. To make that move, see [Migrate from legacy auth](./migrate-from-legacy-auth) after completing this upgrade.
 
+### If you use the new auth module on Android
+
+`serverpod_auth_core_flutter` now requires `flutter_secure_storage` 10.0.0 or newer and allows 11.x. Most projects already resolve 10.x and are not affected.
+
+If your Flutter app is still on 9.x, you have two options:
+
+- **Upgrade directly to 11.x.** Version 11 dropped the code that migrates data written by 9.x, so users on Android are signed out and have to sign in again.
+- **Upgrade to 10.x first.** Both 9.x to 10.x and 10.x to 11.x keep the session, so users stay signed in. Release a 10.x build, let it reach your users, then move to 11.x.
+
+Projects created with `serverpod create` pin 10.x with a dependency override. To do the same, add this to the Flutter app's `pubspec.yaml`:
+
+```yaml
+dependency_overrides:
+  flutter_secure_storage: ^10.0.0
+```
+
+Version 11 also requires `compileSdk = 37` in `android/app/build.gradle.kts`, which is higher than the current Flutter default.
+
 From the project's root folder, refresh dependencies. Dart workspaces (used by projects created with the 3.3+ scaffold) resolve all sub-packages in one command:
 
 ```bash
