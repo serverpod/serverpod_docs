@@ -1,5 +1,5 @@
 ---
-description: Enable Redis for shared cache and cluster messaging in Serverpod: set host, port, and password, start Docker, and connect a GUI such as RedisInsight.
+description: "Enable Redis for shared cache and cluster messaging in Serverpod: set host, port, and password, start Docker, and connect a GUI such as RedisInsight."
 ---
 
 # Redis
