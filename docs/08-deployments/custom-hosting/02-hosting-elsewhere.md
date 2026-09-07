@@ -42,6 +42,8 @@ You can specify the role of your server when you launch it by setting the `--rol
 $ dart bin/main.dart --role serverless
 ```
 
+For connection pools, Redis, isolates, and other production scale concerns beyond roles, see [Scalability](../../concepts/operations/scalability).
+
 ## Docker container
 
 Running Serverpod through a Docker container is often the best option as it provides a well-defined environment. It's also easy to integrate into your build and deployment process and runs well on most platforms.
