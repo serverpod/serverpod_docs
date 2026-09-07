@@ -1,5 +1,5 @@
 ---
-description: Store uploaded files on local disk or a NAS with a custom CloudStorage, and keep using FileUploader against your API server.
+description: A custom CloudStorage that stores uploaded files on local disk or a NAS, while FileUploader keeps talking to your API server.
 ---
 
 # Custom cloud storage
