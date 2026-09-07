@@ -191,7 +191,7 @@ Cluster messaging is best effort. Failed publishes are not retried. The `Message
 
 The [`/readyz`](../operations/health-checks) probe checks Redis only when Redis is enabled. The `/livez` probe does not.
 
-In development and test, a failed Redis connection at startup logs that Serverpod is falling back to a local cache, and the server still starts. In production there is no fallback: the global cache stays Redis-backed even if Redis is down.
+In every run mode except production, a failed Redis connection at startup logs that Serverpod is falling back to a local cache, and the server still starts. In production there is no fallback: the global cache stays Redis-backed even if Redis is down.
 
 To send Redis commands beyond the cache and pub/sub APIs, borrow the connection Serverpod manages. See [Send Redis commands directly](../endpoints-and-apis/caching#send-redis-commands-directly).
 
@@ -207,7 +207,7 @@ The password is `development.redis` in `config/passwords.yaml`, not nested under
 
 ### The server started but instances do not share state
 
-In development and test, a down Redis does not stop the server. Confirm the container is running and that [`/readyz`](../operations/health-checks) reports a passing Redis check. Production does not fall back.
+In every run mode except production, a down Redis does not stop the server. Confirm the container is running and that [`/readyz`](../operations/health-checks) reports a passing Redis check. Production does not fall back.
 
 ### Staging or production fails at startup with a missing Redis password
 
