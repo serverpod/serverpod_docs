@@ -387,7 +387,11 @@ To test Pixorama, start the server and the app from the `pixorama_server` direct
 serverpod start
 ```
 
-`serverpod start` runs the server and opens the Flutter app, and hot reloads both as you save changes. To pick the device yourself, keep the server running, change to the `pixorama_flutter` directory, and run `flutter run -d chrome`.
+`serverpod start` runs the server and opens the Flutter app, and hot reloads both as you save changes.
+
+:::info
+To pick the device yourself, run `serverpod start --no-flutter`, then change to the `pixorama_flutter` directory and run `flutter run -d chrome`. Running `flutter run` next to the app `serverpod start` opened also works: each instance is another drawing client.
+:::
 
 You can also start a second instance of the app to see real-time updates reflected across both instances.
 
