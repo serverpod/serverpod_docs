@@ -61,3 +61,4 @@ New projects set `dataPath` under `database` in `config/test.yaml`, which makes 
 - [Configuration](configuration): the options `withServerpod` accepts.
 - [Advanced examples](advanced-examples): streams, future calls, and business logic.
 - [Best practices](best-practices): conventions worth following.
+- [Load testing](../operations/load-testing): measuring a live server under concurrent traffic.

@@ -177,4 +177,5 @@ The two APIs read alike but are not related. Use `healthConfig` with `HealthIndi
 
 - [Logging](logging): the other half of knowing what your server is doing.
 - [Insights](../../tools/insights): charts for the collected metrics.
+- [Load testing](load-testing): reading these probes and metrics while generating concurrent traffic.
 - [Custom hosting](../../deployments/custom-hosting/choosing-a-strategy): wiring the probes up to your host.

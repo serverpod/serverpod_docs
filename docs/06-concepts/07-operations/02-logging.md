@@ -120,3 +120,4 @@ Cleanup is triggered by log writes rather than by a timer, so a server that is n
 - [Configuration reference](../lookups/configuration-reference): every session-log key with its environment variable.
 - [Sessions](../endpoints-and-apis/sessions): what a session is, and the `log` method.
 - [Insights](../../tools/insights): reading logs and editing runtime settings.
+- [Load testing](load-testing): why persisting every session during a run becomes the bottleneck.
