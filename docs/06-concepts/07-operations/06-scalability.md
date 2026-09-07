@@ -1,5 +1,5 @@
 ---
-description: Scale Serverpod beyond a single process with server roles, isolates, Postgres indexes and pools, Redis, JWT auth, and when short RPCs beat long-lived streams.
+description: "Scaling guidance for Serverpod: server roles, isolates for CPU work, Postgres indexes and pools, Redis, JWT auth, and when short RPCs beat long-lived streams."
 ---
 
 # Scalability
