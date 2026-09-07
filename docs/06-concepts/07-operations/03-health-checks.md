@@ -72,7 +72,7 @@ Serverpod registers these based on your configuration:
 
 - `serverpod:startup` records that the server has begun starting.
 - `database:connection` checks the database, when one is configured.
-- `redis:connection` checks Redis, when it is enabled.
+- `redis:connection` checks Redis, when it is [enabled](../server-fundamentals/redis).
 
 ### Add your own indicator
 

@@ -104,7 +104,7 @@ One Serverpod instance runs up to three servers, each on its own port in develop
 - **The Insights server (8081)** is a separate, secret-protected server used by Serverpod's tooling. See [Insights](../../tools/insights).
 - **The web server (8082)** serves web content: HTML routes, static files, and your built Flutter web app. See [Web server](../web-server/overview).
 
-The scaffolded development config also reserves port 8090 for the database and 8091 for Redis.
+The scaffolded development config also reserves port 8090 for the database and 8091 for [Redis](./redis).
 
 ## The config and migrations directories
 
