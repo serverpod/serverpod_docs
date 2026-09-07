@@ -64,7 +64,7 @@ Each Serverpod process opens its own pool. The default `database.maxConnectionCo
 
 `(number of nodes × maxConnectionCount) + headroom ≤ Postgres max_connections`
 
-Leave headroom for Insights, maintenance jobs, migrations, and admin tools. Unlimited pools (`0` or a negative value) are easy to misconfigure under auto-scaling. See [Database connection](../data-and-the-database/database/connection#configure-connection-pool-size).
+Leave headroom for Insights, maintenance jobs, migrations, and admin tools. Unlimited pools (a negative value, or omitting the key) are easy to misconfigure under auto-scaling. See [Database connection](../data-and-the-database/database/connection#configure-connection-pool-size).
 
 ## Scale Postgres itself
 
@@ -87,7 +87,7 @@ Modern projects use the [JWT token manager](../authentication/token-managers/jwt
 
 Local caches (`session.caches.local` and `localPrio`) stay on one process. For values every instance must see, use the [global cache](../endpoints-and-apis/caching#the-global-cache-and-redis) with Redis enabled.
 
-Cross-instance [server events](../endpoints-and-apis/server-events) need Redis as well. `MessageScope.global` requires Redis; without it, messaging stays local to the process that posted the event.
+Cross-instance [server events](../endpoints-and-apis/server-events) need Redis as well. `MessageScope.global` throws a `StateError` without Redis, and the default `MessageScope.auto` falls back to local delivery, so without Redis events silently stop reaching other instances.
 
 Enable Redis in production config when you run more than one request node that shares cache entries or broadcast events.
 
@@ -105,12 +105,12 @@ Keep `websocketPingInterval` (default 30 seconds) in mind under high connection 
 | --- | --- | --- |
 | `role` / `SERVERPOD_SERVER_ROLE` | `monolith` | Split request nodes from maintenance work. |
 | `database.maxConnectionCount` | `10` | Pool size times node count must fit Postgres. |
-| `redis.enabled` | `false` in templates | Required for shared cache and global events. |
+| `redis.enabled` | `false` | Required for shared cache and global events. |
 | `maxRequestSize` | `524288` | Large uploads increase memory pressure. |
 | `websocketPingInterval` | `30` (seconds) | Keepalive cost under many open streams. |
 | `futureCall.concurrencyLimit` | `1` | Caps background CPU and database load. |
-| `sessionLogs.persistentEnabled` | mode-dependent | Extra database writes per request when on. |
-| `healthCheckInterval` | about 1 minute | Metrics write load; aggressive liveness elsewhere can cascade restarts. |
+| `sessionLogs.persistentEnabled` | on when a database is configured | Extra database writes per request when on. |
+| `healthCheckInterval` | 1 minute | Metrics write load; aggressive liveness elsewhere can cascade restarts. |
 
 Full keys and environment variables: [Configuration reference](../lookups/configuration-reference).
 
