@@ -381,17 +381,17 @@ class _PixoramaState extends State<Pixorama> {
 
 ## Running Pixorama
 
-To test Pixorama, start the server by navigating to the `pixorama_server` directory and running:
+To test Pixorama, start the server and the app from the `pixorama_server` directory:
 
 ```bash
-dart bin/main.dart
+serverpod start
 ```
 
-Then, launch the Flutter app by changing to the `pixorama_flutter` directory and running:
+`serverpod start` runs the server and opens the Flutter app, and hot reloads both as you save changes.
 
-```bash
-flutter run -d chrome
-```
+:::info
+To pick the device yourself, run `serverpod start --no-flutter`, then change to the `pixorama_flutter` directory and run `flutter run -d chrome`. Running `flutter run` next to the app `serverpod start` opened also works: each instance is another drawing client.
+:::
 
 You can also start a second instance of the app to see real-time updates reflected across both instances.
 
