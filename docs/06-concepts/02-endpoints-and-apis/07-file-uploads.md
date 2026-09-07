@@ -26,7 +26,7 @@ Future<String> getUploadDescription(Session session, String path) async {
 The `createUploadDescription` method also accepts an optional `UploadOptions` object to control the upload:
 
 - **`UploadOptions.expirationDuration`**: How long the upload URL is valid. Defaults to 10 minutes.
-- **`UploadOptions.maxFileSize`**: Maximum allowed file size in bytes. Defaults to 10 MB.
+- **`UploadOptions.maxFileSize`**: Maximum allowed file size in bytes. Defaults to 10 MiB.
 - **`UploadOptions.contentLength`**: The exact file size in bytes. When provided, the storage provider validates the upload size against `maxFileSize`.
 - **`UploadOptions.preventOverwrite`**: When `true`, the upload will fail if a file already exists at the given path. Defaults to `false`.
 - **`UploadOptions.metadata`**: HTTP metadata and custom key-value data to store with the file.
@@ -97,9 +97,9 @@ When the app uploads through your API server (the default database storage), two
 | Limit | Default | Set in |
 | --- | --- | --- |
 | `maxRequestSize` | 524288 (512 KiB) | `config/<run-mode>.yaml` or `SERVERPOD_MAX_REQUEST_SIZE` |
-| `UploadOptions.maxFileSize` | 10 MB | `createUploadDescription` |
+| `UploadOptions.maxFileSize` | 10 MiB | `createUploadDescription` |
 
-A 5 MB file with default config is rejected even though `maxFileSize` is 10 MB. Raise `maxRequestSize` in every run-mode YAML you use to at least the largest file you accept. See the [Configuration reference](../lookups/configuration-reference).
+A 5 MB file with default config is rejected even though `maxFileSize` is 10 MiB. Raise `maxRequestSize` in every run-mode YAML you use to at least the largest file you accept. See the [Configuration reference](../lookups/configuration-reference).
 
 Uploads to S3, Google Cloud Storage, and R2 go to the provider, so `maxRequestSize` does not apply to the file body.
 

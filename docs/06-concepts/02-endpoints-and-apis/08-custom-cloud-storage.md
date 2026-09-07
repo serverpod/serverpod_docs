@@ -1,5 +1,4 @@
 ---
-sidebar_position: 7.5
 description: Store uploaded files on local disk or a NAS with a custom CloudStorage, and keep using FileUploader against your API server.
 ---
 
@@ -243,9 +242,9 @@ Uploads that post to your API server are capped by two limits. The endpoint uses
 | Limit | Default | Set in |
 | --- | --- | --- |
 | `maxRequestSize` | 524288 (512 KiB) | `config/<run-mode>.yaml` or `SERVERPOD_MAX_REQUEST_SIZE` |
-| `UploadOptions.maxFileSize` | 10 MB | `createUploadDescription` |
+| `UploadOptions.maxFileSize` | 10 MiB | `createUploadDescription` |
 
-A 5 MB file with default config is rejected even though `maxFileSize` is 10 MB. Raise `maxRequestSize` in every run-mode YAML you use (development, staging, production, and test) to at least the largest file you accept:
+A 5 MB file with default config is rejected even though `maxFileSize` is 10 MiB. Raise `maxRequestSize` in every run-mode YAML you use (development, staging, production, and test) to at least the largest file you accept:
 
 ```yaml title="config/development.yaml"
 maxRequestSize: 52428800
