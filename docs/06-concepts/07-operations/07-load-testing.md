@@ -1,5 +1,5 @@
 ---
-description: Drive concurrent traffic at a production-like Serverpod server with Locust or the generated client, and read Insights, logs, and Postgres to see what saturates.
+description: "Load testing for Serverpod: concurrent traffic from Locust or the generated client against a production-like server, read through Insights, logs, and Postgres."
 ---
 
 # Load testing
@@ -70,7 +70,7 @@ Generic HTTP tools such as k6 and wrk work for the same POST-and-JSON calls. You
 
 Locust reports client-side requests per second, latency percentiles (p50, p95, p99), error rate, and timeouts. That is only half the picture. Watch the server at the same time.
 
-**Health probes** on the API port (`8080` by default), not the Insights port: `/livez` (process alive), `/readyz` (database, Redis, and custom indicators), `/startupz` (boot complete). During a run, `/readyz` is the one that tells you the server should still receive traffic. See [Health checks](health-checks).
+**Health probes**: `/livez` (process alive), `/readyz` (database, Redis, and custom indicators), `/startupz` (boot complete). Every server answers them; probe the API port (`8080` by default), since that is the server under load. During a run, `/readyz` is the one that tells you the server should still receive traffic. See [Health checks](health-checks).
 
 **Health metrics** in [Insights](../../tools/insights): CPU load average, memory, database `SELECT 1` latency, and HTTP connection counts (`active`, `closing`, `idle`). Collection runs once a minute. Leave that interval alone; a shorter one writes extra database rows and can distort the run. CPU and memory metrics are not collected on Windows.
 
