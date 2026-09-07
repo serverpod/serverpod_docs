@@ -190,7 +190,7 @@ Each built-in secret also has a dedicated environment variable: `SERVERPOD_DATAB
 
 For secrets related to first-party Serverpod packages, see their respective documentation:
 
-- **Cloud storage**: see [Uploading files](../endpoints-and-apis/file-uploads) for Google Cloud Storage, AWS S3, and Cloudflare R2 secrets.
+- **Cloud storage**: see [File uploads](../endpoints-and-apis/file-uploads) for Google Cloud Storage, AWS S3, and Cloudflare R2 secrets, and [Custom cloud storage](../endpoints-and-apis/custom-cloud-storage) for local disk.
 - **Authentication**: see [Storing Secrets](../authentication/setup#storing-secrets) on the Authentication setup page.
 
 ### Custom secrets

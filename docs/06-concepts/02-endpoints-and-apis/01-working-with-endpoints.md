@@ -157,6 +157,7 @@ The generated test tools call your endpoints the same way production code does, 
 - [Error handling and exceptions](./endpoints-and-apis/error-handling-and-exceptions): typed errors between server and app.
 - [Streaming](./endpoints-and-apis/streaming): push live data to your app.
 - [File uploads](./endpoints-and-apis/file-uploads): direct-to-storage uploads.
+- [Custom cloud storage](./endpoints-and-apis/custom-cloud-storage): local disk, NAS, and custom backends.
 - [Endpoint inheritance](./endpoints-and-apis/endpoint-inheritance): share behavior across endpoints and reshape module endpoints.
 - [Server events](./endpoints-and-apis/server-events): publish and subscribe to messages across sessions and servers.
 - [Endpoint middleware](./endpoints-and-apis/endpoint-middleware): wrap every API request for logging or rate limiting.
