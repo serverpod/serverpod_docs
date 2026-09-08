@@ -132,7 +132,7 @@ Two environment variables control session logging. With a database enabled (the 
 
 To change either default, set the value with `scloud variable set`. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for variable management.
 
-For what the server records, which tables it writes to, and how retention works, see [Logging](https://docs.serverpod.dev/concepts/operations/logging) in the framework documentation.
+For what the server records, which tables it writes to, and how retention works, see [Logging](/concepts/logging) in the framework documentation.
 
 ## Troubleshooting
 

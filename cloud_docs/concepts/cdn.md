@@ -62,7 +62,7 @@ cacheControlFactory: StaticRoute.public(maxAge: const Duration(minutes: 1)),
 Flutter's build uses fixed file names with no content hashes, so a long browser `max-age` can leave a visitor on an old build after you deploy. Keep the browser lifetime short and let the deploy purge handle the edge.
 :::
 
-Caching more aggressively takes cache busting, where each asset URL includes a hash of the file's content, so a new build gets new URLs and old cached copies are never requested again. The web server supports this for static files, and hashed assets can use `publicImmutable` with a long lifetime, because a file at a hashed URL never changes. Flutter's build does not produce hashed names, so for a Flutter build that means post-processing the build output yourself, and the short browser lifetime above is the simpler choice. See the framework [Static files](https://docs.serverpod.dev/concepts/web-server/static-files) guide for the full `cacheControlFactory` and cache-busting reference.
+Caching more aggressively takes cache busting, where each asset URL includes a hash of the file's content, so a new build gets new URLs and old cached copies are never requested again. The web server supports this for static files, and hashed assets can use `publicImmutable` with a long lifetime, because a file at a hashed URL never changes. Flutter's build does not produce hashed names, so for a Flutter build that means post-processing the build output yourself, and the short browser lifetime above is the simpler choice. See the framework [Static files](/concepts/webserver/static-files) guide for the full `cacheControlFactory` and cache-busting reference.
 
 ## Verify caching is working
 
@@ -99,6 +99,6 @@ How to read the responses:
 
 - [Deployments](/cloud/concepts/deployments): the deploy that clears the cache.
 - [Custom domains](/cloud/concepts/custom-domains): the CDN covers your custom domains too.
-- [Static files](https://docs.serverpod.dev/concepts/web-server/static-files): the framework reference for `cacheControlFactory` and cache busting.
-- [Single-page apps](https://docs.serverpod.dev/concepts/web-server/single-page-apps): serving another framework's single-page app with `SpaRoute`.
-- [Flutter web apps](https://docs.serverpod.dev/concepts/web-server/flutter-web): serving a Flutter build from the framework web server.
+- [Static files](/concepts/webserver/static-files): the framework reference for `cacheControlFactory` and cache busting.
+- [Single-page apps](/concepts/webserver/single-page-apps): serving another framework's single-page app with `SpaRoute`.
+- [Flutter web apps](/concepts/webserver/flutter-web): serving a Flutter build from the framework web server.
