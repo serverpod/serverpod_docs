@@ -303,10 +303,10 @@ The examples below use port `8082` (Serverpod's default from `config/development
 
 ### Initialize the Google sign-in service
 
-In your Flutter app's `main.dart`, add `initializeGoogleSignIn()` right after the existing `client.auth.initialize()` call:
+In your Flutter app's `lib/client.dart`, the template creates the `Client` and calls `client.auth.initialize()` inside `initializeClient()`. Add `initializeGoogleSignIn()` right after that call:
 
 ```dart
-client.auth.initialize();
+unawaited(client.auth.initialize());
 client.auth.initializeGoogleSignIn();
 ```
 
@@ -328,7 +328,7 @@ if (kIsWeb) {
 Swap the redirect URI for your production URL when deploying. See [Configuring the web redirect URI](./customizations#configuring-the-web-redirect-uri) to avoid hard-coding it per environment.
 
 :::warning
-On web, the app Serverpod serves is the build you created in [Web setup](#web). After changing `main.dart` (for example the `redirectUri`), run the build command again and hard-reload the browser. A stale build keeps sending the old values, and sign-in fails with [redirect_uri_mismatch](./troubleshooting#sign-in-fails-with-redirect_uri_mismatch).
+On web, the app Serverpod serves is the build you created in [Web setup](#web). After changing `client.dart` (for example the `redirectUri`), run the build command again and hard-reload the browser. A stale build keeps sending the old values, and sign-in fails with [redirect_uri_mismatch](./troubleshooting#sign-in-fails-with-redirect_uri_mismatch).
 :::
 
 ### Show the Google sign-in button
@@ -406,7 +406,7 @@ body: SignInScreen(
 ```
 
 :::warning
-The `initializeGoogleSignIn` call lives in `main()`, and hot reload does not re-run `main()`. After making these changes, hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. Until then, the Google button stays hidden.
+The `initializeGoogleSignIn` call lives in `initializeClient()`, which `main()` runs once, and hot reload does not re-run it. After making these changes, hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. Until then, the Google button stays hidden.
 :::
 
 The `SignInWidget` renders the standard Google sign-in button:

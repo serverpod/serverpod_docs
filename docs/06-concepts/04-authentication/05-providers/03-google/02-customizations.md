@@ -213,7 +213,7 @@ You can also set these environment variables in your IDE's run configuration or 
 
 ### Configuring the web redirect URI
 
-You can pass the web redirect URI to `initializeGoogleSignIn` via `--dart-define`. This is useful when building for different environments (development, staging, production) without changing `main.dart`:
+You can pass the web redirect URI to `initializeGoogleSignIn` via `--dart-define`. This is useful when building for different environments (development, staging, production) without changing `client.dart`:
 
 ```dart
 if (kIsWeb) {

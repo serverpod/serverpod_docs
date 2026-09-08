@@ -197,7 +197,7 @@ On the Android emulator, `10.0.2.2` maps to the host machine. On a physical devi
 
 **Cause:** The `SignInWidget` shows the Google button when the client has a registered `GoogleIdpEndpoint` and the Google sign-in service is initialized. The common misses:
 
-- The app was hot reloaded after adding `initializeGoogleSignIn` to `main.dart`. Hot reload does not re-run `main()`, so the service is never initialized.
+- The app was hot reloaded after adding `initializeGoogleSignIn` to `client.dart`. Hot reload does not re-run `initializeClient()`, so the service is never initialized.
 - `GoogleIdpEndpoint` is missing on the server, or the client was not regenerated after adding it.
 - On web, `initializeGoogleSignIn` was called without `clientId` and `redirectUri`. The widget renders nothing without them.
 

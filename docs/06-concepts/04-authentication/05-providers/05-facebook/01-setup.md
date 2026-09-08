@@ -456,18 +456,17 @@ For more detailed macOS setup instructions, refer to the [flutter_facebook_auth 
 
 ### Initialize the Facebook sign-in service
 
-Initialize the service in your app's `main()` function using the `initializeFacebookSignIn()` extension method on `FlutterAuthSessionManager`, on the line after `client.auth.initialize()`.
+Initialize the service in your app's `lib/client.dart` using the `initializeFacebookSignIn()` extension method on `FlutterAuthSessionManager`, on the line after the existing `client.auth.initialize()` call in `initializeClient()`.
 
 ```dart
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:serverpod_auth_idp_flutter_facebook/serverpod_auth_idp_flutter_facebook.dart';
-import 'package:your_client/your_client.dart';
 
-final client = Client('http://localhost:8080/')
-  ..authSessionManager = FlutterAuthSessionManager();
+Future<void> initializeClient() async {
+  client = Client(await serverUrl)
+    ..connectivityMonitor = FlutterConnectivityMonitor()
+    ..authSessionManager = FlutterAuthSessionManager();
 
-void main() {
-  client.auth.initialize();
+  unawaited(client.auth.initialize());
   client.auth.initializeFacebookSignIn();
 }
 ```
