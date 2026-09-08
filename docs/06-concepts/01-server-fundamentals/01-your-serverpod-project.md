@@ -43,7 +43,8 @@ myproject/
 ├── myproject_client/             # Generated client package
 │   └── lib/src/protocol/         # Generated calls and models (do not edit)
 └── myproject_flutter/            # Your Flutter app
-    ├── lib/main.dart             # App code: creates the global Client
+    ├── lib/main.dart             # App entry point: initializes the client, then runs the app
+    ├── lib/client.dart           # Creates the global Client that talks to the server
     ├── lib/screens/              # Scaffolded sign-in and greetings screens
     ├── lib/driver.dart           # Entry point serverpod start uses to launch the app
     └── assets/config.json        # The server URL the app reads at startup

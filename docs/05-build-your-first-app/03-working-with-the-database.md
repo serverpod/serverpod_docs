@@ -87,7 +87,7 @@ Update `recipe_screen.dart` to load past recipes when it opens and list them nex
 import 'package:flutter/material.dart';
 import 'package:magic_recipe_client/magic_recipe_client.dart';
 
-import '../main.dart';
+import '../client.dart';
 import 'greetings_screen.dart';
 
 class RecipeScreen extends StatefulWidget {

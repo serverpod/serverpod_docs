@@ -211,22 +211,19 @@ cd pixorama_flutter
 flutter pub add pixels
 ```
 
-Next, let's open the `main.dart` file and rename the `MyHomePage` class to `PixoramaApp`. We also remove the demo code and replace it with a `Scaffold` containing a `Pixorama` widget. This is our new main file:
+Next, let's open the `main.dart` file. The template already creates the `client` in `lib/client.dart` and initializes it in `main()`, so we keep that part. Rename the `MyHomePage` class to `PixoramaApp`, remove the demo code, and replace it with a `Scaffold` containing a `Pixorama` widget. This is our new main file:
 
 ```dart
 // lib/main.dart
 
-import 'package:pixorama_client/pixorama_client.dart';
 import 'package:flutter/material.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
 
+import 'client.dart';
 import 'src/pixorama.dart';
 
-var client = Client('http://$localhost:8080/')
-  ..connectivityMonitor = FlutterConnectivityMonitor();
-
-void main() {
-  // Start the app.
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeClient();
   runApp(const PixoramaApp());
 }
 
@@ -257,7 +254,7 @@ import 'package:flutter/material.dart';
 import 'package:pixels/pixels.dart';
 import 'package:pixorama_client/pixorama_client.dart';
 
-import '../../main.dart';
+import '../client.dart';
 
 class Pixorama extends StatefulWidget {
   const Pixorama({super.key});
