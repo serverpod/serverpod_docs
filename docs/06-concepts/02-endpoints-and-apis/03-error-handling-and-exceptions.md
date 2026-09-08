@@ -197,8 +197,10 @@ fields:
 A call from the client can fail in three ways, and you usually handle each one differently:
 
 - A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the user what happened. (It is sent as an HTTP 400 response with a typed payload.)
-- A **`ServerpodClientException`**: something went wrong in the communication or on the server. Its typed subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500).
-- A **connection failure**: when the app cannot reach the server (offline, wrong URL, or a timeout), it throws a `ServerpodClientException` with a `statusCode` of `-1`. A call that exceeds the [request size limit](../endpoints-and-apis#pass-and-return-data) fails with a generic `ServerpodClientException` with status code 413.
+- A **`ServerpodClientHttpException`**: the server answered with an error status, available as `statusCode`. Its subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500). Any other status is a `ServerpodClientUnknownHttpException`, such as the 413 returned when a call exceeds the [request size limit](../endpoints-and-apis#pass-and-return-data).
+- A **`ServerpodClientNetworkException`**: the app cannot reach the server (offline, wrong URL, or a timeout). There is no status code.
+
+Both extend the sealed `ServerpodClientException`, so `on ServerpodClientException` still catches every client-side failure at once.
 
 Calls to [streaming methods](./streaming) fail with their own connection-level exception family; see [error handling in streams](./streaming#error-handling).
 
@@ -213,14 +215,12 @@ try {
 } on ServerpodClientUnauthorized catch (_) {
   // The call requires the user to sign in.
   redirectToSignIn();
-} on ServerpodClientException catch (e) {
-  if (e.statusCode == -1) {
-    // Could not reach the server.
-    showError('Cannot reach the server. Check your connection and try again.');
-  } else {
-    // The server returned an error, for example a 500.
-    showError('Something went wrong. Please try again.');
-  }
+} on ServerpodClientNetworkException catch (_) {
+  // Could not reach the server.
+  showError('Cannot reach the server. Check your connection and try again.');
+} on ServerpodClientHttpException catch (e) {
+  // The server returned an error, for example a 500.
+  showError('Something went wrong (${e.statusCode}). Please try again.');
 }
 ```
 

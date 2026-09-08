@@ -171,7 +171,7 @@ For Firebase-based projects using the Gradle plugin, make sure a Web application
 
 ## Endpoint calls fail on Android with connection refused
 
-**Problem:** Sign-in completes at Google, but the app then fails with `ServerpodClientException: ... Connection refused ... uri=http://localhost:8080/...`.
+**Problem:** Sign-in completes at Google, but the app then fails with `ServerpodClientNetworkException: ... Connection refused ... uri=http://localhost:8080/...`.
 
 **Cause:** On Android, `localhost` is the emulator or device itself, not the machine running your server. The project template's `assets/config.json` sets `apiUrl` to `http://localhost:8080`, and that value takes precedence over the framework's platform-aware default (see [server URL resolution](../../../endpoints-and-apis)).
 
