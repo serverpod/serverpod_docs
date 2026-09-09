@@ -212,6 +212,20 @@ Using the `name` parameter, we define a shared name for the relationship. It ser
 
 Without specifying the `name` parameter, you'd end up with two unrelated relationships.
 
-When the relationship is defined on both sides, it's **required** to specify the `field` keyword. This is because Serverpod cannot automatically determine which side should hold the foreign key field. You decide which side is most logical for your data. As with any [custom foreign key field](#custom-foreign-key-field), `addressId` itself is generated and only needs to be declared if you want control over it.
+When the relationship is defined on both sides, you must mark which side holds the foreign key, because Serverpod cannot decide that for you. Either name the foreign key field with `field`, as above, or add the `fk` flag to keep the generated `addressId` name:
+
+```yaml
+# user.spy.yaml
+class: User
+table: user
+fields:
+  address: Address?, relation(name=user_address, fk)
+indexes:
+  user_address_unique_idx:
+    fields: addressId
+    unique: true
+```
+
+Only one side of a relation can hold the key. As with any [custom foreign key field](#custom-foreign-key-field), `addressId` itself is generated and only needs to be declared if you want control over it.
 
 In a relationship where there is an object on both sides a unique index is always **required** on the foreign key field.
