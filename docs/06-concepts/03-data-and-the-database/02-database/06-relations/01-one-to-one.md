@@ -148,11 +148,11 @@ ALTER TABLE ONLY "user"
     ADD CONSTRAINT "user_fk_0"
     FOREIGN KEY("addressId")
     REFERENCES "address"("id")
-    ON DELETE CASCADE
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ```
 
-The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential actions. The defaults per relation style are covered in [Referential actions](./referential-actions).
+The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential actions, which default to `NO ACTION`. See [Referential actions](./referential-actions) to change them.
 
 ## Independent relations defined on both sides
 

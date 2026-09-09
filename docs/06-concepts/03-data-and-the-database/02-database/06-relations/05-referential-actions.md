@@ -26,19 +26,14 @@ relation(onUpdate=<ACTION>, onDelete=<ACTION>)
 
 ## Default values
 
-If no referential actions are specified, the default behavior will be applied.
-
-If the relation is defined as an [object relation](one-to-one#with-an-object), the default behavior is `NoAction` for both onUpdate and onDelete, equivalent to writing:
+If no referential actions are specified, both `onUpdate` and `onDelete` default to `NoAction`. This applies to [object relations](one-to-one#with-an-object) and [id relations](one-to-one#with-an-id-field) alike, so the two declarations below are equivalent to leaving the actions out:
 
 ```yaml
 parent: Model?, relation(onUpdate=NoAction, onDelete=NoAction)
+parentId: int?, relation(parent=model_table, onUpdate=NoAction, onDelete=NoAction)
 ```
 
-If the relation is defined as an [id relation](one-to-one#with-an-id-field), the default behavior is `NoAction` for onUpdate and `Cascade` for onDelete, equivalent to writing:
-
-```yaml
-parentId: int?, relation(parent=model_table, onUpdate=NoAction, onDelete=Cascade)
-```
+Deleting a parent row that is still referenced therefore fails with a foreign key violation unless you set `onDelete=Cascade` or `onDelete=SetNull` explicitly.
 
 The order of `onUpdate` and `onDelete` in the relation does not matter.
 
