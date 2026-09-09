@@ -65,7 +65,7 @@ Client tables get their own migrations. Whenever a migration is created for a pr
 
 By default, `createSession` applies pending client migrations when it opens the database (`runMigrations: true`). Passing `false` skips them, which can leave the database out of sync with your models, so only do so if you apply migrations through another code path.
 
-With `isDebugMode: true`, the database integrity is verified after migrations are applied. On SQLite this includes a foreign key check that throws a `SqliteForeignKeyViolationException` if it finds violating rows. See [Database exceptions](exceptions#sqlite-foreign-key-checks). On Flutter, pass `kDebugMode` so the verification runs in debug builds only.
+With `isDebugMode: true`, the database integrity is verified after migrations are applied. On SQLite this includes a foreign key check that throws a `SqliteMigrationForeignKeyViolationException` if it finds violating rows. See [Database exceptions](exceptions#sqlite-foreign-key-checks). On Flutter, pass `kDebugMode` so the verification runs in debug builds only.
 
 ## Use the database
 
