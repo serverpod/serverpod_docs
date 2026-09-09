@@ -75,7 +75,7 @@ The example above returns a company with all related employees included.
 
 ### Nested includes
 
-The `includeList` method works slightly differently from a normal `include` and to include nested objects the `includes` field must be used. When including something on a list it means that every entry in the list will each have access to the nested object.
+The `includeList` method works slightly differently from a normal `include`. To include nested objects, use its `include` parameter. When including something on a list it means that every entry in the list will each have access to the nested object.
 
 ```dart
 var company = await Company.db.findById(
@@ -83,7 +83,7 @@ var company = await Company.db.findById(
   companyId,
   include: Company.include(
     employees: Employee.includeList(
-      includes: Employee.include(
+      include: Employee.include(
         address: Address.include(),
       ),
     ),
@@ -101,7 +101,7 @@ var company = await Company.db.findById(
   companyId,
   include: Company.include(
     employees: Employee.includeList(
-      includes: Employee.include(
+      include: Employee.include(
         tools: Tool.includeList(),
       ),
     ),
