@@ -86,3 +86,49 @@ var companies = await Company.db.find(
 - [Row locking](row-locking) calls do nothing, since SQLite allows only one write transaction at a time.
 - [Vector](vector-and-geography-fields#vector-fields) queries are not supported, and [geography](vector-and-geography-fields#geography-fields) values round-trip through CRUD but throw on spatial query operations.
 - Column types and encodings differ from Postgres. See [Field types](../models/field-types#postgres-vs-sqlite).
+
+## Sync tables with the server
+
+:::warning
+Offline sync is experimental. The `serverpod_offline_sync` module is still in development and not yet ready for production use.
+:::
+
+A table with `database: sync` behaves like `database: all` and is additionally kept in sync between the device and the server by the `serverpod_offline_sync` module. Changes made while offline are merged on the next sync. The module tracks every operation and resolves conflicts itself, so your code never intervenes.
+
+Enable the experimental feature and register the module in `config/generator.yaml` (or pass `--experimental-features databaseSync` on the command line):
+
+```yaml
+modules:
+  serverpod_offline_sync:
+    nickname: offline_sync
+
+experimental_features:
+  databaseSync: true
+```
+
+Add `serverpod_offline_sync_server` to the server package and `serverpod_offline_sync_client` to the client package. Then mark the model. Sync tables need a UUID primary key; Serverpod adds the `scopeId` field that links each row to its owner scope for you:
+
+```yaml
+class: Person
+table: person
+database: sync
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  name: String
+```
+
+Code generation wires the sync engine into the generated `Serverpod` class, so the server needs no further changes. On the device, open the database with `createSyncSession` instead of `createSession`, then sync once or keep syncing:
+
+```dart
+final session = await client.createSyncSession(
+  path,
+  isDebugMode: kDebugMode,
+  persistentUserId: persistentUserId,
+);
+
+await client.crdt.syncOnce(session);
+// Or keep the device and the server in sync while the app runs:
+final syncSession = client.crdt.syncContinuously(session);
+```
+
+`createSyncSession` takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing; otherwise the sync calls fail as unauthorized. For sync scopes, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).
