@@ -135,9 +135,46 @@ insightsServer:
 
 The `hotReload`, `getOpenSessionLog`, and `shutdown` Insights methods are removed. See [Insights](../tools/insights#database-access) for details.
 
+## Other breaking changes
+
+Each of these compiles or behaves differently in 4.0. Skim the headings for the ones your project uses.
+
+### Message central delivers globally by default
+
+`session.messages.postMessage` now defaults to `MessageScope.auto`: the message goes through Redis to every server instance when Redis is enabled, and stays local otherwise. Code that relied on local-only delivery must pass `scope: MessageScope.local`, and the removed `global: true` argument becomes `scope: MessageScope.global`. See [Message scope](../concepts/endpoints-and-apis/server-events#message-scope).
+
+### Client exceptions are a sealed hierarchy
+
+`ServerpodClientException` is sealed and carries only `message`. Failures to reach the server throw `ServerpodClientNetworkException`; error responses throw a subclass of the sealed `ServerpodClientHttpException`, which owns `statusCode`. The `statusCode == -1` check for connection failures no longer compiles. See [Error handling and exceptions](../concepts/endpoints-and-apis/error-handling-and-exceptions#handle-errors-in-your-app).
+
+### Database exceptions are typed
+
+`DatabaseInsertRowException`, `DatabaseUpdateRowException`, `DatabaseDeleteRowException`, and `DatabaseUpsertRowException` are replaced by `DatabaseUnexpectedResultException`. Constraint failures throw `DatabaseUniqueViolationException` and `DatabaseForeignKeyViolationException`, and SQLite lock failures throw `SqliteDatabaseLockedException`, all subclasses of `DatabaseQueryException`. See [Database exceptions](../concepts/data-and-the-database/database/exceptions).
+
+### `CloudStorage` methods take an options parameter
+
+The `*WithOptions` variants on `CloudStorage` are merged into the base methods: `storeFile`, `temporaryDownloadUrl`, and `createUploadDescription` now take an `options` parameter. Custom `CloudStorage` implementations must fold the two overrides into one. See [Custom cloud storage](../concepts/endpoints-and-apis/custom-cloud-storage#implement-the-cloudstorage-methods).
+
+### Google sign-in on the web uses the OAuth2 redirect flow
+
+`serverpod_auth_idp_flutter` no longer ships the native Google Sign-In web implementation. On the web, `initializeGoogleSignIn` requires `clientId` and `redirectUri`, and the server needs a `FlutterWebAuth2CallbackRoute`. The legacy `serverpod_auth` module is unaffected. See [Google web setup](../concepts/authentication/providers/google/setup#web).
+
+### Removed deprecated APIs
+
+- The deprecated future call methods on `Serverpod` are gone; use the generated `pod.futureCalls` API. See [Future calls](../concepts/scheduling/future-calls).
+- The `orderDescending` parameter on ORM methods is removed, and `Order` can no longer be constructed directly. Use `column.asc()` and `column.desc()`. See [Sorting](../concepts/data-and-the-database/database/sorting).
+- The `ignoreEndpoint` annotation is removed; use `@doNotGenerate`. See [Exclude an endpoint from generation](../concepts/endpoints-and-apis/working-with-endpoints#exclude-an-endpoint-from-generation).
+- `SerializationManagerServer` is removed. The generated `Protocol` class now extends `DatabaseSerializationManager` from `serverpod_database`; code that referenced the old class can use `Protocol` instead.
+- The legacy web-server widgets and static directory classes (`Widget`, `WidgetJson`, `WidgetRedirect`, `RouteStaticDirectory`, and friends) are removed in favor of `WebWidget`, `JsonWidget`, `RedirectWidget`, and `StaticRoute`. `WidgetRoute.build` now returns `WebWidget?`, where `null` yields a 404. See [Web server](../concepts/web-server/overview).
+- The `--mini` flag on `serverpod create` is removed. Create a project without a database with `--no-database`, or without a Flutter app with `--template server`.
+
+### PostgreSQL Docker image
+
+New projects use `ghcr.io/serverpod/postgres:16`, which bundles pgvector and PostGIS, instead of `pgvector/pgvector:pg16`. Existing Docker setups keep working; switch the image when you need PostGIS. See [Upgrade to PostGIS](./upgrade-to-postgis).
+
 ## Generate the 4.0 migration
 
-Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
+Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. The migration reads the protocol you generated above, so run `serverpod generate` first. Create a migration that captures these schema deltas so your database can be brought up to date:
 
 ```bash
 $ serverpod create-migration --tag "upgrade-4.0"
@@ -292,6 +329,7 @@ Copy the updated Dockerfile from the [4.0 framework template](https://github.com
 - **`upsert` and `upsertRow`** on the ORM, and **`asc()` / `desc()`** convenience methods on orderable columns.
 - **Recurring future calls** via the new claim-based scheduling.
 - **OAuth2 PKCE Flutter web redirect** for sign-in flows.
+- **Account merging** in the auth module, so a user can link a second sign-in method to an existing account. See [Merging accounts](../concepts/authentication/working-with-users#merging-accounts).
 - **httpOnly cookie authentication for the web**, keeping browser sign-in tokens out of JavaScript-readable storage. See [web authentication](../concepts/authentication/web-authentication).
 - **Health endpoints** on the built-in webserver.
 - **IDE and agent selection** in `serverpod create`.
