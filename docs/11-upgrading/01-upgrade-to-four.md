@@ -163,7 +163,7 @@ The `*WithOptions` variants on `CloudStorage` are merged into the base methods: 
 
 - The deprecated future call methods on `Serverpod` are gone; use the generated `pod.futureCalls` API. See [Future calls](../concepts/scheduling/future-calls).
 - The `orderDescending` parameter on ORM methods is removed, and `Order` can no longer be constructed directly. Use `column.asc()` and `column.desc()`. See [Sorting](../concepts/data-and-the-database/database/sorting).
-- The `ignoreEndpoint` annotation is removed; use `@doNotGenerate`. See [Exclude an endpoint from generation](../concepts/endpoints-and-apis/working-with-endpoints#exclude-an-endpoint-from-generation).
+- The `ignoreEndpoint` annotation is removed; use `@doNotGenerate`. See [Exclude an endpoint from generation](../concepts/endpoints-and-apis#exclude-an-endpoint-from-generation).
 - `SerializationManagerServer` is removed. The generated `Protocol` class now extends `DatabaseSerializationManager` from `serverpod_database`; code that referenced the old class can use `Protocol` instead.
 - The legacy web-server widgets and static directory classes (`Widget`, `WidgetJson`, `WidgetRedirect`, `RouteStaticDirectory`, and friends) are removed in favor of `WebWidget`, `JsonWidget`, `RedirectWidget`, and `StaticRoute`. `WidgetRoute.build` now returns `WebWidget?`, where `null` yields a 404. See [Web server](../concepts/web-server/overview).
 - The `--mini` flag on `serverpod create` is removed. Create a project without a database with `--no-database`, or without a Flutter app with `--template server`.
