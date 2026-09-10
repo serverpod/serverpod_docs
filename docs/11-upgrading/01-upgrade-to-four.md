@@ -102,6 +102,18 @@ Then refresh the generated server and client code:
 $ serverpod generate
 ```
 
+### If your model files use the `.yaml` extension
+
+Model files must use the `.spy.yaml` extension in 4.0 (`.spy.yml` and `.spy` are also accepted). Files with a plain `.yaml` or `.yml` extension in `lib/src/models` or `lib/src/protocol` are ignored, and `serverpod generate` and `serverpod start` stop with an error listing them:
+
+```text
+Model files must use the .spy.yaml extension. The following files are ignored:
+  lib/src/models/company.yaml
+Rename the files to use the .spy.yaml extension and run the command again.
+```
+
+Rename the files and run `serverpod generate` again. The contents do not change.
+
 ### If you use the legacy streaming endpoints API
 
 Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed in 4.0. Endpoints that use the `StreamingSession` type no longer compile, and all the related server and client methods (e.g. `streamOpened`, `streamClosed`, `handleStreamMessage`, `sendStreamMessage`, `getUserObject`, `setUserObject`, `openStreamingConnection`) are gone.
