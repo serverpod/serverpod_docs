@@ -200,7 +200,7 @@ A call from the client can fail in a few ways, and you usually handle each one d
 - A **`ServerpodClientHttpException`**: the server answered with an error status, available as `statusCode`. Its subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500). Any other status is a `ServerpodClientUnknownHttpException`, such as the 413 returned when a call exceeds the [request size limit](../endpoints-and-apis#pass-and-return-data).
 - A **`ServerpodClientNetworkException`**: the app cannot reach the server (offline, wrong URL, or a timeout). There is no status code.
 
-All of them extend the sealed `ServerpodClientException`, so `on ServerpodClientException` still catches every client-side failure at once.
+Both extend the sealed `ServerpodClientException`, along with `ServerpodClientUnknownException` for failures the client cannot classify. Catching `ServerpodClientException` handles all of them at once.
 
 Calls to [streaming methods](./streaming) fail with their own connection-level exception family; see [error handling in streams](./streaming#error-handling).
 
