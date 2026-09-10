@@ -23,13 +23,14 @@ When you add a `table` to a serializable class, Serverpod will automatically add
 
 ## Choosing where a table lives
 
-By default, a table model generates its table on the server, and the client package gets the same class as a plain model without database bindings. The `database` keyword changes this. It accepts three values:
+By default, a table model generates its table on the server, and the client package gets the same class as a plain model without database bindings. The `database` keyword changes this. It accepts four values:
 
 | Value | Description |
 | ------- | ----------- |
 | `server` | Generates tables only on the server, and a non-table model on the client package (default). |
 | `client` | Generates tables only on the client, and a non-table model on the server package. |
 | `all` | Generates table models on both server and client. |
+| `sync` | Experimental. Like `all`, and additionally keeps the table synchronized between the client and the server. See [Sync tables with the server](client-side-database#sync-tables-with-the-server). |
 
 For example, to store the table only on the device:
 

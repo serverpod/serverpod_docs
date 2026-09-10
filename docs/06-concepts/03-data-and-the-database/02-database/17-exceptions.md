@@ -4,7 +4,7 @@ description: Serverpod wraps database failures in typed exceptions that signal w
 
 # Database exceptions
 
-Serverpod wraps database failures in exceptions that implement `DatabaseException`. This gives you one common type to catch for database failures and more specific types when you want to handle a known operation failure.
+Serverpod wraps database failures in exceptions that extend `DatabaseException`. This gives you one common type to catch for database failures and more specific types when you want to handle a known failure, such as a unique constraint violation or a single-row operation that matched no row.
 
 ```dart
 try {
@@ -13,7 +13,7 @@ try {
     companyId,
     columnValues: (t) => [t.name('New name')],
   );
-} on DatabaseUpdateRowException {
+} on DatabaseUnexpectedResultException {
   // No row with the provided id was updated.
 } on DatabaseQueryException catch (e) {
   session.log(
@@ -29,19 +29,19 @@ When a database exception is not caught inside an endpoint, it follows Serverpod
 
 ## Exception types
 
-| Exception | When it is thrown |
-| --- | --- |
-| `DatabaseException` | The common interface for database exceptions. Catch this when you want one handler for any database failure. |
-| `DatabaseQueryException` | A query failed in the database adapter, often because the database rejected the SQL or a constraint was violated. |
-| `DatabaseInsertRowException` | A single-row insert operation did not insert exactly one row. |
-| `DatabaseUpdateRowException` | A single-row update operation did not update the expected row, for example when `updateById` receives an id that does not exist. |
-| `DatabaseDeleteRowException` | A single-row delete operation did not delete the expected row. |
-| `DatabaseUpsertRowException` | A single-row upsert operation unexpectedly returned more than one row. |
-| `SqliteForeignKeyViolationException` | A SQLite foreign key integrity check found one or more violating rows. |
+| Exception | Extends | When it is thrown |
+| --- | --- | --- |
+| `DatabaseException` | `Exception` | The base type for database exceptions. Catch this when you want one handler for any database failure. |
+| `DatabaseUnexpectedResultException` | `DatabaseException` | A single-row operation did not affect exactly one row: `insertRow` or `upsertRow` returned a different number of rows, or `updateRow`, `updateById`, or `deleteRow` matched no row. |
+| `DatabaseQueryException` | `DatabaseException` | The database rejected a query. Carries the adapter's error details, see below. |
+| `DatabaseUniqueViolationException` | `DatabaseQueryException` | A write violated a unique index or primary key. |
+| `DatabaseForeignKeyViolationException` | `DatabaseQueryException` | A write violated a foreign key constraint, including at commit for [deferrable constraints](relations/deferrable-constraints). |
+| `SqliteDatabaseLockedException` | `DatabaseQueryException` | SQLite could not acquire a lock, typically because a query ran without the `transaction` of an already active transaction, or two transactions ran concurrently. |
+| `SqliteMigrationForeignKeyViolationException` | `DatabaseException` | A SQLite foreign key integrity check after migrations found one or more violating rows. |
 
 ## Query exception details
 
-The `DatabaseQueryException` type exposes optional fields from the underlying database adapter. These fields are useful for logging and for handling known database errors:
+The `DatabaseQueryException` type and its subclasses expose optional fields from the underlying database adapter. These fields are useful for logging and for handling known database errors:
 
 - `code`
 - `detail`
@@ -51,28 +51,25 @@ The `DatabaseQueryException` type exposes optional fields from the underlying da
 - `constraintName`
 - `position`
 
-For example, PostgreSQL constraint errors can include a database error code and the violated constraint name. These values are database-adapter details, so write defensive code that handles `null` values.
+These values are database-adapter details, so write defensive code that handles `null` values. PostgreSQL fills in the violated constraint name; SQLite does not. To react to a specific failure, prefer the typed subclass over inspecting the fields:
 
 ```dart
 try {
   await Company.db.insertRow(session, company);
-} on DatabaseQueryException catch (e) {
-  if (e.constraintName == 'company_name_key') {
-    // Handle a duplicate company name here.
-    return;
-  }
-
-  // Let unexpected database query errors keep their original stack trace.
-  rethrow;
+} on DatabaseUniqueViolationException {
+  // Handle a duplicate company name here.
+  return;
 }
 ```
 
+Other query failures keep their original type and stack trace, so a broader `on DatabaseQueryException` handler can log them.
+
 ## Operation exceptions
 
-The row-level operation exceptions describe cases where Serverpod expected one row to be affected but the database result did not match that expectation. For example, `updateById` throws a `DatabaseUpdateRowException` when no row exists for the id you pass in.
+`DatabaseUnexpectedResultException` describes cases where Serverpod expected one row to be affected but the database result did not match that expectation. For example, `updateById` throws it when no row exists for the id you pass in.
 
-Batch and filtered operations have their own documented behavior. Some methods, such as `updateWhere` or `deleteWhere`, can validly affect zero rows and return an empty list instead of throwing a row-level exception.
+Batch and filtered operations have their own documented behavior. Some methods, such as `updateWhere` or `deleteWhere`, can validly affect zero rows and return an empty list instead of throwing.
 
 ## SQLite foreign key checks
 
-When using SQLite, Serverpod runs a foreign key integrity check after applying migrations in the development run mode. If SQLite reports invalid foreign key references, Serverpod throws `SqliteForeignKeyViolationException`. The exception contains the violating rows returned by SQLite's `PRAGMA foreign_key_check`.
+When using SQLite, Serverpod runs a foreign key integrity check after applying migrations in the development run mode. If SQLite reports invalid foreign key references, Serverpod throws `SqliteMigrationForeignKeyViolationException`. Its `violations` field holds the rows returned by SQLite's `PRAGMA foreign_key_check`.

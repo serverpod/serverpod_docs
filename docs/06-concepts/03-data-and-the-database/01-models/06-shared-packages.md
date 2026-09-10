@@ -127,7 +127,7 @@ final profile = UserProfile(
 
 ### Table models
 
-A shared model can declare a `table`, as long as it also sets [`database: all`](../database/tables#choosing-where-a-table-lives). A shared package is used from both the server and the client, so its tables have to be declared for both.
+A shared model can declare a `table`, as long as it also sets [`database: all`](../database/tables#choosing-where-a-table-lives) (or the experimental `database: sync`). A shared package is used from both the server and the client, so its tables have to be declared for both.
 
 ```yaml
 class: SharedRecord
@@ -193,7 +193,7 @@ Shared models support most Serverpod model features, with these exceptions:
 
 | Restriction | Reason |
 | ----------- | ------ |
-| A `table` requires `database: all` | The package is used on both sides, so its tables cannot be limited to the server or the client. |
+| A `table` requires `database: all` or `sync` | The package is used on both sides, so its tables cannot be limited to the server or the client. |
 | No `serverOnly` on the class | Models must be usable on both server and client. |
 | No `scope: serverOnly` on fields | All fields must be serializable for the client. |
 
