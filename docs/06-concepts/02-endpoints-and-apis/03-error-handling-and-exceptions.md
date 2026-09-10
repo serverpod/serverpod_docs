@@ -194,13 +194,13 @@ fields:
 
 ## Handle errors in your app
 
-A call from the client can fail in three ways, and you usually handle each one differently:
+A call from the client can fail in a few ways, and you usually handle each one differently:
 
 - A **serializable exception you defined** (`MyException` above): a known, app-level failure. Catch it by its type and show the user what happened. (It is sent as an HTTP 400 response with a typed payload.)
 - A **`ServerpodClientHttpException`**: the server answered with an error status, available as `statusCode`. Its subclasses map to HTTP status codes: `ServerpodClientBadRequest` (400), `ServerpodClientUnauthorized` (401), `ServerpodClientForbidden` (403), `ServerpodClientNotFound` (404), and `ServerpodClientInternalServerError` (500). Any other status is a `ServerpodClientUnknownHttpException`, such as the 413 returned when a call exceeds the [request size limit](../endpoints-and-apis#pass-and-return-data).
 - A **`ServerpodClientNetworkException`**: the app cannot reach the server (offline, wrong URL, or a timeout). There is no status code.
 
-Both extend the sealed `ServerpodClientException`, so `on ServerpodClientException` still catches every client-side failure at once.
+All of them extend the sealed `ServerpodClientException`, so `on ServerpodClientException` still catches every client-side failure at once.
 
 Calls to [streaming methods](./streaming) fail with their own connection-level exception family; see [error handling in streams](./streaming#error-handling).
 
@@ -221,6 +221,9 @@ try {
 } on ServerpodClientHttpException catch (e) {
   // The server returned an error, for example a 500.
   showError('Something went wrong (${e.statusCode}). Please try again.');
+} on ServerpodClientException catch (_) {
+  // Anything else the client could not classify.
+  showError('Something went wrong. Please try again.');
 }
 ```
 

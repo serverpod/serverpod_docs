@@ -42,10 +42,12 @@ The scaffolded Flutter app already creates that client in `lib/client.dart`, con
 
 ```dart
 // lib/client.dart
+final serverUrl = getServerUrl();
+
 late final Client client;
 
 Future<void> initializeClient() async {
-  client = Client(await getServerUrl())
+  client = Client(await serverUrl)
     ..connectivityMonitor = FlutterConnectivityMonitor();
 }
 
