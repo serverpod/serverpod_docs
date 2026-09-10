@@ -46,7 +46,7 @@ Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_serv
 
 ```yaml
 environment:
-  sdk: '^3.10.3'
+  sdk: '^3.12.2'
 ```
 
 ### If you use the legacy auth module
@@ -254,7 +254,7 @@ Replace `cursor` with the editor you use: `antigravity`, `claude`, `cline`, `cod
 
 Your production build needs to switch from `dart compile exe` to `dart build cli`. The 4.0 server includes native build hooks that `dart compile` doesn't support, and produces a bundle (executable plus its native libraries) rather than a single static binary, so your Dockerfile needs a few updates.
 
-Copy the updated Dockerfile from the [4.0 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 4.0 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and bump the Dart SDK base image to 3.10.x or newer.
+Copy the updated Dockerfile from the [4.0 framework template](https://github.com/serverpod/serverpod/blob/main/templates/serverpod_templates/projectname_server/Dockerfile) or a fresh 4.0 project's `<project>_server/Dockerfile`. The key changes vs. the 3.4 pattern: build from the project root (not the server directory), copy the bundle directory, update `ENTRYPOINT` to point at the bundled binary, and build from the `dart:3.12.2` base image or newer.
 
 ## Authentication changes
 

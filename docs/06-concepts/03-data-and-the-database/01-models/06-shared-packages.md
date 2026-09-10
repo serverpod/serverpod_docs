@@ -21,7 +21,7 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: ^3.10.3
+  sdk: ^3.12.2
 
 dependencies:
   serverpod_serialization: SERVERPOD_VERSION
