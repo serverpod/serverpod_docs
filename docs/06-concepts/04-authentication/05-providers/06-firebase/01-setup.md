@@ -193,18 +193,14 @@ If your Flutter project folder name contains an underscore (or any character tha
 
 ### 3. Initialize Firebase and Serverpod
 
-In your Flutter app's `main.dart` file (e.g., `my_project_flutter/lib/main.dart`), the template already sets up the `Client`. Initialize both Firebase and the Serverpod auth services:
+The template creates the `Client` in `lib/client.dart` and initializes it from `main()`. Initialize Firebase before the client, in `lib/main.dart`:
 
 ```dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
-import 'package:your_client/your_client.dart';
-import 'firebase_options.dart';
 
-late Client client;
+import 'client.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -213,15 +209,23 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  client = Client('http://localhost:8080/')
+  await initializeClient();
+  runApp(const MyApp());
+}
+```
+
+Then, in `lib/client.dart`, add `initializeFirebaseSignIn()` right after the existing `client.auth.initialize()` call in `initializeClient()`:
+
+```dart
+import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
+
+Future<void> initializeClient() async {
+  client = Client(await serverUrl)
     ..connectivityMonitor = FlutterConnectivityMonitor()
     ..authSessionManager = FlutterAuthSessionManager();
 
-  await client.auth.initialize();
-
+  unawaited(client.auth.initialize());
   client.auth.initializeFirebaseSignIn();
-
-  runApp(const MyApp());
 }
 ```
 

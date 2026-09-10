@@ -244,34 +244,28 @@ The examples below use port `8082` (Serverpod's default from `config/development
 
 ### Initialize the GitHub sign-in service
 
-Open your Flutter app's `main.dart` (e.g., `my_project_flutter/lib/main.dart`). The Serverpod template already creates the `Client` and calls `client.auth.initialize()` inside `main()`. Add `client.auth.initializeGitHubSignIn(...)` on the line immediately after it.
+Open your Flutter app's `lib/client.dart`. The Serverpod template already creates the `Client` and calls `client.auth.initialize()` inside `initializeClient()`. Add `client.auth.initializeGitHubSignIn(...)` on the line immediately after it.
 
 The GitHub provider requires `clientId` and `redirectUri` on every platform because GitHub does not have native platform-specific clients (unlike Google or Apple):
 
 ```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  final serverUrl = await getServerUrl();
-
-  client = Client(serverUrl)
+Future<void> initializeClient() async {
+  client = Client(await serverUrl)
     ..connectivityMonitor = FlutterConnectivityMonitor()
     ..authSessionManager = FlutterAuthSessionManager();
 
-  await client.auth.initialize();
+  unawaited(client.auth.initialize());
   await client.auth.initializeGitHubSignIn(
     clientId: 'your-github-client-id',
     redirectUri: 'com.example.yourapp://auth',
   );
-
-  runApp(const MyApp());
 }
 ```
 
 Replace `your-github-client-id` with the **Client ID** from your GitHub App, and `redirectUri` with the matching callback URL you registered: a reverse-DNS custom scheme for mobile, or the route URL from [Web](#web) for Flutter web. Swap the redirect URI for your production URL when deploying.
 
 :::tip
-To keep these values out of `main.dart` and vary them per build, read them from `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app) for the pattern.
+To keep these values out of `client.dart` and vary them per build, read them from `--dart-define`. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app) for the pattern.
 :::
 
 ### Show the GitHub sign-in button

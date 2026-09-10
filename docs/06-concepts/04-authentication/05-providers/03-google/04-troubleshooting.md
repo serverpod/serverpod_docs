@@ -171,7 +171,7 @@ For Firebase-based projects using the Gradle plugin, make sure a Web application
 
 ## Endpoint calls fail on Android with connection refused
 
-**Problem:** Sign-in completes at Google, but the app then fails with `ServerpodClientException: ... Connection refused ... uri=http://localhost:8080/...`.
+**Problem:** Sign-in completes at Google, but the app then fails with `ServerpodClientNetworkException: ... Connection refused ... uri=http://localhost:8080/...`.
 
 **Cause:** On Android, `localhost` is the emulator or device itself, not the machine running your server. The project template's `assets/config.json` sets `apiUrl` to `http://localhost:8080`, and that value takes precedence over the framework's platform-aware default (see [server URL resolution](../../../endpoints-and-apis)).
 
@@ -197,7 +197,7 @@ On the Android emulator, `10.0.2.2` maps to the host machine. On a physical devi
 
 **Cause:** The `SignInWidget` shows the Google button when the client has a registered `GoogleIdpEndpoint` and the Google sign-in service is initialized. The common misses:
 
-- The app was hot reloaded after adding `initializeGoogleSignIn` to `main.dart`. Hot reload does not re-run `main()`, so the service is never initialized.
+- The app was hot reloaded after adding `initializeGoogleSignIn` to `client.dart`. Hot reload does not re-run `initializeClient()`, so the service is never initialized.
 - `GoogleIdpEndpoint` is missing on the server, or the client was not regenerated after adding it.
 - On web, `initializeGoogleSignIn` was called without `clientId` and `redirectUri`. The widget renders nothing without them.
 

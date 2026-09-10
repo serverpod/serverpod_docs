@@ -227,7 +227,7 @@ A migrated user can now sign in with their old password or Google account and la
 
 ## Update the Flutter app
 
-In `<project>_flutter/lib/main.dart`, swap the auth setup to use `FlutterAuthSessionManager` and call `initAndImportLegacySessionIfNeeded` before any sign-in UI renders. This exchanges any old auth key stored on the device for a new modular session so existing installs do not have to sign in again.
+Where your app creates the `Client` (`lib/client.dart` in projects created with 4.0 or upgraded with `serverpod create .`, otherwise `lib/main.dart`), swap the auth setup to use `FlutterAuthSessionManager` and call `initAndImportLegacySessionIfNeeded` before any sign-in UI renders. This exchanges any old auth key stored on the device for a new modular session so existing installs do not have to sign in again.
 
 ```dart
 import 'package:serverpod_auth_bridge_flutter/serverpod_auth_bridge_flutter.dart';

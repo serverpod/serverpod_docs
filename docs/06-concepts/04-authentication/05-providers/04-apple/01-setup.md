@@ -249,10 +249,10 @@ The redirect URI and `appleWebRedirectUri` were already configured in the [Store
 
 ### Initialize the Sign in with Apple service
 
-In your Flutter app's `main.dart` file (e.g., `my_project_flutter/lib/main.dart`), the template already sets up the `Client` and calls `client.auth.initialize()`. Add `client.auth.initializeAppleSignIn()` right after it:
+In your Flutter app's `lib/client.dart`, the template already sets up the `Client` and calls `client.auth.initialize()` inside `initializeClient()`. Add `client.auth.initializeAppleSignIn()` right after it:
 
 ```dart
-client.auth.initialize();
+unawaited(client.auth.initialize());
 client.auth.initializeAppleSignIn();
 ```
 

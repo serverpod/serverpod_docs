@@ -126,7 +126,7 @@ Create `magic_recipe_flutter/lib/screens/recipe_screen.dart`:
 ```dart
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import '../client.dart';
 import 'greetings_screen.dart';
 
 class RecipeScreen extends StatefulWidget {
@@ -206,7 +206,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
 }
 ```
 
-`client` comes from `main.dart`, where the template already wired it to talk to your server, and `ResultDisplay` is reused from `greetings_screen.dart`.
+`client` comes from `client.dart`, where the template already wired it to talk to your server, and `ResultDisplay` is reused from `greetings_screen.dart`.
 
 Now show the recipe screen instead of the greeting demo. In `magic_recipe_flutter/lib/main.dart`, add the import:
 
@@ -220,7 +220,7 @@ Then, in the `MyHomePage` widget, change the body from `GreetingsScreen` to `Rec
       body: const RecipeScreen(),
 ```
 
-Save. UI edits like this would normally hot reload, but adding the endpoint also changed the generated client. The app's `client` is created once in `main()`, which only re-runs on a restart, so the app needs a hot restart to pick up the new `client.recipe` endpoint.
+Save. UI edits like this would normally hot reload, but adding the endpoint also changed the generated client. The app's `client` is created once by `initializeClient()` in `main()`, which only re-runs on a restart, so the app needs a hot restart to pick up the new `client.recipe` endpoint.
 
 In the `serverpod start` terminal:
 

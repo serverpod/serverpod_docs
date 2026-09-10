@@ -38,19 +38,23 @@ Your app calls the method through the generated client:
 var result = await client.example.hello('World');
 ```
 
-The scaffolded Flutter app already creates that client in `lib/main.dart`, connected to your development server:
+The scaffolded Flutter app already creates that client in `lib/client.dart`, connected to your development server, and `main()` initializes it before running the app:
 
 ```dart
+// lib/client.dart
+final serverUrl = getServerUrl();
+
 late final Client client;
 
+Future<void> initializeClient() async {
+  client = Client(await serverUrl)
+    ..connectivityMonitor = FlutterConnectivityMonitor();
+}
+
+// lib/main.dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final serverUrl = await getServerUrl();
-
-  client = Client(serverUrl)
-    ..connectivityMonitor = FlutterConnectivityMonitor();
-
+  await initializeClient();
   runApp(const MyApp());
 }
 ```

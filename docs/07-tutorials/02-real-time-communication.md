@@ -8,7 +8,7 @@ _This tutorial is also available as a video._
 
 :::info
 
-Before you begin, make sure that you have [installed Serverpod](/). It's also recommended that you read the [Get started with Mini](../../serverpod-mini) guide.
+Before you begin, make sure that you have [installed Serverpod](../installation).
 
 :::
 
@@ -28,17 +28,19 @@ With the release of Serverpod 2.1, a new feature called [streaming methods](../c
 
 ## Setting up the project
 
-We begin by creating a new project with the `serverpod create` command. Since we don't need to store data in a database, we'll use the Mini version of Serverpod. Serverpod Mini is a lightweight version of Serverpod without a database, advanced logging, and other features - perfect for our needs. Create the project with the command:
+We begin by creating a new project with the `serverpod create` command. Pixorama keeps its image in memory, so it doesn't need a database. In the interactive setup, deselect **Database** under **Database & caching** and keep the other defaults:
 
 ```bash
-serverpod create pixorama --mini
+serverpod create pixorama
 ```
+
+If you run the command non-interactively, pass `--no-interactive --no-database` instead.
 
 Now, let's open the project in VS Code and explore the structure. The server code resides in the `pixorama_server` package. We'll start by creating models - classes that we can serialize and pass between the client and server. Our models will be placed in the `lib/src/models` directory.
 
 ## Creating models
 
-First, we remove the `example.spy.yaml` model, as we won't need it. We'll create two new models: `ImageData` and `ImageUpdate`. Place them in the `lib/src/models` directory and call them `image_data.spy.yaml` and `image_update.spy.yaml`.
+First, we remove the template's example feature, the `lib/src/greetings` directory in `pixorama_server`, as we won't need it. We'll create two new models: `ImageData` and `ImageUpdate`. Place them in the `lib/src/models` directory and call them `image_data.spy.yaml` and `image_update.spy.yaml`.
 
 ```yaml
 # lib/src/models/image_data.spy.yaml
@@ -63,11 +65,10 @@ fields:
 
 The `ImageUpdate` model captures changes to individual pixels, including the pixel's index in the byte array and its new color value.
 
-With our models defined, we run serverpod generate to create the actual Dart files for these models. Run the command from your server's root directory (`pixorama_server`).
+With our models defined, start the project so Serverpod generates the Dart classes for them. Run the command from the project root and leave it running: it regenerates code and hot reloads the server every time you save a file.
 
 ```bash
-cd pixorama_server
-serverpod generate
+serverpod start
 ```
 
 ## Building the server
@@ -193,40 +194,32 @@ class PixoramaEndpoint extends Endpoint {
 }
 ```
 
-That's all the code we need to write for the server side. To make the new endpoint available to our Flutter app, we run serverpod generate in the root directory of our server.
-
-```bash
-cd pixorama_server
-serverpod generate
-```
+That's all the code we need to write for the server side. With `serverpod start` running, the new endpoint is generated into the client package as soon as you save. If you're not running it, run `serverpod generate` in `pixorama_server` instead.
 
 ## Building the Flutter app
 
 With the server side complete, it's time to build the Flutter app. When we created the project, Serverpod set up a basic Flutter app for us in the `pixorama_flutter` package.
 
-First, we will use the pixels package to draw our pixel editor. Import it by running the following command in your `pixorama_flutter` directory:
+Since we removed the greeting endpoint, delete `lib/screens/greetings_screen.dart`, which used it. Then add the pixels package to draw our pixel editor. Import it by running the following command in your `pixorama_flutter` directory:
 
 ```bash
 cd pixorama_flutter
 flutter pub add pixels
 ```
 
-Next, let's open the `main.dart` file and rename the `MyHomePage` class to `PixoramaApp`. We also remove the demo code and replace it with a `Scaffold` containing a `Pixorama` widget. This is our new main file:
+Next, let's open the `main.dart` file. The template already creates the `client` in `lib/client.dart` and initializes it in `main()`, so we keep that part. Rename the `MyHomePage` class to `PixoramaApp`, remove the demo code, and replace it with a `Scaffold` containing a `Pixorama` widget. This is our new main file:
 
 ```dart
 // lib/main.dart
 
-import 'package:pixorama_client/pixorama_client.dart';
 import 'package:flutter/material.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
 
+import 'client.dart';
 import 'src/pixorama.dart';
 
-var client = Client('http://$localhost:8080/')
-  ..connectivityMonitor = FlutterConnectivityMonitor();
-
-void main() {
-  // Start the app.
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeClient();
   runApp(const PixoramaApp());
 }
 
@@ -257,7 +250,7 @@ import 'package:flutter/material.dart';
 import 'package:pixels/pixels.dart';
 import 'package:pixorama_client/pixorama_client.dart';
 
-import '../../main.dart';
+import '../client.dart';
 
 class Pixorama extends StatefulWidget {
   const Pixorama({super.key});
@@ -381,7 +374,7 @@ class _PixoramaState extends State<Pixorama> {
 
 ## Running Pixorama
 
-To test Pixorama, start the server and the app from the `pixorama_server` directory:
+If you kept `serverpod start` running, the server and the app have already picked up your changes. Otherwise, start them from the project root:
 
 ```bash
 serverpod start
