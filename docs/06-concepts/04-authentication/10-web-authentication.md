@@ -20,14 +20,16 @@ Enable cookie auth by adding an `authCookie` section to your server configuratio
 
 ```yaml
 authCookie:
-  # secure: false # Uncomment only for http://localhost development.
+  sameSite: lax
 allowedOrigins:
   - https://app.example.com
 ```
 
+For local development, use `secure: false` in `config/development.yaml` so the cookie is sent over `http://localhost`. The section must contain at least one field: an `authCookie:` key with no children is read as unset, and cookie auth stays off.
+
 `allowedOrigins` is required when `authCookie` is set: it backs the CSRF origin checks and credentialed CORS, which cannot use a wildcard origin. List every browser origin that calls your server. With cookie auth enabled, browsers on origins that are not in the list lose cross-origin access, including to public endpoints.
 
-All `authCookie` fields are optional:
+Each field and its default:
 
 | Field         | Default                  | Purpose                                                        |
 | ------------- | ------------------------ | -------------------------------------------------------------- |
@@ -62,7 +64,7 @@ Everything else is unchanged: sign-in flows, the `client.auth` session manager, 
 3. Confirm no token appears in **Local Storage** for your app's origin.
 4. Reload the page. The user is still signed in.
 
-If sign-in fails, check that every browser origin is listed in `allowedOrigins`, and on `http://localhost` that `authCookie.secure` is `false`.
+If sign-in fails, check that every browser origin is listed in `allowedOrigins`, and on `http://localhost` that `authCookie.secure` is `false`. If the app throws `StateError: cookieAuth is enabled but the server returned the auth token in the response body`, the server's `authCookie` section is missing or has no fields; add at least one.
 
 ## How it works
 

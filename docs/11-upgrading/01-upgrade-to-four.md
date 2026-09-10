@@ -128,7 +128,7 @@ The `hotReload`, `getOpenSessionLog`, and `shutdown` Insights methods are remove
 Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. Create a migration that captures these schema deltas so your database can be brought up to date:
 
 ```bash
-$ serverpod create-migration --tag "upgrade-4.0"
+$ serverpod create-migration --tag "upgrade-4-0"
 ```
 
 This writes a new migration to `<project>_server/migrations/`. It will be applied to your database in the next step.

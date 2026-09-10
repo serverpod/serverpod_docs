@@ -57,7 +57,7 @@ $ serverpod create-migration --empty
 
 ### Tag migration
 
-Tags can be useful to identify migrations that introduced specific changes to the project. Tags are appended to the migration name and can be added with the `--tag` option.
+Tags can be useful to identify migrations that introduced specific changes to the project. Tags are appended to the migration name and can be added with the `--tag` option. A tag can contain only lowercase letters, numbers, and dashes.
 
 ```bash
 $ serverpod create-migration --tag "v1-0-0"
