@@ -25,11 +25,11 @@ allowedOrigins:
   - https://app.example.com
 ```
 
-In `config/development.yaml`, set `secure: false` instead so the cookie is sent over `http://localhost`. The section must contain at least one field: an `authCookie:` key with no children is read as unset, and cookie auth stays off.
+For local development, use `secure: false` in `config/development.yaml` so the cookie is sent over `http://localhost`. The section must contain at least one field: an `authCookie:` key with no children is read as unset, and cookie auth stays off.
 
 `allowedOrigins` is required when `authCookie` is set: it backs the CSRF origin checks and credentialed CORS, which cannot use a wildcard origin. List every browser origin that calls your server. With cookie auth enabled, browsers on origins that are not in the list lose cross-origin access, including to public endpoints.
 
-Every field has a default, so any single field enables the section:
+Each field and its default:
 
 | Field         | Default                  | Purpose                                                        |
 | ------------- | ------------------------ | -------------------------------------------------------------- |

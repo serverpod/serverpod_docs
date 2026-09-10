@@ -105,7 +105,7 @@ Keep `websocketPingInterval` (default 30 seconds) in mind under high connection 
 | --- | --- | --- |
 | `role` / `SERVERPOD_SERVER_ROLE` | `monolith` | Split request nodes from maintenance work. |
 | `database.maxConnectionCount` | `10` | Pool size times node count must fit Postgres. |
-| `redis.enabled` | `false` | Required for shared cache and global events. |
+| `redis.enabled` | `true` when a `redis` section is present | Required for shared cache and global events. |
 | `maxRequestSize` | `524288` | Large uploads increase memory pressure. |
 | `websocketPingInterval` | `30` (seconds) | Keepalive cost under many open streams. |
 | `futureCall.concurrencyLimit` | `1` | Caps background CPU and database load. |
