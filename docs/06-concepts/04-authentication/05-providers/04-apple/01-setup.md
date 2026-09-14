@@ -337,17 +337,17 @@ Add the `apple*` keys to the `production:` section of `passwords.yaml` with prod
 
 #### Serverpod Cloud
 
-Use `scloud password set` for each credential. The `appleKey` value spans multiple lines, so pass it via `--from-file`:
+Use `serverpod cloud password set` for each credential. The `appleKey` value spans multiple lines, so pass it via `--from-file`:
 
 ```bash
-scloud password set appleServiceIdentifier "com.example.service"
-scloud password set appleBundleIdentifier "com.example.app"
-scloud password set appleRedirectUri "https://example.com/auth/callback"
-scloud password set appleTeamId "ABC123DEF4"
-scloud password set appleKeyId "XYZ789ABC0"
-scloud password set appleKey --from-file ./AuthKey_XYZ789ABC0.p8
-scloud password set appleWebRedirectUri "https://example.com/auth/apple-complete"
-scloud password set appleAndroidPackageIdentifier "com.example.app"
+serverpod cloud password set appleServiceIdentifier "com.example.service"
+serverpod cloud password set appleBundleIdentifier "com.example.app"
+serverpod cloud password set appleRedirectUri "https://example.com/auth/callback"
+serverpod cloud password set appleTeamId "ABC123DEF4"
+serverpod cloud password set appleKeyId "XYZ789ABC0"
+serverpod cloud password set appleKey --from-file ./AuthKey_XYZ789ABC0.p8
+serverpod cloud password set appleWebRedirectUri "https://example.com/auth/apple-complete"
+serverpod cloud password set appleAndroidPackageIdentifier "com.example.app"
 ```
 
 Run these from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.

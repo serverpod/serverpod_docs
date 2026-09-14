@@ -2,7 +2,7 @@
 title: Deploy your app
 sidebar_class_name: sidebar-icon-get-started-step-4
 slug: /get-started/deployment
-description: Deploy your Serverpod recipe app to Serverpod Cloud with the scloud CLI, then explore other hosting options.
+description: Deploy your Serverpod recipe app to Serverpod Cloud with the Serverpod CLI, then explore other hosting options.
 ---
 
 <!-- markdownlint-disable MD025 -->
@@ -13,30 +13,33 @@ Your recipe app runs locally. The last step is to put it online. The recommended
 
 ## Deploy to Serverpod Cloud
 
-Install the Serverpod Cloud CLI:
+From your project's root folder, run:
 
 ```bash
-$ dart pub global activate serverpod_cloud_cli
+$ serverpod cloud launch
 ```
 
-From your project's root folder, launch the app. This creates a Cloud project, provisions a managed Postgres database (separate from the embedded one `serverpod start` runs locally), and deploys your server along with the web build of your app:
+The command walks you through these steps:
+
+1. If the Serverpod Cloud CLI isn't installed yet, `serverpod cloud` installs it first.
+2. If you aren't signed in, your browser opens so you can sign in.
+3. For a new project, the Cloud Console opens so you can create it. Keep the database enabled there, because the recipe app stores its recipes in it. Cloud provisions a managed Postgres database, separate from the embedded one `serverpod start` runs locally.
+4. You choose which custom passwords from `config/passwords.yaml` to copy to Cloud. That file stays on your machine and is never deployed. Select `geminiApiKey` so the deployed server can call Gemini. It isn't selected by default, because it sits in the `development` section.
+5. The command deploys your server along with the web build of your app.
+
+The first upload includes your Flutter web build and can exceed the default timeout on a slower connection. If the upload times out, retry with a higher limit, for example, `serverpod cloud launch --timeout 600s`.
+
+If you didn't select `geminiApiKey`, set the key as a secret. Then redeploy so the server picks it up:
 
 ```bash
-$ scloud launch
-```
-
-The first upload includes your Flutter web build and can exceed the default timeout on a slower connection. If the upload times out, retry with a higher limit (in seconds), for example, `scloud launch --timeout 600`.
-
-Your Gemini API key lives in `passwords.yaml`, which stays on your machine and is never deployed. Set it as a secret in Cloud so the deployed server can call Gemini:
-
-```bash
-$ scloud password set geminiApiKey
+$ serverpod cloud password set geminiApiKey "your-gemini-api-key"
+$ serverpod cloud deploy
 ```
 
 Whenever you make changes later, redeploy with:
 
 ```bash
-$ scloud deploy
+$ serverpod cloud deploy
 ```
 
 See the [Serverpod Cloud documentation](/cloud) for the full walkthrough, including custom domains, logs, and your free trial.

@@ -305,11 +305,11 @@ Alternatively, set the `SERVERPOD_PASSWORD_githubClientId` and `SERVERPOD_PASSWO
 
 #### Serverpod Cloud
 
-Use `scloud password set` to upload each value. The Client ID is public, so pass it as a positional argument. The Client Secret is sensitive, so read it from a file with `--from-file` to keep it out of your shell history:
+Use `serverpod cloud password set` to upload each value. The Client ID is public, so pass it as a positional argument. The Client Secret is sensitive, so read it from a file with `--from-file` to keep it out of your shell history:
 
 ```bash
-scloud password set githubClientId your-github-client-id
-scloud password set githubClientSecret --from-file path/to/github-client-secret.txt
+serverpod cloud password set githubClientId your-github-client-id
+serverpod cloud password set githubClientSecret --from-file path/to/github-client-secret.txt
 ```
 
 Run these from your linked server project directory, or pass `--project <project-id>` on each call (the flag is required unless the project is linked). See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.

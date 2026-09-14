@@ -1,7 +1,7 @@
 ---
 sidebar_label: Deploy to Serverpod Cloud
 sidebar_class_name: sidebar-icon-deploy-to-cloud
-description: Deploy your Serverpod Flutter backend to Serverpod Cloud in minutes, with zero configuration and a managed database, TLS, and scaling.
+description: Deploy your Serverpod Flutter backend to Serverpod Cloud in minutes, with zero configuration, a managed database, and TLS.
 ---
 
 # Deploy to Serverpod Cloud
@@ -18,16 +18,17 @@ Cloud manages the production infrastructure for you:
 
 - An optional production-grade Postgres database, with migrations applied automatically on each deploy.
 - Networking, load balancing, and custom domains with TLS certificates.
-- Automatic scaling to any size, with predictable pricing.
+- Server instances (podlets) with predictable pricing. See [Cloud plans](https://serverpod.dev/cloud) for what each plan includes.
 - A secure key manager for your app secrets.
 
 ## Deploy from the terminal
 
-You deploy with the `scloud` CLI:
+You deploy with the Serverpod CLI:
 
-1. Install the `scloud` CLI with `dart pub global activate serverpod_cloud_cli`.
-2. Run `scloud launch`. It creates the Cloud project, provisions a database if you enable one, and deploys your server.
-3. Set any app secrets (API keys, OAuth credentials) with `scloud password set`.
+1. Run `serverpod cloud launch`. It installs the Cloud CLI if needed. If you aren't signed in, it opens your browser so you can sign in.
+2. For a new project, the Cloud Console opens so you can create it. The database setting is pre-filled from your server's config.
+3. When prompted, select the custom passwords from `config/passwords.yaml` to copy to Cloud. The command then deploys your server.
+4. Set any other secrets (API keys, OAuth credentials) with `serverpod cloud password set`. Then run `serverpod cloud deploy` so the server picks them up.
 
 See the [Serverpod Cloud documentation](/cloud) for the full walkthrough, including secrets, custom domains, and logs.
 

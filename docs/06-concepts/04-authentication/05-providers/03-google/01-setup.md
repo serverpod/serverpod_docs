@@ -473,10 +473,10 @@ Alternatively, set the `SERVERPOD_PASSWORD_googleClientSecret` [environment vari
 
 #### Serverpod Cloud
 
-Use `https://<project-id>.serverpod.space/auth/callback` as the redirect URI in the JSON (matching the route you registered in [Web setup](#web)). Save it to a file and use `scloud password set` with `--from-file`:
+Use `https://<project-id>.serverpod.space/auth/callback` as the redirect URI in the JSON (matching the route you registered in [Web setup](#web)). Save it to a file and use `serverpod cloud password set` with `--from-file`:
 
 ```bash
-scloud password set googleClientSecret --from-file path/to/google-client-secret.json
+serverpod cloud password set googleClientSecret --from-file path/to/google-client-secret.json
 ```
 
 Run this from your linked server project directory, or pass `--project <project-id>` on the call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.

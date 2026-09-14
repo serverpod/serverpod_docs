@@ -533,11 +533,11 @@ Alternatively, set the `SERVERPOD_PASSWORD_facebookAppId` and `SERVERPOD_PASSWOR
 
 #### Serverpod Cloud
 
-Use `scloud password set` to upload each value. The App ID is public, so pass it as a positional argument. The App secret is sensitive, so read it from a file with `--from-file` to keep it out of your shell history:
+Use `serverpod cloud password set` to upload each value. The App ID is public, so pass it as a positional argument. The App secret is sensitive, so read it from a file with `--from-file` to keep it out of your shell history:
 
 ```bash
-scloud password set facebookAppId your-facebook-app-id
-scloud password set facebookAppSecret --from-file path/to/facebook-app-secret.txt
+serverpod cloud password set facebookAppId your-facebook-app-id
+serverpod cloud password set facebookAppSecret --from-file path/to/facebook-app-secret.txt
 ```
 
 Run these from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and other options.

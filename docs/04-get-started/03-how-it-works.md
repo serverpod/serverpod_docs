@@ -7,7 +7,7 @@ description: 'Start building with Serverpod. Learn how to add endpoints, call th
 
 # How Serverpod works
 
-With Serverpod, you write type-safe Dart on both your Flutter app and the backend. With hot reload, all the changes immediately take effect. Edit a file, hit save, and your running server, your Flutter app, your database, and the generated code that connects them update together. No manual rebuilds or restarts, no Docker to set up, and no API code to write by hand.
+With Serverpod, you write type-safe Dart on both your Flutter app and the backend. Edit a file and hit save. Serverpod regenerates the code that connects your server and Flutter app. It then hot reloads both while they run. To change the database schema, you press one key to create and apply a migration. No manual rebuilds, no Docker to set up, and no API code to write by hand.
 
 Serverpod is a full backend. It manages your database, authentication, file uploads, caching, real-time communication, scheduling, and logging. You can focus on building features instead of wiring together separate services. A project is a single workspace of Dart packages, and a code generator keeps the types shared between your server and app in sync. If you rename a field or use an incorrect type, they will show up as compile-time errors rather than a surprise when you run the app.
 
@@ -15,13 +15,13 @@ Serverpod is a full backend. It manages your database, authentication, file uplo
 
 A Serverpod project starts with the `serverpod create` command, which walks you through a few choices that shape what it generates:
 
-- **Project type:** A full server, or a reusable [module](./concepts/server-fundamentals/modules) shared across servers.
+- **Project type:** A server with a Flutter app (the default), a server only, or a reusable [module](./concepts/server-fundamentals/modules) shared across servers.
 - **Database and caching:** Add a Postgres database and Redis (for pub/sub and caching).
 - **Authentication:** Built-in email and social sign-ins.
 - **Web server:** Optionally serve web pages and your Flutter web app alongside your API.
-- **AI agent / Code editor (optional):** The coding agent you build with (Claude, Cursor, or VS Code), set up with agent skills.
+- **Code editors and AI agents (optional):** Pick any of Antigravity, Claude, Codex, Cursor, OpenCode, and VS Code. Serverpod installs skills and MCP servers for each one you select.
 
-The result is one workspace with three Dart packages:
+The result is one workspace. For the default project type, it has three Dart packages:
 
 ```text
 my_project/
@@ -29,6 +29,8 @@ my_project/
 ├── my_project_client/   # Generated client code used by the app.
 └── my_project_flutter/  # Your Flutter app.
 ```
+
+Server-only projects and modules have the same layout without the `_flutter` package.
 
 In the `_server` package you add your endpoints and data models. Serverpod's code generator generates code on the server and in the client package. You get a type-safe Dart API for your app, along with the serialization and database code on the server. You never write serialization, HTTP calls, or API contracts. For what each package holds in detail, see [Your Serverpod project](./concepts/server-fundamentals/your-serverpod-project).
 
@@ -99,7 +101,7 @@ The generated `Company` class then gains a `db` field with type-safe methods for
 
 ```dart
 final company = await Company.db.insertRow(session, Company(name: 'Serverpod'));
-final stored = await Company.db.findById(session, company.id);
+final stored = await Company.db.findById(session, company.id!);
 ```
 
 These run on the same `session` your endpoint method receives. When you change a table model, press `M` in the `serverpod start` terminal to create the migration and apply it. Pending migrations also apply on startup.

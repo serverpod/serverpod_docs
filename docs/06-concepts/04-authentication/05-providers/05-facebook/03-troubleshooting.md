@@ -118,7 +118,7 @@ development:
   facebookAppSecret: 'your-facebook-app-secret'
 ```
 
-Quoting the values is a safeguard. YAML parses unquoted values that look like numbers as numbers instead of strings. Facebook App IDs are numeric, so an unquoted `facebookAppId` crashes startup with an "Invalid password entries" error instead of this one. On Serverpod Cloud, set them with `scloud password set` instead. See [Publishing to production](./setup#publishing-to-production).
+Quoting the values is a safeguard. YAML parses unquoted values that look like numbers as numbers instead of strings. Facebook App IDs are numeric, so an unquoted `facebookAppId` crashes startup with an "Invalid password entries" error instead of this one. On Serverpod Cloud, set them with `serverpod cloud password set` instead. See [Publishing to production](./setup#publishing-to-production).
 
 ## Server crashes on first Facebook sign-in with "no such table"
 
