@@ -141,7 +141,7 @@ These changes can break code that worked on 3.4. Find the ones that apply to you
 | [Future calls run at least once](#future-calls-run-at-least-once) | You use future calls. |
 | [Removed deprecated APIs](#removed-deprecated-apis) | You use the string-based future call methods, `orderDescending`, `ignoreEndpoint`, `SerializationManagerServer`, the old web widget classes, or `--mini`. |
 | [Message central delivers globally by default](#message-central-delivers-globally-by-default) | You call `session.messages.postMessage` with Redis enabled, or pass `global: true`. |
-| [File storage APIs are renamed](#file-storage-apis-are-renamed) | Your server uses `session.storage` or subclasses `CloudStorage`. |
+| [File storage APIs are renamed](#file-storage-apis-are-renamed) | Your server uses `session.storage`, subclasses `CloudStorage`, or serves public files from native Google Cloud Storage. |
 | [Google sign-in on the web uses the OAuth2 redirect flow](#google-sign-in-on-the-web-uses-the-oauth2-redirect-flow) | Your Flutter web app uses Google sign-in from `serverpod_auth_idp_flutter`. |
 | [Sign-in buttons share one set of style enums](#sign-in-buttons-share-one-set-of-style-enums) | You set style arguments on sign-in buttons from `serverpod_auth_idp_flutter`. |
 | [Legacy streaming endpoints are removed](#legacy-streaming-endpoints-are-removed) | Your endpoints use `StreamingSession`. |
@@ -191,7 +191,7 @@ In 3.4, Serverpod removed a future call from the database before running it, so 
   - `WidgetRedirect` to `RedirectWidget`
 - If a widget extends `WebWidget` directly, implement the new abstract `String render({String? Function(String)? onMissingVariable})` method. The `WidgetRoute` class builds the response from `render` instead of `toString`. Widgets that extend `TemplateWidget`, `ListWidget`, `JsonWidget`, or `RedirectWidget` inherit `render`. The `WidgetRoute.build` method now returns `Future<WebWidget?>`. A `null` return yields a 404. See [Server-side HTML](../concepts/web-server/server-side-html#creating-a-widgetroute).
 - The `RouteStaticDirectory` and `PathCacheMaxAge` classes are removed. Serve directories with `StaticRoute.directory`, and set cache headers with its `cacheControlFactory` parameter. See [Static files](../concepts/web-server/static-files#cache-control).
-- The `--mini` flag on `serverpod create` is removed. To create a project without a database, use `--no-database`. To create a project without a Flutter app, use `--template server`.
+- The `--mini` flag on `serverpod create` is removed. To create a project without a database, deselect Database on the setup screen or pass `--no-interactive --no-database`. To create a project without a Flutter app, use `--template server`.
 
 ### Message central delivers globally by default
 
@@ -226,6 +226,8 @@ If you subclass `CloudStorage`, make these changes:
 - Move the logic from `storeFileWithOptions` and `createDirectFileUploadDescriptionWithOptions` into `storeFile` and `createUploadDescription`, because the `CloudStorageWithOptions` mixin and the `CloudStorageOptions` class are removed.
 
 If the app uploads or downloads through the built-in `/serverpod_cloud_storage` URL, extend `DatabaseCloudStorage`. That URL rejects other storages. If the subclass keeps bytes outside the database, also override `storeUnverifiedFile`, `retrieveFileWithStat`, and `fileExists`. The URL calls the first two. The `DatabaseCloudStorage` version of `fileExists` checks the database instead of calling `statFile`. See [Store files on local disk](../concepts/endpoints-and-apis/custom-cloud-storage#store-files-on-local-disk).
+
+If you serve public files from `NativeGoogleCloudStorage`, make the bucket itself publicly readable, because Serverpod 4.0 no longer makes each uploaded file public. For example, turn on uniform bucket-level access and grant `allUsers` the Storage Object Viewer role.
 
 App code that uses `FileUploader` doesn't change. See [File uploads](../concepts/endpoints-and-apis/file-uploads) and [Custom cloud storage](../concepts/endpoints-and-apis/custom-cloud-storage#implement-the-cloudstorage-methods).
 
