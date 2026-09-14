@@ -4,7 +4,7 @@ description: Serverpod wraps database failures in typed exceptions that signal w
 
 # Database exceptions
 
-Serverpod wraps database failures in exceptions that extend `DatabaseException`. This gives you one common type to catch for database failures and more specific types when you want to handle a known failure, such as a unique constraint violation or a single-row operation that matched no row.
+Serverpod wraps database failures in exceptions that are subtypes of `DatabaseException`. This gives you one common type to catch for database failures and more specific types when you want to handle a known failure, such as a unique constraint violation or a single-row operation that matched no row.
 
 ```dart
 try {
@@ -29,7 +29,7 @@ When a database exception is not caught inside an endpoint, it follows Serverpod
 
 ## Exception types
 
-| Exception | Extends | When it is thrown |
+| Exception | Subtype of | When it is thrown |
 | --- | --- | --- |
 | `DatabaseException` | `Exception` | The base type for database exceptions. Catch this when you want one handler for any database failure. |
 | `DatabaseUnexpectedResultException` | `DatabaseException` | A single-row operation did not affect exactly one row: `insertRow` or `upsertRow` returned a different number of rows, or `updateRow`, `updateById`, or `deleteRow` matched no row. |
