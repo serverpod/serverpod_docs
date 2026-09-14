@@ -31,7 +31,7 @@ auth.AuthConfig.set(auth.AuthConfig(
 ));
 ```
 
-See [Setup](../setup) for where to set `AuthConfig`.
+If you already call `AuthConfig.set`, add `appleClientIds` to that call, because `set` replaces the whole configuration. See [Setup](../setup) for where to set `AuthConfig`.
 
 ## Client-side configuration
 

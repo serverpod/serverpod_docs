@@ -228,7 +228,7 @@ Password import only works with the default legacy hashing. If your legacy `Auth
 :::warning
 Google, Apple, and Firebase accounts aren't linked automatically:
 
-- **Google:** the legacy Google sign-in stored the user's email as the identifier, and `migrateUsers` copies it unchanged. `AuthBackwardsCompatibility.importGoogleAccount` matches only the Google user ID, so it never finds those rows. On first sign-in, a legacy Google user gets a new, empty account. To keep their data, link the account by email in a custom endpoint that extends `GoogleIdpBaseEndpoint`.
+- **Google:** the legacy Google sign-in stored the user's email as the identifier, and `migrateUsers` copies it unchanged. `AuthBackwardsCompatibility.importGoogleAccount` matches only the Google user ID, so it never finds those rows. On first sign-in, a legacy Google user gets a new, empty account. To keep their data, link the account by email in a [Google endpoint](../concepts/authentication/providers/google/setup#create-the-endpoint) that extends `GoogleIdpBaseEndpoint`.
 - **Apple and Firebase:** the bridge has no import helper for these users, so they get no automatic linking.
 :::
 
