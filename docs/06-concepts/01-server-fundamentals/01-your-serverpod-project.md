@@ -26,8 +26,13 @@ myproject/
 ├── pubspec.yaml                  # Workspace root: one `dart pub get` resolves all packages
 ├── AGENTS.md                     # Instructions for AI agents working in the project
 ├── .github/                      # CI workflows: analyze, format, and test
-├── .vscode/                      # Attach-to-server debug configs and a serverpod start task
-├── .agents/                      # Agent skills, plus MCP configs for the editors you picked
+├── .vscode/                      # Attach-to-server debug configs and a serverpod start task, plus mcp.json if you picked VS Code
+├── CLAUDE.md                     # If you picked Claude: loads AGENTS.md for Claude
+├── .mcp.json, .claude/           # If you picked Claude: MCP config and skills
+├── .cursor/                      # If you picked Cursor: MCP config and skills
+├── .codex/                       # If you picked Codex: MCP config
+├── opencode.json, .opencode/     # If you picked OpenCode: MCP config and skills
+├── .agents/                      # If you picked VS Code, Codex, or Antigravity: skills and Antigravity's MCP config
 ├── myproject_server/             # Your server
 │   ├── bin/main.dart             # Entry point, calls run() in lib/server.dart
 │   ├── lib/server.dart           # The run() function: creates and starts the server
@@ -50,7 +55,7 @@ myproject/
     └── assets/config.json        # The server URL the app reads at startup
 ```
 
-The exact set depends on your create-time choices: the auth endpoints and sign-in screen come with authentication, the web pieces with the web server option, and the agent and MCP files with the editors you picked.
+The exact set depends on your create-time choices: the auth endpoints and sign-in screen come with authentication, the web pieces with the web server option, and the MCP configs and skills with the editors you picked. `AGENTS.md` is always created, and `CLAUDE.md` only when you pick Claude.
 
 </p>
 </details>
@@ -117,7 +122,22 @@ After the first server start, a gitignored `.serverpod/` directory also appears 
 
 ## Editor and agent files
 
-The workspace ships ready for IDE debugging and AI agents: `.vscode/` contains attach configurations that connect the debugger to a running `serverpod start` session, `AGENTS.md` instructs AI agents on how to work in the project, and, depending on the editors you picked at create time, agent skills are installed under `.agents/` and MCP configuration files register Serverpod's [MCP server](../cli/commands/mcp-server) with your editor. The agent configuration files are excluded from version control by the workspace `.gitignore`.
+The workspace ships ready for IDE debugging and AI agents: `.vscode/` contains attach configurations that connect the debugger to a running `serverpod start` session, and `AGENTS.md` instructs AI agents on how to work in the project.
+
+Each editor you pick at create time gets its own MCP config, which registers Serverpod's [MCP server](../cli/commands/mcp-server), and its own skills folder:
+
+| Editor      | MCP config                         | Skills              |
+| ----------- | ---------------------------------- | ------------------- |
+| Claude      | `.mcp.json`                        | `.claude/skills/`   |
+| Cursor      | `.cursor/mcp.json`                 | `.cursor/skills/`   |
+| VS Code     | `.vscode/mcp.json`                 | `.agents/skills/`   |
+| Codex       | `.codex/config.toml`               | `.agents/skills/`   |
+| OpenCode    | `opencode.json`                    | `.opencode/skills/` |
+| Antigravity | `.agents/plugins/serverpod-local/` | `.agents/skills/`   |
+
+The setup screen preselects no editors, so pick the ones you use. With `--no-interactive`, `serverpod create` configures Claude, Cursor, and VS Code unless you pass `--ide`.
+
+The workspace `.gitignore` excludes these files for every editor except OpenCode, so `opencode.json` and `.opencode/` stay tracked unless you add them to `.gitignore`.
 
 ## Related
 
