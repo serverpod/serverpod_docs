@@ -41,7 +41,7 @@ module.exports = [{
   {
     // Removed in version 4.0 together with the string-based future call API
     from: ['/concepts/scheduling/legacy'],
-    to: '/concepts/scheduling/overview',
+    to: '/concepts/scheduling/future-calls',
   },
   {
     from: ['/cloud/reference/cli/commands/secret'],
@@ -268,7 +268,7 @@ module.exports = [{
   },
   {
     from: ['/concepts/testing/the-basics'],
-    to: '/concepts/testing/get-started',
+    to: '/concepts/testing/writing-tests',
   },
   {
     from: ['/concepts/testing/best-practises'],
