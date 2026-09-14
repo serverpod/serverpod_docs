@@ -27,7 +27,7 @@ The command walks you through these steps:
 4. You choose which custom passwords from `config/passwords.yaml` to copy to Cloud. That file stays on your machine and is never deployed. Select `geminiApiKey` so the deployed server can call Gemini. It isn't selected by default, because it sits in the `development` section.
 5. The command deploys your server along with the web build of your app.
 
-The first upload includes your Flutter web build and can exceed the default timeout on a slower connection. If the upload times out, retry with a higher limit (in seconds), for example, `serverpod cloud launch --timeout 600`.
+The first upload includes your Flutter web build and can exceed the default timeout on a slower connection. If the upload times out, retry with a higher limit, for example, `serverpod cloud launch --timeout 600s`.
 
 If you didn't select `geminiApiKey`, set the key as a secret. Then redeploy so the server picks it up:
 

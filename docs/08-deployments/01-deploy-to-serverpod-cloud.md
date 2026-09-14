@@ -18,7 +18,7 @@ Cloud manages the production infrastructure for you:
 
 - An optional production-grade Postgres database, with migrations applied automatically on each deploy.
 - Networking, load balancing, and custom domains with TLS certificates.
-- Server instances with predictable pricing. A Starter project runs on one instance. A Growth project runs on 1 to 20 instances.
+- Server instances (podlets) with predictable pricing. See [Cloud plans](https://serverpod.dev/cloud) for what each plan includes.
 - A secure key manager for your app secrets.
 
 ## Deploy from the terminal
