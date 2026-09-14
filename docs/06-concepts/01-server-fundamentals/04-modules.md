@@ -22,7 +22,7 @@ dependencies:
 ```
 
 :::info
-Use the same version as your Serverpod packages, such as `4.0.0`. All official packages share one version number, so matching versions work together. Pin the exact version instead of a caret range. An exact pin keeps the packages in sync with the CLI.
+Use the same version as your Serverpod packages, such as `4.0.0`. All official packages share one version number, so matching versions work together. Pin the exact version rather than a caret range, so the packages stay in sync with the CLI.
 :::
 
 In your `config/generator.yaml`, you can optionally list the module and give it a `nickname`, which sets how you [reference the module's models](#reference-a-module-in-your-models). Without an entry, the module's own declared nickname is used; for the official modules that is the full package name.
