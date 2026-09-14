@@ -106,7 +106,7 @@ experimental_features:
   databaseSync: true
 ```
 
-Add `serverpod_offline_sync_server` to the server package and `serverpod_offline_sync_client` to the client package. Then mark the model. Sync tables need a UUID primary key; Serverpod adds the `scopeId` field that links each row to its owner scope for you:
+Add `serverpod_offline_sync_server` to the server package and `serverpod_offline_sync_client` to the client package. Then mark the model. Sync tables need a UUID primary key; Serverpod adds the `spaceId` field that links each row to its owner space for you:
 
 ```yaml
 class: Person
@@ -126,9 +126,9 @@ final session = await client.createSyncSession(
   persistentUserId: persistentUserId,
 );
 
-await client.crdt.syncOnce(session);
+await client.offlineSync.syncOnce(session);
 // Or keep the device and the server in sync while the app runs:
-final syncSession = client.crdt.syncContinuously(session);
+final syncSession = client.offlineSync.syncContinuously(session);
 ```
 
-`createSyncSession` takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing; otherwise the sync calls fail as unauthorized. For sync scopes, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).
+The `createSyncSession` method returns an `OfflineSyncDatabaseSession` and takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing; otherwise the sync calls fail as unauthorized. For personal and shared spaces, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).
