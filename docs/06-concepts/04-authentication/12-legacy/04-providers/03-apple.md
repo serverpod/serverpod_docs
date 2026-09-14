@@ -23,7 +23,15 @@ You need to install the auth module before you continue, see [Setup](../setup).
 
 ## Server-side configuration
 
-No extra steps outside installing the auth module are required.
+Set `appleClientIds` on `AuthConfig` to the client identifiers your server accepts Sign in with Apple tokens for: your app's bundle IDs and any services IDs. Sign in with Apple is disabled until this is set, so every sign-in request fails.
+
+```dart
+auth.AuthConfig.set(auth.AuthConfig(
+  appleClientIds: {'com.example.myapp'},
+));
+```
+
+See [Setup](../setup) for where to set `AuthConfig`.
 
 ## Client-side configuration
 
