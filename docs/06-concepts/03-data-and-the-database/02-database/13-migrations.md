@@ -124,7 +124,12 @@ To apply migrations explicitly, start the server runtime with the `--apply-migra
 $ dart run bin/main.dart --apply-migrations
 ```
 
-Migrations can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role). The server applies the migrations and then exits, with an exit code that reports success or failure. This suits CI jobs and other automated processes.
+If a migration fails, or the database doesn't match the latest migration afterward, the outcome depends on the run mode:
+
+- **`development`:** the server exits with code 1.
+- **Other run modes:** the server logs `Failed to apply database migrations.` or `Database does not match target state.` and keeps starting.
+
+Migrations can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role). The server applies the migrations and then stops, which suits CI jobs and other automated processes. Only in `development` does a failed migration produce a non-zero exit code. In other run modes, check the logs for failures, because the exit code can still be 0.
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-migrations
@@ -134,7 +139,7 @@ If migrations are applied at the same time as repair migration, the repair migra
 
 ### On Serverpod Cloud
 
-Serverpod Cloud applies migrations for you. Every deploy starts the server with `--apply-migrations`, so any pending migrations run before the server serves requests. If a migration fails, the deploy fails; fix the migration and redeploy. See [Cloud database](/cloud/concepts/database#migrations-run-on-every-deploy) for the full flow.
+Serverpod Cloud applies pending migrations for you on every deploy. If a migration fails, the server logs `Failed to apply database migrations.` Fix the migration and redeploy. See [Cloud database](/cloud/concepts/database#migrations-run-on-every-deploy) for the full flow.
 
 ## Creating a repair migration
 

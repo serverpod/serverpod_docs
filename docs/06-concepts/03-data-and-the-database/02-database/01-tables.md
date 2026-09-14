@@ -207,7 +207,7 @@ Restrictions:
 
 - The `id` field cannot have a column name override.
 - The column name must be unique within the model.
-- The `column` keyword is only allowed on the [foreign key field](relations/one-to-one#with-an-id-field) of a relation.
+- On a relation, set `column` on the [foreign key field](relations/one-to-one#with-an-id-field), not on the object relation field.
 
 ### Relations
 

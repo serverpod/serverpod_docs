@@ -344,7 +344,7 @@ await Company.db.updateWhere(
 
 The write runs with the same filters, conflict handling, transaction, and atomicity guarantees, but the method returns an empty list instead of reading the rows back. Skipping that read saves transferring and deserializing every affected row, which is worth it for bulk imports, cleanup jobs, and any write where the generated ids, database defaults, and updated values are not used afterwards.
 
-The `noReturn` parameter is available on `insert`, `update`, `updateWhere`, `upsert`, `delete`, and `deleteWhere`. The single-row methods `insertRow`, `updateRow`, `upsertRow`, and `deleteRow` always return the affected row.
+The `noReturn` parameter is available on `insert`, `update`, `updateWhere`, `upsert`, `delete`, and `deleteWhere`. The single-row methods `insertRow`, `updateRow`, and `deleteRow` always return the affected row. `upsertRow` returns it too, or `null` when `updateWhere` skips the row.
 
 Since the result is empty, `orderBy` and `orderByList` have no visible effect on it. They still matter on filtered operations, where they decide which rows a `limit` or `offset` selects.
 

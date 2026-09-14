@@ -32,7 +32,7 @@ When a database exception is not caught inside an endpoint, it follows Serverpod
 | Exception | Subtype of | When it is thrown |
 | --- | --- | --- |
 | `DatabaseException` | `Exception` | The base type for database exceptions. Catch this when you want one handler for any database failure. |
-| `DatabaseUnexpectedResultException` | `DatabaseException` | A single-row operation did not affect exactly one row: `insertRow` or `upsertRow` returned a different number of rows, or `updateRow`, `updateById`, or `deleteRow` matched no row. |
+| `DatabaseUnexpectedResultException` | `DatabaseException` | A single-row operation did not affect exactly one row: `insertRow` returned a different number of rows, or `updateRow`, `updateById`, or `deleteRow` matched no row. `upsertRow` returns `null` instead when `updateWhere` skips the row. |
 | `DatabaseQueryException` | `DatabaseException` | The database rejected a query. Carries the adapter's error details, see below. |
 | `DatabaseUniqueViolationException` | `DatabaseQueryException` | A write violated a unique index or primary key. |
 | `DatabaseForeignKeyViolationException` | `DatabaseQueryException` | A write violated a foreign key constraint, including at commit for [deferrable constraints](relations/deferrable-constraints). |

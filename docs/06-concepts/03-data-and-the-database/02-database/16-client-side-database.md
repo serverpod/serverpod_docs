@@ -56,7 +56,14 @@ Future<String> resolveDatabasePath(String fileName) async {
 Creating the session opens the database file, so keep one session for the lifetime of the app, for example in your state management, instead of creating a new one per operation. Call `close()` on the session to close the underlying database when you are done with it. On the web there is no file system, which is why the example passes a bare name instead of a path.
 
 :::info
-SQLite runs in WAL mode, so `<path>-shm` and `<path>-wal` files may exist next to the database file while the session is open.
+On native platforms, SQLite runs in WAL mode, so `<path>-shm` and `<path>-wal` files may exist next to the database file while the session is open.
+:::
+
+:::note
+On the web, SQLite runs as WebAssembly in a web worker. Serve `sqlite3.wasm` and `db_worker.js` from your Flutter app's `web/` directory, at the `sqlite3` and `sqlite_async` versions in your `pubspec.lock`. The [`sqlite_async` web setup](https://pub.dev/packages/sqlite_async#web) links to both files.
+
+- Without `sqlite3.wasm`, `createSession` fails.
+- Without `db_worker.js`, the database runs on the page's main thread and is not safe to use from several tabs.
 :::
 
 ## Run migrations on the device

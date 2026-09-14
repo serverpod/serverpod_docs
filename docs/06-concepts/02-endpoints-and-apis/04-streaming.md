@@ -86,7 +86,11 @@ If you deploy behind a load balancer or proxy with a shorter idle timeout (for e
 
 ### Error handling
 
-A streaming call can fail in two ways. Errors your code raises travel over the stream as [serializable exceptions](./error-handling-and-exceptions). Failures in the connection itself throw a [`MethodStreamException` subtype](#connection-level-exceptions) instead.
+A streaming call can fail in three ways:
+
+- Errors your code raises travel over the stream as [serializable exceptions](./error-handling-and-exceptions).
+- When the server refuses to open the stream, the call fails with a [`ServerpodClientHttpException` subclass](./error-handling-and-exceptions#handle-errors-in-your-app), the same types a regular call uses. For example, a caller who is not signed in gets `ServerpodClientUnauthorized`.
+- Failures in the connection itself throw a [`MethodStreamException` subtype](#connection-level-exceptions).
 
 If an exception is thrown on a stream, the stream is closed with an exception. If the thrown exception is serializable, it is serialized and delivered over the stream before the stream closes, in both directions: stream parameters can pass exceptions to the server, and return streams can pass exceptions to the client.
 
@@ -152,11 +156,10 @@ When the failure is in the connection rather than your code, the client throws a
 | `ConnectionAttemptTimedOutException` | Opening the connection did not complete in time.                              |
 | `WebSocketListenException`           | Listening on the WebSocket failed after it was opened.                        |
 | `WebSocketClosedException`           | The WebSocket closed while the stream was in use.                             |
-| `OpenMethodStreamException`          | The server declined to open the stream; carries a reason: `endpointNotFound`, `authenticationFailed`, `authorizationDeclined`, or `invalidArguments`. |
 | `ConnectionClosedException`          | The stream connection closed, for example when authentication was revoked.    |
 | `MethodStreamIdleTimeoutException`   | The stream was idle past the client's idle timeout.                           |
 
-Catch `MethodStreamException` to handle them as one group, or match specific subtypes when the reaction differs, for example prompting sign-in on `OpenMethodStreamException` with `authenticationFailed`.
+Catch `MethodStreamException` to handle them as one group, or match specific subtypes when the reaction differs.
 
 ## Example: live updates for a filtered query
 

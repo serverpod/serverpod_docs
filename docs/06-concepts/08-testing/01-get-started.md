@@ -11,7 +11,7 @@ That means no separate server to start, no HTTP client to write, and no mocked d
 
 Two things follow from that:
 
-- **Tests stay independent.** Anything a test writes to the database is rolled back once that test finishes, so tests never see each other's data and you do not clean up after yourself.
+- **Tests stay independent.** Anything a test writes to the database is rolled back once that test finishes, so tests never see each other's data and you do not clean up after yourself. Each `withServerpod` group also runs against its own temporary database, which is dropped when the group finishes.
 - **Each test sets its own scene.** A session builder decides what the server state looks like for a call, such as who is signed in.
 
 ## Set up
@@ -53,7 +53,7 @@ Run it:
 dart test
 ```
 
-New projects set `dataPath` under `database` in `config/test.yaml`, which makes the test server start and manage its own PostgreSQL. There is nothing to launch first. If your `test.yaml` has no `dataPath`, the server connects to the database that file points at, and that one has to be running.
+New projects set `dataPath` under `database` in `config/test.yaml`, which makes the test server start and manage its own PostgreSQL. There is nothing to launch first. If your `test.yaml` has no `dataPath`, the PostgreSQL server that file points at has to be running. The test server connects to it and creates a database of its own for each test group.
 
 ## Next
 
