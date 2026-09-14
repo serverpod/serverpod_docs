@@ -6,4 +6,4 @@ In an interactive terminal, `serverpod create` opens a setup screen where you ch
 
 The `--database`, `--redis`, `--auth`, `--webapp`, `--website`, and `--ide` flags apply only when the setup screen does not open, for example with `--no-interactive` or in CI.
 
-A project created without a database still has the generator's database feature on. Set `database: false` under [`features`](../../../01-server-fundamentals/03-configuration.md#features) in `config/generator.yaml`, then run `serverpod generate`.
+To create a project without a database, deselect Database on the setup screen or pass `--no-interactive --no-database`. The new project still has the generator's database feature on, so set `database: false` under [`features`](../../../01-server-fundamentals/03-configuration.md#features) in `config/generator.yaml`, then run `serverpod generate`.

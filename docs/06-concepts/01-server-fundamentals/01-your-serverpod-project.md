@@ -124,7 +124,7 @@ After the first server start, a gitignored `.serverpod/` directory also appears 
 
 The workspace ships ready for IDE debugging and AI agents: `.vscode/` contains attach configurations that connect the debugger to a running `serverpod start` session, and `AGENTS.md` instructs AI agents on how to work in the project.
 
-Each editor you pick at create time gets its own MCP config, which registers Serverpod's [MCP server](../cli/commands/mcp-server), and its own skills folder:
+Each editor you pick at create time gets its own MCP config, which registers Serverpod's [MCP server](../cli/commands/mcp-server), and a skills folder:
 
 | Editor      | MCP config                         | Skills              |
 | ----------- | ---------------------------------- | ------------------- |
@@ -137,7 +137,7 @@ Each editor you pick at create time gets its own MCP config, which registers Ser
 
 The setup screen preselects no editors, so pick the ones you use. With `--no-interactive`, `serverpod create` configures Claude, Cursor, and VS Code unless you pass `--ide`.
 
-The workspace `.gitignore` excludes these files for every editor except OpenCode, so `opencode.json` and `.opencode/` stay tracked unless you add them to `.gitignore`.
+The workspace `.gitignore` excludes these files for every editor except OpenCode, so Git picks up `opencode.json` and `.opencode/` unless you add them to `.gitignore`.
 
 ## Related
 

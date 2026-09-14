@@ -4,7 +4,7 @@ description: The serverpod start command runs your project in development, with 
 
 # Running your server
 
-As you build, one command runs your server, database, and app together. When you save a file, it regenerates code and hot reloads your running server and app. The `serverpod start` command generates the latest code, starts your development database, runs your server with hot reload, and launches your companion Flutter apps, all inside a single interactive terminal.
+As you build, one command runs your server, database, and app together. When you save a file, it regenerates code and hot reloads your running server and app. The `serverpod start` command generates the latest code first, then runs everything inside a single interactive terminal.
 
 Run it from your project's root folder or one of its package folders:
 

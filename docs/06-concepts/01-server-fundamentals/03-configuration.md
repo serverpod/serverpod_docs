@@ -14,9 +14,9 @@ The YAML files and environment variables combine, and the Dart configuration obj
 
 - **YAML files** (`config/development.yaml`, `config/staging.yaml`, `config/production.yaml`, `config/test.yaml`): the baseline configuration, one file per run mode.
 - **Environment variables**: override matching YAML values, useful for per-deployment settings and secrets.
-- **Dart configuration object**: a `ServerpodConfig` passed to the `Serverpod` constructor. The server ignores `config/<run-mode>.yaml` and the `SERVERPOD_*` configuration variables for it, and only the command-line run options, such as `--mode`, still apply on top.
+- **Dart configuration object**: a `ServerpodConfig` passed to the `Serverpod` constructor. When you pass one, the server ignores `config/<run-mode>.yaml` and the `SERVERPOD_*` configuration variables. Only the command-line run options, such as `--mode`, still apply on top.
 
-To adjust the loaded configuration instead of replacing it, pass a `configOverride` function to the `Serverpod` constructor. It receives the configuration loaded from YAML and environment variables, and returns the one the server uses.
+To adjust the loaded configuration instead of replacing it, pass a `configOverride` function to the `Serverpod` constructor. It receives the configuration from the sources above, and returns the one the server uses.
 
 For every available option, its environment variable, config-file key, and default, see the [Configuration reference](../lookups/configuration-reference).
 
