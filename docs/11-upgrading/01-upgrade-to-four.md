@@ -177,14 +177,14 @@ New projects use `ghcr.io/serverpod/postgres:16`, which bundles pgvector and Pos
 Version 4.0 adds a few new internal Serverpod tables and updates some indexes to greatly improve logs performance on Insights. The migration reads the protocol you generated above, so run `serverpod generate` first. Create a migration that captures these schema deltas so your database can be brought up to date:
 
 ```bash
-$ serverpod create-migration --tag "upgrade-4-0" --force
+$ serverpod create-migration --tag "upgrade-4-0"
 ```
 
 This writes a new migration to `<project>_server/migrations/`. It will be applied to your database in the next step.
 
 :::note
 
-The `--force` flag is only needed when using the authentication module due to a small change on the table that stores rate-limit attempts. The migration is safe and won't affect existing accounts, sessions or other auth data. The only side-effect is that ongoing requests will have their attempt counters reset to zero.
+If you use the authentication module, the migration warns about a small change to the table that stores rate-limit attempts, and you need to add `--force` to proceed. The change is safe: accounts, sessions, and other auth data are untouched. The only side effect is that in-flight attempt counters reset to zero.
 
 :::
 
