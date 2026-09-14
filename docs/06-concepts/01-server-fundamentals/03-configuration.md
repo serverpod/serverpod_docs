@@ -121,7 +121,7 @@ database:
   filePath: server.db
 ```
 
-No database password is required when using SQLite. Persistent session logs are not supported on SQLite, but `persistentEnabled` still defaults to `true`, so the server warns at startup until you set it to `false`. Console logging is on by default only in `development`, so set `consoleEnabled` to see session logs in other run modes. See [Configure logging](../operations/logging#configure-logging).
+No database password is required when using SQLite. SQLite doesn't support persistent session logs. `persistentEnabled` still defaults to `true`, so the server warns at startup until you set it to `false`. Console logging is on by default only in `development`. To see session logs in other run modes, set `consoleEnabled`. See [Configure logging](../operations/logging#configure-logging).
 
 ## Configure in Dart
 
