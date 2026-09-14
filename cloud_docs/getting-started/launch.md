@@ -35,7 +35,7 @@ scloud then writes a `scloud.yaml` linking subsequent commands to the project, u
 
 ## Watch the deployment
 
-Launch waits for the deployment and updates each of its three stages as it progresses:
+scloud waits for the deployment and updates each of its three stages as it progresses:
 
 ```text
 Upload successful.

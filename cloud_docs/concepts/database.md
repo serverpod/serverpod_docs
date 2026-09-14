@@ -14,7 +14,7 @@ The managed database runs on PostgreSQL 17 with TLS required, connection pooling
 
 The database is opt-in. You choose whether to enable it when you create the project, in one of two ways:
 
-- **With `scloud launch`.** Launch checks your server config for a `database` section and presets the database switch on the Console's **New project** page. You can change it there before you create the project.
+- **With `scloud launch`.** It checks your server config for a `database` section and presets the database switch on the Console's **New project** page. You can change it there before you create the project.
 - **With `scloud project create`.** Pass `--enable-db`, or `--no-enable-db` if your project doesn't use a database. The flag is **required**: it has no default, so you must pass one.
 
 Once a project is created with the database enabled, the database is provisioned automatically and made available to your server on the next deploy.
