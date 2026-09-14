@@ -11,6 +11,8 @@ This page covers configuration options for the email identity provider beyond th
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `EmailIdpConfig` in-code documentation.
 
+New projects use `ServerpodCloudEmailIdpConfig`, which does not take the options on this page. To set them, switch to `EmailIdpConfigFromPasswords` and pass your own `sendRegistrationVerificationCode` and `sendPasswordResetVerificationCode` callbacks. See [Use your own email provider](./setup#use-your-own-email-provider).
+
 ### Peppering
 
 A pepper is a server-side secret mixed into a password before it is hashed and stored, so a database leak alone is not enough to crack the hashes. See [storing secrets](../../setup#storing-secrets) for where to keep it.

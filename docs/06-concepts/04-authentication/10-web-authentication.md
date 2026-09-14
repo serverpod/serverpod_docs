@@ -44,12 +44,12 @@ Each field can also be set through environment variables (`SERVERPOD_AUTH_COOKIE
 
 ## Configure the client
 
-Turn on cookie transport when the app runs on the web, immediately after constructing the client and before making any calls:
+Turn on cookie transport when the app runs on the web. In `initializeClient()` in your app's `lib/client.dart`, set `cookieAuth` where the client is constructed, before making any calls:
 
 ```dart
 import 'package:flutter/foundation.dart';
 
-client = Client(serverUrl)
+client = Client(await serverUrl)
   ..cookieAuth = kIsWeb
   ..connectivityMonitor = FlutterConnectivityMonitor()
   ..authSessionManager = FlutterAuthSessionManager();

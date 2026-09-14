@@ -13,7 +13,7 @@ The [setup guide](./setup#present-the-authentication-ui) shows a `SignInScreen` 
 
 ### FirebaseAuthController
 
-The controller manages the sync between Firebase authentication state and your Serverpod session. The `client` argument is the global Serverpod `Client` instance created in `main.dart` (see [Initialize Firebase and Serverpod](./setup#3-initialize-firebase-and-serverpod)).
+The controller manages the sync between Firebase authentication state and your Serverpod session. The `client` argument is the global Serverpod `Client` instance created in `lib/client.dart` (see [Initialize Firebase and Serverpod](./setup#3-initialize-firebase-and-serverpod)).
 
 ```dart
 controller = FirebaseAuthController(

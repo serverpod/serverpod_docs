@@ -91,7 +91,7 @@ final firebaseIdpConfig = FirebaseIdpConfigFromPasswords(
   firebaseAccountDetailsValidation: (accountDetails) {
     // Require verified email (even for phone auth). Throw the serializable
     // FirebaseEmailNotVerifiedException so the app can tell this case apart.
-    // A plain Exception reaches the app only as a generic server error.
+    // A plain Exception reaches the app as FirebaseIdTokenVerificationException.
     if (accountDetails.verifiedEmail != true) {
       throw FirebaseEmailNotVerifiedException();
     }

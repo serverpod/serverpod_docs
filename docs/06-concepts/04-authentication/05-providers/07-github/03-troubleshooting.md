@@ -29,7 +29,7 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Client
 
-- [ ] Added `client.auth.initializeGitHubSignIn(clientId: ..., redirectUri: ...)` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+- [ ] Added `client.auth.initializeGitHubSignIn(clientId: ..., redirectUri: ...)` after `client.auth.initialize()` inside `initializeClient()` in your Flutter app's `lib/client.dart`.
 - [ ] Both `clientId` and `redirectUri` match values registered on the GitHub App.
 - [ ] On **Android**, added the `flutter_web_auth_2` `CallbackActivity` to `AndroidManifest.xml` with the **exact** scheme used in your callback URL.
 - [ ] On **Web (Serverpod-hosted Flutter)**, registered `FlutterWebAuth2CallbackRoute` via `pod.webServer.addRoute(...)` in `server.dart` before `pod.start()`. On **Web (separately-hosted Flutter)**, created `web/auth.html` in your Flutter project. See [Web](./setup#web) for both flows.

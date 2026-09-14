@@ -249,10 +249,10 @@ To test locally, build your Flutter web app into Serverpod's `web/app/` director
 
 ```bash
 flutter build web --base-href / --output ../my_project_server/web/app  # from your Flutter project
-serverpod start                                                            # from your server project
+serverpod start --no-flutter                                           # from your server project
 ```
 
-Replace `my_project_server` with your server package directory. Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`.
+Replace `my_project_server` with your server package directory. Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app. Without the flag, it also runs a Flutter web dev server on a different port, which does not share Serverpod's origin.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -339,7 +339,7 @@ New projects include a `SignInScreen` widget at `lib/screens/sign_in_screen.dart
 import 'package:flutter/material.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
-import '../main.dart';
+import '../client.dart';
 
 class SignInScreen extends StatefulWidget {
   final Widget child;
@@ -405,9 +405,10 @@ body: SignInScreen(
 ),
 ```
 
-:::warning
-The `initializeGoogleSignIn` call lives in `initializeClient()`, which `main()` runs once, and hot reload does not re-run it. After making these changes, hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. Until then, the Google button stays hidden.
-:::
+Hot reload does not re-run `initializeClient()`, so restart the app to apply these changes:
+
+- **Web:** run the `flutter build web` command from [Web](#web) again, then hard-reload the browser. Until you do, the Google button stays hidden.
+- **Android and iOS:** hot restart the app by pressing **R** in the `serverpod start` terminal, or rerun `flutter run`. Until you do, Android sign-in fails with [serverClientId must be provided](./troubleshooting#sign-in-fails-on-android-with-serverclientid-must-be-provided).
 
 The `SignInWidget` renders the standard Google sign-in button:
 

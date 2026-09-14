@@ -544,7 +544,7 @@ Run these from your linked server project directory, or pass `--project <project
 
 ### 4. Provide the App ID to the production Flutter build
 
-On web and macOS the App ID must be available to the Flutter app at build time. When you omit `appId`, the provider reads it from the `FACEBOOK_APP_ID` compile-time environment variable, so a single `main.dart` works in dev and prod:
+On web and macOS the App ID must be available to the Flutter app at build time. When you omit `appId`, the provider reads it from the `FACEBOOK_APP_ID` compile-time environment variable, so a single `client.dart` works in dev and prod:
 
 ```dart
 await client.auth.initializeFacebookSignIn();
