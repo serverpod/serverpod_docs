@@ -4,17 +4,19 @@ description: Configuration in Serverpod comes from YAML files, environment varia
 
 # Configuration
 
-Configuration decides what your server listens on, which database and Redis (an in-memory store Serverpod can use for pub/sub and caching) it connects to, and how it behaves in each run mode, so the same code runs locally, in staging, and in production without edits. Serverpod reads configuration from three sources: the `config/<run-mode>.yaml` files, environment variables, and a `ServerpodConfig` Dart object passed to the `Serverpod` constructor. You can mix them, and each source overrides the ones before it.
+Configuration decides what your server listens on, which database and Redis (an in-memory store Serverpod can use for pub/sub and caching) it connects to, and how it behaves in each run mode, so the same code runs locally, in staging, and in production without edits. Serverpod reads configuration from three sources: the `config/<run-mode>.yaml` files, environment variables, and a `ServerpodConfig` Dart object passed to the `Serverpod` constructor. Environment variables override matching keys in the YAML files, and a Dart object replaces both.
 
 With no configuration at all, Serverpod falls back to built-in defaults, so you can start with nothing and add configuration as you need it.
 
 ## How configuration works
 
-The three sources apply in order of precedence. The YAML files are the baseline, environment variables override the YAML files, and the Dart configuration object overrides both:
+The YAML files and environment variables combine, and the Dart configuration object replaces both:
 
 - **YAML files** (`config/development.yaml`, `config/staging.yaml`, `config/production.yaml`, `config/test.yaml`): the baseline configuration, one file per run mode.
 - **Environment variables**: override matching YAML values, useful for per-deployment settings and secrets.
-- **Dart configuration object**: a `ServerpodConfig` passed to the `Serverpod` constructor, overriding everything else.
+- **Dart configuration object**: a `ServerpodConfig` passed to the `Serverpod` constructor. When you pass one, the server ignores `config/<run-mode>.yaml` and the `SERVERPOD_*` configuration variables. Command-line options such as `--mode` still override its values.
+
+To adjust the loaded configuration instead of replacing it, pass a `configOverride` function to the `Serverpod` constructor. It receives the configuration from the sources above, and returns the one the server uses.
 
 For every available option, its environment variable, config-file key, and default, see the [Configuration reference](../lookups/configuration-reference).
 
@@ -119,7 +121,7 @@ database:
   filePath: server.db
 ```
 
-No database password is required when using SQLite. Persistent session logs are not supported on SQLite: the server keeps console logging and warns if persistent logging is enabled.
+No database password is required when using SQLite. Persistent session logs are not supported on SQLite, but `persistentEnabled` still defaults to `true`, so the server warns at startup until you set it to `false`. Console logging is on by default only in `development`, so set `consoleEnabled` to see session logs in other run modes. See [Configure logging](../operations/logging#configure-logging).
 
 ## Configure in Dart
 
@@ -338,7 +340,7 @@ experimental_features:
 
 The `--experimental-features databaseSync` command line flag does the same for a single run.
 
-See [Exception monitoring](../operations/exception-monitoring) for the experimental features Serverpod currently exposes.
+The `experimental_features` key only affects code generation. Experimental runtime APIs are on `pod.experimental` instead: `shutdownTasks` to [run code on shutdown](./running-your-server#run-code-on-shutdown), and `submitDiagnosticEvent` for [exception monitoring](../operations/exception-monitoring).
 
 :::warning
 Experimental features may change or be removed in future versions.
