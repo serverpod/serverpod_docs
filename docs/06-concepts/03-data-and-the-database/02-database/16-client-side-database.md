@@ -106,7 +106,7 @@ experimental_features:
   databaseSync: true
 ```
 
-Add `serverpod_offline_sync_server` to the server package and `serverpod_offline_sync_client` to the client package. Then mark the model. Sync tables need a UUID primary key; Serverpod adds the `spaceId` field that links each row to its owner space for you:
+Add `serverpod_offline_sync_server` to the server package and `serverpod_offline_sync_client` to the client package. Then mark the model. Sync tables need a UUID primary key. Serverpod adds a `spaceId` field for you, which links each row to the space that owns it: the user's personal space or a shared space.
 
 ```yaml
 class: Person
