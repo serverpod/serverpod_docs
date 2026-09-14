@@ -182,6 +182,12 @@ $ serverpod create-migration --tag "upgrade-4-0"
 
 This writes a new migration to `<project>_server/migrations/`. It will be applied to your database in the next step.
 
+:::note
+
+If you use the authentication module, the migration warns about a small change to the table that stores rate-limit attempts, and you need to add `--force` to proceed. The change is safe: accounts, sessions, and other auth data are untouched. The only side effect is that in-flight attempt counters reset to zero.
+
+:::
+
 ## Adopt the new development workflow
 
 Version 4.0 introduces a faster, integrated development workflow. The new `serverpod start` command runs your server, your Flutter app, and (optionally) your database in a single watch process with hot reload, replacing the manual `docker compose up` + `dart bin/main.dart` + `flutter run` triad. The result is a tighter edit-save-see-result loop and built-in tooling for migrations, hot restart, and agent skills.
