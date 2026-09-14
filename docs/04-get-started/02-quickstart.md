@@ -83,12 +83,12 @@ After the server has started and your app has finished building, the app will op
 Instruct your AI agent to build your app. Here are a few simple prompts that you can try:
 
 <Tabs>
-  <TabItem value="jobs" label="Job board">
+  <TabItem value="jobs" label="Job board" default>
 
 > _Build a professional job marketplace where employers post openings and manage applications, while job seekers browse listings. Use an editorial-inspired design with bold typography._
 
   </TabItem>
-  <TabItem value="crm" label="CRM" default>
+  <TabItem value="crm" label="CRM">
 
 > _Build a modern CRM for a B2B sales team. Users can manage companies, contacts, and deals. Use a sleek dark theme with vibrant accent colors, compact layouts, and data-rich dashboards._
 
