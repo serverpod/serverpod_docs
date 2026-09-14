@@ -8,7 +8,7 @@ description: Serverpod model files define serializable classes, exceptions, and 
 
 A data model is a YAML definition that becomes a typed Dart class on both the server and the client, and, with a [table](./database/tables) key, a database table as well. Models are the unit of data your endpoints pass and your database stores. You can also [define models that you only use in Flutter](#using-models-on-the-client-only).
 
-The recommended file extension is `.spy.yaml` (.spy stands for "Serverpod YAML"), with `.spy` and `.spy.yml` accepted as well. These files can be placed anywhere in your server's `lib` directory, and the extension enables syntax highlighting through the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code. Regular `.yaml` files are also supported, but only within `lib/src/models` (or the legacy `lib/src/protocol` directory).
+The recommended file extension is `.spy.yaml` (.spy stands for "Serverpod YAML"), with `.spy` and `.spy.yml` accepted as well. These files can be placed anywhere in your server's `lib` directory, and the extension enables syntax highlighting through the [Serverpod Extension](https://marketplace.visualstudio.com/items?itemName=serverpod.serverpod) for VS Code. Files with a plain `.yaml` or `.yml` extension are not model files. Serverpod 4 ignores them in `lib/src/models` and `lib/src/protocol` and reports an error asking you to rename them.
 
 The Serverpod CLI reads the model files when generating code and creating migrations. With `serverpod start` running, saving a model file regenerates the code. Outside a session, run `serverpod generate`.
 

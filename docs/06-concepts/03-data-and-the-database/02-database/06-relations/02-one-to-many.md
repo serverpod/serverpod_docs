@@ -17,14 +17,14 @@ In the following examples we show how to configure a 1:n relationship between `C
 With an implicit setup, Serverpod determines and establishes the relationship based on the table and class structures.
 
 ```yaml
-# company.yaml
+# company.spy.yaml
 class: Company
 table: company
 fields:
   name: String
   employees: List<Employee>?, relation
 
-# employee.yaml
+# employee.spy.yaml
 class: Employee
 table: employee
 fields:
@@ -44,13 +44,13 @@ In an explicit definition, you directly specify the relationship in a one-to-man
 This can be done through an [object relation](one-to-one#with-an-object):
 
 ```yaml
-# company.yaml
+# company.spy.yaml
 class: Company
 table: company
 fields:
   name: String
 
-# employee.yaml
+# employee.spy.yaml
 class: Employee
 table: employee
 fields:
@@ -61,13 +61,13 @@ fields:
 Or through a [foreign key field](one-to-one#with-an-id-field):
 
 ```yaml
-# company.yaml
+# company.spy.yaml
 class: Company
 table: company
 fields:
   name: String
 
-# employee.yaml
+# employee.spy.yaml
 class: Employee
 table: employee
 fields:
@@ -84,14 +84,14 @@ For a more comprehensive representation, you can define the relationship from bo
 Either through an [object relation](one-to-one#with-an-object) on the many side:
 
 ```yaml
-# company.yaml
+# company.spy.yaml
 class: Company
 table: company
 fields:
   name: String
   employees: List<Employee>?, relation(name=company_employees)
 
-# employee.yaml
+# employee.spy.yaml
 class: Employee
 table: employee
 fields:
@@ -102,14 +102,14 @@ fields:
 Or through a [foreign key field](one-to-one#with-an-id-field) on the many side:
 
 ```yaml
-# company.yaml
+# company.spy.yaml
 class: Company
 table: company
 fields:
   name: String
   employees: List<Employee>?, relation(name=company_employees)
 
-# employee.yaml
+# employee.spy.yaml
 class: Employee
 table: employee
 fields:

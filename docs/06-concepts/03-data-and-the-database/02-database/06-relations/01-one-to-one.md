@@ -15,13 +15,13 @@ In the following examples we show how to configure a 1:1 relationship between `U
 In the most simple case, all we have to do is add an `id` field on one of the models.
 
 ```yaml
-# address.yaml
+# address.spy.yaml
 class: Address
 table: address
 fields:
   street: String
 
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -44,13 +44,13 @@ When fetching a `User` from the database the `addressId` field will automaticall
 While the previous example highlights manual handling of data, there's an alternative approach that simplifies data access using automated handling. By directly specifying the Address type in the User class, Serverpod can automatically handle the relation for you.
 
 ```yaml
-# address.yaml
+# address.spy.yaml
 class: Address
 table: address
 fields:
   street: String
 
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -75,7 +75,7 @@ No `parent` keyword is needed here because the relational table is inferred from
 ### Optional relation
 
 ```yaml
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -93,7 +93,7 @@ With the introduction of the `optional` keyword in the relation, the automatical
 The `field` parameter names the foreign key field used by an object relation.
 
 ```yaml
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -114,7 +114,7 @@ fields:
 Declare the field yourself when you need control over it, for example to give it a [column name override](../tables#column-name-override) or a [scope](../../models#limiting-visibility-of-a-generated-class). A declared field must be nullable if the relation is `optional`:
 
 ```yaml
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -159,7 +159,7 @@ The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential act
 You are able to define as many independent relations as you wish on each side of the relation. This is useful when you want to have multiple relations between two entities.
 
 ```yaml
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -169,7 +169,7 @@ indexes:
     fields: friendsAddressId
     unique: true
 
-# address.yaml
+# address.spy.yaml
 class: Address
 table: address
 fields:
@@ -188,7 +188,7 @@ Both relations operate independently of each other, resulting in two distinct re
 If access to the same relation is desired from both sides, a bidirectional relation can be defined.
 
 ```yaml
-# user.yaml
+# user.spy.yaml
 class: User
 table: user
 fields:
@@ -198,7 +198,7 @@ indexes:
     fields: addressId
     unique: true
 
-# address.yaml
+# address.spy.yaml
 class: Address
 table: address
 fields:

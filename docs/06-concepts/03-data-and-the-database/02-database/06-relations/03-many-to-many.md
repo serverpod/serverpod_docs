@@ -23,7 +23,7 @@ In the following examples we show how to configure an n:m relationship between `
 Both the `Course` and `Student` tables have a direct relationship with the `Enrollment` table but no direct relationship with each other.
 
 ```yaml
-# course.yaml
+# course.spy.yaml
 class: Course
 table: course
 fields:
@@ -32,7 +32,7 @@ fields:
 ```
 
 ```yaml
-# student.yaml
+# student.spy.yaml
 class: Student
 table: student
 fields:
@@ -47,7 +47,7 @@ Note that the `name` argument is different, `course_enrollments` and `student_en
 The `Enrollment` table acts as the bridge between `Course` and `Student`. It contains foreign keys from both tables, representing the many-to-many relationship.
 
 ```yaml
-# enrollment.yaml
+# enrollment.spy.yaml
 class: Enrollment
 table: enrollment
 fields:
