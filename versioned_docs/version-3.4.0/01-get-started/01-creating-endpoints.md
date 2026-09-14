@@ -104,7 +104,7 @@ $ cd magic_recipe_server
 $ serverpod generate
 ```
 
-`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app.
+`serverpod generate` will create bindings for the endpoint and register them in the server's `generated/protocol.dart` file. It will also generate the required client code so that you can call your new `generateRecipe` method from your app. The class name's `Endpoint` suffix is dropped and the first letter lowercased, so `RecipeEndpoint` is called via `client.recipe`, and every method in the class appears under that property.
 
 :::note
 When writing server-side code, in most cases, you want it to be _stateless_. This means you avoid using global or static variables. Instead, think of each endpoint method as a function that does stuff in a sub-second timeframe and returns data or a status messages to your client. If you want to run more complex computations, you can return a `Stream` to yield progress updates as your task progresses.
