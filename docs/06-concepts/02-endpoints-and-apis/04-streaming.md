@@ -89,7 +89,7 @@ If you deploy behind a load balancer or proxy with a shorter idle timeout (for e
 A streaming call can fail in three ways:
 
 - Errors your code raises travel over the stream as [serializable exceptions](./error-handling-and-exceptions).
-- When the server refuses to open the stream, the call fails with a [`ServerpodClientHttpException` subclass](./error-handling-and-exceptions#handle-errors-in-your-app), the same types a regular call uses. For example, a caller who is not signed in gets `ServerpodClientUnauthorized`.
+- When the server refuses to open the stream, the call fails with one of the [`ServerpodClientHttpException` subclasses](./error-handling-and-exceptions#handle-errors-in-your-app) that a regular call uses. For example, a caller who is not signed in gets `ServerpodClientUnauthorized`.
 - Failures in the connection itself throw a [`MethodStreamException` subtype](#connection-level-exceptions).
 
 If an exception is thrown on a stream, the stream is closed with an exception. If the thrown exception is serializable, it is serialized and delivered over the stream before the stream closes, in both directions: stream parameters can pass exceptions to the server, and return streams can pass exceptions to the client.

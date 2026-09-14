@@ -126,10 +126,10 @@ $ dart run bin/main.dart --apply-migrations
 
 If a migration fails, or the database doesn't match the latest migration afterward, the outcome depends on the run mode:
 
+- **Any run mode except `development`:** the server logs `Failed to apply database migrations.` or `Database does not match target state.` and keeps starting.
 - **`development`:** the server exits with code 1.
-- **Other run modes:** the server logs `Failed to apply database migrations.` or `Database does not match target state.` and keeps starting.
 
-Migrations can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role). The server applies the migrations and then stops, which suits CI jobs and other automated processes. Only in `development` does a failed migration produce a non-zero exit code. In other run modes, check the logs for failures, because the exit code can still be 0.
+Migrations can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role). The server applies the migrations and then stops, which suits CI jobs and other automated processes. Outside `development`, it can still exit with code 0 after a failed migration, so check the logs for failures.
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-migrations

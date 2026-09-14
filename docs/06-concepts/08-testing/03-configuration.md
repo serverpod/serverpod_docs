@@ -37,7 +37,9 @@ withServerpod(
 | `testServerOutputMode` | How much server output reaches your terminal. See [below](#server-output). | `TestServerOutputMode.normal` |
 
 :::note
-In a project whose `config/generator.yaml` sets `features: database: false`, `applyMigrations`, `databaseInterceptor`, `rollbackDatabase`, and `runtimeParametersBuilder` are not generated at all, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate. Projects created without a database, for example with `--no-database`, don't include this setting, so add it and run `serverpod generate`.
+When `config/generator.yaml` sets `features: database: false`, the generated `withServerpod` has no `applyMigrations`, `databaseInterceptor`, `rollbackDatabase`, or `runtimeParametersBuilder` parameter, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
+
+Projects created without a database, for example with `--no-database`, don't include this setting, so add it and run `serverpod generate`.
 :::
 
 Set `serverDirectory` when tests run from somewhere other than the server package, such as the workspace root. Without it the server resolves those paths against the current directory, misses your config, and falls over later on whatever it needed from it.
@@ -83,7 +85,7 @@ Future<void> concurrentTransactionCalls(Session session) async {
 }
 ```
 
-Each `withServerpod` group runs against its own database, which is dropped when the group finishes. With rollback disabled, later tests in the same group see what earlier tests committed. To start each test from a clean state, clean up in `tearDown`:
+With rollback disabled, later tests in the same group see what earlier tests committed. To start each test from a clean state, clean up in `tearDown`:
 
 ```dart
 withServerpod(

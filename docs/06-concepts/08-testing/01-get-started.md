@@ -53,7 +53,7 @@ Run it:
 dart test
 ```
 
-New projects set `dataPath` under `database` in `config/test.yaml`, which makes the test server start and manage its own PostgreSQL. There is nothing to launch first. If your `test.yaml` has no `dataPath`, the PostgreSQL server that file points at has to be running. The test server connects to it and creates a database of its own for each test group.
+New projects set `dataPath` under `database` in `config/test.yaml`, which makes the test server start and manage its own PostgreSQL. There is nothing to launch first. If your `test.yaml` connects to a PostgreSQL server without a `dataPath`, that server has to be running. Each test group gets its own database on it.
 
 ## Next
 
