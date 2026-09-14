@@ -8,9 +8,15 @@ description: Serverpod is an open-source backend framework for Flutter developer
 
 # Introduction
 
-Serverpod is an open-source backend framework for Flutter developers. You write server logic in Dart, define data models in YAML, and call your endpoints from your Flutter app through generated, type-safe Dart code. No REST contracts to hand-write, no language-switching, no boilerplate to maintain.
+Serverpod is an open-source full-stack framework for Flutter, built from the ground up for agentic coding. You write your entire stack in Dart, define your data models in YAML, and call your server endpoints from your Flutter app through generated, type-safe Dart code. No REST contracts to maintain, no language-switching, and no boilerplate code.
 
-<div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/teOnBD5d8b8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+:::tip
+
+If you are a Flutter developer, check out our **[Quickstart guide](./04-get-started/02-quickstart.md)** to get up and running in minutes. If you don't have Flutter installed and just want to try things out, get started with **[App Studio](https://serverpod.dev/appstudio)**.
+
+:::
+
+<div style={{ position : 'relative', paddingBottom : '56.25%', height : '0' }}><iframe style={{ position : 'absolute', top : '0', left : '0', width : '100%', height : '100%' }} width="560" height="315" src="https://www.youtube-nocookie.com/embed/fQBlQUNxYWE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 ## Build with Dart everywhere
 
