@@ -231,7 +231,7 @@ On the Android emulator, `10.0.2.2` maps to the host machine. On a physical devi
 - `redirectUri is required when initializing Google Sign-In on web`
 - `clientId is required when initializing Google Sign-In on web with a redirect URI`
 
-**Cause:** On web, `initializeGoogleSignIn` needs both values. A missing `clientId` falls back to the `GOOGLE_CLIENT_ID` `--dart-define`. A missing `redirectUri` has no fallback.
+**Cause:** On web, `initializeGoogleSignIn` needs both `clientId` and `redirectUri`. If you omit `clientId`, it reads the value from the `GOOGLE_CLIENT_ID` `--dart-define`. There is no such fallback for `redirectUri`.
 
 **Resolution:** Pass both values on web:
 

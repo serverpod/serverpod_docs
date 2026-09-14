@@ -251,7 +251,9 @@ To register a signed in user, call:
 await client.auth.updateSignedInUser(authInfo);
 ```
 
-This persists the authentication information. When the signed-in user changes, open method streams close, and new streams connect as the current user. A token refresh for the same user keeps them open. This is the method used by identity providers to register a signed in user. For more details on providers, see [Custom Providers](providers/custom-providers/overview).
+This persists the authentication information. Identity providers call this method to register a signed-in user. For more details on providers, see [Custom Providers](providers/custom-providers/overview).
+
+When the signed-in user changes, open method streams close, and new streams connect as the current user. A token refresh for the same user keeps them open.
 
 ### Monitor authentication changes
 

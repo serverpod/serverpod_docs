@@ -252,7 +252,9 @@ flutter build web --base-href / --output ../my_project_server/web/app  # from yo
 serverpod start --no-flutter                                           # from your server project
 ```
 
-Replace `my_project_server` with your server package directory. Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app. Without the flag, it also runs a Flutter web dev server on a different port, which does not share Serverpod's origin.
+Replace `my_project_server` with your server package directory. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app. Without the flag, it also runs a Flutter web dev server on a different port, which does not share Serverpod's origin.
+
+Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -405,10 +407,10 @@ body: SignInScreen(
 ),
 ```
 
-Hot reload does not re-run `initializeClient()`, so restart the app to apply these changes:
+The running app does not include your `initializeGoogleSignIn` call until you rebuild or restart it:
 
-- **Web:** run the `flutter build web` command from [Web](#web) again, then hard-reload the browser. Until you do, the Google button stays hidden.
-- **Android and iOS:** hot restart the app by pressing **R** in the `serverpod start` terminal, or rerun `flutter run`. Until you do, Android sign-in fails with [serverClientId must be provided](./troubleshooting#sign-in-fails-on-android-with-serverclientid-must-be-provided).
+- **Web:** Serverpod serves the built app, so run the `flutter build web` command from [Web](#web) again, then hard-reload the browser. Until then, the Google button stays hidden.
+- **Android and iOS:** hot reload does not re-run `initializeClient()`, so hot restart the app by pressing **R** in the `serverpod start` terminal, or rerun `flutter run`. Before you restart, Android sign-in fails with [serverClientId must be provided](./troubleshooting#sign-in-fails-on-android-with-serverclientid-must-be-provided).
 
 The `SignInWidget` renders the standard Google sign-in button:
 

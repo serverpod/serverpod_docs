@@ -57,7 +57,7 @@ Xcode writes the same Keychain Sharing entry (`keychain-access-groups`) into you
 
 ### Use the login keychain for local development
 
-If you run unsigned macOS builds locally and want to avoid Keychain Sharing entitlements entirely, configure secure storage to use the login keychain instead of the Data Protection Keychain. In `initializeClient()` in your app's `lib/client.dart`, override the session manager storage:
+If you run unsigned macOS builds locally and want to avoid Keychain Sharing entitlements entirely, configure secure storage to use the login keychain instead of the Data Protection Keychain. Override the session manager storage where `initializeClient()` creates the client in your app's `lib/client.dart`:
 
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
