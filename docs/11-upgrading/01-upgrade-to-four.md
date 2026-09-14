@@ -418,6 +418,12 @@ From your project's root folder, run:
 $ serverpod start
 ```
 
+:::note
+
+If you ran `serverpod start` before upgrading, delete the `<project>_server/.dart_tool/serverpod` folder before you run this command. It holds the server that `serverpod start` compiled earlier, and an old copy can stop the upgraded server at startup. The next run rebuilds it.
+
+:::
+
 On the first run, the command compiles the native build hooks, which can take about 30 seconds. It also applies the migration you generated above. Then the server starts and watches your project. When you save a file, the command hot reloads the code.
 
 The command also launches your `<project>_flutter` app when that package exists. If the server's `pubspec.yaml` has a `serverpod: flutter_apps:` section, the command instead launches the apps in that section that set `auto_launch: true`.
@@ -540,6 +546,18 @@ If you are using Cursor, enable the **Serverpod** and **Dart** MCP servers in yo
 ### Port conflicts on startup
 
 If you run more than one Serverpod server on the same machine, the servers can conflict on the default ports: 8080 for the main server and 8090 for the database. Stop the other server, or run on different ports.
+
+### The server stops because the database doesn't match
+
+After the upgrade, `serverpod start` can report that the latest migration is applied and then stop the server with these warnings:
+
+```text
+WARNING: The database does not match the target database:
+WARNING: Database does not match target state.
+Server stopped (exitCode: 1).
+```
+
+Stop `serverpod start`, delete the `<project>_server/.dart_tool/serverpod` folder, and run `serverpod start` again. If the warnings remain, create and apply the migration from [Generate the 4.0 migration](#generate-the-40-migration).
 
 ### Agent skills or MCP servers aren't picked up after setup
 
