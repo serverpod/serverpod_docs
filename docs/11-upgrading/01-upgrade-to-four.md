@@ -104,7 +104,7 @@ $ serverpod generate
 
 ## Other breaking changes
 
-Each of these compiles or behaves differently in 4.0. Skim the headings for the ones your project uses.
+The following changes can break code that worked on 3.4. Read the sections that apply to your project.
 
 ### Model files use the `.spy.yaml` extension
 
