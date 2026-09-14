@@ -89,6 +89,8 @@ client = Client('http://$ipAddress:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 ```
 
+If you use legacy Sign in with Apple, set `appleClientIds` on `AuthConfig`, because Sign in with Apple is disabled until it's set. See [Apple sign-in](../concepts/authentication/legacy/providers/apple#server-side-configuration).
+
 The legacy module keeps working on 4.0, so you can upgrade without moving to the new authentication framework. To make that move, finish this upgrade first, then see [Migrate from legacy auth](./migrate-from-legacy-auth).
 
 ### If you use the new auth module on Android

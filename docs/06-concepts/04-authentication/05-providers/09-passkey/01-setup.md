@@ -7,8 +7,8 @@ description: Passkey sign-in adds passwordless authentication to your Serverpod 
 
 Passkeys provide a passwordless authentication method using WebAuthn/FIDO2 standards. They offer a secure, phishing-resistant way for users to sign in using biometric authentication, security keys, or device PINs.
 
-:::caution
-This provider is currently experimental and implemented only on the server-side. Flutter client-side UI components are not yet available, but you can build custom UI using the generated client endpoints.
+:::warning
+The passkey identity provider is **experimental**. Flutter UI components for passkeys aren't available yet, so build your own UI with the generated client endpoints.
 :::
 
 :::caution
