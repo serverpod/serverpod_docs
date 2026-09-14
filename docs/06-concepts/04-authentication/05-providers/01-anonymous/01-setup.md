@@ -5,8 +5,8 @@ description: Anonymous authentication lets users access your app without creatin
 
 # Set up anonymous sign-in
 
-:::info
-An anonymous account is its own auth user. To move its data to an account from another provider, merge the accounts. See [Merging accounts](../../working-with-users#merging-accounts).
+:::warning
+The anonymous identity provider is **experimental**. It doesn't support account linking yet. To move an anonymous user's data to an account from another provider, merge the accounts. See [Merging accounts](../../working-with-users#merging-accounts).
 :::
 
 To properly configure anonymous authentication, you must allow anonymous access in your Serverpod auth configuration.

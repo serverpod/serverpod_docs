@@ -83,10 +83,10 @@ For more details on how to configure token managers or create custom ones, see t
 Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
 
 - **[Email](./providers/email/setup)**: sign-up and sign-in with email and password.
-- **[Anonymous](./providers/anonymous/setup)**: accounts without any credentials, for trying the app before registering.
+- **[Anonymous](./providers/anonymous/setup)** (experimental): accounts without any credentials, for trying the app before registering.
 - **[Google](./providers/google/setup)**, **[Apple](./providers/apple/setup)**, **[Facebook](./providers/facebook/setup)**, **[GitHub](./providers/github/setup)**, and **[Microsoft](./providers/microsoft/setup)**: sign-in with the respective account.
 - **[Firebase](./providers/firebase/setup)**: reuse Firebase Authentication, including its phone and social sign-ins.
-- **[Passkey](./providers/passkey/setup)**: passwordless sign-in with passkeys.
+- **[Passkey](./providers/passkey/setup)** (experimental): passwordless sign-in with passkeys.
 - **[Custom providers](./providers/custom-providers/overview)**: build your own, including OAuth2-based ones.
 
 The list of identity providers keeps growing. If you want to contribute a new provider, see the [contribution guidelines](/contribute).
