@@ -8,7 +8,7 @@ You can host Serverpod anywhere, running Dart directly or through a Docker conta
 
 ## Required services
 
-Serverpod needs a database with the correct tables added, unless the project was created with `serverpod create --no-database`. Serverpod can also optionally use Redis. You enable Redis in your configuration files.
+Serverpod needs a database with the correct tables added, unless the project was created without a database, for example with `serverpod create --no-interactive --no-database`. Serverpod can also optionally use Redis. You enable Redis in your configuration files.
 
 ## Configuration files
 
@@ -48,17 +48,17 @@ For connection pools, Redis, isolates, and other production scale concerns beyon
 
 Running Serverpod through a Docker container is often the best option as it provides a well-defined environment. It's also easy to integrate into your build and deployment process and runs well on most platforms.
 
-You will get a `Dockerfile` created in your server directory when you set up a new project. Build it from the project root, because it copies the workspace `pubspec.lock` along with the server package:
+You will get a `Dockerfile` created in your server directory when you set up a new project. Build it from the project root, because it also copies the `pubspec.lock` file stored there:
 
 ```bash
 $ docker build -f <project>_server/Dockerfile .
 ```
 
-The file works out of the box but can be tailored to your needs. The file has no build options, but you can define environment variables when running it. The following variables are supported.
+The file works out of the box but can be tailored to your needs. It has no build options, but you can define environment variables when running it. The following variables are supported.
 
 | Environment variable | Meaning                                                                                                                                           |
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `runmode`            | The run mode to start the server in, possible values are `development`, `staging`, or `production` (default).                                     |
+| `runmode`            | The run mode to start the server in, possible values are `development`, `staging`, or `production` (the `Dockerfile` default).                    |
 | `serverid`           | Identifier of your server, default is `default`                                                                                                   |
 | `logging`            | Logging mode at startup, default is `normal`, but you can specify `verbose` to get more information during startup which can help with debugging. |
 | `role`               | The role that the server will assume, possible values are `monolith` (default), `serverless`, or `maintenance`.                                   |
