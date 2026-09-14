@@ -329,12 +329,14 @@ A server that does not use a database can set `database: false` to skip migratio
 
 ### Experimental features
 
-No experimental features are available in the current version. The `experimental_features` key is how you opt in when they exist; `all` enables every available one:
+Experimental features are off by default and opted into per project with the `experimental_features` key. The current one is `databaseSync`, which enables [`database: sync`](../data-and-the-database/database/client-side-database#sync-tables-with-the-server) on table models; `all` enables every available feature:
 
 ```yaml
 experimental_features:
-  all: true
+  databaseSync: true
 ```
+
+The `--experimental-features databaseSync` command line flag does the same for a single run.
 
 See [Exception monitoring](../operations/exception-monitoring) for the experimental features Serverpod currently exposes.
 
