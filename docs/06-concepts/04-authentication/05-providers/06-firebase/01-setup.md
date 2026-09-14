@@ -369,10 +369,10 @@ Add `firebaseServiceAccountKey` to the `production:` section of `config/password
 
 #### Serverpod Cloud
 
-Use `scloud password set` and pass the JSON file with `--from-file`:
+Use `serverpod cloud password set` and pass the JSON file with `--from-file`:
 
 ```bash
-scloud password set firebaseServiceAccountKey --from-file ./firebase-service-account.json
+serverpod cloud password set firebaseServiceAccountKey --from-file ./firebase-service-account.json
 ```
 
 Run this from your linked server project directory, or pass `--project <project-id>` on each call. See the [Serverpod Cloud passwords guide](/cloud/concepts/passwords-secrets-env-vars) for project linking and when to use passwords, secrets, or variables.

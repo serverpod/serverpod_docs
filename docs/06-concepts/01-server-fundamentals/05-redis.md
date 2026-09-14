@@ -154,7 +154,7 @@ Staging and production templates listen on **6379** and ship with placeholder ho
 2. Add a `redis` password under that run mode in `passwords.yaml`, or set `SERVERPOD_PASSWORD_redis` / `SERVERPOD_REDIS_PASSWORD`.
 3. Set `requireSsl` and `user` if your provider requires them.
 
-On [Serverpod Cloud](/cloud), set the same values with `scloud`. See [Use Redis for PubSub and caching](/cloud/guides/redis).
+On [Serverpod Cloud](/cloud), set the same values with `serverpod cloud password set` and `serverpod cloud variable set`. See [Use Redis for PubSub and caching](/cloud/guides/redis).
 
 ## SSL and username
 

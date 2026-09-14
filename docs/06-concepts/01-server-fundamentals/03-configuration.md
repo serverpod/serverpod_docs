@@ -237,7 +237,7 @@ In production, set secrets through `SERVERPOD_PASSWORD_*` environment variables,
 
 ### Passwords on Serverpod Cloud
 
-On [Serverpod Cloud](/cloud), you set the values that `getPassword` reads from the command line, with `scloud password set`, instead of editing a passwords file. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
+On [Serverpod Cloud](/cloud), you set the values that `getPassword` reads from the command line, with `serverpod cloud password set`, instead of editing a passwords file. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for the full reference.
 
 ## Configure code generation
 

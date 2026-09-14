@@ -61,7 +61,7 @@ From the project's root folder, start everything with one command:
 $ serverpod start
 ```
 
-`serverpod start` generates your code, starts the server with its built-in PostgreSQL database (no Docker required), and opens the Flutter app in Chrome. The app that opens is the default Serverpod starter: enter your name, tap **Send to Server**, and the server responds with a greeting.
+`serverpod start` generates your code, starts the server with its built-in PostgreSQL database (no Docker required), and opens the Flutter app in your default browser. The app that opens is the default Serverpod starter: enter your name and click the send button (or press Enter), and the server responds with a greeting.
 
 Leave `serverpod start` running. It watches your project, so every time you save a file it regenerates the necessary code and hot reloads the app. You'll rely on this for the rest of the guide instead of restarting anything by hand.
 

@@ -120,19 +120,19 @@ If the agent fails to reload the app, you can always hit the `R` key to force a 
 
 Deploy your web app and backend to **[Serverpod Cloud](/cloud)**, a fully managed platform built by the Serverpod team. Your first project includes a one-month free trial, with no credit card required.
 
-Create your Cloud account and create a project on the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, then launch your app:
+Create your Cloud account and create a project on the **[Serverpod Cloud Console](https://console.serverpod.dev/)**. Enable the database when you create the project if your server uses one. Then launch your app:
 
 ```bash
 $ serverpod cloud launch
 ```
 
-This configures your project, provisions a database, and deploys your backend along with the web build of your app.
+This links your project to Cloud and deploys your backend along with the web build of your app.
 
 After the first launch, you redeploy any changes by running `serverpod cloud launch` again.
 
 :::tip
 
-In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open Serverpod Insights to view your server logs, CPU usage, and other information.
+In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open your project and use the **Logs**, **Sessions**, and **Metrics** tabs to see what your server is doing.
 
 :::
 

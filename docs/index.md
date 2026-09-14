@@ -48,7 +48,7 @@ Serverpod is built for Flutter teams that want a Dart-only stack: solo developer
 Serverpod covers all common backend needs out of the box:
 
 - **Code generation:** Server endpoints and the app stay in sync automatically. Define a method on the server, call it from the app as if it were local Dart code.
-- **Fast dev loop:** `serverpod start` hot reloads your app, server, database, generated code, and web pages. No manual rebuilds or restarts.
+- **Fast dev loop:** See your changes as you save. `serverpod start` regenerates code and hot reloads your server and app, and the `M` key creates and applies a database migration.
 - **Type-safe ORM:** Query Postgres or SQLite with Dart. Filters, relations, and joins are checked at compile time. Schema changes ship as versioned migrations.
 - **Client-side database:** Use the same models in your Flutter app through a generated local database, including migrations.
 - **Authentication:** Built-in sign-in with Google, Apple, GitHub, Microsoft, Firebase, email/password, passkeys, and more. Anonymous and custom providers supported.
