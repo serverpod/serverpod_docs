@@ -18,7 +18,7 @@ Add the authentication module as a dependency to the server project's `pubspec.y
 ```yaml
 dependencies:
   ...
-  serverpod_auth_idp_server: 4.0.0-beta.1
+  serverpod_auth_idp_server: 4.0.0
 ```
 
 The `serverpod_auth_idp_server` package contains all components required to configure authentication services.
@@ -182,7 +182,7 @@ The client is the generated Dart package that your app uses to call the server (
 ```yaml
 dependencies:
   ...
-  serverpod_auth_idp_client: 4.0.0-beta.1
+  serverpod_auth_idp_client: 4.0.0
 ```
 
 ## App setup
@@ -193,8 +193,8 @@ First, add these packages to your app's `pubspec.yaml` file. Some providers, suc
 dependencies:
   flutter:
     sdk: flutter
-  serverpod_auth_idp_flutter: 4.0.0-beta.1
-  serverpod_flutter: 4.0.0-beta.1
+  serverpod_auth_idp_flutter: 4.0.0
+  serverpod_flutter: 4.0.0
   your_client:
     path: ../your_client
 ```

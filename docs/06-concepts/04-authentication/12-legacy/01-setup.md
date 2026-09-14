@@ -127,7 +127,7 @@ Add the auth client in your client project's `pubspec.yaml`.
 ```yaml
 dependencies:
   ...
-  serverpod_auth_client: 4.0.0-beta.1
+  serverpod_auth_client: 4.0.0
 ```
 
 ## App setup
@@ -138,11 +138,11 @@ First, add dependencies to your app's `pubspec.yaml` file for the methods of sig
 dependencies:
   flutter:
     sdk: flutter
-  serverpod_flutter: 4.0.0-beta.1
+  serverpod_flutter: 4.0.0
   auth_example_client:
     path: ../auth_example_client
   
-  serverpod_auth_shared_flutter: 4.0.0-beta.1
+  serverpod_auth_shared_flutter: 4.0.0
 ```
 
 Next, you need to set up a `SessionManager`, which keeps track of the user's state. It will also handle the authentication keys passed to the client from the server, upload user profile images, etc.
