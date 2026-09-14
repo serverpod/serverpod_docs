@@ -29,7 +29,7 @@ A failed deploy shows `FAILURE` in the Status column and a short reason in the I
 0 | my-app  | 73e66b41-64fc-4920-b6ef-4918cc6ceca1 | FAILURE | 2026-06-15 15:19:37 | 2026-06-15 15:20:34 | User build FAILURE - see build log
 ```
 
-The Info column points at which lifecycle stage failed: Upload, Cloud build, or Rollout.
+That reason points at the stage that failed.
 
 ## Read the build log
 
