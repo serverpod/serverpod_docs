@@ -71,7 +71,7 @@ If the timeout keeps tripping at high values, the issue is likely upstream (netw
 
 **Build failure.** Lines beginning with `ERROR:` or `FAILED:` in the build log, usually pointing at a Dart compile error, a missing import, or a missing dependency. Fix the file in your project, commit, and redeploy.
 
-**Migration failure.** The build succeeds but the server fails to start because a migration in your project's `migrations/` directory can't apply. The deploy is marked failed. Fix the migration locally (often a SQL error or a column that already exists), commit, and redeploy.
+**Migration failure.** The build succeeds, but a migration in your project's `migrations/` directory can't apply. Check the server logs with `scloud log` for `Failed to apply database migrations.` Fix the migration locally (often a SQL error or a column that already exists), commit, and redeploy.
 
 ## Fix and redeploy
 

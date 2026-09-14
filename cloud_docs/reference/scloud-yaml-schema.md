@@ -91,7 +91,7 @@ project:
 
 **Type:** string or list of strings. **Optional.** **Default:** `[]` (empty list).
 
-Commands that run after scloud finishes uploading. Same shape and shell semantics as `pre_deploy`. A failure here does not roll back the deploy; the new version is already live by then.
+Commands that run after scloud finishes uploading, before Cloud finishes building and rolling out the new version. Same shape and shell semantics as `pre_deploy`. A failure here makes `scloud deploy` exit with an error, but Cloud keeps deploying. Check the result with `scloud deployment show`.
 
 Empty (the default on a freshly created project):
 

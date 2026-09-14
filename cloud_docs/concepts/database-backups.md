@@ -82,10 +82,12 @@ Because this replaces live data, Cloud asks you to confirm first:
 ```text
 WARNING: Restores the database for project "my-app" to snapshot "snap-3f2a9c".
 The live database is replaced with the data from the snapshot.
-The current state is retained by the provider as a separate backup.
+This action cannot be undone.
 
 Do you want to proceed?
 ```
+
+To keep a copy of the current data, take a manual snapshot with `scloud db backup create` before you restore.
 
 The connection string and database credentials do not change, so your deployed server keeps working against the same database with no config change.
 

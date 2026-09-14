@@ -125,12 +125,24 @@ Press `Ctrl+C` to stop. `--tail` cannot be combined with `--since` or `--until`.
 
 ## Configure session logging
 
-Two environment variables control session logging. With a database enabled (the typical Cloud configuration), the defaults are:
+Cloud sets two environment variables that control session logging:
 
-- `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED` defaults to `true`. Session logs are written to the database and visible in Insights.
-- `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` defaults to `false`. Session logs are not printed to the runtime console and don't appear in `scloud log` output. Set it to `true` to enable both.
+- `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` is set to `true` when the project is created. Session logs are printed to the runtime console and appear in `scloud log` output. It is a regular project variable, so you can change it with `scloud variable set`.
+- `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED` is set to `true` when the project has a database. Session logs are written to the database and visible in Insights. Cloud manages this variable.
 
-To change either default, set the value with `scloud variable set`. See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for variable management.
+See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for variable management.
+
+## Clean up old session logs
+
+Cloud projects don't clean up old session logs, so the log tables keep growing. The framework's cleanup defaults don't apply, because Cloud sets session-log variables. To turn cleanup on, set all three cleanup variables and redeploy:
+
+```bash
+scloud variable set SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL "24h"
+scloud variable set SERVERPOD_SESSION_LOG_RETENTION_PERIOD "90d"
+scloud variable set SERVERPOD_SESSION_LOG_RETENTION_COUNT "100000"
+```
+
+Adjust the values to fit your project. See [Purge old records](/next/concepts/operations/logging#purge-old-records) for what each setting does.
 
 For what the server records, which tables it writes to, and how retention works, see [Logging](/concepts/operations/logging) in the framework documentation.
 

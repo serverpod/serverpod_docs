@@ -6,13 +6,13 @@ description: Run custom scripts at fixed points in a Serverpod Cloud deploy. Pre
 
 # Deployment hooks
 
-If you need something to run on every deploy, like database migrations, deployment hooks let you trigger your own scripts before or after `scloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
+If you need something to run on every deploy, like code generation, deployment hooks run your own scripts as part of `scloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
 
 ## When to use hooks
 
 Hooks come in two shapes:
 
-- **`pre_deploy`** for anything that has to run *before* Cloud receives your project (regenerate Serverpod code, build a Flutter web client, compile non-Dart assets, run database migration scripts, run a test suite as a deploy gate).
+- **`pre_deploy`** for anything that has to run *before* Cloud receives your project (regenerate Serverpod code, build a Flutter web client, compile non-Dart assets, run a test suite as a deploy gate).
 - **`post_deploy`** for anything that should fire *after* the upload completes (Slack notification, kick a downstream pipeline, mark a release in your tracker).
 
 If your deploy doesn't depend on either, don't add hooks. Deploys work without them.
@@ -55,7 +55,7 @@ A non-zero exit code halts further commands in that hook.
 The `pre_deploy` and `post_deploy` hooks fail asymmetrically:
 
 - A failing `pre_deploy` script aborts the deploy *before* Cloud receives your code.
-- A failing `post_deploy` script runs *after* the upload, so the deploy has already happened. The `scloud deploy` command exits with an error, but the new version is live.
+- A `post_deploy` script runs *after* the upload, before Cloud finishes building and rolling out the new version. If it fails, the `scloud deploy` command exits with an error, but Cloud keeps deploying. Check the result with `scloud deployment show`.
 
 Plan your scripts accordingly: put anything that must succeed before your code ships in `pre_deploy`.
 
