@@ -18,11 +18,11 @@ To add the `serverpod_auth_idp` module, add `serverpod_auth_idp_server` to your 
 
 ```yaml title="myproject_server/pubspec.yaml"
 dependencies:
-  serverpod_auth_idp_server: 4.0.0-beta.0
+  serverpod_auth_idp_server: 4.0.0
 ```
 
 :::info
-Match the version to the Serverpod version you are using; all official packages share the same version number, so matching versions work together. Prerelease versions must be pinned exactly, as above; from a stable release on, a caret constraint such as `^4.0.0` works.
+Use the same version as your Serverpod packages, such as `4.0.0`. All official packages share one version number, so matching versions work together. Pin the exact version instead of a caret range. An exact pin keeps the packages in sync with the CLI.
 :::
 
 In your `config/generator.yaml`, you can optionally list the module and give it a `nickname`, which sets how you [reference the module's models](#reference-a-module-in-your-models). Without an entry, the module's own declared nickname is used; for the official modules that is the full package name.
@@ -55,7 +55,7 @@ In your client's `pubspec.yaml`, add the module's generated client package:
 
 ```yaml title="myproject_client/pubspec.yaml"
 dependencies:
-  serverpod_auth_idp_client: 4.0.0-beta.0
+  serverpod_auth_idp_client: 4.0.0
 ```
 
 ### Add the Flutter package
@@ -64,7 +64,7 @@ In your Flutter app's `pubspec.yaml`, add the module's Flutter package:
 
 ```yaml title="myproject_flutter/pubspec.yaml"
 dependencies:
-  serverpod_auth_idp_flutter: 4.0.0-beta.0
+  serverpod_auth_idp_flutter: 4.0.0
 ```
 
 ## Reference a module in your models

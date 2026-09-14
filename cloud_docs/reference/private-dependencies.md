@@ -20,7 +20,7 @@ name: my_project
 publish_to: none
 
 environment:
-  sdk: ">=3.8.0 <4.0.0"
+  sdk: ^3.12.2
 
 workspace:
   - packages/shared_utilities
@@ -38,10 +38,10 @@ version: 1.0.0
 resolution: workspace
 
 environment:
-  sdk: ">=3.8.0 <4.0.0"
+  sdk: ^3.12.2
 
 dependencies:
-  serverpod_serialization: ^2.9.0
+  serverpod_serialization: 4.0.0
 ```
 
 When you deploy your Serverpod application, the CLI automatically detects workspace structures and includes all necessary workspace packages in your deployment package.

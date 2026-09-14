@@ -11,11 +11,11 @@ import TabItem from '@theme/TabItem';
 
 # Quickstart
 
-Try out the **Serverpod 4 public beta**. Build and deploy a full-stack Flutter and Serverpod app, hosted on the web, in 10–15 minutes. We have tested the default setup with Antigravity, Cursor, and Claude Code, but most agentic editors will work.
+Build and deploy a full-stack Flutter and Serverpod app, hosted on the web, in 10–15 minutes. We have tested the default setup with Antigravity, Cursor, and Claude Code, but most agentic editors will work.
 
 ## Prerequisites
 
-Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed.
+Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed. Serverpod 4 requires Flutter 3.44.4 or later, which includes Dart 3.12.2.
 
 :::info
 Check your Flutter installation by running the following command in your terminal:
@@ -138,6 +138,6 @@ In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open Serve
 
 ## Get help
 
-Serverpod 4 is in public beta. We're still fine-tuning agent skills, MCP servers, and the `serverpod start` workflow. If you run into issues, reach out on **[Discord](https://serverpod.dev/discord)** or file an issue on **[GitHub](https://github.com/serverpod/serverpod)**. Pull requests are welcome.
+We welcome feedback on agent skills, MCP servers, and the `serverpod start` workflow. If you run into issues, reach out on **[Discord](https://serverpod.dev/discord)** or file an issue on **[GitHub](https://github.com/serverpod/serverpod)**. Pull requests are welcome.
 
 Happy building with Serverpod 4.

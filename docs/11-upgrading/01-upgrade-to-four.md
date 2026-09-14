@@ -13,6 +13,7 @@ This guide walks through the upgrade and should take about 15 minutes.
 
 ## Before you start
 
+- You have Flutter 3.44.4 or later. It includes Dart 3.12.2, which Serverpod 4.0 requires. Check with `flutter --version`, and run `flutter upgrade` if your version is older.
 - Your project is on the latest Serverpod 3.4.x release.
 - Your project compiles and tests pass.
 - You've committed your current state to Git so you can roll back if needed.
@@ -22,7 +23,7 @@ This guide walks through the upgrade and should take about 15 minutes.
 Install the 4.0 CLI:
 
 ```bash
-$ dart install serverpod_cli 4.0.0-beta.1
+$ dart install serverpod_cli
 ```
 
 Verify the version:
@@ -37,9 +38,9 @@ In each package's `pubspec.yaml` (`<project>_server`, `<project>_client`, `<proj
 
 ```yaml
 dependencies:
-  serverpod: 4.0.0-beta.1
-  serverpod_client: 4.0.0-beta.1      # in the client and Flutter packages
-  serverpod_flutter: 4.0.0-beta.1     # in the Flutter package
+  serverpod: 4.0.0
+  serverpod_client: 4.0.0      # in the client and Flutter packages
+  serverpod_flutter: 4.0.0     # in the Flutter package
 ```
 
 Also bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to match the 4.0 minimum:
@@ -55,9 +56,9 @@ The legacy `serverpod_auth` packages ship 4.0 releases. Bump every `serverpod_au
 
 ```yaml
 dependencies:
-  serverpod_auth_server: 4.0.0-beta.1          # in the server package
-  serverpod_auth_client: 4.0.0-beta.1          # in the client package
-  serverpod_auth_shared_flutter: 4.0.0-beta.1  # in the Flutter package
+  serverpod_auth_server: 4.0.0          # in the server package
+  serverpod_auth_client: 4.0.0          # in the client package
+  serverpod_auth_shared_flutter: 4.0.0  # in the Flutter package
 ```
 
 The `authenticationKeyManager` parameter on the generated `Client` was removed in 4.0. Assign the key manager to the `authKeyProvider` field instead:

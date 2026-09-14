@@ -32,7 +32,7 @@ Add the dependency to your `pubspec.yaml` in your flutter project.
 ```yaml
 dependencies:
   ...
-  serverpod_auth_apple_flutter: 4.0.0-beta.1
+  serverpod_auth_apple_flutter: 4.0.0
 ```
 
 ### Config
