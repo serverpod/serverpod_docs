@@ -12,14 +12,12 @@ The managed database runs on PostgreSQL 17 with TLS required, connection pooling
 
 ## Enable the database
 
-The database is opt-in. You choose whether to enable it when you create the project, and you can enable it in two ways:
+The database is opt-in. You choose whether to enable it when you create the project, in one of two ways:
 
-- **Interactively with `scloud launch`.** Launch prompts you with *"Enable the database for the project?"* and defaults to yes.
-- **Non-interactively with `--enable-db`.** Pass `--enable-db` (or `--no-enable-db`) to `scloud launch` to skip the prompt. The same flag is **required** on `scloud project create`: it has no default there, so you must pass one.
+- **With `scloud launch`.** It checks your server config for a `database` section and presets the database switch on the Console's **New project** page. You can change it there before you create the project.
+- **With `scloud project create`.** Pass `--enable-db`, or `--no-enable-db` if your project doesn't use a database. The flag is **required**: it has no default, so you must pass one.
 
 Once a project is created with the database enabled, the database is provisioned automatically and made available to your server on the next deploy.
-
-If your project doesn't use a database, pass `--no-enable-db` instead.
 
 ## How your server connects
 
@@ -38,11 +36,11 @@ Your server reads these through Serverpod's standard configuration. You don't wr
 
 ## Migrations run on every deploy
 
-When Cloud deploys your server, the container starts with `--apply-migrations`. Any pending migrations in your project's `migrations/` directory are applied before the server begins serving requests.
+Cloud applies pending migrations from your project's `migrations/` directory when it deploys your server.
 
-If a migration fails to apply, the server fails to start and the deployment is reported as failed. Fix the migration in your project and redeploy. For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
+If a migration fails to apply, the server logs `Failed to apply database migrations.` Check the server logs with `scloud log`, then fix the migration in your project and redeploy. For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
 
-To undo a migration that already applied successfully, create a repair migration with `serverpod create-repair-migration` targeting the version you want to roll back to, then redeploy. Cloud applies the repair on the next deploy. Only the schema is rolled back; data is not. See the framework's [Migrations](/concepts/data-and-the-database/database/migrations#rolling-back-migrations) guide for details.
+To undo a migration that already applied, create a forward migration that reverses it. Revert the model change, run `serverpod create-migration`, and redeploy. If the command stops because data would be lost, add `--force`. The forward migration changes the schema only. It does not restore data.
 
 ## Backups
 
@@ -101,4 +99,4 @@ The managed database includes infrastructure features you'd otherwise wire up yo
 ## Related
 
 - [CLI reference: `scloud db`](/cloud/reference/cli/commands/db) for all `db` subcommands and options.
-- [Deployments](/cloud/concepts/deployments) for how migrations apply during deploy.
+- [Deployments](/cloud/concepts/deployments) for the deploy lifecycle.
