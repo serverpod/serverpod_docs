@@ -139,4 +139,4 @@ await client.offlineSync.syncOnce(session);
 final syncSession = client.offlineSync.syncContinuously(session);
 ```
 
-The `createSyncSession` method returns an `OfflineSyncDatabaseSession` and takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing; otherwise the sync calls fail as unauthorized. For personal and shared spaces, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).
+The `createSyncSession` method returns an `OfflineSyncDatabaseSession` and takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing, or the sync calls fail as unauthorized. For personal and shared spaces, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).
