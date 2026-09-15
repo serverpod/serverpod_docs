@@ -1,11 +1,11 @@
 ---
-description: Upgrading from serverpod_auth_server to the new modular auth stack while existing users keep their passwords and sessions and legacy endpoints keep working.
+description: Upgrading from serverpod_auth_server to the new modular auth stack while email users keep their passwords and existing sessions keep working.
 sidebar_label: Migrate from legacy auth
 ---
 
 # Migrate from legacy serverpod_auth
 
-This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or later. At the end, existing users sign in through the new modular auth stack with their old passwords and old sessions, and your legacy endpoints keep working until every client has rolled forward. Plan for about an hour, plus migration runtime.
+This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or later. At the end, your server runs the new modular auth stack. Email users sign in with their old passwords, and existing sessions keep working. Google, Apple, and Firebase accounts aren't linked automatically, so read [the warning](#wire-up-sign-in-for-migrated-users) before you start. Old client builds can still sign in by email. [Configure the server](#configure-the-server) lists the limits on their other auth calls. Plan for about an hour, plus migration runtime.
 
 :::warning
 The `serverpod_auth_bridge` and `serverpod_auth_migration` packages are experimental. They may receive breaking changes and are not yet production-ready.
@@ -17,7 +17,7 @@ The `serverpod_auth_bridge` and `serverpod_auth_migration` packages are experime
 - Dart SDK 3.12.2 or later.
 - Flutter SDK 3.44.4 or later (only if you are migrating the Flutter app).
 - Postgres 14 or later, or SQLite3.
-- The four new auth packages at `4.0.0`: `serverpod_auth_core`, `serverpod_auth_idp`, `serverpod_auth_bridge`, and `serverpod_auth_migration`.
+- The new auth packages at `4.0.0` from the `serverpod_auth_core`, `serverpod_auth_idp`, `serverpod_auth_bridge`, and `serverpod_auth_migration` families. [Add the new auth packages](#add-the-new-auth-packages) shows which ones each `pubspec.yaml` needs.
 - Back up your production database.
 - Commit your current state on a clean branch.
 - Restore a copy of production data into a staging environment and rehearse this guide against it before running it for real.
@@ -309,7 +309,7 @@ Once that migration is applied, users still on a legacy session must sign in aga
 | --- | --- | --- |
 | `migrateUsers` throws or rolls back | Migrations not applied, or the wrong `emailIdp` instance on `AuthMigrationConfig` | Apply all module migrations; set `AuthMigrations.config = AuthMigrationConfig(emailIdp: AuthServices.instance.emailIdp)` after `pod.initializeAuthServices`. |
 | Migrated email user cannot log in with their old password | `importLegacyPasswordIfNeeded` is not on the login path | Confirm your email endpoint subclasses `EmailIdpBaseEndpoint` and catches `EmailAccountLoginException` with reason `invalidCredentials`. For an account without a password, it must call `AuthBackwardsCompatibility.importLegacyPasswordIfNeeded` and then `super.login` again. |
-| Flutter app prompts the user to sign in again after upgrade | Bridge client is not on the classpath, or the wrong module caller was passed | Add `serverpod_auth_bridge_client` to the client package; pass `client.modules.serverpod_auth_bridge` into `initAndImportLegacySessionIfNeeded`. |
+| Flutter app prompts the user to sign in again after upgrade | `initAndImportLegacySessionIfNeeded` didn't run before the sign-in UI, `migrateUsers` hasn't run, or the app stores its session in a custom location | Call `initAndImportLegacySessionIfNeeded` before any sign-in UI renders. Run `migrateUsers`, so the bridge holds the old sessions. For custom session storage, pass a `legacyStringGetter` that reads from it. |
 | Duplicate Google `AuthUser` created on first sign-in | Legacy Google rows store the email, and `importGoogleAccount` matches only the Google user ID | Link legacy Google accounts by email before the base login. Re-running `migrateUsers` does not help, because it skips users who are already migrated. |
 | Authentication handler rejects modular tokens | `pod.initializeAuthServices` was not called, or token managers list is missing | Call `pod.initializeAuthServices(...)` before `pod.start()`; include `JwtConfigFromPasswords` (or `ServerSideSessionsConfigFromPasswords`) plus `LegacySessionTokenManager` in `tokenManagerBuilders`. |
 | `serverpod generate` fails with "Endpoint analysis skipped due to invalid Dart syntax" or "The function 'Protocol' isn't defined" | The bridge or migration package exports its own `Endpoints` and `Protocol` classes that clash with your project's | Import the bridge with a `show` clause (`show LegacySessionTokenManager, LegacyClientSupport`) in `server.dart`, move the email endpoint subclass into its own file under `lib/src/endpoints/`, and use `hide Endpoints, Protocol` when importing the migration package in a helper file. |
