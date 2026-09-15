@@ -89,7 +89,7 @@ Local caches (`session.caches.local` and `localPrio`) stay on one process. For v
 
 Cross-instance [server events](../endpoints-and-apis/server-events) need Redis as well. `MessageScope.global` throws a `StateError` without Redis, and the default `MessageScope.auto` falls back to local delivery, so without Redis events silently stop reaching other instances.
 
-[Enable Redis](redis#enable-redis) in production config when you run more than one request node that shares cache entries or broadcast events.
+[Enable Redis in production config](redis#test-staging-and-production) when you run more than one request node that shares cache entries or broadcast events.
 
 ## Choose streams carefully
 
