@@ -113,4 +113,4 @@ Backup storage is billed separately from your regular database storage, as its o
 
 - [Database](/cloud/concepts/database): how the managed database is provisioned, connected, and reset.
 - [`scloud db` CLI reference](/cloud/reference/cli/commands/db): every `db backup` and `db schedule` flag and default.
-- [Migrations](/concepts/database/migrations#rolling-back-migrations): rolling a schema change back, which pairs with restoring data.
+- [Migrations](/concepts/data-and-the-database/database/migrations#rolling-back-migrations): rolling a schema change back, which pairs with restoring data.
