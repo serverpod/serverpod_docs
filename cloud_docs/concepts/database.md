@@ -42,7 +42,7 @@ When Cloud deploys your server, the container starts with `--apply-migrations`. 
 
 If a migration fails to apply, the server fails to start and the deployment is reported as failed. Fix the migration in your project and redeploy. For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
 
-To undo a migration that already applied successfully, create a repair migration with `serverpod create-repair-migration` targeting the version you want to roll back to, then redeploy. Cloud applies the repair on the next deploy. Only the schema is rolled back; data is not. See the framework's [Migrations](/concepts/database/migrations#rolling-back-migrations) guide for details.
+To undo a migration that already applied successfully, create a repair migration with `serverpod create-repair-migration` targeting the version you want to roll back to, then redeploy. Cloud applies the repair on the next deploy. Only the schema is rolled back; data is not. See the framework's [Migrations](/concepts/data-and-the-database/database/migrations#rolling-back-migrations) guide for details.
 
 ## Backups
 
