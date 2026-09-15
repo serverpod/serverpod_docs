@@ -229,9 +229,7 @@ Future<void> initializeClient() async {
 }
 ```
 
-:::info
-The `initializeFirebaseSignIn()` call ensures that the user gets automatically signed out from Firebase when signing out from Serverpod, keeping both systems in sync.
-:::
+The `initializeFirebaseSignIn()` call signs the user out from Firebase automatically when they sign out from Serverpod, so both systems stay in sync.
 
 ## Present the authentication UI
 

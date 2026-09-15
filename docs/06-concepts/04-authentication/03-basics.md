@@ -114,9 +114,7 @@ class MyEndpoint extends Endpoint {
 
 Serverpod ships with `Scope.admin` for built-in admin functionality in Serverpod modules. Define your own scope names for application-specific access control.
 
-:::info
 When `requiredScopes` is non-empty, authentication is required even if `requireLogin` is false.
-:::
 
 ### Custom scopes
 
@@ -202,7 +200,7 @@ await AuthServices.instance.authUsers.update(
 );
 ```
 
-Changing a user's scopes does not affect existing sessions or tokens until the user signs in again or their tokens are revoked. For open streaming connections, Serverpod closes method streams when a revoked scope overlaps what the endpoint requires. See [Managing tokens](./token-managers/managing-tokens#revoking-tokens) for revoking tokens across devices.
+Changing a user's scopes does not affect existing sessions or tokens until the user signs in again or their tokens are revoked. Serverpod closes open method streams when a revoked scope overlaps what the endpoint requires. See [Managing tokens](./token-managers/managing-tokens#revoking-tokens) for revoking tokens across devices.
 
 ### HTTP responses
 
@@ -219,7 +217,7 @@ On the client side, authentication state is managed through the `FlutterAuthSess
 On macOS, the `FlutterAuthSessionManager` stores tokens in the Keychain. New projects need a Keychain Sharing entitlement before sign-in works. See [Set up authentication on macOS](./macos-authentication).
 :::
 
-:::info
+:::note
 If you are building a pure Dart application, use the `ClientAuthSessionManager` from the `serverpod_auth_core_client` package instead. It works the same way, except it has no `authInfoListenable` getter, which is tied to the Flutter framework.
 :::
 
@@ -245,7 +243,7 @@ Returns an `AuthSuccess` object if the user is currently signed in, or `null` if
 
 ### Register authentication
 
-To register a signed in user, call:
+To register a signed-in user, call:
 
 ```dart
 await client.auth.updateSignedInUser(authInfo);
