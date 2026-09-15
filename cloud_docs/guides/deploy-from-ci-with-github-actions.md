@@ -62,10 +62,10 @@ What each step does:
 Commit the workflow file and push to `main`. Open the **Actions** tab in your repository to watch the run. When it succeeds, confirm the deploy went live:
 
 ```bash
-scloud deployment show
+scloud status deployment show
 ```
 
-You should see a recent deployment moving through Upload → Cloud build → Infra deploy → Service rollout, finishing with the rocket on **Service rollout**.
+You should see a recent deployment moving through Upload → Cloud build → Rollout, finishing with the rocket on **Rollout**.
 
 ## Run `serverpod generate` in CI (variant)
 

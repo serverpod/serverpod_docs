@@ -47,10 +47,10 @@ When the server has started, you can access it at:
 The server isn't live yet. Watch the deployment finish:
 
 ```bash
-scloud deployment show
+scloud status deployment show
 ```
 
-The command tracks the deployment through four stages, updating each line as it progresses:
+The command tracks the deployment through three stages, updating each line as it progresses:
 
 ```text
 Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
@@ -58,11 +58,10 @@ Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
 
 Upload successful.
 Cloud build successful.
-Infra deploy successful.
-Service rollout successful. 🚀
+Rollout successful. 🚀
 ```
 
-When you see the rocket on **Service rollout**, your app is live.
+When you see the rocket on **Rollout**, your app is live.
 
 ## Open your app
 

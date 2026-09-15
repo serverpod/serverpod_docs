@@ -25,21 +25,21 @@ Use Serverpod Insights for root-cause analysis. The session-grouped view makes i
 Build logs are emitted while Cloud builds your deployment package: package installation, compilation, warnings, and errors. They're the first place to look when a deploy fails. Fetch the latest build log:
 
 ```bash
-scloud deployment build-log
+scloud build log
 ```
 
-Pass a sequence number (where `0` is the latest) or a UUID to inspect a specific deployment; `scloud deployment list` shows the IDs:
+Pass a sequence number (where `0` is the latest) or a UUID to inspect a specific deployment; `scloud status deployment list` shows the IDs:
 
 ```bash
-scloud deployment build-log 3
-scloud deployment build-log 550e8400-e29b-41d4-a716-446655440000
+scloud build log 3
+scloud build log 550e8400-e29b-41d4-a716-446655440000
 ```
 
 For longer build logs, redirect to a file or filter inline:
 
 ```bash
-scloud deployment build-log > build-log.txt
-scloud deployment build-log | grep ERROR
+scloud build log > build-log.txt
+scloud build log | grep ERROR
 ```
 
 For a step-by-step walkthrough of diagnosing and recovering from a failed deploy, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
@@ -143,4 +143,5 @@ For what the server records, which tables it writes to, and how retention works,
 ## Related
 
 - [CLI reference: `log` command](/cloud/reference/cli/commands/log)
-- [CLI reference: `deployment` command](/cloud/reference/cli/commands/deployment)
+- [CLI reference: `build` command](/cloud/reference/cli/commands/build)
+- [CLI reference: `status` command](/cloud/reference/cli/commands/status)

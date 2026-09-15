@@ -42,7 +42,7 @@ Cloud zips your project directory and includes every file that isn't excluded fr
 To preview which files Cloud will upload before deploying:
 
 ```bash
-scloud deploy --dry-run --show-files
+scloud deploy --wet-run --show-files
 ```
 
 ## Read an asset at runtime
@@ -123,7 +123,7 @@ Asset files count toward your deployment package size. Large folders slow upload
 
 ## Troubleshooting
 
-**File not found at runtime.** The path is relative to the server's working directory, not to the source file. Use `./assets/<path>`. Verify the file is in the deployment with `scloud deploy --dry-run --show-files` before debugging at runtime.
+**File not found at runtime.** The path is relative to the server's working directory, not to the source file. Use `./assets/<path>`. Verify the file is in the deployment with `scloud deploy --wet-run --show-files` before debugging at runtime.
 
 **Asset missing from the deployment.** Check `.gitignore` and `.scloudignore`. Patterns like `*.json` exclude every `.json` file unless you opt them back in with `!assets/**`.
 
