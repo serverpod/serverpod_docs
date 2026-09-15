@@ -10,13 +10,13 @@ Your server needs sensitive values (database passwords, third-party API keys, OA
 
 |                       | Passwords                                              | Secrets                                                    | Variables                                               |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------- |
-| **CLI**               | `scloud password`                                      | `scloud variable set --secret`                             | `scloud variable`                                       |
+| **CLI**               | `serverpod cloud password`                                      | `serverpod cloud variable set --secret`                             | `serverpod cloud variable`                                       |
 | **Stored as**         | Env var with `SERVERPOD_PASSWORD_` prefix              | Env var (any name)                                         | Env var (any name)                                      |
 | **Encrypted**         | Yes                                                    | Yes                                                        | No (values visible in CLI and Cloud console)                |
 | **Access in code**    | `session.serverpod.getPassword('name')`                | `Platform.environment['NAME']`                             | `Platform.environment['NAME']`                          |
 | **Use when**          | Serverpod code reads the value (preferred for sensitive values) | A dependency reads env vars and cannot use `getPassword()` | Non-sensitive config (URLs, feature flags)              |
 
-Both `scloud password` and `scloud variable` follow the same shape:
+Both `serverpod cloud password` and `serverpod cloud variable` follow the same shape:
 
 - **`--name`** (mandatory): positional or as a flag
 - **Value**: positional, `--value`, or `--from-file`
@@ -27,14 +27,14 @@ Both `scloud password` and `scloud variable` follow the same shape:
 
 Passwords are the default tier for sensitive values the server reads through the Serverpod API. They are encrypted at rest, never shown after they're set, and accessed in code by the name you gave them. Each password is stored under a `SERVERPOD_PASSWORD_` prefix that the CLI adds on `set` and that `getPassword()` strips on read, so the name in your code stays clean. Common cases include database passwords, JWT signing secrets, third-party API keys, and email service credentials.
 
-Serverpod Cloud also provisions a set of platform-managed passwords automatically: database credentials, Insights tokens, `serverpod_auth_idp_server` keys, and keys for the legacy auth module. Run `scloud password list` to see them grouped into four categories: **Custom** (passwords you add), **Services** (database, Insights, and related platform passwords), **Auth** (passwords for `serverpod_auth_idp_server`), and **Legacy Auth** (passwords for the legacy authentication module). The Status column marks platform-managed passwords `AUTO (Platform)` and user-set ones `SET (User)`.
+Serverpod Cloud also provisions a set of platform-managed passwords automatically: database credentials, Insights tokens, `serverpod_auth_idp_server` keys, and keys for the legacy auth module. Run `serverpod cloud password list` to see them grouped into four categories: **Custom** (passwords you add), **Services** (database, Insights, and related platform passwords), **Auth** (passwords for `serverpod_auth_idp_server`), and **Legacy Auth** (passwords for the legacy authentication module). The Status column marks platform-managed passwords `AUTO (Platform)` and user-set ones `SET (User)`.
 
 Override a platform-managed password by setting a custom value with the same name. Unset it to restore the platform default.
 
 Set a password by name and value:
 
 ```bash
-scloud password set myApiKey "your_secret_value"
+serverpod cloud password set myApiKey "your_secret_value"
 ```
 
 Read the value in code:
@@ -46,29 +46,29 @@ final apiKey = session.serverpod.getPassword('myApiKey');
 Pass `--from-file` when the value is long, multi-line, or shouldn't appear in shell history:
 
 ```bash
-scloud password set myApiKey --from-file path/to/file.txt
+serverpod cloud password set myApiKey --from-file path/to/file.txt
 ```
 
 List all configured passwords:
 
 ```bash
-scloud password list
+serverpod cloud password list
 ```
 
 Remove a user-added password:
 
 ```bash
-scloud password unset myApiKey
+serverpod cloud password unset myApiKey
 ```
 
 ## Manage secrets
 
-Secrets are the right tier when a library or dependency reads a value from `Platform.environment['SOMETHING']` and can't use the Serverpod API. They're encrypted at rest, and the CLI shows their values masked after creation. Secrets share the `scloud variable` command with plaintext variables. The `--secret` flag on `set` stores the value in the secret tier.
+Secrets are the right tier when a library or dependency reads a value from `Platform.environment['SOMETHING']` and can't use the Serverpod API. They're encrypted at rest, and the CLI shows their values masked after creation. Secrets share the `serverpod cloud variable` command with plaintext variables. The `--secret` flag on `set` stores the value in the secret tier.
 
 Set a secret by name and value:
 
 ```bash
-scloud variable set --secret API_KEY "your_secret_value"
+serverpod cloud variable set --secret API_KEY "your_secret_value"
 ```
 
 Read the value in code:
@@ -80,19 +80,19 @@ final apiKey = Platform.environment['API_KEY'];
 Pass `--from-file` for long, multi-line, or sensitive values you don't want in shell history:
 
 ```bash
-scloud variable set --secret API_KEY --from-file path/to/file.txt
+serverpod cloud variable set --secret API_KEY --from-file path/to/file.txt
 ```
 
-List variables and secrets together, with secret values masked (passwords are listed by `scloud password list` instead):
+List variables and secrets together, with secret values masked (passwords are listed by `serverpod cloud password list` instead):
 
 ```bash
-scloud variable list
+serverpod cloud variable list
 ```
 
 Remove a secret:
 
 ```bash
-scloud variable unset API_KEY
+serverpod cloud variable unset API_KEY
 ```
 
 A name keeps the tier it was created in. Running `set` again updates the value in place. Turning a variable into a secret, or a secret back into a variable, is refused with an error. To switch tiers, `unset` the name and recreate it.
@@ -104,7 +104,7 @@ Variables are for non-sensitive configuration: URLs, feature flags, region names
 Set a variable by name and value:
 
 ```bash
-scloud variable set LOG_LEVEL "info"
+serverpod cloud variable set LOG_LEVEL "info"
 ```
 
 Read the value in code:
@@ -116,19 +116,19 @@ final logLevel = Platform.environment['LOG_LEVEL'];
 Pass `--from-file` to load the value from a file:
 
 ```bash
-scloud variable set LOG_LEVEL --from-file path/to/file.txt
+serverpod cloud variable set LOG_LEVEL --from-file path/to/file.txt
 ```
 
 List configured variables and secrets:
 
 ```bash
-scloud variable list
+serverpod cloud variable list
 ```
 
 Remove a variable:
 
 ```bash
-scloud variable unset LOG_LEVEL
+serverpod cloud variable unset LOG_LEVEL
 ```
 
 :::warning

@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Logs
-description: How Serverpod Cloud surfaces logs through Insights, the scloud CLI for terminal access and filtering, and session-log configuration.
+description: How Serverpod Cloud surfaces logs through Insights, the Serverpod Cloud CLI for terminal access and filtering, and session-log configuration.
 ---
 
 # Logs
 
-When a request fails, a deploy errors out, or you're chasing a slow endpoint, logs are where you go to find out what happened. Serverpod Cloud collects logs from your running app and from each deployment's build, and surfaces them through Serverpod Insights (a visual viewer in the Cloud console) and the `scloud` CLI.
+When a request fails, a deploy errors out, or you're chasing a slow endpoint, logs are where you go to find out what happened. Serverpod Cloud collects logs from your running app and from each deployment's build, and surfaces them through Serverpod Insights (a visual viewer in the Cloud console) and the Serverpod Cloud CLI.
 
 Insights groups logs by session, so it's the right starting point for tracing a single request end-to-end. The CLI is faster for one-off filtering and is the only path to build logs from failed deploys.
 
@@ -25,21 +25,21 @@ Use Serverpod Insights for root-cause analysis. The session-grouped view makes i
 Build logs are emitted while Cloud builds your deployment package: package installation, compilation, warnings, and errors. They're the first place to look when a deploy fails. Fetch the latest build log:
 
 ```bash
-scloud build log
+serverpod cloud build log
 ```
 
-Pass a sequence number (where `0` is the latest) or a UUID to inspect a specific deployment; `scloud status deployment list` shows the IDs:
+Pass a sequence number (where `0` is the latest) or a UUID to inspect a specific deployment; `serverpod cloud status deployment list` shows the IDs:
 
 ```bash
-scloud build log 3
-scloud build log 550e8400-e29b-41d4-a716-446655440000
+serverpod cloud build log 3
+serverpod cloud build log 550e8400-e29b-41d4-a716-446655440000
 ```
 
 For longer build logs, redirect to a file or filter inline:
 
 ```bash
-scloud build log > build-log.txt
-scloud build log | grep ERROR
+serverpod cloud build log > build-log.txt
+serverpod cloud build log | grep ERROR
 ```
 
 For a step-by-step walkthrough of diagnosing and recovering from a failed deploy, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
@@ -55,26 +55,26 @@ Runtime logs are the live output of your deployed service. Each entry contains:
 Fetch the most recent records:
 
 ```bash
-scloud log
+serverpod cloud log
 ```
 
 By default this returns 50 records. Use `--limit` to fetch more (or fewer):
 
 ```bash
-scloud log --limit 100
+serverpod cloud log --limit 100
 ```
 
 Pass `--utc` for UTC timestamps (useful when collaborating across time zones):
 
 ```bash
-scloud log --utc
+serverpod cloud log --utc
 ```
 
 Pipe to standard shell tools for further filtering, or redirect to a file for sharing:
 
 ```bash
-scloud log | grep ERROR
-scloud log > project_logs.txt
+serverpod cloud log | grep ERROR
+serverpod cloud log > project_logs.txt
 ```
 
 ## Filter logs by time
@@ -84,33 +84,33 @@ The `--since` and `--until` options accept either duration strings or ISO 8601 t
 Duration strings cover recent windows:
 
 ```bash
-scloud log 120s              # last 120 seconds
-scloud log 5m                # last 5 minutes
-scloud log 12h               # last 12 hours
-scloud log 7d                # last 7 days
-scloud log --since 1h --until 10m
+serverpod cloud log 120s              # last 120 seconds
+serverpod cloud log 5m                # last 5 minutes
+serverpod cloud log 12h               # last 12 hours
+serverpod cloud log 7d                # last 7 days
+serverpod cloud log --since 1h --until 10m
 ```
 
 ISO 8601 strings allow specific times:
 
 ```bash
-scloud log --since "2026-06-15T14:00:00Z"
-scloud log --since "2026-06-15T14:00:00Z" --until "2026-06-15T16:00:00Z"
+serverpod cloud log --since "2026-06-15T14:00:00Z"
+serverpod cloud log --since "2026-06-15T14:00:00Z" --until "2026-06-15T16:00:00Z"
 ```
 
 Lower-precision ISO forms are also accepted:
 
 ```bash
-scloud log --since "2026-06-15T14:00"     # without seconds
-scloud log --since "2026-06-15T14"        # without minutes and seconds
-scloud log --since "2026-06-15"           # just the date (starts at 00:00:00)
+serverpod cloud log --since "2026-06-15T14:00"     # without seconds
+serverpod cloud log --since "2026-06-15T14"        # without minutes and seconds
+serverpod cloud log --since "2026-06-15"           # just the date (starts at 00:00:00)
 ```
 
 Duration and ISO forms can be mixed:
 
 ```bash
-scloud log --since "2026-06-15T14:00:00Z" --until 30m
-scloud log --since 1h --until "2026-06-15T16:00:00Z"
+serverpod cloud log --since "2026-06-15T14:00:00Z" --until 30m
+serverpod cloud log --since 1h --until "2026-06-15T16:00:00Z"
 ```
 
 ## Stream logs
@@ -118,7 +118,7 @@ scloud log --since 1h --until "2026-06-15T16:00:00Z"
 Follow new log records as they arrive:
 
 ```bash
-scloud log --tail
+serverpod cloud log --tail
 ```
 
 Press `Ctrl+C` to stop. `--tail` cannot be combined with `--since` or `--until`.
@@ -127,7 +127,7 @@ Press `Ctrl+C` to stop. `--tail` cannot be combined with `--since` or `--until`.
 
 Cloud sets two environment variables that control session logging:
 
-- `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` is set to `true` when the project is created. Session logs are printed to the runtime console and appear in `scloud log` output. It is a regular project variable, so you can change it with `scloud variable set`.
+- `SERVERPOD_SESSION_CONSOLE_LOG_ENABLED` is set to `true` when the project is created. Session logs are printed to the runtime console and appear in `serverpod cloud log` output. It is a regular project variable, so you can change it with `serverpod cloud variable set`.
 - `SERVERPOD_SESSION_PERSISTENT_LOG_ENABLED` is set to `true` when the project has a database. Session logs are written to the database and visible in Insights. Cloud manages this variable.
 
 See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-secrets-env-vars) for variable management.
@@ -137,9 +137,9 @@ See [Passwords, secrets, and environment variables](/cloud/concepts/passwords-se
 Cloud projects don't clean up old session logs, so the log tables keep growing. The framework's cleanup defaults don't apply, because Cloud sets session-log variables. To turn cleanup on, set all three cleanup variables and redeploy:
 
 ```bash
-scloud variable set SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL "24h"
-scloud variable set SERVERPOD_SESSION_LOG_RETENTION_PERIOD "90d"
-scloud variable set SERVERPOD_SESSION_LOG_RETENTION_COUNT "100000"
+serverpod cloud variable set SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL "24h"
+serverpod cloud variable set SERVERPOD_SESSION_LOG_RETENTION_PERIOD "90d"
+serverpod cloud variable set SERVERPOD_SESSION_LOG_RETENTION_COUNT "100000"
 ```
 
 Adjust the values to fit your project. See [Purge old records](/concepts/operations/logging#purge-old-records) for what each setting does.

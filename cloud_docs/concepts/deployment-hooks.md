@@ -6,7 +6,7 @@ description: Run custom scripts at fixed points in a Serverpod Cloud deploy. Pre
 
 # Deployment hooks
 
-If you need something to run on every deploy, like code generation, deployment hooks run your own scripts as part of `scloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
+If you need something to run on every deploy, like code generation, deployment hooks run your own scripts as part of `serverpod cloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
 
 ## When to use hooks
 
@@ -46,7 +46,7 @@ project:
 
 ## How scripts run
 
-Each command runs in your project directory (the one containing `scloud.yaml`) through the system shell (`bash -c` on macOS and Linux, `cmd /c` on Windows). Scripts inherit the environment variables of the shell that invoked `scloud deploy`, so CI-set secrets and your local `PATH` are available. Commands in an array run sequentially; output streams to your terminal in real time as each one executes.
+Each command runs in your project directory (the one containing `scloud.yaml`) through the system shell (`bash -c` on macOS and Linux, `cmd /c` on Windows). Scripts inherit the environment variables of the shell that invoked `serverpod cloud deploy`, so CI-set secrets and your local `PATH` are available. Commands in an array run sequentially; output streams to your terminal in real time as each one executes.
 
 A non-zero exit code halts further commands in that hook.
 
@@ -55,7 +55,7 @@ A non-zero exit code halts further commands in that hook.
 The `pre_deploy` and `post_deploy` hooks fail asymmetrically:
 
 - A failing `pre_deploy` script aborts the deploy *before* Cloud receives your code.
-- A `post_deploy` script runs *after* the upload, before Cloud finishes building and rolling out the new version. If it fails, the `scloud deploy` command exits with an error, but Cloud keeps deploying. Check the result with `scloud deployment show`.
+- A `post_deploy` script runs *after* the upload, before Cloud finishes building and rolling out the new version. If it fails, the `serverpod cloud deploy` command exits with an error, but Cloud keeps deploying. Check the result with `serverpod cloud status deployment show`.
 
 Plan your scripts accordingly: put anything that must succeed before your code ships in `pre_deploy`.
 
@@ -64,4 +64,4 @@ Plan your scripts accordingly: put anything that must succeed before your code s
 ## Related
 
 - [Deployments](/cloud/concepts/deployments) for the deploy lifecycle around hooks.
-- [`scloud deploy`](/cloud/reference/cli/commands/deploy) for the deploy command and its flags.
+- [`serverpod cloud deploy`](/cloud/reference/cli/commands/deploy) for the deploy command and its flags.
