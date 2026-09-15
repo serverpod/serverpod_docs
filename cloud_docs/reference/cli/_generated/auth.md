@@ -9,7 +9,7 @@ Usage: scloud auth <subcommand> [arguments]
 Available subcommands:
   create-token   Create a personal access token.
   list           List the current authentication sessions.
-  login          Log in to Serverpod cloud.
+  login          Log in to Serverpod Cloud.
   logout         Log out from Serverpod Cloud.
   revoke-token   Revoke an authentication token.
 
@@ -24,7 +24,7 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 #### `login`
 
 ```console
-Log in to Serverpod cloud.
+Log in to Serverpod Cloud.
 
 Usage: scloud auth login [arguments]
 -h, --help                                   Print this usage information.
@@ -67,10 +67,9 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 List the current authentication sessions.
 
 Usage: scloud auth list [arguments]
--h, --help                       Print this usage information.
--u, --[no-]utc                   Display timestamps in UTC timezone instead of local.
-    --format=<text|json|yaml>    Selects the command output format.
-                                 (defaults to "text")
+-h, --help        Print this usage information.
+-u, --[no-]utc    Display timestamps in UTC timezone instead of local. Set
+                  SERVERPOD_CLOUD_DISPLAY_UTC=true to make UTC the default for all commands.
 
 Run "scloud help" to see global options.
 

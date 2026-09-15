@@ -25,13 +25,11 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 Lists all environment variables and secrets for the project.
 
 Usage: scloud variable list [arguments]
--h, --help                       Print this usage information.
--p, --project (mandatory)        The ID of the project.
-                                 Can be omitted for existing projects that are linked (see the
-                                 "project link" command) or if a global project context is set (see
-                                 the "context set" command).
-    --format=<text|json|yaml>    Selects the command output format.
-                                 (defaults to "text")
+-h, --help                   Print this usage information.
+-p, --project (mandatory)    The ID of the project.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
 
 Run "scloud help" to see global options.
 
@@ -48,8 +46,8 @@ Usage: scloud variable set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked (see the "project
-                             link" command) or if a global project context is set (see the "context
-                             set" command).
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
     --name (mandatory)       The name of the environment variable. Can be passed as the first
                              argument.
     --[no-]secret            Store the value as a secret. The value is encrypted and masked. Without
@@ -91,8 +89,8 @@ Usage: scloud variable unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked (see the "project
-                             link" command) or if a global project context is set (see the "context
-                             set" command).
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
     --name (mandatory)       The name of the environment variable. Can be passed as the first
                              argument.
 

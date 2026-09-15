@@ -51,8 +51,8 @@ Usage: scloud domain attach [arguments]
 -p, --project (mandatory)                      The ID of the project.
                                                Can be omitted for existing projects that are linked
                                                (see the "project link" command) or if a global
-                                               project context is set (see the "context set"
-                                               command).
+                                               project context is set (see the "settings set
+                                               projectContext" command).
     --name (mandatory)                         The custom domain name. Can be passed as the first
                                                argument.
 -t, --target=<api|insights|web> (mandatory)    The Serverpod server target of the custom domain,
@@ -73,8 +73,8 @@ Usage: scloud domain list [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked (see the "project
-                             link" command) or if a global project context is set (see the "context
-                             set" command).
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
 
 Run "scloud help" to see global options.
 
@@ -91,8 +91,8 @@ Usage: scloud domain detach [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked (see the "project
-                             link" command) or if a global project context is set (see the "context
-                             set" command).
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
     --name (mandatory)       The custom domain name. Can be passed as the first argument.
 
 Run "scloud help" to see global options.
@@ -110,8 +110,8 @@ Usage: scloud domain verify [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
                              Can be omitted for existing projects that are linked (see the "project
-                             link" command) or if a global project context is set (see the "context
-                             set" command).
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
     --name (mandatory)       The custom domain name. Can be passed as the first argument.
 
 Run "scloud help" to see global options.

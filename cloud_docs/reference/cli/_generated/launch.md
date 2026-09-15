@@ -15,6 +15,9 @@ Usage: scloud launch [arguments]
     --[no-]pre-deploy-scripts    Set up pre-deploy scripts.
                                  (defaults to on)
     --dart-version               Overrides the Dart SDK version to use for building the project.
+-u, --[no-]utc                   Display timestamps in UTC timezone instead of local. Set
+                                 SERVERPOD_CLOUD_DISPLAY_UTC=true to make UTC the default for all
+                                 commands.
 
 Deployment options
 -c, --concurrency=<integer>      Number of concurrent files processed when zipping the project.

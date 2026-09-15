@@ -13,6 +13,8 @@ Usage: scloud deploy [arguments]
     --wet-run                  Perform every step except the deployment, leaving the hosted
                                application untouched. Local files may still be modified.
     --show-files               Display the file tree that will be uploaded.
+    --redeploy                 Redeploy the currently running build with the latest variables and
+                               secrets. Skips zipping and uploading the project.
 -o, --output                   Save the deployment zip file to the specified path. Must end with
                                .zip
     --[no-]await               Await the deployment to finish while showing status progression.
@@ -47,6 +49,10 @@ Examples
   Save the deployment zip and still upload it (unless --wet-run is set)
 
     $ scloud deploy --output deployment.zip
+
+  Redeploy the currently running build with the latest variables and secrets
+
+    $ scloud deploy --redeploy
 
 
 See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/deploy
