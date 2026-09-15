@@ -82,7 +82,7 @@ final success = await client.myEndpoint.verifyUpload('myfile');
 
 :::info
 
-In a real-world app, you most likely want to create the file paths on your server. For your file paths to be compatible with S3, do not use a leading slash. Only use standard characters and numbers. E.g.:
+In a real-world app, you most likely want to create the file paths on your server. For your file paths to be compatible with S3, do not use a leading slash. Only use standard characters and numbers. For example:
 
 ```dart
 'profile/$userId/images/avatar.png'

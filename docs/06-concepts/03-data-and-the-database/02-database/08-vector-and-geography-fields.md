@@ -10,7 +10,7 @@ Serverpod supports two families of specialized field types backed by PostgreSQL 
 
 Vector types are used for storing high-dimensional vectors, which are especially useful for similarity search operations.
 
-When specifying vector types, the dimension is required between parentheses (e.g., `Vector(1536)`). Common dimensions include:
+When specifying vector types, the dimension is required between parentheses (for example, `Vector(1536)`). Common dimensions include:
 
 - 1536 (OpenAI embeddings)
 - 768 (many sentence transformers)

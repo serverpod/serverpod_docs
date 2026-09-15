@@ -82,9 +82,7 @@ The PostGIS extension will be automatically enabled during the first migration t
 
 For cloud providers (AWS RDS, Google Cloud SQL, Azure Database, etc.), ensure that the PostGIS extension is available on your PostgreSQL instance. Most major managed services support PostGIS with no additional setup required. If available, the extension will be enabled automatically when applying the migration.
 
-:::tip
-If the cloud provider instructs you to run a `CREATE EXTENSION postgis;` command, you can skip this step as Serverpod will handle it automatically during migration.
-:::
+If the cloud provider instructs you to run a `CREATE EXTENSION postgis;` command, you can skip that step. Serverpod handles it automatically during migration.
 
 ## Troubleshooting
 

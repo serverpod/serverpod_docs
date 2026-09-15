@@ -6,7 +6,7 @@ description: Database migrations keep your Serverpod schema in sync as your mode
 
 Serverpod comes with a migration system that helps you keep your database schema up to date as your project evolves. Database migrations provide a structured way of upgrading your database while maintaining existing data.
 
-A migration is a set of database operations (e.g. creating a table, adding a column, etc.) required to update the database schema to match the requirements of the project. Each migration handles both initializing a new database and rolling an existing one forward from a previous state.
+A migration is a set of database operations (for example, creating a table or adding a column) required to update the database schema to match the requirements of the project. Each migration handles both initializing a new database and rolling an existing one forward from a previous state.
 
 If you ever get out of sync with the migration system, repair migrations can be used to bring the database schema up to date with the migration system. Repair migrations identify the differences between the two and create a unique migration that brings the live database schema in sync with a migration database schema.
 
