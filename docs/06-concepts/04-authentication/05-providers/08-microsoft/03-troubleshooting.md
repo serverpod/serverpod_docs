@@ -27,7 +27,7 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Flutter app
 
-- [ ] Added `client.auth.initializeMicrosoftSignIn(clientId: ..., redirectUri: ...)` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+- [ ] Added `client.auth.initializeMicrosoftSignIn(clientId: ..., redirectUri: ...)` after `client.auth.initialize()` inside `initializeClient()` in your Flutter app's `lib/client.dart`.
 - [ ] Both `clientId` and `redirectUri` match values registered on the app registration.
 - [ ] The `tenant` passed on initialization matches the server's `tenant` setting. Both default to `common`.
 - [ ] On **Android**, added the `flutter_web_auth_2` `CallbackActivity` to `AndroidManifest.xml` with the **exact** scheme and host used in your callback URL.

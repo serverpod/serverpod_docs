@@ -205,7 +205,9 @@ flutter build web --base-href / --output ../my_project_server/web/app  # from yo
 serverpod start --no-flutter                             # from your server project
 ```
 
-Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`. Pass `--no-flutter` so `serverpod start` serves your prebuilt web app instead of launching a separate `flutter run -d chrome` instance, which runs on a different port and would not share Serverpod's origin. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+Pass `--no-flutter` so `serverpod start` serves your prebuilt web app. Without the flag, it also runs a Flutter web dev server on a different port, which does not share Serverpod's origin. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.
+
+Open `http://localhost:8082/` to test. Projects created with the website option serve the app under `/app` instead. Build those with `--base-href /app/` and open `/app`.
 
 The examples below use port `8082` (Serverpod's default from `config/development.yaml`).
 
@@ -316,7 +318,7 @@ Run these from your linked server project directory, or pass `--project <project
 
 ### 3. Verify the redirect URI in the Flutter build
 
-The production build of your Flutter app must initialize `GitHubSignInService` with the production `redirectUri`. The cleanest pattern is to read it from `--dart-define` so a single `main.dart` works in dev and prod. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app).
+The production build of your Flutter app must initialize `GitHubSignInService` with the production `redirectUri`. The cleanest pattern is to read it from `--dart-define` so a single `client.dart` works in dev and prod. See [Configuring client IDs on the app](./customizations#configuring-client-ids-on-the-app).
 
 :::tip
 If you run into issues, see the [troubleshooting guide](./troubleshooting).

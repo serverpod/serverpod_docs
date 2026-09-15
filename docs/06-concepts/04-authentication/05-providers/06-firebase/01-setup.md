@@ -11,7 +11,7 @@ Firebase authentication lets you use any Firebase sign-in method (email/password
 
 Before you start, make sure you have:
 
-- A Serverpod project with the new auth module installed. New projects created with `serverpod create` (Serverpod 3.4 and later) include it by default. If you are upgrading an older project, follow the [auth module setup guide](../../setup) first.
+- A Serverpod project with the new auth module installed. New projects created with `serverpod create` include it by default. If you are upgrading an older project, follow the [auth module setup guide](../../setup) first.
 - A Google account with access to the [Firebase Console](https://console.firebase.google.com/).
 - The [Firebase CLI installed](https://firebase.google.com/docs/cli#install_the_firebase_cli) and the FlutterFire CLI activated (`dart pub global activate flutterfire_cli`). You will use both later in the guide.
 
@@ -243,7 +243,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as firebase_ui;
 import 'package:serverpod_auth_idp_flutter_firebase/serverpod_auth_idp_flutter_firebase.dart';
 
-import '../main.dart';
+import '../client.dart';
 
 /// A screen that manages sign-in flow and wraps the rest of the app after authentication.
 class SignInScreen extends StatefulWidget {

@@ -223,10 +223,6 @@ await TokenMetadata.db.insertRow(
 
 The `JwtTokenManager` needs no extra configuration in your app. The client includes the access token in requests automatically and refreshes it when it is 30 seconds from expiring. If the refresh token itself expires, the client signs the user out the next time it validates the tokens. Your app decides what to show next, for example by listening to [authentication state changes](../basics#monitor-authentication-changes).
 
-:::warning
-The deprecated `client.openStreamingConnection()` interface is not compatible with JWT authentication. If you are using JWT tokens, migrate to [streaming methods](../../endpoints-and-apis/streaming) instead.
-:::
-
 ## Related
 
 - [Managing tokens](./managing-tokens): issue, validate, revoke, and list tokens.

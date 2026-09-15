@@ -33,7 +33,7 @@ Go through this before investigating a specific error. Most problems come from a
 #### Client
 
 * [ ] Add `serverpod_auth_idp_flutter` to your Flutter app's `pubspec.yaml`.
-* [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+* [ ] Add `client.auth.initializeAppleSignIn()` after `client.auth.initialize()` inside `initializeClient()` in your Flutter app's `lib/client.dart`.
 * [ ] Add **Sign in with Apple** under Signing & Capabilities in Xcode (*iOS/macOS only*).
 * [ ] Add the **Apple JS SDK** script to `web/index.html` (*web only*).
 * [ ] Pass **`APPLE_SERVICE_IDENTIFIER`** and **`APPLE_REDIRECT_URI`** via `--dart-define`. Initialization throws an `ArgumentError` without them, on every platform.

@@ -34,7 +34,7 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] Run **`flutterfire configure`** so `firebase_options.dart` is generated.
 - [ ] Verify the platform config files are in place: `GoogleService-Info.plist` (iOS, in the Runner target) and `google-services.json` (Android, in `android/app/`).
 - [ ] Import `firebase_options.dart` and call **`Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)`** before creating the Serverpod client.
-- [ ] Call **`client.auth.initializeFirebaseSignIn()`** after `client.auth.initialize()` in your Flutter app's `main.dart`.
+- [ ] Call **`client.auth.initializeFirebaseSignIn()`** after `client.auth.initialize()` inside `initializeClient()` in your Flutter app's `lib/client.dart`.
 - [ ] Call **`controller.login(user)`** after Firebase authentication completes.
 
 ## Server crashes on first Firebase sign-in with "no such table"

@@ -29,7 +29,7 @@ Go through this before investigating a specific error. Most problems come from a
 #### Client
 
 - [ ] Installed the `serverpod_auth_idp_flutter_facebook` package.
-- [ ] Called `client.auth.initializeFacebookSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`.
+- [ ] Called `client.auth.initializeFacebookSignIn()` after `client.auth.initialize()` inside `initializeClient()` in your Flutter app's `lib/client.dart`.
 - [ ] On **web** and **macOS**, supplied the App ID (directly or via the `FACEBOOK_APP_ID` dart-define).
 - [ ] On **Android**, added `strings.xml` with the app ID, protocol scheme, and client token, plus the `<meta-data>` and `<queries>` entries in `AndroidManifest.xml`, and registered the debug or release key hash on the Facebook app.
 - [ ] On **iOS**, added the `CFBundleURLTypes`, `FacebookAppID`, `FacebookClientToken`, and `LSApplicationQueriesSchemes` entries to `Info.plist`.

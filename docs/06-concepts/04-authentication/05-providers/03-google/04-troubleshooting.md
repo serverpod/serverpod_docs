@@ -29,7 +29,7 @@ Go through this before investigating a specific error. Most problems come from a
 
 #### Client
 
-- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` in your Flutter app's `main.dart`. On web, pass `clientId` and `redirectUri` (the full callback URL, either the route URL or the `auth.html` URL, depending on your [Web setup](./setup#web)). On Android, pass `serverClientId` (the Web client's ID) unless your app uses the Firebase Gradle plugin.
+- [ ] Add `client.auth.initializeGoogleSignIn()` after `client.auth.initialize()` inside `initializeClient()` in your Flutter app's `lib/client.dart`. On web, pass `clientId` and `redirectUri` (the full callback URL, either the route URL or the `auth.html` URL, depending on your [Web setup](./setup#web)). On Android, pass `serverClientId` (the Web client's ID) unless your app uses the Firebase Gradle plugin.
 - [ ] Surface Google sign-in in the UI with `SignInWidget` or `GoogleSignInWidget` (see [Present the authentication UI](./setup#present-the-authentication-ui)).
 - [ ] Create an **iOS** OAuth client in the **same** Google Cloud project as the Web client, using the same **Bundle ID** as the app. Set `GIDClientID` from the iOS client, `GIDServerClientID` to the **Web** client's ID, and add the reversed-client-ID **URL scheme** in `Info.plist` (*iOS only*).
 - [ ] Create an **Android** OAuth client in the **same** project, with the same **package name** and **SHA-1** as the build you run (*Android only*).
@@ -57,7 +57,7 @@ Common mistakes:
 - Trailing slashes, port differences, or `http` vs `https`.
 - Forgetting the callback path on the redirect URI. The bare origin is not enough.
 - For separately-hosted Flutter web, the Flutter dev server running on a random port. Pass `--web-port=<port>` to `flutter run` so the origin is stable.
-- A stale build on the standard [Web setup](./setup#web) flow. The app Serverpod serves is a compiled snapshot, so a `redirectUri` change in `main.dart` takes effect only after re-running `flutter build web`. Rebuild and hard-reload the browser; the service worker can cache the old bundle.
+- A stale build on the standard [Web setup](./setup#web) flow. The app Serverpod serves is a compiled snapshot, so a `redirectUri` change in `client.dart` takes effect only after re-running `flutter build web`. Rebuild and hard-reload the browser, because the service worker can cache the old bundle.
 
 ## Production redirect URIs rejected by Google
 
@@ -112,7 +112,8 @@ development:
     {
       "web": {
         "client_id": "...",
-        "client_secret": "..."
+        "client_secret": "...",
+        "redirect_uris": []
       }
     }
 ```
@@ -195,13 +196,13 @@ On the Android emulator, `10.0.2.2` maps to the host machine. On a physical devi
 
 **Problem:** The `SignInWidget` renders, but the Google button is missing.
 
-**Cause:** The `SignInWidget` shows the Google button when the client has a registered `GoogleIdpEndpoint` and the Google sign-in service is initialized. The common misses:
+**Cause:** The `SignInWidget` shows the Google button when the client has a registered `GoogleIdpEndpoint`. On web, the Google sign-in service must also be initialized. The common misses:
 
-- The app was hot reloaded after adding `initializeGoogleSignIn` to `client.dart`. Hot reload does not re-run `initializeClient()`, so the service is never initialized.
 - `GoogleIdpEndpoint` is missing on the server, or the client was not regenerated after adding it.
-- On web, `initializeGoogleSignIn` was called without `clientId` and `redirectUri`. The widget renders nothing without them.
+- On web, the running app does not include your `initializeGoogleSignIn` call yet. The app Serverpod serves is a build, and hot reload does not re-run `initializeClient()`.
+- On web, `initializeGoogleSignIn` threw an `ArgumentError` because `clientId` or `redirectUri` is missing. See [clientId or redirectUri is required on web](#clientid-or-redirecturi-is-required-when-initializing-google-sign-in-on-web).
 
-**Resolution:** Hot restart the app: press **R** in the `serverpod start` terminal, or rerun `flutter run`. If the button is still missing, confirm `GoogleIdpEndpoint` exists on the server and run `serverpod generate`, and on web confirm `initializeGoogleSignIn` receives `clientId` and `redirectUri` per [Web setup](./setup#web).
+**Resolution:** Confirm `GoogleIdpEndpoint` exists on the server and run `serverpod generate`. On web, run the `flutter build web` command from [Web setup](./setup#web) again and hard-reload the browser. If you run the app with `flutter run` instead, hot restart it.
 
 ## Lightweight sign-in (One Tap) not appearing
 
@@ -223,13 +224,16 @@ On the Android emulator, `10.0.2.2` maps to the host machine. On a physical devi
 2. Verify the URL scheme (`CFBundleURLSchemes`) contains the reversed client ID from the iOS plist (the `REVERSED_CLIENT_ID` value).
 3. Clean the build and run again.
 
-## clientId is required when initializing Google Sign-In on web
+## clientId or redirectUri is required when initializing Google Sign-In on web
 
-**Problem:** The Flutter app throws an `ArgumentError` at startup saying `clientId is required when initializing Google Sign-In on web with a redirect URI`.
+**Problem:** The Flutter app throws an `ArgumentError` at startup with one of these messages:
 
-**Cause:** You passed `redirectUri` to `initializeGoogleSignIn` on web but did not pass `clientId` and did not set the `GOOGLE_CLIENT_ID` `--dart-define`. In redirect mode the package needs the Web OAuth client ID explicitly; it cannot derive it from anywhere else on web.
+- `redirectUri is required when initializing Google Sign-In on web`
+- `clientId is required when initializing Google Sign-In on web with a redirect URI`
 
-**Resolution:** Either pass `clientId` directly, or pass it via `--dart-define`:
+**Cause:** On web, `initializeGoogleSignIn` needs both `clientId` and `redirectUri`. If you omit `clientId`, it reads the value from the `GOOGLE_CLIENT_ID` `--dart-define`. There is no such fallback for `redirectUri`.
+
+**Resolution:** Pass both values on web:
 
 ```dart
 client.auth.initializeGoogleSignIn(
@@ -242,7 +246,7 @@ client.auth.initializeGoogleSignIn(
 );
 ```
 
-Or:
+You can also pass `clientId` via `--dart-define` instead of in code:
 
 ```bash
 flutter run --dart-define=GOOGLE_CLIENT_ID=your-web-client-id.apps.googleusercontent.com ...
