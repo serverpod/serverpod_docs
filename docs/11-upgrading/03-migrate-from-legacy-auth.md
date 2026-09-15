@@ -5,7 +5,12 @@ sidebar_label: Migrate from legacy auth
 
 # Migrate from legacy serverpod_auth
 
-This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or later. At the end, your server runs the new modular auth stack. Email users sign in with their old passwords, and existing sessions keep working. Google, Apple, and Firebase accounts aren't linked automatically, so read [the warning](#wire-up-sign-in-for-migrated-users) before you start. Old client builds can still sign in by email. [Configure the server](#configure-the-server) lists the limits on their other auth calls. Plan for about an hour, plus migration runtime.
+This guide is for apps still running `serverpod_auth_server` on Serverpod 3.4 or later. At the end, your server runs the new modular auth stack. Email users sign in with their old passwords, and existing sessions keep working. Plan for about an hour, plus migration runtime.
+
+Two limits apply:
+
+- **Google, Apple, and Firebase accounts** aren't linked automatically. Read the warning in [Wire up sign-in for migrated users](#wire-up-sign-in-for-migrated-users) before you begin.
+- **Old client builds** can still sign in by email. The end of [Configure the server](#configure-the-server) lists the limits on their other auth calls.
 
 :::warning
 The `serverpod_auth_bridge` and `serverpod_auth_migration` packages are experimental. They may receive breaking changes and are not yet production-ready.
@@ -17,7 +22,7 @@ The `serverpod_auth_bridge` and `serverpod_auth_migration` packages are experime
 - Dart SDK 3.12.2 or later.
 - Flutter SDK 3.44.4 or later (only if you are migrating the Flutter app).
 - Postgres 14 or later, or SQLite3.
-- The new auth packages at `4.0.0` from the `serverpod_auth_core`, `serverpod_auth_idp`, `serverpod_auth_bridge`, and `serverpod_auth_migration` families. [Add the new auth packages](#add-the-new-auth-packages) shows which ones each `pubspec.yaml` needs.
+- The new auth packages at `4.0.0`: the server, client, and Flutter variants of `serverpod_auth_core`, `serverpod_auth_idp`, and `serverpod_auth_bridge`, plus the server and client variants of `serverpod_auth_migration`. [Add the new auth packages](#add-the-new-auth-packages) shows which ones each `pubspec.yaml` needs.
 - Back up your production database.
 - Commit your current state on a clean branch.
 - Restore a copy of production data into a staging environment and rehearse this guide against it before running it for real.
