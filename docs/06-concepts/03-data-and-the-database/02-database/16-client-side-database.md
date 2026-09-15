@@ -60,6 +60,7 @@ On the web, SQLite runs as WebAssembly in a web worker. Your Flutter app's `web/
 
 - `sqlite3.wasm`, from the release that matches the `sqlite3` version in your `pubspec.lock`. Without it, `createSession` fails.
 - `db_worker.js`, from the release that matches the `sqlite_async` version in your `pubspec.lock`. Without it, the database runs on the page's main thread and is not safe to use from several tabs.
+
 :::
 
 :::info
