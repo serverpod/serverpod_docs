@@ -27,7 +27,7 @@ All platforms require an App ID, a Sign in with Apple key, and a Service ID. Onl
 
 3. Select **App** as the type and click **Continue**.
 
-4. Fill in a description and your app's **Bundle ID** (e.g. `com.example.app`).
+4. Fill in a description and your app's **Bundle ID** (for example, `com.example.app`).
 
 5. Scroll down to **Capabilities**, find **Sign in with Apple**, and check it. Keep it set as a **primary App ID**.
 
@@ -43,14 +43,14 @@ All platforms require an App ID, a Sign in with Apple key, and a Service ID. Onl
 
    ![Register a new identifier: Services IDs selected](/img/authentication/providers/apple/6-service-id-create.png)
 
-3. Enter a description and a unique **Identifier** (e.g. `com.example.service`). This value becomes your `serviceIdentifier`. Click **Continue**, then **Register**.
+3. Enter a description and a unique **Identifier** (for example, `com.example.service`). This value becomes your `serviceIdentifier`. Click **Continue**, then **Register**.
 
 4. Click on the Service ID you created above. Check **Sign in with Apple** and click **Configure**.
 
 5. In the modal, set:
    - **Primary App ID**: the App ID from the previous section
-   - **Domains and Subdomains**: your domain (e.g. `example.com`)
-   - **Return URLs**: your server's callback route (e.g. `https://example.com/auth/callback`)
+   - **Domains and Subdomains**: your domain (for example, `example.com`)
+   - **Return URLs**: your server's callback route (for example, `https://example.com/auth/callback`)
 
    ![Web Authentication Configuration: Primary App ID, domains, and return URLs](/img/authentication/providers/apple/7-service-id-configure.png)
 
@@ -161,7 +161,7 @@ The `webAuthenticationCallbackRoutePath` must match the **Return URL** you regis
 
 ### Create the endpoint
 
-Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/apple_idp_endpoint.dart`). Extending the base class registers the sign-in methods with your server so your app can call them:
+Create a new endpoint file in your server project (for example, `my_project_server/lib/src/auth/apple_idp_endpoint.dart`). Extending the base class registers the sign-in methods with your server so your app can call them:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/apple.dart';
@@ -171,7 +171,7 @@ class AppleIdpEndpoint extends AppleIdpBaseEndpoint {}
 
 ### Start the server
 
-Start the server from your server project directory (e.g., `my_project_server/`):
+Start the server from your server project directory (for example, `my_project_server/`):
 
 ```bash
 serverpod start
@@ -319,8 +319,8 @@ Add your production domain and callback URL to the Service ID. The development t
 
 1. In [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list), open your Service ID.
 2. Under **Sign in with Apple**, click **Configure**.
-3. Add your production domain to **Domains and Subdomains** (e.g. `example.com`).
-4. Add your production callback to **Return URLs** (e.g. `https://example.com/auth/callback`).
+3. Add your production domain to **Domains and Subdomains** (for example, `example.com`).
+4. Add your production callback to **Return URLs** (for example, `https://example.com/auth/callback`).
 5. Click **Next**, **Done**, then **Save**.
 
 ### Set production credentials
@@ -333,7 +333,7 @@ Pick the path that matches your deployment:
 
 #### Self-hosted
 
-Add the `apple*` keys to the `production:` section of `passwords.yaml` with production values, or set them as environment variables on the production server using the `SERVERPOD_PASSWORD_` prefix (e.g. `SERVERPOD_PASSWORD_appleServiceIdentifier`, `SERVERPOD_PASSWORD_appleKey`).
+Add the `apple*` keys to the `production:` section of `passwords.yaml` with production values, or set them as environment variables on the production server using the `SERVERPOD_PASSWORD_` prefix (for example, `SERVERPOD_PASSWORD_appleServiceIdentifier`, `SERVERPOD_PASSWORD_appleKey`).
 
 #### Serverpod Cloud
 

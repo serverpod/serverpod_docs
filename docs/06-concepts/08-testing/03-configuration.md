@@ -24,6 +24,7 @@ withServerpod(
 | --- | --- | --- |
 | `applyMigrations` | Whether pending migrations are applied when the test server starts. | `true` |
 | `configOverride` | A function that changes values in the loaded config before the server starts. | `null` |
+| `databaseInterceptor` | A [database interceptor](../data-and-the-database/database/database-interceptors) for the test server to use. | `null` |
 | `enableSessionLogging` | Whether session logging is on. | `false` |
 | `experimentalFeatures` | Experimental features to enable, such as [diagnostic event handlers](../operations/exception-monitoring). | `null` |
 | `rollbackDatabase` | When database changes are rolled back. See [below](#rollbackdatabase). | `RollbackDatabase.afterEach` |
@@ -31,12 +32,14 @@ withServerpod(
 | `runtimeParametersBuilder` | Runtime parameters to apply before startup. See [runtime parameters](../data-and-the-database/database/runtime-parameters). | `null` |
 | `serverDirectory` | The directory that `config/<runMode>.yaml`, `config/passwords.yaml`, and `migrations/` are resolved against. | The directory the test process runs in |
 | `serverpodLoggingMode` | The logging mode used when creating Serverpod. | `ServerpodLoggingMode.normal` |
-| `serverpodStartTimeout` | How long to wait for the server to start. | 30 seconds |
+| `serverpodStartTimeout` | How long to wait for the server to start. | 120 seconds |
 | `testGroupTagsOverride` | The tags applied to the generated test group. See [below](#test-tags). | `['integration']` |
 | `testServerOutputMode` | How much server output reaches your terminal. See [below](#server-output). | `TestServerOutputMode.normal` |
 
-:::info
-In a project without a database, `applyMigrations`, `rollbackDatabase`, and `runtimeParametersBuilder` are not generated at all, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
+:::note
+When `config/generator.yaml` sets `features: database: false`, the generated `withServerpod` has no `applyMigrations`, `databaseInterceptor`, `rollbackDatabase`, or `runtimeParametersBuilder` parameter, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
+
+Projects created without a database, for example with `--no-database`, don't include this setting, so add it and run `serverpod generate`.
 :::
 
 Set `serverDirectory` when tests run from somewhere other than the server package, such as the workspace root. Without it the server resolves those paths against the current directory, misses your config, and falls over later on whatever it needed from it.
@@ -63,7 +66,7 @@ By default each test runs inside a transaction that is rolled back when that tes
 | --- | --- |
 | `RollbackDatabase.afterEach` | After every test. The default. |
 | `RollbackDatabase.afterAll` | Once the whole `withServerpod` group finishes. |
-| `RollbackDatabase.disabled` | Never. You clean up yourself. |
+| `RollbackDatabase.disabled` | Never. Data stays until the group finishes and its database is dropped. |
 
 Three situations call for changing it.
 
@@ -82,13 +85,13 @@ Future<void> concurrentTransactionCalls(Session session) async {
 }
 ```
 
-With rollback disabled you clean up yourself, or later tests inherit the data:
+With rollback disabled, later tests in the same group see what earlier tests committed. To start each test from a clean state, clean up in `tearDown`:
 
 ```dart
 withServerpod(
   'Given ProductsEndpoint when calling concurrentTransactionCalls',
   (sessionBuilder, endpoints) {
-    tearDownAll(() async {
+    tearDown(() async {
       var session = sessionBuilder.build();
       await Product.db.deleteWhere(session, where: (_) => Constant.bool(true));
     });
@@ -102,14 +105,6 @@ withServerpod(
   rollbackDatabase: RollbackDatabase.disabled,
 );
 ```
-
-Tests that share a database this way also need to run one at a time, since the test runner runs files in parallel by default:
-
-```bash
-dart test -t integration --concurrency=1
-```
-
-This applies only when rollback is disabled. With rollback on, each `withServerpod` group has its own transaction and is already isolated from the others.
 
 **Caught database exceptions.** This is the one case where the test tools behave differently from production:
 

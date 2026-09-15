@@ -55,8 +55,16 @@ Future<String> resolveDatabasePath(String fileName) async {
 
 Creating the session opens the database file, so keep one session for the lifetime of the app, for example in your state management, instead of creating a new one per operation. Call `close()` on the session to close the underlying database when you are done with it. On the web there is no file system, which is why the example passes a bare name instead of a path.
 
+:::note
+On the web, SQLite runs as WebAssembly in a web worker. Your Flutter app's `web/` directory needs two files, which the [`sqlite_async` web setup](https://pub.dev/packages/sqlite_async#web) links to:
+
+- `sqlite3.wasm`, from the release that matches the `sqlite3` version in your `pubspec.lock`. Without it, `createSession` fails.
+- `db_worker.js`, from the release that matches the `sqlite_async` version in your `pubspec.lock`. Without it, the database runs on the page's main thread and is not safe to use from several tabs.
+
+:::
+
 :::info
-SQLite runs in WAL mode, so `<path>-shm` and `<path>-wal` files may exist next to the database file while the session is open.
+On native platforms, SQLite runs in WAL mode, so `<path>-shm` and `<path>-wal` files may exist next to the database file while the session is open.
 :::
 
 ## Run migrations on the device
@@ -131,4 +139,4 @@ await client.offlineSync.syncOnce(session);
 final syncSession = client.offlineSync.syncContinuously(session);
 ```
 
-The `createSyncSession` method returns an `OfflineSyncDatabaseSession` and takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing; otherwise the sync calls fail as unauthorized. For personal and shared spaces, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).
+The `createSyncSession` method returns an `OfflineSyncDatabaseSession` and takes the same `runMigrations` and `isDebugMode` parameters as `createSession`. The user must be signed in before syncing, or the sync calls fail as unauthorized. For personal and shared spaces, `persistentUserId`, and the rest of the API, see the [`serverpod_offline_sync` README](https://pub.dev/packages/serverpod_offline_sync).

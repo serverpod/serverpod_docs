@@ -11,7 +11,7 @@ The `JwtTokenManager` uses JWT (JSON Web Tokens) for stateless authentication. I
 - Refresh tokens for long-term authentication.
 - Automatic token rotation.
 
-:::info Web apps
+:::note Web apps
 With [cookie-based web authentication](../web-authentication) enabled, browsers keep the access token in memory only and receive the refresh token as an `httpOnly` cookie.
 :::
 
@@ -195,12 +195,14 @@ for (final row in tokenMetadata) {
 }
 ```
 
-#### Attaching metadata when issuing tokens from an endpoint
+#### Attaching metadata when creating tokens from an endpoint
 
-The `onRefreshTokenCreated` callback is global and runs for every new refresh token (including those created by identity providers). When you create a token from an endpoint, for example a personal access token (PAT) or CLI token, you often have endpoint-specific parameters (e.g. a token name or label) that the callback cannot see. In that case, issue the token with `AuthServices.instance.tokenManager.issueToken`, then use the returned `AuthSuccess.jwtRefreshTokenId` to insert your metadata with the endpoint's parameters:
+The `onRefreshTokenCreated` callback is global and runs for every new refresh token, including those created by identity providers. An endpoint that creates a personal access token (PAT) or CLI token often has its own parameters, such as a token name or label, which the callback can't see.
+
+In that case, create the token with `AuthServices.instance.tokenManager.createToken` rather than `issueToken`, which is for [sign-in flows](./managing-tokens#issuing-tokens). Then use the returned `AuthSuccess.jwtRefreshTokenId` to insert your metadata with the endpoint's parameters:
 
 ```dart
-final authSuccess = await AuthServices.instance.tokenManager.issueToken(
+final authSuccess = await AuthServices.instance.tokenManager.createToken(
   session,
   authUserId: userId,
   method: 'pat',

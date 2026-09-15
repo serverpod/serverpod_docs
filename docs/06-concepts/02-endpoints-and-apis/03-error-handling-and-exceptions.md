@@ -6,11 +6,9 @@ description: Errors in Serverpod reach the app as serializable exceptions define
 
 Errors on the server reach your app as typed Dart exceptions. You define an exception once, throw it on the server, and catch it by type in your Flutter app. Failures carry structured data instead of strings.
 
-If you throw a normal exception that isn't caught by your code, it will be treated as an internal server error. The exception will be logged together with its stack trace, and a 500 HTTP status (internal server error) will be sent to the client. On the client side, this throws a `ServerpodClientException` with status code 500 (specifically `ServerpodClientInternalServerError`). The error message and stack trace stay on the server, logged to the `serverpod_session_log` table.
+If you throw a normal exception that isn't caught by your code, it will be treated as an internal server error. The exception will be logged together with its stack trace, and a 500 HTTP status (internal server error) will be sent to the client. On the client side, this throws a `ServerpodClientException` with status code 500 (specifically `ServerpodClientInternalServerError`).
 
-:::info
-Session logs live in `serverpod_session_log`, not `serverpod_log`; see [logging](../operations/logging) for the difference. The Serverpod Insights app shows failed and slow calls.
-:::
+The error message and stack trace stay on the server. They are stored with the session logs in `serverpod_session_log`, not in `serverpod_log`. See [logging](../operations/logging) for the difference. The Serverpod Insights app shows failed and slow calls.
 
 ## Serializable exceptions
 
@@ -181,9 +179,7 @@ The `SerializableException` interface marks the exception as safe to serialize t
 
 Serverpod allows you to specify default values for fields in exceptions, similar to models: `default` sets the value when the field is omitted, and `defaultModel` sets it on the Dart side. See [default values](../data-and-the-database/models#default-values) in Working with models.
 
-:::info
 Since exceptions are not persisted in the database, the `defaultPersist` keyword is not supported. If both `default` and `defaultModel` are specified, `defaultModel` takes precedence.
-:::
 
 ```yaml
 exception: MyException
@@ -202,7 +198,7 @@ A call from the client can fail in a few ways, and you usually handle each one d
 
 Both extend the sealed `ServerpodClientException`, along with `ServerpodClientUnknownException` for failures the client cannot classify. Catching `ServerpodClientException` handles all of them at once.
 
-Calls to [streaming methods](./streaming) fail with their own connection-level exception family; see [error handling in streams](./streaming#error-handling).
+A call to a [streaming method](./streaming) that the server refuses to open fails with the same `ServerpodClientHttpException` subclasses. Failures in the stream connection itself use their own exception family. See [error handling in streams](./streaming#error-handling).
 
 Catch the specific cases first, then fall back to the general one:
 

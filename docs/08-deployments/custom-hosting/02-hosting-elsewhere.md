@@ -12,17 +12,20 @@ Serverpod needs a database with the correct tables added, unless the project was
 
 ## Configuration files
 
-Serverpod has three main configuration files, depending on which mode the server is running; `development`, `staging`, or `production`. The files are located in the `config/` directory. By default, the server will start in development mode. To use another configuration file, use the `--mode` option when starting the server. If you are running multiple servers in a cluster, use the `--server-id` option to specify the id of each server. By default, the server will run as id `default`. For instance, to start the server in production mode with id `2`, run the following command:
+Serverpod has three main configuration files, one for each mode the server can run in: `development`, `staging`, and `production`. The files are located in the `config/` directory.
+
+Two options control how the server starts:
+
+- `--mode` selects the configuration file. By default, the server starts in development mode.
+- `--server-id` sets the id of each server when you run multiple servers in a cluster. By default, the server runs as id `default`.
+
+For example, to start the server in production mode with id `2`, run the following command:
 
 ```bash
 $ dart bin/main.dart --mode production --server-id 2
 ```
 
-:::info
-
-It may be totally valid to run all servers with the same id. If you are using something like AWS Fargate it's hard to configure individual server ids.
-
-:::
+Running all servers with the same id can also be valid. This helps on platforms such as AWS Fargate, where individual server ids are hard to configure.
 
 By default, Serverpod will listen on ports 8080, 8081, and 8082. The ports are used by the API server, Serverpod Insights, and the [web server](../../06-concepts/05-web-server/01-overview.md). You can configure the ports in the configuration files. Most often, you will want to place your server or servers behind a load balancer that handles the SSL certificates for your server and maps the traffic to different domain addresses and ports (typically 443 for HTTPS).
 

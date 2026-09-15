@@ -54,9 +54,39 @@ serverpod start -- --mode staging
 
 The run mode selects which configuration and passwords the server loads. See [Run modes](./configuration#run-modes) for what each mode reads. Flutter apps only launch in the `development` run mode.
 
+## Choose which Flutter apps start
+
+The `serverpod: flutter_apps:` block in the server's `pubspec.yaml` lists the Flutter apps that `serverpod start` can run. Each one has its own entry, keyed by an id you choose. New projects with a Flutter app include this block:
+
+```yaml
+serverpod:
+  flutter_apps:
+    my_project:
+      path: ../my_project_flutter
+      displayName: "My project app"
+      auto_launch: true
+      target: lib/driver.dart
+```
+
+Each entry accepts these keys:
+
+| Key | Description |
+| --- | --- |
+| `path` | Required. The Flutter package folder, relative to the server package. |
+| `displayName` | The name on the app's tab. Defaults to the app id. |
+| `auto_launch` | Set to `true` to launch the app when the session starts. Defaults to `false`. |
+| `device` | The `flutter run -d` device, for example `chrome` or `macos`. Without it, the app runs on Flutter's web server and opens in your browser. |
+| Any other key | Passed to `flutter run` as a flag. For example, `target: lib/driver.dart` becomes `--target=lib/driver.dart`, and `release: true` becomes `--release`. |
+
+Apps without `auto_launch: true` stay stopped when the session begins. To run one, press **Ctrl+R** in the `serverpod start` terminal and pick it from the app launch panel.
+
+Without a `flutter_apps` block, `serverpod start` launches the `<project>_flutter` package beside your server, when that package exists.
+
+In watch mode, adding or removing an app takes effect when you save. A running app keeps its old settings until you restart it from the same panel.
+
 ## Run the server on its own
 
-By default, `serverpod start` also launches the companion Flutter apps marked `auto_launch: true` in the server's `pubspec.yaml`. To start only the server, disable that:
+By default, `serverpod start` also runs the Flutter apps [set to launch automatically](#choose-which-flutter-apps-start). To start only the server, disable that:
 
 ```bash
 serverpod start --no-flutter
@@ -64,7 +94,7 @@ serverpod start --no-flutter
 
 You can still launch an app on demand: press **Ctrl+R** in the terminal to open the app launch panel.
 
-If your project has a Docker Compose file (`docker-compose.yaml`, `compose.yaml`, or another standard name), `serverpod start` brings it up automatically when your database is a Postgres on `localhost` with no `dataPath`, and stops the services it started when the session ends. When that does not apply, for example an embedded or remote database with [Redis](./redis) in Compose, pass `--docker` to start the stack anyway, or `--no-docker` to keep it off.
+If your project has a Docker Compose file (`docker-compose.yaml`, `compose.yaml`, or another standard name), `serverpod start` brings it up automatically when your database is a Postgres on `localhost` with no `dataPath`, and stops the services it started when the session ends. When that does not apply, for example an embedded or remote database with [Redis](../operations/redis) in Compose, pass `--docker` to start the stack anyway, or `--no-docker` to keep it off.
 
 To run without the interactive terminal, pass `--no-tui`. When the output is not a terminal, for example in CI, `serverpod start` falls back to plain output on its own.
 

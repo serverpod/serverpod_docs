@@ -17,8 +17,8 @@ Go through this before investigating a specific error. Most problems come from a
 - [ ] In **Google Auth Platform**, complete the initial setup (wizard) and add the required scopes on **Data Access** (`.../auth/userinfo.email` and `.../auth/userinfo.profile`).
 - [ ] On **Branding** ([Branding](https://console.cloud.google.com/auth/branding)), complete the OAuth consent screen (logo, homepage, privacy policy, terms of service, and developer contact) and add the **root domain** (top private domain) under **Authorized domains**. Google stores only the root, so a single verified entry covers all of its subdomains. On Serverpod Cloud, add `serverpod.space` (already verified by Serverpod, no DNS setup needed). For custom domains, see [Verify your authorized domain](./setup#1-verify-your-authorized-domain).
 - [ ] Add **test users** on **Audience** while in **Testing** mode ([Audience](https://console.cloud.google.com/auth/audience)), or **Publish app** when everyone should be able to sign in.
-- [ ] Create a **Web application** OAuth client. For web sign-in, set **Authorized JavaScript origins** to your Flutter web app's origin (e.g., `https://my-awesome-project.serverpod.space`) and **Authorized redirect URIs** to the route URL from [Web setup](./setup#web) (e.g., `https://my-awesome-project.serverpod.space/auth/callback`), or the `auth.html` URL if you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback (e.g., `http://localhost:49660/auth.html`). Copy the **Client ID** and **Client secret**.
-- [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and matching `redirect_uris` (the same callback URL as above). For production, this is the route URL you registered via `FlutterWebAuth2CallbackRoute` (e.g., `https://my-awesome-project.serverpod.space/auth/callback`) from [Web setup](./setup#web), or the production `auth.html` URL on your Flutter web host if you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback. See [Publishing to production](./setup#publishing-to-production).
+- [ ] Create a **Web application** OAuth client. For web sign-in, set **Authorized JavaScript origins** to your Flutter web app's origin (for example, `https://my-awesome-project.serverpod.space`) and **Authorized redirect URIs** to the route URL from [Web setup](./setup#web) (for example, `https://my-awesome-project.serverpod.space/auth/callback`), or the `auth.html` URL if you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback (for example, `http://localhost:49660/auth.html`). Copy the **Client ID** and **Client secret**.
+- [ ] Add `googleClientSecret` to `config/passwords.yaml` with your client ID, client secret, and matching `redirect_uris` (the same callback URL as above). For production, this is the route URL you registered via `FlutterWebAuth2CallbackRoute` (for example, `https://my-awesome-project.serverpod.space/auth/callback`) from [Web setup](./setup#web), or the production `auth.html` URL on your Flutter web host if you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback. See [Publishing to production](./setup#publishing-to-production).
 
 #### Server
 
@@ -45,8 +45,8 @@ Go through this before investigating a specific error. Most problems come from a
 
 **Resolution:** In the Google Auth Platform, navigate to **Clients**, select your Web application client, and verify that the URIs under **Authorized JavaScript origins** and **Authorized redirect URIs** match what your app actually uses:
 
-- **Authorized JavaScript origins** must contain your Flutter web app's origin (e.g., `http://localhost:49660` locally, `https://my-awesome-project.serverpod.space` in production).
-- **Authorized redirect URIs** must contain the full callback URL: the route URL from [Web setup](./setup#web) (e.g., `https://my-awesome-project.serverpod.space/auth/callback`), or the full `auth.html` URL if you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback (e.g., `http://localhost:49660/auth.html` locally).
+- **Authorized JavaScript origins** must contain your Flutter web app's origin (for example, `http://localhost:49660` locally, or `https://my-awesome-project.serverpod.space` in production).
+- **Authorized redirect URIs** must contain the full callback URL: the route URL from [Web setup](./setup#web) (for example, `https://my-awesome-project.serverpod.space/auth/callback`), or the full `auth.html` URL if you use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback (for example, `http://localhost:49660/auth.html` locally).
 
 The same callback URL must also appear in `client.auth.initializeGoogleSignIn(..., redirectUri: ...)` in your Flutter app.
 
@@ -65,7 +65,7 @@ Common mistakes:
 
 **Cause:** The redirect URI's root domain (the top private domain) has not been verified and added to **Authorized domains** on the Branding page. Google requires the root to be a verified Authorized Domain before it accepts redirect URIs that use it.
 
-**Resolution:** Add the root domain (e.g., `serverpod.space` or your custom root) to **Authorized domains**, then retry the redirect URI. On Serverpod Cloud, the `serverpod.space` root is already verified, so you only need to add `serverpod.space` to **Authorized domains**. For a custom domain, verify ownership at [Google Search Console](https://search.google.com/search-console) first. See [Verify your authorized domain](./setup#1-verify-your-authorized-domain).
+**Resolution:** Add the root domain (for example, `serverpod.space` or your custom root) to **Authorized domains**, then retry the redirect URI. On Serverpod Cloud, the `serverpod.space` root is already verified, so you only need to add `serverpod.space` to **Authorized domains**. For a custom domain, verify ownership at [Google Search Console](https://search.google.com/search-console) first. See [Verify your authorized domain](./setup#1-verify-your-authorized-domain).
 
 ## Sign-in works for you but not for other users
 
@@ -79,7 +79,7 @@ Common mistakes:
 
 **Problem:** You followed [Web setup](./setup#web) and registered `FlutterWebAuth2CallbackRoute`. Sign-in completes at Google, the browser redirects, but the Flutter app never receives the result. Only affects `flutter run -d chrome` local dev.
 
-**Cause:** The integrated route requires Serverpod and your Flutter web app to be on the **same origin** (same scheme, host, AND port). With `flutter run -d chrome`, Flutter runs on its own dev server port (e.g., `49660`) while Serverpod is on `8082`, so they are different origins. The browser blocks the callback page's `postMessage` across origins.
+**Cause:** The integrated route requires Serverpod and your Flutter web app to be on the **same origin** (same scheme, host, AND port). With `flutter run -d chrome`, Flutter runs on its own dev server port (for example, `49660`) while Serverpod is on `8082`, so they are different origins. The browser blocks the callback page's `postMessage` across origins.
 
 **Resolution:** Use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow for local dev. It serves `auth.html` from Flutter's own dev server, same-origin with your Flutter app. For production, the integrated route works once Serverpod serves your Flutter build (via `FlutterRoute`, mounted at `/` on default projects, or `/app` when the website option is enabled).
 
@@ -182,7 +182,7 @@ For Firebase-based projects using the Gradle plugin, make sure a Web application
 flutter run --dart-define=SERVER_URL=http://10.0.2.2:8080/
 ```
 
-On the Android emulator, `10.0.2.2` maps to the host machine. On a physical device, use your computer's LAN IP address instead (e.g., `http://192.168.1.20:8080/`), with the phone on the same network.
+On the Android emulator, `10.0.2.2` maps to the host machine. On a physical device, use your computer's LAN IP address instead (for example, `http://192.168.1.20:8080/`), with the phone on the same network.
 
 ## Server crashes on first Google sign-in with "no such table"
 
@@ -254,7 +254,7 @@ flutter run --dart-define=GOOGLE_CLIENT_ID=your-web-client-id.apps.googleusercon
 
 ## Google API calls fail after one hour
 
-**Problem:** Your server calls Google APIs (e.g., Calendar, Drive) with the access token captured during sign-in, but requests start returning `401 Unauthorized` after about an hour.
+**Problem:** Your server calls Google APIs (for example, Calendar or Drive) with the access token captured during sign-in, but requests start returning `401 Unauthorized` after about an hour.
 
 **Cause:** Google access tokens expire after 3,600 seconds (one hour). Serverpod captures the token during sign-in for the `getExtraGoogleInfoCallback`, and does not refresh it afterwards.
 

@@ -29,6 +29,14 @@ A relative `dataPath` is resolved from the root of the server package, and each 
 
 The first start downloads the PostgreSQL binaries for your operating system and architecture into a per-user cache, which every later start and every other project reuses. Binaries are available for Linux and macOS on x64 and Arm64, and for Windows on x64.
 
+The cache location depends on your operating system:
+
+- **macOS:** `~/Library/Caches/serverpod/pg-binaries`
+- **Linux:** `$XDG_CACHE_HOME/serverpod/pg-binaries`, or `~/.cache/serverpod/pg-binaries` when `XDG_CACHE_HOME` is not set
+- **Windows:** `%LOCALAPPDATA%\serverpod\Cache\pg-binaries`
+
+Set `SERVERPOD_PG_CACHE_DIR` to keep the binaries in a different directory.
+
 Serverpod starts the database before it opens its connection pool, and connects over a Unix domain socket instead of a TCP port, so several projects can run at once without competing for ports. If another Serverpod process already runs a database in the same `dataPath`, the new process attaches to it rather than starting a second one.
 
 The files under `dataPath` are kept when the server stops, so your data is still there on the next start. After an unclean exit, Serverpod clears the leftover process state and brings the database back up.

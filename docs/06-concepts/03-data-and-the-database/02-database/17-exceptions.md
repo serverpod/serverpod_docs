@@ -25,14 +25,14 @@ try {
 }
 ```
 
-When a database exception is not caught inside an endpoint, it follows Serverpod's normal endpoint exception handling and is logged as an uncaught server exception. Serverpod does not serialize database exception details and send them to the app; those details stay server-side in the logs. See [Error handling and exceptions](../../endpoints-and-apis/error-handling-and-exceptions) for how uncaught exceptions reach the app.
+When a database exception is not caught inside an endpoint, it follows Serverpod's normal endpoint exception handling and is logged as an uncaught server exception. Serverpod does not serialize database exception details and send them to the app. They stay server-side in the logs. See [Error handling and exceptions](../../endpoints-and-apis/error-handling-and-exceptions) for how uncaught exceptions reach the app.
 
 ## Exception types
 
 | Exception | Subtype of | When it is thrown |
 | --- | --- | --- |
 | `DatabaseException` | `Exception` | The base type for database exceptions. Catch this when you want one handler for any database failure. |
-| `DatabaseUnexpectedResultException` | `DatabaseException` | A single-row operation did not affect exactly one row: `insertRow` or `upsertRow` returned a different number of rows, or `updateRow`, `updateById`, or `deleteRow` matched no row. |
+| `DatabaseUnexpectedResultException` | `DatabaseException` | A single-row operation did not affect exactly one row: `insertRow` returned a different number of rows, or `updateRow`, `updateById`, or `deleteRow` matched no row. `upsertRow` returns `null` instead when the existing row doesn't match its `updateWhere` expression. |
 | `DatabaseQueryException` | `DatabaseException` | The database rejected a query. Carries the adapter's error details, see below. |
 | `DatabaseUniqueViolationException` | `DatabaseQueryException` | A write violated a unique index or primary key. |
 | `DatabaseForeignKeyViolationException` | `DatabaseQueryException` | A write violated a foreign key constraint, including at commit for [deferrable constraints](relations/deferrable-constraints). |
@@ -51,7 +51,7 @@ The `DatabaseQueryException` type and its subclasses expose optional fields from
 - `constraintName`
 - `position`
 
-These values are database-adapter details, so write defensive code that handles `null` values. PostgreSQL fills in the violated constraint name; SQLite does not. To react to a specific failure, prefer the typed subclass over inspecting the fields:
+These values are database-adapter details, so write defensive code that handles `null` values. PostgreSQL fills in the violated constraint name. SQLite does not. To react to a specific failure, prefer the typed subclass over inspecting the fields:
 
 ```dart
 try {

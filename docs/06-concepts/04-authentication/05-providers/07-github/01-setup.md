@@ -202,7 +202,7 @@ On web, GitHub completes sign-in by redirecting the browser to a callback URL yo
 
 ```bash
 flutter build web --base-href / --output ../my_project_server/web/app  # from your Flutter project
-serverpod start --no-flutter                             # from your server project
+serverpod start --no-flutter                                           # from your server project
 ```
 
 Pass `--no-flutter` so `serverpod start` serves your prebuilt web app. Without the flag, it also runs a Flutter web dev server on a different port, which does not share Serverpod's origin. For hot-reload workflows, use the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) flow instead.

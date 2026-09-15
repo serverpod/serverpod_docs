@@ -23,7 +23,7 @@ All platforms require a Web application OAuth client (used by the server). iOS a
 
 1. Go to [Create a project](https://console.cloud.google.com/projectcreate).
 
-2. Enter a **Project name** (e.g. `My Serverpod App`) and click **Create**.
+2. Enter a **Project name** (for example, `My Serverpod App`) and click **Create**.
 
 ### Configure Google Auth Platform
 
@@ -48,7 +48,7 @@ All platforms require a Web application OAuth client (used by the server). iOS a
    ![Scopes configuration](/img/authentication/providers/google/1-scopes.png)
 
    :::tip
-   If you need access to additional Google APIs (e.g., Calendar, Drive), you can add more scopes here. See [Accessing Google APIs](./customizations#accessing-google-apis) for details on requesting additional scopes and using them with the `getExtraGoogleInfoCallback` on the server.
+   If you need access to additional Google APIs (for example, Calendar or Drive), you can add more scopes here. See [Accessing Google APIs](./customizations#accessing-google-apis) for details on requesting additional scopes and using them with the `getExtraGoogleInfoCallback` on the server.
    :::
 
 5. **Audience**: Navigate to the [Audience](https://console.cloud.google.com/auth/audience) page. While in development, the app is in **Testing** mode, which means only users you explicitly add as test users can sign in (up to 100). Add your email as a test user so you can test the integration.
@@ -104,7 +104,7 @@ For production, add the same `googleClientSecret` entry to the `production:` sec
 
 ### Add the Google identity provider
 
-Your server's `server.dart` file (e.g., `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
+Your server's `server.dart` file (for example, `my_project_server/lib/server.dart`) should already contain a `pod.initializeAuthServices()` call if your project was created with the Serverpod project template (`serverpod create`). If it's not there, see [Setup](../../setup) first to configure the auth module and JWT settings.
 
 Add the Google import and `GoogleIdpConfigFromPasswords()` to the existing `identityProviderBuilders` list:
 
@@ -132,7 +132,7 @@ If you need more control over how the client secret is loaded, you can use `Goog
 
 ### Create the endpoint
 
-Create a new endpoint file in your server project (e.g., `my_project_server/lib/src/auth/google_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so your app can call them to complete the authentication flow:
+Create a new endpoint file in your server project (for example, `my_project_server/lib/src/auth/google_idp_endpoint.dart`) alongside the existing auth endpoints. Extending the base class registers the sign-in methods with your server so your app can call them to complete the authentication flow:
 
 ```dart
 import 'package:serverpod_auth_idp_server/providers/google.dart';
@@ -142,7 +142,7 @@ class GoogleIdpEndpoint extends GoogleIdpBaseEndpoint {}
 
 ### Start the server
 
-Start the server from your server project directory (e.g., `my_project_server/`):
+Start the server from your server project directory (for example, `my_project_server/`):
 
 ```bash
 serverpod start
@@ -170,7 +170,7 @@ The Android and iOS integrations use the [google_sign_in](https://pub.dev/packag
 
    ![Create iOS OAuth client](/img/authentication/providers/google/8-ios-client-create.png)
 
-5. Open the `Info.plist` file in your Flutter project (e.g., `my_project_flutter/ios/Runner/Info.plist`) and add the following keys inside the top-level `<dict>`:
+5. Open the `Info.plist` file in your Flutter project (for example, `my_project_flutter/ios/Runner/Info.plist`) and add the following keys inside the top-level `<dict>`:
 
    ```xml
    <dict>
@@ -217,7 +217,7 @@ Without the URL scheme, the OAuth callback never returns to your app and sign-in
 
 2. Select **Android** as the application type.
 
-3. Fill in your app's **Package name** and **SHA-1 certificate fingerprint**. You can get the debug SHA-1 hash by running this from your Flutter project's `android/` directory (e.g., `my_project_flutter/android/`):
+3. Fill in your app's **Package name** and **SHA-1 certificate fingerprint**. You can get the debug SHA-1 hash by running this from your Flutter project's `android/` directory (for example, `my_project_flutter/android/`):
 
    ```bash
    ./gradlew signingReport
@@ -288,8 +288,8 @@ The examples below use port `8082` (Serverpod's default from `config/development
 
 2. Update the server OAuth client you created in the [previous section](#create-the-server-oauth-client-web-application) and add the following:
 
-   - **Authorized JavaScript origins**: your Flutter web app's origin (e.g., `http://localhost:8082` locally, `https://my-awesome-project.serverpod.space` in production).
-   - **Authorized redirect URIs**: the full URL of the route you registered (e.g., `http://localhost:8082/auth/callback` locally, `https://my-awesome-project.serverpod.space/auth/callback` in production).
+   - **Authorized JavaScript origins**: your Flutter web app's origin (for example, `http://localhost:8082` locally, or `https://my-awesome-project.serverpod.space` in production).
+   - **Authorized redirect URIs**: the full URL of the route you registered (for example, `http://localhost:8082/auth/callback` locally, or `https://my-awesome-project.serverpod.space/auth/callback` in production).
 
    Add the same URL to `redirect_uris` in the `googleClientSecret` entry of `passwords.yaml` from [Store your credentials](#store-your-credentials).
 
@@ -432,7 +432,7 @@ Google's **Authorized domains** field on the [Branding](https://console.cloud.go
 
 If you deploy on Serverpod Cloud under a `*.serverpod.space` subdomain, `serverpod.space` is already verified by Serverpod. Add `serverpod.space` to **Authorized domains** in the Google Auth Platform; no DNS verification is required on your end.
 
-For a custom domain, verify ownership of your root domain (e.g., `example.com`) at [Google Search Console](https://search.google.com/search-console) by adding the DNS TXT record Google provides. After verification completes, add the root to **Authorized domains** in the Google Auth Platform.
+For a custom domain, verify ownership of your root domain (for example, `example.com`) at [Google Search Console](https://search.google.com/search-console) by adding the DNS TXT record Google provides. After verification completes, add the root to **Authorized domains** in the Google Auth Platform.
 
 :::tip
 A single verified root authorizes all of its subdomains. If Google rejects a domain you add, you are likely entering a full subdomain instead of the root.
@@ -442,8 +442,8 @@ A single verified root authorizes all of its subdomains. If Google rejects a dom
 
 Go back to the [server OAuth client](#create-the-server-oauth-client-web-application) in the Google Auth Platform and add your production URLs:
 
-- **Authorized JavaScript origins**: your production Flutter web app's origin (e.g., `https://my-awesome-project.serverpod.space`).
-- **Authorized redirect URIs**: the production callback URL. From the standard [Web setup](#web), this is the route URL you registered (e.g., `https://my-awesome-project.serverpod.space/auth/callback`). For the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback, it's the full URL where `auth.html` is served on your production Flutter web host (e.g., `https://app.example.com/auth.html`).
+- **Authorized JavaScript origins**: your production Flutter web app's origin (for example, `https://my-awesome-project.serverpod.space`).
+- **Authorized redirect URIs**: the production callback URL. From the standard [Web setup](#web), this is the route URL you registered (for example, `https://my-awesome-project.serverpod.space/auth/callback`). For the [separately-hosted Flutter web](./customizations#separately-hosted-flutter-web) fallback, it's the full URL where `auth.html` is served on your production Flutter web host (for example, `https://app.example.com/auth.html`).
 
 Replace the URLs with your actual production address. On Serverpod Cloud, your project is served from `https://<project-id>.serverpod.space`.
 
