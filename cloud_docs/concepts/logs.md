@@ -142,7 +142,7 @@ scloud variable set SERVERPOD_SESSION_LOG_RETENTION_PERIOD "90d"
 scloud variable set SERVERPOD_SESSION_LOG_RETENTION_COUNT "100000"
 ```
 
-Adjust the values to fit your project. See [Purge old records](/next/concepts/operations/logging#purge-old-records) for what each setting does.
+Adjust the values to fit your project. See [Purge old records](/concepts/operations/logging#purge-old-records) for what each setting does.
 
 For what the server records, which tables it writes to, and how retention works, see [Logging](/concepts/operations/logging) in the framework documentation.
 
