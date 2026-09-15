@@ -55,7 +55,7 @@ This allows you to support multiple token types simultaneously, which is useful 
 
 ### Issuing tokens
 
-Tokens are issued automatically by identity providers when users authenticate. You can also issue tokens programmatically:
+Tokens are issued automatically by identity providers when users authenticate. To issue a token from your own sign-in flow, call `issueToken`:
 
 ```dart
 final authSuccess = await AuthServices.instance.tokenManager.issueToken(
@@ -66,7 +66,20 @@ final authSuccess = await AuthServices.instance.tokenManager.issueToken(
 );
 ```
 
-The returned `AuthSuccess` carries everything the app needs: the token, its expiry, the granted scopes, and, for JWT, the refresh token. Send the whole object back to the app.
+Return the `AuthSuccess` to the app. It carries the token, its expiry, the granted scopes, and, for JWT, the refresh token. The `issueToken` method is built for sign-in:
+
+- If the caller is already signed in as a different user, it throws a `SignInWhileAuthenticatedException`.
+- On a web request with [cookie-based authentication](../web-authentication), it sends the refresh token (JWT) or the session token (server-side sessions) as an `httpOnly` cookie instead of in the response body.
+
+To create a token for another user, or a token you return directly to the caller, call `createToken` instead. For example, use it in an admin flow or for a personal access token. It skips the sign-in check and the cookie delivery, so the returned `AuthSuccess` always carries the secrets:
+
+```dart
+final authSuccess = await AuthServices.instance.tokenManager.createToken(
+  session,
+  authUserId: targetUserId,
+  method: 'pat',
+);
+```
 
 #### Attaching metadata to tokens
 
