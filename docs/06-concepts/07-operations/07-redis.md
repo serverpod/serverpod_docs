@@ -64,7 +64,7 @@ export SERVERPOD_PASSWORD_redis='...'
 export SERVERPOD_REDIS_PASSWORD='...'
 ```
 
-Both variables set the same secret. If both are set, `SERVERPOD_PASSWORD_redis` wins. Environment variables override the passwords file. See [Manage secrets](./configuration#manage-secrets) for how secrets are loaded.
+Both variables set the same secret. If both are set, `SERVERPOD_PASSWORD_redis` wins. Environment variables override the passwords file. See [Manage secrets](../server-fundamentals/configuration#manage-secrets) for how secrets are loaded.
 
 If Redis is enabled and the password is missing, the server refuses to start:
 
@@ -101,7 +101,7 @@ To start Compose whenever the server starts, pass `--docker`:
 serverpod start --docker
 ```
 
-See [Running your server](./running-your-server) for when Compose is started automatically.
+See [Running your server](../server-fundamentals/running-your-server) for when Compose is started automatically.
 
 To stop Redis:
 
@@ -137,7 +137,7 @@ Redis itself listens on port 6379. Serverpod's development setup publishes **809
 redis-cli -h localhost -p 8091 -a '<password from passwords.yaml>'
 ```
 
-**Test**
+**Test** (Docker from the template)
 
 | Field | Value |
 | --- | --- |
@@ -195,7 +195,7 @@ The in-memory fallback for `session.caches.global` is a separate cache, not `loc
 
 Cluster messaging is best effort. Failed publishes are not retried. The `MessageScope.global` scope requires Redis and throws `StateError('Redis needs to be enabled to use this method')` without it. See [Message scope](../endpoints-and-apis/server-events#message-scope).
 
-The [`/readyz`](../operations/health-checks) probe checks Redis only when Redis is enabled. The `/livez` probe does not.
+The [`/readyz`](health-checks) probe checks Redis only when Redis is enabled. The `/livez` probe does not.
 
 In every run mode except production, a failed Redis connection at startup logs that Serverpod is falling back to a local cache, and the server still starts. In production there is no fallback: the global cache stays Redis-backed even if Redis is down.
 
@@ -213,7 +213,7 @@ The password is `development.redis` in `config/passwords.yaml`, not nested under
 
 ### The server started but instances do not share state
 
-In every run mode except production, a down Redis does not stop the server. Confirm the container is running and that [`/readyz`](../operations/health-checks) reports a passing Redis check. Production does not fall back.
+In every run mode except production, a down Redis does not stop the server. Confirm the container is running and that [`/readyz`](health-checks) reports a passing Redis check. Production does not fall back.
 
 ### Staging or production fails at startup with a missing Redis password
 
@@ -221,7 +221,7 @@ Those templates do not generate a `redis` password. Add `redis:` under that run 
 
 ## Related
 
-- [Configuration](./configuration): run modes, YAML files, and secrets.
+- [Configuration](../server-fundamentals/configuration): run modes, YAML files, and secrets.
 - [Configuration reference](../lookups/configuration-reference): every Redis option and environment variable.
 - [Caching](../endpoints-and-apis/caching): the global cache Redis backs.
 - [Server events](../endpoints-and-apis/server-events): cluster messaging through Redis.

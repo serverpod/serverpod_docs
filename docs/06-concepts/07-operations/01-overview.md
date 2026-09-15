@@ -15,6 +15,7 @@ Everything here works the same whether you deploy to [Serverpod Cloud](../../dep
 - **[Security and TLS](security-and-tls)**: how traffic to your server is encrypted, and when you need to configure that yourself.
 - **[Exception monitoring](exception-monitoring)**: reporting exceptions to a monitoring service as they happen. This one is an experimental API.
 - **[Scalability](scalability)**: roles for scale-out, isolates for CPU work, Postgres and connection pools, Redis, JWT auth, and streaming tradeoffs.
+- **[Redis](redis)**: the optional service that lets several server instances share a cache, messages, and auth revocation, plus how to enable it, set its password, run it locally in Docker, and connect a GUI.
 - **[Load testing](load-testing)**: measuring how a production-like server behaves under concurrent traffic, with Locust or the generated client.
 
 ## Related
