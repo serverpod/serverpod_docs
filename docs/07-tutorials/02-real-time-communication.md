@@ -34,7 +34,7 @@ We begin by creating a new project with the `serverpod create` command. Pixorama
 serverpod create pixorama
 ```
 
-If you run the command non-interactively, pass `--no-interactive --no-database --no-redis --ide none` instead. Without `--no-redis` and `--ide none`, it also adds Redis and AI agent configuration for Claude, Cursor, and VS Code.
+If you run the command non-interactively, pass `--no-interactive --no-database --no-redis --ide none` instead. The last two flags match the interactive defaults. Without them, the command adds Redis and AI agent setup for Claude, Cursor, and VS Code.
 
 Now, let's open the project in VS Code and explore the structure. The server code resides in the `pixorama_server` package. We'll start by creating models - classes that we can serialize and pass between the client and server. Our models will be placed in the `lib/src/models` directory.
 
