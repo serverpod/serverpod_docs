@@ -78,11 +78,11 @@ Each entry accepts these keys:
 | `device` | The `flutter run -d` device, for example `chrome` or `macos`. Without it, the app runs on Flutter's web server and opens in your browser. |
 | Any other key | Passed to `flutter run` as a flag. For example, `target: lib/driver.dart` becomes `--target=lib/driver.dart`, and `release: true` becomes `--release`. |
 
-Apps without `auto_launch: true` do not start with the session. Pick one from the **Ctrl+R** launch panel when you need it.
+Apps without `auto_launch: true` stay stopped when the session begins. To run one, press **Ctrl+R** in the `serverpod start` terminal and pick it from the app launch panel.
 
 Without a `flutter_apps` block, `serverpod start` launches the `<project>_flutter` package beside your server, when that package exists.
 
-In watch mode, adding or removing an app takes effect when you save. A running app keeps its old settings until you relaunch it from the **Ctrl+R** launch panel.
+In watch mode, adding or removing an app takes effect when you save. A running app keeps its old settings until you restart it from the same panel.
 
 ## Run the server on its own
 
