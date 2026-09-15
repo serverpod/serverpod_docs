@@ -41,10 +41,10 @@ To regenerate code or run other tasks before each deploy, configure a pre-deploy
 Watch the latest deployment as it runs:
 
 ```bash
-scloud deployment show
+scloud status deployment show
 ```
 
-The command tracks the deployment through its four lifecycle stages and updates each line as it progresses. When complete:
+The command tracks the deployment through its three lifecycle stages and updates each line as it progresses. When complete:
 
 ```text
 Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
@@ -52,16 +52,15 @@ Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
 
 Upload successful.
 Cloud build successful.
-Infra deploy successful.
-Service rollout successful. 🚀
+Rollout successful. 🚀
 ```
 
-The four stages are **Upload** (your project package reaches Cloud), **Cloud build** (Cloud builds the container), **Infra deploy** (Cloud prepares the infrastructure for the new version), and **Service rollout** (the new version starts serving requests).
+The three stages are **Upload** (your project package reaches Cloud), **Cloud build** (Cloud builds the container), and **Rollout** (Cloud prepares the infrastructure and the new version starts serving requests).
 
 List recent deployments:
 
 ```bash
-scloud deployment list
+scloud status deployment list
 ```
 
 The list shows deploy IDs alongside status and timestamps:
@@ -76,21 +75,21 @@ The list shows deploy IDs alongside status and timestamps:
 Inspect a specific deployment by its ID:
 
 ```bash
-scloud deployment show <deployment-id>
+scloud status deployment show <deployment-id>
 ```
 
 Stream the build log for a deployment that failed during the build stage:
 
 ```bash
-scloud deployment build-log
+scloud build log
 ```
 
 ## Validate before deploying
 
-A dry run packages your project and validates the package without uploading or building it:
+A wet run performs every step except the deployment itself, leaving the running app untouched:
 
 ```bash
-scloud deploy --dry-run
+scloud deploy --wet-run
 ```
 
 Preview the file tree that will be uploaded, with ignored files marked:
@@ -102,13 +101,13 @@ scloud deploy --show-files
 Combine the two flags to inspect what will be uploaded without deploying:
 
 ```bash
-scloud deploy --dry-run --show-files
+scloud deploy --wet-run --show-files
 ```
 
 Save the package to a local zip (useful for CI inspection or air-gapped environments):
 
 ```bash
-scloud deploy --output deployment.zip --dry-run
+scloud deploy --output deployment.zip --wet-run
 ```
 
 ## Configure what's included
@@ -141,7 +140,7 @@ The `scloud` CLI may generate intermediate files under `.scloud/` directories. A
 Verify your ignore patterns:
 
 ```bash
-scloud deploy --dry-run --show-files
+scloud deploy --wet-run --show-files
 ```
 
 ## Troubleshooting
@@ -149,7 +148,7 @@ scloud deploy --dry-run --show-files
 **Build failure.** Stream the build log and look for lines beginning with `ERROR:` or `FAILED:`:
 
 ```bash
-scloud deployment build-log
+scloud build log
 ```
 
 Common causes are missing dependencies in `pubspec.yaml` or compile errors in your code.

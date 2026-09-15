@@ -61,26 +61,26 @@ and at rest.
 
 ### CLI commands for build secrets
 
-Use the `scloud deployment build-secret` commands to manage your build secrets.
+Use the `scloud build secret` commands to manage your build secrets.
 
 #### List the current build secrets
 ```sh
-$ scloud deployment build-secret list
+$ scloud build secret list
 ```
 
 #### Add or modify a build secret
 ```sh
-$ scloud deployment build-secret set MY_SECRET_NAME "my-private-ssh-key"
+$ scloud build secret set MY_SECRET_NAME "my-private-ssh-key"
 ```
 
 #### Add or modify a build secret with the value in a file
 ```sh
-$ scloud deployment build-secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
+$ scloud build secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
 ```
 
 #### Remove a build secret
 ```sh
-$ scloud deployment build-secret unset MY_SECRET_NAME
+$ scloud build secret unset MY_SECRET_NAME
 ```
 
 ### Accessing a private repository in GitHub
