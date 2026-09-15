@@ -4,7 +4,7 @@ description: Add PostGIS to a Serverpod project to enable geography fields, with
 
 # Upgrading to PostGIS support
 
-New Serverpod projects do not include PostGIS by default. To use geography fields in your models, you need a PostgreSQL instance with the PostGIS extension installed.
+New Serverpod projects already include PostGIS, both in the embedded PostgreSQL and in the Docker image. This guide is for older Docker setups and external PostgreSQL servers. To use geography fields in your models there, you need a PostgreSQL instance with the PostGIS extension installed.
 
 :::info
 This upgrade is only necessary if you want to use geography fields in your models. If you do not plan to use geography fields, you can skip this upgrade.

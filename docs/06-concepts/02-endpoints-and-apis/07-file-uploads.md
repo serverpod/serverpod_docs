@@ -194,6 +194,23 @@ To delete a stored file, use `deleteFile` with the same `storageId` and `path`.
 
 Each storage is identified by a `storageId`. Serverpod comes with two default storages, `public` and `private`. Replace these with a cloud-backed implementation, or add additional storages with custom IDs. Calling `pod.addCloudStorage` with `public` or `private` replaces that default. Call it before `pod.start()`. For local disk or a NAS, see [Custom cloud storage](./custom-cloud-storage).
 
+In new projects, `server.dart` already swaps both defaults for `ServerpodCloudProvider`, from the `serverpod_cloud_storage` package:
+
+```dart
+pod.addCloudStorage(
+  await ServerpodCloudProvider.private(
+    fallback: () => DatabaseCloudStorage('private'),
+  ),
+);
+pod.addCloudStorage(
+  await ServerpodCloudProvider.public(
+    fallback: () => DatabaseCloudStorage('public'),
+  ),
+);
+```
+
+When Serverpod Cloud provides storage for your project, these calls connect to it. Otherwise, for example when you run the server locally, the `fallback` runs and files are stored in the database. To keep files somewhere else, replace these calls with one of the storages below.
+
 Pick the package that matches your provider. Use [serverpod_cloud_storage_s3](https://pub.dev/packages/serverpod_cloud_storage_s3) for AWS S3, [serverpod_cloud_storage_gcp](https://pub.dev/packages/serverpod_cloud_storage_gcp) for Google Cloud Storage, or [serverpod_cloud_storage_r2](https://pub.dev/packages/serverpod_cloud_storage_r2) for Cloudflare R2.
 
 ### Configure Google Cloud Storage
@@ -241,6 +258,8 @@ pod.addCloudStorage(
 ### Use native Google Cloud Storage
 
 As an alternative to HMAC keys, use Google Cloud Storage's native JSON API with a service account. This path supports custom metadata, conditional writes with `preventOverwrite`, and signed temporary download URLs. It lives in the same `serverpod_cloud_storage_gcp` package.
+
+For a public storage, make the bucket itself publicly readable, because Serverpod doesn't make each uploaded file public. For example, turn on uniform bucket-level access and grant `allUsers` the Storage Object Viewer role.
 
 The factory constructors are asynchronous, so create the storage before starting the pod:
 

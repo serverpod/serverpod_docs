@@ -327,7 +327,7 @@ features:
   database: false
 ```
 
-A server that does not use a database can set `database: false` to skip migrations and table generation.
+A server that does not use a database can set `database: false` to skip migrations and table generation. Projects created without a database, for example with `--no-database`, don't include this setting, so add it yourself.
 
 ### Experimental features
 
