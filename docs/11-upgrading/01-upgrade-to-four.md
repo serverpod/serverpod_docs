@@ -193,7 +193,7 @@ In 3.4, Serverpod removed a future call from the database before running it, so 
   - `WidgetRedirect` to `RedirectWidget`
 - If a widget extends `WebWidget` directly, implement the new abstract `String render({String? Function(String)? onMissingVariable})` method. The `WidgetRoute` class builds the response from `render` instead of `toString`. Widgets that extend `TemplateWidget`, `ListWidget`, `JsonWidget`, or `RedirectWidget` inherit `render`. The `WidgetRoute.build` method now returns `Future<WebWidget?>`. A `null` return yields a 404. See [Server-side HTML](../concepts/web-server/server-side-html#creating-a-widgetroute).
 - The `RouteStaticDirectory` and `PathCacheMaxAge` classes are removed. Serve directories with `StaticRoute.directory`, and set cache headers with its `cacheControlFactory` parameter. See [Static files](../concepts/web-server/static-files#cache-control).
-- The `--mini` flag on `serverpod create` is removed. To create a project without a database, deselect Database on the setup screen or pass `--no-interactive --no-database`. To create a project without a Flutter app, use `--template server`.
+- The `--mini` flag on `serverpod create` is removed. To create a project without a database, deselect **Database (recommended)** on the setup screen, or pass `--no-interactive --no-database`. To create a project without a Flutter app, use `--template server`.
 
 ### Message central delivers globally by default
 
