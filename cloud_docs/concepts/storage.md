@@ -1,43 +1,43 @@
 ---
+title: Storage
 sidebar_position: 9
-description: Every Serverpod Cloud project gets file storage for avatars, documents, and other user files, read and written through the standard Serverpod storage API.
+description: Serverpod Cloud gives every project file storage. Use it from your server through session.storage, and manage storages and their files from the CLI or the console.
 ---
 
 # Storage
 
-Avatars, invoice PDFs, video attachments, and generated exports do not belong in your database. Serverpod Cloud keeps them as files instead. Your app uploads a file straight to storage rather than through an endpoint method, which keeps large files out of your API calls. Every new Serverpod Cloud project starts with two storages, `private` and `public`, matching the two the Serverpod framework configures by default.
+Avatars, invoice PDFs, and generated exports do not belong in your database. Serverpod Cloud keeps them as files instead. Every new project starts with two storages, `private` and `public`, matching the two the Serverpod framework configures by default, and you can add more.
 
-## Choose between private and public
+## Choose access for a storage
 
-`private` is the default. Only your server can read the files in it. When your app needs a file, your server hands out a link that works for a short time.
+A storage is either private or public, and the two you start with are named after their access.
 
-`public` serves its files to anyone who has the URL. Use it for content you would put on a website, such as profile pictures, product images, and downloadable assets.
+Files in a private storage are never served publicly. Your server reads and writes them, and you can reach them yourself from the CLI and the console. Use it for anything belonging to a single user or anything you would not publish. To let an app download one, your server hands out a link that works for a short time with `session.storage.temporaryDownloadUrl`.
 
-You choose access when you create a storage, and it cannot be changed afterwards. Pick `private` when you are unsure. You can add a public storage later and copy the files you want to expose into it.
+Files in a public storage are served to anyone who has the URL. Use it for content you would put on a website, such as profile images, product photos, and downloadable assets.
 
-## Use a storage from your server
+Access is fixed when a storage is created and cannot be changed afterwards. Choose private when you are unsure. You can create a public storage later and copy the files you want to expose into it.
 
-Register each storage before you start the server. The storage id is the name you gave it.
+## Use storage from your server
 
-<!-- TODO: ServerpodCloudStorage has not landed in the framework yet. Replace this
-     block with the real class, its package, and its import once it ships. -->
+New projects already connect both default storages in `server.dart`. The `serverpod_cloud_storage` package that `serverpod create` adds provides them:
 
 ```dart title="server.dart"
-void run(List<String> args) async {
-  final pod = Serverpod(args, Protocol(), Endpoints());
-
-  pod.addCloudStorage(await ServerpodCloudStorage.create(storageId: 'private'));
-  pod.addCloudStorage(await ServerpodCloudStorage.create(storageId: 'public'));
-
-  await pod.start();
-}
+pod.addCloudStorage(
+  await ServerpodCloudProvider.private(
+    fallback: () => DatabaseCloudStorage('private'),
+  ),
+);
+pod.addCloudStorage(
+  await ServerpodCloudProvider.public(
+    fallback: () => DatabaseCloudStorage('public'),
+  ),
+);
 ```
 
-`ServerpodCloudStorage.create` is asynchronous, so call it before `pod.start()`. Projects created from the Serverpod template already contain these two lines.
+Register storages before `pod.start()`, because the running server serves the storages registered on it. The `fallback` runs when your server is not running on Serverpod Cloud, for example on your own machine, and files are then stored in the database instead.
 
-After that, reach the storage through `session.storage`, the same API every Serverpod storage uses.
-
-Write a file from your server:
+Each call names the storage it works on with a storage id, the same name you see in the CLI and the console. Write a file:
 
 ```dart
 await session.storage.storeFile(
@@ -59,83 +59,69 @@ final pdfBytes = await session.storage.retrieveFile(
 Get the URL of a file in a public storage:
 
 ```dart
-final url = await session.storage.getPublicUrl(
+final url = await session.storage.publicDownloadUrl(
   storageId: 'public',
   path: 'avatars/$userId.png',
 );
 ```
 
-To upload from your app, your server creates an upload description and your app sends the file with it. See [File uploads](https://docs.serverpod.dev/concepts/endpoints-and-apis/file-uploads) for the full flow, including the Flutter side.
+To upload from your app instead, your server creates an upload description and your app sends the file with it. See [File uploads](/concepts/endpoints-and-apis/file-uploads) for the full flow, including the Flutter side.
 
-```dart
-class ProfileEndpoint extends Endpoint {
-  Future<String?> getAvatarUploadDescription(Session session, String path) {
-    return session.storage.createDirectFileUploadDescription(
-      storageId: 'public',
-      path: path,
-    );
-  }
+Cloud connects `private` and `public` for you. A storage you add yourself has no ready-made helper, so you register it in `server.dart` the same way you would any other storage provider. See [Configure a storage provider](/concepts/endpoints-and-apis/file-uploads#configure-a-storage-provider) for how registration works.
 
-  Future<bool> verifyAvatarUpload(Session session, String path) {
-    return session.storage.verifyDirectFileUpload(
-      storageId: 'public',
-      path: path,
-    );
-  }
-}
-```
+## Manage your storages
 
-## Add a storage
-
-Add a storage when you want files kept apart from the two defaults, such as one per tenant or one for exports you purge on a schedule.
-
-1. Open your project in the Cloud console and select the **Storage** tab.
-2. Select **Create storage**.
-3. Enter a storage id. This is the name your code passes as `storageId`. Use lowercase letters, digits, and dashes.
-4. Choose **Private** or **Public**.
-5. Select **Create storage**.
-
-The storage shows as `Creating` for a few seconds, then as `Private` or `Public`.
-
-Deploy your project again so the new storage reaches your running server:
+List the storages in your project:
 
 ```bash
-scloud deploy
+serverpod cloud storage list
 ```
 
-Then register it the same way as the default storages:
+Add one when you want files kept apart from the defaults, such as exports you purge on a schedule:
 
-<!-- TODO: same placeholder class as above. -->
-
-```dart title="server.dart"
-pod.addCloudStorage(await ServerpodCloudStorage.create(storageId: 'user-uploads'));
+```bash
+serverpod cloud storage create exports
 ```
 
-## Browse files in the console
+A storage id uses lowercase letters, digits, and dashes, starts and ends with a letter or a digit, and is at most 63 characters. New storages are private unless you pass `--access public`.
 
-Select a storage in the **Storage** tab to open its file browser.
+Delete a storage and everything in it:
 
-A storage holds a flat list of files, and the console reads `/` in a path as a folder separator. A file stored at `avatars/2026/user-42.png` appears under `avatars`, then `2026`. The path you write is the only structure you get, so decide on a path scheme before you store many files. Use **Filter by name** to narrow a long list.
+```bash
+serverpod cloud storage delete exports
+```
 
-To add files, select **Upload files**, or drag them onto the browser. Select **Upload folder** to upload a whole folder and keep its structure.
+The command asks you to confirm. The files cannot be recovered, and code that still writes to that storage id fails afterwards.
 
-Each file row has **Download** and **Delete**.
+You can do both in the Cloud console instead, from the **Storage** tab. A new storage shows as `Creating` briefly, then as `Private` or `Public`, and deleting one asks you to type its storage id to confirm.
 
-## Delete a storage
+## Work with files
 
-Open the row menu for the storage and select **Delete storage**. Type the storage id to confirm.
+Use these commands to check what your users uploaded, to put an asset in place before anyone needs it, or to clear out test data. The first argument is the storage id:
 
-Deleting a storage deletes every file in it. The files cannot be recovered. Remove the storage from `server.dart` and deploy again, or calls to that storage id will fail.
+```bash
+serverpod cloud storage file list public avatars
+serverpod cloud storage file upload public ./avatar.png avatars/u1.png
+serverpod cloud storage file download public avatars/u1.png
+serverpod cloud storage file delete public avatars/u1.png
+```
 
-## Usage and limits
+See [CLI reference: `storage` command](/cloud/reference/cli/commands/storage) for every subcommand and flag.
 
-A project's plan sets how many storages it can have and how much data it can store and transfer. Serverpod Cloud meters stored data and transfer, and bills them by usage.
+In the console, select a storage in the **Storage** tab to open its file browser. A storage holds a flat list of files, and the console reads `/` in a path as a folder separator. A file stored at `avatars/2026/user-42.png` appears under `avatars`, then `2026`. The path you write is the only structure you get, so decide on a path scheme before you store many files. Use **Filter by name** to narrow a long list.
 
-When a project reaches a usage limit, its files stop being readable until usage is back under the limit. Delete files you no longer need to restore access.
+To add files, select **Upload files**, or drag them onto the browser. Select **Upload folder** to upload a whole folder and keep its structure. Each file row has a menu with **Download** and **Delete**.
 
-See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the figures on your plan.
+## Limits
+
+- **Storages per project.** Your plan sets how many storages a project can have.
+- **Metered usage.** Serverpod Cloud meters three things and bills them by usage: the data you store, the data read out of your storages, and the operations performed on them.
+- **Caps on some plans.** Plans that set caps lock a project out when it goes over one. Every storage in the project becomes unreadable and unwritable, and public URLs stop working.
+- **Getting access back.** Access returns on the next enforcement pass, once usage is back under the cap, once the month rolls over for a monthly cap, or once the project moves to a plan that covers the usage. Deleting files helps when the amount stored is what you went over.
+
+See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the caps and prices on your plan.
 
 ## Related
 
-- [File uploads](https://docs.serverpod.dev/concepts/endpoints-and-apis/file-uploads): the `session.storage` API and the Flutter upload flow.
-- [Passwords, secrets, and environment variables](./passwords-secrets-env-vars): configuration your server reads at runtime.
+- [File uploads](/concepts/endpoints-and-apis/file-uploads): the `session.storage` API and the Flutter upload flow.
+- [CLI reference: `storage` command](/cloud/reference/cli/commands/storage): every storage subcommand and flag.
