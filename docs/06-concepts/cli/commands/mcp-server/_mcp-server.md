@@ -1,6 +1,6 @@
 # serverpod mcp-server
 
-`serverpod mcp-server` starts a Model Context Protocol bridge to the `serverpod start` runner of a server project, letting an AI assistant build, run, and inspect your server.
+`serverpod mcp-server` starts a Model Context Protocol bridge to the `serverpod start` runner of a server project. An agent can use it to create and apply migrations, reload the server and Flutter app, and read logs.
 
 The server directory is auto-detected from the current working directory. Pass `--server-dir` explicitly in monorepos that contain more than one server project.
 
@@ -19,8 +19,7 @@ The bridge drives a running session, so start one with `serverpod start` before 
 | Codex | `.codex/config.toml` |
 | OpenCode | `opencode.json` |
 
-In Cursor, once the file is created, open Cursor Settings and go to **Customize > MCPs**. There, make sure both **Serverpod** and **Dart** are enabled.  
-You can also enable them using the "Tools & MCPs" option in the Command bar.
+In Cursor, once the file is created, open Cursor Settings and go to **Customize > MCPs**. There, make sure both the `serverpod` and `dart` servers are enabled.
 
 ### Set up any other MCP client
 
@@ -41,7 +40,7 @@ Serverpod registers two servers, its own bridge and the Dart MCP server. Any cli
 }
 ```
 
-VS Code names the block `servers` rather than `mcpServers`, Antigravity names the Dart entry `dart-mcp-server`, and Codex uses TOML. The two commands are the same in every case.
+The shape differs per editor. VS Code names the block `servers` rather than `mcpServers`. Antigravity and OpenCode name the Dart entry `dart-mcp-server`, and OpenCode puts both under an `mcp` block. Codex uses TOML.
 
 :::note
 Module projects get only the Dart MCP server. A module has no runnable server, so there is no `serverpod start` session for the bridge to connect to.
@@ -49,10 +48,8 @@ Module projects get only the Dart MCP server. A module has no runnable server, s
 
 ## Migrations and your data
 
-The migration tools change your database. Both `create_migration` and `create_repair_migration` accept a `force` parameter, which proceeds even when Serverpod warns that data may be destroyed.
+The bridge exposes three migration tools. `create_migration` and `create_repair_migration` write migration files without changing your database. Both accept a `force` parameter that proceeds past Serverpod's warning that a change may destroy data. `apply_migrations` then applies the pending migrations to your database.
 
 :::warning
-An agent decides on its own when to pass `force`. Point the bridge at a development database, not production, and read migration tool calls before you approve them.
+`apply_migrations` takes no parameters and applies every pending migration, including one an agent created with `force`. Keep `serverpod start` in its default `development` run mode, because another mode loads that environment's database. Review each `apply_migrations` call before you approve it.
 :::
-
-Keep your MCP client's approval prompts on for these tools. Most clients ask before each tool call, which is the point at which a destructive migration can still be stopped.
