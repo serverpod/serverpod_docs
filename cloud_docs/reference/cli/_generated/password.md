@@ -7,8 +7,8 @@ The passwords are automatically prefixed with SERVERPOD_PASSWORD_ and will be in
 environment variables.
 Passwords defined by this command can be accessed with the getPassword function.
 
-If you need to set a secret without the SERVERPOD_PASSWORD_ prefix, you can do so by using the
-secret set command.
+If you need to set a secret without the SERVERPOD_PASSWORD_ prefix, you can do so by using `scloud
+variable set --secret`.
 
 
 Usage: scloud password <subcommand> [arguments]
@@ -35,16 +35,17 @@ List all passwords, both user-set and platform-managed.
   Passwords are grouped by category:
   - Custom: User-defined passwords that are not part of the platform.
   - Services: Passwords for services like databases, insights, etc.
-  - Auth: Passwords for authentication like JWT, email, for package serverpod_auth_idp_server.
+  - Auth: Passwords for authentication like JWT and email for package serverpod_auth_idp_server, and
+  the Serverpod Cloud email service.
   - Legacy Auth: Passwords for the legacy authentication module.
 
 
 Usage: scloud password list [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
 
 Run "scloud help" to see global options.
 
@@ -64,9 +65,9 @@ Set a password.
 Usage: scloud password set [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
     --name (mandatory)       The name of the password (without SERVERPOD_PASSWORD_ prefix). Can be
                              passed as the first argument.
 
@@ -88,9 +89,9 @@ Unset a password, can only unset user-set passwords.
 Usage: scloud password unset [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
     --name (mandatory)       The name of the password (without SERVERPOD_PASSWORD_ prefix). Can be
                              passed as the first argument.
 

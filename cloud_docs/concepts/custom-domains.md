@@ -27,7 +27,7 @@ A custom domain points at one of the three surfaces:
 Attach the domain to your project, specifying the target surface:
 
 ```bash
-scloud domain attach example.com --target web
+serverpod cloud domain attach example.com --target web
 ```
 
 After attaching, the CLI prints DNS records to add at your registrar. For an apex domain like `example.com`, two records are needed:
@@ -75,7 +75,7 @@ DNS changes typically propagate within a few minutes but can take up to 24 hours
 To force a verification attempt without waiting:
 
 ```bash
-scloud domain verify example.com
+serverpod cloud domain verify example.com
 ```
 
 A successful verification triggers TLS certificate provisioning, which usually completes within the hour. Certificates are renewed automatically.
@@ -91,7 +91,7 @@ final client = Client('https://api.example.com');
 Show the domains attached to a project, with their target surface and verification status:
 
 ```bash
-scloud domain list
+serverpod cloud domain list
 ```
 
 ## Detach a custom domain
@@ -99,12 +99,12 @@ scloud domain list
 Remove a custom domain from a project. The CLI prompts for confirmation before removing:
 
 ```bash
-scloud domain detach example.com
+serverpod cloud domain detach example.com
 ```
 
 ## Troubleshooting
 
-**Verification fails.** DNS records may be missing or still propagating. Confirm the records are in place at your registrar, then wait up to 24 hours and retry with `scloud domain verify <domain>`.
+**Verification fails.** DNS records may be missing or still propagating. Confirm the records are in place at your registrar, then wait up to 24 hours and retry with `serverpod cloud domain verify <domain>`.
 
 **Can't attach the domain.** The domain is already attached to another project. Detach it from that project first.
 

@@ -6,7 +6,7 @@ description: Database backups on Serverpod Cloud are point-in-time snapshots of 
 
 # Database backups
 
-A bad migration or an accidental bulk delete can lose data you needed. Serverpod Cloud can take point-in-time snapshots of your managed database, on demand or on a recurring schedule, and restore the whole database to any snapshot in one step. Backups run on the platform, so there is nothing for you to host or maintain. You manage them with the `scloud` CLI.
+A bad migration or an accidental bulk delete can lose data you needed. Serverpod Cloud can take point-in-time snapshots of your managed database, on demand or on a recurring schedule, and restore the whole database to any snapshot in one step. Backups run on the platform, so there is nothing for you to host or maintain. You manage them with the Serverpod Cloud CLI.
 
 :::info
 Backups are a **Growth** plan feature. On Growth you can create snapshots, schedule backups, and restore. Listing snapshots, deleting snapshots, and viewing or disabling the schedule are available on every plan, so a project on a smaller plan can still see and clean up backups it already has.
@@ -21,10 +21,10 @@ Two kinds of backup cover different needs, and most projects use both.
 
 ## Set up automatic backups
 
-A schedule takes snapshots for you at a fixed frequency. Each database has one schedule. Set it with `scloud db schedule set` and a frequency of `daily`, `weekly`, or `monthly`:
+A schedule takes snapshots for you at a fixed frequency. Each database has one schedule. Set it with `serverpod cloud db schedule set` and a frequency of `daily`, `weekly`, or `monthly`:
 
 ```bash
-scloud db schedule set --frequency weekly --day 1 --hour 3 --retention 30d
+serverpod cloud db schedule set --frequency weekly --day 1 --hour 3 --retention 30d
 ```
 
 Use `--day` to pick the day of the week (1-7) for a weekly schedule or the day of the month (1-31) for a monthly one; it defaults to 1 and does not apply to a daily schedule. Use `--hour` for the hour of the day (0-23, in UTC); it defaults to 0. Use `--retention` (for example `30d`) to set how long each scheduled snapshot is kept before it is deleted automatically. Without `--retention`, scheduled snapshots are kept for 24 hours.
@@ -40,24 +40,24 @@ Day        | 1
 Retention  | 30 days
 ```
 
-To see the current schedule, run `scloud db schedule show`. To turn it off, run `scloud db schedule unset`.
+To see the current schedule, run `serverpod cloud db schedule show`. To turn it off, run `serverpod cloud db schedule unset`.
 
 ## Create a manual snapshot
 
-Take a one-off snapshot with `scloud db backup create`, for example just before applying a large migration:
+Take a one-off snapshot with `serverpod cloud db backup create`, for example just before applying a large migration:
 
 ```bash
-scloud db backup create --name pre-migration --expire-in 7d
+serverpod cloud db backup create --name pre-migration --expire-in 7d
 ```
 
 Both options are optional. The `--name` option labels the snapshot so you can recognize it later. The `--expire-in` option (for example `7d` or `24h`) sets how long the snapshot is kept before it is deleted automatically; leave it off to keep the snapshot until you delete it yourself.
 
 ## List your backups
 
-Run `scloud db backup list` to see every snapshot and its ID:
+Run `serverpod cloud db backup list` to see every snapshot and its ID:
 
 ```bash
-scloud db backup list
+serverpod cloud db backup list
 ```
 
 ```text
@@ -71,10 +71,10 @@ The **Type** column shows whether a snapshot was taken manually or by the schedu
 
 ## Restore from a backup
 
-Restoring replaces the live database with the contents of a snapshot. Pass the snapshot ID from `scloud db backup list`:
+Restoring replaces the live database with the contents of a snapshot. Pass the snapshot ID from `serverpod cloud db backup list`:
 
 ```bash
-scloud db backup restore snap-3f2a9c
+serverpod cloud db backup restore snap-3f2a9c
 ```
 
 Because this replaces live data, Cloud asks you to confirm first:
@@ -82,19 +82,21 @@ Because this replaces live data, Cloud asks you to confirm first:
 ```text
 WARNING: Restores the database for project "my-app" to snapshot "snap-3f2a9c".
 The live database is replaced with the data from the snapshot.
-The current state is retained by the provider as a separate backup.
+This action cannot be undone.
 
 Do you want to proceed?
 ```
+
+To keep a copy of the current data, take a manual snapshot with `serverpod cloud db backup create` before you restore.
 
 The connection string and database credentials do not change, so your deployed server keeps working against the same database with no config change.
 
 ## Delete a snapshot
 
-Remove a snapshot you no longer need with `scloud db backup delete` and its ID:
+Remove a snapshot you no longer need with `serverpod cloud db backup delete` and its ID:
 
 ```bash
-scloud db backup delete snap-3f2a9c
+serverpod cloud db backup delete snap-3f2a9c
 ```
 
 Cloud asks for confirmation, then deletes the snapshot permanently. Scheduled snapshots are removed automatically once they pass the schedule's retention, so you mostly delete manual snapshots this way.
@@ -112,5 +114,5 @@ Backup storage is billed separately from your regular database storage, as its o
 ## Related
 
 - [Database](/cloud/concepts/database): how the managed database is provisioned, connected, and reset.
-- [`scloud db` CLI reference](/cloud/reference/cli/commands/db): every `db backup` and `db schedule` flag and default.
-- [Migrations](/concepts/database/migrations#rolling-back-migrations): rolling a schema change back, which pairs with restoring data.
+- [CLI reference: `db` command](/cloud/reference/cli/commands/db): every `db backup` and `db schedule` flag and default.
+- [Migrations](/concepts/data-and-the-database/database/migrations#rolling-back-migrations): rolling a schema change back, which pairs with restoring data.

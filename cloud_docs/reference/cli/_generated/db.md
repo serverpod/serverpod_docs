@@ -33,9 +33,9 @@ Show the connection details for a Serverpod Cloud DB.
 Usage: scloud db connection [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
 
 Run "scloud help" to see global options.
 
@@ -53,7 +53,11 @@ Usage: scloud db user <subcommand> [arguments]
 
 Available subcommands:
   create           Create a new superuser in the Serverpod Cloud DB.
+  list             List the superusers in the Serverpod Cloud DB.
   reset-password   Reset a password in the Serverpod Cloud DB.
+
+Danger Zone
+  delete           Delete a superuser from the Serverpod Cloud DB.
 
 Run "scloud help" to see global options.
 
@@ -110,9 +114,9 @@ Irreversibly wipe and recreate the database, deleting all data and schema change
 Usage: scloud db wipe [arguments]
 -h, --help                   Print this usage information.
 -p, --project (mandatory)    The ID of the project.
-                             Can be omitted for existing projects that are linked or if a global
-                             project context is set. See `scloud project link --help` and `scloud
-                             context set --help`.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
 
 Run "scloud help" to see global options.
 

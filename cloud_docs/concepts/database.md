@@ -12,14 +12,12 @@ The managed database runs on PostgreSQL 17 with TLS required, connection pooling
 
 ## Enable the database
 
-The database is opt-in. You choose whether to enable it when you create the project, and you can enable it in two ways:
+The database is opt-in. You choose whether to enable it when you create the project, in one of two ways:
 
-- **Interactively with `scloud launch`.** Launch prompts you with *"Enable the database for the project?"* and defaults to yes.
-- **Non-interactively with `--enable-db`.** Pass `--enable-db` (or `--no-enable-db`) to `scloud launch` to skip the prompt. The same flag is **required** on `scloud project create`: it has no default there, so you must pass one.
+- **With `serverpod cloud launch`.** It checks your server config for a `database` section and presets the database switch on the Console's **New project** page. You can change it there before you create the project.
+- **With `serverpod cloud project create`.** Pass `--enable-db`, or `--no-enable-db` if your project doesn't use a database. The flag is **required**: it has no default, so you must pass one.
 
 Once a project is created with the database enabled, the database is provisioned automatically and made available to your server on the next deploy.
-
-If your project doesn't use a database, pass `--no-enable-db` instead.
 
 ## How your server connects
 
@@ -38,11 +36,11 @@ Your server reads these through Serverpod's standard configuration. You don't wr
 
 ## Migrations run on every deploy
 
-When Cloud deploys your server, the container starts with `--apply-migrations`. Any pending migrations in your project's `migrations/` directory are applied before the server begins serving requests.
+Cloud applies pending migrations from your project's `migrations/` directory when it deploys your server.
 
-If a migration fails to apply, the server fails to start and the deployment is reported as failed. Fix the migration in your project and redeploy. For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
+If a migration fails to apply, the server logs `Failed to apply database migrations.` Check the server logs with `serverpod cloud log`, then fix the migration in your project and redeploy. For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
 
-To undo a migration that already applied successfully, create a repair migration with `serverpod create-repair-migration` targeting the version you want to roll back to, then redeploy. Cloud applies the repair on the next deploy. Only the schema is rolled back; data is not. See the framework's [Migrations](/concepts/database/migrations#rolling-back-migrations) guide for details.
+To undo a migration that already applied, create a forward migration that reverses it. Revert the model change, run `serverpod create-migration`, and redeploy. If the command stops because data would be lost, add `--force`. The forward migration changes the schema only. It does not restore data.
 
 ## Backups
 
@@ -54,13 +52,13 @@ You can connect to the managed database from your machine, a GUI client, or `psq
 
 The steps:
 
-1. Run `scloud db connection` to print the host, port, and database name.
-2. Run `scloud db user create <username>` to create a superuser. The password is shown **once**; save it.
+1. Run `serverpod cloud db connection` to print the host, port, and database name.
+2. Run `serverpod cloud db user create <username>` to create a superuser. The password is shown **once**, so save it.
 3. Connect from your client with the host, port, database, your username, and the saved password.
 
-Both commands need to know which project you're working with. From a project directory that's been linked (any project created with `scloud launch` is linked automatically), the project ID is picked up from `scloud.yaml`. From anywhere else, pass `-p your-project-id`.
+Both commands need to know which project you're working with. From a project directory that's been linked (any project created with `serverpod cloud launch` is linked automatically), the project ID is picked up from `scloud.yaml`. From anywhere else, pass `-p your-project-id`.
 
-If you lose the password, run `scloud db user reset-password <username>` to reset it. The new password is also shown only once.
+If you lose the password, run `serverpod cloud db user reset-password <username>` to reset it. The new password is also shown only once.
 
 Any PostgreSQL-compatible client works. A few popular options:
 
@@ -73,13 +71,13 @@ Any PostgreSQL-compatible client works. A few popular options:
 
 ## Reset the database
 
-The `scloud db wipe` command deletes all tables, all data, and all applied migrations from the managed database. It asks for confirmation by default.
+The `serverpod cloud db wipe` command deletes all tables, all data, and all applied migrations from the managed database. It asks for confirmation by default.
 
 ```bash
-scloud db wipe
+serverpod cloud db wipe
 ```
 
-After a wipe, your server will error on its next request because the schema is gone. Redeploy with `scloud deploy` to reapply migrations and bring the database back into a working state.
+After a wipe, your server will error on its next request because the schema is gone. Redeploy with `serverpod cloud deploy` to reapply migrations and bring the database back into a working state.
 
 Use this when you want to start clean during development. **Do not wipe a production database.**
 
@@ -89,16 +87,16 @@ The managed database is built so you don't have to think about credentials in yo
 
 - **TLS is required for all connections.** Cloud sets `SERVERPOD_DATABASE_REQUIRE_SSL` to `true` for your server, and the same applies to direct connections from `psql` or a GUI client.
 - **The server's password is managed by the platform.** It's never written into your repo and never shown to you. Your server reads it from the injected environment at runtime.
-- **Direct access uses separate superusers that you create.** The server's user and the users you create with `scloud db user create` are distinct, so revoking or rotating a direct-access password does not affect the server.
+- **Direct access uses separate superusers that you create.** The server's user and the users you create with `serverpod cloud db user create` are distinct, so revoking or rotating a direct-access password does not affect the server.
 
 ## Performance
 
 The managed database includes infrastructure features you'd otherwise wire up yourself:
 
-- **Connection pooling is on by default.** The connection details returned by `scloud db connection` point at a pooled endpoint, so short-lived connections from many clients don't exhaust Postgres connection slots.
+- **Connection pooling is on by default.** The connection details returned by `serverpod cloud db connection` point at a pooled endpoint, so short-lived connections from many clients don't exhaust Postgres connection slots.
 - **Compute autoscales.** The database scales compute up and down within bounds set by your plan, so you don't need to provision for peak traffic up front.
 
 ## Related
 
-- [CLI reference: `scloud db`](/cloud/reference/cli/commands/db) for all `db` subcommands and options.
-- [Deployments](/cloud/concepts/deployments) for how migrations apply during deploy.
+- [CLI reference: `db` command](/cloud/reference/cli/commands/db) for all `db` subcommands and options.
+- [Deployments](/cloud/concepts/deployments) for the deploy lifecycle.

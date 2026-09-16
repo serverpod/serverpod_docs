@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 sidebar_label: Deploy your first app
-description: Run scloud launch to create a Cloud project, deploy your Serverpod server, and open it at a public URL. Takes about five minutes.
+description: Run serverpod cloud launch to create a Cloud project, deploy your Serverpod server, and open it at a public URL. Takes about five minutes.
 sidebar_class_name: sidebar-icon-deploying
 ---
 
@@ -13,70 +13,60 @@ Get your Serverpod app live on Cloud in a few minutes.
 
 You need:
 
-- `scloud`, Serverpod Cloud's command-line tool, installed and signed in. See [Install scloud](/cloud/getting-started/installation).
-- A Serverpod project on your machine. See the Serverpod [Quickstart](https://docs.serverpod.dev/get-started/quickstart) to create one.
+- The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
+- A Serverpod project on your machine. See [Creating a new project](/quickstart#create-the-project) in the Serverpod installation guide.
 
 ## Launch your project
 
 From your project's root directory:
 
 ```bash
-scloud launch
+serverpod cloud launch
 ```
 
-It creates a Cloud project and ships its first version. The CLI walks you through eight prompts; press Enter at each one to accept the default (most default to yes). The four that need real decisions:
+It creates a Cloud project and ships its first version in these steps:
 
-- **Project ID.** scloud suggests a default from your pubspec name (for example, `my-app`). Press Enter to accept, or type a different ID. The project ID becomes part of your default URL (`<project-id>.serverpod.space`).
-- **Plan.** Type `starter` or `growth` (see [Cloud plans](https://serverpod.dev/cloud) for details). Pick `starter` for a first deploy. Starter includes a 1-month free trial; no credit card required.
-- **Database.** Press Enter for yes if you want Cloud to provision and manage a Postgres database for your server. Type `n` if your app doesn't need a database, or if you plan to connect to your own.
-- **Pre-deploy hooks.** Hooks run scripts before each deploy. scloud may offer to add `serverpod generate` and a Flutter build hook (if your project defines one). Accept the ones that match your project. See [Deployment hooks](/cloud/concepts/deployment-hooks) for details.
+1. **Choose the project.** If your account has no projects, the command asks *"Open the browser and create a new Serverpod Cloud project?"* Press Enter to accept. If you already have projects, it lists them, with a last option to create a new project in the browser.
+2. **Create the project in the Console.** If you chose to create a new project, the Console's **New project** page opens. The project ID is pre-filled from your pubspec name (for example, `my-app`), and the database is switched on if your server config has a `database` section. Change either if you need to. Pick a plan (see [Cloud plans](https://serverpod.dev/cloud)), click **Launch Project**, and return to the terminal. The project ID becomes part of your default URL (`<project-id>.serverpod.space`).
+3. **Pre-deploy hooks.** The command adds `serverpod generate` as a pre-deploy hook, plus `serverpod run flutter_build` if your server's `pubspec.yaml` defines that script. See [Deployment hooks](/cloud/concepts/deployment-hooks) for details.
+4. **Custom passwords.** If `config/passwords.yaml` has custom passwords, the command asks which ones to copy to Cloud. Passwords from the `production` and `shared` sections are preselected. Set the rest later with `serverpod cloud password set`.
 
-After the final confirmation, scloud creates the Cloud project, writes a `scloud.yaml` linking subsequent commands to it, uploads your code, and starts the deploy.
+The command then writes a `scloud.yaml` linking subsequent commands to the project, uploads your code, and deploys.
 
 ## Watch the deployment
 
-Next, scloud prints the URLs your project will be reachable at:
+The deployment runs in three stages. The terminal updates each one as it progresses:
 
 ```text
+Upload successful.
+Cloud build successful.
+Rollout successful. 🚀
+```
+
+When you see the rocket on **Rollout**, your app is live. The command then prints your project ID and the URLs your project is reachable at:
+
+```text
+Your Serverpod Cloud project ID is: my-app
+
 When the server has started, you can access it at:
    Web:      https://my-app.serverpod.space/
    API:      https://my-app.api.serverpod.space/
    Insights: https://my-app.insights.serverpod.space/
 ```
 
-The server isn't live yet. Watch the deployment finish:
-
-```bash
-scloud deployment show
-```
-
-The command tracks the deployment through four stages, updating each line as it progresses:
-
-```text
-Tracking my-app deployment 4583d0a1-3d0a-400e-a9a5-9880da6abc94
-(Press Ctrl+C to exit)
-
-Upload successful.
-Cloud build successful.
-Infra deploy successful.
-Service rollout successful. 🚀
-```
-
-When you see the rocket on **Service rollout**, your app is live.
-
 ## Open your app
 
-In your browser, open the Web URL scloud printed:
+In your browser, open the Web URL the command printed:
 
 ```text
 https://my-app.serverpod.space/
 ```
 
-The server's landing page loads. If you added the Flutter build hook, navigate to `/app` to see your Flutter web app.
+Your Flutter web app loads at the root. If the app wasn't built before the upload, a **Flutter web app not built** page loads instead. Projects created with the website option show a landing page at the root, with the Flutter web app under `/app`.
 
 ## What you've done
 
 You've created a Cloud project and shipped its first version. From here:
 
-- Every change you make ships with `scloud deploy`. See [Deployments](/cloud/concepts/deployments) for the full deploy lifecycle.
+- Every change you make ships with `serverpod cloud deploy`. See [Deployments](/cloud/concepts/deployments) for the full deploy lifecycle.
 - To use your own domain instead of `<project>.serverpod.space`, see [Custom domains](/cloud/concepts/custom-domains).

@@ -147,4 +147,4 @@ var result = await client.company.isLegit(company);
 
 ## Conclusion
 
-You are now ready to start exploring the exciting world of Serverpod! And even if you start out with Serverpod mini, you can always [upgrade](../upgrading/upgrade-from-mini) to the full version later.
+You are now ready to start exploring the exciting world of Serverpod! And even if you start out with Serverpod mini, you can always [upgrade](./upgrading/upgrade-from-mini) to the full version later.

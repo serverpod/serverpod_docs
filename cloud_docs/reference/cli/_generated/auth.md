@@ -9,8 +9,9 @@ Usage: scloud auth <subcommand> [arguments]
 Available subcommands:
   create-token   Create a personal access token.
   list           List the current authentication sessions.
-  login          Log in to Serverpod cloud.
+  login          Log in to Serverpod Cloud.
   logout         Log out from Serverpod Cloud.
+  revoke-token   Revoke an authentication token.
 
 Run "scloud help" to see global options.
 
@@ -23,7 +24,7 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 #### `login`
 
 ```console
-Log in to Serverpod cloud.
+Log in to Serverpod Cloud.
 
 Usage: scloud auth login [arguments]
 -h, --help                                   Print this usage information.
@@ -67,7 +68,8 @@ List the current authentication sessions.
 
 Usage: scloud auth list [arguments]
 -h, --help        Print this usage information.
--u, --[no-]utc    Display timestamps in UTC timezone instead of local.
+-u, --[no-]utc    Display timestamps in UTC timezone instead of local. Set
+                  SERVERPOD_CLOUD_DISPLAY_UTC=true to make UTC the default for all commands.
 
 Run "scloud help" to see global options.
 
@@ -95,6 +97,32 @@ TTL: Expire after non-use
     --no-idle-ttl                          Do not expire the token after a duration of non-use.
 
 Run "scloud help" to see global options.
+
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
+
+```
+
+#### `revoke-token`
+
+```console
+Revoke an authentication token.
+
+Revokes a specific login session or CLI / personal access token.
+See also "scloud auth list", to list the current authentication sessions.
+
+Usage: scloud auth revoke-token [arguments]
+-h, --help                    Print this usage information.
+    --token-id (mandatory)    The ID of the token to revoke. Can be passed as the first argument.
+
+Run "scloud help" to see global options.
+
+
+Examples
+
+  Revoke a token by ID.
+
+    $ scloud auth revoke-token <token-id>
+
 
 See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/auth
 

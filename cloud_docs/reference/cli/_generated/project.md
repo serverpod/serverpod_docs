@@ -11,6 +11,7 @@ Available subcommands:
   delete   Delete a Serverpod Cloud project.
   link     Link your local project to an existing Serverpod Cloud project.
   list     List the Serverpod Cloud projects.
+  show     Show the profile of a Serverpod Cloud project.
 
 Management
   user     Manage Serverpod Cloud project users.
@@ -61,8 +62,34 @@ See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/co
 List the Serverpod Cloud projects.
 
 Usage: scloud project list [arguments]
--h, --help    Print this usage information.
-    --all     Include deleted projects.
+-h, --help        Print this usage information.
+    --all         Include deleted projects.
+-u, --[no-]utc    Display timestamps in UTC timezone instead of local. Set
+                  SERVERPOD_CLOUD_DISPLAY_UTC=true to make UTC the default for all commands.
+
+Run "scloud help" to see global options.
+
+See the full documentation at: https://docs.serverpod.dev/cloud/reference/cli/commands/project
+
+```
+
+#### `show`
+
+```console
+Show the profile of a Serverpod Cloud project.
+
+Shows when the project was created, the region it runs in, its plan, and its compute and database
+capacity.
+
+Usage: scloud project show [arguments]
+-h, --help                   Print this usage information.
+-p, --project (mandatory)    The ID of the project. Can be passed as the first argument.
+                             Can be omitted for existing projects that are linked (see the "project
+                             link" command) or if a global project context is set (see the "settings
+                             set projectContext" command).
+-u, --[no-]utc               Display timestamps in UTC timezone instead of local. Set
+                             SERVERPOD_CLOUD_DISPLAY_UTC=true to make UTC the default for all
+                             commands.
 
 Run "scloud help" to see global options.
 

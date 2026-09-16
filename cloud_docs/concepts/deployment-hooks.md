@@ -6,13 +6,13 @@ description: Run custom scripts at fixed points in a Serverpod Cloud deploy. Pre
 
 # Deployment hooks
 
-If you need something to run on every deploy, like database migrations, deployment hooks let you trigger your own scripts before or after `scloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
+If you need something to run on every deploy, like code generation, deployment hooks run your own scripts as part of `serverpod cloud deploy`. Without them, those steps live in a separate command you remember to run yourself.
 
 ## When to use hooks
 
 Hooks come in two shapes:
 
-- **`pre_deploy`** for anything that has to run *before* Cloud receives your project (regenerate Serverpod code, build a Flutter web client, compile non-Dart assets, run database migration scripts, run a test suite as a deploy gate).
+- **`pre_deploy`** for anything that has to run *before* Cloud receives your project (regenerate Serverpod code, build a Flutter web client, compile non-Dart assets, run a test suite as a deploy gate).
 - **`post_deploy`** for anything that should fire *after* the upload completes (Slack notification, kick a downstream pipeline, mark a release in your tracker).
 
 If your deploy doesn't depend on either, don't add hooks. Deploys work without them.
@@ -46,7 +46,7 @@ project:
 
 ## How scripts run
 
-Each command runs in your project directory (the one containing `scloud.yaml`) through the system shell (`bash -c` on macOS and Linux, `cmd /c` on Windows). Scripts inherit the environment variables of the shell that invoked `scloud deploy`, so CI-set secrets and your local `PATH` are available. Commands in an array run sequentially; output streams to your terminal in real time as each one executes.
+Each command runs in your project directory (the one containing `scloud.yaml`) through the system shell (`bash -c` on macOS and Linux, `cmd /c` on Windows). Scripts inherit the environment variables of the shell that invoked `serverpod cloud deploy`, so CI-set secrets and your local `PATH` are available. Commands in an array run sequentially. Output streams to your terminal in real time as each one executes.
 
 A non-zero exit code halts further commands in that hook.
 
@@ -55,7 +55,7 @@ A non-zero exit code halts further commands in that hook.
 The `pre_deploy` and `post_deploy` hooks fail asymmetrically:
 
 - A failing `pre_deploy` script aborts the deploy *before* Cloud receives your code.
-- A failing `post_deploy` script runs *after* the upload, so the deploy has already happened. The `scloud deploy` command exits with an error, but the new version is live.
+- A `post_deploy` script runs *after* the upload, before Cloud finishes building and rolling out the new version. If it fails, the `serverpod cloud deploy` command exits with an error, but Cloud keeps deploying. Check the result with `serverpod cloud status deployment show`.
 
 Plan your scripts accordingly: put anything that must succeed before your code ships in `pre_deploy`.
 
@@ -64,4 +64,4 @@ Plan your scripts accordingly: put anything that must succeed before your code s
 ## Related
 
 - [Deployments](/cloud/concepts/deployments) for the deploy lifecycle around hooks.
-- [`scloud deploy`](/cloud/reference/cli/commands/deploy) for the deploy command and its flags.
+- [CLI reference: `deploy` command](/cloud/reference/cli/commands/deploy) for all deploy flags.

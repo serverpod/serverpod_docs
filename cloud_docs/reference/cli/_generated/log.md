@@ -7,15 +7,19 @@ Usage: scloud log [arguments]
 -h, --help                                                       Print this usage information.
 -p, --project (mandatory)                                        The ID of the project.
                                                                  Can be omitted for existing
-                                                                 projects that are linked or if a
-                                                                 global project context is set. See
-                                                                 `scloud project link --help` and
-                                                                 `scloud context set --help`.
+                                                                 projects that are linked (see the
+                                                                 "project link" command) or if a
+                                                                 global project context is set (see
+                                                                 the "settings set projectContext"
+                                                                 command).
     --limit=<integer>                                            The maximum number of log records
                                                                  to fetch.
                                                                  (defaults to "50")
 -u, --[no-]utc                                                   Display timestamps in UTC timezone
-                                                                 instead of local.
+                                                                 instead of local. Set
+                                                                 SERVERPOD_CLOUD_DISPLAY_UTC=true to
+                                                                 make UTC the default for all
+                                                                 commands.
     --until=<YYYY-MM-DDtHH:MM:SSz or duration[us|ms|s|m|h|d]>    Fetch records from before this
                                                                  timestamp. Accepts ISO date (e.g.
                                                                  "2024-01-15T10:30:00Z") or relative
@@ -27,7 +31,10 @@ Usage: scloud log [arguments]
                                                                  Can also be specified as the first
                                                                  argument.
     --tail                                                       Tail the log and get real time
-                                                                 updates.
+                                                                 updates. Cannot be combined with
+                                                                 --since or --until.
+    --raw                                                        Print the log content exactly as
+                                                                 stored, without parsing.
 
 Run "scloud help" to see global options.
 
@@ -47,6 +54,10 @@ Examples
   Stream logs in real-time.
 
     $ scloud log --tail
+
+  Streaming logs in real-time with --format json emits JSONL.
+
+    $ scloud log --tail --format json
 
 
   View logs from the last hour using duration.
