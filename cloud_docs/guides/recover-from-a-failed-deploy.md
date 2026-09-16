@@ -24,7 +24,7 @@ serverpod cloud status deployment list
 A failed deploy shows `FAILURE` in the Status column and a short reason in the Info column:
 
 ```text
-# | Project | Deploy Id                            | Status  | Started             | Finished            | Info
+# | Project | Deploy Id                            | Status  | Started (local)     | Finished (local)    | Info
 --+---------+--------------------------------------+---------+---------------------+---------------------+-----------------------------------
 0 | my-app  | 73e66b41-64fc-4920-b6ef-4918cc6ceca1 | FAILURE | 2026-06-15 15:19:37 | 2026-06-15 15:20:34 | User build FAILURE - see build log
 ```
