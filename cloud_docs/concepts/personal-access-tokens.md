@@ -1,21 +1,21 @@
 ---
 sidebar_position: 7
 sidebar_label: Personal access tokens
-description: Create personal access tokens to authenticate scloud in CI pipelines, scripts, and headless environments without interactive login.
+description: Create personal access tokens to authenticate the Serverpod Cloud CLI in CI pipelines, scripts, and headless environments without interactive login.
 ---
 
 # Personal access tokens
 
-When you need to run `scloud` in a CI pipeline, a script, or a headless environment where the browser-based `scloud auth login` flow isn't possible, you authenticate with a personal access token instead. Tokens are long-lived credentials you generate once, store as a secret, and pass to `scloud` as a flag or environment variable.
+When you need to run the Serverpod Cloud CLI in a CI pipeline, a script, or a headless environment where the browser-based `serverpod cloud auth login` flow isn't possible, you authenticate with a personal access token instead. Tokens are long-lived credentials you generate once, store as a secret, and pass to the CLI as a flag or environment variable.
 
-For everyday development on your machine, `scloud auth login` is simpler; it stores credentials locally and you don't need to handle tokens.
+For everyday development on your machine, `serverpod cloud auth login` is simpler. It stores credentials locally, so you don't need to handle tokens.
 
 ## Create a token
 
 Sign in first, then run:
 
 ```bash
-scloud auth create-token
+serverpod cloud auth create-token
 ```
 
 Example output:
@@ -24,7 +24,7 @@ Example output:
 ✅ Successfully created an API token.
 
 Use the --token option or the SERVERPOD_CLOUD_TOKEN environment variable to
-authenticate with this token in scloud commands.
+authenticate with this token in serverpod cloud commands.
 
 The token is only visible once:
 c2FzAZxXRnzFeN2xTo6xVInh3k3bNanACBRM7ux5AYOLQDgzK82PZvdRn0N_f2WqLPCZ
@@ -42,13 +42,13 @@ By default, tokens expire after 30 days of non-use. Adjust this when creating th
 
 ```bash
 # Expire after 7 days of non-use
-scloud auth create-token --idle-ttl 7d
+serverpod cloud auth create-token --idle-ttl 7d
 
 # Never expire from non-use (still valid until revoked or until --expire-at)
-scloud auth create-token --no-idle-ttl
+serverpod cloud auth create-token --no-idle-ttl
 
 # Expire at a fixed ISO 8601 time
-scloud auth create-token --expire-at 2026-12-31T23:59:59Z
+serverpod cloud auth create-token --expire-at 2026-12-31T23:59:59Z
 ```
 
 Durations accept `s`, `m`, `h`, and `d` units.
@@ -58,45 +58,45 @@ Durations accept `s`, `m`, `h`, and `d` units.
 To see your active sessions and tokens with their IDs, creation, last-used, and expiry times:
 
 ```bash
-scloud auth list
+serverpod cloud auth list
 ```
 
 Use the Token Id column to identify a token before revoking it.
 
 ## Revoke a token
 
-Revoke a specific token by its ID from `scloud auth list`:
+Revoke a specific token by its ID from `serverpod cloud auth list`:
 
 ```bash
-scloud auth logout --token-id <token-id>
+serverpod cloud auth logout --token-id <token-id>
 ```
 
 Log out the current session instead:
 
 ```bash
-scloud auth logout
+serverpod cloud auth logout
 ```
 
 Revoke every session and token at once:
 
 ```bash
-scloud auth logout --all
+serverpod cloud auth logout --all
 ```
 
 A revoked token can no longer authenticate.
 
-## Use a token with scloud
+## Use a token with the Cloud CLI
 
 The CLI accepts a token two ways. For CI pipelines and shell sessions, prefer the `SERVERPOD_CLOUD_TOKEN` environment variable. The `--token` flag is a per-command override.
 
 ### Environment variable
 
-Set the variable once so every subsequent `scloud` call in that shell uses the token:
+Set the variable once so every subsequent `serverpod cloud` command in that shell uses the token:
 
 ```bash
 export SERVERPOD_CLOUD_TOKEN="your-token-here"
-scloud deploy
-scloud log
+serverpod cloud deploy
+serverpod cloud log
 ```
 
 Best for CI pipelines and shell sessions where you set the secret once and run multiple commands.
@@ -106,8 +106,8 @@ Best for CI pipelines and shell sessions where you set the secret once and run m
 Pass the token directly to any command:
 
 ```bash
-scloud --token="your-token-here" deploy
-scloud --token="your-token-here" log
+serverpod cloud --token="your-token-here" deploy
+serverpod cloud --token="your-token-here" log
 ```
 
 The flag applies only to that command. Useful when the token lives in a script variable or a short-lived secret.
@@ -128,5 +128,5 @@ For the full walkthrough, see [Deploy from CI with GitHub Actions](/cloud/guides
 
 ## Related
 
-- [`scloud auth`](/cloud/reference/cli/commands/auth) for the full reference on `auth login`, `create-token`, `list`, and `logout`.
-- [CLI environment variables](/cloud/reference/cli/env_vars) for all `scloud` environment variables.
+- [CLI reference: `auth` command](/cloud/reference/cli/commands/auth) for `auth login`, `create-token`, `list`, and `logout`.
+- [CLI environment variables](/cloud/reference/cli/env_vars) for all Cloud CLI environment variables.

@@ -11,7 +11,7 @@ Use the official [`serverpod/serverpod_cloud_deploy`](https://github.com/serverp
 ## Before you start
 
 - A personal access token. See [Create a token](/cloud/concepts/personal-access-tokens#create-a-token) on the Personal access tokens page.
-- The project's `scloud.yaml` committed to the repository. It's created by `scloud launch` or `scloud link`.
+- The project's `scloud.yaml` committed to the repository. It's created by `serverpod cloud launch` or `serverpod cloud project link`.
 - Either: generated Serverpod files committed to the repository, **or** a CI step that runs `serverpod generate` (covered as a variant below).
 - One Serverpod project per repository, located no more than two subdirectory levels below the repository root.
 
@@ -53,16 +53,16 @@ jobs:
 What each step does:
 
 - The `actions/checkout@v4` step clones the repository into the runner.
-- The `subosito/flutter-action@v2` step installs the Flutter SDK, which also provides Dart. The deploy action needs Dart to install `scloud`.
-- The `dart pub global activate serverpod_cli` step puts the framework CLI on the runner so any pre-deploy hooks (for example, `serverpod generate`) can run.
-- The `serverpod/serverpod_cloud_deploy@v1` step installs `scloud`, reads your `scloud.yaml`, and runs `scloud deploy` against your project using the token.
+- The `subosito/flutter-action@v2` step installs the Flutter SDK, which also provides Dart. The deploy action needs Dart to install the Serverpod Cloud CLI.
+- The `dart pub global activate serverpod_cli` step puts the Serverpod CLI on the runner so any pre-deploy hooks (for example, `serverpod generate`) can run.
+- The `serverpod/serverpod_cloud_deploy@v1` step installs the Serverpod Cloud CLI as `scloud`, reads your `scloud.yaml`, and runs `scloud deploy` against your project using the token.
 
 ## Push to trigger the workflow
 
 Commit the workflow file and push to `main`. Open the **Actions** tab in your repository to watch the run. When it succeeds, confirm the deploy went live:
 
 ```bash
-scloud status deployment show
+serverpod cloud status deployment show
 ```
 
 You should see a recent deployment moving through Upload → Cloud build → Rollout, finishing with the rocket on **Rollout**.

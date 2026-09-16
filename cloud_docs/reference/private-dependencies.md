@@ -61,26 +61,26 @@ and at rest.
 
 ### CLI commands for build secrets
 
-Use the `scloud build secret` commands to manage your build secrets.
+Use the `serverpod cloud build secret` commands to manage your build secrets.
 
 #### List the current build secrets
 ```sh
-$ scloud build secret list
+$ serverpod cloud build secret list
 ```
 
 #### Add or modify a build secret
 ```sh
-$ scloud build secret set MY_SECRET_NAME "my-private-ssh-key"
+$ serverpod cloud build secret set MY_SECRET_NAME "my-private-ssh-key"
 ```
 
 #### Add or modify a build secret with the value in a file
 ```sh
-$ scloud build secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
+$ serverpod cloud build secret set MY_SECRET_NAME --from-file my_private_ssh_key_file
 ```
 
 #### Remove a build secret
 ```sh
-$ scloud build secret unset MY_SECRET_NAME
+$ serverpod cloud build secret unset MY_SECRET_NAME
 ```
 
 ### Accessing a private repository in GitHub

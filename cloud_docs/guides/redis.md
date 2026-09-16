@@ -12,7 +12,7 @@ Serverpod uses Redis for **distributed caching** and **PubSub** when running acr
 
 ## Before you start
 
-- Completed the **Installation** steps (`scloud` installed and authenticated).
+- The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - A Serverpod Cloud project already deployed (or ready to deploy).
 
 ## Create a Redis database on Upstash
@@ -33,7 +33,7 @@ Upstash enables TLS for all databases and does not allow disabling it, so you wi
 Serverpod expects the Redis password under the built-in key `redis`. Set it with the Serverpod Cloud CLI:
 
 ```bash
-scloud password set redis "YOUR_UPSTASH_PASSWORD"
+serverpod cloud password set redis "YOUR_UPSTASH_PASSWORD"
 ```
 
 Use the exact password from the Upstash database page.
@@ -43,10 +43,10 @@ Use the exact password from the Upstash database page.
 Configure host, port, enable Redis, and require SSL using environment variables:
 
 ```bash
-scloud variable set SERVERPOD_REDIS_HOST "YOUR_UPSTASH_ENDPOINT"
-scloud variable set SERVERPOD_REDIS_PORT "YOUR_UPSTASH_PORT"
-scloud variable set SERVERPOD_REDIS_ENABLED "true"
-scloud variable set SERVERPOD_REDIS_REQUIRE_SSL "true"
+serverpod cloud variable set SERVERPOD_REDIS_HOST "YOUR_UPSTASH_ENDPOINT"
+serverpod cloud variable set SERVERPOD_REDIS_PORT "YOUR_UPSTASH_PORT"
+serverpod cloud variable set SERVERPOD_REDIS_ENABLED "true"
+serverpod cloud variable set SERVERPOD_REDIS_REQUIRE_SSL "true"
 ```
 
 Replace `YOUR_UPSTASH_ENDPOINT` with the Upstash endpoint (host only, no `rediss://` or port). Replace `YOUR_UPSTASH_PORT` with the port number as a string (most likely `6380` for Upstash).
@@ -56,7 +56,7 @@ Replace `YOUR_UPSTASH_ENDPOINT` with the Upstash endpoint (host only, no `rediss
 If your Redis provider uses a username (e.g. ACL), you can set:
 
 ```bash
-scloud variable set SERVERPOD_REDIS_USER "default"
+serverpod cloud variable set SERVERPOD_REDIS_USER "default"
 ```
 
 :::
@@ -66,7 +66,7 @@ scloud variable set SERVERPOD_REDIS_USER "default"
 Environment variables and passwords are applied when your server deploys. Redeploy so the new Redis config is used:
 
 ```bash
-scloud deploy
+serverpod cloud deploy
 ```
 
 After a successful deploy, your server will use Upstash for Redis-backed caching and PubSub.

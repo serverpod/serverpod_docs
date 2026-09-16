@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: Project identifier rules
-description: "Naming rules for the Serverpod Cloud project identifier and how scloud picks which project to operate on: scloud.yaml, -p flag, or environment variable."
+description: "Naming rules for the Serverpod Cloud project identifier and how the Cloud CLI picks which project to operate on: scloud.yaml, -p flag, or environment variable."
 ---
 
 # Project identifier rules
@@ -13,14 +13,14 @@ The identifier given to a project in Serverpod Cloud must adhere to these rules:
 - Contain only lowercase letters, numbers, and hyphens
 
 When creating a new project (see also the
-[`scloud launch`](/cloud/reference/cli/commands/launch/)
+[`serverpod cloud launch`](/cloud/reference/cli/commands/launch/)
 or
-[`scloud project`](/cloud/reference/cli/commands/project/)
+[`serverpod cloud project`](/cloud/reference/cli/commands/project/)
 commands) you will get an error message if the name is not valid.
 
-Most `scloud` commands need to know which project to operate on, which can be
+Most `serverpod cloud` commands need to know which project to operate on, which can be
 specified in multiple ways:
-- The `scloud.yaml` file in your project directory (see [scloud.yaml schema](/cloud/reference/scloud-yaml-schema) for the file format and the [`scloud project link`](/cloud/reference/cli/commands/project/) command for how to generate or update it)
+- The `scloud.yaml` file in your project directory (see [scloud.yaml schema](/cloud/reference/scloud-yaml-schema) for the file format and the [`serverpod cloud project link`](/cloud/reference/cli/commands/project/) command for how to generate or update it)
 - The `-p` / `--project` command line option
 - The `SERVERPOD_CLOUD_PROJECT_ID` environment variable
 
