@@ -1,16 +1,16 @@
 ---
 sidebar_position: 4
 sidebar_label: Recover from a failed deploy
-description: Diagnose why your serverpod cloud deploy failed, read the build log, identify the failure type, and ship a fix to recover without disrupting any running version.
+description: Diagnose why a deploy to Serverpod Cloud failed, read the build log, identify the failure type, and ship a fix to recover without disrupting any running version.
 ---
 
 # Recover from a failed deploy
 
-Your `serverpod cloud deploy` just failed. This guide walks you through finding what broke and shipping a fix. A failed deploy doesn't disrupt a running version; Cloud only switches traffic to a successful deploy, so if a previous version was live, it stays live.
+Your deploy to Serverpod Cloud just failed. This guide walks you through finding what broke and shipping a fix. A failed deploy doesn't disrupt a running version. Cloud only switches traffic to a successful deploy, so if a previous version was live, it stays live.
 
 ## Before you start
 
-- The Serverpod Cloud CLI installed and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
+- The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - A Serverpod Cloud project with at least one deploy attempt.
 
 ## Confirm the deploy failed

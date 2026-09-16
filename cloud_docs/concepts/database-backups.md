@@ -114,5 +114,5 @@ Backup storage is billed separately from your regular database storage, as its o
 ## Related
 
 - [Database](/cloud/concepts/database): how the managed database is provisioned, connected, and reset.
-- [`serverpod cloud db` CLI reference](/cloud/reference/cli/commands/db): every `db backup` and `db schedule` flag and default.
+- [CLI reference: `db` command](/cloud/reference/cli/commands/db): every `db backup` and `db schedule` flag and default.
 - [Migrations](/concepts/data-and-the-database/database/migrations#rolling-back-migrations): rolling a schema change back, which pairs with restoring data.

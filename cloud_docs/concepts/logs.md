@@ -28,7 +28,7 @@ Build logs are emitted while Cloud builds your deployment package: package insta
 serverpod cloud build log
 ```
 
-Pass a sequence number (where `0` is the latest) or a UUID to inspect a specific deployment; `serverpod cloud status deployment list` shows the IDs:
+To inspect a specific deployment, pass its sequence number (where `0` is the latest) or its UUID from `serverpod cloud status deployment list`:
 
 ```bash
 serverpod cloud build log 3

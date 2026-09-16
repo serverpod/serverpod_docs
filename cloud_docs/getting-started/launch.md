@@ -13,7 +13,7 @@ Get your Serverpod app live on Cloud in a few minutes.
 
 You need:
 
-- The Serverpod Cloud CLI set up and signed in. See [Set up the Cloud CLI](/cloud/getting-started/installation).
+- The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - A Serverpod project on your machine. See [Creating a new project](/quickstart#create-the-project) in the Serverpod installation guide.
 
 ## Launch your project
@@ -29,13 +29,13 @@ It creates a Cloud project and ships its first version in these steps:
 1. **Choose the project.** If your account has no projects, the command asks *"Open the browser and create a new Serverpod Cloud project?"* Press Enter to accept. If you already have projects, it lists them, with a last option to create a new project in the browser.
 2. **Create the project in the Console.** If you chose to create a new project, the Console's **New project** page opens. The project ID is pre-filled from your pubspec name (for example, `my-app`), and the database is switched on if your server config has a `database` section. Change either if you need to. Pick a plan (see [Cloud plans](https://serverpod.dev/cloud)), click **Launch Project**, and return to the terminal. The project ID becomes part of your default URL (`<project-id>.serverpod.space`).
 3. **Pre-deploy hooks.** The command adds `serverpod generate` as a pre-deploy hook, plus `serverpod run flutter_build` if your server's `pubspec.yaml` defines that script. See [Deployment hooks](/cloud/concepts/deployment-hooks) for details.
-4. **Custom passwords.** If `config/passwords.yaml` has custom passwords, the CLI asks which ones to copy to Cloud. Passwords from the `production` and `shared` sections are preselected. Set the rest later with `serverpod cloud password set`.
+4. **Custom passwords.** If `config/passwords.yaml` has custom passwords, the command asks which ones to copy to Cloud. Passwords from the `production` and `shared` sections are preselected. Set the rest later with `serverpod cloud password set`.
 
 The command then writes a `scloud.yaml` linking subsequent commands to the project, uploads your code, and deploys.
 
 ## Watch the deployment
 
-`serverpod cloud launch` waits for the deployment and updates each of its three stages as it progresses:
+The deployment runs in three stages. The terminal updates each one as it progresses:
 
 ```text
 Upload successful.

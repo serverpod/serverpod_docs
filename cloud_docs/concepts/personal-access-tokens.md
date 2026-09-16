@@ -8,7 +8,7 @@ description: Create personal access tokens to authenticate the Serverpod Cloud C
 
 When you need to run the Serverpod Cloud CLI in a CI pipeline, a script, or a headless environment where the browser-based `serverpod cloud auth login` flow isn't possible, you authenticate with a personal access token instead. Tokens are long-lived credentials you generate once, store as a secret, and pass to the CLI as a flag or environment variable.
 
-For everyday development on your machine, `serverpod cloud auth login` is simpler; it stores credentials locally and you don't need to handle tokens.
+For everyday development on your machine, `serverpod cloud auth login` is simpler. It stores credentials locally, so you don't need to handle tokens.
 
 ## Create a token
 
@@ -128,5 +128,5 @@ For the full walkthrough, see [Deploy from CI with GitHub Actions](/cloud/guides
 
 ## Related
 
-- [`serverpod cloud auth`](/cloud/reference/cli/commands/auth) for the full reference on `auth login`, `create-token`, `list`, and `logout`.
+- [CLI reference: `auth` command](/cloud/reference/cli/commands/auth) for `auth login`, `create-token`, `list`, and `logout`.
 - [CLI environment variables](/cloud/reference/cli/env_vars) for all Cloud CLI environment variables.

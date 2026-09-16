@@ -28,5 +28,5 @@ serverpod cloud launch
 
 ## Where to go next
 
-- [Set up the Cloud CLI](/cloud/getting-started/installation) to install it and sign in.
+- [Set up the Cloud CLI](/cloud/getting-started/installation) to get the CLI ready and authenticate it.
 - [Deploy your first app](/cloud/getting-started/launch) for a guided first deploy.

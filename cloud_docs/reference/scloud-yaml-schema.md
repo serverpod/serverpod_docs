@@ -29,7 +29,7 @@ When the CLI writes the file, it prepends this comment header so the file is rec
 # For full documentation, visit: https://docs.serverpod.dev/cloud
 ```
 
-The header is preserved across later updates.
+The CLI keeps the header when it rewrites the file.
 
 ## Schema
 
@@ -67,7 +67,7 @@ Holds two hook lists, `pre_deploy` and `post_deploy`. Each runs commands around 
 
 **Type:** string or list of strings. **Optional.** **Default:** `serverpod cloud launch` may suggest hooks (typically `serverpod generate`).
 
-Commands that run before the CLI uploads your project package. A single string runs one command; a list runs each command in order. Each command runs through the system shell (`bash -c` on macOS and Linux, `cmd /c` on Windows) in your project directory. A non-zero exit code halts further commands and aborts the deploy.
+Commands that run before the CLI uploads your project package. A single string runs one command. A list runs each command in order. Each command runs through the system shell (`bash -c` on macOS and Linux, `cmd /c` on Windows) in your project directory. A non-zero exit code halts further commands and aborts the deploy.
 
 Single command:
 
@@ -139,7 +139,7 @@ Both `serverpod cloud launch` and `serverpod cloud project link` rewrite `scloud
 - **`scripts.pre_deploy`** is merged. Your custom hooks are kept. Hooks that the CLI considers "suggested" (for example `serverpod generate` for projects that need it) are re-added on every run, even if you removed them.
 - **`scripts.post_deploy`** is preserved entirely.
 
-In practice, hand-edit `dartSdk` and `post_deploy` freely, and add your own `pre_deploy` hooks alongside any suggested ones. Editing `projectId` by hand has no lasting effect; use `serverpod cloud project link` to change which project the file points at.
+In practice, hand-edit `dartSdk` and `post_deploy` freely, and add your own `pre_deploy` hooks alongside any suggested ones. Editing `projectId` by hand has no lasting effect. To change which project the file points at, use `serverpod cloud project link`.
 
 ## Validation errors
 
@@ -174,4 +174,4 @@ The `pre_deploy` or `post_deploy` value is neither a string nor a list of string
 - [Project identifier rules](/cloud/reference/project-id-rules)
 - [Dart SDK versions](/cloud/reference/dart-sdk-versions)
 - [Deployment hooks](/cloud/concepts/deployment-hooks)
-- [serverpod cloud project](/cloud/reference/cli/commands/project)
+- [CLI reference: `project` command](/cloud/reference/cli/commands/project)

@@ -26,7 +26,7 @@ The CLI packages your project, uploads it, and waits for the new version to go l
 - API: `https://<project-id>.api.serverpod.space/`
 - Insights: `https://<project-id>.insights.serverpod.space/`
 
-To use your own URL instead, see [`serverpod cloud domain`](/cloud/reference/cli/commands/domain).
+To use your own URL instead, see [Custom domains](/cloud/concepts/custom-domains).
 
 Other flags:
 

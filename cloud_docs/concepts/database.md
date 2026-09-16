@@ -53,7 +53,7 @@ You can connect to the managed database from your machine, a GUI client, or `psq
 The steps:
 
 1. Run `serverpod cloud db connection` to print the host, port, and database name.
-2. Run `serverpod cloud db user create <username>` to create a superuser. The password is shown **once**; save it.
+2. Run `serverpod cloud db user create <username>` to create a superuser. The password is shown **once**, so save it.
 3. Connect from your client with the host, port, database, your username, and the saved password.
 
 Both commands need to know which project you're working with. From a project directory that's been linked (any project created with `serverpod cloud launch` is linked automatically), the project ID is picked up from `scloud.yaml`. From anywhere else, pass `-p your-project-id`.
@@ -98,5 +98,5 @@ The managed database includes infrastructure features you'd otherwise wire up yo
 
 ## Related
 
-- [CLI reference: `serverpod cloud db`](/cloud/reference/cli/commands/db) for all `db` subcommands and options.
+- [CLI reference: `db` command](/cloud/reference/cli/commands/db) for all `db` subcommands and options.
 - [Deployments](/cloud/concepts/deployments) for the deploy lifecycle.

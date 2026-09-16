@@ -54,8 +54,8 @@ What each step does:
 
 - The `actions/checkout@v4` step clones the repository into the runner.
 - The `subosito/flutter-action@v2` step installs the Flutter SDK, which also provides Dart. The deploy action needs Dart to install the Serverpod Cloud CLI.
-- The `dart pub global activate serverpod_cli` step puts the framework CLI on the runner so any pre-deploy hooks (for example, `serverpod generate`) can run.
-- The `serverpod/serverpod_cloud_deploy@v1` step installs the Serverpod Cloud CLI, reads your `scloud.yaml`, and runs its `deploy` command against your project using the token.
+- The `dart pub global activate serverpod_cli` step puts the Serverpod CLI on the runner so any pre-deploy hooks (for example, `serverpod generate`) can run.
+- The `serverpod/serverpod_cloud_deploy@v1` step installs the Serverpod Cloud CLI as `scloud`, reads your `scloud.yaml`, and runs `scloud deploy` against your project using the token.
 
 ## Push to trigger the workflow
 

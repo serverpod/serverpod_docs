@@ -12,7 +12,7 @@ Serverpod uses Redis for **distributed caching** and **PubSub** when running acr
 
 ## Before you start
 
-- The Serverpod Cloud CLI installed and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
+- The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - A Serverpod Cloud project already deployed (or ready to deploy).
 
 ## Create a Redis database on Upstash

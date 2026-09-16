@@ -11,7 +11,7 @@ Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with yo
 ## Before you start
 
 - A Serverpod server project on disk (alongside `lib/` and `bin/`).
-- The Serverpod Cloud CLI installed and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
+- The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 
 ## Add files to your project
 
@@ -130,4 +130,4 @@ Asset files count toward your deployment package size. Large folders slow upload
 ## Related
 
 - [Deployments](/cloud/concepts/deployments) for what's in the deployment package and how `.scloudignore` works.
-- [`serverpod cloud deploy`](/cloud/reference/cli/commands/deploy) for the deploy command and its flags.
+- [CLI reference: `deploy` command](/cloud/reference/cli/commands/deploy) for all deploy flags.
