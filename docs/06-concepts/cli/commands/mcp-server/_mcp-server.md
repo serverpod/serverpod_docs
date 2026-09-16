@@ -19,7 +19,8 @@ The bridge drives a running session, so start one with `serverpod start` before 
 | Codex | `.codex/config.toml` |
 | OpenCode | `opencode.json` |
 
-In Cursor, enable **Serverpod** and **Dart** under Cursor Settings > Tools & MCPs after the file is written.
+In Cursor, once the file is created, open Cursor Settings and go to **Customize > MCPs**. There, make sure both **Serverpod** and **Dart** are enabled.  
+You can also enable them using the "Tools & MCPs" option in the Command bar.
 
 ### Set up any other MCP client
 
