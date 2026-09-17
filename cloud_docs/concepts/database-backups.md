@@ -34,7 +34,7 @@ The other options:
 - **`--retention`** sets how long each scheduled snapshot is kept before it is deleted automatically, for example `30d`. Without it, snapshots are kept for 35 days, which is also the longest allowed.
 
 :::info
-Serverpod Cloud changed this default on 15 September 2026. A schedule set without `--retention` before then still keeps its snapshots for 24 hours. Run `serverpod cloud db schedule show` to see which retention yours uses, and set the schedule again with a `--retention` value to change it.
+The default retention was changed on 15 September 2026. A schedule set without `--retention` before then still keeps its snapshots for 24 hours. Run `serverpod cloud db schedule show` to see which retention yours uses, and set the schedule again with a `--retention` value to change it.
 :::
 
 Cloud confirms the schedule it stored:
