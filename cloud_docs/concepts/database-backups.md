@@ -27,13 +27,11 @@ A schedule takes snapshots for you at a fixed frequency. Each database has one s
 serverpod cloud db schedule set --frequency weekly --day 1 --hour 3 --retention 30d
 ```
 
-The other options control when the schedule runs and how long its snapshots live:
+The other options:
 
-- **`--day`** picks the day of the week (1-7) for a weekly schedule, or the day of the month (1-31) for a monthly one. It defaults to 1 and does not apply to a daily schedule.
+- **`--day`** sets the day of the week (1-7) for a weekly schedule, or the day of the month (1-31) for a monthly one. It defaults to 1 and does not apply to a daily schedule.
 - **`--hour`** sets the hour of the day, from 0 to 23 in UTC. It defaults to 0.
-- **`--retention`** sets how long each scheduled snapshot is kept before it is deleted automatically, for example `30d`. Without it, snapshots are kept for 35 days, which is also the longest a schedule can keep them.
-
-The 35-day default applies to new schedules only. A schedule created without `--retention` before it still expires its snapshots after 24 hours, so run the command again with a `--retention` value to change that.
+- **`--retention`** sets how long each scheduled snapshot is kept before it is deleted automatically, for example `30d`. New schedules keep them for 35 days, which is also the longest allowed. A schedule set before that default changed keeps 24 hours until you set a retention.
 
 Cloud confirms the schedule it stored:
 
