@@ -22,8 +22,11 @@ Global options:
     --non-interactive                     Never wait for user input, fail with an error instead. For
                                           use in non-interactive environments such as CI. Combine
                                           with --yes to accept confirmation prompts.
-    --format=<text|json|yaml>             Selects the command output format.
+    --format=<text|csv|json|yaml>         Selects the command output format.
                                           (defaults to "text")
+    --[no-]auto-cli-upgrade               Automatically update the CLI when a newer version is
+                                          available.
+                                          (defaults to on)
 
 Available commands:
   completion   Command line completion commands
