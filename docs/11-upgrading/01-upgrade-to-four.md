@@ -19,6 +19,7 @@ Compile errors after you regenerate are expected. Most match a section on [Break
 - Your project is on the latest Serverpod 3.4.x release.
 - Your project compiles and its tests pass.
 - You have committed your current state to Git, so you can roll back if needed.
+- You have no model changes waiting for a migration. If you do, create and apply that migration first.
 
 ## Update the Serverpod CLI
 
@@ -112,12 +113,14 @@ Version 4.0 adds a few internal Serverpod tables. It also updates some indexes t
 Finish the previous step first. Then create the migration:
 
 ```bash
-$ serverpod create-migration --tag "upgrade-4-0"
+$ serverpod create-migration --tag "upgrade-4-0" --force
 ```
 
 :::note
 
-If you use the authentication module, the migration warns about a small change to the table that stores rate-limit attempts. Add `--force` to proceed. The change is safe: accounts, sessions, and other auth data are untouched. The only side effect is that current attempt counters reset to zero.
+Without `--force`, the command stops with a warning, because this migration changes the authentication module's rate-limit table. The change is safe: accounts, sessions, and other auth data are untouched. The only side effect is that the counters in that table reset to zero.
+
+If you don't use the authentication module, there is no warning, and the flag changes nothing.
 
 :::
 
