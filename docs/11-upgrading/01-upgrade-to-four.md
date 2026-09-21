@@ -1,22 +1,24 @@
 ---
 title: Upgrade to 4.0
-description: Upgrading a Serverpod 3.4 project to 4.0 (Jetstream) brings serverpod start, the embedded Postgres option, and the new agent skills.
+description: Upgrade a Serverpod 3.4 project to 4.0 and switch to serverpod start, with steps for dependencies, code generation, the migration, and deployment.
 ---
 
 <!-- markdownlint-disable MD025 -->
 
 # Upgrade to 4.0
 
-Serverpod 4.0 (Jetstream) adds `serverpod start`, one command that runs your server, database, and Flutter app together with hot reload.
+Serverpod 4.0 (Jetstream) adds `serverpod start`, one command that runs your server, database, and Flutter app together with hot reload. Upgrade your 3.4 project to 4.0, then run it with `serverpod start`.
 
-The required steps take about 15 minutes: update the CLI and your dependencies, regenerate code, and create a migration. Plan for more time if breaking changes affect your code, or if you have a Dockerfile or CI workflows to update. The new `serverpod start` workflow, the embedded Postgres, and the agent setup are optional.
+The upgrade itself takes about 15 minutes: update the CLI and your dependencies, regenerate your code, and create one migration.
+
+Compile errors after you regenerate are expected. Most match a section on [Breaking changes in 4.0](./breaking-changes-in-four). Plan for more time if breaking changes affect your code, or if you have a Dockerfile or CI workflows to update.
 
 ## Before you start
 
 - You have Flutter 3.44.4 or later. It includes Dart 3.12.2, which Serverpod 4.0 requires. Check with `flutter --version`, and run `flutter upgrade` if your version is older.
 - Your project is on the latest Serverpod 3.4.x release.
-- Your project compiles and tests pass.
-- You've committed your current state to Git so you can roll back if needed.
+- Your project compiles and its tests pass.
+- You have committed your current state to Git, so you can roll back if needed.
 
 ## Update the Serverpod CLI
 
@@ -32,73 +34,86 @@ Then install the 4.0 CLI:
 $ dart install serverpod_cli
 ```
 
-Verify the version:
+Check that it reports a 4.0 version:
 
 ```bash
 $ serverpod version
 ```
 
-## Update your project dependencies
+## Update your dependencies
 
-Bump every Serverpod package to 4.0 in the `pubspec.yaml` files of `<project>_server`, `<project>_client`, and `<project>_flutter`. Bump them in both `dependencies` and `dev_dependencies`. Pin the exact version rather than a caret range, so the packages stay in sync with the CLI:
+Bump every Serverpod package your project uses to 4.0. Pin the exact version rather than a caret range, so the packages stay in sync with the CLI.
+
+The packages are in the `pubspec.yaml` files of `<project>_server`, `<project>_client`, and `<project>_flutter`:
 
 ```yaml
 dependencies:
-  serverpod: 4.0.0             # in the server package
-  serverpod_client: 4.0.0      # in the client package
-  serverpod_flutter: 4.0.0     # in the Flutter package
+  serverpod: 4.0.0                      # in the server package
+  serverpod_client: 4.0.0               # in the client package
+  serverpod_flutter: 4.0.0              # in the Flutter package
+
+  # If you use the new auth module:
+  serverpod_auth_idp_server: 4.0.0      # in the server package
+  serverpod_auth_idp_client: 4.0.0      # in the client package
+  serverpod_auth_idp_flutter: 4.0.0     # in the Flutter package
+
+  # If you use the legacy serverpod_auth module:
+  serverpod_auth_server: 4.0.0          # in the server package
+  serverpod_auth_client: 4.0.0          # in the client package
+  serverpod_auth_shared_flutter: 4.0.0  # in the Flutter package
 
 dev_dependencies:
-  serverpod_test: 4.0.0        # in the server package
+  serverpod_test: 4.0.0                 # in the server package
 ```
 
-Don't skip `serverpod_test`. It pins `serverpod` to an exact version. If you leave `serverpod_test` on 3.4 in `dev_dependencies`, `dart pub upgrade` fails.
+- **Don't skip `serverpod_test` in `dev_dependencies`.** It pins `serverpod` to an exact version. If it stays on 3.4, `dart pub upgrade` fails.
+- **If you use the legacy `serverpod_auth` module, expect code changes.** It keeps working on 4.0, but the client setup and Sign in with Apple need updating. See [the legacy auth changes](./breaking-changes-in-four#if-you-use-the-legacy-auth-module).
+- **If you use the new auth module, check your Flutter app's `flutter_secure_storage` version.** The module needs 10.0.0 or newer, which most projects already have. If yours is still on 9.x, read [how to upgrade without signing out your Android users](./breaking-changes-in-four#if-you-use-the-new-auth-module-on-android) first.
 
-Bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to the 4.0 minimum:
+Then bump the Dart SDK constraint in the root `pubspec.yaml` and `<project>_server/pubspec.yaml` to the 4.0 minimum:
 
 ```yaml
 environment:
   sdk: '^3.12.2'
 ```
 
-If your project uses the new auth module, bump its packages in the same files:
+## Regenerate your code
 
-```yaml
-dependencies:
-  serverpod_auth_idp_server: 4.0.0   # in the server package
-  serverpod_auth_idp_client: 4.0.0   # in the client package
-  serverpod_auth_idp_flutter: 4.0.0  # in the Flutter package
-```
+**Check your model files first.** Rename each model file that ends in just `.yaml` or `.yml`, so `company.yaml` becomes `company.spy.yaml`. Otherwise, `serverpod generate` [stops with an error](./breaking-changes-in-four#model-files-use-the-spyyaml-extension).
 
-## Refresh dependencies and regenerate code
-
-From the project's root folder, refresh dependencies. Projects created with the 3.3+ scaffold use a Dart workspace. A workspace resolves all sub-packages in one command:
+Then refresh dependencies from the project's root folder:
 
 ```bash
 $ dart pub upgrade
 ```
 
-If the root `pubspec.yaml` has no `workspace:` block, your project doesn't use a Dart workspace. In that case, run `dart pub upgrade` separately in each sub-package. To adopt workspaces, see Dart's [pub workspaces documentation](https://dart.dev/tools/pub/workspaces).
+Projects created with the 3.3 scaffold or later use a Dart workspace, so this one command covers every sub-package. If the root `pubspec.yaml` has no `workspace:` block, run `dart pub upgrade` in each sub-package instead. To adopt workspaces, see Dart's [pub workspaces documentation](https://dart.dev/tools/pub/workspaces).
 
-Before you generate code, rename model files that use a plain `.yaml` or `.yml` extension to `.spy.yaml`, so `serverpod generate` doesn't stop with an error. See [Model files use the `.spy.yaml` extension](./breaking-changes-in-four#model-files-use-the-spyyaml-extension) for details.
-
-Then refresh the generated server and client code:
+Now refresh the generated server and client code:
 
 ```bash
 $ serverpod generate
 ```
 
-If `serverpod generate` reports `analysis skipped due to invalid Dart syntax` for an endpoint or future call file, that file doesn't compile against 4.0. The error usually means the file still uses an API that changed in 4.0. Fix the file with the matching section under [Other breaking changes](./breaking-changes-in-four), then run `serverpod generate` again.
+**Expect errors here.** If the command reports `analysis skipped due to invalid Dart syntax` for an endpoint or future call file, that file usually still uses an API that changed. Fix each file the same way:
+
+1. Find the matching section on [Breaking changes in 4.0](./breaking-changes-in-four).
+2. Update the file.
+3. Run `serverpod generate` again.
+
+Repeat until the command finishes without errors.
+
+Some changes don't cause an error, such as how future calls and messages behave. Scan the table on [Breaking changes in 4.0](./breaking-changes-in-four) for anything else that affects your project.
 
 ## Create the 4.0 migration
 
-Version 4.0 adds a few internal Serverpod tables and updates some indexes to speed up logs in Insights. The migration is built from your generated code, so run `serverpod generate` first if you skipped it. Then create the migration:
+Version 4.0 adds a few internal Serverpod tables. It also updates some indexes to speed up logs in [Serverpod Insights](../tools/insights), the desktop log viewer.
+
+Finish the previous step first. Then create the migration:
 
 ```bash
 $ serverpod create-migration --tag "upgrade-4-0"
 ```
-
-The command writes a new migration to `<project>_server/migrations/`. When you [start the server](#start-the-server), the `serverpod start` command applies the migration. If you run the server yourself instead, start it once from the server package with `dart run bin/main.dart --apply-migrations`. See [Run the server directly](../concepts/server-fundamentals/running-your-server#run-the-server-directly).
 
 :::note
 
@@ -106,7 +121,13 @@ If you use the authentication module, the migration warns about a small change t
 
 :::
 
+The command writes a new migration to `<project>_server/migrations/`. The `serverpod start` command applies it when you [start the server](#start-the-server) later in this guide.
+
+If you run the server yourself instead, start it once from the server package with `dart run bin/main.dart --apply-migrations`. See [Run the server directly](../concepts/server-fundamentals/running-your-server#run-the-server-directly).
+
 ## Update your deployment
+
+This step applies if you compile your server, or if your project has the GitHub Actions workflows that 3.4 created. Otherwise, skip to [Switch to `serverpod start`](#switch-to-serverpod-start).
 
 ### Update the server build
 
@@ -121,17 +142,19 @@ If you deploy with the Dockerfile, copy the updated one from the [4.0 framework 
 
 ### Update the GitHub Actions workflows
 
-If your project still has the GitHub Actions workflows that 3.4 created, replace them. The 3.4 workflows are `analyze.yml`, `format.yml`, and `tests.yml` in `.github/workflows/`. They set up an SDK older than the Dart 3.12.2 that 4.0 requires, so they fail after the upgrade. The `tests.yml` workflow also installs the 3.4 CLI. Copy the 4.0 versions from the [framework templates](https://github.com/serverpod/serverpod/tree/main/templates/serverpod_templates/github/workflows) and fill in their placeholders:
+If your project still has the GitHub Actions workflows that 3.4 created, replace them. The 3.4 workflows are `analyze.yml`, `format.yml`, and `tests.yml` in `.github/workflows/`. They set up an SDK older than the Dart 3.12.2 that 4.0 requires, so they fail after the upgrade. The `tests.yml` workflow also installs the 3.4 CLI.
+
+Copy the 4.0 versions from the [framework templates](https://github.com/serverpod/serverpod/tree/main/templates/serverpod_templates/github/workflows) and fill in their placeholders:
 
 - `projectname`: your project name.
 - `CLI_VERSION`: `4.0.0`.
 - `DB_TEST_PASSWORD` and `REDIS_TEST_PASSWORD`: the `test` passwords from `<project>_server/config/passwords.yaml`.
 
-## Adopt the new development workflow (optional)
+## Switch to `serverpod start`
 
-The `serverpod start` command runs your server, your Flutter app, and your database in one terminal, and hot reloads your code when you save. It replaces running `docker compose up`, `dart bin/main.dart`, and `flutter run` separately. See [Running your server](../concepts/server-fundamentals/running-your-server) for the full workflow.
+Your project is now on 4.0, but you still run it the 3.4 way. The `serverpod start` command runs your server, your Flutter app, and your database in one terminal, and hot reloads your code when you save. It replaces running `docker compose up`, `dart bin/main.dart`, and `flutter run` separately.
 
-Before you run it, choose how to handle the database.
+See [Running your server](../concepts/server-fundamentals/running-your-server) for the full workflow. Before you run `serverpod start`, choose how to handle the database.
 
 ### Choose your data store
 
@@ -200,7 +223,7 @@ If you ran `serverpod start` before upgrading, delete the `<project>_server/.dar
 
 :::
 
-On the first run, the command compiles the native build hooks, which can take about 30 seconds. It also applies the migration you generated above. Then the server starts and watches your project. When you save a file, the command hot reloads the code.
+On the first run, the command compiles the native build hooks, which can take about 30 seconds. It also applies the migration you created in [Create the 4.0 migration](#create-the-40-migration). Then the server starts and watches your project. When you save a file, the command hot reloads the code.
 
 The command also launches your `<project>_flutter` app when that package exists. If the server's `pubspec.yaml` has a `serverpod: flutter_apps:` section, the command instead launches the apps in that section that set `auto_launch: true`.
 
@@ -217,9 +240,17 @@ Your upgraded project keeps its 3.4 `launch.json`, which runs `bin/main.dart`. P
 2. Copy `tasks.json` and `launch.json` from the throwaway project's `.vscode` folder into your project's `.vscode` folder, replacing the old files.
 3. If `tasks.json` sets `SERVERPOD_PASSWORD_database`, replace its value with the `database` password under `development` in `<project>_server/config/passwords.yaml`. The environment variable overrides `passwords.yaml`. If you leave the throwaway project's password in place, the server gets the wrong database password.
 
-## Set up the agent workflow (optional)
+## Verify
 
-Version 4.0 ships AI agent skills and MCP servers for editors like Claude Code and Cursor. They let your agent build, run, and inspect your server. The `serverpod create` command sets them up in a new project. In an upgraded project, install the skills and register the MCP servers by hand.
+Your project runs on 4.0 when these three checks pass:
+
+- **The server starts.** With `serverpod start`, or with `dart run bin/main.dart --apply-migrations` if you run the server yourself.
+- **The migration is applied.** The log shows no `Database does not match target state` warning. If it does, see [Troubleshooting](#troubleshooting).
+- **Your tests pass.** Run them the way you did before the upgrade.
+
+## Set up the agent workflow
+
+Version 4.0 ships AI agent skills and MCP servers for editors like Claude Code and Cursor. They let your agent hot reload your server, create and apply migrations, launch your Flutter app, and read the logs. The `serverpod create` command sets them up in a new project. In an upgraded project, install the skills and register the MCP servers by hand.
 
 :::warning
 
@@ -303,7 +334,7 @@ If you are using Cursor, enable the **Serverpod** and **Dart** MCP servers in yo
 - **`serverpod start` terminal UI**: hot reload on save. Press **R** to hot restart, **M** to create and apply a migration, or **P** to create and apply a repair migration.
 - **Simplified server initialization**: the generated `Serverpod` class comes with `Protocol` and `Endpoints` already set up, so `server.dart` needs only `Serverpod(args)`. Projects that keep their existing imports can stay on `Serverpod(args, Protocol(), Endpoints())`.
 - **Flutter app launching** from `serverpod start`, so the Flutter app runs alongside the server in the same terminal UI.
-- **AI agent skills and MCP servers** set up during `serverpod create`. Existing projects can [add them manually](#set-up-the-agent-workflow-optional).
+- **AI agent skills and MCP servers** set up during `serverpod create`. Existing projects can [add them manually](#set-up-the-agent-workflow).
 - **Embedded Postgres**: develop without Docker by setting `dataPath`.
 - **SQLite database support** as an alternative dialect to Postgres.
 - **Client-side database generation** for the Flutter app.
@@ -333,7 +364,7 @@ WARNING: Database does not match target state.
 Server stopped (exitCode: 1).
 ```
 
-Stop `serverpod start`, delete the `<project>_server/.dart_tool/serverpod` folder, and run `serverpod start` again. If the warnings remain, create and apply the migration from [Generate the 4.0 migration](#create-the-40-migration).
+Stop `serverpod start`, delete the `<project>_server/.dart_tool/serverpod` folder, and run `serverpod start` again. If the warnings remain, create and apply the migration from [Create the 4.0 migration](#create-the-40-migration).
 
 ### Agent skills or MCP servers aren't picked up after setup
 
@@ -345,5 +376,8 @@ If something here didn't go as expected, reach out on the [community page](../su
 
 ## Related
 
+- [Breaking changes in 4.0](./breaking-changes-in-four): every API and behavior change between 3.4 and 4.0, for looking up an error.
+- [Running your server](../concepts/server-fundamentals/running-your-server): what the `serverpod start` command does, and the other ways to run your server.
+- [Embedded PostgreSQL](../concepts/data-and-the-database/database/embedded-postgres): how the embedded Postgres runs alongside your server, and how to reset it or connect a tool to it.
 - [Migrations](../concepts/data-and-the-database/database/migrations): how Serverpod's migration system works under the hood.
 - [Build your first app](../get-started/creating-endpoints): the hands-on tour of the 4.0 workflow, if you want to see `serverpod start` in a project built from scratch.

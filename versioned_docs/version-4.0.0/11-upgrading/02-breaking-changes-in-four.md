@@ -7,9 +7,9 @@ description: Every breaking API and behavior change between Serverpod 3.4 and 4.
 
 # Breaking changes in 4.0
 
-## Breaking changes
+Serverpod 4.0 changes APIs and behavior that 3.4 code relies on. Find your error or symptom in the table, then read only that section. Other sign-in and token changes are under [Authentication changes](#authentication-changes).
 
-These changes can break code that worked on 3.4. Find the ones that apply to your project, then read only those sections. Changes to sign-in and tokens are in [Authentication changes](#authentication-changes).
+For the upgrade steps themselves, see [Upgrade to 4.0](./upgrade-to-four).
 
 | Change | Affects you if |
 | --- | --- |
@@ -27,8 +27,10 @@ These changes can break code that worked on 3.4. Find the ones that apply to you
 | [The `columnOverride` experimental feature is removed](#the-columnoverride-experimental-feature-is-removed) | You pass `--experimental-features columnOverride`. |
 | [`Session.close()` returns `Future<void>`](#sessionclose-returns-futurevoid) | Your code uses the value that `session.close()` returns. |
 | [Unused email exceptions are removed](#unused-email-exceptions-are-removed) | Your app catches `EmailAccountRequestAlreadyExistsException` or `EmailPasswordResetAccountNotFoundException`. |
+| [If you use the legacy auth module](#if-you-use-the-legacy-auth-module) | Your project uses the `serverpod_auth` packages. |
+| [If you use the new auth module on Android](#if-you-use-the-new-auth-module-on-android) | Your Flutter app still has `flutter_secure_storage` 9.x. |
 
-### Model files use the `.spy.yaml` extension
+## Model files use the `.spy.yaml` extension
 
 In 4.0, model files must use the `.spy.yaml` extension. The `.spy.yml` and `.spy` extensions are also accepted. Serverpod ignores files in `lib/src/models` or `lib/src/protocol` that have a plain `.yaml` or `.yml` extension. The `serverpod generate` and `serverpod start` commands stop with an error that lists those files:
 
@@ -40,19 +42,19 @@ Rename the files to use the .spy.yaml extension and run the command again.
 
 Rename the files and run `serverpod generate` again. The contents do not change.
 
-### Client exceptions are a sealed hierarchy
+## Client exceptions are a sealed hierarchy
 
 The `ServerpodClientException` class is sealed and carries only `message`. When the app can't reach the server, the call throws `ServerpodClientNetworkException`. When the server returns an error response, the call throws a subclass of the sealed `ServerpodClientHttpException`, which owns `statusCode`. Code that checks `statusCode == -1` for connection failures no longer compiles. See [Error handling and exceptions](../concepts/endpoints-and-apis/error-handling-and-exceptions#handle-errors-in-your-app).
 
-### Database exceptions are typed
+## Database exceptions are typed
 
 The `DatabaseInsertRowException`, `DatabaseUpdateRowException`, `DatabaseDeleteRowException`, and `DatabaseUpsertRowException` classes are replaced by `DatabaseUnexpectedResultException`. Constraint failures throw `DatabaseUniqueViolationException` or `DatabaseForeignKeyViolationException`. SQLite lock failures throw `SqliteDatabaseLockedException`. All three are subclasses of `DatabaseQueryException`. See [Database exceptions](../concepts/data-and-the-database/database/exceptions).
 
-### Future calls run at least once
+## Future calls run at least once
 
 In 3.4, Serverpod removed a future call from the database before running it, so a crash mid-run lost the call. In 4.0, Serverpod removes the call only after it finishes. If a crash interrupts the call, the call runs again, possibly on another server instance. Make each future call safe to run more than once, for example by checking whether an email was already sent before sending it. See [Execution guarantees](../concepts/scheduling/overview#execution-guarantees).
 
-### Removed deprecated APIs
+## Removed deprecated APIs
 
 - The future call methods on `Serverpod` are removed: `registerFutureCall`, `futureCallWithDelay`, `futureCallAtTime`, and `cancelFutureCall`. The `invoke` method you overrode on `FutureCall` is removed too. Calls already scheduled under an old string name match no generated call, so Serverpod doesn't run them and reports them as [broken future calls](../concepts/scheduling/configuration#broken-future-calls). To port a string-registered call:
   - Replace the `invoke` override with a public `Future<void>` method that takes a `Session` as its first parameter. See [Define a future call](../concepts/scheduling/future-calls#define-a-future-call).
@@ -71,11 +73,11 @@ In 3.4, Serverpod removed a future call from the database before running it, so 
 - The `RouteStaticDirectory` and `PathCacheMaxAge` classes are removed. Serve directories with `StaticRoute.directory`, and set cache headers with its `cacheControlFactory` parameter. See [Static files](../concepts/web-server/static-files#cache-control).
 - The `--mini` flag on `serverpod create` is removed. To create a project without a database, deselect **Database (recommended)** on the setup screen, or pass `--no-interactive --no-database`. To create a project without a Flutter app, use `--template server`.
 
-### Message central delivers globally by default
+## Message central delivers globally by default
 
 Calls to `session.messages.postMessage` now default to `MessageScope.auto`. When Redis is enabled, the message goes through Redis to every server instance. Otherwise, the message stays local. If your code relied on local-only delivery, pass `scope: MessageScope.local`. The `global: true` argument is removed, so replace it with `scope: MessageScope.global`. See [Message scope](../concepts/endpoints-and-apis/server-events#message-scope).
 
-### File storage APIs are renamed
+## File storage APIs are renamed
 
 Several `session.storage` methods are renamed in 4.0. The methods that return a single file or URL now throw instead of returning `null`. Update your server code as follows:
 
@@ -109,7 +111,7 @@ If you serve public files from `NativeGoogleCloudStorage`, make the bucket itsel
 
 App code that uses `FileUploader` doesn't change. See [File uploads](../concepts/endpoints-and-apis/file-uploads) and [Custom cloud storage](../concepts/endpoints-and-apis/custom-cloud-storage#implement-the-cloudstorage-methods).
 
-### Google sign-in on the web uses the OAuth2 redirect flow
+## Google sign-in on the web uses the OAuth2 redirect flow
 
 If your Flutter web app uses Google sign-in from `serverpod_auth_idp_flutter`, sign-in now redirects the browser to a callback page. The legacy `serverpod_auth` module is unaffected.
 
@@ -123,7 +125,7 @@ See [Google web setup](../concepts/authentication/providers/google/setup#web).
 
 If the app runs on its own origin, for example with `flutter run -d chrome`, skip step 1, because the browser blocks the route's callback across origins. Place an `auth.html` file in the app's `web/` folder instead. In steps 2 and 3, use that file's URL, for example `http://localhost:49660/auth.html`. See [Separately-hosted Flutter web](../concepts/authentication/providers/google/customizations#separately-hosted-flutter-web).
 
-### Sign-in buttons share one set of style enums
+## Sign-in buttons share one set of style enums
 
 If you set style arguments on a sign-in button from `serverpod_auth_idp_flutter` or `serverpod_auth_idp_flutter_facebook`, update them. The legacy `serverpod_auth` module is unaffected.
 
@@ -147,13 +149,13 @@ To style every button inside `SignInWidget` at once, pass a `SignInButtonStyle` 
 </p>
 </details>
 
-### Legacy streaming endpoints are removed
+## Legacy streaming endpoints are removed
 
 Serverpod's legacy streaming endpoints API was deprecated in 3.0 and is removed in 4.0. Endpoints that use the `StreamingSession` type no longer compile. The related server and client methods are gone too, for example `streamOpened`, `streamClosed`, `handleStreamMessage`, `sendStreamMessage`, `getUserObject`, `setUserObject`, and `openStreamingConnection`.
 
 Port code that uses the legacy API to [streaming methods](../concepts/endpoints-and-apis/streaming). With streaming methods, the endpoint declares `Stream` parameters and return types, and Serverpod manages the connection. State that used to live in a user object becomes a local variable in the streaming method. The method stays alive as long as the stream is open. The old API stays documented in [Streaming endpoints](./archive/streaming-endpoints) while you port.
 
-### Insights database endpoints are disabled by default
+## Insights database endpoints are disabled by default
 
 In 4.0, the Insights server endpoints that give direct database access are disabled by default: `fetchDatabaseBulkData`, `runQueries`, `getDatabaseRowCount`, and `executeSql`. They throw an `AccessDeniedException` until you enable them. The Insights app doesn't use these endpoints, so most projects need no change.
 
@@ -170,15 +172,15 @@ insightsServer:
 
 The `hotReload`, `getOpenSessionLog`, and `shutdown` Insights methods are removed. See [Insights](../tools/insights#database-access) for details.
 
-### The `columnOverride` experimental feature is removed
+## The `columnOverride` experimental feature is removed
 
 The `column` keyword no longer needs an experimental feature, so `columnOverride` is removed. Remove `--experimental-features columnOverride` from your commands and scripts, because the flag stops the CLI with a usage error that reports `"columnOverride" is not in all|databaseSync`. Serverpod ignores a `columnOverride` entry under `experimental_features` in `<project>_server/config/generator.yaml`, so you can delete the entry. See [Column name override](../concepts/data-and-the-database/database/tables#column-name-override).
 
-### `Session.close()` returns `Future<void>`
+## `Session.close()` returns `Future<void>`
 
 The `Session.close()` method returns `Future<void>` instead of `Future<int?>`. It no longer returns an ID when Serverpod logs the session to the database. Code that uses the returned value no longer compiles. A plain `await session.close();` still works.
 
-### Unused email exceptions are removed
+## Unused email exceptions are removed
 
 The email identity provider's `EmailAccountRequestAlreadyExistsException` and `EmailPasswordResetAccountNotFoundException` classes are removed. Nothing threw them in 3.4, so the app sees the same responses as before. Remove any `catch` clause or `case` that names them.
 
@@ -194,7 +196,9 @@ Version 4.0 changes a few authentication behaviors that can affect existing apps
 - **If you wrote a custom token manager, extend the base class.** The `TokenIssuer` and `TokenManager` classes are now base classes. Implement `createToken` to create the token itself, and leave `issueToken` alone. The `issueToken` method is non-virtual. It applies the sign-in policy and cookie delivery for every token type.
 - **If you wrote a custom identity provider, implement `IdentityProvider`.** The `IdentityProviderBuilder` class now requires a provider that implements `IdentityProvider`. A provider class written for 3.4 must add a `method` getter and a `mergeAuthUsers` method. Replace any `static const String method` with the getter, because a class can't declare a static and an instance member with the same name. Give each provider a unique, non-empty `method`, or Serverpod throws a `StateError` when you register the provider. See [the provider class](../concepts/authentication/providers/custom-providers/oauth2-utility/creating-an-oauth2-based-identity-provider#3-provider-class).
 
-### If you use the legacy auth module
+Two more changes depend on which auth module your project uses.
+
+## If you use the legacy auth module
 
 The legacy `serverpod_auth` packages ship 4.0 releases. Bump every `serverpod_auth` package your project uses to the same version as Serverpod itself, in the same `pubspec.yaml` files:
 
@@ -217,7 +221,7 @@ If you use legacy Sign in with Apple, set `appleClientIds` on `AuthConfig`, beca
 
 The legacy module keeps working on 4.0, so you can upgrade without moving to the new authentication framework. To make that move, finish this upgrade first, then see [Migrate from legacy auth](./migrate-from-legacy-auth).
 
-### If you use the new auth module on Android
+## If you use the new auth module on Android
 
 The `serverpod_auth_core_flutter` package now requires `flutter_secure_storage` 10.0.0 or newer and allows 11.x. Most projects already resolve 10.x and are not affected.
 
@@ -234,3 +238,8 @@ dependency_overrides:
 ```
 
 Version 11 also requires `compileSdk = 37` in `android/app/build.gradle.kts`. That value is higher than the current Flutter default.
+
+## Related
+
+- [Upgrade to 4.0](./upgrade-to-four): the step-by-step guide, from the CLI update to `serverpod start`.
+- [Migrate from legacy auth](./migrate-from-legacy-auth): how to move off `serverpod_auth` to the new authentication framework, once the upgrade is done.
