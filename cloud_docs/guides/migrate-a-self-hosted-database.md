@@ -6,9 +6,9 @@ description: Database migration from a self-hosted Serverpod server to Serverpod
 
 # Migrate a self-hosted database
 
-You run Serverpod and PostgreSQL yourself, for example with Docker Compose on a VPS. This guide moves your data, your users, and their sessions into a new Serverpod Cloud project.
+You run Serverpod and PostgreSQL yourself, for example with Docker Compose on a VPS, and you want to be on Serverpod Cloud instead. This guide takes your data, your users, and their sessions across.
 
-You deploy your project to Cloud first, so Cloud creates the tables from your migrations. Then you copy the rows from your old database into those tables.
+It happens in two halves. Deploying your project to Cloud comes first, because that is what creates the tables from your migrations. Copying the rows comes second, out of your old database and into those tables.
 
 ## Before you start
 
