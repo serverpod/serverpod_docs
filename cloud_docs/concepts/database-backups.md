@@ -27,7 +27,15 @@ A schedule takes snapshots for you at a fixed frequency. Each database has one s
 serverpod cloud db schedule set --frequency weekly --day 1 --hour 3 --retention 30d
 ```
 
-Use `--day` to pick the day of the week (1-7) for a weekly schedule or the day of the month (1-31) for a monthly one; it defaults to 1 and does not apply to a daily schedule. Use `--hour` for the hour of the day (0-23, in UTC); it defaults to 0. Use `--retention` (for example `30d`) to set how long each scheduled snapshot is kept before it is deleted automatically. Without `--retention`, scheduled snapshots are kept for 24 hours.
+The other options:
+
+- **`--day`** sets the day of the week (1-7) for a weekly schedule, or the day of the month (1-31) for a monthly one. It defaults to 1 and does not apply to a daily schedule.
+- **`--hour`** sets the hour of the day, from 0 to 23 in UTC. It defaults to 0.
+- **`--retention`** sets how long each scheduled snapshot is kept before it is deleted automatically, for example `30d`. Without it, snapshots are kept for 35 days, which is also the longest allowed.
+
+:::info
+The default retention was changed on 15 September 2026. A schedule set without `--retention` before then still keeps its snapshots for 24 hours. Run `serverpod cloud db schedule show` to see which retention yours uses, and set the schedule again with a `--retention` value to change it.
+:::
 
 Cloud confirms the schedule it stored:
 
@@ -50,7 +58,7 @@ Take a one-off snapshot with `serverpod cloud db backup create`, for example jus
 serverpod cloud db backup create --name pre-migration --expire-in 7d
 ```
 
-Both options are optional. The `--name` option labels the snapshot so you can recognize it later. The `--expire-in` option (for example `7d` or `24h`) sets how long the snapshot is kept before it is deleted automatically; leave it off to keep the snapshot until you delete it yourself.
+Both options are optional. The `--name` option labels the snapshot so you can recognize it later. The `--expire-in` option (for example `7d` or `24h`) sets how long the snapshot is kept before it is deleted automatically. Leave it off to keep the snapshot until you delete it yourself.
 
 ## List your backups
 
@@ -61,13 +69,13 @@ serverpod cloud db backup list
 ```
 
 ```text
-ID           | Name          | Type      | Created             | Expires             | Size
+ID           | Name          | Type      | Created (local)     | Expires (local)     | Size
 -------------+---------------+-----------+---------------------+---------------------+---------
 snap-3f2a9c  | pre-migration | manual    | 2026-07-15 09:12:04 | 2026-07-22 09:12:04 | 512.0 MB
 snap-9b71e0  |               | scheduled | 2026-07-15 03:00:01 | 2026-08-14 03:00:01 | 24.3 MB
 ```
 
-The **Type** column shows whether a snapshot was taken manually or by the schedule. **Size** is the snapshot's full size. A scheduled snapshot's actual storage is smaller, because only the first snapshot in a schedule is a full copy and the rest keep just the changes since the previous one. Timestamps are shown in your local time zone; add `--utc` to show them in UTC.
+The **Type** column shows whether a snapshot was taken manually or by the schedule. **Size** is the snapshot's full size. A scheduled snapshot's actual storage is smaller, because only the first snapshot in a schedule is a full copy and the rest keep just the changes since the previous one. Timestamps are shown in your local time zone. Add `--utc` to show them in UTC.
 
 ## Restore from a backup
 
@@ -107,12 +115,12 @@ Backup storage is billed separately from your regular database storage, as its o
 
 ## Limits
 
-- **Up to 100 manual snapshots per project.** Scheduled snapshots do not count towards this limit. When you reach it, creating another manual snapshot returns a clear error; delete snapshots you no longer need to make room.
-- **Retention defaults.** A manual snapshot created without `--expire-in` is kept until you delete it. A scheduled snapshot created without `--retention` is kept for 24 hours, then deleted automatically.
+- **Up to 100 manual snapshots per project.** Scheduled snapshots do not count towards this limit. When you reach it, creating another manual snapshot returns a clear error. Delete snapshots you no longer need to make room.
+- **Retention defaults.** A manual snapshot created without `--expire-in` is kept until you delete it. A scheduled snapshot created without `--retention` is kept for 35 days, then deleted automatically. No schedule can keep snapshots longer than that.
 - **Downgrading with stored backups.** A project that still has backups stored cannot move from the Growth plan to a smaller plan. Delete the backups first, then change the plan.
 
 ## Related
 
 - [Database](/cloud/concepts/database): how the managed database is provisioned, connected, and reset.
-- [CLI reference: `db` command](/cloud/reference/cli/commands/db): every `db backup` and `db schedule` flag and default.
+- [CLI reference: `db` command](/cloud/reference/cli/commands/db): the full `db` command tree, including `db backup` and `db schedule`.
 - [Migrations](/concepts/data-and-the-database/database/migrations#rolling-back-migrations): rolling a schema change back, which pairs with restoring data.

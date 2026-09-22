@@ -123,7 +123,7 @@ The `flutter-action@v2` step is required if the `generate` step pulls Flutter pa
 
 ## Troubleshooting
 
-**`scloud auth login` is required in the run output.** The `token` input is empty or the secret name in the workflow doesn't match what's in your repository's secrets. Confirm the secret name in your repository matches the name your workflow references in `${{ secrets.<name> }}`.
+**Authentication fails.** The run output says "The credentials for this session seem to no longer be valid." The `token` input is empty, the secret name in the workflow doesn't match what's in your repository's secrets, or the token was revoked. Check the secret name against what your workflow references in `${{ secrets.<name> }}`, and create a new token if the old one is gone. Ignore the hint to run `scloud auth login`, which can't work in CI.
 
 **Project not found.** Either `scloud.yaml` isn't committed and the action can't resolve the project, or `project_id` was passed but doesn't match a project on your Cloud account. Commit `scloud.yaml`, or pass the correct `project_id` as an action input.
 

@@ -66,7 +66,7 @@ serverpod cloud status deployment list
 The list shows deploy IDs alongside status and timestamps:
 
 ```text
-# | Project | Deploy Id                            | Status  | Started             | Finished            | Info
+# | Project | Deploy Id                            | Status  | Started (local)     | Finished (local)    | Info
 --+---------+--------------------------------------+---------+---------------------+---------------------+-----------------------------------
 0 | my-app  | 4583d0a1-3d0a-400e-a9a5-9880da6abc94 | SUCCESS | 2026-06-03 13:41:21 | 2026-06-03 13:46:08 |
 1 | my-app  | 73e66b41-64fc-4920-b6ef-4918cc6ceca1 | FAILURE | 2026-06-02 15:19:37 | 2026-06-02 15:20:34 | User build FAILURE - see build log
@@ -130,10 +130,10 @@ By default, every file ignored by `.gitignore` is also excluded from the deploym
 !lib/src/generated/
 ```
 
-The Serverpod Cloud CLI may generate intermediate files under `.scloud/` directories. Add the pattern to your project's `.gitignore` so they don't end up in version control:
+The Serverpod Cloud CLI may generate intermediate files under `.scloud/` directories. In a workspace project, the CLI adds this pattern to the workspace root's `.gitignore` for you. In any other project, add it yourself so the files stay out of version control:
 
 ```text title=".gitignore"
-# scloud deployment generated files
+# scloud deployment generated files should not be committed to git
 **/.scloud/
 ```
 

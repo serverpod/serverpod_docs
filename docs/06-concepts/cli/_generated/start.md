@@ -5,14 +5,16 @@ Start the full development stack with hot reload: generates code, runs the serve
 
 Usage: serverpod start [-- <server-args>]
 -h, --help            Print this usage information.
--w, --[no-]watch      Watch files and use the Frontend Server for fast incremental compilation. With --no-watch, the server is started via `dart run`.
+-w, --[no-]watch      Watch files and use the Frontend Server.
                       (defaults to on)
--d, --directory       The server directory (defaults to auto-detect from current directory).
+-d, --directory       The server directory.
                       (defaults to "")
-    --[no-]docker     Start Docker Compose services if a Docker Compose file exists. Defaults to on if the project has a Docker Compose file and the database is configured to PostgreSQL on localhost without a dataPath. Otherwise, defaults to off. Pass --docker or --no-docker to override the default behavior.
-    --[no-]tui        Show interactive terminal UI.
+    --[no-]docker     Start Docker Compose services if a compose file exists.
+    --[no-]attach     Attach a UI once the stack is up. With --no-attach the runner is brought up, its address is printed, and the command returns.
                       (defaults to on)
-    --[no-]flutter    Auto-launch the companion Flutter apps as configured on the server pubspec.yaml with `auto_launch: true`. Use --no-flutter to disable auto-launch. Apps can still be started on demand from the TUI.
+    --[no-]tui        Show the interactive terminal UI when attaching. Ignored with --no-attach, since nothing renders.
+                      (defaults to on)
+    --[no-]flutter    Auto-launch companion Flutter apps on the first UI attach.
                       (defaults to on)
 
 Run "serverpod help" to see global options.
