@@ -220,7 +220,7 @@ pod.addCloudStorage(
 );
 ```
 
-If the storage does not exist in your Cloud project, the server throws a `CloudStorageException` at startup. To create one, use the [storage commands](/cloud/reference/cli/commands/storage) in the Cloud CLI.
+If the storage does not exist in your Cloud project, the server throws a `CloudStorageException` at startup. To create one, see [Storage](/cloud/concepts/storage) in the Cloud docs.
 
 When Serverpod Cloud provides storage for your project, these calls connect to it. Otherwise, for example when you run the server locally, the `fallback` runs and files are stored in the database. To keep files somewhere else, replace these calls with one of the storages below.
 
