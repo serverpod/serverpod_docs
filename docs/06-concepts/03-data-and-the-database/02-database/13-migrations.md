@@ -228,7 +228,7 @@ The repair migration is applied using the server runtime. To apply a repair migr
 $ dart run bin/main.dart --apply-repair-migration
 ```
 
-The repair migration can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role), where the server exits after applying it.
+The repair migration can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role), where the server exits after applying it, with code 1 if it fails.
 
 ```bash
 $ dart run bin/main.dart --role maintenance --apply-repair-migration
