@@ -67,6 +67,7 @@ dev_dependencies:
   serverpod_test: 4.0.0                 # in the server package
 ```
 
+- **The block is not the full list.** Bump any other package whose name starts with `serverpod_` to the same version, such as `serverpod_cloud_storage_s3`.
 - **Don't skip `serverpod_test` in `dev_dependencies`.** It pins `serverpod` to an exact version. If it stays on 3.4, `dart pub upgrade` fails.
 - **If you use the legacy `serverpod_auth` module, expect code changes.** It keeps working on 4.0, but the client setup and Sign in with Apple need updating. See [the legacy auth changes](./breaking-changes-in-four#if-you-use-the-legacy-auth-module).
 - **If you use the new auth module, check your Flutter app's `flutter_secure_storage` version.** The module needs 10.0.0 or newer, which most projects already have. If yours is still on 9.x, read [how to upgrade without signing out your Android users](./breaking-changes-in-four#if-you-use-the-new-auth-module-on-android) first.
@@ -253,7 +254,7 @@ Your project runs on 4.0 when these three checks pass:
 
 ## Set up the agent workflow
 
-Version 4.0 ships AI agent skills and MCP servers for editors like Claude Code and Cursor. They let your agent hot reload your server, create and apply migrations, launch your Flutter app, and read the logs. The `serverpod create` command sets them up in a new project. In an upgraded project, install the skills and register the MCP servers by hand.
+Version 4.0 ships AI agent skills and MCP servers for editors like Claude Code and Cursor. A new project gets them from `serverpod create`. An upgraded project does not, so this step installs the skills and registers the MCP servers by hand. Once set up, your agent can hot reload your server, create and apply migrations, launch your Flutter app, and read the logs.
 
 :::warning
 
