@@ -37,9 +37,20 @@ pod.addCloudStorage(
 
 The `fallback` runs when your server is not on Serverpod Cloud, for example on your own machine. Files are then stored in the database instead.
 
-Your server reaches a storage through `session.storage`, naming it with a storage id. That id is the same name you see in the CLI and the console. A storage you create yourself is not connected automatically. To list, upload, download or delete its files, use the CLI or the console.
+Your server reaches a storage through `session.storage`, naming it with a storage id. That id is the same name you see in the CLI and the console.
 
-See [File uploads](/concepts/endpoints-and-apis/file-uploads) for the `session.storage` API and the Flutter upload flow.
+To use a storage you created yourself, connect it in `server.dart` the same way, with `custom` and its storage id. This needs `serverpod_cloud_storage` 4.0.2 or later:
+
+```dart title="server.dart"
+pod.addCloudStorage(
+  await ServerpodCloudProvider.custom(
+    storageId: 'exports',
+    fallback: () => DatabaseCloudStorage('exports'),
+  ),
+);
+```
+
+See [File uploads](/concepts/endpoints-and-apis/file-uploads) for the `session.storage` API, the Flutter upload flow, and how storage providers are configured.
 
 ## List your storages
 
@@ -62,6 +73,8 @@ serverpod cloud storage create exports
 ```
 
 A storage id uses lowercase letters, digits, and dashes, starts and ends with a letter or a digit, and is at most 63 characters. New storages are private unless you pass `--access public`.
+
+To use it from your server, connect it with `ServerpodCloudProvider.custom`. See [Use storage from your server](#use-storage-from-your-server).
 
 ## Delete a storage
 
@@ -101,5 +114,5 @@ See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the caps and prices
 
 ## Related
 
-- [File uploads](/concepts/endpoints-and-apis/file-uploads): the `session.storage` API and the Flutter upload flow.
+- [File uploads](/concepts/endpoints-and-apis/file-uploads): the `session.storage` API, the Flutter upload flow, and storage provider setup.
 - [CLI reference: `storage` command](/cloud/reference/cli/commands/storage): the `storage` commands and their options.
