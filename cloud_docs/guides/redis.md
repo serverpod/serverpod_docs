@@ -6,7 +6,7 @@ description: Configure a third-party Redis service like Upstash for distributed 
 
 # Use Redis for PubSub and caching
 
-Serverpod Cloud does not yet provide Redis natively. You can use a third-party Redis service and point your Serverpod app at it. This guide uses [Upstash](https://upstash.com) as an example; other Redis-compatible providers that support TLS and password auth will work with the same configuration pattern.
+Serverpod Cloud does not provide Redis. You can use a third-party Redis service and point your Serverpod app at it. This guide uses [Upstash](https://upstash.com) as an example. Other Redis-compatible providers that support TLS and password auth work with the same configuration pattern.
 
 Serverpod uses Redis for **distributed caching** and **PubSub** when running across multiple servers. The connection is configured via environment variables and a password.
 
