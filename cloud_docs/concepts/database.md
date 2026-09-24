@@ -53,7 +53,7 @@ You can connect to the managed database from your machine, a GUI client, or `psq
 The steps:
 
 1. Run `serverpod cloud db connection` to print the host, port, and database name.
-2. Run `serverpod cloud db user create <username>` to create a superuser. The password is shown **once**, so save it.
+2. Run `serverpod cloud db user create <username>` to create a database user. It can read and write data, but it can't create or change tables. The password is shown **once**, so save it.
 3. Connect from your client with the host, port, database, your username, and the saved password.
 
 Both commands need to know which project you're working with. From a project directory that's been linked (any project created with `serverpod cloud launch` is linked automatically), the project ID is picked up from `scloud.yaml`. From anywhere else, pass `-p your-project-id`.
@@ -87,7 +87,7 @@ The managed database is built so you don't have to think about credentials in yo
 
 - **TLS is required for all connections.** Cloud sets `SERVERPOD_DATABASE_REQUIRE_SSL` to `true` for your server, and the same applies to direct connections from `psql` or a GUI client.
 - **The server's password is managed by the platform.** It's never written into your repo and never shown to you. Your server reads it from the injected environment at runtime.
-- **Direct access uses separate superusers that you create.** The server's user and the users you create with `serverpod cloud db user create` are distinct, so revoking or rotating a direct-access password does not affect the server.
+- **Direct access uses separate database users that you create.** The server's user and the users you create with `serverpod cloud db user create` are distinct, so revoking or rotating a direct-access password does not affect the server.
 
 ## Performance
 
