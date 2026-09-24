@@ -97,7 +97,7 @@ docker compose exec -T postgres pg_dump -U postgres -d my_project \
 
 Three details in this command matter:
 
-- **Dump with `--data-only`.** A data-only dump orders tables by their foreign keys, so users are restored before their profiles. A full dump doesn't, so restoring it can fail on foreign key errors.
+- **Dump with `--data-only`.** A data-only dump orders tables by their foreign keys, so users are restored before their profiles. A full dump doesn't, so restoring it with `--data-only` can fail on foreign key errors.
 - **Keep the `*` at the end of each pattern.** It also leaves out each table's ID sequence. Without it, the dump carries your server's sequence values, and the restore resets Cloud's counters for those tables.
 - **Everything else is included.** That covers your own tables, users, sessions, future calls, and files stored in the database.
 
