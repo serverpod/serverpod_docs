@@ -226,7 +226,7 @@ When everything works, move your apps over to Cloud. Existing sessions keep work
 
 - **Keep your domain.** Attach it to your Cloud project, and your apps don't need a new build. See [Custom domains](/cloud/concepts/custom-domains).
 - **Use your Cloud URL.** Your API runs at `https://<project-id>.api.serverpod.space/`. For mobile and desktop apps, set `apiUrl` in your Flutter app's `assets/config.json` to that URL. You can also pass it with `--dart-define=SERVER_URL=<url>` when you build. Then ship a new build.
-- **Flutter web apps deployed with your server** get the Cloud URL from the server on Serverpod 4.0 or later, so they need no change.
+- **Flutter web apps deployed with your server** get the Cloud URL from the server, so they need no change. This applies to projects created on Serverpod 3.2 or later.
 
 ## Clean up
 
