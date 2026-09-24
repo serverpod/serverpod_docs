@@ -4,7 +4,7 @@ sidebar_label: Migrate a self-hosted database
 description: Moving a self-hosted database into Serverpod Cloud with pg_dump and pg_restore, so your data, users, and sessions come across intact.
 ---
 
-# Migrate a self-hosted database
+# Migrate a self-hosted database to Cloud
 
 You run Serverpod and PostgreSQL yourself, for example with Docker Compose on a VPS, and you want to be on Serverpod Cloud instead. This guide takes your data, your users, and their sessions across.
 
@@ -17,7 +17,7 @@ You need:
 - The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - Your Serverpod project on your machine, with the same code and migrations that run on your server.
 - Shell access to the server that runs your database.
-- The PostgreSQL client tools (`pg_dump`, `pg_restore`, and `psql`) on your machine. Use the same major version as your self-hosted database or newer. See [PostgreSQL downloads](https://www.postgresql.org/download/).
+- The PostgreSQL client tools (`pg_restore` and `psql`) on your machine. Use the same major version as your self-hosted database or newer. Cloud runs PostgreSQL 17, so version 17 works for most projects. See [PostgreSQL downloads](https://www.postgresql.org/download/).
 
 The commands below use example names. Your database runs in a Docker Compose service called `postgres`, and your server runs in a service called `server`. The database is called `my_project`. Replace these names with your own.
 
@@ -87,7 +87,6 @@ Take a data-only dump. Leave out the data Serverpod keeps about each deployment,
 docker compose exec -T postgres pg_dump -U postgres -d my_project \
   --data-only --format=custom \
   --exclude-table-data='serverpod_migrations*' \
-  --exclude-table-data='serverpod_runtime_settings*' \
   --exclude-table-data='serverpod_health_*' \
   --exclude-table-data='serverpod_*log*' \
   --exclude-table-data='serverpod_readwrite_test*' \
@@ -95,11 +94,12 @@ docker compose exec -T postgres pg_dump -U postgres -d my_project \
   > app-data.dump
 ```
 
-Three details in this command matter:
+The dump uses these options:
 
-- **Dump with `--data-only`.** A data-only dump orders tables by their foreign keys, so users are restored before their profiles. A full dump doesn't, so restoring it with `--data-only` can fail on foreign key errors.
-- **Keep the `*` at the end of each pattern.** It also leaves out each table's ID sequence. Without it, the dump carries your server's sequence values, and the restore resets Cloud's counters for those tables.
-- **Everything else is included.** That covers your own tables, users, sessions, future calls, and files stored in the database.
+- **`--data-only` copies rows, not tables.** Your migrations already created the tables on Cloud, and the database user you restore with can't create or change tables. A data-only dump also orders tables by their foreign keys, so each row is restored after the rows it points to.
+- **Each pattern ends with `*`.** The `*` also leaves out each table's ID sequence. Without it, the dump carries your server's sequence values, and the restore resets Cloud's counters for those tables.
+- **The excluded tables stay behind.** Your server's logs and health checks stay in your old database, so Cloud starts with a clean history. Future call claims are short-lived locks held by a running server, so they aren't needed. The future calls themselves are copied.
+- **Everything else is included.** That covers your own tables, users, sessions, runtime settings, future calls, and files stored in the database.
 
 The `pg_dump` command warns about circular foreign keys between `serverpod_auth_core_profile` and `serverpod_auth_core_profile_image`, with a hint to use a full dump. Ignore the hint. The warning only matters if some of your users have profile images. Count them:
 
@@ -135,11 +135,13 @@ Then run the `pg_dump` command from [Dump your data](#dump-your-data) again, wit
 
 ## Create a database user
 
-The restore connects as a database user that you create yourself. It needs the host and database name, so print the connection details first:
+The restore connects as a database user that you create yourself. Print the connection details first:
 
 ```bash
 serverpod cloud db connection
 ```
+
+The output ends with a `psql` command that contains your connection string, in the form `postgresql://<host>/<database>?sslmode=require`. The commands below use that string with `migrator@` added after `postgresql://`.
 
 Now create that user. The password is shown only once, so save it:
 
@@ -147,7 +149,7 @@ Now create that user. The password is shown only once, so save it:
 serverpod cloud db user create migrator
 ```
 
-The `migrator` user can read and write rows, but it can't disable triggers or turn off foreign key checks. That's why the dump contains data only. See [Access the database directly](/cloud/concepts/database#access-the-database-directly) for more about database users.
+The `migrator` user can read and write rows, but it can't create or change tables, disable triggers, or turn off foreign key checks. That's why the dump contains data only. See [Access the database directly](/cloud/concepts/database#access-the-database-directly) for more about database users.
 
 Check that Cloud is on the same migration versions as your server:
 
@@ -156,13 +158,24 @@ psql "postgresql://migrator@<host>/<database>?sslmode=require" \
   -c "SELECT module, version FROM serverpod_migrations ORDER BY module;"
 ```
 
-Replace `<host>` and `<database>` with the values from `serverpod cloud db connection`. If it prints a port, add it after the host as `<host>:<port>`.
-
 ## Restore the data
 
-Download `app-data.dump` to your machine, for example with `scp`. If you created `profile-images.sql`, download it too.
+Copy `app-data.dump` from your server to your machine. One way is [`scp`](https://man.openbsd.org/scp), which copies files over SSH. Run it on your machine, with your own user, server address, and path:
+
+```bash
+scp user@your-server:~/my_project/app-data.dump .
+```
+
+If you created `profile-images.sql`, copy it the same way.
 
 If your project is on the Growth plan, take a backup snapshot first. See [Database backups](/cloud/concepts/database-backups).
+
+Cloud wrote default runtime settings when it deployed your project. Delete them, so the settings from your server can take their place:
+
+```bash
+psql "postgresql://migrator@<host>/<database>?sslmode=require" \
+  -c "DELETE FROM public.serverpod_runtime_settings;"
+```
 
 Restore the dump into Cloud:
 
@@ -182,6 +195,12 @@ psql "postgresql://migrator@<host>/<database>?sslmode=require" \
   -v ON_ERROR_STOP=1 -f profile-images.sql
 ```
 
+Your server reads its runtime settings when it starts. Deploy again, so it picks up the ones you restored:
+
+```bash
+serverpod cloud deploy
+```
+
 ## Check the result
 
 Count the rows in your most important tables on Cloud:
@@ -197,7 +216,11 @@ Run the same query on your server, and compare the numbers. Then call your Cloud
 - Create a new row, and check that it gets the next ID after your migrated rows.
 - Sign in with an existing account.
 
-When everything works, point your apps at your Cloud URLs, or attach your existing domain. See [Custom domains](/cloud/concepts/custom-domains). Existing sessions keep working, because Cloud now uses your server's auth secrets.
+When everything works, move your apps over to Cloud. Existing sessions keep working, because Cloud now uses your server's auth secrets.
+
+- **Keep your domain.** Attach it to your Cloud project, and your apps don't need a new build. See [Custom domains](/cloud/concepts/custom-domains).
+- **Use your Cloud URL.** Your API runs at `https://<project-id>.api.serverpod.space/`. For mobile and desktop apps, set `apiUrl` in your Flutter app's `assets/config.json` to that URL, or pass it with `--dart-define=SERVER_URL=<url>` when you build. Then ship a new build.
+- **Flutter web apps deployed with your server** get the Cloud URL from the server, so they need no change.
 
 ## Clean up
 
@@ -217,7 +240,7 @@ Keep your self-hosted server and its data until your apps run against Cloud with
 
 ## Troubleshooting
 
-**`duplicate key value violates unique constraint "serverpod_migrations_pkey"`.** The dump includes data that Cloud already wrote when it deployed your project. The same error can name `serverpod_runtime_settings`, `serverpod_health_metric`, or `serverpod_session_log`. Dump again with every `--exclude-table-data` option from [Dump your data](#dump-your-data). With `--single-transaction`, nothing was written, so you can restore again right away.
+**`duplicate key value violates unique constraint "serverpod_migrations_pkey"`.** The dump includes data that Cloud already wrote when it deployed your project. The same error can name `serverpod_health_metric` or `serverpod_session_log`. Dump again with every `--exclude-table-data` option from [Dump your data](#dump-your-data). If the error names `serverpod_runtime_settings`, delete Cloud's runtime settings as shown in [Restore the data](#restore-the-data). With `--single-transaction`, nothing was written, so you can restore again right away.
 
 **`violates foreign key constraint`.** If the constraint is `serverpod_auth_core_profile_fk_1`, some of your users have profile images. Follow [Dump users with profile images](#dump-users-with-profile-images). For any other constraint, check that you dumped with `--data-only`.
 
