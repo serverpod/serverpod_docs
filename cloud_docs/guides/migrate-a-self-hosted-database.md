@@ -147,7 +147,7 @@ Now create that user. The password is shown only once, so save it:
 serverpod cloud db user create migrator
 ```
 
-The `migrator` user can read and write rows. It can't change the schema, disable triggers, or turn off foreign key checks. That's why the dump contains data only. See [Access the database directly](/cloud/concepts/database#access-the-database-directly) for more about database users.
+The `migrator` user can read and write rows, but it can't disable triggers or turn off foreign key checks. That's why the dump contains data only. See [Access the database directly](/cloud/concepts/database#access-the-database-directly) for more about database users.
 
 Check that Cloud is on the same migration versions as your server:
 
