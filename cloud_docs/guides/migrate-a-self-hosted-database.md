@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 sidebar_label: Migrate a self-hosted database
-description: Database migration from a self-hosted Serverpod server to Serverpod Cloud. Copy your data, users, and auth secrets with pg_dump and pg_restore.
+description: Moving a self-hosted database into Serverpod Cloud with pg_dump and pg_restore, so your data, users, and sessions come across intact.
 ---
 
 # Migrate a self-hosted database
