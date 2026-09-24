@@ -21,7 +21,7 @@ You need:
 
 The commands below use example names. Your database runs in a Docker Compose service called `postgres`, and your server runs in a service called `server`. The database is called `my_project`. Replace these names with your own.
 
-Run the `docker compose` commands on your server, and the `serverpod cloud` commands from your server directory on your machine.
+Run the `docker compose` commands on your server, and the `serverpod cloud` commands from your project's `<project>_server` folder on your own machine.
 
 ## Deploy your project to Cloud
 
