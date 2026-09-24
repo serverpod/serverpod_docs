@@ -101,7 +101,7 @@ Three details in this command matter:
 - **Keep the `*` at the end of each pattern.** It also leaves out each table's ID sequence. Without it, the dump carries your server's sequence values, and the restore resets Cloud's counters for those tables.
 - **Everything else is included.** That covers your own tables, users, sessions, future calls, and files stored in the database.
 
-`pg_dump` warns about circular foreign keys between `serverpod_auth_core_profile` and `serverpod_auth_core_profile_image`, with a hint to use a full dump. Ignore the hint. The warning only matters if some of your users have profile images. Count them:
+The `pg_dump` command warns about circular foreign keys between `serverpod_auth_core_profile` and `serverpod_auth_core_profile_image`, with a hint to use a full dump. Ignore the hint. The warning only matters if some of your users have profile images. Count them:
 
 ```bash
 docker compose exec postgres psql -U postgres -d my_project -At \
