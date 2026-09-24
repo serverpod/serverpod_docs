@@ -6,4 +6,8 @@ The `serverpod start` command runs your project in development mode. It generate
 serverpod start
 ```
 
-Run it from anywhere inside your project folder.
+Run it from anywhere inside your project folder. To run another server entrypoint, pass its path relative to the server package:
+
+```bash
+serverpod start -t bin/main_enterprise.dart
+```
