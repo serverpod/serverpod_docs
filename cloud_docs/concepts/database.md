@@ -87,7 +87,7 @@ The managed database is built so you don't have to think about credentials in yo
 
 - **TLS is required for all connections.** Cloud sets `SERVERPOD_DATABASE_REQUIRE_SSL` to `true` for your server, and the same applies to direct connections from `psql` or a GUI client.
 - **The server's password is managed by the platform.** It's never written into your repo and never shown to you. Your server reads it from the injected environment at runtime.
-- **Direct access uses separate database users that you create.** The server's user and the users you create with `serverpod cloud db user create` are distinct, so revoking or rotating a direct-access password does not affect the server.
+- **Direct access uses separate database users that you create.** The server connects as its own user, not as one you create with `serverpod cloud db user create`. Revoking or rotating a direct-access password doesn't affect the server.
 
 ## Performance
 
