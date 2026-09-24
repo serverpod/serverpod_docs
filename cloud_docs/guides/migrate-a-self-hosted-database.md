@@ -57,7 +57,7 @@ serverpod cloud password set jwtHmacSha512PrivateKey "<value from your server>"
 serverpod cloud password set jwtRefreshTokenHashPepper "<value from your server>"
 ```
 
-Set every other password your server reads the same way, for example `serverSideSessionKeyHashPepper` or the client secrets for your sign-in providers. Then deploy, so the server picks up the new values:
+Set every other password your server reads the same way, for example `serverSideSessionKeyHashPepper` or the client secrets for your sign-in providers. If you accepted them when `serverpod cloud launch` asked, they're already set. Then deploy, so the server picks up the new values:
 
 ```bash
 serverpod cloud deploy
@@ -96,7 +96,7 @@ docker compose exec -T postgres pg_dump -U postgres -d my_project \
 
 The dump uses these options:
 
-- **`--data-only` copies rows, not tables.** Your migrations already created the tables on Cloud. The database user you restore with can't create or change tables anyway. A data-only dump also orders tables by their foreign keys, so each row is restored after the rows it points to.
+- **Dump rows only, with `--data-only`.** Your migrations already created the tables on Cloud. The database user you restore with can't create or change tables anyway. A data-only dump also orders tables by their foreign keys, so each row is restored after the rows it points to.
 - **Each pattern ends with `*`.** The `*` also leaves out each table's ID sequence. Without it, the dump carries your server's sequence values, and the restore resets Cloud's counters for those tables.
 - **The excluded tables stay behind.** Your server's logs and health checks stay in your old database, so Cloud starts with a clean history. Future call claims are short-lived locks held by a running server, so they aren't needed. The future calls themselves are copied.
 - **Everything else is included.** That covers your own tables, users, sessions, runtime settings, future calls, and files stored in the database.
@@ -118,7 +118,7 @@ If the count is `0`, skip to [Create a database user](#create-a-database-user).
 
 ### Dump users with profile images
 
-`serverpod_auth_core_profile` and `serverpod_auth_core_profile_image` point at each other, so neither can be restored first. Cloud doesn't let you turn off foreign key checks during a restore either. Instead, you restore the profiles without their image links and add the links back afterwards.
+The `serverpod_auth_core_profile` and `serverpod_auth_core_profile_image` tables point at each other, so neither can be restored first. Cloud doesn't let you turn off foreign key checks during a restore either. Instead, you restore the profiles without their image links and add the links back afterwards.
 
 First, save the links as SQL statements. They name the `public` schema, because `pg_restore` leaves the `search_path` empty on the connection it used:
 
@@ -192,7 +192,7 @@ pg_restore \
   app-data.dump
 ```
 
-`--single-transaction` and `--exit-on-error` make the restore all or nothing. If any row fails, nothing is written. Fix the problem and run the same command again.
+The `--single-transaction` and `--exit-on-error` options make the restore all or nothing. If any row fails, nothing is written. Fix the problem and run the same command again.
 
 If you created `profile-images.sql`, add the image links back:
 
@@ -230,7 +230,7 @@ When everything works, move your apps over to Cloud. Existing sessions keep work
 
 ## Clean up
 
-Delete the migration user:
+Delete the `migrator` user:
 
 ```bash
 serverpod cloud db user delete migrator
@@ -252,7 +252,7 @@ Keep your self-hosted server and its data until your apps run against Cloud with
 
 **Signing in fails with `invalidCredentials`, or refreshing fails with `RefreshTokenInvalidSecretException`.** Cloud uses different auth secrets from your server. Follow [Copy your auth secrets to Cloud](#copy-your-auth-secrets-to-cloud). Users whose refresh failed before the fix need to sign in again.
 
-**`relation "..." does not exist` in `psql` right after a restore.** `pg_restore` sets `search_path` to an empty value on its connection. Cloud pools connections, so a later session can get that connection back with the empty value still set. Run `SET search_path TO public;` or reconnect later. Your deployed server isn't affected.
+**`relation "..." does not exist` in `psql` right after a restore.** The `pg_restore` command sets `search_path` to an empty value on its connection. Cloud pools connections, so a later session can get that connection back with the empty value still set. Run `SET search_path TO public;` or reconnect later. Your deployed server isn't affected.
 
 ## Related
 
