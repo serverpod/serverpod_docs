@@ -71,7 +71,7 @@ Any PostgreSQL-compatible client works. A few popular options:
 
 :::warning
 
-Session settings can carry over on the pooled endpoint. A `SET` from one connection, such as a change to `search_path`, can still apply the next time you connect as the same user. Use `SET LOCAL` inside a transaction, so the setting ends with the transaction.
+Session settings can carry over between direct connections, because they go through a connection pool. A `SET` from one connection, such as a change to `search_path`, can still apply the next time you connect as the same user. Use `SET LOCAL` inside a transaction, so the setting ends with the transaction.
 
 :::
 
