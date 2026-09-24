@@ -9,17 +9,16 @@ You configure future calls in your Serverpod config files or through environment
 | Option | Default | Controls |
 | --- | --- | --- |
 | `futureCall.enabled` | `true` | Whether future calls can be scheduled and executed. |
-| `futureCallExecutionEnabled` | `true` | Whether this server runs future calls at all. |
+| `futureCall.executionEnabled` | `true` | Whether this server runs future calls at all. |
 | `futureCall.concurrencyLimit` | `1` | How many calls may run at once. |
 | `futureCall.scanInterval` | `5000` | How often, in milliseconds, the server checks for due calls. |
 | `futureCall.checkBrokenCalls` | unset | Whether to scan for broken calls on startup. |
 | `futureCall.deleteBrokenCalls` | `false` | Whether to delete broken calls that are found. |
 
 ```yaml
-futureCallExecutionEnabled: true
-
 futureCall:
   enabled: true           # default
+  executionEnabled: true  # default
   concurrencyLimit: 1     # default
   scanInterval: 5000      # default, in milliseconds
 ```
@@ -47,10 +46,11 @@ Future calls require a database. Without one, they are disabled regardless of th
 
 ### Enable or disable execution
 
-The `futureCallExecutionEnabled` option turns future call execution on or off for a server. It is `true` by default. Unlike `futureCall.enabled`, it does not stop calls from being scheduled; they are stored and run by any server that has execution enabled. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
+The `executionEnabled` option turns future call execution on or off for a server. It is `true` by default. Unlike `futureCall.enabled`, it does not stop calls from being scheduled; they are stored and run by any server that has execution enabled. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
 
 ```yaml
-futureCallExecutionEnabled: false
+futureCall:
+  executionEnabled: false
 ```
 
 ### Concurrency limit
