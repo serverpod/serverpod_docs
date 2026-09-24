@@ -6,7 +6,7 @@ description: Moving a self-hosted database into Serverpod Cloud with pg_dump and
 
 # Migrate a self-hosted database to Cloud
 
-You run Serverpod and PostgreSQL yourself, for example with Docker Compose on a VPS, and you want to be on Serverpod Cloud instead. This guide takes your data, your users, and their sessions across.
+You run Serverpod and PostgreSQL yourself, for example with Docker Compose on a VPS. Now you want to move to Serverpod Cloud. This guide takes your data, your users, and their sessions across.
 
 It happens in two halves. Deploying your project to Cloud comes first, because that is what creates the tables from your migrations. Copying the rows comes second, out of your old database and into those tables.
 
@@ -17,7 +17,7 @@ You need:
 - The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - Your Serverpod project on your machine, with the same code and migrations that run on your server.
 - Shell access to the server that runs your database.
-- The PostgreSQL client tools (`pg_restore` and `psql`) on your machine. Use the same major version as your self-hosted database or newer. Cloud runs PostgreSQL 17, so version 17 works for most projects. See [PostgreSQL downloads](https://www.postgresql.org/download/).
+- The PostgreSQL client tools (`pg_restore` and `psql`) on your machine. Use the same major version as your self-hosted database or newer. Cloud runs PostgreSQL 17, so version 17 works unless your self-hosted database is newer. See [PostgreSQL downloads](https://www.postgresql.org/download/).
 
 The commands below use example names. Your database runs in a Docker Compose service called `postgres`, and your server runs in a service called `server`. The database is called `my_project`. Replace these names with your own.
 
@@ -96,7 +96,7 @@ docker compose exec -T postgres pg_dump -U postgres -d my_project \
 
 The dump uses these options:
 
-- **`--data-only` copies rows, not tables.** Your migrations already created the tables on Cloud, and the database user you restore with can't create or change tables. A data-only dump also orders tables by their foreign keys, so each row is restored after the rows it points to.
+- **`--data-only` copies rows, not tables.** Your migrations already created the tables on Cloud. The database user you restore with can't create or change tables anyway. A data-only dump also orders tables by their foreign keys, so each row is restored after the rows it points to.
 - **Each pattern ends with `*`.** The `*` also leaves out each table's ID sequence. Without it, the dump carries your server's sequence values, and the restore resets Cloud's counters for those tables.
 - **The excluded tables stay behind.** Your server's logs and health checks stay in your old database, so Cloud starts with a clean history. Future call claims are short-lived locks held by a running server, so they aren't needed. The future calls themselves are copied.
 - **Everything else is included.** That covers your own tables, users, sessions, runtime settings, future calls, and files stored in the database.
@@ -155,7 +155,7 @@ Now create that user. The password is shown only once, so save it:
 serverpod cloud db user create migrator
 ```
 
-The `migrator` user can read and write rows, but it can't create or change tables, disable triggers, or turn off foreign key checks. That's why the dump contains data only. See [Access the database directly](/cloud/concepts/database#access-the-database-directly) for more about database users.
+The `migrator` user can read and write rows. It can't create or change tables, disable triggers, or turn off foreign key checks. See [Access the database directly](/cloud/concepts/database#access-the-database-directly) for more about database users.
 
 Check that Cloud is on the same migration versions as your server:
 
@@ -225,8 +225,8 @@ Run the same query on your server, and compare the numbers. Then call your Cloud
 When everything works, move your apps over to Cloud. Existing sessions keep working, because Cloud now uses your server's auth secrets.
 
 - **Keep your domain.** Attach it to your Cloud project, and your apps don't need a new build. See [Custom domains](/cloud/concepts/custom-domains).
-- **Use your Cloud URL.** Your API runs at `https://<project-id>.api.serverpod.space/`. For mobile and desktop apps, set `apiUrl` in your Flutter app's `assets/config.json` to that URL, or pass it with `--dart-define=SERVER_URL=<url>` when you build. Then ship a new build.
-- **Flutter web apps deployed with your server** get the Cloud URL from the server, so they need no change.
+- **Use your Cloud URL.** Your API runs at `https://<project-id>.api.serverpod.space/`. For mobile and desktop apps, set `apiUrl` in your Flutter app's `assets/config.json` to that URL. You can also pass it with `--dart-define=SERVER_URL=<url>` when you build. Then ship a new build.
+- **Flutter web apps deployed with your server** get the Cloud URL from the server on Serverpod 4.0 or later, so they need no change.
 
 ## Clean up
 
