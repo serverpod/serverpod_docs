@@ -156,7 +156,7 @@ psql "postgresql://migrator@<host>/<database>?sslmode=require" \
   -c "SELECT module, version FROM serverpod_migrations ORDER BY module;"
 ```
 
-Replace `<host>` and `<database>` with the values from `serverpod cloud db connection`.
+Replace `<host>` and `<database>` with the values from `serverpod cloud db connection`. If it prints a port, add it after the host as `<host>:<port>`.
 
 ## Restore the data
 
