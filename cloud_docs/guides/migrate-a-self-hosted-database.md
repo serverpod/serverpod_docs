@@ -101,7 +101,13 @@ The dump uses these options:
 - **The excluded tables stay behind.** Your server's logs and health checks stay in your old database, so Cloud starts with a clean history. Future call claims are short-lived locks held by a running server, so they aren't needed. The future calls themselves are copied.
 - **Everything else is included.** That covers your own tables, users, sessions, runtime settings, future calls, and files stored in the database.
 
-The `pg_dump` command warns about circular foreign keys between `serverpod_auth_core_profile` and `serverpod_auth_core_profile_image`, with a hint to use a full dump. Ignore the hint. The warning only matters if some of your users have profile images. Count them:
+:::tip
+
+The `pg_dump` command warns about circular foreign keys between `serverpod_auth_core_profile` and `serverpod_auth_core_profile_image`, with a hint to use a full dump. Ignore the hint. The warning only matters if some of your users have profile images.
+
+:::
+
+Count the users with profile images:
 
 ```bash
 docker compose exec postgres psql -U postgres -d my_project -At \
