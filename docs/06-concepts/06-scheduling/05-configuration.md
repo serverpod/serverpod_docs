@@ -9,7 +9,7 @@ You configure future calls in your Serverpod config files or through environment
 | Option | Default | Controls |
 | --- | --- | --- |
 | `futureCall.enabled` | `true` | Whether future calls can be scheduled and executed. |
-| `futureCall.executionEnabled` | `true` | Whether this server runs future calls at all. |
+| `futureCall.executionEnabled` | `true` | Whether this server runs due calls. Scheduling still works. |
 | `futureCall.concurrencyLimit` | `1` | How many calls may run at once. |
 | `futureCall.scanInterval` | `5000` | How often, in milliseconds, the server checks for due calls. |
 | `futureCall.checkBrokenCalls` | unset | Whether to scan for broken calls on startup. |
