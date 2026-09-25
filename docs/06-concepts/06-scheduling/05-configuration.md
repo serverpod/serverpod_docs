@@ -34,15 +34,7 @@ futureCall:
   enabled: false
 ```
 
-You can also set it with the `SERVERPOD_FUTURE_CALL_ENABLED` environment variable, which takes precedence over the config file.
-
-:::warning
-Trying to schedule future calls when `futureCall.enabled` is set to false throws an error.
-:::
-
-:::info
-Future calls require a database. Without one, they are disabled regardless of this option.
-:::
+If you schedule a call while it is off, the server throws a `StateError` with the message `FutureCalls is not initialized.` Future calls also need a database. Without one, they are off regardless of this option.
 
 ### Enable or disable execution
 
