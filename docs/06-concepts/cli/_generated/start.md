@@ -9,6 +9,8 @@ Usage: serverpod start [-- <server-args>]
                       (defaults to on)
 -d, --directory       The server directory.
                       (defaults to "")
+-t, --target          The server entrypoint, relative to the server directory.
+                      (defaults to "bin/main.dart")
     --[no-]docker     Start Docker Compose services if a compose file exists.
     --[no-]attach     Attach a UI once the stack is up. With --no-attach the runner is brought up, its address is printed, and the command returns.
                       (defaults to on)
