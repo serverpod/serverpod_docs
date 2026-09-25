@@ -1,5 +1,5 @@
 ---
-description: Future call settings cover execution, concurrency, the scan interval, and broken-call handling, set in config files or environment variables.
+description: Future call settings cover enabling future calls, execution, concurrency, the scan interval, and broken-call handling, set in config files or environment variables.
 ---
 
 # Configuration
@@ -8,28 +8,41 @@ You configure future calls in your Serverpod config files or through environment
 
 | Option | Default | Controls |
 | --- | --- | --- |
-| `futureCallExecutionEnabled` | `true` | Whether this server runs future calls at all. |
+| `futureCall.enabled` | `true` | Whether future calls can be scheduled and executed. |
+| `futureCall.executionEnabled` | `true` | Whether this server runs due calls. Scheduling still works. |
 | `futureCall.concurrencyLimit` | `1` | How many calls may run at once. |
 | `futureCall.scanInterval` | `5000` | How often, in milliseconds, the server checks for due calls. |
 | `futureCall.checkBrokenCalls` | unset | Whether to scan for broken calls on startup. |
 | `futureCall.deleteBrokenCalls` | `false` | Whether to delete broken calls that are found. |
 
 ```yaml
-futureCallExecutionEnabled: true
-
 futureCall:
+  enabled: true           # default
+  executionEnabled: true  # default
   concurrencyLimit: 1     # default
   scanInterval: 5000      # default, in milliseconds
 ```
+
+## Disable future calls
+
+The `futureCall.enabled` option turns future calls off completely. It is `true` by default. When set to `false`, calls can neither be scheduled nor executed. Use it when your project does not use future calls.
+
+```yaml
+futureCall:
+  enabled: false
+```
+
+If you schedule a call while it is off, the server throws a `StateError` with the message `FutureCalls is not initialized.` Future calls also need a database. Without one, they are off regardless of this option.
 
 ## Execution options
 
 ### Enable or disable execution
 
-The `futureCallExecutionEnabled` option turns future call execution on or off for a server. It is `true` by default. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
+The `futureCall.executionEnabled` option turns future call execution on or off for a server. It is `true` by default. Unlike `futureCall.enabled`, it does not stop calls from being scheduled; they are stored and run by any server that has execution enabled. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
 
 ```yaml
-futureCallExecutionEnabled: false
+futureCall:
+  executionEnabled: false
 ```
 
 ### Concurrency limit
