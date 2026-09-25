@@ -27,7 +27,7 @@ futureCall:
 
 ### Disable future calls entirely
 
-The `futureCall.enabled` option turns future calls off completely. It is `true` by default. When set to `false`, the server does not create a future call manager, so calls can neither be scheduled nor executed. Use it when your project does not use future calls.
+The `futureCall.enabled` option turns future calls off completely. It is `true` by default. When set to `false`, calls can neither be scheduled nor executed. Use it when your project does not use future calls.
 
 ```yaml
 futureCall:
