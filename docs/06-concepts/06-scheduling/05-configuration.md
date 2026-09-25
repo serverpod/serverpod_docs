@@ -23,9 +23,7 @@ futureCall:
   scanInterval: 5000      # default, in milliseconds
 ```
 
-## Execution options
-
-### Disable future calls entirely
+## Disable future calls
 
 The `futureCall.enabled` option turns future calls off completely. It is `true` by default. When set to `false`, calls can neither be scheduled nor executed. Use it when your project does not use future calls.
 
@@ -35,6 +33,8 @@ futureCall:
 ```
 
 If you schedule a call while it is off, the server throws a `StateError` with the message `FutureCalls is not initialized.` Future calls also need a database. Without one, they are off regardless of this option.
+
+## Execution options
 
 ### Enable or disable execution
 
