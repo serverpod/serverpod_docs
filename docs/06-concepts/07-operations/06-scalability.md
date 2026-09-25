@@ -30,7 +30,7 @@ Use roles so request capacity and background work do not share the same scaling 
 dart run bin/main.dart --mode production --role serverless
 ```
 
-Schedule a separate process in the `maintenance` role (for example once per minute) when request nodes run as `serverless`. On pure request nodes you can also set `futureCall.executionEnabled` to `false`; see [Future call configuration](../scheduling/configuration).
+Schedule a separate process in the `maintenance` role (for example once per minute) when request nodes run as `serverless`. On pure request nodes you can also disable execution with the `SERVERPOD_FUTURE_CALL_EXECUTION_ENABLED` environment variable set to `false`, so the maintenance process, which reads the same config file, keeps running calls; see [Future call configuration](../scheduling/configuration).
 
 ## Offload CPU work to isolates
 
