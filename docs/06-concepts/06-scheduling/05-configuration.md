@@ -46,7 +46,7 @@ Future calls require a database. Without one, they are disabled regardless of th
 
 ### Enable or disable execution
 
-The `executionEnabled` option turns future call execution on or off for a server. It is `true` by default. Unlike `futureCall.enabled`, it does not stop calls from being scheduled; they are stored and run by any server that has execution enabled. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
+The `futureCall.executionEnabled` option turns future call execution on or off for a server. It is `true` by default. Unlike `futureCall.enabled`, it does not stop calls from being scheduled; they are stored and run by any server that has execution enabled. Set it to `false` in environments where background tasks should not run, such as a staging server where you want to test API behavior without triggering scheduled work.
 
 ```yaml
 futureCall:
