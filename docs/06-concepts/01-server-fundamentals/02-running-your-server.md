@@ -12,6 +12,12 @@ Run it from your project's root folder or one of its package folders:
 serverpod start
 ```
 
+The CLI runs `bin/main.dart` from the server package by default. To use another entrypoint, pass its path relative to the server package with `--target` (or `-t`):
+
+```bash
+serverpod start --target bin/main_enterprise.dart
+```
+
 The interactive terminal shows a tab for the server and for each running app, with the most common actions along the bottom. Shortcuts are unshifted key presses: **M** means typing a lowercase `m`, while **Shift+M** produces the capital and triggers the variant. Press **H** for the full list of shortcuts, and **Q** to quit the session. If a session is already running for the project, a second `serverpod start` tells you so and exits. While the session runs, it also exposes an MCP endpoint that AI agents can use to drive it. See the [`serverpod mcp-server` reference](../cli/commands/mcp-server).
 
 New projects use an embedded PostgreSQL database that the server manages for you, so there is nothing else to start. See [Database backends](./configuration#database-backends) for how it is configured and how to use an external database instead.
