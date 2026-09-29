@@ -69,6 +69,12 @@ Any PostgreSQL-compatible client works. A few popular options:
 - `psql`, the standard PostgreSQL command-line client
 - A PostgreSQL VS Code extension if you prefer to stay in your editor
 
+:::warning
+
+Session settings can carry over between direct connections, because they go through a connection pool. A `SET` from one connection, such as a change to `search_path`, can still apply the next time you connect as the same user. Use `SET LOCAL` inside a transaction, so the setting ends with the transaction.
+
+:::
+
 ## Reset the database
 
 The `serverpod cloud db wipe` command deletes all tables, all data, and all applied migrations from the managed database. It asks for confirmation by default.
