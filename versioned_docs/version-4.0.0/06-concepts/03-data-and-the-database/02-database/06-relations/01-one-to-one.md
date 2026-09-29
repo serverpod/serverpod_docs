@@ -128,7 +128,7 @@ indexes:
 
 ### Generated SQL
 
-The following code block shows how to set up the same relation with raw SQL. Serverpod will generate this code behind the scenes.
+For the [id field](#with-an-id-field) and [object](#with-an-object) examples, Serverpod generates this SQL behind the scenes:
 
 ```sql
 CREATE TABLE "address" (
@@ -151,6 +151,8 @@ ALTER TABLE ONLY "user"
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ```
+
+The other variants change only the foreign key column. In an optional relation, the column is nullable, so `NOT NULL` is dropped. With a custom foreign key field, the column takes the field's name, such as `customIdField`. A column name override, such as `fk_user_address_id`, replaces that name. The unique index and the foreign key use the same column.
 
 The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential actions, which default to `NO ACTION`. See [Referential actions](./referential-actions) to change them.
 
