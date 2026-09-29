@@ -54,6 +54,16 @@ serverpod start -- --mode staging
 
 The run mode selects which configuration and passwords the server loads. See [Run modes](./configuration#run-modes) for what each mode reads. Flutter apps only launch in the `development` run mode.
 
+## Choose the server entry point
+
+By default, `serverpod start` runs `bin/main.dart` in the server package. To run another entry point, pass its path relative to the server package with `--target`:
+
+```bash
+serverpod start --target bin/main_enterprise.dart
+```
+
+See [The server entry point](./your-serverpod-project#the-server-entry-point) for what `bin/main.dart` does.
+
 ## Choose which Flutter apps start
 
 The `serverpod: flutter_apps:` block in the server's `pubspec.yaml` lists the Flutter apps that `serverpod start` can run. Each one has its own entry, keyed by an id you choose. New projects with a Flutter app include this block:
