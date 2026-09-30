@@ -190,6 +190,24 @@ await session.storage.storeFile(
 
 To delete a stored file, use `deleteFile` with the same `storageId` and `path`.
 
+## Save a file reference in a model
+
+To link a stored file to your data, such as a document a user uploaded, save where the file lives rather than the file itself. Add `storageId` and `path` fields to the [model](../data-and-the-database/models):
+
+```yaml title="document.spy.yaml"
+class: Document
+table: document
+fields:
+  title: String
+  storageId: String
+  path: String
+```
+
+The storage methods above identify a file by its `storageId` and `path`. These two fields are enough to read, delete, or create a URL for the file later.
+
+- **Private storage:** Don't save a URL. Signed URLs expire, so call `temporaryDownloadUrl` each time an authorized user asks for the file.
+- **Public storage:** You can also save the URL from `publicDownloadUrl` in a `Uri` field, so the app gets the link along with the rest of the data. Keep `storageId` and `path` next to it, because a URL alone isn't enough to delete or replace the file. A saved URL also keeps the domain it was created with, so create new URLs from those two fields if you move the files or change their domain.
+
 ## Configure a storage provider
 
 Each storage is identified by a `storageId`. Serverpod comes with two default storages, `public` and `private`. Replace these with a cloud-backed implementation, or add additional storages with custom IDs. Calling `pod.addCloudStorage` with `public` or `private` replaces that default. Call it before `pod.start()`. For local disk or a NAS, see [Custom cloud storage](./custom-cloud-storage).
