@@ -203,10 +203,10 @@ fields:
   path: String
 ```
 
-The storage methods above identify a file by its `storageId` and `path`, so these two fields are enough to read the file, delete it, or create a URL for it later.
+The storage methods above identify a file by its `storageId` and `path`. These two fields are enough to read, delete, or create a URL for the file later.
 
-- **Private storage:** don't save a URL. Signed URLs expire, so call `temporaryDownloadUrl` each time an authorized user asks for the file.
-- **Public storage:** you can also save the URL from `publicDownloadUrl` in a `Uri` field, so the app gets the link along with the rest of the data. Keep `storageId` and `path` next to it, because a URL alone isn't enough to delete or replace the file. A saved URL also keeps the domain it was created with, so create new URLs from those two fields if you move the files or change their domain.
+- **Private storage:** Don't save a URL. Signed URLs expire, so call `temporaryDownloadUrl` each time an authorized user asks for the file.
+- **Public storage:** You can also save the URL from `publicDownloadUrl` in a `Uri` field, so the app gets the link along with the rest of the data. Keep `storageId` and `path` next to it, because a URL alone isn't enough to delete or replace the file. A saved URL also keeps the domain it was created with, so create new URLs from those two fields if you move the files or change their domain.
 
 ## Configure a storage provider
 
