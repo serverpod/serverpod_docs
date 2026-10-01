@@ -1,6 +1,9 @@
 import React from 'react';
 import { PageMetadata } from '@docusaurus/theme-common';
-import { useDoc } from '@docusaurus/plugin-content-docs/client';
+import {
+  useDoc,
+  useDocsVersion,
+} from '@docusaurus/plugin-content-docs/client';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -11,6 +14,8 @@ import {
 
 export default function DocItemMetadata() {
   const { metadata, frontMatter, assets } = useDoc();
+  // Keep search engines on the latest version; older and unreleased versions are noindexed.
+  const { isLast } = useDocsVersion();
   const { generatedImage, image } = openGraphImageForDoc({
     assetImage: assets.image,
     frontMatterImage: frontMatter.image,
@@ -26,6 +31,7 @@ export default function DocItemMetadata() {
       keywords={frontMatter.keywords}
       image={image}
     >
+      {!isLast && <meta name="robots" content="noindex" />}
       {generatedImage && (
         <>
           <meta property="og:image:width" content={String(CARD_WIDTH)} />
