@@ -18,7 +18,12 @@ Set up this machine for Serverpod development. Check what is already installed f
 3. Make sure `flutter`, `dart`, and `serverpod` are on the PATH for new terminal sessions, including non-interactive shells.
 4. Verify by running `flutter doctor`, `dart --version`, and `serverpod version`. Do not install the platform toolchains flutter doctor reports as missing (Android Studio, Xcode, Chrome) unless I ask.
 
-Finish with a short summary: what was already installed, what you installed, and the output of the verification commands. Then ask me: "Do you want me to create a new Serverpod project?" and show the command to do it manually: `serverpod create <project_name>`.
+Finish with a short summary in this format, with no other commentary:
+- Already installed: each tool with its version, or "nothing".
+- Installed: each tool or package you installed, with its version.
+- Optional, not set up: only the items flutter doctor reports as missing, each with what it is for: Android toolchain (Android apps), Xcode (iOS and macOS apps), Chrome (web apps), Linux toolchain (Linux desktop apps), Visual Studio (Windows desktop apps). Ask if I want any of them installed.
+
+Then ask me: "Do you want me to create a new Serverpod project?" and show the command to do it manually: `serverpod create <project_name>`.
 ```
 
 ### Prerequisites
