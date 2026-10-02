@@ -1,0 +1,32 @@
+.container :global(pre code) {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.collapsed :global(pre) {
+  max-height: var(--collapsed-height);
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
+.toggle {
+  display: block;
+  margin: calc(-1 * var(--ifm-leading) + 0.25rem) 0 var(--ifm-leading);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ifm-color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle:hover {
+  text-decoration: underline;
+}
+
+/* Keep the copy button visible. Docusaurus hides it until hover and then
+   shows it at 0.4 opacity, which is too faint for a block meant to be copied. */
+.container :global(.theme-code-block) button {
+  opacity: 1 !important;
+}

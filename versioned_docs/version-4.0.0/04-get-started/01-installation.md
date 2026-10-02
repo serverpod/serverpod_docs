@@ -4,11 +4,15 @@ sidebar_class_name: sidebar-installation-icon
 slug: /installation
 ---
 
+import CollapsibleCodeBlock from '@site/src/components/CollapsibleCodeBlock';
+
 # Installation
 
 ### Set up with an AI agent
 
 If you use a coding agent such as Claude Code, Cursor, or Codex, you can configure your development environment with it. Give it this prompt, and the agent will install only what is missing and verify the results.
+
+<CollapsibleCodeBlock expandLabel="Show full prompt">
 
 ```text title="Agent setup prompt"
 Set up this machine for Serverpod development. Check what is already installed first and only install what is missing. Do not reinstall or upgrade anything without asking me.
@@ -33,6 +37,8 @@ Use these descriptions for the optional items: Android toolchain (Android apps),
 
 Then ask me: "Do you want me to create a new Serverpod project?" and show the command to do it manually: `serverpod create <project_name>`.
 ```
+
+</CollapsibleCodeBlock>
 
 ### Prerequisites
 
