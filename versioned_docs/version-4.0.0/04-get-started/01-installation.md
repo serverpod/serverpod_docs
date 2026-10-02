@@ -4,9 +4,9 @@ sidebar_class_name: sidebar-installation-icon
 slug: /installation
 ---
 
-import CollapsibleCodeBlock from '@site/src/components/CollapsibleCodeBlock';
-
 # Installation
+
+import CollapsibleCodeBlock from '@site/src/components/CollapsibleCodeBlock';
 
 ### Set up with an AI agent
 
