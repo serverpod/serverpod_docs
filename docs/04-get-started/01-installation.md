@@ -8,7 +8,7 @@ slug: /installation
 
 ### Set up with an AI agent
 
-If you use a coding agent such as Claude Code, Cursor, or Codex, paste this prompt into it. The agent checks what is already installed, installs only what is missing, and verifies the result. To install manually, follow the steps below instead.
+If you use a coding agent such as Claude Code, Cursor, or Codex, you can configure your development environment with it. Give it this prompt, and the agent will install only what is missing and verify the results.
 
 ```text title="Agent setup prompt"
 Set up this machine for Serverpod development. Check what is already installed first and only install what is missing. Do not reinstall or upgrade anything without asking me.
