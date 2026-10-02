@@ -56,7 +56,7 @@
     "cheerio": "1.2.0",
     "docusaurus-plugin-snipsync": "^1.0.0",
     "fontkit": "2.0.4",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "snipsync": "^1.13.0"
   }
 }
