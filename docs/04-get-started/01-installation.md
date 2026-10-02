@@ -6,6 +6,21 @@ slug: /installation
 
 # Installation
 
+### Set up with an AI agent
+
+If you use a coding agent such as Claude Code, Cursor, or Codex, paste this prompt into it. The agent checks what is already installed, installs only what is missing, and verifies the result. To install manually, follow the steps below instead.
+
+```text title="Agent setup prompt"
+Set up this machine for Serverpod development. Check what is already installed first and only install what is missing. Do not reinstall or upgrade anything without asking me.
+
+1. Flutter: run `flutter --version`. If Flutter is missing, install the latest stable release for this OS following https://docs.flutter.dev/get-started/install. Use the Dart SDK bundled with Flutter, not a separate one.
+2. Serverpod CLI: run `serverpod version`. If it is missing, run `dart install serverpod_cli` (if it was previously installed with `dart pub global activate`, run `dart pub global deactivate serverpod_cli` first). If the install fails because the installed Flutter is too old, stop and ask me whether to upgrade Flutter.
+3. Make sure `flutter`, `dart`, and `serverpod` are on the PATH for new terminal sessions, including non-interactive shells.
+4. Verify by running `flutter doctor`, `dart --version`, and `serverpod version`. Do not install the platform toolchains flutter doctor reports as missing (Android Studio, Xcode, Chrome) unless I ask.
+
+Finish with a short summary: what was already installed, what you installed, and the output of the verification commands.
+```
+
 ### Prerequisites
 
 Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed. Serverpod 4 requires Flutter 3.44.4 or later, which includes Dart 3.12.2.

@@ -2,6 +2,7 @@
  * Swizzled from @docusaurus/theme-classic to strip leading shell prompts
  * (`$ `) from text written to the clipboard. The prompt remains visible
  * in the rendered code block, but the copied text is the runnable command.
+ * Also reports each copy to Google Analytics as a `copy_code_block` event.
  */
 import React, {useCallback, useState, useRef, useEffect} from 'react';
 import clsx from 'clsx';
@@ -62,20 +63,35 @@ async function copyToClipboard(text) {
   return copy(text);
 }
 
+function reportCopyEvent(params) {
+  // gtag is absent on the dev server and behind ad blockers.
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+    return;
+  }
+  try {
+    window.gtag('event', 'copy_code_block', params);
+  } catch {}
+}
+
 function useCopyButton() {
   const {
-    metadata: {code},
+    metadata: {code, language, title: blockTitle},
   } = useCodeBlockContext();
   const [isCopied, setIsCopied] = useState(false);
   const copyTimeout = useRef(undefined);
   const copyCode = useCallback(() => {
     copyToClipboard(stripShellPrompts(code)).then(() => {
       setIsCopied(true);
+      reportCopyEvent({
+        page_path: window.location.pathname,
+        language,
+        block_title: typeof blockTitle === 'string' ? blockTitle : undefined,
+      });
       copyTimeout.current = window.setTimeout(() => {
         setIsCopied(false);
       }, 1000);
     });
-  }, [code]);
+  }, [code, language, blockTitle]);
   useEffect(() => () => window.clearTimeout(copyTimeout.current), []);
   return {copyCode, isCopied};
 }
