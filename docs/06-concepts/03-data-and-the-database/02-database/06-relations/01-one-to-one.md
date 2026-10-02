@@ -72,7 +72,36 @@ An object relation field gives a big advantage when fetching data. Utilizing [re
 
 No `parent` keyword is needed here because the relational table is inferred from the type on the field.
 
+### Generated SQL
+
+For the [id field](#with-an-id-field) and [object](#with-an-object) examples above, Serverpod generates this SQL behind the scenes:
+
+```sql
+CREATE TABLE "address" (
+    "id" bigserial PRIMARY KEY,
+    "street" text NOT NULL
+);
+
+CREATE TABLE "user" (
+    "id" bigserial PRIMARY KEY,
+    "addressId" bigint NOT NULL
+);
+
+CREATE UNIQUE INDEX "user_address_unique_idx" ON "user" USING btree ("addressId");
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT "user_fk_0"
+    FOREIGN KEY("addressId")
+    REFERENCES "address"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+```
+
+The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential actions, which default to `NO ACTION`. See [Referential actions](./referential-actions) to change them.
+
 ### Optional relation
+
+To make the relation optional, add the `optional` keyword:
 
 ```yaml
 # user.spy.yaml
@@ -86,7 +115,7 @@ indexes:
     unique: true
 ```
 
-With the introduction of the `optional` keyword in the relation, the automatically generated `addressId` field becomes nullable. This means that the `addressId` can either hold a foreign key to the related `address` table or be set to null, indicating no associated address.
+With the introduction of the `optional` keyword in the relation, the automatically generated `addressId` field becomes nullable. This means that the `addressId` can either hold a foreign key to the related `address` table or be set to null, indicating no associated address. In the generated SQL, the `addressId` column loses its `NOT NULL`.
 
 ### Custom foreign key field
 
@@ -111,6 +140,8 @@ fields:
   address: Address?, relation(optional, field=customIdField)
 ```
 
+In the generated SQL, the column, the unique index, and the foreign key all use the custom name.
+
 Declare the field yourself when you need control over it, for example to give it a [column name override](../tables#column-name-override) or a [scope](../../models#limiting-visibility-of-a-generated-class). A declared field must be nullable if the relation is `optional`:
 
 ```yaml
@@ -126,33 +157,7 @@ indexes:
     unique: true
 ```
 
-### Generated SQL
-
-The following code block shows how to set up the same relation with raw SQL. Serverpod will generate this code behind the scenes.
-
-```sql
-CREATE TABLE "address" (
-    "id" bigserial PRIMARY KEY,
-    "street" text NOT NULL
-);
-
-CREATE TABLE "user" (
-    "id" bigserial PRIMARY KEY,
-    "addressId" bigint NOT NULL
-);
-
-
-CREATE UNIQUE INDEX "user_address_unique_idx" ON "user" USING btree ("addressId");
-
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT "user_fk_0"
-    FOREIGN KEY("addressId")
-    REFERENCES "address"("id")
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION;
-```
-
-The `ON DELETE` and `ON UPDATE` clauses come from the relation's referential actions, which default to `NO ACTION`. See [Referential actions](./referential-actions) to change them.
+With the override, the generated column is named `fk_user_address_id`, and the unique index and the foreign key use that name.
 
 ## Independent relations defined on both sides
 
