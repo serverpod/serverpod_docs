@@ -126,6 +126,7 @@ function reportCopyEvent(params) {
 
 export default function CopyPageButton({permalink, docsVersion}) {
   const [state, setState] = useState('idle');
+  const isCloud = permalink === '/cloud' || permalink.startsWith('/cloud/');
   const resetTimer = useRef(undefined);
   const mounted = useRef(true);
   useEffect(() => {
@@ -143,7 +144,6 @@ export default function CopyPageButton({permalink, docsVersion}) {
     window.clearTimeout(resetTimer.current);
     setState('loading');
     const markdownPath = mdPath(permalink);
-    const isCloud = permalink === '/cloud' || permalink.startsWith('/cloud/');
     const finish = (ok, error) => {
       if (error) {
         // Surface the cause (missing .md, clipboard denial) so a "Copy
@@ -166,7 +166,7 @@ export default function CopyPageButton({permalink, docsVersion}) {
       () => finish(true),
       (error) => finish(false, error),
     );
-  }, [state, permalink, docsVersion]);
+  }, [state, permalink, docsVersion, isCloud]);
 
   // aria-busy + click guard instead of `disabled`, which would drop keyboard
   // focus; the live region sits outside the button so screen readers still
@@ -180,7 +180,10 @@ export default function CopyPageButton({permalink, docsVersion}) {
         })}
         onClick={handleClick}
         aria-busy={state === 'loading'}
-        title={title()}>
+        title={title()}
+        data-attr="copy-page-markdown"
+        data-docs-instance={isCloud ? 'cloud' : 'framework'}
+        data-docs-version={docsVersion}>
         <span className={styles.copyPageButtonIcon} aria-hidden="true">
           {state === 'copied' ? <IconCheck /> : <IconCopy />}
         </span>
