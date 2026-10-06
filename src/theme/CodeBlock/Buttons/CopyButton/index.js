@@ -2,7 +2,9 @@
  * Swizzled from @docusaurus/theme-classic to strip leading shell prompts
  * (`$ `) from text written to the clipboard. The prompt remains visible
  * in the rendered code block, but the copied text is the runnable command.
- * Also reports each copy to Google Analytics as a `copy_code_block` event.
+ * Also reports each copy to Google Analytics as a `copy_code_block` event,
+ * and tags the button with `data-*` attributes that PostHog autocapture
+ * records on every click.
  */
 import React, {useCallback, useState, useRef, useEffect} from 'react';
 import clsx from 'clsx';
@@ -93,15 +95,23 @@ function useCopyButton() {
     });
   }, [code, language, blockTitle]);
   useEffect(() => () => window.clearTimeout(copyTimeout.current), []);
-  return {copyCode, isCopied};
+  return {
+    copyCode,
+    isCopied,
+    language,
+    blockTitle: typeof blockTitle === 'string' ? blockTitle : undefined,
+  };
 }
 
 export default function CopyButton({className}) {
-  const {copyCode, isCopied} = useCopyButton();
+  const {copyCode, isCopied, language, blockTitle} = useCopyButton();
   return (
     <Button
       aria-label={ariaLabel(isCopied)}
       title={title()}
+      data-attr="copy-code"
+      data-block-title={blockTitle}
+      data-language={language}
       className={clsx(
         className,
         styles.copyButton,
