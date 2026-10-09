@@ -19,7 +19,7 @@ For the upgrade steps themselves, see [Upgrade to 4.0](./upgrade-to-four).
 | [Future calls run at least once](#future-calls-run-at-least-once) | You use future calls. |
 | [Removed deprecated APIs](#removed-deprecated-apis) | You use the string-based future call methods, `orderDescending`, `ignoreEndpoint`, `SerializationManagerServer`, the old web widget classes, or `--mini`. |
 | [Message central delivers globally by default](#message-central-delivers-globally-by-default) | You call `session.messages.postMessage` with Redis enabled, or pass `global: true`. |
-| [File storage APIs are renamed](#file-storage-apis-are-renamed) | Your server uses `session.storage`, subclasses `CloudStorage`, or serves public files from native Google Cloud Storage. |
+| [File storage APIs are renamed and throw instead of returning `null`](#file-storage-apis-are-renamed-and-throw-instead-of-returning-null) | Your server uses `session.storage`, checks its results for `null`, subclasses `CloudStorage`, or serves public files from native Google Cloud Storage. |
 | [Google sign-in on the web uses the OAuth2 redirect flow](#google-sign-in-on-the-web-uses-the-oauth2-redirect-flow) | Your Flutter web app uses Google sign-in from `serverpod_auth_idp_flutter`. |
 | [Sign-in buttons share one set of style enums](#sign-in-buttons-share-one-set-of-style-enums) | You set style arguments on sign-in buttons from `serverpod_auth_idp_flutter`. |
 | [Legacy streaming endpoints are removed](#legacy-streaming-endpoints-are-removed) | Your endpoints use `StreamingSession`. |
@@ -77,9 +77,9 @@ In 3.4, Serverpod removed a future call from the database before running it, so 
 
 Calls to `session.messages.postMessage` now default to `MessageScope.auto`. When Redis is enabled, the message goes through Redis to every server instance. Otherwise, the message stays local. If your code relied on local-only delivery, pass `scope: MessageScope.local`. The `global: true` argument is removed, so replace it with `scope: MessageScope.global`. See [Message scope](../concepts/endpoints-and-apis/server-events#message-scope).
 
-## File storage APIs are renamed
+## File storage APIs are renamed and throw instead of returning `null`
 
-Several `session.storage` methods are renamed in 4.0. The methods that return a single file or URL now throw instead of returning `null`. Update your server code as follows:
+Several `session.storage` methods are renamed in 4.0. The methods that return a single file or URL now throw instead of returning `null`. Code such as `if (file == null)` after `retrieveFile` still compiles, with only an analyzer warning that the check is unnecessary, but the `null` branch never runs and a missing file throws instead. Update your server code as follows:
 
 | 3.4 | 4.0 |
 | --- | --- |
