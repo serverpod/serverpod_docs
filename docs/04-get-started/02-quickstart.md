@@ -17,6 +17,8 @@ Build and deploy a full-stack Flutter and Serverpod app, hosted on the web, in 1
 
 Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed. Serverpod 4 requires Flutter 3.44.4 or later, which includes Dart 3.12.2.
 
+New projects use the embedded PostgreSQL that ships with Serverpod, so no database setup is needed. If you connect to your own PostgreSQL instead, it must be version 16 or later.
+
 :::info
 Check your Flutter installation by running the following command in your terminal:
 

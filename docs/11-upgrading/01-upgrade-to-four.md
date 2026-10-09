@@ -16,6 +16,7 @@ Compile errors after you regenerate are expected. Most match a section on [Break
 ## Before you start
 
 - You have Flutter 3.44.4 or later. It includes Dart 3.12.2, which Serverpod 4.0 requires. Check with `flutter --version`, and run `flutter upgrade` if your version is older.
+- Your Postgres is version 16 or later. Serverpod 4.0 supports PostgreSQL 16 and newer. On Postgres 14 and earlier, the server can't read the database schema, so the startup integrity check fails and `serverpod create-repair-migration` can't run. Check with `SELECT version();`, and upgrade the database before you upgrade Serverpod. The embedded Postgres and the `ghcr.io/serverpod/postgres:16` image meet the requirement.
 - Your project is on the latest Serverpod 3.4.x release.
 - Your project compiles and its tests pass.
 - You have committed your current state to Git, so you can roll back if needed.
@@ -203,7 +204,7 @@ The data directory holds a complete database, so keep it out of version control.
 
 Once `dataPath` is set, `serverpod start` uses the embedded Postgres automatically.
 
-Don't add `dataPath` to `production.yaml` or `staging.yaml`. In production, use a managed Postgres, such as a [Serverpod Cloud](/cloud) database, Cloud SQL, or RDS.
+Don't add `dataPath` to `production.yaml` or `staging.yaml`. In production, use a managed Postgres, such as a [Serverpod Cloud](/cloud) database, Cloud SQL, or RDS. Pick an engine version of 16 or later, which Serverpod 4.0 requires.
 
 The server reaches the embedded Postgres over the socket, but database tools like `psql` connect over TCP. To connect a tool, stop the server and run `serverpod database start`. See [Connect a database tool](../concepts/data-and-the-database/database/embedded-postgres#connect-a-database-tool).
 
