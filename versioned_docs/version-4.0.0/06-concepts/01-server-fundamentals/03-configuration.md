@@ -112,6 +112,8 @@ database:
   maxConnectionCount: 10
 ```
 
+The external PostgreSQL must be version 16 or later.
+
 Set the database password in `passwords.yaml` (`database`) or through `SERVERPOD_PASSWORD_database`.
 
 #### SQLite
