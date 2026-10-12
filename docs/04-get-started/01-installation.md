@@ -53,6 +53,8 @@ $ flutter doctor
 
 :::
 
+New projects use an embedded PostgreSQL that Serverpod downloads and runs for you, so no database setup is needed. If you connect to your own PostgreSQL instead, it must be version 16 or later.
+
 ### Install Serverpod
 
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:

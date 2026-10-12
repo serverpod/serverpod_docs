@@ -21,7 +21,7 @@ The `serverpod_auth_bridge` and `serverpod_auth_migration` packages are experime
 - A Serverpod 4.0.x project. If you are on an earlier version, follow [Upgrade to 4.0](./upgrade-to-four) first.
 - Dart SDK 3.12.2 or later.
 - Flutter SDK 3.44.4 or later (only if you are migrating the Flutter app).
-- Postgres 14 or later, or SQLite3.
+- Postgres 16 or later, or SQLite3.
 - The new auth packages at `4.0.0`: the server, client, and Flutter variants of `serverpod_auth_core`, `serverpod_auth_idp`, and `serverpod_auth_bridge`, plus the server and client variants of `serverpod_auth_migration`. [Add the new auth packages](#add-the-new-auth-packages) shows which ones each `pubspec.yaml` needs.
 - Back up your production database.
 - Commit your current state on a clean branch.
