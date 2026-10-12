@@ -79,7 +79,7 @@ Calls to `session.messages.postMessage` now default to `MessageScope.auto`. When
 
 ## File storage APIs are renamed and throw instead of returning `null`
 
-Several `session.storage` methods are renamed in 4.0. The methods that return a single file or URL now throw instead of returning `null`. Code such as `if (file == null)` after `retrieveFile` still compiles, with only an analyzer warning that the check is unnecessary, but the `null` branch never runs and a missing file throws instead. Update your server code as follows:
+Several `session.storage` methods are renamed in 4.0. The methods that return a single file or URL now throw instead of returning `null`. An existing `null` check still compiles. For example, `if (file == null)` after `retrieveFile` only triggers an analyzer warning that the check is unnecessary. The branch inside it never runs. Update your server code as follows:
 
 | 3.4 | 4.0 |
 | --- | --- |
