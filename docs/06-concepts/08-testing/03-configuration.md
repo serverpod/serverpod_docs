@@ -68,7 +68,7 @@ By default each test runs inside a transaction that is rolled back when that tes
 | `RollbackDatabase.afterAll` | Once the whole `withServerpod` group finishes. |
 | `RollbackDatabase.disabled` | Never. Data stays until the group finishes and its database is dropped. |
 
-Three situations call for changing it.
+Four situations call for changing it.
 
 **Tests that build on each other.** When one test depends on what the previous one left behind, `afterAll` keeps state across the group and still rolls everything back at the end. Tests that share state are usually worth avoiding, but this helps when the setup is expensive.
 
@@ -84,6 +84,8 @@ Future<void> concurrentTransactionCalls(Session session) async {
   ]);
 }
 ```
+
+**Watching queries.** The [`watch`](../data-and-the-database/database/crud#watching-rows) and [`unsafeWatch`](../data-and-the-database/database/raw-access#unsafewatch) streams only see committed data, so they cannot observe writes inside the rollback transaction. Both throw `InvalidConfigurationException` unless you pass `RollbackDatabase.disabled`.
 
 With rollback disabled, later tests in the same group see what earlier tests committed. To start each test from a clean state, clean up in `tearDown`:
 
