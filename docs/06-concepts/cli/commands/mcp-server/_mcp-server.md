@@ -8,7 +8,7 @@ The bridge drives a running session, so start one with `serverpod start` before 
 
 ## Set up your editor
 
-`serverpod create` writes the MCP configuration for the editors you select, so a new project needs no manual setup. Run `serverpod create .` in an existing project to add the same files.
+The `serverpod create` command writes the MCP configuration for the editors you select, so a new project needs no manual setup. Run `serverpod create .` in an existing project to add the same files.
 
 | Editor | File |
 | --- | --- |
@@ -48,8 +48,8 @@ Module projects get only the Dart MCP server. A module has no runnable server, s
 
 ## Migrations and your data
 
-The bridge exposes three migration tools. `create_migration` and `create_repair_migration` write migration files without changing your database. Both accept a `force` parameter that proceeds past Serverpod's warning that a change may destroy data. `apply_migrations` then applies the pending migrations to your database.
+The bridge exposes three migration tools. The `create_migration` and `create_repair_migration` tools write migration files without changing your database. Both accept a `force` parameter that proceeds past Serverpod's warning that a change may destroy data. The `apply_migrations` tool then applies the pending migrations to your database.
 
 :::warning
-`apply_migrations` takes no parameters and applies every pending migration, including one an agent created with `force`. Keep `serverpod start` in its default `development` run mode, because another mode loads that environment's database. Review each `apply_migrations` call before you approve it.
+The `apply_migrations` tool takes no parameters and applies every pending migration, including one an agent created with `force`. Keep `serverpod start` in its default `development` run mode, because another mode loads that environment's database. Review each `apply_migrations` call before you approve it.
 :::
