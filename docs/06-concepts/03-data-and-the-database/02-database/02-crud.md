@@ -62,7 +62,7 @@ When using `ignoreConflicts` with models that have [non-persistent fields](./tab
 
 ## Read
 
-There are three different read operations available.
+There are four different read operations available.
 
 ### Finding by id
 
@@ -106,6 +106,30 @@ var companies = await Company.db.find(
 This operation returns a `List` of your models matching the filtering criteria.
 
 See [filter](./filtering) and [sort](./sorting) for all filter and sorting operations and [pagination](pagination) for how to paginate the result.
+
+### Watching rows
+
+To keep a result up to date, use the `watch` method. It takes the same `where`, `orderBy`, `orderByList`, `limit`, `offset`, and `include` parameters as `find`, and returns a `Stream` that emits the matching rows as soon as you listen to it.
+
+```dart
+var subscription = Company.db.watch(
+  session,
+  where: (t) => t.name.like('%Ltd'),
+  orderBy: (t) => t.name,
+).listen((companies) {
+  // Handle the latest matching rows.
+});
+```
+
+The stream runs the query again and emits the result every time a write to one of the watched tables commits, until you cancel the subscription. The watched tables are the model's table and every table that `where`, `orderBy`, `orderByList`, and `include` refer to. Writes inside a [transaction](transactions) emit once it commits, and a rolled-back transaction emits nothing.
+
+To also react to writes on other tables, pass them with `alsoTriggerOnTables`, for example `alsoTriggerOnTables: [Town.t]`. This is needed when a filter reads a table only through raw SQL, which `watch` does not inspect.
+
+By default, the query runs at most once every 30 milliseconds, no matter how many writes happen in between. Pass a different `Duration` as `throttle` to change the interval, or `null` to run the query after every write.
+
+:::note
+The `watch` method is only supported on SQLite, which includes the [client-side database](client-side-database). On PostgreSQL, calling it throws an `UnsupportedError`.
+:::
 
 ## Update
 
