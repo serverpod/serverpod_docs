@@ -332,7 +332,7 @@ Each editor reads the servers from its own file:
 
 In the Codex and OpenCode formats, register the same two commands as the sample: `serverpod mcp-server --server-dir <project>_server` and `dart mcp-server`.
 
-If you are using Cursor, enable the **Serverpod** and **Dart** MCP servers in your project settings (_Cursor Settings_ > _Tools & MCPs_).
+If you are using Cursor, enable the **Serverpod** and **Dart** MCP servers: open **Customize** in the sidebar, click **MCPs**, and turn on both servers.
 
 ## What's new in 4.0
 
