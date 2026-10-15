@@ -13,7 +13,7 @@ Run "serverpod help" to see global options.
 
 ## Tools
 
-The bridge exposes the following tools. Each one acts on the running `serverpod start` session, so they report an error when no session is running.
+The bridge exposes the following tools. Each one acts on the running `serverpod start` session, so they report an error when no session is running. The exception is `tail_runner_logs`, which the bridge answers from the runner's log file whether or not a session is running.
 
 ### `apply_migrations`
 
@@ -73,6 +73,14 @@ Return recent raw stdout/stderr lines for a Flutter app started from `serverpod 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `appId` | `string` | No | Which Flutter app to target. The id is the map key on the server pubspec under `serverpod: flutter_apps:`. Ids are case-sensitive; pass the key exactly as written. Optional when only one app is configured. When multiple apps are configured and no `appId` is provided, the tool returns an error listing available ids. |
+| `limit` | `integer` | No | Max lines to return (default 200, max 10000). |
+
+### `tail_runner_logs`
+
+Return the last lines of the runner log file, which records everything `serverpod start` printed: code generation, compilation, Docker, the server's raw stdout/stderr and Flutter output. Newest last, with a `--- serverpod runner <pid> started ---` line at the start of each run. Unlike the other tools, this works while the server is still starting and after it stopped or crashed, so call it to find out why a tool reports the server is not running.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
 | `limit` | `integer` | No | Max lines to return (default 200, max 10000). |
 
 ### `tail_server_logs`
