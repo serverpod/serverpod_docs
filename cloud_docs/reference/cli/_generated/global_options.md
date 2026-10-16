@@ -16,7 +16,8 @@ Global options:
 -d, --project-dir                         The path to the Serverpod Cloud project server directory.
     --project-config-file                 The path to the Serverpod Cloud project configuration file
                                           (defaults to <server-package>/scloud.yaml)
-    --timeout=<integer[us|ms|s|m|h|d]>    The timeout for the connection to the Serverpod Cloud API.
+    --timeout=<integer[us|ms|s|m|h|d]>    The timeout for connections to the Serverpod Cloud API,
+                                          and for an upload that makes no progress.
                                           (defaults to "1m")
     --yes                                 Automatically accept confirmation prompts.
     --non-interactive                     Never wait for user input, fail with an error instead. For
