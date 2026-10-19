@@ -30,6 +30,16 @@ New projects use an embedded PostgreSQL that Serverpod downloads and runs for yo
 
 ## Install Serverpod
 
+:::tip One-command setup
+On macOS (Apple silicon) and Linux (x86_64), one command installs Flutter if you have none and the Serverpod CLI, then sets up your PATH:
+
+```bash
+curl -fsSL https://serverpod.dev/install.sh | sh
+```
+
+Open a new terminal afterwards and continue with [Create the project](#create-the-project). See [Installation](./01-installation.md) for details.
+:::
+
 Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
 
 ```txt
