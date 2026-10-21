@@ -51,6 +51,7 @@ Mission Control
   password     Manage Serverpod Cloud passwords.
   status       Show project and deployment status.
   storage      Manage file storage for a project.
+  top          Show a live overview of a project.
   variable     Manage Serverpod Cloud environment variables and secrets for a project.
 
 Run "scloud help <command>" for more information about a command.
