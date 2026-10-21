@@ -11,74 +11,115 @@ import TabItem from '@theme/TabItem';
 
 # Quickstart
 
-Build and deploy a full-stack Flutter and Serverpod app, hosted on the web, in 10–15 minutes. We have tested the default setup with Antigravity, Cursor, and Claude Code, but most agentic editors will work.
+This quickstart shows you how to build a full-stack Flutter and Serverpod app with an AI coding agent and deploy it to the web in about 15 minutes.
 
 ## Prerequisites
 
-Serverpod is tested on Mac, Windows, and Linux. Before you can install Serverpod, you need to have **[Flutter](https://flutter.dev/docs/get-started/install)** installed. Serverpod 4 requires Flutter 3.44.4 or later, which includes Dart 3.12.2.
+- [Flutter](https://flutter.dev/docs/get-started/install) 3.44.4 or later, which includes Dart 3.12.2.
+- An AI coding agent like Claude Code, Cursor, or GitHub Copilot.
 
-:::info
-Check your Flutter installation by running the following command in your terminal:
+To check your Flutter version, run:
 
 ```bash
-$ flutter doctor
+flutter doctor
 ```
 
-:::
+:::info
 
-New projects use an embedded PostgreSQL that Serverpod downloads and runs for you, so no database setup is needed.
+You don't need to install or set up a database. New projects use an embedded PostgreSQL that Serverpod downloads and runs for you.
+
+:::
 
 ## Install Serverpod
 
-Serverpod is installed using the Dart package manager. To install Serverpod, run the following command in your terminal:
+1. Install the Serverpod CLI with Dart:
 
-```txt
-$ dart install serverpod_cli
-```
+    ```bash
+    dart install serverpod_cli
+    ```
 
-Verify the installation by running:
+2. Verify the installation:
 
-```bash
-$ serverpod
-```
+    ```bash
+    serverpod
+    ```
+
+    You should see a list of available commands.
+
+3. To make the `serverpod` command available in new terminals, add the Dart install directory to your PATH:
+
+   <Tabs>
+     <TabItem value="macos" label="macOS" default>
+
+   ```bash
+   echo 'export PATH="$PATH:$HOME/Library/Application Support/Dart/install/bin"' >> ~/.zshrc
+   ```
+
+     </TabItem>
+     <TabItem value="linux" label="Linux">
+
+   ```bash
+   echo 'export PATH="$PATH:$HOME/.local/state/Dart/install/bin"' >> ~/.bashrc
+   ```
+
+     </TabItem>
+     <TabItem value="windows" label="Windows">
+
+   Run this in PowerShell:
+
+   ```powershell
+   [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "User") + ";$env:APPDATA\Dart\install\bin", "User")
+   ```
+
+     </TabItem>
+   </Tabs>
+
 
 :::warning
 
-If a previous version of Serverpod is already installed with `dart pub global activate`, deactivate it before installing or upgrading:
+If you installed an earlier version of Serverpod with `dart pub global activate`, remove it before you install:
 
-```txt
-$ dart pub global deactivate serverpod_cli
+```bash
+dart pub global deactivate serverpod_cli
 ```
 
 :::
 
-## Create the project
 
-Use Serverpod's `quickstart` command to create a new project.
+## Create your project
 
-```bash
-$ serverpod quickstart my_project
-```
+1. Create a new Serverpod project with the quickstart command:
 
-The command opens an interactive screen where you select the editor or agent you plan to use. Navigate with your mouse or use the arrow keys to move around, press `Space` to select your editor, then press `Enter` to create the project.
+    ```bash
+    serverpod quickstart my_project
+    ```
 
-Next, open your newly created project with your favorite AI powered editor. Open the _root_ folder of the full project, for example, `my_project`, which includes the server, client, and Flutter app.
+    Follow the prompts to choose your code agent or editor and configure your project. Navigate with your mouse or arrow keys, press `Space` to select, and press `Enter` to create the project. Serverpod uses your selection to set up the project for your selected agent or editor.
+
+2. When setup finishes, open the newly created `my_project` folder in the agent or editor you selected. 
+    Serverpod creates a `my_project` folder with three packages:
+
+    - `my_project_server` is your backend.
+    - `my_project_client` is generated code that your app uses to call the server.
+    - `my_project_flutter` is your Flutter app.
 
 :::important
-
-If you are using Cursor, you will need to **enable the Serverpod and Dart MCP servers**: open **Customize** in the sidebar, click **MCPs**, and turn on both servers.
-
+**If you use Cursor**, you need to turn on the Serverpod and Dart MCP servers. Open **Customize** in the sidebar, click **MCPs**, and turn on both servers. 
 :::
 
-## Start the server and the app
+## Start your server and app
 
-Start the server and the Flutter app by opening up a terminal window and running the [`serverpod start`](./concepts/server-fundamentals/running-your-server) command:
+Open the project folder in your terminal and run the [`serverpod start`](./concepts/server-fundamentals/running-your-server) command:
 
 ```bash
-$ serverpod start
+serverpod start
 ```
 
-After the server has started and your app has finished building, the app will open in a new browser window. Try it out by entering your name and clicking the send button.
+Keep the terminal open while the app is running. The command starts the local development environment, including the server, Flutter app, and local database. The first start takes a few minutes, because Serverpod downloads PostgreSQL and builds the app. 
+
+When it's ready, the sample app opens in your browser. Try it out by entering your name and clicking **Send**. The server sends back a greeting.
+
+Keep this terminal running. It watches your files and reloads the app every time the agent changes the code.
 
 ## Build your app
 
@@ -102,39 +143,39 @@ Instruct your AI agent to build your app. Here are a few simple prompts that you
   </TabItem>
 </Tabs>
 
----
 
-The agent will start building your app. It will manage your database and perform a hot reload when the app is complete.
-
-:::tip
-
-If your app uses authentication, the verification code will be displayed as an alert in Serverpod's command line interface. Press the `C` key to copy the code.
-
-:::
+The agent writes the server code, creates the database tables, and builds the screens. When it's finished, it reloads the app and displays the new app on the browser.
 
 :::tip
 
-If the agent fails to reload the app, you can always hit the `R` key to force a restart of the server and the app.
+- If your app uses authentication, the verification code will be displayed as an alert in Serverpod's CLI. Press the `C` key to copy the code.
+- If the app fails to reload, click `R` in the terminal running `serverpod start` to force restart the server and the app. 
 
 :::
 
-## Deploy the app to the cloud
 
-Deploy your web app and backend to **[Serverpod Cloud](/cloud)**, a fully managed platform built by the Serverpod team. Your first project includes a one-month free trial, with no credit card required.
+## Deploy your app to Serverpod Cloud
 
-Create your Cloud account and create a project on the **[Serverpod Cloud Console](https://console.serverpod.dev/)**. Enable the database when you create the project if your server uses one. Then launch your app:
+To share your app with others, deploy it to **[Serverpod Cloud](/cloud)**. Serverpod Cloud hosts your backend, database, and web app, and gives you a public URL that anyone can access. Your first project includes a one-month free trial, and you don't need a credit card.
 
-```bash
-$ serverpod cloud launch
-```
+1. Create an account on the **[Serverpod Cloud Console](https://console.serverpod.dev/)**.
+2. Create a project and turn on the database.
+3. In the `my_project` folder, run:
 
-This links your project to Cloud and deploys your backend along with the web build of your app.
+   ```bash
+   serverpod cloud launch
+   ```
+
+4. Follow the prompts to authenticate in the browser and select your Cloud account.
+5. Back in the terminal, select the project you want to deploy
+
+This links your project to Cloud and deploys your backend along with your web app. Wait for the deployment to finish, then use the deployed app URL provided by the CLI or Cloud Console to open your app publicly.
 
 After the first launch, you redeploy any changes by running `serverpod cloud launch` again.
 
 :::tip
 
-In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open your project and use the **Logs**, **Sessions**, and **Metrics** tabs to see what your server is doing.
+In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open your project and use the **Logs**, **Sessions**, and **Metrics** tabs to monitor your app. See **[Serverpod Cloud guide](/cloud_docs/)** to learn more.
 
 :::
 
