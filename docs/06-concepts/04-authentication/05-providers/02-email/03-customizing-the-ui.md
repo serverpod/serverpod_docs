@@ -1,22 +1,25 @@
 ---
 sidebar_label: Customizing the UI
-description: Email sign-in UI can be customized with the EmailSignInWidget and EmailAuthController to build a custom authentication flow.
+description: Customize email sign-in with the EmailOtpSignInWidget and EmailSignInWidget, or build your own sign-in UI on top of their controllers.
 ---
 
 # Customize the email sign-in UI
 
-When using the email identity provider, you can customize the UI to your liking. You can use the `EmailSignInWidget` to display the email authentication flow in your own custom UI, or you can use the `EmailAuthController` to build a completely custom authentication interface.
+When using the email identity provider, you can customize the UI to your liking. Use a widget to display the email authentication flow in your own custom UI, or a controller to build a completely custom authentication interface. Each flow has its own widget and controller:
+
+- **Passwordless sign-in**: the `EmailOtpSignInWidget` and the `EmailOtpAuthController`, for endpoints that extend `EmailOtpIdpBaseEndpoint`, as in new projects.
+- **Password sign-in**: the `EmailSignInWidget` and the `EmailAuthController`, for endpoints that extend `EmailIdpBaseEndpoint`.
 
 :::info
-The `SignInWidget` uses the `EmailSignInWidget` internally to display the email authentication flow. You can also supply a custom `EmailSignInWidget` to the `SignInWidget` to override the default behavior.
+The `SignInWidget` uses one of these widgets internally, depending on your endpoint. You can supply your own widget to the `SignInWidget` to override the default behavior, as either `emailOtpSignInWidget` or `emailSignInWidget`.
 
 ```dart
 SignInWidget(
   client: client,
-  emailSignInWidget: EmailSignInWidget(
+  emailOtpSignInWidget: EmailOtpSignInWidget(
     client: client,
-    // Open on the login screen instead of the default registration screen
-    startScreen: EmailFlowScreen.login,
+    // Also let users sign in with their password
+    allowPasswordSignIn: true,
     // A custom widget replaces the built-in handling, so pass your own callbacks.
     onAuthenticated: () { /* ... */ },
     onError: (error) { /* ... */ },
@@ -24,6 +27,151 @@ SignInWidget(
 )
 ```
 :::
+
+## Using the `EmailOtpSignInWidget`
+
+The `EmailOtpSignInWidget` handles the complete passwordless flow: requesting and verifying the one-time code, signing in to an existing account, and creating an account for a new email. It can also offer password sign-in and password reset.
+
+You can customize the widget's behavior using its constructor parameters:
+
+```dart
+EmailOtpSignInWidget(
+  client: client,
+  // Offer password sign-in and password reset on the start screen.
+  // Defaults to false.
+  allowPasswordSignIn: true,
+  // Customize the one-time code input. Must match the server's code format.
+  // The default matches the default server code generation: 6 digits.
+  otpVerificationCodeConfig: VerificationCodeConfig(
+    length: 6,
+    keyboardType: TextInputType.number,
+    allowedCharactersPattern: RegExp(r'[0-9]'),
+  ),
+  // Customize the password reset code input, used with allowPasswordSignIn.
+  // The default matches the server's 8-digit password reset codes.
+  verificationCodeConfig: VerificationCodeConfig(
+    resendCountdownDuration: Duration(minutes: 1),
+  ),
+  // Custom email validation function. Throw InvalidEmailException so the
+  // widget shows the message. Other exceptions block sign-in silently.
+  emailValidation: (email) {
+    if (!email.contains('@example.com')) {
+      throw const InvalidEmailException('Only @example.com emails allowed');
+    }
+  },
+  // Requirements for the password set on password reset, or on account
+  // creation if the server allows it.
+  passwordRequirements: [
+    PasswordRequirement.minLength(12),
+  ],
+  onTermsAndConditionsPressed: () {
+    // Open terms and conditions
+  },
+  onPrivacyPolicyPressed: () {
+    // Open privacy policy
+  },
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+  },
+)
+```
+
+If you change the code format on the server, update `otpVerificationCodeConfig` to match. See [custom verification code generation](./configuration#custom-verification-code-generation).
+
+By default, both email widgets accept email aliases, such as `name+alias@example.com`. To reject them, pass `emailValidation: (email) => EmailFlowController.validateEmail(email, allowEmailAliases: false)`.
+
+For a new email, the account creation screen shows the terms checkbox if you provide `onTermsAndConditionsPressed` or `onPrivacyPolicyPressed`. It also offers an optional password if the server enables [`allowPasswordOnOtpRegistration`](./configuration#allowing-a-password-on-account-creation).
+
+Optionally, you can provide an externally managed `EmailOtpAuthController` instance to the widget. A controller and a `client` are mutually exclusive, and `onAuthenticated` and `onError` belong on the controller in that case. The controller carries `allowPasswordSignIn`, `emailValidation`, and `passwordRequirements`, while the code configurations and the terms callbacks stay on the widget.
+
+```dart
+EmailOtpSignInWidget(
+  controller: controller,
+)
+```
+
+## Building a custom UI with the `EmailOtpAuthController`
+
+For more control over the UI, you can use the `EmailOtpAuthController` class, which provides all the logic of passwordless sign-in without any UI components.
+
+```dart
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+
+final controller = EmailOtpAuthController(
+  client: client,
+  allowPasswordSignIn: true,
+  onAuthenticated: () {
+    // Do something when the user is authenticated.
+    //
+    // NOTE: You should not navigate to the home screen here, otherwise
+    // the user will have to sign in again every time they open the app.
+  },
+  onError: (error) {
+    // Handle errors
+  },
+);
+```
+
+It shares its state properties, text controllers, and navigation methods with the `EmailAuthController`. See [EmailAuthController state management](#emailauthcontroller-state-management) and [navigating between screens](#navigating-between-screens). Your widget should render the screen given by `currentScreen`, which is one of:
+
+- `EmailOtpFlowScreen.start` - Enter email to request a code, or sign in with a password
+- `EmailOtpFlowScreen.verify` - Enter the one-time code
+- `EmailOtpFlowScreen.completeRegistration` - Create an account for a new email
+- `EmailOtpFlowScreen.requestPasswordReset` - Request password reset
+- `EmailOtpFlowScreen.verifyPasswordReset` - Verify password reset code
+- `EmailOtpFlowScreen.completePasswordReset` - Set new password
+
+### Passwordless sign-in flow
+
+The passwordless sign-in flow consists of up to three steps:
+
+1. **Request a code** - Send a one-time code to the email:
+
+```dart
+controller.emailController.text = 'user@example.com';
+await controller.startOtpLogin();
+// Controller navigates to the verify screen
+```
+
+2. **Verify the code** - Sign in, or continue to account creation:
+
+```dart
+controller.verificationCodeController.text = '123456';
+await controller.verifyOtpCode();
+// If an account exists, the user is now authenticated.
+// Otherwise, the controller navigates to the completeRegistration screen.
+```
+
+3. **Create the account** - Only for a new email, once the user has accepted the terms:
+
+```dart
+// Optional, only if the server allows a password on account creation.
+if (controller.otpAllowPassword) {
+  controller.toggleRegistrationPassword();
+  controller.passwordController.text = 'securePassword123';
+}
+await controller.finishOtpRegistration();
+// User is now authenticated
+```
+
+If the code is accepted but completing the sign-in fails, for example because of a network error, call `verifyOtpCode()` again. It retries the sign-in without checking the code a second time. If the server rejects the retry, the controller's `error` is an `OtpLoginRejectedException`, `onError` receives a message asking for a new code, and the user needs to request one with `resendVerificationCode()`.
+
+### Password sign-in
+
+With `allowPasswordSignIn` set to `true`, call `togglePasswordSignIn()` to show the password field on the start screen, then `login()` to sign in. Password reset works the same as with the [`EmailAuthController`](#password-reset-flow).
+
+```dart
+controller.togglePasswordSignIn();
+controller.emailController.text = 'user@example.com';
+controller.passwordController.text = 'password123';
+await controller.login();
+```
 
 ## Using the `EmailSignInWidget`
 
@@ -92,7 +240,7 @@ The terms and conditions and privacy policy checkbox on the registration screen 
 
 ### Customizing the default widget's appearance
 
-Since the `EmailSignInWidget` uses the Material Design system, it will react to your app's Material theme. You can also wrap it in a `Theme` widget to apply a custom theme.
+Since the `EmailSignInWidget` and the `EmailOtpSignInWidget` use the Material Design system, they will react to your app's Material theme. You can also wrap it in a `Theme` widget to apply a custom theme.
 
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';

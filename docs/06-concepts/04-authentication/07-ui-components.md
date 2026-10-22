@@ -52,9 +52,9 @@ The `SignInWidget` builds a default widget for each identity provider it detects
 ```dart
 final signInWidget = SignInWidget(
   client: client,
-  emailSignInWidget: EmailSignInWidget(
+  emailOtpSignInWidget: EmailOtpSignInWidget(
     client: client,
-    startScreen: EmailFlowScreen.login,
+    allowPasswordSignIn: true,
     // NOTE: When you opt-out of the internal widget, you need to provide your
     // own `onAuthenticated` and `onError` callbacks.
     onAuthenticated: _onAuthenticated,
@@ -84,6 +84,8 @@ void _onError(Object error) {
 }
 ```
 
+For email, pass the widget that matches your server endpoint: `emailOtpSignInWidget` for `EmailOtpIdpBaseEndpoint`, as in new projects, or `emailSignInWidget` for `EmailIdpBaseEndpoint`. See [Set up email sign-in](./providers/email/setup).
+
 ### Styling the buttons
 
 Inside `SignInWidget`, every provider button shares one neutral, theme-aware appearance. To change it, pass a `SignInButtonStyle` as `buttonStyle`:
@@ -109,7 +111,9 @@ For all options of each provider widget, see the provider's customizations page,
 All text shown by the authentication widgets is in English by default. To replace it, wrap `SignInWidget`, or any individual provider widget, in a `SignInLocalizationProvider` and pass the text objects for the parts you want to translate:
 
 - `BasicSignInTexts` for the shared messages and dividers.
-- `EmailSignInTexts` for the email flow: sign-in, registration, account verification, password reset, and the terms and privacy labels.
+- `EmailSignInTexts` for the email flow: sign-in, registration, account verification, password reset, and the terms and privacy labels. Passwordless sign-in uses the same texts for the email field, password reset, and terms.
+- `EmailWithOtpSignInTexts` for the passwordless sign-in screens: requesting and verifying the code, and creating an account.
+- `VerificationCodeTexts` for the button that resends a code, in both email flows.
 - `PasswordRequirementTexts` for the labels of the built-in password requirement widgets.
 - One text object per provider for the sign-in buttons: `AppleSignInTexts`, `GoogleSignInTexts`, `GitHubSignInTexts`, `MicrosoftSignInTexts`, `FacebookSignInTexts`, and `AnonymousSignInTexts`.
 
@@ -158,6 +162,27 @@ const emailTexts = EmailSignInTexts(
   privacyPolicy: 'Privacy Policy',
 );
 
+const emailWithOtpTexts = EmailWithOtpSignInTexts(
+  startTitle: 'Sign In with email',
+  sendCode: 'Send code',
+  signInWithPassword: 'Sign in with password',
+  signInWithCode: 'Sign in with a code',
+  verifyTitle: 'Check your email',
+  verificationMessage:
+      'A verification email has been sent. Please check your email and '
+      'enter the verification code below.',
+  verifyAction: 'Continue',
+  createAccountTitle: 'Create your account',
+  addPassword: 'Add a password (optional)',
+  removePassword: 'Continue without a password',
+  passwordLabel: 'Password',
+  createAccount: 'Create account',
+);
+
+const verificationCodeTexts = VerificationCodeTexts(
+  resendCode: "Didn't receive? Send a new code",
+);
+
 const passwordTexts = PasswordRequirementTexts(
   minLengthTemplate: 'At least {length} characters',
   maxLengthTemplate: 'At most {length} characters',
@@ -170,6 +195,8 @@ const passwordTexts = PasswordRequirementTexts(
 SignInLocalizationProvider(
   basic: basicTexts,
   email: emailTexts,
+  emailWithOtp: emailWithOtpTexts,
+  verificationCodeTexts: verificationCodeTexts,
   passwordRequirementTexts: passwordTexts,
   apple: const AppleSignInTexts(signInButton: 'Sign in with Apple'),
   google: const GoogleSignInTexts(signInButton: 'Sign in with Google'),

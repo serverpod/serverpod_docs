@@ -58,22 +58,27 @@ This sets up the database and starts the server and your app.
 
 The app opens on the sign-in screen. To create an account:
 
-1. Choose to create a new account, enter your email, and continue.
-2. Look in the server console for the verification code. While testing, it is logged instead of emailed:
+1. Enter your email and select **Send code**.
+2. Look in the server console for the code. While testing, it is logged instead of emailed:
 
    ```text
-   Registration code for you@example.com: <12345678>
+   Login code for you@example.com: <123456>
    ```
 
-3. Enter the code, then set a password to finish.
+3. Enter the code, then select **Create account** to finish.
 
-Once you are signed in, the app shows your content with a sign-out button.
+Once you are signed in, the app shows your content with a sign-out button. The next time you sign in with the same email, entering the code takes you straight to your account.
+
+:::note
+Projects created before Serverpod 4.1 use password sign-in, so you set a password when you create the account. To switch, see [Switch an existing project to passwordless sign-in](./providers/email/setup#switch-an-existing-project-to-passwordless-sign-in).
+:::
 
 ## Next steps
 
 - Send verification emails from your own email service instead of the default. See [Use your own email provider](./providers/email/setup#use-your-own-email-provider).
 - Customize the sign-in screen. See [UI components](./ui-components).
 - Build your own sign-in UI with the email controller. See [Customizing the UI](./providers/email/customizing-the-ui).
+- Let users sign in with a password as well as a code. See [Customizing the UI](./providers/email/customizing-the-ui#using-the-emailotpsigninwidget).
 - Change password rules, code length, and rate limits. See [Email configuration](./providers/email/configuration).
 - Require sign-in on your endpoints. See [The basics](./basics#requiring-authentication-on-endpoints).
 - Add more sign-in options, like Google or Apple. See [Identity providers configuration](./setup#identity-providers-configuration).

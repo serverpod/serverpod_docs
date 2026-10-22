@@ -9,7 +9,7 @@ This page covers configuration options for the email identity provider beyond th
 
 ## Configuration options
 
-New projects use `ServerpodCloudEmailIdpConfig`. It reads the [pepper](#peppering) from the `emailSecretHashPepper` password, but it does not take the other options on this page. To set them, switch to `EmailIdpConfigFromPasswords` and pass your own `sendRegistrationVerificationCode` and `sendPasswordResetVerificationCode` callbacks. See [Use your own email provider](./setup#use-your-own-email-provider).
+New projects use `ServerpodCloudEmailIdpConfig`. It reads the [pepper](#peppering) from the `emailSecretHashPepper` password, but it does not take the other options on this page. To set them, switch to `EmailIdpConfigFromPasswords` and pass your own `sendOtpLoginVerificationCode`, `sendRegistrationVerificationCode`, and `sendPasswordResetVerificationCode` callbacks. See [Use your own email provider](./setup#use-your-own-email-provider).
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `EmailIdpConfig` in-code documentation.
 
@@ -53,12 +53,38 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
 ```
 
 :::tip
-This is useful to ensure password policies on the server-side. It is a best practice to pair it with a configuration on the client-side to provide a better UX when creating a new password. The `EmailSignInWidget` and `EmailAuthController` have a `passwordRequirements` parameter that can be used to configure the password requirements.
+This is useful to ensure password policies on the server-side. It is a best practice to pair it with a configuration on the client-side to provide a better UX when creating a new password. The email widgets and controllers have a `passwordRequirements` parameter that can be used to configure the password requirements.
 :::
+
+### Allowing a password on account creation
+
+By default, accounts created through passwordless sign-in have no password. To let users set one while creating their account, enable `allowPasswordOnOtpRegistration`:
+
+```dart
+final emailIdpConfig = EmailIdpConfigFromPasswords(
+  allowPasswordOnOtpRegistration: true,
+);
+```
+
+The account creation screen then shows an optional password field. To let users sign in with that password later, also set `allowPasswordSignIn: true` on the `EmailOtpSignInWidget`. See the [customizing the UI section](./customizing-the-ui#using-the-emailotpsigninwidget).
 
 ### Custom verification code generation
 
-You can customize how verification codes are generated:
+One-time codes for passwordless sign-in are 6 digits by default, while registration and password reset codes are 8 digits. You can customize how each kind of code is generated:
+
+```dart
+final emailIdpConfig = EmailIdpConfigFromPasswords(
+  // Use 8-digit codes for passwordless sign-in.
+  otpLoginVerificationCodeGenerator: () =>
+      defaultVerificationCodeGenerator(length: 8),
+);
+```
+
+:::warning
+Remember to configure the `otpVerificationCodeConfig` parameter on the `EmailOtpSignInWidget` to match the length and allowed characters of the one-time code you generate. The app does not get the code format from the server, so if the two differ, users will never be able to enter the code correctly. See the [customizing the UI section](./customizing-the-ui#using-the-emailotpsigninwidget) for more details.
+:::
+
+Registration codes are customized the same way:
 
 ```dart
 final emailIdpConfig = EmailIdpConfigFromPasswords(
@@ -85,6 +111,9 @@ pod.initializeAuthServices(
   ],
   identityProviderBuilders: [
     EmailIdpConfigFromPasswords(
+      otpLoginVerificationCodeGenerator: pod.runMode == 'development'
+          ? () => '111111' // Digits only, and the same length as production.
+          : defaultOtpVerificationCodeGenerator,
       registrationVerificationCodeGenerator: pod.runMode == 'development'
           ? () => '11111111' // Digits only, and the same length as production.
           : defaultVerificationCodeGenerator,
@@ -95,7 +124,7 @@ pod.initializeAuthServices(
 
 ### Reacting to events
 
-Beyond the `sendRegistrationVerificationCode` and `sendPasswordResetVerificationCode` callbacks to send verification codes to the user, there are a few callbacks that can be used to react to events, such as `onAfterAccountCreated` and `onPasswordResetCompleted`. These can be useful for sending emails to the user to communicate the successful operation.
+Beyond the callbacks to send verification codes to the user, there are a few callbacks that can be used to react to events, such as `onAfterAccountCreated` and `onPasswordResetCompleted`. These can be useful for sending emails to the user to communicate the successful operation.
 
 ### Rate limiting
 
@@ -103,12 +132,19 @@ The email provider includes built-in rate limiting to prevent abuse, with some s
 
 - **Failed login attempts**: Limited to 5 attempts per 5 minutes
 - **Password reset attempts**: Limited to 3 attempts per hour
+- **One-time code requests**: Limited to 5 requests per email per 15 minutes, reset by a successful sign-in
 - **Verification code attempts**: Limited to 3 attempts per code lifetime of 15 minutes
 
 You can customize all rate limits in the `EmailIdpConfig`:
 
 ```dart
 final emailIdpConfig = EmailIdpConfigFromPasswords(
+  otpLoginVerificationCodeLifetime: Duration(minutes: 15),
+  otpLoginVerificationCodeAllowedAttempts: 3,
+  maxOtpLoginAttempts: RateLimit(
+    maxAttempts: 5,
+    timeframe: Duration(minutes: 15),
+  ),
   registrationVerificationCodeLifetime: Duration(minutes: 15),
   registrationVerificationCodeAllowedAttempts: 3,
   passwordResetVerificationCodeLifetime: Duration(minutes: 15),
