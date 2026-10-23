@@ -280,6 +280,10 @@ To override the default widget, pass your own `EmailSignInWidget` to the `SignIn
 
 ### Using the `EmailSignInWidget`
 
+:::note
+The `EmailSignInWidget` is the old way to add email sign-in. Use the [`EmailOtpSignInWidget`](#using-the-emailotpsigninwidget) instead, which supports both one-time code and password sign-in.
+:::
+
 The `EmailSignInWidget` handles the complete email authentication flow including login, registration, email verification, and password reset.
 
 You can customize the widget's behavior using its constructor parameters:
