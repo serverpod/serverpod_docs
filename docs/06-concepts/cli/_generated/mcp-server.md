@@ -42,7 +42,7 @@ Create a repair migration that brings the live database in line with the target 
 
 ### `get_flutter_app_dtd`
 
-Return the Dart Tooling Daemon (DTD) URI for Flutter apps started from `serverpod start`. The JSON object is keyed by app id, the same ids used as keys under `serverpod: flutter_apps:` in the server pubspec. Apps that have not been launched are absent from the map; apps that have not published their DTD yet map to null; apps that have published their DTD map to their DTD URI.
+Return the Dart Tooling Daemon (DTD) URI for Flutter apps started by the runner. The JSON object is keyed by app id, the same ids used as keys under `serverpod: flutter_apps:` in the server pubspec. Apps that have not been launched are absent from the map; apps that have not published their DTD yet map to null; apps that have published their DTD map to their DTD URI.
 
 Takes no parameters.
 
@@ -68,7 +68,7 @@ Start a Flutter app configured under `serverpod: flutter_apps:` in the server pu
 
 ### `tail_flutter_logs`
 
-Return recent raw stdout/stderr lines for a Flutter app started from `serverpod start`, newest last.
+Return recent raw stdout/stderr lines for a Flutter app started by the runner, newest last.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
@@ -77,7 +77,7 @@ Return recent raw stdout/stderr lines for a Flutter app started from `serverpod 
 
 ### `tail_runner_logs`
 
-Return the last lines of the runner log file, which records everything `serverpod start` printed: code generation, compilation, Docker, the server's raw stdout/stderr and Flutter output. Newest last, with a `--- serverpod runner <pid> started ---` line at the start of each run. Unlike the other tools, this works while the server is still starting and after it stopped or crashed, so call it to find out why a tool reports the server is not running.
+Return the last lines of the runner log file, which records everything the runner printed: code generation, compilation, Docker, the server's raw stdout/stderr and Flutter output. Newest last, with a `--- serverpod runner <pid> started ---` line at the start of each run. Unlike the other tools, this works while the server is still starting and after it stopped or crashed, so call it to find out why a tool reports the server is not running.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
