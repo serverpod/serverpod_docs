@@ -8,6 +8,28 @@ slug: /installation
 
 import CollapsibleCodeBlock from '@site/src/components/CollapsibleCodeBlock';
 
+### Install with one command (macOS and Linux)
+
+On macOS (Apple silicon) and Linux (x86_64), one command sets up everything Serverpod needs:
+
+```bash
+curl -fsSL https://serverpod.dev/install.sh | sh
+```
+
+The installer checks what your machine already has, installs Flutter to `~/.serverpod/flutter` only if you have none, installs the Serverpod CLI with `dart install serverpod_cli`, and puts both on your PATH through `~/.serverpod/env.sh`, sourced from your shell startup file. It shows what it is about to do and asks before changing anything. In scripts, pass `--yes` to skip the question:
+
+```bash
+curl -fsSL https://serverpod.dev/install.sh | sh -s -- --yes
+```
+
+A Flutter you already have is used as it is when it is version 3.44.4 or later. An older one is reported with instructions to upgrade it; the installer never replaces a Flutter you manage yourself.
+
+Open a new terminal when it finishes. Then check your setup with `serverpod doctor`.
+
+:::info
+Windows is not supported by the installer yet. Use the manual steps below.
+:::
+
 ### Set up with an AI agent
 
 If you use a coding agent such as Claude Code, Cursor, or Codex, you can configure your development environment with it. Give it this prompt, and the agent will install only what is missing and verify the results.
@@ -80,6 +102,16 @@ $ dart pub global deactivate serverpod_cli
 ```
 
 :::
+
+### Check your setup
+
+`serverpod doctor` reports whether Flutter, Dart, Git, the Serverpod CLI, and access to pub.dev are in place, and what to do about anything that is not:
+
+```bash
+$ serverpod doctor
+```
+
+Add `--json` for machine-readable output. On macOS and Linux, `serverpod doctor --fix` writes `~/.serverpod/env.sh` with the PATH entries Serverpod needs and sources it from your shell startup file. It asks before changing anything unless you pass `--yes`.
 
 ### Install the VS Code extension (recommended)
 
