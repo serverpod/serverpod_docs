@@ -130,7 +130,7 @@ await admin.deletePasswordResetRequestsAttemptsForEmail(
 
 ### Cleaning up one-time code requests
 
-Each code sent for passwordless sign-in creates a request, which expires after the code lifetime, and an entry in the log used for rate limiting. Both should be cleaned up:
+Each one-time sign-in code creates a request, which expires after the code lifetime, and an entry in the log used for rate limiting. Both should be cleaned up:
 
 ```dart
 // Delete all expired one-time code requests

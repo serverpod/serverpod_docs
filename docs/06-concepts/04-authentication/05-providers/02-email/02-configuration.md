@@ -9,7 +9,7 @@ This page covers configuration options for the email identity provider beyond th
 
 ## Configuration options
 
-New projects use `ServerpodCloudEmailIdpConfig`. It reads the [pepper](#peppering) from the `emailSecretHashPepper` password, but it does not take the other options on this page. To set them, switch to `EmailIdpConfigFromPasswords` and pass your own `sendOtpLoginVerificationCode`, `sendRegistrationVerificationCode`, and `sendPasswordResetVerificationCode` callbacks. See [Use your own email provider](./setup#use-your-own-email-provider).
+New projects use `ServerpodCloudEmailIdpConfig`. It reads the [pepper](#peppering) from the `emailSecretHashPepper` password, but it does not take the other options on this page. To set them, switch to `EmailIdpConfigFromPasswords` and pass your own `sendRegistrationVerificationCode` and `sendPasswordResetVerificationCode` callbacks, and optionally `sendOtpLoginVerificationCode`. See [Use your own email provider](./setup#use-your-own-email-provider).
 
 Below is a non-exhaustive list of some of the most common configuration options. For more details on all options, check the `EmailIdpConfig` in-code documentation.
 
@@ -58,7 +58,7 @@ This is useful to ensure password policies on the server-side. It is a best prac
 
 ### Allowing a password on account creation
 
-By default, accounts created through passwordless sign-in have no password. To let users set one while creating their account, enable `allowPasswordOnOtpRegistration`:
+By default, accounts created with a one-time code have no password. To let users set one while creating their account, enable `allowPasswordOnOtpRegistration`:
 
 ```dart
 final emailIdpConfig = EmailIdpConfigFromPasswords(
@@ -70,11 +70,11 @@ The account creation screen then shows an optional password field. To let users 
 
 ### Custom verification code generation
 
-One-time codes for passwordless sign-in are 6 digits by default, while registration and password reset codes are 8 digits. You can customize how each kind of code is generated:
+One-time sign-in codes are 6 digits by default, while password reset codes are 8 digits. You can customize how each kind of code is generated:
 
 ```dart
 final emailIdpConfig = EmailIdpConfigFromPasswords(
-  // Use 8-digit codes for passwordless sign-in.
+  // Use 8-digit codes for sign-in.
   otpLoginVerificationCodeGenerator: () =>
       defaultVerificationCodeGenerator(length: 8),
 );
@@ -82,22 +82,6 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
 
 :::warning
 Remember to configure the `otpVerificationCodeConfig` parameter on the `EmailOtpSignInWidget` to match the length and allowed characters of the one-time code you generate. The app does not get the code format from the server, so if the two differ, users will never be able to enter the code correctly. See the [customizing the UI section](./customizing-the-ui#using-the-emailotpsigninwidget) for more details.
-:::
-
-Registration codes are customized the same way:
-
-```dart
-final emailIdpConfig = EmailIdpConfigFromPasswords(
-  registrationVerificationCodeGenerator: () {
-    // Generate a 6-digit numeric code
-    final random = Random.secure();
-    return List.generate(6, (_) => random.nextInt(10)).join();
-  },
-);
-```
-
-:::warning
-Remember to configure the `verificationCodeConfig` parameter on the `EmailSignInWidget` to match the length and allowed characters of the verification code you generate. Otherwise, users will never be able to enter the verification code correctly. See the [customizing the UI section](./customizing-the-ui) for more details.
 :::
 
 #### Bypassing verification code in development
@@ -114,9 +98,6 @@ pod.initializeAuthServices(
       otpLoginVerificationCodeGenerator: pod.runMode == 'development'
           ? () => '111111' // Digits only, and the same length as production.
           : defaultOtpVerificationCodeGenerator,
-      registrationVerificationCodeGenerator: pod.runMode == 'development'
-          ? () => '11111111' // Digits only, and the same length as production.
-          : defaultVerificationCodeGenerator,
     ),
   ],
 );
@@ -159,3 +140,21 @@ final emailIdpConfig = EmailIdpConfigFromPasswords(
   ),
 );
 ```
+
+## Password-only sign-in
+
+Projects that use the `EmailSignInWidget` for password-only sign-in, as described in [Switch from password-only sign-in](./setup#switch-from-password-only-sign-in), verify new accounts with a registration code. Registration codes are 8 digits by default, and are customized with `registrationVerificationCodeGenerator`:
+
+```dart
+final emailIdpConfig = EmailIdpConfigFromPasswords(
+  registrationVerificationCodeGenerator: () {
+    // Generate a 6-digit numeric code
+    final random = Random.secure();
+    return List.generate(6, (_) => random.nextInt(10)).join();
+  },
+);
+```
+
+:::warning
+Remember to configure the `verificationCodeConfig` parameter on the `EmailSignInWidget` to match the length and allowed characters of the verification code you generate. Otherwise, users will never be able to enter the verification code correctly. See the [customizing the UI section](./customizing-the-ui#using-the-emailsigninwidget) for more details.
+:::

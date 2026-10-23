@@ -84,7 +84,7 @@ void _onError(Object error) {
 }
 ```
 
-For email, pass the widget that matches your server endpoint: `emailOtpSignInWidget` for `EmailOtpIdpBaseEndpoint`, as in new projects, or `emailSignInWidget` for `EmailIdpBaseEndpoint`. See [Set up email sign-in](./providers/email/setup).
+Projects that still use password-only email sign-in pass an `EmailSignInWidget` as `emailSignInWidget` instead. See [Switch from password-only sign-in](./providers/email/setup#switch-from-password-only-sign-in).
 
 ### Styling the buttons
 
@@ -111,9 +111,9 @@ For all options of each provider widget, see the provider's customizations page,
 All text shown by the authentication widgets is in English by default. To replace it, wrap `SignInWidget`, or any individual provider widget, in a `SignInLocalizationProvider` and pass the text objects for the parts you want to translate:
 
 - `BasicSignInTexts` for the shared messages and dividers.
-- `EmailSignInTexts` for the email flow: sign-in, registration, account verification, password reset, and the terms and privacy labels. Passwordless sign-in uses the same texts for the email field, password reset, and terms.
-- `EmailWithOtpSignInTexts` for the passwordless sign-in screens: requesting and verifying the code, and creating an account.
-- `VerificationCodeTexts` for the button that resends a code, in both email flows.
+- `EmailWithOtpSignInTexts` for the email sign-in screens: requesting and verifying the code, and creating an account.
+- `EmailSignInTexts` for the email field, password reset, and the terms and privacy labels, and for the screens of password-only sign-in.
+- `VerificationCodeTexts` for the button that resends a code.
 - `PasswordRequirementTexts` for the labels of the built-in password requirement widgets.
 - One text object per provider for the sign-in buttons: `AppleSignInTexts`, `GoogleSignInTexts`, `GitHubSignInTexts`, `MicrosoftSignInTexts`, `FacebookSignInTexts`, and `AnonymousSignInTexts`.
 

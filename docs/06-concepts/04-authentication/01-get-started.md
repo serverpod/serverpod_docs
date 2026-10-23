@@ -70,7 +70,7 @@ The app opens on the sign-in screen. To create an account:
 Once you are signed in, the app shows your content with a sign-out button. The next time you sign in with the same email, entering the code takes you straight to your account.
 
 :::note
-Projects created before Serverpod 4.1 use password sign-in, so you set a password when you create the account. To switch, see [Switch an existing project to passwordless sign-in](./providers/email/setup#switch-an-existing-project-to-passwordless-sign-in).
+Projects created before Serverpod 4.1 use password sign-in, so you set a password when you create the account. To switch, see [Switch from password-only sign-in](./providers/email/setup#switch-from-password-only-sign-in).
 :::
 
 ## Next steps
