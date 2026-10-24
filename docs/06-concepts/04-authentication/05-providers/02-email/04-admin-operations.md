@@ -94,7 +94,7 @@ This is useful for checking the status of a registration request or verifying if
 
 ## Cleanup operations
 
-Over time, expired account requests, password reset requests, and failed login attempts can accumulate in the database, leading to database bloat and potential performance issues. It's important to periodically clean these up to prevent database bloat. Such requests are not automatically cleaned up since they can be useful for auditing purposes, so it is up to each application to decide when to clean them up.
+Over time, expired account requests, password reset requests, one-time code requests, and failed login attempts can accumulate in the database, leading to database bloat and potential performance issues. It's important to periodically clean these up to prevent database bloat. Such requests are not automatically cleaned up since they can be useful for auditing purposes, so it is up to each application to decide when to clean them up.
 
 ### Cleaning up expired account requests
 
@@ -125,6 +125,27 @@ await admin.deleteExpiredPasswordResetRequests(session);
 await admin.deletePasswordResetRequestsAttemptsForEmail(
   session,
   email: 'user@example.com',
+);
+```
+
+### Cleaning up one-time code requests
+
+Each one-time sign-in code creates a request, which expires after the code lifetime, and an entry in the log used for rate limiting. Both should be cleaned up:
+
+```dart
+// Delete all expired one-time code requests
+await admin.deleteExpiredOtpLoginRequests(session);
+
+// Delete the logged requests outside the rate limit window
+await admin.deleteOtpLoginAttempts(session);
+
+// Delete all logged requests for a specific email
+// Useful when you want to allow a user to request a new code
+// even though they have hit the rate limit
+await admin.deleteOtpLoginAttempts(
+  session,
+  email: 'user@example.com',
+  olderThan: Duration.zero,
 );
 ```
 

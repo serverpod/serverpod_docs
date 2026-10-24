@@ -148,7 +148,7 @@ class PasswordImportingEmailIdpEndpoint extends EmailIdpBaseEndpoint {
 }
 ```
 
-If your project already has an endpoint that extends `EmailIdpBaseEndpoint`, such as `lib/src/auth/email_idp_endpoint.dart` from the project template, delete it. With two such endpoints, the Flutter email sign-in UI throws `ServerpodClientMultipleEndpointsFound`.
+If your project already has an endpoint that extends `EmailIdpBaseEndpoint` or `EmailOtpIdpBaseEndpoint`, such as `lib/src/auth/email_idp_endpoint.dart` from the project template, delete it. With two such endpoints, the Flutter email sign-in UI throws `ServerpodClientMultipleEndpointsFound`.
 
 Add the required entries to `<project>_server/config/passwords.yaml` under the `development:` section (use distinct values per environment):
 
