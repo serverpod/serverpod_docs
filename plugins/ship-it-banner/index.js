@@ -31,11 +31,11 @@ const CAMPAIGN_URL =
 
 const VARIANTS = {
   main: {
-    text: 'Built something real on Serverpod? Win three sessions with a Serverpod engineer',
+    text: 'Built something real? Win three sessions with our engineers to help it grow',
     href: `${CAMPAIGN_URL}&utm_content=banner`,
   },
   'last-days': {
-    text: 'Built something real on Serverpod? Win three sessions with a Serverpod engineer. Less than 48 hours left.',
+    text: 'Built something real? Win three sessions with our engineers to help it grow. Less than 48 hours left.',
     href: `${CAMPAIGN_URL}&utm_content=banner-last-days`,
   },
 };
