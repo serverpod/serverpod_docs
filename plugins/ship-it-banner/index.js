@@ -25,7 +25,7 @@ const LAST_DAYS_FROM = '2026-11-07T22:59:00Z';
 const ENDS_AT = '2026-11-09T22:59:00Z';
 
 const BANNER_ID = 'ship-it-with-serverpod-2026';
-const CTA_LABEL = 'See how to enter';
+const CTA_LABEL = 'Enter now';
 const CAMPAIGN_URL =
   'https://serverpod.dev/blog/ship-it-with-serverpod?utm_source=docs&utm_medium=banner&utm_campaign=ship-it-with-serverpod';
 
