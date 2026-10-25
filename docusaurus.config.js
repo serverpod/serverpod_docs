@@ -4,6 +4,7 @@ import {
   themes
 } from 'prism-react-renderer';
 import {SITE_URL, BASE_URL} from './plugins/markdown-export/urls.js';
+import {shipItAnnouncementBar} from './plugins/ship-it-banner/index.js';
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 
@@ -61,6 +62,9 @@ const config = {
         respectPrefersColorScheme: true,
         disableSwitch: true,
       },
+      // Ship it with Serverpod banner. Switch, copy, and dates live in
+      // plugins/ship-it-banner/index.js.
+      announcementBar: shipItAnnouncementBar(),
       navbar: {
         logo: {
           alt: 'Serverpod Logo',
@@ -147,6 +151,7 @@ const config = {
       },
     ],
     './plugins/markdown-export',
+    './plugins/ship-it-banner',
     [
       'docusaurus-plugin-snipsync',
       {

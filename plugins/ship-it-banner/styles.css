@@ -1,0 +1,56 @@
+/* Ship it with Serverpod banner. Loaded only while the banner is live. */
+
+:root {
+  --ship-it-banner-background: #0950c3;
+  --ship-it-banner-color: #ffffff;
+}
+
+[data-theme='dark'] {
+  --ship-it-banner-background: #1c3461;
+  --ship-it-banner-color: #ffffff;
+}
+
+/* `html` raises specificity above the theme's own bar styles, which can load
+   after this file. */
+html .theme-announcement-bar {
+  background-color: var(--ship-it-banner-background);
+  color: var(--ship-it-banner-color);
+  border-bottom: none;
+}
+
+html .theme-announcement-bar .close {
+  color: inherit;
+  opacity: 0.8;
+}
+
+html .theme-announcement-bar .close:hover {
+  opacity: 1;
+}
+
+.ship-it-banner__cta {
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 0.25rem;
+}
+
+.ship-it-banner__cta:hover {
+  color: inherit;
+  text-decoration-thickness: 2px;
+}
+
+/* Phase switching. The inline script in the plugin sets the attribute. */
+.ship-it-banner--last-days {
+  display: none;
+}
+
+html[data-ship-it-banner='last-days'] .ship-it-banner--main {
+  display: none;
+}
+
+html[data-ship-it-banner='last-days'] .ship-it-banner--last-days {
+  display: inline;
+}
+
+html[data-ship-it-banner='ended'] .theme-announcement-bar {
+  display: none;
+}
