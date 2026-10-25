@@ -51,6 +51,7 @@ html[data-ship-it-banner='last-days'] .ship-it-banner--last-days {
   display: inline;
 }
 
+html[data-ship-it-banner='pending'] .theme-announcement-bar,
 html[data-ship-it-banner='ended'] .theme-announcement-bar {
   display: none;
 }
