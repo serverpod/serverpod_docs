@@ -62,6 +62,7 @@ function bannerContent() {
     .map(
       ([phase, {text, href}]) =>
         `<span class="ship-it-banner ship-it-banner--${phase}">` +
+        `<img class="ship-it-banner__icon" src="/img/megaphone.webp" alt="" width="40" height="40">` +
         `<span class="ship-it-banner__text">${escapeHtml(text)}</span> ` +
         `<a class="ship-it-banner__cta" href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(CTA_LABEL)}</a>` +
         `</span>`,
