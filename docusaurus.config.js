@@ -62,8 +62,8 @@ const config = {
         respectPrefersColorScheme: true,
         disableSwitch: true,
       },
-      // Ship it with Serverpod banner. Switch, copy, and dates live in
-      // plugins/ship-it-banner/index.js.
+      // Ship it with Serverpod banner. Switch, copy, A/B test, and dates live
+      // in plugins/ship-it-banner/index.js.
       announcementBar: shipItAnnouncementBar(),
       navbar: {
         logo: {
