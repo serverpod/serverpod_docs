@@ -1,0 +1,123 @@
+// Site-wide announcement banner for the Ship it with Serverpod campaign.
+//
+// Everything about the campaign lives in this file: the on/off switch, the
+// copy, the links, and the dates. The banner uses Docusaurus's built-in
+// `announcementBar` (dismissible, remembered per browser), and this plugin
+// adds the date logic on top of it:
+//
+// - An inline script in <head> sets `data-ship-it-banner` on <html> to
+//   `pending`, `main`, `last-days`, or `ended` from the visitor's clock, before
+//   the page paints. CSS in `styles.css` shows the matching copy, or hides the
+//   bar before the start and once the campaign has ended. The check runs in the browser, so the banner switches
+//   copy and disappears on time without a rebuild.
+// - A build made after the campaign ends leaves the banner out entirely.
+//
+// SHIP_IT_BANNER_ENABLED is the master switch. While it is true, the banner
+// shows from STARTS_AT until ENDS_AT.
+
+const SHIP_IT_BANNER_ENABLED = true;
+
+// 2026-10-26 00:00 CET. From this moment the main copy is shown.
+const STARTS_AT = '2026-10-25T23:00:00Z';
+// 2026-11-07 23:59 CET. From this moment the last-days copy is shown.
+const LAST_DAYS_FROM = '2026-11-07T22:59:00Z';
+// 2026-11-09 23:59 CET. From this moment the banner is hidden.
+const ENDS_AT = '2026-11-09T22:59:00Z';
+
+const BANNER_ID = 'ship-it-with-serverpod-2026';
+const CTA_LABEL = 'Enter now';
+const CAMPAIGN_URL =
+  'https://serverpod.dev/blog/ship-it-with-serverpod?utm_source=docs&utm_medium=banner&utm_campaign=ship-it-with-serverpod';
+
+const VARIANTS = {
+  main: {
+    text: 'Built something real? Win three sessions with our engineers to help it grow',
+    href: `${CAMPAIGN_URL}&utm_content=banner`,
+  },
+  'last-days': {
+    text: 'Built something real? Win three sessions with our engineers to help it grow. Less than 48 hours left.',
+    href: `${CAMPAIGN_URL}&utm_content=banner-last-days`,
+  },
+};
+
+const PLUGIN_NAME = 'serverpod-ship-it-banner';
+
+function isLiveAtBuild() {
+  return SHIP_IT_BANNER_ENABLED && Date.now() < Date.parse(ENDS_AT);
+}
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// Both variants are rendered on the server. The `data-ship-it-banner` attribute
+// on <html> decides which one is visible, so the right copy shows on first
+// paint and there is no flash after hydration.
+function bannerContent() {
+  return Object.entries(VARIANTS)
+    .map(
+      ([phase, {text, href}]) =>
+        `<span class="ship-it-banner ship-it-banner--${phase}">` +
+        `<img class="ship-it-banner__icon" src="/img/megaphone.webp" alt="" width="40" height="40">` +
+        `<span class="ship-it-banner__text">${escapeHtml(text)}</span> ` +
+        `<a class="ship-it-banner__cta" href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(CTA_LABEL)}</a>` +
+        `</span>`,
+    )
+    .join('');
+}
+
+// Value for `themeConfig.announcementBar` in docusaurus.config.js.
+function shipItAnnouncementBar() {
+  if (!isLiveAtBuild()) {
+    return undefined;
+  }
+  return {
+    id: BANNER_ID,
+    content: bannerContent(),
+    isCloseable: true,
+  };
+}
+
+// Runs in the browser before first paint. Sets the phase from the visitor's
+// clock and re-checks at the next boundary for tabs that stay open.
+function phaseScript() {
+  return `(function () {
+  var startsAt = ${Date.parse(STARTS_AT)};
+  var lastDaysFrom = ${Date.parse(LAST_DAYS_FROM)};
+  var endsAt = ${Date.parse(ENDS_AT)};
+  function update() {
+    var now = Date.now();
+    var phase = now >= endsAt ? 'ended' : now >= lastDaysFrom ? 'last-days' : now >= startsAt ? 'main' : 'pending';
+    document.documentElement.setAttribute('data-ship-it-banner', phase);
+    if (phase === 'ended') return;
+    var next = phase === 'pending' ? startsAt : phase === 'main' ? lastDaysFrom : endsAt;
+    var wait = next - now;
+    if (wait < 2147483647) setTimeout(update, wait + 1000);
+  }
+  update();
+})();`;
+}
+
+function shipItBannerPlugin() {
+  return {
+    name: PLUGIN_NAME,
+    getClientModules() {
+      return isLiveAtBuild() ? [require.resolve('./styles.css')] : [];
+    },
+    injectHtmlTags() {
+      if (!isLiveAtBuild()) {
+        return {};
+      }
+      return {
+        headTags: [{tagName: 'script', innerHTML: phaseScript()}],
+      };
+    },
+  };
+}
+
+module.exports = shipItBannerPlugin;
+module.exports.shipItAnnouncementBar = shipItAnnouncementBar;

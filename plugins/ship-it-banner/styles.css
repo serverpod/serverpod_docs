@@ -1,0 +1,121 @@
+/* Ship it with Serverpod banner. Loaded only while the banner is live.
+   Matches the shoutout banner on serverpod.dev. */
+
+:root {
+  --ship-it-banner-background: #fef9c3;
+  --ship-it-banner-color: #713f12;
+  --ship-it-banner-border: #eab308;
+  --ship-it-banner-button-border: #ca8a04;
+  --ship-it-banner-button-hover: #fefce8;
+}
+
+/* `html:root` outranks the theme's own `:root` height rule. The sidebar uses
+   this height for its bottom margin. */
+html:root {
+  --docusaurus-announcement-bar-height: auto;
+}
+
+@media (min-width: 997px) {
+  html:root {
+    --docusaurus-announcement-bar-height: 63px;
+  }
+}
+
+/* `html` raises specificity above the theme's own bar styles, which can load
+   after this file. */
+html .theme-announcement-bar {
+  height: auto;
+  min-height: var(--docusaurus-announcement-bar-height);
+  background-color: var(--ship-it-banner-background);
+  color: var(--ship-it-banner-color);
+  border-bottom: 1px solid var(--ship-it-banner-border);
+}
+
+html .theme-announcement-bar .close {
+  color: inherit;
+  opacity: 0.8;
+}
+
+html .theme-announcement-bar .close:hover {
+  opacity: 1;
+}
+
+.ship-it-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  /* With the theme's 5px content padding this gives the website's 0.5rem. */
+  padding: 0.1875rem 0;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.ship-it-banner__text {
+  text-align: left;
+}
+
+.ship-it-banner__icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+html .theme-announcement-bar .ship-it-banner__cta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--ship-it-banner-button-border);
+  border-radius: 0.5rem;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms;
+}
+
+html .theme-announcement-bar .ship-it-banner__cta:hover {
+  background-color: var(--ship-it-banner-button-hover);
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .ship-it-banner {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .ship-it-banner__text {
+    text-align: center;
+  }
+
+  .ship-it-banner__icon {
+    display: none;
+  }
+
+  .ship-it-banner__cta {
+    width: 100%;
+  }
+}
+
+/* Phase switching. The inline script in the plugin sets the attribute. */
+.ship-it-banner--last-days {
+  display: none;
+}
+
+html[data-ship-it-banner='last-days'] .ship-it-banner--main {
+  display: none;
+}
+
+html[data-ship-it-banner='last-days'] .ship-it-banner--last-days {
+  display: flex;
+}
+
+html[data-ship-it-banner='pending'] .theme-announcement-bar,
+html[data-ship-it-banner='ended'] .theme-announcement-bar {
+  display: none;
+}
