@@ -89,7 +89,7 @@ html .theme-announcement-bar .ship-it-banner__cta:hover {
     text-align: center;
   }
 
-  .ship-it-banner__text {
+  html .theme-announcement-bar .ship-it-banner__text {
     text-align: center;
   }
 
@@ -102,16 +102,19 @@ html .theme-announcement-bar .ship-it-banner__cta:hover {
   }
 }
 
-/* Phase switching. The inline script in the plugin sets the attribute. */
-.ship-it-banner--last-days {
+/* Phase switching. The inline script in the plugin sets the attribute.
+   The production minifier merges rules and can move them before
+   `.ship-it-banner { display: flex }`, so these rules must win on specificity,
+   not on source order. */
+html .theme-announcement-bar .ship-it-banner--last-days {
   display: none;
 }
 
-html[data-ship-it-banner='last-days'] .ship-it-banner--main {
+html[data-ship-it-banner='last-days'] .theme-announcement-bar .ship-it-banner--main {
   display: none;
 }
 
-html[data-ship-it-banner='last-days'] .ship-it-banner--last-days {
+html[data-ship-it-banner='last-days'] .theme-announcement-bar .ship-it-banner--last-days {
   display: flex;
 }
 
