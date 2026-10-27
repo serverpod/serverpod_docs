@@ -12,7 +12,7 @@ Run it from your project's root folder or one of its package folders:
 serverpod start
 ```
 
-The interactive terminal shows a tab for the server and for each running app, with the most common actions along the bottom. Shortcuts are unshifted key presses: **M** means typing a lowercase `m`, while **Shift+M** produces the capital and triggers the variant. Press **H** for the full list of shortcuts, and **Q** to quit the session. If a session is already running for the project, a second `serverpod start` tells you so and exits. While the session runs, it also exposes an MCP endpoint that AI agents can use to drive it. See the [`serverpod mcp-server` reference](../cli/commands/mcp-server).
+The interactive terminal shows a tab for the server and for each running app, with the most common actions along the bottom. Shortcuts are unshifted key presses: **M** means typing a lowercase `m`, while **Shift+M** produces the capital and triggers the variant. Press **H** for the full list of shortcuts, and **Q** to stop the session. If a session is already running for the project, `serverpod start` attaches to it instead of starting a second one. See [Run the stack in the background](#run-the-stack-in-the-background). While the session runs, it also exposes an MCP endpoint that AI agents can use to drive it. See the [`serverpod mcp-server` reference](../cli/commands/mcp-server).
 
 New projects use an embedded PostgreSQL database that the server manages for you, so there is nothing else to start. See [Database backends](./configuration#database-backends) for how it is configured and how to use an external database instead.
 
@@ -107,6 +107,28 @@ You can still launch an app on demand: press **Ctrl+R** in the terminal to open 
 If your project has a Docker Compose file (`docker-compose.yaml`, `compose.yaml`, or another standard name), `serverpod start` brings it up automatically when your database is a Postgres on `localhost` with no `dataPath`, and stops the services it started when the session ends. When that does not apply, for example an embedded or remote database with [Redis](../operations/redis) in Compose, pass `--docker` to start the stack anyway, or `--no-docker` to keep it off.
 
 To run without the interactive terminal, pass `--no-tui`. When the output is not a terminal, for example in CI, `serverpod start` falls back to plain output on its own.
+
+## Run the stack in the background
+
+The server, database, and Flutter apps run in a background process, the runner, and the `serverpod start` terminal attaches to it. To start the runner without a terminal, for example from a script or an AI agent, run this from your project's root folder or one of its package folders:
+
+```bash
+serverpod runner start
+```
+
+The command returns once the server is up and prints its addresses. It takes the same options as `serverpod start`, such as `--no-watch` and `--target`. Flutter apps [set to launch automatically](#choose-which-flutter-apps-start) wait until a terminal attaches.
+
+Manage the running stack with these commands:
+
+| Command | What it does |
+| --- | --- |
+| `serverpod start` or `serverpod runner attach` | Opens the interactive terminal on the running stack. |
+| `serverpod runner status` | Prints the stack's state, the API, Insights, web, and database addresses, and the path to its log file. |
+| `serverpod runner stop` | Stops the stack. |
+
+In a terminal that attached to a stack it did not start, **Q** asks before stopping it: press **Q** again to leave the stack running, or **Shift+Q** to stop it.
+
+Each server package runs one stack. A `serverpod start` with options that differ from the running stack's, such as `--no-watch`, fails and names the differences, so stop the stack first to change them. When another stack on the machine, for example in another worktree, holds the configured ports, the new stack moves to free ones. Check `serverpod runner status` for the addresses in use.
 
 ## Run the server directly
 
