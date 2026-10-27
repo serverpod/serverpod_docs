@@ -46,7 +46,7 @@ The queried tables are detected automatically. To set them yourself, pass their 
 The method is only supported on SQLite. On PostgreSQL, calling it throws an `UnsupportedError`.
 
 :::warning
-SQLite may not report a `DELETE` without a `WHERE` clause, so streams from `unsafeWatch` and the generated `watch` method don't emit after it. Add a `WHERE` clause, such as `WHERE true`, when clearing a watched table.
+A raw `DELETE` without a `WHERE` clause can skip SQLite's change notifications, so streams from `unsafeWatch` and the generated `watch` method don't emit after it. Add a `WHERE` clause, such as `WHERE true`, when clearing a watched table. The generated delete methods always include one.
 :::
 
 ## `unsafeSimpleQuery`
