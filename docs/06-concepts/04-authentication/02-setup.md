@@ -82,7 +82,7 @@ For more details on how to configure token managers or create custom ones, see t
 
 Identity providers handle authentication with different methods (Email, Google, Apple, etc.). Each provider has its own configuration:
 
-- **[Email](./providers/email/setup)**: sign-up and sign-in with email and password.
+- **[Email](./providers/email/setup)**: sign-in with a one-time code sent by email, or with email and password.
 - **[Anonymous](./providers/anonymous/setup)** (experimental): accounts without any credentials, for trying the app before registering.
 - **[Google](./providers/google/setup)**, **[Apple](./providers/apple/setup)**, **[Facebook](./providers/facebook/setup)**, **[GitHub](./providers/github/setup)**, and **[Microsoft](./providers/microsoft/setup)**: sign-in with the respective account.
 - **[Firebase](./providers/firebase/setup)**: reuse Firebase Authentication, including its phone and social sign-ins.
@@ -115,7 +115,7 @@ By default, endpoints for all providers are disabled. To enable a provider:
     ```dart
     import 'package:serverpod_auth_idp_server/providers/email.dart';
 
-    class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+    class EmailIdpEndpoint extends EmailOtpIdpBaseEndpoint {}
     ```
 
 3. Start the server with `serverpod start`. It generates the client code and endpoint methods for the provider, then runs the server with hot reload.
