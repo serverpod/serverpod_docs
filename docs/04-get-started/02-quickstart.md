@@ -68,7 +68,7 @@ You don't need to install or set up a database. New projects use an embedded Pos
    Run this in PowerShell:
 
    ```powershell
-   [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "User") + ";$env:APPDATA\Dart\install\bin", "User")
+   [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "User") + ";$env:LOCALAPPDATA\Dart\install\bin", "User")
    ```
 
      </TabItem>
@@ -175,7 +175,7 @@ After the first launch, you redeploy any changes by running `serverpod cloud lau
 
 :::tip
 
-In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open your project and use the **Logs**, **Sessions**, and **Metrics** tabs to monitor your app. See **[Serverpod Cloud guide](/cloud_docs/)** to learn more.
+In the **[Serverpod Cloud Console](https://console.serverpod.dev/)**, open your project and use the **Logs**, **Sessions**, and **Metrics** tabs to monitor your app. See **[Serverpod Cloud guide](/cloud)** to learn more.
 
 :::
 
