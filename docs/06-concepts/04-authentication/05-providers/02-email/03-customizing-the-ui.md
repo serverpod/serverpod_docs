@@ -83,7 +83,11 @@ If you change the code format on the server, update `otpVerificationCodeConfig` 
 
 By default, the widget accepts email aliases, such as `name+alias@example.com`. To reject them, pass `emailValidation: (email) => EmailFlowController.validateEmail(email, allowEmailAliases: false)`.
 
-For a new email, the account creation screen shows the terms checkbox if you provide `onTermsAndConditionsPressed` or `onPrivacyPolicyPressed`. It also offers an optional password if the server enables [`allowPasswordOnOtpRegistration`](./configuration#allowing-a-password-on-account-creation).
+:::info
+The terms and conditions and privacy policy checkbox on the account creation screen is optional and disabled by default. The checkbox is shown as soon as you provide either `onTermsAndConditionsPressed` or `onPrivacyPolicyPressed`.
+:::
+
+For a new email, the account creation screen also offers an optional password if the server enables [`allowPasswordOnOtpRegistration`](./configuration#allowing-a-password-on-account-creation).
 
 Optionally, you can provide an externally managed `EmailOtpAuthController` instance to the widget. A controller and a `client` are mutually exclusive, and `onAuthenticated` and `onError` belong on the controller in that case. The controller carries `allowPasswordSignIn`, `emailValidation`, and `passwordRequirements`, while the code configurations and the terms callbacks stay on the widget.
 

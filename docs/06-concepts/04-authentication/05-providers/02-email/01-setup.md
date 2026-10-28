@@ -169,7 +169,7 @@ EmailOtpSignInWidget(
 The widget automatically handles:
 
 - Sending and verifying the one-time code.
-- Sign-in to an existing account, or account creation with terms acceptance for a new email.
+- Sign-in to an existing account, or account creation for a new email, with optional terms acceptance.
 - Password sign-in and password reset, if `allowPasswordSignIn` is `true`.
 - Navigation between screens.
 
