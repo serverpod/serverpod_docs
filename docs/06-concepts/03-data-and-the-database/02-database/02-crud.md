@@ -123,7 +123,21 @@ var subscription = Company.db.watch(
 
 The stream runs the query again and emits the result every time a write to one of the watched tables commits, until you cancel the subscription. The watched tables are the model's table and every table that `where`, `orderBy`, `orderByList`, and `include` refer to. Writes inside a [transaction](transactions) emit once it commits, and a rolled-back transaction emits nothing.
 
-To also react to writes on other tables, pass them with `alsoTriggerOnTables`, for example `alsoTriggerOnTables: [Town.t]`. This is needed when a filter reads a table only through raw SQL, which `watch` does not inspect.
+To also react to writes on other tables, pass them with `alsoTriggerOnTables`. This is needed when a filter reads a table only through raw SQL, written as an `Expression`, because `watch` does not inspect raw SQL. In this example, `Company` has a `town` relation, and the filter selects companies in Stockholm with a subquery:
+
+```dart
+var subscription = Company.db.watch(
+  session,
+  where: (t) => const Expression(
+    "townId IN (SELECT id FROM town WHERE name = 'Stockholm')",
+  ),
+  alsoTriggerOnTables: [Town.t],
+).listen((companies) {
+  // Handle the latest matching rows.
+});
+```
+
+Without `alsoTriggerOnTables`, renaming a town to Stockholm would not update the result. The typed [relation filter](filtering#relation-operations) `t.town.name.equals('Stockholm')` selects the same rows and needs no `alsoTriggerOnTables`, because `watch` sees the `town` table in it. `Expression` inserts its SQL into the query as is, so never build it from user input.
 
 By default, the query runs at most once every 30 milliseconds, no matter how many writes happen in between. Pass a different `Duration` as `throttle` to change the interval, or `null` to run the query after every write.
 
