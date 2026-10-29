@@ -90,9 +90,11 @@ $ dart pub global deactivate serverpod_cli
       </TabItem>
       <TabItem value="windows" label="Windows">
 
-    ```powershell
-    [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "User") + ";$env:LOCALAPPDATA\Pub\Cache\bin", "User")
-    ```
+   Run this in PowerShell:
+
+   ```powershell
+   [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "User") + ";$env:LOCALAPPDATA\Dart\install\bin", "User")
+   ```
 
       </TabItem>
     </Tabs>
