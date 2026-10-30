@@ -54,7 +54,7 @@ myproject/
     └── assets/config.json        # The server URL the app reads at startup
 ```
 
-The exact set depends on your create-time choices: the auth endpoints and sign-in screen come with authentication, the web pieces with the web server option, and the MCP configs and skills with the editors you picked. `AGENTS.md` is always created.
+The exact set depends on your create-time choices: the auth endpoints and sign-in screen come with authentication, the web pieces with the web server option, and the MCP configs and skills with the editors you picked. The `AGENTS.md` file is always created.
 
 </p>
 </details>
