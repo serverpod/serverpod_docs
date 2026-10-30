@@ -59,6 +59,8 @@ serverpod cloud build log | grep ERROR
 
 Find the symptom that best matches your deployment status or logs, then expand the corresponding section.
 
+<div className="troubleshooting-accordions">
+
 <details>
 <summary><strong>A pre-deploy script failed</strong></summary>
 
@@ -145,6 +147,8 @@ To fix:
 If the error is `Bad state: FutureCalls is not initialized.`, your server is trying to schedule a future call, which isn't supported on the Starter plan. To use future calls, [upgrade to the Growth or Enterprise plan](https://serverpod.dev/cloud) and redeploy.
 
 </details>
+
+</div>
 
 ## 4. Redeploy and verify
 
