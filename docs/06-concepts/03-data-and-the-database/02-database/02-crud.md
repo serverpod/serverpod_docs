@@ -137,7 +137,7 @@ var subscription = Company.db.watch(
 });
 ```
 
-Without `alsoTriggerOnTables`, renaming a town to Stockholm would not update the result. The typed [relation filter](filtering#relation-operations) `t.town.name.equals('Stockholm')` selects the same rows and needs no `alsoTriggerOnTables`, because `watch` sees the `town` table in it. `Expression` inserts its SQL into the query as is, so never build it from user input.
+Without `alsoTriggerOnTables`, renaming a town to Stockholm would not update the result. The typed [relation filter](filtering#relation-operations) `t.town.name.equals('Stockholm')` selects the same rows and needs no `alsoTriggerOnTables`, because `watch` sees the `town` table in it. An `Expression` inserts its SQL into the query as is, so never build it from user input.
 
 By default, the query runs at most once every 30 milliseconds, no matter how many writes happen in between. Pass a different `Duration` as `throttle` to change the interval, or `null` to run the query after every write.
 
