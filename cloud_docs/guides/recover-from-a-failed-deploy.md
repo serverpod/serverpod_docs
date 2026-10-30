@@ -35,7 +35,7 @@ Copy the deployment ID so you can inspect the logs for that specific attempt.
 
 ## 2. Inspect the build logs
 
-Build logs help diagnose errors that occur during the build process. Start by retrieving the latest build log:
+Build-time errors appear only in the build log. Start by retrieving the latest build log:
 
 ```bash
 serverpod cloud build log
