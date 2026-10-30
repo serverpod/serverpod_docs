@@ -110,7 +110,7 @@ To run without the interactive terminal, pass `--no-tui`. When the output is not
 
 ## Run the stack in the background
 
-The server, database, and Flutter apps run in a background process, the runner, and the `serverpod start` terminal attaches to it. To start the runner without a terminal, for example from a script or an AI agent, run this from your project's root folder or one of its package folders:
+The server, database, and Flutter apps run in a background process called the runner. The `serverpod start` terminal attaches to it. To start the runner without a terminal, for example from a script or an AI agent, run this from your project's root folder or one of its package folders:
 
 ```bash
 serverpod runner start
