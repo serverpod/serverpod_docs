@@ -16,14 +16,12 @@ Global options:
     --experimental-features    Enable experimental features. Experimental features might be removed at any time.
 
 Available commands:
-  clean                     Delete the cached server build and generation staleness stamp.
   cloud                     Manage Serverpod Cloud projects through the Serverpod Cloud.
   completion                Command line completion commands
   create                    Creates a new Serverpod project, specify project name (must be lowercase with no special characters).
   create-migration          Creates a migration from the last migration to the current state of the database.
   create-repair-migration   Repairs the database by comparing the target state to what is in the live database instead of comparing to the latest migration.
   database                  Manage the embedded PostgreSQL database used by a Serverpod project.
-  doctor                    Check that Flutter, Dart, Git, and the Serverpod CLI are installed, compatible, and selected by PATH.
   generate                  Generate code from yaml files for server and clients.
   language-server           Launches a serverpod language server communicating with JSON-RPC-2 intended to be used with a client integrated in an IDE.
   mcp-server                Start an MCP bridge to the `serverpod start` runner of one server project.
