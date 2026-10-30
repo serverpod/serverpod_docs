@@ -6,22 +6,24 @@ description: Diagnose why a deploy to Serverpod Cloud failed, read the build log
 
 # Recover from a failed deploy
 
-Your deploy to Serverpod Cloud just failed. This guide walks you through finding what broke and shipping a fix. A failed deploy doesn't disrupt a running version. Cloud only switches traffic to a successful deploy, so if a previous version was live, it stays live.
+When a deployment to Serverpod Cloud fails, use this guide to identify the cause, fix the problem, and deploy again. A failed deployment does not replace the currently running version. Serverpod Cloud switches traffic only after a successful deployment. If a previous version was live, it remains live.
 
 ## Before you start
+
+Ensure you have:
 
 - The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - A Serverpod Cloud project with at least one deploy attempt.
 
-## Confirm the deploy failed
+## 1. Confirm the failed deployment
 
-List recent deployments to see status:
+List recent deployments to identify the failed attempt:
 
 ```bash
 serverpod cloud status deployment list
 ```
 
-A failed deploy shows `FAILURE` in the Status column and a short reason in the Info column:
+A failed deploy shows `FAILURE` in the Status column and a reason in the Info column. For example:
 
 ```text
 # | Project | Deploy Id                            | Status  | Started (local)     | Finished (local)    | Info
@@ -29,61 +31,127 @@ A failed deploy shows `FAILURE` in the Status column and a short reason in the I
 0 | my-app  | 73e66b41-64fc-4920-b6ef-4918cc6ceca1 | FAILURE | 2026-06-15 15:19:37 | 2026-06-15 15:20:34 | User build FAILURE - see build log
 ```
 
-That reason points at the stage that failed.
+Copy the deployment ID so you can inspect the logs for that specific attempt.
 
-## Read the build log
+## 2. Inspect the build logs
 
-Build logs are the only surface for build-time errors. Fetch the latest:
+Build logs help diagnose errors that occur during the build process. Start by retrieving the latest build log:
 
 ```bash
 serverpod cloud build log
 ```
 
-For a specific deploy, pass a sequence number (`0` is the latest) or the deploy UUID from `serverpod cloud status deployment list`:
+To inspect a specific deployment, pass its sequence number (`0` is the latest) or deployment UUID from `serverpod cloud status deployment list`:
 
 ```bash
 serverpod cloud build log 3
 serverpod cloud build log 73e66b41-64fc-4920-b6ef-4918cc6ceca1
 ```
 
-For long logs, redirect to a file or grep for errors:
+For long logs, redirect the output to a file or search for error messages:
 
 ```bash
 serverpod cloud build log > build-log.txt
 serverpod cloud build log | grep ERROR
 ```
 
-## Identify the failure type
+## 3. Diagnose and fix the failure
 
-Most failed deploys fall into one of these patterns. Match the log output to the closest one.
+Find the symptom that best matches your deployment status or logs, then expand the corresponding section.
 
-**Pre-deploy hook failure.** A script in your `scloud.yaml` under `project.scripts.pre_deploy` exited non-zero, so the upload never happened. Run the failing command locally to reproduce, fix the script, commit, and redeploy. See [Deployment hooks](/cloud/concepts/deployment-hooks) for the failure semantics and the [scloud.yaml schema](/cloud/reference/scloud-yaml-schema#pre_deploy) for the accepted formats.
+<details>
+<summary><strong>A pre-deploy script failed</strong></summary>
 
-**Upload timeout.** The CLI reports `Send Timeout. Please check your internet connection and try again.` The project never reached Cloud, so nothing was built. Common on first deploys with large project packages or slow connections. Retry with a longer timeout:
+A script in your `scloud.yaml` under `project.scripts.pre_deploy` exited with a non-zero status, so the CLI stopped before uploading your project.
+
+To fix:
+
+1. Run the failing command locally to reproduce the error.
+2. Fix script logic, file paths, or missing local environment variables.
+
+See [Deployment hooks](/cloud/concepts/deployment-hooks) for the failure semantics and the [scloud.yaml schema](/cloud/reference/scloud-yaml-schema#pre_deploy) for the accepted formats.
+
+</details>
+
+<details>
+<summary><strong>The CLI reported a send timeout</strong></summary>
+
+The CLI reports `Send Timeout. Please check your internet connection and try again`. The project failed to upload to Serverpod Cloud within the default network timeout window. This commonly occurs on slower connections or first deploys containing large assets.
+
+Increase the upload timeout and redeploy:
 
 ```bash
 serverpod cloud deploy --timeout 120s
 ```
 
-If the timeout keeps tripping at high values, the issue is likely upstream (network or Cloud-side); retry later.
+If the problem persists, check your network connection and retry later.
 
-**Package resolution failure.** Cloud can't resolve your `pubspec.yaml`. Run `dart pub get` locally to reproduce the error, fix the pubspec (mismatched versions, missing packages, private dependencies that aren't configured), and redeploy. For private packages, see [Private dependencies](/cloud/reference/private-dependencies).
+</details>
 
-**Build failure.** Lines beginning with `ERROR:` or `FAILED:` in the build log, usually pointing at a Dart compile error, a missing import, or a missing dependency. Fix the file in your project, commit, and redeploy.
+<details>
+<summary><strong>The deployment failed to resolve dependencies</strong></summary>
 
-**Migration failure.** The build succeeds, but a migration in your project's `migrations/` directory can't apply. Check the server logs with `serverpod cloud log` for `Failed to apply database migrations.` Fix the migration locally (often a SQL error or a column that already exists), commit, and redeploy.
+Serverpod Cloud cannot resolve packages declared in `pubspec.yaml`.
 
-## Fix and redeploy
+To fix:
 
-Commit the fix and redeploy:
+1. Run `dart pub get` locally.
+2. Resolve version conflicts, missing packages, or private dependency configuration issues.
+
+For private packages, see [Private dependencies](/cloud/reference/private-dependencies).
+
+</details>
+
+<details>
+<summary><strong>The build failed with compilation errors</strong></summary>
+
+Lines starting with `ERROR:` or `FAILED:` in the build log often indicate a Dart compilation error, missing import, or missing dependency. Fix the relevant code or dependency and redeploy.
+
+</details>
+
+<details>
+<summary><strong>The build succeeded, but a database migration failed</strong></summary>
+
+The build succeeded, but pending schema changes in `migrations/` failed to apply.
+
+To fix:
+
+1. View the runtime server logs to find the exact database error:
+
+    ```bash
+    serverpod cloud log
+    ```
+
+2. Look for `Failed to apply database migrations`. Common causes are duplicate columns or malformed SQL.
+3. Correct the migration locally.
+
+</details>
+
+<details>
+<summary><strong>The build succeeded, but the server crashed on startup</strong></summary>
+
+The CLI reports `Rollout failed.`, and the Info column shows `Deployment failed: the new version did not become healthy and did not roll out.`
+
+To fix:
+
+1. Check the runtime server logs:
+
+    ```bash
+    serverpod cloud log
+    ```
+
+2. Look for `Unhandled exception:` and inspect the stack trace.
+
+If the error is `Bad state: FutureCalls is not initialized.`, your server is trying to schedule a future call, which isn't supported on the Starter plan. To use future calls, [upgrade to the Growth or Enterprise plan](https://serverpod.dev/cloud) and redeploy.
+
+</details>
+
+## 4. Redeploy and verify
+
+Once the issue is resolved locally, re-run the deployment and monitor the rollout:
 
 ```bash
 serverpod cloud deploy
-```
-
-Watch the new attempt:
-
-```bash
 serverpod cloud status deployment show
 ```
 
