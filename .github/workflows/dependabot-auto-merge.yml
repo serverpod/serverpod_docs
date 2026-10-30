@@ -33,3 +33,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+
+  stop-auto-merge:
+    name: Stop auto-merge
+    runs-on: ubuntu-latest
+    # GitHub keeps auto-merge on when someone with write access pushes, so
+    # their commits would otherwise merge without a second review.
+    if: >
+      github.event.action == 'synchronize' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.auto_merge
+    steps:
+      - name: Disable auto-merge
+        run: gh pr merge "$PR_URL" --disable-auto
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
