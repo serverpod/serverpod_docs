@@ -37,9 +37,7 @@ withServerpod(
 | `testServerOutputMode` | How much server output reaches your terminal. See [below](#server-output). | `TestServerOutputMode.normal` |
 
 :::note
-When `config/generator.yaml` sets `features: database: false`, the generated `withServerpod` has no `applyMigrations`, `databaseInterceptor`, `rollbackDatabase`, or `runtimeParametersBuilder` parameter, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
-
-Projects created without a database, for example with `--no-database`, don't include this setting, so add it and run `serverpod generate`.
+When the run mode files configure no database, for example in a project created with `--no-database`, the generated `withServerpod` has no `applyMigrations`, `databaseInterceptor`, `rollbackDatabase`, or `runtimeParametersBuilder` parameter, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
 :::
 
 Set `serverDirectory` when tests run from somewhere other than the server package, such as the workspace root. Without it the server resolves those paths against the current directory, misses your config, and falls over later on whatever it needed from it.
