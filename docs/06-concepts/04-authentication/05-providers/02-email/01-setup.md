@@ -1,11 +1,16 @@
 ---
 sidebar_label: Setup
-description: Sign in with Email lets users authenticate with an email and password, with verification codes delivered by Serverpod Cloud or your own email provider.
+description: Sign in with Email lets users authenticate with a one-time code or a password, with codes delivered by Serverpod Cloud or your own email provider.
 ---
 
 # Set up email sign-in
 
-Sign in with Email verifies the user's address with a code, both when they register and when they reset their password.
+Sign in with Email offers two ways to sign in:
+
+- **One-time code.** The user enters their email and the code sent to it. A new email gets an account.
+- **Password.** The user enters their email and password. This is off by default.
+
+Both work for the same account.
 
 :::caution
 You need to install the auth module before you continue, see [Setup](../../setup).
@@ -43,7 +48,7 @@ If you are adding the auth module to an existing project, extend the abstract en
 ```dart
 import 'package:serverpod_auth_idp_server/providers/email.dart';
 
-class EmailIdpEndpoint extends EmailIdpBaseEndpoint {}
+class EmailIdpEndpoint extends EmailOtpIdpBaseEndpoint {}
 ```
 
 Then start the server with `serverpod start` to generate the client code, and create and apply the migration that initializes the database for the provider (in the `serverpod start` terminal, press **M**). More detailed instructions can be found in the general [identity providers setup section](../../setup#identity-providers-configuration).
@@ -52,7 +57,7 @@ Then start the server with `serverpod start` to generate the client code, and cr
 
 Serverpod Cloud delivery is there to get sign-in working quickly, and it sends a standard message carrying your `appDisplayName`. You might prefer using a custom email provider to have full control over the body, layout, and language of the emails. For servers hosted outside of Serverpod Cloud, it is the only option.
 
-Changing the email provider is done by replacing `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords`, which requires you to pass your own callbacks for the two codes. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, SendGrid, or Mandrill, support SMTP.
+Changing the email provider is done by replacing `ServerpodCloudEmailIdpConfig` with `EmailIdpConfigFromPasswords`, which requires you to pass your own callbacks for sending the codes. One convenient option is the [mailer](https://pub.dev/packages/mailer) package, which can send emails through any SMTP service. Most email providers, such as Resend, SendGrid, or Mandrill, support SMTP.
 
 ```dart
 import 'package:serverpod_auth_idp_server/core.dart';
@@ -75,6 +80,9 @@ void run(List<String> args) async {
         sendRegistrationVerificationCode: _sendRegistrationCode,
         // Callback to send the password reset verification code to the user.
         sendPasswordResetVerificationCode: _sendPasswordResetCode,
+        // Optional callback to send the one-time sign-in code to the user.
+        // Defaults to sendRegistrationVerificationCode if not set.
+        sendOtpLoginVerificationCode: _sendOtpLoginCode,
       ),
     ],
   );
@@ -105,12 +113,25 @@ void _sendPasswordResetCode(
   // the user. For testing, we will log the verification code.
   session.log('[EmailIDP] Password reset code ($email): $verificationCode');
 }
+
+void _sendOtpLoginCode(
+  Session session, {
+  required String email,
+  required UuidValue otpLoginRequestId,
+  required String verificationCode,
+  required Transaction? transaction,
+}) {
+  // NOTE: Here you call your mail service to send the sign-in code to the
+  // user. For testing, we will log the code.
+  session.log('[EmailIDP] Login code ($email): $verificationCode');
+}
 ```
 
 #### Basic configuration options
 
 - `sendRegistrationVerificationCode`: A callback that will be called to send the registration verification code to the user. Here you should call the email sending service to send the verification code to the user.
 - `sendPasswordResetVerificationCode`: A callback that will be called to send the password reset verification code to the user. Here you should call the email sending service to send the verification code to the user.
+- `sendOtpLoginVerificationCode`: An optional callback that will be called to send the one-time sign-in code. If it is not set, the code is sent with `sendRegistrationVerificationCode`. Set it to send a different email for signing in than for registering. A user signing in with a new email also receives this email, since the code is sent before the account is created.
 
 Both configurations hash passwords and verification codes with a secret pepper, which `EmailIdpConfigFromPasswords` reads from the `emailSecretHashPepper` key in `config/passwords.yaml` or the `SERVERPOD_PASSWORD_emailSecretHashPepper` environment variable. Newly generated projects already have a value for every run mode. To pass the pepper directly instead, use `EmailIdpConfig` with its `secretHashPepper` parameter.
 
@@ -120,13 +141,16 @@ For more details on configuration options, such as customizing password requirem
 
 If you have configured the `SignInWidget` as described in the [setup section](../../setup#present-the-authentication-ui), the Email identity provider will be automatically detected and displayed in the sign-in widget.
 
-You can also use the `EmailSignInWidget` to include the email authentication flow in your own custom UI.
+You can also use the `EmailOtpSignInWidget` to include email sign-in in your own custom UI.
 
 ```dart
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
-EmailSignInWidget(
+EmailOtpSignInWidget(
   client: client,
+  // Also let users sign in with a password and reset a forgotten one.
+  // Defaults to false.
+  allowPasswordSignIn: true,
   onAuthenticated: () {
     // Do something when the user is authenticated.
     //
@@ -144,9 +168,28 @@ EmailSignInWidget(
 
 The widget automatically handles:
 
-- Login with email and password.
-- Registration with terms acceptance and email verification.
-- Password reset flow with email verification.
+- Sending and verifying the one-time code.
+- Sign-in to an existing account, or account creation for a new email, with optional terms acceptance.
+- Password sign-in and password reset, if `allowPasswordSignIn` is `true`.
 - Navigation between screens.
 
 For details on how to display the email authentication UI in your Flutter app, see the [customizing the UI section](./customizing-the-ui).
+
+## Switch from password-only sign-in
+
+Projects created before Serverpod 4.1 extend `EmailIdpBaseEndpoint`, which supports password sign-in only. For these projects, the `SignInWidget` shows the `EmailSignInWidget`, where users register with an email and a password. To switch to the `EmailOtpIdpBaseEndpoint`:
+
+1. In your email endpoint file, change the base class to `EmailOtpIdpBaseEndpoint`:
+
+    ```dart
+    class EmailIdpEndpoint extends EmailOtpIdpBaseEndpoint {}
+    ```
+
+2. Start the server with `serverpod start` to regenerate the client code, then create and apply the migration (in the `serverpod start` terminal, press **M**).
+3. If you pass your own `EmailSignInWidget` to the `SignInWidget` as `emailSignInWidget`, replace it with an `EmailOtpSignInWidget` passed as `emailOtpSignInWidget`.
+
+Existing accounts keep working, and users can sign in with a code sent to the email they registered with. To let them keep signing in with their password, set `allowPasswordSignIn: true` on the widget, as shown in [client-side configuration](#client-side-configuration).
+
+:::warning
+If you use [your own email provider](#use-your-own-email-provider) and don't set `sendOtpLoginVerificationCode`, sign-in codes are sent with `sendRegistrationVerificationCode`, and a warning is logged the first time this happens. That callback then receives the ID of the sign-in request as its `accountRequestId`, so any links built from it, such as a link to complete the registration, won't work. Set `sendOtpLoginVerificationCode` if your registration emails contain more than the code.
+:::
