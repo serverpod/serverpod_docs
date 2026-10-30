@@ -25,9 +25,8 @@ That is the whole mental model: you work in the server and the app, and Serverpo
 myproject/
 ├── pubspec.yaml                  # Workspace root: one `dart pub get` resolves all packages
 ├── AGENTS.md                     # Instructions for AI agents working in the project
-├── .github/                      # CI workflows: analyze, format, and test
+├── .github/                      # CI workflows: analyze, format, test, and deploy to Serverpod Cloud
 ├── .vscode/                      # Attach-to-server debug configs and a serverpod start task, plus mcp.json if you picked VS Code
-├── CLAUDE.md                     # If you picked Claude: loads AGENTS.md for Claude
 ├── .mcp.json, .claude/           # If you picked Claude: MCP config and skills
 ├── .cursor/                      # If you picked Cursor: MCP config and skills
 ├── .codex/                       # If you picked Codex: MCP config
@@ -55,7 +54,7 @@ myproject/
     └── assets/config.json        # The server URL the app reads at startup
 ```
 
-The exact set depends on your create-time choices: the auth endpoints and sign-in screen come with authentication, the web pieces with the web server option, and the MCP configs and skills with the editors you picked. `AGENTS.md` is always created, and `CLAUDE.md` only when you pick Claude.
+The exact set depends on your create-time choices: the auth endpoints and sign-in screen come with authentication, the web pieces with the web server option, and the MCP configs and skills with the editors you picked. The `AGENTS.md` file is always created.
 
 </p>
 </details>
