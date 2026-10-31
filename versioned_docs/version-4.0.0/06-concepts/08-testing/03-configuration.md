@@ -71,7 +71,7 @@ withServerpod(
 );
 ```
 
-Serverpod then neither creates nor drops that database, and [`rollbackDatabase`](#rollbackdatabase) still decides whether the group's writes are rolled back. Groups that share the database can't run in parallel, so run their test files one at a time with `dart test --concurrency=1`.
+Serverpod then neither creates nor drops that database, and [`rollbackDatabase`](#rollbackdatabase) still decides whether the group's writes are rolled back. Groups that share the database can't run in parallel, so run their test files one at a time with `dart test --concurrency=1`. The option needs Serverpod 4.0.3 or later.
 
 ## Database rollback {#rollbackdatabase}
 

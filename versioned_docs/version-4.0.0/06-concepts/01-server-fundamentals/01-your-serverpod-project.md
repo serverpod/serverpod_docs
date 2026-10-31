@@ -134,7 +134,7 @@ Each editor you pick at create time gets its own MCP config, which registers Ser
 | OpenCode    | `opencode.json`                    | `.opencode/skills/` |
 | Antigravity | `.agents/plugins/serverpod-local/` | `.agents/skills/`   |
 
-The setup screen preselects no editors, so pick the ones you use. With `--no-interactive`, `serverpod create` configures Claude, Cursor, and VS Code unless you pass `--ide`.
+The first `serverpod create` screen preselects no editors, so pick the ones you use, or **None**. With `--no-interactive`, `serverpod create` configures Claude, Cursor, and VS Code unless you pass `--ide`.
 
 The workspace `.gitignore` excludes these files for every editor except OpenCode, so Git picks up `opencode.json` and `.opencode/` unless you add them to `.gitignore`.
 
