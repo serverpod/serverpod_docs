@@ -1,0 +1,8 @@
+MD001: false
+MD013: false
+MD014: false
+MD024: false
+MD041: false # MD041/first-line-heading/first-line-h1: First line in a file should be a top-level heading
+# Temporarily disable MD012/no-multiple-blanks because the cli_tools adds
+# an extra newline for commands without sub commands 
+MD012: false 
