@@ -28,6 +28,27 @@ int result = await session.db.unsafeExecute(
 );
 ```
 
+## `unsafeWatch`
+
+Returns a `Stream` that runs a read query and emits its `DatabaseResult` as soon as you listen to it, then again every time a write to one of the queried tables commits. It is the raw counterpart of the generated [`watch`](crud#watching-rows) method and takes the same `throttle` parameter.
+
+```dart
+var subscription = session.db.unsafeWatch(
+  r'SELECT id, size FROM apparel WHERE color = @color',
+  parameters: QueryParameters.named({'color': 'green'}),
+).listen((result) {
+  // Handle the latest rows.
+});
+```
+
+The queried tables are detected automatically. To set them yourself, pass their names with `triggerOnTables`. The list replaces the detection, so include every table the stream should react to.
+
+The method is only supported on SQLite. On PostgreSQL, calling it throws an `UnsupportedError`.
+
+:::warning
+A raw `DELETE` without a `WHERE` clause can skip SQLite's change notifications. Streams from `unsafeWatch` and the generated `watch` method then don't emit after it. Add a `WHERE` clause, such as `WHERE true`, when clearing a watched table. The generated delete methods always include one.
+:::
+
 ## `unsafeSimpleQuery`
 
 Similar to `unsafeQuery`, but uses the simple query protocol. This protocol does not support parameter binding, making it more susceptible to SQL injection. **Use with extreme caution and only when absolutely necessary.**
@@ -84,7 +105,7 @@ var result = await session.db.unsafeQuery(
 ```
 
 :::danger
-Always sanitize your input when using raw query methods. For the `unsafeQuery` and `unsafeExecute` methods, use query parameters to prevent SQL injection. Avoid using `unsafeSimpleQuery` and `unsafeSimpleExecute` unless the simple query protocol is strictly required.
+Always sanitize your input when using raw query methods. For the `unsafeQuery`, `unsafeExecute`, and `unsafeWatch` methods, use query parameters to prevent SQL injection. Avoid using `unsafeSimpleQuery` and `unsafeSimpleExecute` unless the simple query protocol is strictly required.
 :::
 
 ## Working with results

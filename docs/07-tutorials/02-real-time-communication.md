@@ -28,13 +28,13 @@ With the release of Serverpod 2.1, a new feature called [streaming methods](../c
 
 ## Setting up the project
 
-We begin by creating a new project with the `serverpod create` command. Pixorama keeps its image in memory, so it doesn't need a database. In the interactive setup, deselect **Database (recommended)** under **Database & caching** and keep the other defaults:
+We begin by creating a new project with the `serverpod create` command. Pixorama keeps its image in memory, so it doesn't need a database. In the interactive setup, pick your editors or **None**, deselect **Database (recommended)** on the **Database & caching** screen, and keep the other defaults:
 
 ```bash
 serverpod create pixorama
 ```
 
-If you run the command non-interactively, pass `--no-interactive --no-database --no-redis --ide none` instead. The last two flags match the interactive defaults. Without them, the command adds Redis and AI agent setup for Claude, Cursor, and VS Code.
+If you run the command non-interactively, pass `--no-interactive --no-database --no-redis --ide none` instead. Without the last two flags, the command adds Redis and AI agent setup for Claude, Cursor, and VS Code.
 
 Now, let's open the project in VS Code and explore the structure. The server code resides in the `pixorama_server` package. We'll start by creating models - classes that we can serialize and pass between the client and server. Our models will be placed in the `lib/src/models` directory.
 

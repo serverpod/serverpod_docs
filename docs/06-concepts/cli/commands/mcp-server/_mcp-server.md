@@ -4,7 +4,7 @@
 
 The server directory is auto-detected from the current working directory. Pass `--server-dir` explicitly in monorepos that contain more than one server project.
 
-The bridge drives a running session, so start one with `serverpod start` before asking an agent to use these tools. The bridge itself can stay connected while the session stops and starts.
+The bridge drives a running session, so start one with `serverpod start`, or with `serverpod runner start` to run it in the background, before asking an agent to use these tools. The bridge itself can stay connected while the session stops and starts.
 
 ## Set up your editor
 

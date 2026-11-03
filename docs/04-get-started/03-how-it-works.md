@@ -15,11 +15,11 @@ Serverpod is a full backend. It manages your database, authentication, file uplo
 
 A Serverpod project starts with the `serverpod create` command, which walks you through a few choices that shape what it generates:
 
+- **Code editors and AI agents:** Pick any of Antigravity, Claude, Codex, Cursor, OpenCode, and VS Code, or **None**. Serverpod installs skills and MCP servers for each one you select.
 - **Project type:** A server with a Flutter app (the default), a server only, or a reusable [module](./concepts/server-fundamentals/modules) shared across servers.
 - **Database and caching:** Add a Postgres database and Redis (for pub/sub and caching).
-- **Authentication:** Built-in email and social sign-ins.
 - **Web server:** Optionally serve web pages and your Flutter web app alongside your API.
-- **Code editors and AI agents (optional):** Pick any of Antigravity, Claude, Codex, Cursor, OpenCode, and VS Code. Serverpod installs skills and MCP servers for each one you select.
+- **Authentication:** Built-in email and social sign-ins.
 
 The result is one workspace. For the default project type, it has three Dart packages:
 

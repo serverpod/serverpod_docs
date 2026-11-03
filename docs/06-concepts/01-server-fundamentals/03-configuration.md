@@ -93,10 +93,10 @@ The three server blocks configure Serverpod's three servers: the API server your
 
 ### Database backends
 
-Serverpod supports both PostgreSQL and SQLite as database backends.
+Serverpod supports both PostgreSQL and SQLite as database backends. A server that does not use a database leaves the `database` section out of every run mode file. Its models then can't use `table`, and `serverpod create-migration` won't create migrations.
 
 :::warning
-All run modes must use the same database backend: creating migrations fails otherwise. This also keeps your development environment consistent with production.
+All run modes must use the same database backend, and either all of them or none of them configure a database: `serverpod generate` fails otherwise. This also keeps your development environment consistent with production.
 :::
 
 #### PostgreSQL
@@ -319,17 +319,6 @@ extraClasses:
 ```
 
 See the [serialization documentation](../data-and-the-database/models/custom-serialization) for implementing custom serializable classes.
-
-### Features
-
-Control which Serverpod features are enabled:
-
-```yaml
-features:
-  database: false
-```
-
-A server that does not use a database can set `database: false` to skip migrations and table generation. Projects created without a database, for example with `--no-database`, don't include this setting, so add it yourself.
 
 ### Experimental features
 

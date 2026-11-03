@@ -32,6 +32,8 @@ By default, `serverpod start` watches your project. What happens when you save d
 
 The **R** key adapts to the situation. In watch mode, where saves already hot reload, **R** performs a hot restart: use it when a change cannot be hot reloaded, such as code that only runs at startup. If the project has errors instead, the session stays open and tells you what failed; the server boots automatically once a save fixes the errors, or press **R** to retry the build and start.
 
+If the session keeps reporting compilation errors you already fixed, stop it, run [`serverpod clean`](../cli/commands/clean) to delete the cached server build, and start it again.
+
 To start without watching, pass `--no-watch`. Nothing reloads on save; there, **R** hot reloads on demand, and **Shift+R** restarts the server.
 
 ## Manage migrations from the terminal

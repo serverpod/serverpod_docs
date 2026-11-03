@@ -8,8 +8,8 @@ Turn Redis on when more than one Serverpod instance must share a cache, pass mes
 
 Whether a new project includes Redis configuration depends on how you created it:
 
-- **`serverpod create` with the setup screen:** only if you select Redis.
-- **`serverpod create` without the setup screen** (for example with `--no-interactive`): included by default.
+- **Interactive `serverpod create`:** only if you select Redis on the **Database & caching** screen.
+- **`serverpod create` without questions** (for example with `--no-interactive`): included by default.
 - **`serverpod quickstart`:** always included.
 
 Including it copies the config, the Compose service, and a generated password. It doesn't turn Redis on.

@@ -30,7 +30,7 @@ Use `serverpod create` to generate a new project with a server, a client, and a 
 $ serverpod create magic_recipe
 ```
 
-The command is interactive. Step through the prompts, accepting the defaults.
+The command is interactive. Pick your editors or **None** on the first screen, then accept the defaults on the rest.
 
 Open the project's **root** folder (`magic_recipe`) in your editor, not one of the sub-packages. This keeps the analyzer in sync when code is generated and makes it easy to move between the server and app.
 

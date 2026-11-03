@@ -124,10 +124,7 @@ To apply migrations explicitly, start the server runtime with the `--apply-migra
 $ dart run bin/main.dart --apply-migrations
 ```
 
-If a migration fails, or the database doesn't match the latest migration afterward, the outcome depends on the run mode:
-
-- **Any run mode except `development`:** the server logs `Failed to apply database migrations.` or `Database does not match target state.` and keeps starting.
-- **`development`:** the server exits with code 1.
+If a migration fails, or the database doesn't match the latest migration afterward, the server logs `Failed to apply database migrations.` or `Database does not match target state.` and keeps starting. Requests that use the mismatched tables can fail until you fix the schema.
 
 Migrations can also be applied with the [maintenance role](../../server-fundamentals/running-your-server#choose-a-server-role). The server applies the migrations and then exits, which suits CI jobs and other automated processes. If a migration fails, or the database doesn't match the latest migration afterward, it exits with code 1 in every run mode, so the job fails.
 

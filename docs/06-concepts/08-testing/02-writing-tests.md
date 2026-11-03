@@ -129,7 +129,7 @@ The generated file exports these, so you can name them in a test without importi
 | `ServerpodUnauthenticatedException` | An endpoint call was made without authentication and the endpoint requires it. |
 | `ServerpodInsufficientAccessException` | The authentication used did not carry the scopes the endpoint requires. |
 | `ConnectionClosedException` | A stream connection closed with an error, for example because authentication was revoked. |
-| `InvalidConfigurationException` | The endpoint ran database calls or transactions in parallel, which the automatic rollback cannot wrap. See [`rollbackDatabase`](configuration#rollbackdatabase). |
+| `InvalidConfigurationException` | Database calls or transactions ran in parallel, or a query was watched, neither of which the automatic rollback can wrap. See [`rollbackDatabase`](configuration#rollbackdatabase). |
 
 The test server also throws when it fails to start or takes longer than the start timeout. That error type is not exported, so you cannot catch it by name, but the message says which of the two happened.
 

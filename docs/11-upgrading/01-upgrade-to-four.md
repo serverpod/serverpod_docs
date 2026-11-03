@@ -275,7 +275,6 @@ In a folder that already has a Serverpod server, `serverpod create .` runs an up
 - `<project>_server/docker-compose.yaml` and the workflows in `.github/workflows/`.
 - The scaffolded authentication endpoints in `<project>_server/lib/src/auth/`, and the scaffolded web server files in `<project>_server/lib/src/web/` and `<project>_server/web/`.
 - `lib/main.dart`, `lib/client.dart`, and `lib/screens/greetings_screen.dart` in your Flutter app.
-- `CLAUDE.md`, which becomes a pointer to an `AGENTS.md` file that the command doesn't create.
 
 The command also adds dependencies to your `pubspec.yaml` files. In an interactive terminal on a project that already has migrations, it only asks which editors to set up. In that case, it turns every other option off, so the rewritten files lose your setup.
 

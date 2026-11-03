@@ -26,6 +26,7 @@ withServerpod(
 | `configOverride` | A function that changes values in the loaded config before the server starts. | `null` |
 | `databaseInterceptor` | A [database interceptor](../data-and-the-database/database/database-interceptors) for the test server to use. | `null` |
 | `enableSessionLogging` | Whether session logging is on. | `false` |
+| `ephemeralDatabase` | Whether the group gets its own empty database. See [below](#ephemeraldatabase). | `true` |
 | `experimentalFeatures` | Experimental features to enable, such as [diagnostic event handlers](../operations/exception-monitoring). | `null` |
 | `rollbackDatabase` | When database changes are rolled back. See [below](#rollbackdatabase). | `RollbackDatabase.afterEach` |
 | `runMode` | The run mode the server starts in. | `test` |
@@ -37,9 +38,7 @@ withServerpod(
 | `testServerOutputMode` | How much server output reaches your terminal. See [below](#server-output). | `TestServerOutputMode.normal` |
 
 :::note
-When `config/generator.yaml` sets `features: database: false`, the generated `withServerpod` has no `applyMigrations`, `databaseInterceptor`, `rollbackDatabase`, or `runtimeParametersBuilder` parameter, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
-
-Projects created without a database, for example with `--no-database`, don't include this setting, so add it and run `serverpod generate`.
+When the run mode files configure no database, for example in a project created with `--no-database`, the generated `withServerpod` has no `applyMigrations`, `databaseInterceptor`, `ephemeralDatabase`, `rollbackDatabase`, or `runtimeParametersBuilder` parameter, so passing one is a compile error. Rollback is off in that case and there is nothing to migrate.
 :::
 
 Set `serverDirectory` when tests run from somewhere other than the server package, such as the workspace root. Without it the server resolves those paths against the current directory, misses your config, and falls over later on whatever it needed from it.
@@ -58,6 +57,22 @@ withServerpod(
 );
 ```
 
+## Use an existing database {#ephemeraldatabase}
+
+Each `withServerpod` group runs against its own empty database, created when the group starts and dropped when it finishes. To run against the database configured for the run mode instead, for example one you seeded beforehand, pass `ephemeralDatabase: false`:
+
+```dart
+withServerpod(
+  'Given a seeded database',
+  (sessionBuilder, endpoints) {
+    /* test code */
+  },
+  ephemeralDatabase: false,
+);
+```
+
+Serverpod then neither creates nor drops that database, and [`rollbackDatabase`](#rollbackdatabase) still decides whether the group's writes are rolled back. Groups that share the database can't run in parallel, so run their test files one at a time with `dart test --concurrency=1`.
+
 ## Database rollback {#rollbackdatabase}
 
 By default each test runs inside a transaction that is rolled back when that test ends, so tests cannot see each other's data. Three values control this:
@@ -68,7 +83,7 @@ By default each test runs inside a transaction that is rolled back when that tes
 | `RollbackDatabase.afterAll` | Once the whole `withServerpod` group finishes. |
 | `RollbackDatabase.disabled` | Never. Data stays until the group finishes and its database is dropped. |
 
-Three situations call for changing it.
+Four situations call for changing it.
 
 **Tests that build on each other.** When one test depends on what the previous one left behind, `afterAll` keeps state across the group and still rolls everything back at the end. Tests that share state are usually worth avoiding, but this helps when the setup is expensive.
 
@@ -84,6 +99,8 @@ Future<void> concurrentTransactionCalls(Session session) async {
   ]);
 }
 ```
+
+**Watching queries.** The [`watch`](../data-and-the-database/database/crud#watching-rows) and [`unsafeWatch`](../data-and-the-database/database/raw-access#unsafewatch) streams only see committed data, so they cannot observe writes inside the rollback transaction. Both throw `InvalidConfigurationException` unless you pass `RollbackDatabase.disabled`.
 
 With rollback disabled, later tests in the same group see what earlier tests committed. To start each test from a clean state, clean up in `tearDown`:
 

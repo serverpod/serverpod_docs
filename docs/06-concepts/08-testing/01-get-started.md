@@ -11,7 +11,7 @@ That means no separate server to start, no HTTP client to write, and no mocked d
 
 Two things follow from that:
 
-- **Tests stay independent.** Anything a test writes to the database is rolled back once that test finishes, so tests never see each other's data and you do not clean up after yourself. Each `withServerpod` group also runs against its own temporary database, which is dropped when the group finishes.
+- **Tests stay independent.** Anything a test writes to the database is rolled back once that test finishes, so tests never see each other's data and you do not clean up after yourself. By default, each `withServerpod` group also runs against its own temporary database, which is dropped when the group finishes.
 - **Each test sets its own scene.** A session builder decides what the server state looks like for a call, such as who is signed in.
 
 ## Set up

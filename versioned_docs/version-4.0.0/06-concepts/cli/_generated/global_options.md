@@ -16,6 +16,7 @@ Global options:
     --experimental-features    Enable experimental features. Experimental features might be removed at any time.
 
 Available commands:
+  clean                     Delete the cached server build so the next `serverpod start` recompiles from scratch.
   cloud                     Manage Serverpod Cloud projects through the Serverpod Cloud.
   completion                Command line completion commands
   create                    Creates a new Serverpod project, specify project name (must be lowercase with no special characters).
