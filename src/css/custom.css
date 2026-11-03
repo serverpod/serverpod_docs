@@ -630,3 +630,28 @@ a.navbar__link svg use[href="#theme-svg-external-link"] {
   border: 1px solid var(--docs-code-border-color) !important;
   border-width: 1px !important;
 }
+
+/*------------------------------------------------------------------------------
+ * Troubleshooting accordions
+ *----------------------------------------------------------------------------*/
+
+.troubleshooting-accordions details {
+  --docusaurus-details-decoration-color: var(--ifm-color-emphasis-300);
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  box-shadow: none;
+  color: inherit;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.troubleshooting-accordions details > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.troubleshooting-accordions details:hover {
+  border-color: var(--ifm-color-primary);
+}
