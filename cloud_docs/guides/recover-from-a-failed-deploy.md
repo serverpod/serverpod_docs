@@ -15,7 +15,7 @@ Ensure you have:
 - The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
 - A Serverpod Cloud project with at least one deploy attempt.
 
-## 1. Confirm the failed deployment
+## Confirm the failed deployment
 
 List recent deployments to identify the failed attempt:
 
@@ -33,7 +33,7 @@ A failed deploy shows `FAILURE` in the Status column and a reason in the Info co
 
 Copy the deployment ID so you can inspect the logs for that specific attempt.
 
-## 2. Inspect the build logs
+## Inspect the build logs
 
 Build-time errors appear only in the build log. Start by retrieving the latest build log:
 
@@ -55,7 +55,7 @@ serverpod cloud build log > build-log.txt
 serverpod cloud build log | grep ERROR
 ```
 
-## 3. Diagnose and fix the failure
+## Diagnose and fix the failure
 
 Find the symptom that best matches your deployment status or logs, then expand the corresponding section.
 
@@ -78,7 +78,7 @@ See [Deployment hooks](/cloud/concepts/deployment-hooks) for the failure semanti
 <details>
 <summary><strong>The CLI reported a send timeout</strong></summary>
 
-The CLI reports `Send Timeout. Please check your internet connection and try again`. The project failed to upload to Serverpod Cloud within the default network timeout window. This commonly occurs on slower connections or first deploys containing large assets.
+The CLI reports `Send Timeout. Please check your internet connection and try again`. The upload stalled for longer than the CLI's timeout (60 seconds by default), so nothing was built. This commonly occurs on slower connections or first deploys containing large assets.
 
 Increase the upload timeout and redeploy:
 
@@ -150,7 +150,7 @@ If the error is `Bad state: FutureCalls is not initialized.`, your server is try
 
 </div>
 
-## 4. Redeploy and verify
+## Redeploy and verify
 
 Once the issue is resolved locally, re-run the deployment and monitor the rollout:
 
