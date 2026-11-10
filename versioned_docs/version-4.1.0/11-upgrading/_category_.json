@@ -1,9 +1,5 @@
 {
-  "label": "Upgrading",
-  "className": "sidebar-icon-upgrading",
-  "link": {
-    "type": "generated-index",
-    "slug": "/upgrading",
-    "description": "Upgrade an existing project to a new version of Serverpod, move it off the legacy auth module, or add PostGIS to its database."
+    "label": "Upgrading",
+    "className": "sidebar-icon-upgrading"
   }
-}
+  
