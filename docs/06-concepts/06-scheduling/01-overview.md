@@ -9,7 +9,7 @@ A future call is a piece of server work you schedule to run later instead of rig
 Future calls are stored in the database, so they survive a server restart and are shared across every server instance you run. This makes them different from an in-memory `Timer`: a scheduled call is not lost if the process that created it stops.
 
 :::note
-On Serverpod Cloud, future calls are available only on the Growth and Enterprise [plans](https://serverpod.dev/cloud).
+On Serverpod Cloud, future calls are available only on the Growth and Enterprise [plans](https://serverpod.dev/cloud). They also aren't supported on projects that [scale to zero](/cloud/concepts/scale-to-zero) when idle.
 :::
 
 ## What you can schedule
