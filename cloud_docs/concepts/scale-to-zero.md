@@ -25,12 +25,11 @@ To see whether your project scales to zero, open its **Settings** in the [Server
 
 ## When to use scale to zero
 
-Whether scale to zero suits a project depends on how it's used. It suits projects that sit idle for long stretches, such as staging projects, demos, internal tools, and new apps before traffic picks up.
+Whether scale to zero suits a project depends on how it's used. It suits projects that sit idle for long stretches, such as staging projects, demos, internal tools, and apps before launch.
 
 It doesn't suit:
 
-- **Apps where every request must be fast:** The first request after a quiet period waits a few seconds while the server starts.
-- **Production apps with steady traffic:** These apps rarely sit idle, so scale to zero saves little.
+- **Production apps:** The first user after a quiet period waits a few seconds while the server starts. If traffic is steady, the project rarely sits idle, so scale to zero saves little.
 - **Servers that use future calls:** [Future calls](/concepts/scheduling/overview), Serverpod's way to schedule server work for later, aren't supported with scale to zero. A call that falls due while the project is at zero runs late, once the next request wakes the server.
 
 If your project is one of these, keep its server running. Starter projects always scale to zero, so [move the project to Growth](#turn-off-scale-to-zero). Growth keeps the server running unless you turn on scale to zero.
