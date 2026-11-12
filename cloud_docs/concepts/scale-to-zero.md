@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10
 title: Scale to zero
-description: Scale to zero, which every Starter project uses, stops a Serverpod Cloud server after about 5 minutes without requests and starts it again on the next one.
+description: Scale to zero stops a Serverpod Cloud server after about 5 minutes without requests and starts it again on the next one.
 ---
 
 # Scale to zero
@@ -12,10 +12,14 @@ Staging projects, demos, and internal tools can go hours without a request. Thei
 
 Whether a project scales to zero depends on its plan:
 
+<div className="full-width-table">
+
 | Plan    | Scale to zero  | To change it                                                         |
 | ------- | -------------- | -------------------------------------------------------------------- |
 | Starter | On             | [Move the project to Growth](#turn-off-scale-to-zero) to turn it off |
 | Growth  | Off by default | [Set **Min podlets** to 0](#turn-on-scale-to-zero) to turn it on     |
+
+</div>
 
 To see whether your project scales to zero, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Compute** section of the **Plan** card shows how many podlets, the running copies of your server, the project can run. A range that starts at 0, such as **0-1 PODLETS**, means the project scales to zero. From the terminal, run `serverpod cloud project show` in your project's directory. Its `Compute` row ends with the same range, such as `0-1 podlets`.
 
@@ -26,6 +30,7 @@ Whether scale to zero suits a project depends on how it's used. It suits project
 It doesn't suit:
 
 - **Apps where every request must be fast:** The first request after a quiet period waits a few seconds while the server starts.
+- **Production apps with steady traffic:** These apps rarely sit idle, so scale to zero saves little.
 - **Servers that use future calls:** [Future calls](/concepts/scheduling/overview), Serverpod's way to schedule server work for later, aren't supported with scale to zero. A call that falls due while the project is at zero runs late, once the next request wakes the server.
 
 If your project is one of these, keep its server running. Starter projects always scale to zero, so [move the project to Growth](#turn-off-scale-to-zero). Growth keeps the server running unless you turn on scale to zero.
@@ -38,6 +43,8 @@ About 5 minutes after the last request ends, the project scales down to zero pod
 
 Only requests that reach your server wake the project or keep it awake. Here are common activities and whether each one does:
 
+<div className="full-width-table">
+
 | Activity                                                                                                      | Wakes it or keeps it awake?                                                                                     |
 | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | A request to any of your project's addresses, including your [custom domains](/cloud/concepts/custom-domains) | Yes                                                                                                             |
@@ -48,13 +55,15 @@ Only requests that reach your server wake the project or keep it awake. Here are
 | A file the [CDN](/cloud/concepts/cdn) (content delivery network) serves from its cache                        | No, unless the CDN checks with your server first                                                                |
 | A deploy                                                                                                      | No                                                                                                              |
 
-During a deploy, Serverpod Cloud runs the new version briefly to apply database migrations and check that it starts. An idling project then stays at zero until the next request, which starts the new version. A new project's first deploy starts it, and it can scale down about 5 minutes later.
+</div>
+
+During a deploy, Serverpod Cloud runs the new version briefly to apply database migrations and check that it starts. An idling project then stays at zero until the next request, which starts the new version. A new project's first deploy starts a podlet. If no requests arrive, the project scales down to zero about 5 minutes later.
 
 While the project is at zero, the data in your database and your stored files stay as they are. Anything your server keeps in memory, such as a cache, starts empty after a wake-up.
 
 ## Handle the first request to an idling project
 
-The first request to an idling project wakes it. A wake-up usually takes 4 to 6 seconds, and sometimes up to 9. The request waits until the server is ready, for up to 30 seconds.
+The first request to an idling project wakes it. A wake-up usually takes 4 to 6 seconds, and sometimes a few seconds more. The request waits until the server is ready, for up to 30 seconds.
 
 In rare cases where a wake-up takes longer than 30 seconds, the request fails with a timeout error (HTTP 504), but the server keeps starting.
 
@@ -72,12 +81,16 @@ From anywhere else, pass `-p your-project-id`.
 
 The console status and the `Status` row of the command's output use these labels:
 
+<div className="full-width-table">
+
 | What's happening                                | Console         | Cloud CLI     |
 | ----------------------------------------------- | --------------- | ------------- |
 | The project is running                          | **Online**      | `● Running`   |
 | The project is at zero podlets                  | **Idling**      | `☾ Idling`    |
-| The project is waking up                        | **Starting**    | `◐ Deploying` |
+| The project is waking up                        | **Starting**    | `◐ Starting`  |
 | The project is still waking up after 30 seconds | **Unavailable** | `✖ Down`      |
+
+</div>
 
 While a project is idling, its web and API links stay available. When you open one, the project wakes up.
 
@@ -90,7 +103,7 @@ Cloud CLI versions before 1.3.0 show an error for an idling project. To see whic
 On Growth, you turn on scale to zero in the console. The Cloud CLI can't change the autoscaling range.
 
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Edit plan**.
-2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 0. The text "scales to zero when idle" appears below **Min podlets**. Above **Save**, a warning reads "Future calls are not supported with Scale to 0."
+2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 0. The text "scales to zero when idle" appears below **Min podlets**.
 3. Select **Save**.
 
 The console confirms with "Your plan is updated". The change can take up to a minute to apply. Your server restarts once after you save. If no requests arrive, the project then scales down to zero.
@@ -111,7 +124,7 @@ To stop a Starter project from scaling to zero, move it to Growth:
 2. Under **Project plan**, choose **Growth**. The autoscaling range changes to Growth's default of 1 to 1, which keeps one podlet running.
 3. Select **Save**. If you haven't added a card, the button reads **Add card and upgrade**.
 
-Growth costs more than Starter. See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the prices.
+Upgrading to a higher plan costs more. See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the prices.
 
 ## Related
 
