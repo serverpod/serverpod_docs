@@ -32,9 +32,9 @@ Scale to zero suits projects with quiet periods.
 It doesn't suit:
 
 - **Apps where every request must be fast:** The first request after a quiet period waits a few seconds while the server starts.
-- **Servers that use future calls:** [Future calls](/concepts/scheduling/overview), Serverpod's way to schedule server work for later, aren't supported with scale to zero. If your plan includes future calls, a call that's due while the project is idle runs late, once the next request wakes the server.
+- **Servers that use future calls:** [Future calls](/concepts/scheduling/overview) aren't supported with scale to zero. A call that's due while the project is idle runs late, once the next request wakes the server.
 
-If one of these describes your project, keep its server running. Starter projects always scale to zero, so [move the project to Growth](#turn-off-scale-to-zero). Growth keeps the server running unless you turn on scale to zero.
+If one of these describes your project, [turn off scale to zero](#turn-off-scale-to-zero).
 
 On Growth, you pay for the time your podlets run, so a project with zero podlets adds nothing to your podlet costs. The monthly plan fee still applies.
 
@@ -42,19 +42,19 @@ On Growth, you pay for the time your podlets run, so a project with zero podlets
 
 About 5 minutes after the last request ends, the project scales down to zero podlets. The console then shows its status as **Idling**.
 
-Only requests that reach your server wake the project or keep it awake. Here are common activities and whether each one does:
+Only requests that reach your server wake it or keep it running. Here are common activities and whether each one does:
 
 <div className="full-width-table">
 
-| Activity                                                                                                      | Wakes it or keeps it awake?                                                                                     |
-| ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| A request to any of your project's addresses, including your [custom domains](/cloud/concepts/custom-domains) | Yes                                                                                                             |
-| An uptime monitor that checks your project more often than every 5 minutes                                    | Yes, all the time                                                                                               |
-| A connection your app keeps open for [streaming methods](/concepts/endpoints-and-apis/streaming)              | Yes, while it's open. If your app always keeps one open, the project stays awake while anyone has the app open. |
-| The console's **Sessions** tab, which lists the calls to your server                                          | Yes, on a project with a database, while the tab is open with **Auto-fetch** on (the default)                   |
-| Work your server does on its own, such as a timer                                                             | No                                                                                                              |
-| A file the [CDN](/cloud/concepts/cdn) (content delivery network) serves from its cache                        | No, unless the CDN checks with your server first                                                                |
-| A deploy                                                                                                      | No                                                                                                              |
+| Activity                                                                                                      | Wakes it or keeps it running?                                                                                    |
+| ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| A request to any of your project's addresses, including your [custom domains](/cloud/concepts/custom-domains) | Yes                                                                                                              |
+| An uptime monitor that checks your project more often than every 5 minutes                                    | Yes, all the time                                                                                                |
+| A connection your app keeps open for [streaming methods](/concepts/endpoints-and-apis/streaming)              | Yes, while it's open. If your app always keeps one open, the server keeps running while anyone has the app open. |
+| The console's **Sessions** tab, which lists the calls to your server                                          | Yes, on a project with a database, while the tab is open with **Auto-fetch** on (the default)                    |
+| Work your server does on its own, such as a timer                                                             | No                                                                                                               |
+| A file the [CDN](/cloud/concepts/cdn) (content delivery network) serves from its cache                        | No, unless the CDN checks with your server first                                                                 |
+| A deploy                                                                                                      | No                                                                                                               |
 
 </div>
 
@@ -64,11 +64,11 @@ While the project is idling, the data in your database and your stored files sta
 
 ## Handle the first request to an idling project
 
-The first request to an idling project wakes it. A wake-up usually takes 4 to 6 seconds. Serverpod Cloud holds the request until the server is ready, for up to 30 seconds. Your server then answers it.
+The first request to an idling project wakes the server. A wake-up usually takes 4 to 6 seconds. Serverpod Cloud holds the request for up to 30 seconds, then passes it on to the server once it is ready.
 
 In rare cases where a wake-up takes longer than 30 seconds, the request fails with a timeout error (HTTP 504), but the server keeps starting.
 
-By default, your app waits 20 seconds for an endpoint call, which covers a typical wake-up. A new streaming connection waits 5 seconds, which can be shorter than a wake-up. To make your app wait longer, pass `connectionTimeout` and `streamingConnectionTimeout` when you create your `Client`. Also make your app retry [a call](/concepts/endpoints-and-apis/error-handling-and-exceptions#handle-errors-in-your-app) or [a streaming connection](/concepts/endpoints-and-apis/streaming#connection-level-exceptions) that fails while the server wakes up.
+By default, your app waits 20 seconds for an endpoint call and 5 seconds for a new streaming connection. The 20 seconds covers a typical wake-up, but the 5 seconds can be too short. To make your app wait longer, pass `connectionTimeout` and `streamingConnectionTimeout` when you create your `Client`. Also make your app retry [a call](/concepts/endpoints-and-apis/error-handling-and-exceptions#handle-errors-in-your-app) or [a streaming connection](/concepts/endpoints-and-apis/streaming#connection-level-exceptions) that fails while the server wakes up.
 
 ## Check whether your project is idling
 
@@ -89,53 +89,48 @@ The console status and the `Status` row of the command's output use these labels
 
 <div className="full-width-table">
 
-| What's happening                                | Console         | Cloud CLI     |
-| ----------------------------------------------- | --------------- | ------------- |
-| The project is running                          | **Online**      | `● Running`   |
-| The project has scaled down to zero podlets     | **Idling**      | `☾ Idling`    |
-| The project is waking up                        | **Starting**    | `◐ Starting`  |
-| The project is still waking up after 30 seconds | **Unavailable** | `✖ Down`      |
+| What's happening                               | Console         | Cloud CLI    |
+| ---------------------------------------------- | --------------- | ------------ |
+| The server is running                          | **Online**      | `● Running`  |
+| The server has stopped                         | **Idling**      | `☾ Idling`   |
+| The server is waking up                        | **Starting**    | `◐ Starting` |
+| The server is still waking up after 30 seconds | **Unavailable** | `✖ Down`     |
 
 </div>
 
-While a project is idling, its web and API links stay available. When you open one, the project wakes up.
+While a project is idling, its web and API links stay available. When you open one, the server wakes up.
 
 :::info
 Cloud CLI versions before 1.3.0 show an error for an idling project. To see which version you have, run `serverpod cloud version`. To update, run `dart install serverpod_cloud_cli`.
 :::
 
-## Turn scale to zero on or off
+## Configure scale to zero
 
-Scale to zero is on when **Min podlets**, the number of podlets your project always keeps running, is 0. If your plan lets you change **Min podlets**, you set it in the console, not the Cloud CLI.
-
-<!-- screenshot: cloud-console/settings-autoscaling-range.png. Owner: docs team. Last verified: 2026-11-13 against console.serverpod.dev. -->
-![The Compute section of the console's plan panel, with the Autoscaling range below Podlet size, Min podlets set to 0, and "scales to zero when idle" below it.](/img/cloud-console/settings-autoscaling-range.png)
+Scale to zero is on when **Min podlets**, the number of podlets your project always keeps running, is 0. You set it in the console, except on Starter, where it's always 0.
 
 ### Turn on scale to zero
 
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Edit plan**.
 2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 0. The text "scales to zero when idle" appears below **Min podlets**.
+
+   <!-- screenshot: cloud-console/settings-autoscaling-range.png. Owner: docs team. Last verified: 2026-11-13 against console.serverpod.dev. -->
+   ![The Compute section of the console's plan panel, with the Autoscaling range below Podlet size, Min podlets set to 0, and "scales to zero when idle" below it.](/img/cloud-console/settings-autoscaling-range.png)
+
 3. Select **Save**.
 
-The console confirms with "Your plan is updated". The change can take up to a minute to apply. Your server restarts once after you save. If no requests arrive, the project then scales down to zero.
+The console confirms with "Your plan is updated". The change can take up to a minute to apply, and your server restarts once. The project then scales down to zero after about 5 minutes without requests.
 
 ### Turn off scale to zero
 
-Starter projects always scale to zero. To keep your server running, move the project to Growth:
+Starter projects always scale to zero. To keep your server running, move the project to Growth, which keeps one podlet running by default.
 
-1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Upgrade plan**.
-2. Under **Project plan**, choose **Growth**. Growth keeps one podlet running by default.
-3. Select **Save**. If you haven't added a card, the button reads **Add card and upgrade**.
-
-Growth costs more than Starter. See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the prices.
-
-If your plan lets you change **Min podlets**, turn off scale to zero in the console:
+On other plans, set **Min podlets** to 1 or more in the console:
 
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Edit plan**.
 2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 1 or more.
 3. Select **Save**.
 
-The console confirms with "Your plan is updated". The change can take up to a minute to apply. If the project is idling, a podlet starts without waiting for a request. If the project is running, your server restarts once. The project then keeps at least the number of podlets you set.
+The console confirms with "Your plan is updated". The change can take up to a minute to apply. Your server then starts, or restarts once if it was already running.
 
 ## Related
 
