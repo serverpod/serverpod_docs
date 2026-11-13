@@ -22,6 +22,7 @@ serverpod cloud launch
 - **Networking and TLS.** Encrypted endpoints, certificates, and load balancing work without configuration.
 - **[Managed Postgres](/cloud/concepts/database)** (optional). Cloud can provision a production-grade Postgres database with automatic migrations and backups.
 - **[File storage](/cloud/concepts/storage).** Cloud provisions a private and a public storage with every project, ready for the files your app uploads at runtime.
+- **Hosting region.** Every project runs in Frankfurt, Germany, in the EU. That includes its server, database, and file storage.
 - **[Secrets and environment variables](/cloud/concepts/passwords-secrets-env-vars).** Manage sensitive values through the Cloud CLI. Values are encrypted where applicable.
 - **[Custom domains](/cloud/concepts/custom-domains).** Attach your own domain. TLS certificates are provisioned and renewed. Cloud hosts both your backend and a preconfigured website for your Flutter web app.
 - **[Logs and inspection](/cloud/concepts/logs).** View logs in the CLI or in Serverpod Insights, the desktop log viewer (requires a database).
