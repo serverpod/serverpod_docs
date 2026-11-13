@@ -163,3 +163,4 @@ For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides
 - [Private dependencies](/cloud/reference/private-dependencies) for private package access during the build.
 - [Ship non-Dart files with your server](/cloud/guides/ship-non-dart-files) for shipping static assets like configuration and templates.
 - [Deploy from CI with GitHub Actions](/cloud/guides/deploy-from-ci-with-github-actions) for shipping every push.
+- [Scale to zero](/cloud/concepts/scale-to-zero) for how an idle project stops its server and starts it again on the next request.
