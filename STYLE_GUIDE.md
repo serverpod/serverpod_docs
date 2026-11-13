@@ -153,3 +153,11 @@ Avoid em dashes (—) in running text. They are hard to read aloud and almost al
 
 Avoid: `Call initializeAuthServices before pod.start — this registers the token managers.`\
 Prefer: `Call initializeAuthServices before pod.start. This registers the token managers.`
+
+---
+
+## 9. Screenshots
+
+Take screenshots in the light theme, so they match the rest of the docs. In the Serverpod Cloud console, switch the theme to light first.
+
+Crop each screenshot to what the reader needs to find, with enough around it to show where it is on the screen.
