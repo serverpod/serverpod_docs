@@ -31,7 +31,7 @@ Releasing a build from TestFlight or the internal testing track to the public st
 Before you can publish for a platform, connect its store in the [Serverpod Cloud console](https://console.serverpod.dev). Open your project, then open the **App Stores** tab. Each store has a setup guide that walks you through the steps:
 
 - **App Store:** Join the Apple Developer Program, register your app's bundle ID, create the app in App Store Connect, and add an App Store Connect API key. Only the project owner can add the key.
-- **Google Play:** Sign up for Play Console, create the app, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
+- **Google Play:** Sign up for Play Console, create the app with your app's package name, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
 
 The `app doctor` command shows whether each connection is complete, and links to the setup guide when it isn't.
 
@@ -226,7 +226,6 @@ Each platform needs the icon in several sizes. A package such as [flutter_launch
 ## Limits
 
 - **Platforms:** App publishing builds for iOS and Android only.
-- **First Android build:** Google Play only accepts the first build of a new app from Play Console. Download it with `app artifacts` and upload it in Play Console once. Later builds upload on their own.
 - **Monthly builds:** Each plan includes a number of app builds per month. When they are used up, `app publish` stops with an error until the next month.
 
 ## Related
