@@ -197,7 +197,7 @@ android {
 
 Serverpod Cloud sets `SERVERPOD_APP_BUILD` on its builds, so release builds on your computer keep using the debug key. Apps created with `serverpod create` already include this setup.
 
-The `app doctor` command checks that your Gradle build file names all four variables. You can read them in any way Gradle supports, such as `providers.environmentVariable("ANDROID_KEY_ALIAS")` or, in a Groovy `build.gradle`, `System.getenv('ANDROID_KEY_ALIAS')`.
+The `app doctor` command checks that your release build type doesn't sign with the debug key alone, and that your Gradle build file names all four variables. You can read them in any way Gradle supports, such as `providers.environmentVariable("ANDROID_KEY_ALIAS")` or, in a Groovy `build.gradle`, `System.getenv('ANDROID_KEY_ALIAS')`.
 
 ### iOS export compliance {#ios-export-compliance}
 
