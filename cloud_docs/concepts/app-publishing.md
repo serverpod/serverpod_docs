@@ -223,6 +223,12 @@ Replace the icon files on each platform:
 
 Each platform needs the icon in several sizes. A package such as [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) creates every size for both platforms from one image.
 
+## Limits
+
+- **Platforms:** App publishing builds for iOS and Android only.
+- **First Android build:** Google Play only accepts the first build of a new app from Play Console. Download it with `app artifacts` and upload it in Play Console once. Later builds upload on their own.
+- **Monthly builds:** Each plan includes a number of app builds per month. When they are used up, `app publish` stops with an error until the next month.
+
 ## Related
 
 - [Deployments](/cloud/concepts/deployments): how to deploy the server your app talks to.
