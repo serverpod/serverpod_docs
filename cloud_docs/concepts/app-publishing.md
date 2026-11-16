@@ -107,6 +107,27 @@ To start the builds and return right away, pass `--no-await`. The command then p
 
 If your Flutter app is part of a Dart workspace, the upload includes the workspace packages it depends on. To leave files out of the upload, list them in a [`.scloudignore` file](/cloud/concepts/deployments#configure-whats-included).
 
+### Dart defines
+
+To build your app with compile-time values, pass them as with `flutter build`. Use `--dart-define` for one value, and `--dart-define-from-file` for a file in JSON or `.env` format:
+
+```bash
+serverpod cloud app publish --dart-define-from-file .env --dart-define FLAVOR=production
+```
+
+You can repeat both options. A later file replaces the values of an earlier one, and a `--dart-define` value replaces the value of the same key from a file.
+
+To build every publish with the same files, set `dartDefineFromFile` in `scloud.yaml` to a path or a list of paths, relative to `scloud.yaml`. The `--dart-define-from-file` option replaces this setting:
+
+```yaml title="scloud.yaml"
+project:
+  projectId: my-project
+  app:
+    dartDefineFromFile: .env
+```
+
+Serverpod Cloud always sets `SERVER_URL` to the URL of your project's server, so `getServerUrl` from `serverpod_flutter` connects the app to it. A `SERVER_URL` value you pass is ignored.
+
 ## Follow your builds
 
 Each publish creates an app upload with one build per platform. The upload ID that `app publish` and `app list` print identifies it. Use these commands to follow the builds:
