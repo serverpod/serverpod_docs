@@ -1,5 +1,6 @@
 ---
 sidebar_position: 11
+unlisted: true
 description: Serverpod Cloud builds your Flutter app and uploads it to TestFlight and Google Play. Check the setup with app doctor, then publish from the CLI.
 ---
 
