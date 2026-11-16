@@ -267,7 +267,7 @@ Each platform needs the icon in several sizes. A package such as [flutter_launch
 ## Limits
 
 - **Platforms:** App publishing builds for iOS and Android only.
-- **Monthly builds:** Each plan includes a number of app builds per month. When they are used up, `app publish` stops with an error until the next month.
+- **Monthly builds:** Your plan sets how many times you can publish each project per month. A publish counts once one of its builds succeeds, however many platforms it builds for, so a publish where every build fails doesn't count. The count resets on the first of each month, in UTC.
 
 ## Related
 
