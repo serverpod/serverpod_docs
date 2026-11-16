@@ -1,14 +1,14 @@
 ---
 sidebar_position: 11
 unlisted: true
-description: Serverpod Cloud builds your Flutter app and uploads it to TestFlight and Google Play. Check the setup with app doctor, then publish from the CLI.
+description: Serverpod Cloud builds your Flutter app and uploads it to TestFlight and Google Play. Set up the app with app setup, check it with app doctor, then publish from the CLI.
 ---
 
 # App publishing
 
 Getting a Flutter app to testers means signing builds, matching store settings, and uploading to TestFlight and Google Play. With app publishing, you run one command: Serverpod Cloud builds your Flutter app for iOS and Android, signs it, and uploads it to the stores you connected in the console.
 
-You publish from the Cloud CLI. The `app doctor` command checks your app's setup before you publish and tells you how to fix each problem it finds.
+You publish from the Cloud CLI. The `app setup` command prepares your Flutter app for the stores, and the `app doctor` command checks your app's setup before you publish and tells you how to fix each problem it finds.
 
 ## What app publishing does
 
@@ -35,6 +35,24 @@ Before you can publish for a platform, connect its store in the [Serverpod Cloud
 - **Google Play:** Sign up for Play Console, create the app with your app's package name, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
 
 The `app doctor` command shows whether each connection is complete, and links to the setup guide when it isn't.
+
+## Set up your app
+
+Run `app setup` from your project's directory to prepare your Flutter app for the stores:
+
+```bash
+serverpod cloud app setup
+```
+
+For each platform, the command checks the [app identifier](#app-identifiers). If your app still uses Flutter's `com.example` placeholder, it asks for a new identifier and writes it into your app's files. It then saves the identifier to your Serverpod Cloud project. For Android, it also checks the [release signing](#android-release-signing).
+
+To set the identifiers without a prompt, such as in CI, pass them as options:
+
+```bash
+serverpod cloud app setup --non-interactive --android-package-name com.yourcompany.yourapp --ios-bundle-id com.yourcompany.yourapp
+```
+
+Pass `--platforms ios` or `--platforms android` to set up one platform, and `--app-dir` to set up an app somewhere else.
 
 ## Check your app with app doctor
 
@@ -136,7 +154,7 @@ The version must be a Flutter release version, and it can't be lower than the Fl
 
 The stores identify your app by its bundle ID on iOS and its package name on Android. Serverpod Cloud reads them from your Flutter app: the bundle ID from the Xcode project in `ios/`, and the package name from `applicationId` in `android/app/build.gradle.kts` or `build.gradle`.
 
-A new Flutter app uses a `com.example` placeholder, which the stores don't accept. Replace it with your own identifier, such as `com.yourcompany.yourapp`, in both places. The identifier must match the app you created in App Store Connect and Play Console.
+A new Flutter app uses a `com.example` placeholder, which the stores don't accept. Replace it with your own identifier, such as `com.yourcompany.yourapp`, in both places. The [`app setup`](#set-up-your-app) command does this for you. The identifier must match the app you created in App Store Connect and Play Console.
 
 To publish with a different identifier than the one in your app's files, set it in `scloud.yaml`:
 
