@@ -69,7 +69,7 @@ iOS
 
 A check marked `✗` makes the build or the upload fail, so fix it before you publish. A check marked `!` is a warning: the app can be published, but the result may not be what you want.
 
-The command finds your Flutter app from `project.appDir` in `scloud.yaml`, the current directory, or your server's workspace. Pass `--app-dir` to check an app somewhere else, and `--platforms ios` or `--platforms android` to check one platform.
+The command finds your Flutter app from `project.app.dir` in `scloud.yaml`, the current directory, or your server's workspace. Pass `--app-dir` to check an app somewhere else, and `--platforms ios` or `--platforms android` to check one platform.
 
 ## Publish your app
 
@@ -118,7 +118,7 @@ Serverpod Cloud builds your app with the first Flutter version it finds, in this
 
 1. The `--flutter-version` option of `app publish`, such as `--flutter-version 3.50.0`.
 2. A single version in `environment.flutter` of your app's `pubspec.yaml`.
-3. `project.flutterSdk` in `scloud.yaml`.
+3. `project.app.flutterSdk` in `scloud.yaml`.
 4. The version of the Flutter SDK on your computer.
 5. The latest stable release.
 
@@ -143,9 +143,10 @@ To publish with a different identifier than the one in your app's files, set it 
 ```yaml title="scloud.yaml"
 project:
   projectId: my-project
-  appIdentifiers:
-    ios: com.yourcompany.yourapp
-    android: com.yourcompany.yourapp
+  app:
+    identifiers:
+      ios: com.yourcompany.yourapp
+      android: com.yourcompany.yourapp
 ```
 
 ### Android release signing {#android-release-signing}
