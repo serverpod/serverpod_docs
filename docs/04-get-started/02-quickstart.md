@@ -79,7 +79,7 @@ $ dart pub global deactivate serverpod_cli
     $ serverpod quickstart my_project
     ```
 
-2. Follow the instructions on the interactive screen to choose your coding editor and click `Enter` to create the project.
+2. Follow the instructions on the interactive screen to choose your coding editor and press **Enter** to create the project.
 
 3. Open the project's root folder, `my_project`, in your editor.
 
@@ -87,7 +87,7 @@ $ dart pub global deactivate serverpod_cli
 **If you use Cursor**, turn on the Serverpod and Dart MCP servers. Open **Customize** in the sidebar, click **MCPs**, and turn on both servers.
 :::
 
-## Start your app
+## Start your server and app
 
 In your terminal, go to the project folder and run [`serverpod start`](./concepts/server-fundamentals/running-your-server):
 
@@ -96,9 +96,8 @@ $ cd my_project
 $ serverpod start
 ```
 
-This starts your backend server, Flutter app, and database. The first start takes a few minutes while Serverpod downloads PostgreSQL and builds the app.
-
-When startup finishes, the sample app opens in your browser. Type your name and press **Enter**. The server responds with a personalized greeting, `Hello [your_name]`. Keep this terminal running. It watches your files and reloads your app whenever you save a change.
+This starts your backend server, Flutter app, and database. When startup is finished, the sample app opens in your browser. Type your name and press **Enter**. The server responds with a personalized greeting, `Hello [your_name]`.
+Keep this terminal running. It watches your files and reloads your app whenever you save a change.
 
 ## Build your app
 
@@ -115,7 +114,7 @@ Instruct your agent to build your app. Here are a few prompts that you can try:
 > _Build a modern CRM for a B2B sales team. Users can manage companies, contacts, and deals. Use a sleek dark theme with vibrant accent colors, compact layouts, and data-rich dashboards._
 
   </TabItem>
-  <TabItem value="journal" label="Social network">
+  <TabItem value="social" label="Social network">
 
 > _Build a modern social network where users share posts, follow each other, comment, and react. Give it a bold consumer-app style with colorful gradients, large avatars, and playful animations._
 
@@ -126,8 +125,8 @@ The agent will start building your app. It will manage your database and perform
 
 :::tip
 
-- If your app uses authentication, the terminal running `serverpod start` shows the verification code. Press the `C` key to copy the code.
-- If the app fails to reload, press the `R` key in the terminal running `serverpod start` to force a restart of the server and the app.
+- If your app uses authentication, the verification code appears as an alert in the terminal running `serverpod start`. Press the `C` key to copy the code.
+- If the agent fails to reload the app, press the `R` key in the terminal running `serverpod start` to force a restart of the server and the app.
 
 :::
 
@@ -144,11 +143,11 @@ Deploy your app to [Serverpod Cloud](/cloud), the hosting platform run by the Se
    ```
 
 3. Select your account from the browser window that opens, then return to your terminal once you see _Login successful_.
-4. When the terminal asks *Open the browser and create a new Serverpod Cloud project?*, press **Enter**. Your browser opens the project creation page.
+4. When the terminal asks _Open the browser and create a new Serverpod Cloud project?_, press **Enter**. Your browser opens the project creation page.
 5. The Console suggests a **Project ID**, which becomes your public URL. Change it if the Console says the name is taken, keep the **Starter** plan, and click **Launch Project**.
 6. Return to your terminal while the CLI packages and deploys your app.
 
-When rollout finishes, your web app is live at `https://<project-id>.serverpod.space`. To deploy updates later, run `serverpod cloud launch` again from your project directory.
+When rollout finishes, your web app is live at `https://<project-id>.serverpod.space`. To deploy updates later, run `serverpod cloud launch` again from your project folder.
 
 ## Next steps
 
