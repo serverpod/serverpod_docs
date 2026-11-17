@@ -108,6 +108,10 @@ Cloud CLI versions before 1.3.0 show an error for an idling project. To see whic
 
 Scale to zero is on when **Min podlets**, the number of podlets your project always keeps running, is 0. You set it in the console, except on Starter, where it's always 0.
 
+:::info
+Only the project's owner can change **Min podlets**. For anyone else, **Edit plan** is dimmed, and hovering it shows who the owner is.
+:::
+
 ### Turn on scale to zero
 
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Edit plan**.
@@ -122,7 +126,7 @@ The console confirms with "Your plan is updated". The change can take up to a mi
 
 ### Turn off scale to zero
 
-Starter projects always scale to zero. To keep your server running, move the project to Growth, which keeps one podlet running by default.
+Starter projects always scale to zero, and the console shows **Upgrade plan** instead of **Edit plan**. To keep your server running, move the project to Growth, which keeps one podlet running by default.
 
 On other plans, set **Min podlets** to 1 or more in the console:
 
