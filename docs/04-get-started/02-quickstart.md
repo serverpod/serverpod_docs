@@ -48,7 +48,7 @@ $ dart pub global deactivate serverpod_cli
       <TabItem value="linux" label="Linux">
 
     ```bash
-    $ echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
+    $ echo 'export PATH="$PATH:${XDG_STATE_HOME:-$HOME/.local/state}/Dart/install/bin"' >> ~/.bashrc
     ```
 
       </TabItem>
@@ -69,7 +69,7 @@ $ dart pub global deactivate serverpod_cli
     $ serverpod
     ```
 
-    You'll see a list of Serverpod commands.
+    You'll see a list of Serverpod commands. On the first run, Serverpod also opens a welcome page in your browser.
 
 ## Create your project
 
@@ -79,9 +79,9 @@ $ dart pub global deactivate serverpod_cli
     $ serverpod quickstart my_project
     ```
 
-2. Follow the prompts to choose your coding editor and click `Enter` to create the project.
+2. Follow the instructions on the interactive screen to choose your coding editor and click `Enter` to create the project.
 
-3. Open the project folder in your selected editor.
+3. Open the project's root folder, `my_project`, in your editor.
 
 :::important
 **If you use Cursor**, turn on the Serverpod and Dart MCP servers. Open **Customize** in the sidebar, click **MCPs**, and turn on both servers.
@@ -89,7 +89,7 @@ $ dart pub global deactivate serverpod_cli
 
 ## Start your app
 
-From the project folder, run [`serverpod start`](./concepts/server-fundamentals/running-your-server):
+In your terminal, go to the project folder and run [`serverpod start`](./concepts/server-fundamentals/running-your-server):
 
 ```bash
 $ cd my_project
@@ -98,7 +98,7 @@ $ serverpod start
 
 This starts your backend server, Flutter app, and database. The first start takes a few minutes while Serverpod downloads PostgreSQL and builds the app.
 
-When startup finishes, the sample app opens in your browser. Enter your name and select **Send**. The server responds with a personalized greeting, `Hello [your_name]`. Keep this terminal running. It watches your files and reloads your app whenever you save a change.
+When startup finishes, the sample app opens in your browser. Type your name and press **Enter**. The server responds with a personalized greeting, `Hello [your_name]`. Keep this terminal running. It watches your files and reloads your app whenever you save a change.
 
 ## Build your app
 
@@ -133,19 +133,19 @@ The agent will start building your app. It will manage your database and perform
 
 ## Deploy your app to Serverpod Cloud
 
-Deploy your app to Serverpod Cloud to make it publicly accessible. Your first project includes a one-month free trial with no credit card required.
+Deploy your app to [Serverpod Cloud](/cloud), the hosting platform run by the Serverpod team, to make it publicly accessible. Your first project includes a one-month free trial with no credit card required.
 
 1. Create an account in the [Serverpod Cloud Console](https://console.serverpod.dev/).
 
-2. From the project folder, run:
+2. Open a second terminal. From the project folder, run:
 
    ```bash
    $ serverpod cloud launch
    ```
 
 3. Select your account from the browser window that opens, then return to your terminal once you see _Login successful_.
-4. In your terminal, use the arrow keys to select **Open the browser and create a new project**, then press **Enter**. Your browser opens the project creation page.
-5. Enter a **Project ID** to set your public URL and click **Launch Project**.
+4. When the terminal asks *Open the browser and create a new Serverpod Cloud project?*, press **Enter**. Your browser opens the project creation page.
+5. The Console suggests a **Project ID**, which becomes your public URL. Change it if the Console says the name is taken, keep the **Starter** plan, and click **Launch Project**.
 6. Return to your terminal while the CLI packages and deploys your app.
 
 When rollout finishes, your web app is live at `https://<project-id>.serverpod.space`. To deploy updates later, run `serverpod cloud launch` again from your project directory.
