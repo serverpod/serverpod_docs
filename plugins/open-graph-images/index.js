@@ -20,12 +20,23 @@ const DOCS_PLUGIN = 'docusaurus-plugin-content-docs';
 const RENDER_FINGERPRINT_DEFINE = '__SERVERPOD_OG_RENDER_FINGERPRINT__';
 const RENDER_CONCURRENCY = 6;
 const STALE_TEMP_FILE_AGE_MS = 60 * 60 * 1000;
-const FONTKIT_VERSION = JSON.parse(
-  fs.readFileSync(
-    path.join(path.dirname(require.resolve('fontkit')), '..', 'package.json'),
-    'utf8'
-  )
-).version;
+const FONTKIT_VERSION = installedPackageVersion('fontkit');
+
+function installedPackageVersion(name) {
+  let directory = path.dirname(require.resolve(name));
+  while (true) {
+    const manifestPath = path.join(directory, 'package.json');
+    if (fs.existsSync(manifestPath)) {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      if (manifest.name === name) return manifest.version;
+    }
+    const parent = path.dirname(directory);
+    if (parent === directory) {
+      throw new Error(`Could not find the package.json of ${name}.`);
+    }
+    directory = parent;
+  }
+}
 
 async function mapWithConcurrency(items, concurrency, callback) {
   let nextIndex = 0;
