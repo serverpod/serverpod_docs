@@ -69,6 +69,7 @@ project:
   app:
     dir: "../my_app_flutter"
     flutterSdk: "3.50.0"
+    xcodeVersion: "26.6"
     identifiers:
       ios: "com.yourcompany.yourapp"
       android: "com.yourcompany.yourapp"
@@ -97,6 +98,20 @@ The Flutter release version to build your app with, such as `3.50.0`. The `--flu
 project:
   app:
     flutterSdk: "3.50.0"
+```
+
+#### xcodeVersion
+
+**Type:** string. **Optional.**
+
+The Xcode version to build your iOS app with, such as `26.6`. When unset, iOS builds use the Xcode version that Serverpod Cloud selects. Android builds ignore this setting. Put the version in quotes: without them, YAML reads a version such as `26.10` as the number `26.1`.
+
+If the value isn't a version in the form `major.minor` or `major.minor.patch`, `serverpod cloud app publish` stops with an error. If the build machines don't have that Xcode version, the iOS build fails.
+
+```yaml title="scloud.yaml"
+project:
+  app:
+    xcodeVersion: "26.6"
 ```
 
 #### identifiers
