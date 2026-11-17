@@ -26,15 +26,6 @@ When you publish, the CLI uploads your Flutter app's source code. Serverpod Clou
 
 Releasing a build from TestFlight or the internal testing track to the public store stays in App Store Connect and Play Console.
 
-## Connect the stores
-
-Before you can publish for a platform, connect its store in the [Serverpod Cloud console](https://console.serverpod.dev). Open your project, then open the **App Stores** tab. Each store has a setup guide that walks you through the steps:
-
-- **App Store:** Join the Apple Developer Program, register your app's bundle ID, create the app in App Store Connect, and add an App Store Connect API key. Only the project owner can add the key.
-- **Google Play:** Sign up for Play Console, create the app with your app's package name, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
-
-The `app doctor` command shows whether each connection is complete, and links to the setup guide when it isn't.
-
 ## Set up your app
 
 Run `app setup` from your project's directory to prepare your Flutter app for the stores:
@@ -52,6 +43,17 @@ serverpod cloud app setup --non-interactive --android-package-name com.yourcompa
 ```
 
 Pass `--platforms ios` or `--platforms android` to set up one platform, and `--app-dir` to set up an app somewhere else.
+
+## Connect the stores
+
+Before you can publish for a platform, connect its store in the [Serverpod Cloud console](https://console.serverpod.dev). Open your project, then open the **App Stores** tab.
+
+Each store's setup guide starts after `app setup` has saved the app identifier for that platform. Until then, the guide shows the `app setup` command to run, and it continues by itself when the command is done. The guide then shows your bundle ID or package name, which you enter in the store, and walks you through the steps:
+
+- **App Store:** Join the Apple Developer Program, register your app's bundle ID, create the app in App Store Connect, and add an App Store Connect API key. Only the project owner can add the key.
+- **Google Play:** Sign up for Play Console, create the app with your app's package name, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
+
+The `app doctor` command shows whether each connection is complete, and links to the setup guide when it isn't.
 
 ## Check your app with app doctor
 
@@ -174,7 +176,7 @@ The version must be a Flutter release version, and it can't be lower than the Fl
 
 The stores identify your app by its bundle ID on iOS and its package name on Android. Serverpod Cloud reads them from your Flutter app: the bundle ID from the Xcode project in `ios/`, and the package name from `applicationId` in `android/app/build.gradle.kts` or `build.gradle`.
 
-A new Flutter app uses a `com.example` placeholder, which the stores don't accept. Replace it with your own identifier, such as `com.yourcompany.yourapp`, in both places. The [`app setup`](#set-up-your-app) command does this for you. The identifier must match the app you created in App Store Connect and Play Console.
+A new Flutter app uses a `com.example` placeholder, which the stores don't accept. Replace it with your own identifier, such as `com.yourcompany.yourapp`, in both places. The [`app setup`](#set-up-your-app) command does this for you. Use the same identifier when you create the app in App Store Connect and Play Console.
 
 To publish with a different identifier than the one in your app's files, set it in `scloud.yaml`:
 
