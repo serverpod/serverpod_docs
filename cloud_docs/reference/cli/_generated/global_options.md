@@ -43,6 +43,7 @@ Management
   project      Manage Serverpod Cloud projects.
 
 Mission Control
+  app          Publish and follow the apps of a Serverpod project.
   build        View build logs and manage build secrets.
   db           Manage Serverpod Cloud DBs.
   deploy       Deploy a Serverpod project to the cloud.
