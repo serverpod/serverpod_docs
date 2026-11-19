@@ -14,7 +14,7 @@ Rules:
 
 Examples:
 
-Weak: The ultimate backend solution for modern apps.\
+Weak: A next-generation backend solution for modern apps.\
 Strong: Build your backend in Dart, deploy with zero configuration, and keep full control of your stack.
 
 Weak: A powerful and robust platform.\
@@ -46,8 +46,8 @@ The following words add length without adding meaning, or sound marketing-inflec
 
 - Always capitalize **Serverpod** (proper noun).
 - Always write **Serverpod Cloud** with both words capitalized.
-- Always write the advocacy program as: **Serverpod Voyager - Developer Expert Program** (exact capitalization and hyphenation).
-- Use consistent core terminology: prefer “backend framework” or “full-stack Dart framework” over mixing with “platform,” “solution,” or “BaaS,” unless context clearly requires it. Prefer “open-source backend framework” when emphasizing positioning, and avoid inventing new category terms.
+- Always write the advocacy program as **Serverpod Voyager - Developer Expert Program** (exact capitalization and hyphenation).
+- Use consistent core terminology. Prefer “backend framework” or “full-stack Dart framework” over mixing with “platform,” “solution,” or “BaaS,” unless context clearly requires it. Prefer “open-source backend framework” when emphasizing positioning, and avoid inventing new category terms.
 
 ### Canonical product phrases
 
@@ -147,12 +147,17 @@ Avoid:
 
 ---
 
-## 8. Em dashes
+## 8. Em dashes and colons
 
-Avoid em dashes (—) in running text. They are hard to read aloud and almost always signal a sentence that should be split or rephrased. Use a comma, parenthesis, colon, or period instead.
+Avoid em dashes (—) in running text. They are hard to read aloud and almost always signal a sentence that should be split or rephrased. Rewrite the sentence with a comma, a parenthesis, a word that names the relation (such as "because" or "so"), or two sentences.
 
 Avoid: `Call initializeAuthServices before pod.start — this registers the token managers.`\
 Prefer: `Call initializeAuthServices before pod.start. This registers the token managers.`
+
+Don't replace an em dash with a colon. A colon that joins two clauses reads as machine-written, and it hides how the two halves relate. Use a colon only after a bold lead-in in a list, or at the end of a sentence that introduces a list, table, or code block.
+
+Avoid: `Those checks are cheap: for an unchanged file, your server sends a 304 response.`\
+Prefer: `When a file hasn't changed, your server sends a 304 response, so those checks cost little.`
 
 ---
 
@@ -161,3 +166,14 @@ Prefer: `Call initializeAuthServices before pod.start. This registers the token 
 Take screenshots in the light theme, so they match the rest of the docs. In the Serverpod Cloud console, switch the theme to light first.
 
 Crop each screenshot to what the reader needs to find, with enough around it to show where it is on the screen.
+
+---
+
+## 10. Serverpod Cloud console
+
+The console shows the reader what each screen does. The docs cover what it can't show, so they stay correct when the console changes.
+
+- **Explain what the console can't show.** For each feature, say what it is for, when to use it, what it causes (such as suspension, resets, or charges), its limits, and the CLI command that does the same.
+- **Locate a console step in one line.** Say where the feature lives, for example "under **Environment variables** in the project's **Env & Passwords** tab", and add only what the screen doesn't make obvious. Don't walk through the form field by field, because the reader can see the fields and the steps go stale when the console changes.
+- **Document every capability.** A screen that explains itself is no reason to leave a feature out. The docs feed AI search and list what Serverpod Cloud can do.
+- **Add a screenshot only where an entry point or a state is hard to find.** The text still names the page and the control, so the step works without the image.
