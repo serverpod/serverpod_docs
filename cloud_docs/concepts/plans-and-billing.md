@@ -10,30 +10,11 @@ Your project's plan decides which features it can use, such as custom domains an
 
 ## Choose a plan
 
-Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps, and any project that needs a feature Starter doesn't include.
-
-Here's what each plan includes:
-
-<div className="full-width-table">
-
-| Feature                                                      | Starter                                       | Growth                                                               |
-| ------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------- |
-| Podlets, the copies of your server that handle requests      | One small podlet                              | Choose the podlet size, and run up to 20 podlets during busy periods |
-| [Scale to zero](/cloud/concepts/scale-to-zero)               | On, can't be turned off                       | Off by default, can be turned on                                     |
-| [Database](/cloud/concepts/database), optional on both plans | One small database with up to 2 GB of storage | Choose the size                                                      |
-| [Database backups](/cloud/concepts/database-backups)         | Not available                                 | Available                                                            |
-| [Future calls](/concepts/scheduling/overview)                | Not available                                 | Available                                                            |
-| [Custom domains](/cloud/concepts/custom-domains)             | Not available                                 | Available                                                            |
-| Team members                                                 | Only you                                      | Invite others to the project                                         |
-| [Storages](/cloud/concepts/storage#limits)                   | Two, with usage caps                          | Up to ten, no usage caps                                             |
-
-</div>
-
-To see which plan your project is on, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Plan** section shows the plan's name. From the terminal, run `serverpod cloud project show` in your project's directory and look at the `Plan` row.
-
-For each plan's price, see the [pricing page](https://serverpod.dev/pricing). Your first Starter project starts with a one-month [free trial](#free-trial).
+Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps, and adds features Starter doesn't include, such as custom domains, database backups, future calls, and team members. The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
 
 For needs beyond Growth, Serverpod also offers an Enterprise plan, which you arrange with the Serverpod team. The pricing page lists what it includes.
+
+To see which plan your project is on, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Plan** section shows the plan's name. From the terminal, run `serverpod cloud project show` in your project's directory and look at the `Plan` row.
 
 ## Free trial
 
@@ -52,9 +33,9 @@ To keep the project running, [set up billing](#set-up-billing) before the trial 
 
 ## Set up billing
 
-Billing has two parts: a card that pays for your projects, and billing details for your invoices. Your billing details are your billing address, plus your company name if you're billed as a business. Without them, an invoice can't be issued, and the project is [suspended](#why-is-my-project-suspended).
+Your account needs a card to pay for your projects and billing details for your invoices. Your billing details are your billing address, plus your company name if you're billed as a business. Without them, an invoice can't be issued, and the project is [suspended](#why-is-my-project-suspended).
 
-You need a card and billing details to:
+You need both to:
 
 - Keep a project running after its [free trial](#free-trial)
 - [Change a project's plan](#change-your-projects-plan)
@@ -100,7 +81,7 @@ Make sure:
 
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings**. On Starter, select **Upgrade plan** in the **Plan** section. On Growth, select **Edit plan**.
 2. Under **Project plan**, choose the plan.
-3. Review **Compute** and **Database**, because choosing a plan resets both to that plan's defaults: one small podlet and the small database size. On Starter, the podlet scales to zero. On Growth, it keeps running.
+3. Review **Compute** and **Database**, because choosing a plan resets both to that plan's defaults, which are one small podlet (a running copy of your server) and the small database size. On Starter, the podlet scales to zero. On Growth, it keeps running.
 4. Select **Save**. If your account has no card, the button reads **Add card and upgrade**, and the console asks for the card first.
 
 The change can take up to a minute to apply. The **Plan** section then shows the new plan's name. If the project has been deployed, your server restarts with the new plan's settings.
@@ -109,7 +90,7 @@ If the console says "We couldn't confirm your plan change", refresh the page. If
 
 ## View your invoices
 
-Your invoices are kept in your billing portal, a separate page that opens in a new tab. To open it, select the person icon in the top bar of the [Serverpod Cloud console](https://console.serverpod.dev), then **Billing**, then **View invoices**.
+Your invoices are kept in your billing portal, a separate page that opens in a new tab. To open it, go to the [Billing page](https://console.serverpod.dev/account/billing) of the Serverpod Cloud console and select **View invoices**.
 
 ## Stop charges
 
