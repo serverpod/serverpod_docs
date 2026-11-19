@@ -20,6 +20,12 @@ Deploy your project to Cloud:
 serverpod cloud deploy
 ```
 
+The command also takes these flags:
+
+- `-v` (`--verbose`): Shows detailed output.
+- `--dart-version`: Overrides the Dart SDK used at build time.
+- `--concurrency=<N>`: Sets how many files are zipped in parallel during packaging (default `5`).
+
 The CLI packages your project, uploads it, and waits for the new version to go live. Once the deployment is live, your project is reachable at its default URLs:
 
 - Web: `https://<project-id>.serverpod.space/`
@@ -28,11 +34,9 @@ The CLI packages your project, uploads it, and waits for the new version to go l
 
 To use your own URL instead, see [Custom domains](/cloud/concepts/custom-domains).
 
-Other flags:
-
-- `-v` (`--verbose`): detailed output.
-- `--dart-version`: override the Dart SDK used at build time.
-- `--concurrency=<N>`: how many files are zipped in parallel during packaging (default `5`).
+:::note
+Your web content is served through a [CDN](/cloud/concepts/cdn). Each successful deploy clears its cached copies, so the new version is served without waiting for the old copies to expire.
+:::
 
 To regenerate code or run other tasks before each deploy, configure a pre-deploy hook. See [Deployment hooks](/cloud/concepts/deployment-hooks).
 
@@ -163,4 +167,5 @@ For a step-by-step walkthrough, see [Recover from a failed deploy](/cloud/guides
 - [Private dependencies](/cloud/reference/private-dependencies) for private package access during the build.
 - [Ship non-Dart files with your server](/cloud/guides/ship-non-dart-files) for shipping static assets like configuration and templates.
 - [Deploy from CI with GitHub Actions](/cloud/guides/deploy-from-ci-with-github-actions) for shipping every push.
+- [Content delivery and caching](/cloud/concepts/cdn) for how the CDN caches your web content and clears it on every deploy.
 - [Scale to zero](/cloud/concepts/scale-to-zero) for how an idle project stops its server and starts it again on the next request.
