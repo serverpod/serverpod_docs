@@ -33,7 +33,7 @@ $ dart pub global deactivate serverpod_cli
 
     ```bash
     $ dart install serverpod_cli
-    ```
+    
 
 2. To make the `serverpod` command available in new terminals, add the Dart install directory to your `PATH`:
 
@@ -79,7 +79,7 @@ $ dart pub global deactivate serverpod_cli
     $ serverpod quickstart my_project
     ```
 
-2. Follow the instructions on the interactive screen to choose your coding editor and press **Enter** to create the project.
+2. On the interactive screen, use the arrow keys to move to your editor or agent, press **Space** to select it, then press **Enter** to create the project.
 
 3. Open the project's root folder, `my_project`, in your editor.
 
