@@ -33,12 +33,15 @@ $ dart pub global deactivate serverpod_cli
 
     ```bash
     $ dart install serverpod_cli
-    
+    ```
+
+    The install ends with a warning that its folder is not on your `PATH`. The next step fixes that.
 
 2. To make the `serverpod` command available in new terminals, add the Dart install directory to your `PATH`:
 
     <Tabs groupId="os">
       <TabItem value="macos" label="macOS" default>
+    Run this in your terminal:
 
     ```bash
     $ echo 'export PATH="$PATH:$HOME/Library/Application Support/Dart/install/bin"' >> ~/.zshrc
@@ -47,8 +50,22 @@ $ dart pub global deactivate serverpod_cli
       </TabItem>
       <TabItem value="linux" label="Linux">
 
+    If your shell is bash, run:
+
     ```bash
     $ echo 'export PATH="$PATH:${XDG_STATE_HOME:-$HOME/.local/state}/Dart/install/bin"' >> ~/.bashrc
+    ```
+
+    If your shell is zsh, run:
+
+    ```bash
+    $ echo 'export PATH="$PATH:${XDG_STATE_HOME:-$HOME/.local/state}/Dart/install/bin"' >> ~/.zshrc
+    ```
+
+    If your shell is fish, run:
+
+    ```bash
+    $ fish_add_path ~/.local/state/Dart/install/bin
     ```
 
       </TabItem>
