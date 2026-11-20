@@ -50,12 +50,9 @@ To set up billing:
    <!-- screenshot: cloud-console/account-menu-billing.png. Owner: docs team. Last verified: 2026-11-16 against console.serverpod.dev. -->
    <img src="/img/cloud-console/account-menu-billing.png" alt="The person icon at the right of the Serverpod Cloud console's top bar, with the account menu open below it, listing Billing, Account settings, Security, Theme, and Log out." width="337" />
 
-2. Add your card under **Payment methods**.
-3. Fill in your billing address under **Billing info**. If you're billed as a business, select **Are you a business?** and add your company name. **VAT information** is optional.
-4. Under **Billing emails**, add anyone else who should get billing messages, such as trial reminders and failed payments.
-5. Select **Save**. Your billing info and billing emails are saved only when you do.
-
-Once your account has a card and billing details, the **Set up billing** banner and buttons go away.
+2. Add your card under **Payment methods** and your billing address under **Billing info**. If you're billed as a business, select **Are you a business?** and add your company name.
+3. Under **Billing emails**, add anyone else who should get billing messages, such as trial reminders and failed payments.
+4. Select **Save**. Your billing info and billing emails are saved only when you do.
 
 ## Change your project's plan
 
@@ -82,7 +79,7 @@ Make sure:
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings**. On Starter, select **Upgrade plan** in the **Plan** section. On Growth, select **Edit plan**.
 2. Under **Project plan**, choose the plan.
 3. Review **Compute** and **Database**, because choosing a plan resets both to that plan's defaults, which are one small [podlet](/cloud/concepts/compute) (a running copy of your server) and the small database size. On Starter, the podlet scales to zero. On Growth, it keeps running.
-4. Select **Save**. If your account has no card, the button reads **Add card and upgrade**, and the console asks for the card first.
+4. Select **Save**.
 
 The change usually applies within a minute or two. The **Plan** section then shows the new plan's name. If the project has been deployed, your server restarts with the new plan's settings.
 

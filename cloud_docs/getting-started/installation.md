@@ -15,7 +15,7 @@ The Serverpod Cloud CLI is the command-line tool that deploys and manages your p
 Before you start, make sure you have:
 
 - **The Serverpod CLI, version 4.0 or later.** Follow the [Serverpod installation guide](/installation). To use the Cloud CLI without it, see [Install the Cloud CLI on its own](#install-the-cloud-cli-on-its-own).
-- **A Serverpod Cloud account.** [Sign up for Cloud](https://console.serverpod.cloud/auth/signup).
+- **A Serverpod Cloud account.** [Sign up for Cloud](https://console.serverpod.dev/auth/signup).
 
 ## Run the Cloud CLI through the Serverpod CLI
 

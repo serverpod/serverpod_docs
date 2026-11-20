@@ -115,14 +115,14 @@ Only the project's owner can change **Min podlets**. For anyone else, **Edit pla
 ### Turn on scale to zero
 
 1. In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Edit plan**.
-2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 0. The text "scales to zero when idle" appears below **Min podlets**.
+2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 0.
 
    <!-- screenshot: cloud-console/settings-autoscaling-range.png. Owner: docs team. Last verified: 2026-11-13 against console.serverpod.dev. -->
    ![The Compute section of the console's plan panel, with the Autoscaling range below Podlet size, Min podlets set to 0, and "scales to zero when idle" below it.](/img/cloud-console/settings-autoscaling-range.png)
 
 3. Select **Save**.
 
-The console confirms with "Your plan is updated". The change usually applies within a minute or two, and your server restarts once. The project then scales down to zero after about 5 minutes without requests.
+The change usually applies within a minute or two, and your server restarts once. The project then scales down to zero after about 5 minutes without requests.
 
 ### Turn off scale to zero
 
@@ -134,7 +134,7 @@ On other plans, set **Min podlets** to 1 or more in the console:
 2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 1 or more.
 3. Select **Save**.
 
-The console confirms with "Your plan is updated". The change usually applies within a minute or two. Your server then starts, or restarts once if it was already running.
+The change usually applies within a minute or two. Your server then starts, or restarts once if it was already running.
 
 ## Related
 
