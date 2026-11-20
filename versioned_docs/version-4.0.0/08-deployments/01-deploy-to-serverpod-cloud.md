@@ -18,7 +18,7 @@ Cloud manages the production infrastructure for you:
 
 - An optional production-grade Postgres database, with migrations applied automatically on each deploy.
 - Networking, load balancing, and custom domains with TLS certificates.
-- Server instances (podlets) with predictable pricing. See [Cloud plans](https://serverpod.dev/cloud) for what each plan includes.
+- Server instances (podlets) with predictable pricing. See [Plans and billing](/cloud/concepts/plans-and-billing) for what each plan includes.
 - A secure key manager for your app secrets.
 
 ## Deploy from the terminal

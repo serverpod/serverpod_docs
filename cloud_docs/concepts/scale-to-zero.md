@@ -21,7 +21,7 @@ Whether a project scales to zero depends on its plan:
 
 </div>
 
-To see whether your project scales to zero, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Compute** section of the **Plan** card shows the range of podlets the project can run, such as **0-1 PODLETS**. Podlets are the running copies of your server. If the range starts at 0, the project scales to zero.
+To see whether your project scales to zero, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Compute** card in the **Plan** section shows the range of podlets the project can run, such as **0-1 PODLETS**. Podlets are the running copies of your server. If the range starts at 0, the project scales to zero.
 
 From the terminal, run `serverpod cloud project show` in your project's directory. The `Compute` row ends with the same range, such as `0-1 podlets`.
 
@@ -126,7 +126,7 @@ The console confirms with "Your plan is updated". The change can take up to a mi
 
 ### Turn off scale to zero
 
-Starter projects always scale to zero, and the console shows **Upgrade plan** instead of **Edit plan**. To keep your server running, move the project to Growth, which keeps one podlet running by default.
+Starter projects always scale to zero, and the console shows **Upgrade plan** instead of **Edit plan**. To keep your server running, [move the project to Growth](/cloud/concepts/plans-and-billing#change-your-projects-plan), which keeps one podlet running by default.
 
 On other plans, set **Min podlets** to 1 or more in the console:
 
@@ -142,4 +142,4 @@ The console confirms with "Your plan is updated". The change can take up to a mi
 - [Database](/cloud/concepts/database): the managed database, which runs separately from your podlets.
 - [Scheduling overview](/concepts/scheduling/overview): future calls, which need a running server.
 - [CLI reference: `status` command](/cloud/reference/cli/commands/status): the `status live` command and its options.
-- [Serverpod Cloud plans](https://serverpod.dev/cloud): what each plan includes and costs.
+- [Plans and billing](/cloud/concepts/plans-and-billing): what each plan includes, how to change a project's plan, and how billing works.

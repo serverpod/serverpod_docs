@@ -9,7 +9,7 @@ description: Database backups on Serverpod Cloud are point-in-time snapshots of 
 A bad migration or an accidental bulk delete can lose data you needed. Serverpod Cloud can take point-in-time snapshots of your managed database, on demand or on a recurring schedule, and restore the whole database to any snapshot in one step. Backups run on the platform, so there is nothing for you to host or maintain. You manage them with the Serverpod Cloud CLI.
 
 :::info
-Backups are a **Growth** plan feature. On Growth you can create snapshots, schedule backups, and restore. Listing snapshots, deleting snapshots, and viewing or disabling the schedule are available on every plan, so a project on a smaller plan can still see and clean up backups it already has.
+Backups are a [**Growth** plan](/cloud/concepts/plans-and-billing) feature. On Growth you can create snapshots, schedule backups, and restore. Listing snapshots, deleting snapshots, and viewing or disabling the schedule are available on every plan, so a Starter project can still see and clean up backups it already has.
 :::
 
 ## When to use each kind of backup
@@ -111,13 +111,13 @@ Cloud asks for confirmation, then deletes the snapshot permanently. Scheduled sn
 
 ## Pricing
 
-Backup storage is billed separately from your regular database storage, as its own metered charge rather than counting against your database usage. It is priced the same as database storage, billed by usage and prorated for partial months, and applies only on the Growth plan. A schedule usually costs less than keeping the same number of manual snapshots. Each manual snapshot is a full copy, while a scheduled series stores one full copy plus the changes between snapshots. For current plan pricing, see [Serverpod Cloud plans](https://serverpod.dev/cloud).
+Backup storage is billed separately from your regular database storage, as its own metered charge rather than counting against your database usage. It is priced the same as database storage, billed by usage and prorated for partial months, and applies only on the Growth plan. A schedule usually costs less than keeping the same number of manual snapshots. Each manual snapshot is a full copy, while a scheduled series stores one full copy plus the changes between snapshots. For current plan pricing, see [Serverpod Cloud pricing](https://serverpod.dev/pricing).
 
 ## Limits
 
 - **Up to 100 manual snapshots per project.** Scheduled snapshots do not count towards this limit. When you reach it, creating another manual snapshot returns a clear error. Delete snapshots you no longer need to make room.
 - **Retention defaults.** A manual snapshot created without `--expire-in` is kept until you delete it. A scheduled snapshot created without `--retention` is kept for 35 days, then deleted automatically. No schedule can keep snapshots longer than that.
-- **Downgrading with stored backups.** A project that still has backups stored cannot move from the Growth plan to a smaller plan. Delete the backups first, then change the plan.
+- **Moving to Starter with stored backups.** A project with stored backups can't move to Starter. Delete the backups first, then [change the plan](/cloud/concepts/plans-and-billing#change-your-projects-plan).
 
 ## Related
 
