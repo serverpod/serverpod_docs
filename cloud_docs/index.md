@@ -20,11 +20,13 @@ serverpod cloud launch
 
 - **Runtime and scaling.** Your app runs on a production runtime that scales as traffic grows. It can also [scale to zero](/cloud/concepts/scale-to-zero) instead of running while nobody uses it.
 - **Networking and TLS.** Encrypted endpoints, certificates, and load balancing work without configuration.
-- **[Managed Postgres](/cloud/concepts/database)** (optional). Cloud can provision a production-grade Postgres database with automatic migrations and backups.
+- **[Managed Postgres](/cloud/concepts/database)** (optional). Cloud can provision a production-grade Postgres database. Each deploy applies your migrations. If your plan includes backups, you can take [snapshots](/cloud/concepts/database-backups) on demand or on a schedule.
 - **[File storage](/cloud/concepts/storage).** Cloud provisions a private and a public storage with every project, ready for the files your app uploads at runtime.
+- **Hosting region.** Every project runs in Frankfurt, Germany, in the EU. That includes its server, database, and file storage.
 - **[Secrets and environment variables](/cloud/concepts/passwords-secrets-env-vars).** Manage sensitive values through the Cloud CLI. Values are encrypted where applicable.
 - **[Custom domains](/cloud/concepts/custom-domains).** Attach your own domain. TLS certificates are provisioned and renewed. Cloud hosts both your backend and a preconfigured website for your Flutter web app.
 - **[Logs and inspection](/cloud/concepts/logs).** View logs in the CLI or in Serverpod Insights, the desktop log viewer (requires a database).
+- **[App publishing](/cloud/concepts/app-publishing).** Build, sign, and upload your Flutter app to TestFlight and Google Play from the Cloud CLI.
 - **Pub/sub and caching.** Supported through the Serverpod framework with a third-party Redis service you connect yourself. See [Use Redis for PubSub and caching](/cloud/guides/redis) for the typical setup.
 
 ## Where to go next
