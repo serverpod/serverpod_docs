@@ -6,7 +6,7 @@ description: How Serverpod Cloud's managed PostgreSQL works, including provision
 
 # Database
 
-Most Serverpod apps need to persist data (user accounts, orders, session state). Serverpod Cloud can provision and run a managed PostgreSQL database alongside your project, so you don't have to set up or maintain Postgres yourself. When the database is enabled, Cloud handles provisioning, connection details for your server, migrations on every deploy, and backups. Direct access from tools like `psql` or a GUI client is opt-in and requires a database user that you create yourself.
+Most Serverpod apps need to persist data (user accounts, orders, session state). Serverpod Cloud can provision and run a managed PostgreSQL database alongside your project, so you don't have to set up or maintain Postgres yourself. When the database is enabled, Cloud handles provisioning, connection details for your server, migrations on every deploy, and backups if your plan includes them. Direct access from tools like `psql` or a GUI client is opt-in and requires a database user that you create yourself.
 
 The managed database runs on PostgreSQL 17 with TLS required, connection pooling on by default, and autoscaling compute.
 
@@ -44,7 +44,7 @@ To undo a migration that already applied, create a forward migration that revers
 
 ## Backups
 
-Cloud can back up the managed database on demand or on a schedule, and restore it to any snapshot in one step. See [Database backups](/cloud/concepts/database-backups) for how to set up scheduled backups, take manual snapshots, and restore.
+Cloud can back up the managed database on demand or on a schedule, and restore it to any snapshot in one step. Backups need the [**Growth** plan](/cloud/concepts/plans-and-billing). See [Database backups](/cloud/concepts/database-backups) for how to set up scheduled backups, take manual snapshots, and restore.
 
 ## Access the database directly
 
