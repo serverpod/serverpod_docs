@@ -21,7 +21,7 @@ Whether a project scales to zero depends on its plan:
 
 </div>
 
-To see whether your project scales to zero, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Compute** card in the **Plan** section shows the range of podlets the project can run, such as **0-1 PODLETS**. Podlets are the running copies of your server. If the range starts at 0, the project scales to zero.
+To see whether your project scales to zero, open its **Settings** in the [Serverpod Cloud console](https://console.serverpod.dev). The **Compute** card in the **Plan** section shows the range of podlets the project can run, such as **0-1 PODLETS**. [Podlets](/cloud/concepts/compute) are the running copies of your server. If the range starts at 0, the project scales to zero.
 
 From the terminal, run `serverpod cloud project show` in your project's directory. The `Compute` row ends with the same range, such as `0-1 podlets`.
 
@@ -122,7 +122,7 @@ Only the project's owner can change **Min podlets**. For anyone else, **Edit pla
 
 3. Select **Save**.
 
-The console confirms with "Your plan is updated". The change can take up to a minute to apply, and your server restarts once. The project then scales down to zero after about 5 minutes without requests.
+The console confirms with "Your plan is updated". The change usually applies within a minute or two, and your server restarts once. The project then scales down to zero after about 5 minutes without requests.
 
 ### Turn off scale to zero
 
@@ -134,11 +134,12 @@ On other plans, set **Min podlets** to 1 or more in the console:
 2. In the **Compute** section, under **Autoscaling range**, set **Min podlets** to 1 or more.
 3. Select **Save**.
 
-The console confirms with "Your plan is updated". The change can take up to a minute to apply. Your server then starts, or restarts once if it was already running.
+The console confirms with "Your plan is updated". The change usually applies within a minute or two. Your server then starts, or restarts once if it was already running.
 
 ## Related
 
 - [Deployments](/cloud/concepts/deployments): how to deploy your server and check a deployment.
+- [Compute](/cloud/concepts/compute): podlet sizes and the autoscaling range.
 - [Database](/cloud/concepts/database): the managed database, which runs separately from your podlets.
 - [Scheduling overview](/concepts/scheduling/overview): future calls, which need a running server.
 - [CLI reference: `status` command](/cloud/reference/cli/commands/status): the `status live` command and its options.
