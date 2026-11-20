@@ -4,7 +4,7 @@ description: Flutter web app serving in Serverpod uses FlutterRoute with SPA-sty
 
 # Flutter web apps
 
-Serverpod can serve your Flutter web application directly, allowing you to host both your API and web frontend from the same server. The `FlutterRoute` class handles the specifics: serving the build output, SPA-style fallback to `index.html` for client-side routing, and cache headers that make redeploys take effect right away.
+Serverpod can serve your Flutter web application directly, allowing you to host both your API and web frontend from the same server. The `FlutterRoute` class serves the build output, falls back to `index.html` for client-side routing, and sends cache headers that make redeploys take effect right away.
 
 New fullstack projects come with this already set up. The scaffolded `server.dart` serves your Flutter app at the root URL when a build exists in `web/app`, and shows a build-instructions page when it does not.
 
@@ -94,6 +94,10 @@ SERVERPOD_WEB_SERVER_FLUTTER_CACHE_CONTROL="public, max-age=3600"
 
 The environment variable applies to every `FlutterRoute` that does not pass a `cacheControlFactory` of its own, and the same warning applies to it.
 
+:::note
+Serverpod Cloud sets `SERVERPOD_WEB_SERVER_FLUTTER_CACHE_CONTROL` to `public, max-age=0, s-maxage=86400` on every project. Browsers still check for a new version on every load. The Cloud CDN serves your Flutter build from the edge for up to a day, and every deploy clears it. See [Content delivery and caching](/cloud/concepts/cdn) to change or remove the variable.
+:::
+
 See [Static files](static-files#cache-control) for more on cache control.
 
 ### Cache busting
@@ -128,7 +132,7 @@ Flutter can compile to WebAssembly for improved performance, with multi-threaded
 - `Cross-Origin-Opener-Policy: same-origin`
 - `Cross-Origin-Embedder-Policy: require-corp`
 
-The `enableWasmHeaders` parameter controls whether `FlutterRoute` sends them. The constructor defaults it to true, but generated projects pass `enableWasmHeaders: false` because the plain JavaScript build is the scaffolded default and cross-origin isolation has side effects: it blocks embedding cross-origin resources, such as images or iframes from other domains, unless they opt in.
+The `enableWasmHeaders` parameter controls whether `FlutterRoute` sends them. The constructor defaults it to true, but generated projects pass `enableWasmHeaders: false` because the plain JavaScript build is the scaffolded default, and because cross-origin isolation blocks embedding cross-origin resources, such as images or iframes from other domains, unless they opt in.
 
 To serve a WASM build:
 
