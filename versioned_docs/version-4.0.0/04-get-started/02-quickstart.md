@@ -151,7 +151,7 @@ The agent will start building your app. It will manage your database and perform
 
 Deploy your app to [Serverpod Cloud](/cloud), the hosting platform run by the Serverpod team, to make it publicly accessible. Your first project includes a one-month free trial with no credit card required.
 
-1. Create an account in the [Serverpod Cloud Console](https://console.serverpod.dev/).
+1. Create an account in the [Serverpod Cloud console](https://console.serverpod.dev/).
 
 2. Open a second terminal. From the project folder, run:
 
@@ -161,7 +161,7 @@ Deploy your app to [Serverpod Cloud](/cloud), the hosting platform run by the Se
 
 3. Select your account from the browser window that opens, then return to your terminal once you see _Login successful_.
 4. When the terminal asks _Open the browser and create a new Serverpod Cloud project?_, press **Enter**. Your browser opens the project creation page.
-5. The Console suggests a **Project ID**, which becomes your public URL. Change it if the Console says the name is taken, keep the **Starter** plan, and click **Launch Project**.
+5. The console suggests a **Project ID**, which becomes your public URL. Change it if the console says the name is taken, keep the **Starter** plan, and click **Launch Project**.
 6. Return to your terminal while the CLI packages and deploys your app.
 
 When rollout finishes, your web app is live at `https://<project-id>.serverpod.space`. To deploy updates later, run `serverpod cloud launch` again from your project folder.
@@ -169,7 +169,7 @@ When rollout finishes, your web app is live at `https://<project-id>.serverpod.s
 ## Next steps
 
 - [Learn how Serverpod works](./03-how-it-works.md): See how your agent builds with Serverpod, and how endpoints, data models, and the database fit together.
-- [Monitor your app](/cloud): Use the Logs, Sessions, and Metrics tabs in the [Serverpod Cloud Console](https://console.serverpod.dev/).
+- [Monitor your app](/cloud): Use the Logs, Sessions, and Metrics tabs in the [Serverpod Cloud console](https://console.serverpod.dev/).
 - Have feedback or questions? Tell us on [Discord](https://serverpod.dev/discord) or open an issue on [GitHub](https://github.com/serverpod/serverpod). Pull requests are welcome.
 
 Happy building with Serverpod 4!
