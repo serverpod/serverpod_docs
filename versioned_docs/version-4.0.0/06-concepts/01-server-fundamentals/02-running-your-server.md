@@ -44,7 +44,7 @@ Every time `serverpod start` boots the server, including restarts, it applies an
 - **P** creates a repair migration to reconcile a database that has drifted from your migrations, and applies it. This shortcut is not shown in the bottom bar; press **H** to see it listed.
 - **A** applies pending migrations. Use it to retry after a failed apply.
 
-Hold **Shift** with **M** or **P** to force the migration past Serverpod's warning that information may be destroyed, so force deliberately. **Shift+M** still creates nothing when your models have no changes. For an empty migration, run [`serverpod create-migration --empty`](../cli/commands/create-migration). **Shift+P** creates a repair migration even when the database has not drifted. For how migrations work, see [Migrations](../data-and-the-database/database/migrations).
+Hold **Shift** with **M** or **P** to force the migration past Serverpod's data-loss warning. A forced migration is applied immediately and **can permanently delete data**, so use it carefully. **Shift+M** still creates nothing when your models have no changes. For an empty migration, run [`serverpod create-migration --empty`](../cli/commands/create-migration). **Shift+P** creates a repair migration even when the database has not drifted. For how migrations work, see [Migrations](../data-and-the-database/database/migrations).
 
 ## Choose a run mode
 
