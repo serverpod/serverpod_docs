@@ -57,7 +57,7 @@ The `pre_deploy` and `post_deploy` hooks fail asymmetrically:
 - A failing `pre_deploy` script aborts the deploy *before* Cloud receives your code.
 - A `post_deploy` script runs *after* the upload, before Cloud finishes building and rolling out the new version. If it fails, the `serverpod cloud deploy` command exits with an error, but Cloud keeps deploying. Check the result with `serverpod cloud status deployment show`.
 
-Plan your scripts accordingly: put anything that must succeed before your code ships in `pre_deploy`.
+Put anything that must succeed before your code ships in `pre_deploy`, because only a failing `pre_deploy` script stops the deploy.
 
 :::
 
