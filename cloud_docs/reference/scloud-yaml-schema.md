@@ -8,7 +8,7 @@ description: "The schema for scloud.yaml: every key, its type, what the Cloud CL
 
 A Serverpod project deployed to Serverpod Cloud has a `scloud.yaml` file at its root. The file links the local project to a Cloud project, optionally pins the Dart SDK used for builds, configures how your Flutter app is published, and lists commands to run before or after each deploy.
 
-Two commands write the file: `serverpod cloud launch` creates it on first setup, and `serverpod cloud project link` creates or updates it when you link your codebase to a Cloud project. You can also hand-edit it at any time, and the Cloud CLI preserves your `dartSdk`, app settings, and hook scripts across later commands. See [How the Cloud CLI updates the file](#how-the-cloud-cli-updates-the-file) for the exact per-field rules.
+Two commands write the file. `serverpod cloud launch` creates it on first setup, and `serverpod cloud project link` creates or updates it when you link your codebase to a Cloud project. You can also hand-edit it at any time, and the Cloud CLI preserves your `dartSdk`, app settings, and hook scripts across later commands. See [How the Cloud CLI updates the file](#how-the-cloud-cli-updates-the-file) for the exact per-field rules.
 
 ## File location
 
