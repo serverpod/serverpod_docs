@@ -149,7 +149,7 @@ The agent will start building your app. It will manage your database and perform
 
 ## Deploy your app to Serverpod Cloud
 
-Deploy your app to [Serverpod Cloud](/cloud), the hosting platform run by the Serverpod team, to make it publicly accessible. Your first project includes a one-month free trial with no credit card required.
+Deploy your app to [Serverpod Cloud](/cloud), the hosting platform run by the Serverpod team, to make it publicly accessible. Your first project includes a one-month [free trial](/cloud/concepts/plans-and-billing#free-trial) with no credit card required.
 
 1. Create an account in the [Serverpod Cloud Console](https://console.serverpod.dev/).
 
