@@ -18,6 +18,8 @@ Every Serverpod Cloud project gets default domains automatically. A project name
 
 ## Attach a custom domain
 
+Custom domains need the [**Growth** plan](/cloud/concepts/plans-and-billing).
+
 A custom domain points at one of the three surfaces:
 
 - `web`: a Flutter web app or other content served by Serverpod's web server
@@ -106,7 +108,7 @@ serverpod cloud domain detach example.com
 
 **Verification fails.** DNS records may be missing or still propagating. Confirm the records are in place at your registrar, then wait up to 24 hours and retry with `serverpod cloud domain verify <domain>`.
 
-**Can't attach the domain.** The domain is already attached to another project. Detach it from that project first.
+**Can't attach the domain.** If the CLI reports `Custom domains are not available for this project's plan.`, the project is on Starter. [Move it to Growth](/cloud/concepts/plans-and-billing#change-your-projects-plan) first. Otherwise, the domain is already attached to another project. Detach it from that project first.
 
 **TLS certificate errors.** TLS provisioning is still in progress. It usually completes within an hour of successful verification.
 
