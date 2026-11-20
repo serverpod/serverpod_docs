@@ -10,7 +10,7 @@ description: Deploy your Serverpod Flutter backend to Serverpod Cloud in minutes
 
 :::info
 
-Your first project includes a one-month free trial, with no credit card required.
+Your first project includes a one-month [free trial](/cloud/concepts/plans-and-billing#free-trial), with no credit card required.
 
 :::
 
