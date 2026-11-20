@@ -6,7 +6,7 @@ description: Include configuration files, templates, data, or other non-Dart ass
 
 # Ship non-Dart files with your server
 
-Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with your server code on Cloud. Place them in an `assets/` folder at the project root and read them with `./assets/<path>` at runtime.
+Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with your server code on Cloud. Place them in an `assets/` folder in your server project and read them with `./assets/<path>` at runtime.
 
 ## Before you start
 
@@ -37,7 +37,7 @@ Then deploy:
 serverpod cloud deploy
 ```
 
-Cloud zips your project directory and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). The `assets/` name is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
+Cloud zips your server project and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). The `assets/` name is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
 
 To preview which files Cloud will upload before deploying:
 
