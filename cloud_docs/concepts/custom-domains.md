@@ -32,26 +32,28 @@ Attach the domain to your project, specifying the target surface:
 serverpod cloud domain attach example.com --target web
 ```
 
-After attaching, the CLI prints DNS records to add at your registrar. For an apex domain like `example.com`, two records are needed:
+After attaching, the CLI prints DNS records to add at your registrar. For an apex domain like `example.com`, which has no subdomain, it lists an ANAME and a TXT record. On the `web` target, it also lists a CNAME for `www.example.com`:
 
 ```text
 Custom domain attached successfully!
 
-Complete the setup by adding the records to your DNS configuration
+Complete the setup by adding the following records to your DNS configuration:
 
-┌────────────────────────────────────────────────────────────────────────────────┐
-│ Record type | Domain name | Value                                              │
-│ ------------+-------------+--------------------------------------------------- │
-│ ANAME       | example.com | my-app.api.serverpod.space                         │
-│ TXT         | example.com | scloud-verify=cbe1f5cc-f176-4183-8142-e0585ad15999 │
-│                                                                                │
-└────────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ Record type | Domain name     | Value                                              │
+│ ------------+-----------------+--------------------------------------------------- │
+│ ANAME       | example.com     | my-app.serverpod.space                             │
+│ TXT         | example.com     | scloud-verify=cbe1f5cc-f176-4183-8142-e0585ad15999 │
+│ CNAME       | www.example.com | my-app.serverpod.space                             │
+│                                                                                    │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 Each row corresponds to one record to add at your registrar:
 
 - **ANAME (or ALIAS)**: points the domain at the Serverpod Cloud surface
 - **TXT**: carries a verification token that Serverpod Cloud uses to confirm ownership
+- **CNAME for `www`** (`web` target only): makes `www.example.com` redirect to `example.com`. Serverpod Cloud also provisions its TLS certificate.
 
 Plain CNAMEs aren't valid at the zone apex, which is why ANAME or ALIAS is required there. [Cloudflare](https://www.cloudflare.com/), [Route 53](https://aws.amazon.com/route53/), and [DNSimple](https://dnsimple.com/) all support ANAME or ALIAS records.
 
@@ -60,7 +62,7 @@ For a subdomain like `api.example.com`, a single CNAME record is enough:
 ```text
 Custom domain attached successfully!
 
-Complete the setup by adding the records to your DNS configuration
+Complete the setup by adding the following records to your DNS configuration:
 
 ┌────────────────────────────────────────────────────────────┐
 │ Record type | Domain name     | Value                      │
@@ -108,7 +110,7 @@ serverpod cloud domain detach example.com
 
 **Verification fails.** DNS records may be missing or still propagating. Confirm the records are in place at your registrar, then wait up to 24 hours and retry with `serverpod cloud domain verify <domain>`.
 
-**Can't attach the domain.** If the CLI reports `Custom domains are not available for this project's plan.`, the project is on Starter. [Move it to Growth](/cloud/concepts/plans-and-billing#change-your-projects-plan) first. Otherwise, the domain is already attached to another project. Detach it from that project first.
+**Can't attach the domain.** If the CLI reports `Custom domains are not available for this project's plan.`, the project is on Starter. [Move it to Growth](/cloud/concepts/plans-and-billing#change-your-projects-plan) first. If it reports `The domain name is already in use.`, the domain is already attached to this project. Run `serverpod cloud domain list` to see it.
 
 **TLS certificate errors.** TLS provisioning is still in progress. It usually completes within an hour of successful verification.
 
