@@ -116,11 +116,19 @@ serverpod cloud deploy --output deployment.zip --wet-run
 
 ## Configure what's included
 
-A `.scloudignore` file in your project root controls which files are packaged. The syntax mirrors `.gitignore`.
+A deploy uploads your server project. In a Serverpod 4 project, which is a Dart workspace, it also uploads the workspace packages your server depends on and the workspace's root `pubspec.yaml` and `pubspec.lock`. Your Flutter app and other folders at the workspace root aren't uploaded.
 
-By default, every file ignored by `.gitignore` is also excluded from the deployment. To include files that `.gitignore` excludes, prefix the pattern with `!` in your `.scloudignore`:
+Within what's uploaded, a deploy leaves out:
 
-```text title=".scloudignore"
+- Files your `.gitignore` files exclude
+- Hidden files and folders, whose names start with `.`
+- Files your `.scloudignore` files exclude
+
+The CLI creates a `.scloudignore` in your server project, such as `my_project_server/`, when you link or deploy the project. In a workspace, it also creates one in the workspace root. Its template already leaves out your passwords and config files. It also keeps your generated code and the files under `web/`, such as your Flutter web build, even where `.gitignore` excludes them.
+
+The syntax mirrors `.gitignore`. A pattern with a `/` at the start or in the middle is relative to the folder of the `.scloudignore` it's in. Other patterns match at any depth. To upload a file that a `.gitignore` excludes, add the pattern with a `!` prefix to a `.scloudignore` in the same folder as that `.gitignore`, or in a folder below it. For files in your server project, that's usually the server project's `.scloudignore`:
+
+```text title="my_project_server/.scloudignore"
 # Exclude a specific file
 /specific_file.txt
 
