@@ -114,15 +114,15 @@ Save the package to a local zip (useful for CI inspection or air-gapped environm
 serverpod cloud deploy --output deployment.zip --wet-run
 ```
 
-## Choose what a deploy uploads {#configure-whats-included}
+## What a deploy uploads {#what-a-deploy-uploads}
 
-By default, a deploy uploads your server project and any packages from its [Dart workspace](https://dart.dev/tools/pub/workspaces) that it depends on, along with the workspace's root `pubspec.yaml` and `pubspec.lock`. A deploy leaves out anything your `.gitignore` files exclude, and hidden files and folders, whose names start with `.`. To change what a deploy uploads, use a `.scloudignore` file.
+By default, a deploy uploads your server project and any packages from its [Dart workspace](https://dart.dev/tools/pub/workspaces) that it depends on, along with the workspace's root `pubspec.yaml` and `pubspec.lock`. It leaves out hidden files and folders, whose names start with `.`, and anything your `.gitignore` files exclude. Because `.gitignore` also controls what Git ignores, you can use a `.scloudignore` file to change only what a deploy uploads.
 
-### Use a `.scloudignore` file
+### Configure what's included {#configure-whats-included}
 
-A `.scloudignore` file lists files to leave out of a deploy, and files to upload that a deploy would otherwise leave out. Its syntax mirrors `.gitignore`.
+A `.scloudignore` file can exclude files from a deploy, or include files that are left out by default. Its syntax mirrors `.gitignore`.
 
-When you link or deploy the project, the CLI creates a `.scloudignore` in your server project, such as `my_project_server/`. In a Dart workspace, it also creates one in the workspace root. In your server project, the file already leaves out your passwords and config files. It also keeps your generated code and the files under `web/`, such as your Flutter web build, even where `.gitignore` excludes them.
+When you launch or link a project, the CLI creates a default `.scloudignore` in your server project's folder, unless one is already there. In a Dart workspace, it also creates one in the workspace root. In your server project, the default file leaves out your passwords and config files, which Serverpod Cloud manages for you.
 
 Two rules decide where to put a pattern:
 
@@ -141,8 +141,8 @@ Here's an example `.scloudignore` for your server project:
 # Exclude a directory and its contents
 /large_dir/
 
-# Include a file that .gitignore excludes
-!assets/data/initial_data.csv
+# Include generated code, even if ignored by .gitignore
+!lib/src/generated/
 ```
 
 Verify your ignore patterns:
