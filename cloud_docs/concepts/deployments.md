@@ -114,9 +114,9 @@ Save the package to a local zip (useful for CI inspection or air-gapped environm
 serverpod cloud deploy --output deployment.zip --wet-run
 ```
 
-## Configure what's included
+## Choose what a deploy uploads {#configure-whats-included}
 
-A deploy uploads your server project. In a Serverpod 4 project, which is a Dart workspace, it also uploads the workspace packages your server depends on and the workspace's root `pubspec.yaml` and `pubspec.lock`. Your Flutter app and other folders at the workspace root aren't uploaded.
+A Serverpod project is a Dart workspace, a folder whose root `pubspec.yaml` lists your server, client, and Flutter app packages. A deploy uploads your server project, the workspace packages your server depends on, and the root `pubspec.yaml` and `pubspec.lock`. Your Flutter app isn't uploaded. In a single-package project, a deploy uploads only the server project.
 
 Within what's uploaded, a deploy leaves out:
 
@@ -126,7 +126,12 @@ Within what's uploaded, a deploy leaves out:
 
 The CLI creates a `.scloudignore` in your server project, such as `my_project_server/`, when you link or deploy the project. In a workspace, it also creates one in the workspace root. Its template already leaves out your passwords and config files. It also keeps your generated code and the files under `web/`, such as your Flutter web build, even where `.gitignore` excludes them.
 
-The syntax mirrors `.gitignore`. A pattern with a `/` at the start or in the middle is relative to the folder of the `.scloudignore` it's in. Other patterns match at any depth. To upload a file that a `.gitignore` excludes, add the pattern with a `!` prefix to a `.scloudignore` in the same folder as that `.gitignore`, or in a folder below it. For files in your server project, that's usually the server project's `.scloudignore`:
+The syntax mirrors `.gitignore`. Two rules decide where to put a pattern:
+
+- **Patterns with a `/`:** A pattern with a `/` at the start or in the middle is relative to the folder of the `.scloudignore` it's in. Other patterns match at any depth.
+- **Patterns with a `!`:** To upload a file that a `.gitignore` excludes, add the pattern with a `!` prefix to a `.scloudignore` in the same folder as that `.gitignore`, or in a folder below it. For files in your server project, that's usually the server project's `.scloudignore`.
+
+Here's an example `.scloudignore` for your server project:
 
 ```text title="my_project_server/.scloudignore"
 # Exclude a specific file
@@ -138,8 +143,8 @@ The syntax mirrors `.gitignore`. A pattern with a `/` at the start or in the mid
 # Exclude a directory and its contents
 /large_dir/
 
-# Include generated code, even if ignored by .gitignore
-!lib/src/generated/
+# Include a file that .gitignore excludes
+!assets/data/initial_data.csv
 ```
 
 The Serverpod Cloud CLI may generate intermediate files under `.scloud/` directories. In a workspace project, the CLI adds this pattern to the workspace root's `.gitignore` for you. In any other project, add it yourself so the files stay out of version control:
