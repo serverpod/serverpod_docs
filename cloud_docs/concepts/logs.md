@@ -12,7 +12,7 @@ Insights groups logs by session, so it's the right starting point for tracing a 
 
 ## View logs in Insights
 
-Open Insights from the Cloud console once a project is deployed. Sessions appear in a chronological list. Selecting one shows its messages and errors. If query logging and stack-trace capture are on for the project, it also shows the database queries the session ran and the stack traces for any caught exceptions. Both add overhead, so they're off by default.
+Open Insights from the Cloud console once a project is deployed. Sessions appear in a chronological list. Select a session to see its messages and errors. If query logging and stack-trace capture are on for the project, you also see the database queries the session ran and the stack traces for any caught exceptions. Both add overhead, so they're off by default.
 
 :::tip
 

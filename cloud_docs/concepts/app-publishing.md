@@ -5,7 +5,7 @@ description: Serverpod Cloud builds your Flutter app and uploads it to TestFligh
 
 # App publishing
 
-Getting a Flutter app to testers means signing builds, matching store settings, and uploading to TestFlight and Google Play. With app publishing, you run one command. Serverpod Cloud builds your Flutter app for iOS and Android, signs it, and uploads it to the stores you connected in the console.
+Getting a Flutter app to testers means signing builds, matching store settings, and uploading to TestFlight and Google Play. With app publishing, one command builds your Flutter app for iOS and Android, signs it, and uploads it to the stores you connected in the console.
 
 You publish from the Cloud CLI. The `app setup` command prepares your Flutter app for the stores, and the `app doctor` command checks your app's setup before you publish and tells you how to fix each problem it finds.
 
@@ -84,7 +84,7 @@ iOS
 1 check failed. Fix it before you publish the app.
 ```
 
-A check marked `✗` makes the build or the upload fail, so fix it before you publish. A check marked `!` is a warning. The app can be published, but the result may not be what you want.
+A check marked `✗` makes the build or the upload fail, so fix it before you publish. A check marked `!` is a warning. It doesn't stop you from publishing, but the result may not be what you want.
 
 The command finds your Flutter app from `project.app.dir` in `scloud.yaml`, the current directory, or your server's workspace. Pass `--app-dir` to check an app somewhere else, and `--platforms ios` or `--platforms android` to check one platform.
 
