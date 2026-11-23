@@ -1,7 +1,7 @@
 ---
 sidebar_position: 8
 title: Deployment hooks
-description: Run custom scripts at fixed points in a Serverpod Cloud deploy. Pre-deploy hooks handle setup like code generation; post-deploy hooks send notifications.
+description: Run custom scripts at fixed points in a Serverpod Cloud deploy. Pre-deploy hooks handle setup like code generation, and post-deploy hooks send notifications.
 ---
 
 # Deployment hooks

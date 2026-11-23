@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 title: scloud.yaml schema
-description: "The schema for scloud.yaml: every key, its type, what the Cloud CLI preserves across commands, and the validation errors you might see."
+description: "Every key in scloud.yaml, with its type, what the Cloud CLI preserves across commands, and the validation errors you might see."
 ---
 
 # scloud.yaml schema

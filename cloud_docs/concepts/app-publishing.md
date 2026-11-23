@@ -5,7 +5,7 @@ description: Serverpod Cloud builds your Flutter app and uploads it to TestFligh
 
 # App publishing
 
-Getting a Flutter app to testers means signing builds, matching store settings, and uploading to TestFlight and Google Play. With app publishing, you run one command, and Serverpod Cloud builds your Flutter app for iOS and Android, signs it, and uploads it to the stores you connected in the console.
+Getting a Flutter app to testers means signing builds, matching store settings, and uploading to TestFlight and Google Play. With app publishing, you run one command. Serverpod Cloud builds your Flutter app for iOS and Android, signs it, and uploads it to the stores you connected in the console.
 
 You publish from the Cloud CLI. The `app setup` command prepares your Flutter app for the stores, and the `app doctor` command checks your app's setup before you publish and tells you how to fix each problem it finds.
 
@@ -172,7 +172,7 @@ The version must be a Flutter release version, and it can't be lower than the Fl
 
 ### App identifiers {#app-identifiers}
 
-The stores identify your app by its bundle ID on iOS and its package name on Android. Serverpod Cloud reads them from your Flutter app: the bundle ID from the Xcode project in `ios/`, and the package name from `applicationId` in `android/app/build.gradle.kts` or `build.gradle`.
+The stores identify your app by its bundle ID on iOS and its package name on Android. Serverpod Cloud reads the bundle ID from the Xcode project in `ios/`, and the package name from `applicationId` in `android/app/build.gradle.kts` or `build.gradle`.
 
 A new Flutter app uses a `com.example` placeholder, which the stores don't accept. Replace it with your own identifier, such as `com.yourcompany.yourapp`, in both places. The [`app setup`](#set-up-your-app) command does this for you. The identifier must match the app you created in App Store Connect and Play Console.
 
