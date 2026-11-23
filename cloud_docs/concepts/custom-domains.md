@@ -22,9 +22,9 @@ Custom domains need the [**Growth** plan](/cloud/concepts/plans-and-billing).
 
 A custom domain points at one of the three surfaces:
 
-- `web`: a Flutter web app or other content served by Serverpod's web server
-- `api`: Serverpod endpoints your Flutter app or other clients call
-- `insights`: the Serverpod Insights app (typically on a separate subdomain like `insights.example.com`)
+- **`web`:** A Flutter web app or other content served by Serverpod's web server.
+- **`api`:** Serverpod endpoints your Flutter app or other clients call.
+- **`insights`:** The Serverpod Insights app, typically on a separate subdomain like `insights.example.com`.
 
 Attach the domain to your project, specifying the target surface:
 
@@ -51,9 +51,9 @@ Complete the setup by adding the following records to your DNS configuration:
 
 Each row corresponds to one record to add at your registrar:
 
-- **ANAME (or ALIAS)**: points the domain at the Serverpod Cloud surface
-- **TXT**: carries a verification token that Serverpod Cloud uses to confirm ownership
-- **CNAME for `www`** (`web` target only): makes `www.example.com` redirect to `example.com`. Serverpod Cloud also provisions its TLS certificate.
+- **ANAME (or ALIAS):** Points the domain at the Serverpod Cloud surface.
+- **TXT:** Carries a verification token that Serverpod Cloud uses to confirm ownership.
+- **CNAME for `www` (`web` target only):** Makes `www.example.com` redirect to `example.com`. Serverpod Cloud also provisions a TLS certificate for `www.example.com`.
 
 Plain CNAMEs aren't valid at the zone apex, which is why ANAME or ALIAS is required there. [Cloudflare](https://www.cloudflare.com/), [Route 53](https://aws.amazon.com/route53/), and [DNSimple](https://dnsimple.com/) all support ANAME or ALIAS records.
 
@@ -84,7 +84,7 @@ serverpod cloud domain verify example.com
 
 A successful verification triggers TLS certificate provisioning, which usually completes within the hour. Certificates are renewed automatically.
 
-Once the domain is active, point your client at the new URL:
+Once the domain is active, point your app's `Client` at the new URL:
 
 ```dart
 final client = Client('https://api.example.com');
@@ -100,7 +100,7 @@ serverpod cloud domain list
 
 ## Detach a custom domain
 
-Remove a custom domain from a project. The CLI prompts for confirmation before removing:
+Remove a custom domain from a project. The CLI asks you to confirm before it removes the domain:
 
 ```bash
 serverpod cloud domain detach example.com
