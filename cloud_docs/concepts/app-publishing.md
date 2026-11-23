@@ -24,7 +24,7 @@ App publishing supports two platforms:
 
 When you publish, the CLI uploads your Flutter app's source code. Serverpod Cloud builds it in release mode on its own build machines, with the Flutter version you choose. It then signs each build and uploads it to the store. You don't need Xcode, Android Studio, or a Mac to publish.
 
-Google Play keeps each build as a draft release. Testers can install it once you roll out the release in Play Console, and before the first rollout you choose who your testers are. See [Set up an open, closed, or internal test](https://support.google.com/googleplay/android-developer/answer/9845334).
+Google Play keeps each build as a draft release. Testers can install it once you roll out the release in Play Console. Before the first rollout, you also choose who your testers are. See [Set up an open, closed, or internal test](https://support.google.com/googleplay/android-developer/answer/9845334).
 
 Releasing a build from TestFlight or the internal testing track to the public store stays in App Store Connect and Play Console.
 
