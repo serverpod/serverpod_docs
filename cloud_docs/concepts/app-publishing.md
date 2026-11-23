@@ -24,7 +24,11 @@ App publishing supports two platforms:
 
 When you publish, the CLI uploads your Flutter app's source code. Serverpod Cloud builds it in release mode on its own build machines, with the Flutter version you choose. It then signs each build and uploads it to the store. You don't need Xcode, Android Studio, or a Mac to publish.
 
-Google Play keeps each build as a draft release. Testers can install it once you roll out the release in Play Console. Before the first rollout, you also choose who your testers are. See [Set up an open, closed, or internal test](https://support.google.com/googleplay/android-developer/answer/9845334).
+:::note
+
+Google Play keeps each build as a draft release until you roll it out to your testers in Play Console. See [Set up an open, closed, or internal test](https://support.google.com/googleplay/android-developer/answer/9845334).
+
+:::
 
 Releasing a build from TestFlight or the internal testing track to the public store stays in App Store Connect and Play Console.
 
@@ -39,13 +43,17 @@ The `app doctor` command shows whether each connection is complete, and links to
 
 ## Set up your app
 
-The `app` commands need Cloud CLI 1.4.0 or later. Run `serverpod cloud version` to check. If a newer version is out, the command updates the CLI before it prints the version.
-
 Run `app setup` from your project's directory to prepare your Flutter app for the stores:
 
 ```bash
 serverpod cloud app setup
 ```
+
+:::note
+
+The `app` commands need Cloud CLI 1.4.0 or later.
+
+:::
 
 For each platform, the command checks the [app identifier](#app-identifiers). If your app still uses Flutter's `com.example` placeholder, it asks for a new identifier and writes it into your app's files. It then saves the identifier to your Serverpod Cloud project. For Android, it also checks the [release signing](#android-release-signing).
 
@@ -276,9 +284,15 @@ Each platform needs the icon in several sizes. A package such as [flutter_launch
 
 ## Troubleshooting
 
-**Apple has no room for another certificate.** Apple signs iOS builds with a Distribution certificate. The first time Serverpod Cloud builds an iOS app for your Apple team, it creates its own Distribution certificate there and reuses it for later builds. The App Store Connect API key you added in the console isn't a certificate, so changing it doesn't help.
+**Apple has no room for another certificate.** Your Apple Developer team already has [as many Distribution certificates as Apple allows](https://developer.apple.com/help/account/certificates/certificates-overview/), so Serverpod Cloud can't create one to sign your iOS builds. It creates this certificate the first time it builds an iOS app for your team, and reuses it after that. The certificate is separate from the App Store Connect API key you added in the console.
 
-This error means your team already has as many Distribution certificates as Apple allows, for example from other build services or your team's Macs. Revoke one that nothing uses anymore in [Certificates, IDs & Profiles](https://developer.apple.com/account/resources/certificates/list), then publish again. Before you revoke it, check that no teammate or other build pipeline still signs with it. Revoking a certificate doesn't affect apps already on the App Store or in TestFlight.
+In [Certificates, IDs & Profiles](https://developer.apple.com/account/resources/certificates/list), revoke a Distribution certificate that no one on your team still uses, then publish again. Revoking doesn't affect apps already on the App Store or in TestFlight.
+
+:::warning
+
+You can't restore a revoked certificate, and anyone still signing builds with it can no longer sign new ones.
+
+:::
 
 ## Related
 
