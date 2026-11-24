@@ -203,7 +203,7 @@ class TenantDataRoute extends Route {
 
     return Response.ok(
       body: Body.fromString(
-        jsonEncode(data.map((p) => p.toJson()).toList()),
+        jsonEncode(data.map((p) => p.toJsonForProtocol()).toList()),
         mimeType: MimeType.json,
       ),
     );

@@ -180,7 +180,7 @@ class UserCrudModule extends Route {
 
     return Response.ok(
       body: Body.fromString(
-        jsonEncode(users.map((u) => u.toJson()).toList()),
+        jsonEncode(users.map((u) => u.toJsonForProtocol()).toList()),
         mimeType: MimeType.json,
       ),
     );
@@ -200,7 +200,7 @@ class UserCrudModule extends Route {
 
     return Response.ok(
       body: Body.fromString(
-        jsonEncode(user.toJson()),
+        jsonEncode(user.toJsonForProtocol()),
         mimeType: MimeType.json,
       ),
     );

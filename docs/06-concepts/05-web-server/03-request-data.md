@@ -27,7 +27,7 @@ class UserRoute extends Route {
 
     return Response.ok(
       body: Body.fromString(
-        jsonEncode(user.toJson()),
+        jsonEncode(user.toJsonForProtocol()),
         mimeType: MimeType.json,
       ),
     );
