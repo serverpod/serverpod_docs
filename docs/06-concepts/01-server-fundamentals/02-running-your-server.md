@@ -23,6 +23,7 @@ Use `serverpod start` for local development only. To run your server in producti
 By default, `serverpod start` watches your project. What happens when you save depends on the file:
 
 - **Server code:** hot reloads, and restarts the server if the reload fails.
+- **New endpoints:** regenerates the client and hot reloads, but the running app keeps the client it created at startup. Press **R** to hot restart the app before calling the new endpoint. New methods and signature changes on an existing endpoint need no extra step.
 - **Models:** regenerates code and hot reloads. The database does not change until you [apply a migration](#manage-migrations-from-the-terminal).
 - **Flutter app code:** hot reloads the running apps.
 - **Static web files:** refreshes the browser.

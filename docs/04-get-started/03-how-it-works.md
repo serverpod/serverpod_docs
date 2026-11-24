@@ -42,7 +42,7 @@ You run the whole project with one command:
 $ serverpod start
 ```
 
-This starts your server, launches your Flutter app, and watches your code. When you make a change, Serverpod instantly regenerates the client, hot reloads the server, and reloads your app.
+This starts your server, launches your Flutter app, and watches your code. When you save a change, Serverpod regenerates the client, hot reloads the server, and hot reloads your app.
 
 :::tip
 
@@ -73,6 +73,8 @@ final greeting = await client.example.hello('World');
 ```
 
 The client handles the request, the response, and the JSON in between. Most calls follow this request-and-response shape. For live updates, Serverpod also has [streaming methods](./concepts/endpoints-and-apis/streaming) that keep a connection open so the server and app can push data to each other.
+
+The app creates the client once, when it starts. If you add an endpoint while `serverpod start` is running, press **R** in its terminal to hot restart the app so the client includes the new endpoint. See [Running your server](./concepts/server-fundamentals/running-your-server#save-a-file-to-hot-reload) for what each kind of change needs.
 
 ## Define your data models
 
