@@ -56,7 +56,7 @@ $ serverpod create-migration --force
 ```
 
 :::warning
-Using `--force` approves deleting the flagged tables or columns when the migration runs. Before applying it, inspect the `DROP` statements in the generated `migration.sql` file to verify that only expected data will be removed.
+Using `--force` approves deleting the flagged tables or columns when the migration runs. Before applying it, review the warning to verify that only the expected data will be removed.
 :::
 
 A common cause of data-loss warnings is adding a required field without a default to a table that already has rows. To avoid dropping the table, make the field nullable or give it a [database default](../models#default-values) before creating the migration.
@@ -122,7 +122,7 @@ The `serverpod start` command handles migrations for you. Pending migrations are
 - Hold **Shift** with **M** or **P** to force the migration.
 
 :::warning
-Forcing the migration here applies the changes immediately and can delete data before you have a chance to review it. To review a migration first, run `serverpod create-migration --force` in a separate terminal, inspect `migration.sql`, and press **A** in the server terminal to apply it.
+When a migration risks data loss, **M** aborts and shows what will be deleted so you can review it. **Shift+M** applies the migration immediately without warning, permanently deleting the data.
 :::
 
 See [Running your server](../../server-fundamentals/running-your-server#manage-migrations-from-the-terminal) for the full set of shortcuts.
