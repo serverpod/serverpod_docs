@@ -15,7 +15,7 @@ The managed database runs on PostgreSQL 17 with TLS required, connection pooling
 The database is opt-in. You choose whether to enable it when you create the project, in one of two ways:
 
 - **With `serverpod cloud launch`.** It checks your server config for a `database` section and presets the database switch on the console's **New project** page. You can change it there before you create the project.
-- **With `serverpod cloud project create`.** Pass `--enable-db`, or `--no-enable-db` if your project doesn't use a database. The flag is **required**: it has no default, so you must pass one.
+- **With `serverpod cloud project create`.** Pass `--enable-db`, or `--no-enable-db` if your project doesn't use a database. The flag is **required** and has no default, so you must pass one.
 
 Once a project is created with the database enabled, the database is provisioned automatically and made available to your server on the next deploy.
 
@@ -23,16 +23,16 @@ Once a project is created with the database enabled, the database is provisioned
 
 When the database is enabled, your deployed Serverpod server receives its connection details as environment variables, injected by Cloud:
 
-| Variable                          | What it holds                       |
-| --------------------------------- | ----------------------------------- |
-| `SERVERPOD_DATABASE_HOST`         | The database host                   |
-| `SERVERPOD_DATABASE_PORT`         | The port (5432 by default)          |
-| `SERVERPOD_DATABASE_NAME`         | The database name                   |
-| `SERVERPOD_DATABASE_USER`         | The server's database user          |
-| `SERVERPOD_DATABASE_REQUIRE_SSL`  | Always `true`; TLS is required      |
-| `SERVERPOD_PASSWORD_database`     | The server's database password      |
+| Variable                         | What it holds                          |
+| -------------------------------- | -------------------------------------- |
+| `SERVERPOD_DATABASE_HOST`        | The database host                      |
+| `SERVERPOD_DATABASE_PORT`        | The port (5432 by default)             |
+| `SERVERPOD_DATABASE_NAME`        | The database name                      |
+| `SERVERPOD_DATABASE_USER`        | The server's database user             |
+| `SERVERPOD_DATABASE_REQUIRE_SSL` | Always `true`, because TLS is required |
+| `SERVERPOD_PASSWORD_database`    | The server's database password         |
 
-Your server reads these through Serverpod's standard configuration. You don't write them into `config/production.yaml` or `passwords.yaml`; Cloud supplies them at runtime. The server's password is managed by the platform and never exposed to you.
+Your server reads these through Serverpod's standard configuration. You don't write them into `config/production.yaml` or `passwords.yaml`, because Cloud supplies them at runtime. The server's password is managed by the platform and never exposed to you.
 
 ## Migrations run on every deploy
 
