@@ -8,7 +8,7 @@ To create a project from the command line:
 scloud project create my-project --enable-db
 ```
 
-If the project doesn't need a database, pass `--no-enable-db` instead. Then link your codebase to the project and [deploy](/cloud/reference/cli/commands/deploy):
+If the project doesn't need a database, pass `--no-enable-db` instead. In a script or CI, add `--yes` to answer the cost confirmation. Then link your codebase to the project and [deploy](/cloud/reference/cli/commands/deploy):
 
 ```bash
 scloud project link my-project
