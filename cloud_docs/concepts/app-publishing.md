@@ -24,6 +24,12 @@ App publishing supports two platforms:
 
 When you publish, the CLI uploads your Flutter app's source code. Serverpod Cloud builds it in release mode on its own build machines, with the Flutter version you choose. It then signs each build and uploads it to the store. You don't need Xcode, Android Studio, or a Mac to publish.
 
+:::note
+
+Google Play keeps each build as a draft release until you roll it out to your testers in Play Console. See [Set up an open, closed, or internal test](https://support.google.com/googleplay/android-developer/answer/9845334).
+
+:::
+
 Releasing a build from TestFlight or the internal testing track to the public store stays in App Store Connect and Play Console.
 
 ## Connect the stores
@@ -43,6 +49,12 @@ Run `app setup` from your project's directory to prepare your Flutter app for th
 serverpod cloud app setup
 ```
 
+:::note
+
+The `app` commands need Cloud CLI 1.4.0 or later.
+
+:::
+
 For each platform, the command checks the [app identifier](#app-identifiers). If your app still uses Flutter's `com.example` placeholder, it asks for a new identifier and writes it into your app's files. It then saves the identifier to your Serverpod Cloud project. For Android, it also checks the [release signing](#android-release-signing).
 
 To set the identifiers without a prompt, such as in CI, pass them as options:
@@ -52,6 +64,8 @@ serverpod cloud app setup --non-interactive --android-package-name com.yourcompa
 ```
 
 Pass `--platforms ios` or `--platforms android` to set up one platform, and `--app-dir` to set up an app somewhere else.
+
+Every `app` command reads your Cloud project ID from `scloud.yaml`, which `serverpod cloud launch` or `serverpod cloud project link` creates. Without that file, pass `--project <project-id>`.
 
 ## Check your app with app doctor
 
@@ -267,6 +281,20 @@ Each platform needs the icon in several sizes. A package such as [flutter_launch
 
 - **Platforms:** App publishing builds for iOS and Android only.
 - **Monthly builds:** Your plan sets how many times you can publish each project per month. A publish counts once one of its builds succeeds, however many platforms it builds for, so a publish where every build fails doesn't count. The count resets on the first of each month, in UTC.
+
+## Troubleshooting
+
+**Apple has no room for another certificate.** Serverpod Cloud needs a new Distribution certificate to sign your iOS builds, but your Apple Developer team already has [as many as Apple allows](https://developer.apple.com/help/account/certificates/certificates-overview/).
+
+In [Certificates, IDs & Profiles](https://developer.apple.com/account/resources/certificates/list), revoke a Distribution certificate that no one on your team still uses, then publish again. Apps already on the App Store or in TestFlight keep working.
+
+:::warning
+
+Revoking is permanent. Anyone still signing builds with that certificate will need a new certificate.
+
+:::
+
+If you'd rather keep all your certificates, you can publish only for Android, with `--platforms android`.
 
 ## Related
 
