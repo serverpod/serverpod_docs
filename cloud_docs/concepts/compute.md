@@ -66,6 +66,7 @@ Only the project's owner can change compute. For anyone else, **Edit plan** is d
 
 - **Billed per minute:** On Growth, each podlet is metered per minute while it runs, so a project at zero podlets adds no podlet cost. The [pricing page](https://serverpod.dev/pricing) lists the price of each size.
 - **Up to 20 podlets:** On Growth, **Max podlets** goes up to 20.
+- **Serverpod 3.3.0 or later for more than one podlet:** Earlier versions lack the health checks Cloud uses while it scales and deploys. See [Serverpod versions](/cloud/reference/serverpod-versions).
 
 ## Related
 
