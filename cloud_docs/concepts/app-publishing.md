@@ -284,15 +284,17 @@ Each platform needs the icon in several sizes. A package such as [flutter_launch
 
 ## Troubleshooting
 
-**Apple has no room for another certificate.** Your Apple Developer team already has [as many Distribution certificates as Apple allows](https://developer.apple.com/help/account/certificates/certificates-overview/), so Serverpod Cloud can't create one to sign your iOS builds. It creates this certificate the first time it builds an iOS app for your team, and reuses it after that. The certificate is separate from the App Store Connect API key you added in the console.
+**Apple has no room for another certificate.** Serverpod Cloud needs a new Distribution certificate to sign your iOS builds, but your Apple Developer team already has [as many as Apple allows](https://developer.apple.com/help/account/certificates/certificates-overview/).
 
-In [Certificates, IDs & Profiles](https://developer.apple.com/account/resources/certificates/list), revoke a Distribution certificate that no one on your team still uses, then publish again. Revoking doesn't affect apps already on the App Store or in TestFlight.
+In [Certificates, IDs & Profiles](https://developer.apple.com/account/resources/certificates/list), revoke a Distribution certificate that no one on your team still uses, then publish again. Apps already on the App Store or in TestFlight keep working.
 
 :::warning
 
-You can't restore a revoked certificate, and anyone still signing builds with it can no longer sign new ones.
+Revoking is permanent. Anyone still signing builds with that certificate will need a new certificate.
 
 :::
+
+If you'd rather keep all your certificates, you can publish only for Android, with `--platforms android`.
 
 ## Related
 
