@@ -27,7 +27,14 @@ Both `serverpod cloud password` and `serverpod cloud variable` follow the same s
 
 Passwords are the default tier for sensitive values the server reads through the Serverpod API. They are encrypted at rest, never shown after they're set, and accessed in code by the name you gave them. Each password is stored under a `SERVERPOD_PASSWORD_` prefix that the CLI adds on `set` and that `getPassword()` strips on read, so the name in your code stays clean. Common cases include database passwords, JWT signing secrets, third-party API keys, and email service credentials.
 
-Serverpod Cloud also provisions a set of platform-managed passwords automatically: database credentials, Insights tokens, `serverpod_auth_idp_server` keys, and keys for the legacy auth module. Run `serverpod cloud password list` to see them grouped into four categories: **Custom** (passwords you add), **Services** (database, Insights, and related platform passwords), **Auth** (passwords for `serverpod_auth_idp_server`), and **Legacy Auth** (passwords for the legacy authentication module). The Status column marks platform-managed passwords `AUTO (Platform)` and user-set ones `SET (User)`.
+Serverpod Cloud also provisions platform-managed passwords automatically. These cover database credentials, Insights tokens, `serverpod_auth_idp_server` keys, and keys for the legacy auth module. Run `serverpod cloud password list` to see them. The list groups passwords into four categories:
+
+- **Custom:** Passwords you add.
+- **Services:** Database, Insights, and related platform passwords.
+- **Auth:** Passwords for `serverpod_auth_idp_server`.
+- **Legacy Auth:** Passwords for the legacy authentication module.
+
+The Status column marks platform-managed passwords `AUTO (Platform)` and user-set ones `SET (User)`.
 
 Override a platform-managed password by setting a custom value with the same name. Unset it to restore the platform default.
 
@@ -99,7 +106,7 @@ A name keeps the tier it was created in. Running `set` again updates the value i
 
 ## Manage environment variables
 
-Variables are for non-sensitive configuration: URLs, feature flags, region names, or other settings that don't need encryption. Values are stored in plaintext and visible in the CLI and the Cloud console.
+Variables are for non-sensitive configuration, such as URLs, feature flags, region names, or other settings that don't need encryption. Values are stored in plaintext and visible in the CLI and the Cloud console.
 
 Set a variable by name and value:
 

@@ -64,7 +64,7 @@ The **Storage** tab in the Cloud console shows the same list, and you can add an
 
 ## Add a storage
 
-A storage you add yourself keeps files apart from the defaults, such as exports you purge on a schedule. The Starter plan includes two storages and your project already uses both, so adding more needs the **Growth** plan.
+A storage you add yourself keeps files apart from the defaults, such as exports you purge on a schedule. The Starter plan includes two storages and your project already uses both, so adding more needs the [**Growth** plan](/cloud/concepts/plans-and-billing).
 
 Add one:
 
@@ -108,9 +108,9 @@ In the console, select a storage in the **Storage** tab to browse, upload, downl
 - **Storages per project.** The Starter plan includes two and Growth allows up to ten.
 - **Metered usage.** Serverpod Cloud meters three things and bills them by usage: the data you store, the data read out of your storages, and the operations performed on them.
 - **Going over a cap.** Caps come with the plan, and there is no setting that raises them. When a project goes over one, your server can no longer read or write any storage in the project, and public URLs stop serving. Listing, downloading and deleting keep working from the CLI and the console, so you can clear space.
-- **Getting access back.** Access returns once usage is back under the cap, the month rolls over for a monthly cap, or the project moves to a plan that covers the usage. The check runs about once an hour, so it can take up to an hour. Deleting files helps when stored data is what you went over.
+- **Getting access back.** Access returns once usage is back under the cap, the month rolls over for a monthly cap, or the project [moves to a plan](/cloud/concepts/plans-and-billing#change-your-projects-plan) that covers the usage. The check runs about once an hour, so it can take up to an hour. Deleting files helps when stored data is what you went over.
 
-See [Serverpod Cloud plans](https://serverpod.dev/cloud) for the caps and prices on your plan.
+See [Serverpod Cloud pricing](https://serverpod.dev/pricing) for the caps and prices on your plan.
 
 ## Related
 

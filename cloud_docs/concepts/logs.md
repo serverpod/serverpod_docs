@@ -12,7 +12,7 @@ Insights groups logs by session, so it's the right starting point for tracing a 
 
 ## View logs in Insights
 
-Open Insights from the Cloud console once a project is deployed. Sessions appear in a chronological list; selecting one expands into its messages, errors, and (when enabled per project) the database queries the session ran and the stack traces for any caught exceptions. Query logging and stack-trace capture add overhead, so they're off by default.
+Open Insights from the Cloud console once a project is deployed. Sessions appear in a chronological list. Select a session to see its messages and errors. If query logging and stack-trace capture are on for the project, you also see the database queries the session ran and the stack traces for any caught exceptions. Both add overhead, so they're off by default.
 
 :::tip
 
@@ -22,7 +22,7 @@ Use Serverpod Insights for root-cause analysis. The session-grouped view makes i
 
 ## View build logs
 
-Build logs are emitted while Cloud builds your deployment package: package installation, compilation, warnings, and errors. They're the first place to look when a deploy fails. Fetch the latest build log:
+Build logs are emitted while Cloud builds your deployment package. They show package installation, compilation, warnings, and errors. They're the first place to look when a deploy fails. Fetch the latest build log:
 
 ```bash
 serverpod cloud build log

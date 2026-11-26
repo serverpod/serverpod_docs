@@ -6,7 +6,7 @@ description: Include configuration files, templates, data, or other non-Dart ass
 
 # Ship non-Dart files with your server
 
-Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with your server code on Cloud. Place them in an `assets/` folder at the project root and read them with `./assets/<path>` at runtime.
+Bundle non-Dart files (configuration, templates, CSV data, binary blobs) with your server code on Cloud. Place them in an `assets/` folder in your server project and read them with `./assets/<path>` at runtime.
 
 ## Before you start
 
@@ -37,7 +37,7 @@ Then deploy:
 serverpod cloud deploy
 ```
 
-Cloud zips your project directory and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). The `assets/` name is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
+Cloud zips your server project and includes every file that isn't excluded from the deploy package (see [Control what gets uploaded](#control-what-gets-uploaded) below). The `assets/` name is the Serverpod naming convention for this folder. You can call it anything, but the rest of this guide assumes `assets/`.
 
 To preview which files Cloud will upload before deploying:
 
@@ -58,7 +58,7 @@ Future<String> readSettings() async {
 }
 ```
 
-The path is relative to the directory the server runs from, not to the source file. Use `./assets/<path>` everywhere; absolute paths break across local and deployed environments.
+The path is relative to the directory the server runs from, not to the source file. Use `./assets/<path>` everywhere. Absolute paths break across local and deployed environments.
 
 For binary data (images, PDFs, archives), use `readAsBytes()` instead of `readAsString()`.
 
@@ -110,22 +110,18 @@ For more complex parsing, the [`csv` package](https://pub.dev/packages/csv) hand
 
 Two files affect what's in the deployment:
 
-- **`.gitignore`.** Anything excluded here is also excluded from the deploy.
-- **`.scloudignore`.** Cloud-specific exclusions. Same syntax as `.gitignore`. Use the `!` prefix to opt files back in that `.gitignore` excluded.
+- **`.gitignore`:** Anything excluded here is also excluded from the deploy.
+- **`.scloudignore`:** Cloud-specific exclusions, with the same syntax as `.gitignore`. To upload files that `.gitignore` excludes, add them with a `!` prefix to the `.scloudignore` in your server project.
 
 Hidden files (those starting with `.`) are excluded by default. If you need them shipped, opt back in via `.scloudignore`. See [Deployments](/cloud/concepts/deployments) for the full picture of the deployment package.
 
-:::tip
-
-Asset files count toward your deployment package size. Large folders slow uploads and the Cloud build step. For files larger than a few megabytes that don't need to live in version control, consider an external object store and reading them from the network instead.
-
-:::
+Asset files count toward your deployment package size. Large folders slow uploads and the Cloud build step. For files larger than a few megabytes that don't need to live in version control, keep them in [file storage](/cloud/concepts/storage) and read them at runtime instead.
 
 ## Troubleshooting
 
 **File not found at runtime.** The path is relative to the server's working directory, not to the source file. Use `./assets/<path>`. Verify the file is in the deployment with `serverpod cloud deploy --wet-run --show-files` before debugging at runtime.
 
-**Asset missing from the deployment.** Check `.gitignore` and `.scloudignore`. Patterns like `*.json` exclude every `.json` file unless you opt them back in with `!assets/**`.
+**Asset missing from the deployment.** Check `.gitignore` and `.scloudignore`. Patterns like `*.json` exclude every `.json` file unless you opt them back in with `!assets/**` in your server project's `.scloudignore`.
 
 ## Related
 

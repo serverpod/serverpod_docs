@@ -45,15 +45,21 @@ See the [Pre-migration project upgrade path](../../../upgrading/archive/upgrade-
 
 ### Force create migration
 
-The command stops without creating a migration in two situations, and each has its own override flag:
+The `create-migration` command stops without creating a migration in two cases:
 
-- When no changes are detected between the latest migration and the schema the project requires, the command skips creating a migration. Pass `--empty` to create the migration anyway, for example as a starting point for [custom SQL](#writing-custom-sql).
-- When the change carries a risk of destroying data, the command aborts with a warning. Pass `--force` to override the warning and create the migration.
+- **No schema changes detected:** If the latest migration already matches the schema required by the project, no migration is created. Pass `--empty` to create an empty migration anyway, for example, as a starting point for [custom SQL](#writing-custom-sql).
+- **Potential data loss detected:** If the required schema changes will delete data from the database, the command aborts and displays a warning describing the affected tables or columns. Pass `--force` to create the migration despite these warnings.
 
 ```bash
-$ serverpod create-migration --force
 $ serverpod create-migration --empty
+$ serverpod create-migration --force
 ```
+
+:::warning
+Using `--force` approves deleting the flagged tables or columns when the migration runs. Before applying it, review the warning to verify that only the expected data will be removed.
+:::
+
+A common cause of data-loss warnings is adding a required field without a default to a table that already has rows. To avoid dropping the table, make the field nullable or give it a [database default](../models#default-values) before creating the migration.
 
 ### Tag migration
 
@@ -113,8 +119,13 @@ The `serverpod start` command handles migrations for you. Pending migrations are
 - Press **M** to create a migration from your model changes and apply it.
 - Press **P** to create a repair migration and apply it.
 - Press **A** to retry when applying a migration fails.
+- Hold **Shift** with **M** or **P** to force the migration.
 
-Hold **Shift** with **M** or **P** to force the migration. See [Running your server](../../server-fundamentals/running-your-server#manage-migrations-from-the-terminal) for the full set of shortcuts.
+:::warning
+When a migration risks data loss, **M** aborts and shows what will be deleted so you can review it. **Shift+M** applies the migration immediately without warning, permanently deleting the data.
+:::
+
+See [Running your server](../../server-fundamentals/running-your-server#manage-migrations-from-the-terminal) for the full set of shortcuts.
 
 ### In production or CI
 
