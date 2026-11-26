@@ -50,7 +50,7 @@ project:
 
 **Type:** string. **Optional.**
 
-Pins the Dart SDK version used for builds. When unset, the CLI falls back to your `.tool-versions` file and then the `environment.sdk` constraint in your `pubspec.yaml`. See [Dart SDK versions](/cloud/reference/dart-sdk-versions) for the supported versions and the full selection order.
+Pins the Dart SDK version used for builds. When unset, the CLI falls back to your `.tool-versions` file and then the `environment.sdk` constraint in your `pubspec.yaml`. See [Serverpod and Dart SDK versions](/cloud/reference/serverpod-and-dart-sdk-versions#dart-sdk-versions) for the supported Dart SDK versions and the full selection order.
 
 ```yaml title="scloud.yaml"
 project:
@@ -243,7 +243,7 @@ The `pre_deploy`, `post_deploy`, or `app.dartDefineFromFile` value is neither a 
 ## Related
 
 - [Project identifier rules](/cloud/reference/project-id-rules)
-- [Dart SDK versions](/cloud/reference/dart-sdk-versions)
+- [Serverpod and Dart SDK versions](/cloud/reference/serverpod-and-dart-sdk-versions)
 - [App publishing](/cloud/concepts/app-publishing)
 - [Deployment hooks](/cloud/concepts/deployment-hooks)
 - [CLI reference: `project` command](/cloud/reference/cli/commands/project)

@@ -15,7 +15,7 @@ It happens in two halves. Deploying your project to Cloud comes first, because t
 You need:
 
 - The Serverpod Cloud CLI set up and authenticated. See [Set up the Cloud CLI](/cloud/getting-started/installation).
-- Your Serverpod project on your machine, with the same code and migrations that run on your server. It must use Serverpod 2.3.0 or later. See [Serverpod versions](/cloud/reference/serverpod-versions).
+- Your Serverpod project on your machine, with the same code and migrations that run on your server. It must use Serverpod 2.3.0 or later. See [Serverpod and Dart SDK versions](/cloud/reference/serverpod-and-dart-sdk-versions#serverpod-versions).
 - Shell access to the server that runs your database.
 - The PostgreSQL client tools (`pg_restore` and `psql`) on your machine. Use the same major version as your self-hosted database or newer. Cloud runs PostgreSQL 17, so version 17 works unless your self-hosted database is newer. See [PostgreSQL downloads](https://www.postgresql.org/download/).
 

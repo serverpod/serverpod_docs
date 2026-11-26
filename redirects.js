@@ -88,8 +88,11 @@ module.exports = [{
     to: '/cloud/reference/private-dependencies',
   },
   {
-    from: ['/cloud/reference/deployment/dart-sdk-versions'],
-    to: '/cloud/reference/dart-sdk-versions',
+    from: [
+      '/cloud/reference/deployment/dart-sdk-versions',
+      '/cloud/reference/dart-sdk-versions',
+    ],
+    to: '/cloud/reference/serverpod-and-dart-sdk-versions',
   },
   {
     from: ['/cloud/reference/project-id'],
