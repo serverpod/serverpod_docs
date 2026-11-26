@@ -1,6 +1,6 @@
 ---
 sidebar_position: 11
-description: Serverpod Cloud builds your Flutter app and uploads it to TestFlight and Google Play. Set up the app with app setup, check it with app doctor, then publish from the CLI.
+description: Serverpod Cloud builds your Flutter app for iOS and Android, signs it, and uploads it to TestFlight and Google Play from the Cloud CLI.
 ---
 
 # App publishing
@@ -62,10 +62,20 @@ Every `app` command reads your Cloud project ID from `scloud.yaml`, which `serve
 
 Before you can publish for a platform, connect its store in the [Serverpod Cloud console](https://console.serverpod.dev). Open your project, then open the **App Stores** tab.
 
-Each store's setup guide starts after `app setup` has saved the app identifier for that platform. Until then, the guide shows the `app setup` command to run, and it continues by itself when the command is done. The guide then shows your bundle ID or package name, which you enter in the store, and walks you through the steps:
+Check the bundle ID and package name before you create the app in each store, because the stores don't let you change them after the first build is uploaded. For an app that's already in the stores, use its registered identifier. See [App identifiers](#app-identifiers).
 
-- **App Store:** Join the Apple Developer Program, register your app's bundle ID, create the app in App Store Connect, and add an App Store Connect API key. Only the project owner can add the key.
+Each store's setup guide shows your bundle ID or package name, which you enter in the store, and walks you through the steps:
+
+- **App Store:** Join the Apple Developer Program, register your app's bundle ID, create the app in App Store Connect, and add an App Store Connect API key.
 - **Google Play:** Sign up for Play Console, create the app with your app's package name, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
+
+Only the project owner can add an App Store Connect API key. The key is saved to the owner's account, so the owner can choose it again when connecting their other projects. To replace or remove a key, open **App Stores** under the person icon in the console's top bar.
+
+:::note
+
+If you open a guide before running `app setup`, the guide shows the command to run. When the command is done, it shows the connected bundle ID or package name. Select **Continue** to open the steps.
+
+:::
 
 The `app doctor` command shows whether each connection is complete, and links to the setup guide when it isn't.
 
@@ -166,7 +176,7 @@ When a build fails, `app show` and `app status` print the `app log` command that
 
 These are the parts of your Flutter app that `app doctor` checks. Each one has a section below.
 
-### Flutter version {#flutter-version}
+### Flutter version
 
 Serverpod Cloud builds your app with the first Flutter version it finds, in this order:
 
@@ -186,7 +196,7 @@ environment:
 
 The version must be a Flutter release version, and it can't be lower than the Flutter version your app's `pubspec.lock` requires. When `app doctor` warns that the version isn't pinned, the builds use the latest stable release, which can change between two publishes.
 
-### App identifiers {#app-identifiers}
+### App identifiers
 
 The stores identify your app by its bundle ID on iOS and its package name on Android. Serverpod Cloud reads the bundle ID from the Xcode project in `ios/`, and the package name from `applicationId` in `android/app/build.gradle.kts` or `build.gradle`.
 
@@ -203,7 +213,7 @@ project:
       android: com.yourcompany.yourapp
 ```
 
-### Android release signing {#android-release-signing}
+### Android release signing
 
 Google Play only accepts builds signed with your app's upload key. Serverpod Cloud stores that key and passes it to each Android build through these environment variables:
 
@@ -255,7 +265,7 @@ Serverpod Cloud sets `SERVERPOD_APP_BUILD` on its builds, so release builds on y
 
 The `app doctor` command checks that your release build type doesn't sign with the debug key alone, and that your Gradle build file names all four variables. You can read them in any way Gradle supports, such as `providers.environmentVariable("ANDROID_KEY_ALIAS")` or, in a Groovy `build.gradle`, `System.getenv('ANDROID_KEY_ALIAS')`.
 
-### iOS export compliance {#ios-export-compliance}
+### iOS export compliance
 
 App Store Connect asks whether each build uses encryption, because apps that use some kinds of encryption need export compliance documentation. Until a build answers it, App Store Connect holds the build and your testers can't install it.
 
@@ -268,7 +278,7 @@ Answer it once in your app's `ios/Runner/Info.plist`, inside the top-level `<dic
 
 If your app uses encryption that isn't exempt, set it to `<true/>` and provide the documentation in App Store Connect. Apple's [ITSAppUsesNonExemptEncryption reference](https://developer.apple.com/documentation/bundleresources/information-property-list/itsappusesnonexemptencryption) explains which encryption is exempt.
 
-### App icon {#app-icon}
+### App icon
 
 A new Flutter app has the Flutter logo as its icon. Testers see this icon on their home screen, and the stores show it on your app's listing. The `app doctor` command warns while your app still has it.
 

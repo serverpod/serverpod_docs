@@ -102,9 +102,9 @@ project:
 
 #### xcodeVersion
 
-**Type:** string. **Optional.**
+**Type:** string or number. **Optional.**
 
-The Xcode version to build your iOS app with, such as `26.6`. When unset, iOS builds use the Xcode version that Serverpod Cloud selects. Android builds ignore this setting. Put the version in quotes: without them, YAML reads a version such as `26.10` as the number `26.1`.
+The Xcode version to build your iOS app with, such as `26.6`. When unset, iOS builds use the Xcode version that Serverpod Cloud selects. Android builds ignore this setting. Put the version in quotes, because YAML reads an unquoted version such as `26.10` as the number `26.1`.
 
 If the value isn't a version in the form `major.minor` or `major.minor.patch`, `serverpod cloud app publish` stops with an error. If the build machines don't have that Xcode version, the iOS build fails.
 
