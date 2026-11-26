@@ -26,7 +26,7 @@ This opens a browser window where you sign in. To check which account the CLI is
 
 ### Account settings
 
-Your account settings are under the person icon in the console's top bar, on these tabs:
+Your account settings are in the account menu at the right of the console's top bar, on these tabs:
 
 <div className="full-width-table">
 
@@ -35,16 +35,18 @@ Your account settings are under the person icon in the console's top bar, on the
 | **Billing**    | Your card and billing details. See [Plans and billing](/cloud/concepts/plans-and-billing#set-up-billing).                                   |
 | **Vouchers**   | Redeem a voucher code to add credit to your account, and see your balance.                                                                  |
 | **Settings**   | Your name and email.                                                                                                                        |
-| **Security**   | Every place you're signed in, and your personal access tokens. See [Manage where you're signed in](#manage-where-youre-signed-in).          |
+| **Security**   | Every place you're signed in, and your personal access tokens. See [Manage your sessions](#manage-your-sessions).                           |
 | **App Stores** | The App Store Connect keys your projects use to upload iOS builds. See [App publishing](/cloud/concepts/app-publishing#connect-the-stores). |
 
 </div>
 
-### Manage where you're signed in
+### Manage your sessions
 
 Every place you're signed in to Serverpod Cloud, in the console or the CLI, is a session. To see your sessions, along with your [personal access tokens](/cloud/concepts/personal-access-tokens), open the **Security** tab. Each row shows when the session or token was created and last used.
 
-To sign out a device you no longer use or trust, select **Revoke** on its session. From the terminal, find the session's ID, then sign it out:
+To sign out a device you no longer use or trust, open the menu at the end of its session's row, then select **Revoke**.
+
+From the terminal, find the session's ID, then sign it out:
 
 ```bash
 serverpod cloud auth list
@@ -53,7 +55,7 @@ serverpod cloud auth logout --token-id <token-id>
 
 To sign out only the terminal you're in, run `serverpod cloud auth logout`. To sign out every session and revoke every token at once, run `serverpod cloud auth logout --all`.
 
-For CI pipelines and scripts, sign in with a personal access token instead of signing in through the browser.
+For CI pipelines and scripts, sign in with a [personal access token](/cloud/concepts/personal-access-tokens#create-a-token) instead of signing in through the browser.
 
 ## Project teams
 
@@ -68,7 +70,7 @@ A project has one owner and any number of admins.
 
 </div>
 
-Team members need the [Growth plan](/cloud/concepts/plans-and-billing). On Starter, inviting someone fails with `Inviting users is not available for this project's plan.`
+To invite team members, a project needs a plan that includes them, such as [Growth](/cloud/concepts/plans-and-billing#choose-a-plan). On Starter, **Invite user** asks you to upgrade instead, and `serverpod cloud project user invite` fails with `Inviting users is not available for this project's plan.`
 
 ### Invite a team member
 

@@ -45,7 +45,7 @@ Projects you were invited to are billed to their owner, so they don't need your 
 
 To set up billing:
 
-1. In the [Serverpod Cloud console](https://console.serverpod.dev), select the person icon in the top bar, then **Billing**. The **Set up billing** buttons open the same page.
+1. In the [Serverpod Cloud console](https://console.serverpod.dev), open the account menu at the right of the top bar, then select **Billing**. The **Set up billing** buttons open the same page.
 
    <!-- screenshot: cloud-console/account-menu-billing.png. Owner: docs team. Last verified: 2026-11-16 against console.serverpod.dev. -->
    <img src="/img/cloud-console/account-menu-billing.png" alt="The person icon at the right of the Serverpod Cloud console's top bar, with the account menu open below it, listing Billing, Account settings, Security, Theme, and Log out." width="337" />
