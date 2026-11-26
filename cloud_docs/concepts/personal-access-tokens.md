@@ -83,7 +83,7 @@ Revoke every session and token at once:
 serverpod cloud auth logout --all
 ```
 
-A revoked token can no longer authenticate.
+A revoked token can no longer authenticate. To sign out a device from the console, see [Manage where you're signed in](/cloud/concepts/account-and-access#manage-where-youre-signed-in).
 
 ## Use a token with the Cloud CLI
 

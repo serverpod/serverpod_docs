@@ -10,7 +10,7 @@ Your project's plan decides which features it can use, such as custom domains an
 
 ## Choose a plan
 
-Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps, and adds features Starter doesn't include, such as custom domains, database backups, future calls, and team members. The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
+Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps, and adds features Starter doesn't include, such as custom domains, database backups, future calls, and [team members](/cloud/concepts/account-and-access#project-teams). The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
 
 For needs beyond Growth, Serverpod also offers an Enterprise plan, which you arrange with the Serverpod team. The pricing page lists what it includes.
 
@@ -71,7 +71,7 @@ Make sure:
 
 - **Backups:** Turn off the backup schedule with `serverpod cloud db schedule unset`, then [delete every snapshot](/cloud/concepts/database-backups#delete-a-snapshot), including scheduled ones.
 - **Custom domains:** [Detach them](/cloud/concepts/custom-domains#detach-a-custom-domain).
-- **Team members:** Remove each one with `serverpod cloud project user revoke` followed by their email.
+- **Team members:** [Remove each one](/cloud/concepts/account-and-access#remove-a-team-member) with `serverpod cloud project user revoke` followed by their email.
 - **Storages:** [Delete storages](/cloud/concepts/storage#delete-a-storage) until two remain. Deleting a storage removes its files for good, so copy out anything you need first.
 
 ### Change the plan
