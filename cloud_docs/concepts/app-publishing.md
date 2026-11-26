@@ -69,7 +69,7 @@ Each store's setup guide shows your bundle ID or package name, which you enter i
 - **App Store:** Join the Apple Developer Program, register your app's bundle ID, create the app in App Store Connect, and add an App Store Connect API key.
 - **Google Play:** Sign up for Play Console, create the app with your app's package name, choose an upload key, and invite Serverpod Cloud's service account to your app in Play Console. Serverpod Cloud can create the upload key for you, or you can upload the keystore you already sign the app with.
 
-Only the project owner can add an App Store Connect API key. The key is saved to the owner's account, so the owner can choose it again when connecting their other projects. To replace or remove a key, open **App Stores** under the person icon in the console's top bar.
+Only the project owner can add an App Store Connect API key. The key is saved to the owner's account, so the owner can choose it again when connecting their other projects. To replace or remove a key, open **App Stores** in the account menu at the right of the console's top bar.
 
 :::note
 
