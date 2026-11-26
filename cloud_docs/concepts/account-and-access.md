@@ -1,7 +1,7 @@
 ---
 sidebar_position: 15
 title: Account and access
-description: Sign in to Serverpod Cloud with your account, see and sign out every place you're signed in, and choose who else can work on each project.
+description: Your Serverpod Cloud account is what you sign in with, in the console and the CLI, and a project's team is who else can deploy and manage that project.
 ---
 
 # Account and access
