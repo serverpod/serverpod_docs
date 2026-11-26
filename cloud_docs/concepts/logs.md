@@ -8,22 +8,25 @@ description: Serverpod Cloud shows your server's logs and sessions in the consol
 
 When a request fails, a deploy errors out, or you're chasing a slow endpoint, logs are where you go to find out what happened. Serverpod Cloud collects logs from your running server and from each deployment's build. You read them in the console or with the Serverpod Cloud CLI.
 
-The console's **Sessions** tab groups logs by request, so it's the right starting point for tracing a single call end to end. The CLI is faster for filtering, and it reads the build logs of any deploy from the terminal.
+The console's **Sessions** tab groups logs by request, so it's the right starting point for tracing a single call end to end. The CLI is faster for filtering by time and for piping output to other tools.
 
 ## View logs in the console
 
-Select your project in the [Serverpod Cloud console](https://console.serverpod.dev), then the **Logs** or **Sessions** tab.
+Select your project in the [Serverpod Cloud console](https://console.serverpod.dev), then the **Logs**, **Sessions**, or **Deployments** tab.
 
 - **Logs:** Everything your server prints, starting with the most recent records and then live as new ones arrive. Each record shows its time, its level, the podlet that printed it, and the session it belongs to, if any.
 - **Sessions:** Every call to your server, with how long it took and what it queried. Select a session to see its messages and errors. If query logging and stack-trace capture are on for the project, you also see the database queries the session ran and the stack traces for any caught exceptions. Both add overhead, so they're off by default.
+- **Deployments:** Select a deployment to see its build log, the output from building it. It shows package installation, compilation, warnings, and errors, so it's the first place to look when a deploy fails.
 
 Sessions are stored in your project's database, so the **Sessions** tab needs a project with a database. Before the first deploy, the tab shows sample sessions. If your latest deployment is from before February 2026, redeploy once to see sessions.
 
-## View build logs
+## View logs from the terminal
 
-Build logs are emitted while Cloud builds your deployment package. They show package installation, compilation, warnings, and errors. They're the first place to look when a deploy fails.
+The Serverpod Cloud CLI reads the same build and runtime logs as the console.
 
-In the console, select a deployment in the **Deployments** tab to see its build log. From the terminal, fetch the latest build log:
+### Fetch build logs
+
+Fetch the latest build log:
 
 ```bash
 serverpod cloud build log
@@ -45,9 +48,9 @@ serverpod cloud build log | grep ERROR
 
 For a step-by-step walkthrough of diagnosing and recovering from a failed deploy, see [Recover from a failed deploy](/cloud/guides/recover-from-a-failed-deploy).
 
-## View runtime logs
+### Fetch runtime logs
 
-Runtime logs are the live output of your deployed service. From the terminal, each entry contains:
+Runtime logs are the live output of your deployed server. Each entry contains:
 
 - **Timestamp**: local time by default, UTC with `--utc`
 - **Level**: `INFO`, `ERROR`, and so on
@@ -78,7 +81,7 @@ serverpod cloud log | grep ERROR
 serverpod cloud log > project_logs.txt
 ```
 
-## Filter logs by time
+### Filter logs by time
 
 The `--since` and `--until` options accept either duration strings or ISO 8601 timestamps.
 
@@ -114,7 +117,7 @@ serverpod cloud log --since "2026-06-15T14:00:00Z" --until 30m
 serverpod cloud log --since 1h --until "2026-06-15T16:00:00Z"
 ```
 
-## Stream logs
+### Stream logs
 
 Follow new log records as they arrive:
 
