@@ -36,7 +36,7 @@ It doesn't suit:
 
 If one of these describes your project, [turn off scale to zero](#turn-off-scale-to-zero).
 
-On Growth, you pay for the time your podlets run, so a project with zero podlets adds nothing to your podlet costs. The monthly plan fee still applies.
+You pay for the time your podlets run, so a project with zero podlets adds nothing to your podlet costs. The monthly plan fee still applies.
 
 ## How scale to zero works
 
