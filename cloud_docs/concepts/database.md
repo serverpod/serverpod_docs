@@ -32,7 +32,7 @@ When the database is enabled, your deployed Serverpod server receives its connec
 | `SERVERPOD_DATABASE_REQUIRE_SSL` | Always `true`, because TLS is required |
 | `SERVERPOD_PASSWORD_database`    | The server's database password         |
 
-Your server reads these through Serverpod's standard configuration. You don't write them into `config/production.yaml` or `passwords.yaml`, because Cloud supplies them at runtime. The server's password is managed by the platform and never exposed to you.
+Your server reads these through Serverpod's standard configuration. You don't need to add them to `config/production.yaml` or `passwords.yaml`, because Cloud supplies them at runtime. The server's password is managed by the platform and never exposed to you.
 
 ## Migrations run on every deploy
 
