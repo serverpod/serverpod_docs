@@ -10,7 +10,7 @@ Your project's plan decides which features it can use, such as custom domains an
 
 ## Choose a plan
 
-Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps, and adds features Starter doesn't include, such as custom domains, database backups, future calls, and [team members](/cloud/concepts/account-and-access#project-teams). The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
+Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps and includes features such as custom domains, database backups, future calls, and [team members](/cloud/concepts/account-and-access#project-teams). The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
 
 For needs beyond Growth, Serverpod also offers an Enterprise plan, which you arrange with the Serverpod team. The pricing page lists what it includes.
 
