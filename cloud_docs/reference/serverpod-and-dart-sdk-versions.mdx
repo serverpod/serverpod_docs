@@ -8,11 +8,9 @@ import versionData from './dart-sdk-versions.json';
 
 # Serverpod and Dart SDK versions
 
-Serverpod Cloud checks two versions on every deploy, the Serverpod version your server depends on and the Dart SDK it builds with. If either one isn't supported, the deploy stops.
+Each deploy to Serverpod Cloud checks two versions in your project. The Serverpod version decides whether the project deploys and whether it can safely run more than one [podlet](/cloud/concepts/compute). The Dart SDK version decides which Dart release Cloud builds your server with.
 
 ## Serverpod versions
-
-The Serverpod version also decides whether your project can safely run more than one [podlet](/cloud/concepts/compute).
 
 <div className="full-width-table">
 
