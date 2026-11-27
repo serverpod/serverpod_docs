@@ -12,7 +12,9 @@ For everyday development on your machine, `serverpod cloud auth login` is simple
 
 ## Create a token
 
-Sign in first, then run:
+In the console, open the **Security** tab in your [account settings](/cloud/concepts/account-and-access#account-settings) and select **Create token**. You can give the token a name and set when it expires.
+
+From the terminal, sign in first, then run:
 
 ```bash
 serverpod cloud auth create-token
@@ -32,7 +34,7 @@ c2FzAZxXRnzFeN2xTo6xVInh3k3bNanACBRM7ux5AYOLQDgzK82PZvdRn0N_f2WqLPCZ
 
 :::warning
 
-The CLI prints the token once. Store it somewhere secure (a secret in your CI system, a password manager). It can't be retrieved again.
+The console and the CLI show the token only once. Store it somewhere secure (a secret in your CI system, a password manager). It can't be retrieved again.
 
 :::
 
@@ -83,7 +85,7 @@ Revoke every session and token at once:
 serverpod cloud auth logout --all
 ```
 
-A revoked token can no longer authenticate.
+A revoked token can no longer authenticate. To sign out a device from the console, see [Manage your sessions](/cloud/concepts/account-and-access#manage-your-sessions).
 
 ## Use a token with the Cloud CLI
 

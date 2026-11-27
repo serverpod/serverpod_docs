@@ -10,7 +10,7 @@ Your project's plan decides which features it can use, such as custom domains an
 
 ## Choose a plan
 
-Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps and includes features such as custom domains, database backups, future calls, and team members. The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
+Serverpod Cloud has two standard plans, Starter and Growth. Starter fits an app before launch or a side project. Growth fits production apps and includes features such as custom domains, database backups, future calls, and [team members](/cloud/concepts/account-and-access#project-teams). The [pricing page](https://serverpod.dev/pricing) lists what each plan includes and costs.
 
 For needs beyond Growth, Serverpod also offers an Enterprise plan, which you arrange with the Serverpod team. The pricing page lists what it includes.
 
@@ -45,7 +45,7 @@ Projects you were invited to are billed to their owner, so they don't need your 
 
 To set up billing:
 
-1. In the [Serverpod Cloud console](https://console.serverpod.dev), select the person icon in the top bar, then **Billing**. The **Set up billing** buttons open the same page.
+1. In the [Serverpod Cloud console](https://console.serverpod.dev), open the account menu at the right of the top bar, then select **Billing**. The **Set up billing** buttons open the same page.
 
    <!-- screenshot: cloud-console/account-menu-billing.png. Owner: docs team. Last verified: 2026-11-16 against console.serverpod.dev. -->
    <img src="/img/cloud-console/account-menu-billing.png" alt="The person icon at the right of the Serverpod Cloud console's top bar, with the account menu open below it, listing Billing, Account settings, Security, Theme, and Log out." width="337" />
@@ -71,7 +71,7 @@ Make sure:
 
 - **Backups:** Turn off the backup schedule with `serverpod cloud db schedule unset`, then [delete every snapshot](/cloud/concepts/database-backups#delete-a-snapshot), including scheduled ones.
 - **Custom domains:** [Detach them](/cloud/concepts/custom-domains#detach-a-custom-domain).
-- **Team members:** Remove each one with `serverpod cloud project user revoke` followed by their email.
+- **Team members:** [Remove each one](/cloud/concepts/account-and-access#remove-a-team-member) with `serverpod cloud project user revoke` followed by their email.
 - **Storages:** [Delete storages](/cloud/concepts/storage#delete-a-storage) until two remain. Deleting a storage removes its files for good, so copy out anything you need first.
 
 ### Change the plan
