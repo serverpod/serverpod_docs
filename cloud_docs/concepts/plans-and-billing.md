@@ -1,5 +1,5 @@
 ---
-sidebar_position: 12
+sidebar_position: 14
 title: Plans and billing
 description: Plans decide which features a Serverpod Cloud project can use, and the card and billing details on your account keep every project you own running.
 ---

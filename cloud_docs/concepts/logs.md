@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 12
 title: Logs
 description: Serverpod Cloud shows your server's logs and sessions in the console, and the Cloud CLI fetches and filters runtime and build logs from the terminal.
 ---

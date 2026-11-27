@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 16
 sidebar_label: Personal access tokens
 description: Create personal access tokens to authenticate the Serverpod Cloud CLI in CI pipelines, scripts, and headless environments without interactive login.
 ---
