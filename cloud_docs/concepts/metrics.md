@@ -1,5 +1,5 @@
 ---
-sidebar_position: 14
+sidebar_position: 11
 title: Metrics
 description: Metrics in the Serverpod Cloud console show your project's podlets, CPU and memory, traffic, and database over time, so you can tell whether it keeps up.
 ---

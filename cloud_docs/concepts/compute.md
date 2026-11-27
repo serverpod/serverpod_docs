@@ -1,5 +1,5 @@
 ---
-sidebar_position: 13
+sidebar_position: 9
 title: Compute
 description: Compute sets how much memory each copy of your Serverpod Cloud server gets and how many copies run, so your server keeps up with your traffic.
 ---

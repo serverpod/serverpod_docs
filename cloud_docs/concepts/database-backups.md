@@ -1,6 +1,6 @@
 ---
 title: Database backups
-sidebar_position: 6
+sidebar_position: 5
 description: Database backups on Serverpod Cloud are snapshots of the managed database, taken on demand or on a schedule and restorable in one step.
 ---
 

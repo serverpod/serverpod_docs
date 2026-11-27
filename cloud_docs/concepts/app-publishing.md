@@ -1,5 +1,5 @@
 ---
-sidebar_position: 11
+sidebar_position: 13
 description: Serverpod Cloud builds your Flutter app for iOS and Android, signs it, and uploads it to TestFlight and Google Play from the Cloud CLI.
 ---
 

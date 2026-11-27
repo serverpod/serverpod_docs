@@ -1,6 +1,6 @@
 ---
 title: Storage
-sidebar_position: 9
+sidebar_position: 6
 description: Serverpod Cloud gives every project file storage. Use it from your server through session.storage, and manage storages and files from the CLI or the console.
 ---
 
