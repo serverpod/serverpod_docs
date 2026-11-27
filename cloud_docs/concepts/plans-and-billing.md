@@ -118,20 +118,21 @@ A suspended project's server stops, and you can't deploy to it until it's reacti
 
 The project's page shows **Project suspended** with the reason and a button, and the project list marks it **Suspended**. From the terminal, `serverpod cloud project show` prints the reason in its `Status` row.
 
-What to do depends on the button on the project's page:
+What to do depends on the reason:
 
 <div className="full-width-table">
 
-| Button                     | Why the project is suspended                                                                                             | To reactivate it                                                            |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| **Pay invoices**           | A payment is overdue                                                                                                     | Select **Pay invoices** and pay the overdue invoices in your billing portal |
-| **Complete billing setup** | Your account was missing a card or billing details when the free trial ended, or billing details when an invoice was due | [Set up billing](#set-up-billing)                                           |
-| **Manage plan**            | The project's plan ended                                                                                                 | Select **Manage plan**, then choose a plan on the project's **Settings**    |
-| **Contact support**        | Serverpod Cloud support suspended it                                                                                     | Contact support from the **Need help?** menu in the console's top bar       |
+| Reason                   | What happened                                                                                                            | To reactivate it                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Payment overdue          | An invoice wasn't paid in time                                                                                           | Select **Pay invoices** and pay the overdue invoices in your billing portal                        |
+| Billing setup incomplete | Your account was missing a card or billing details when the free trial ended, or billing details when an invoice was due | [Set up billing](#set-up-billing)                                                                  |
+| Usage cap exceeded       | A Starter project used more than its plan covers in the current billing period                                           | Wait for the billing period to end. The project is reactivated once that period's invoice is paid. |
+| Subscription ended       | The project's plan ended                                                                                                 | Contact support from the **Need help?** menu in the console's top bar                              |
+| By support               | Serverpod Cloud support suspended it                                                                                     | Contact support from the **Need help?** menu in the console's top bar                              |
 
 </div>
 
-After you pay, complete billing setup, or choose a plan, the project is reactivated, and its server starts again with its last deployment.
+You can't change a suspended project's plan. When the project is reactivated, its server starts again with its last deployment.
 
 ## Related
 

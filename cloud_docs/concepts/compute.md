@@ -66,7 +66,7 @@ Only the project's owner can change compute. For anyone else, **Edit plan** is d
 
 ## Cost and limits
 
-- **Billing:** On Growth, you pay for each podlet for the minutes it runs. On Starter, the monthly fee covers usage up to a fixed cap. The [pricing page](https://serverpod.dev/pricing) lists the price of each size and what each plan includes.
+- **Billing:** On Growth, you pay for each podlet for the minutes it runs. On Starter, the monthly fee covers usage up to a fixed cap. Going over the cap [suspends the project](/cloud/concepts/plans-and-billing#why-is-my-project-suspended) until the billing period ends. The [pricing page](https://serverpod.dev/pricing) lists the price of each size and what each plan includes.
 - **Podlets:** Starter runs one small podlet that [scales to zero](/cloud/concepts/scale-to-zero). On Growth, **Max podlets** goes up to 20.
 - **Serverpod version:** Use Serverpod 3.3.0 or later for more than one podlet. Earlier versions lack the health checks Cloud uses while it scales and deploys. See [Serverpod and Dart SDK versions](/cloud/reference/serverpod-and-dart-sdk-versions#serverpod-versions).
 
