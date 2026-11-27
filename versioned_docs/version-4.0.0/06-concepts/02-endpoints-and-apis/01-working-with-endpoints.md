@@ -28,7 +28,7 @@ class ExampleEndpoint extends Endpoint {
 }
 ```
 
-The above code creates an endpoint called `example` (the Endpoint suffix is removed) with the single `hello` method. While [`serverpod start`](./server-fundamentals/running-your-server) is running, the client-side code is generated automatically when you save. Outside a start session, run `serverpod generate` (or `serverpod generate --watch`) in the server directory.
+The above code creates an endpoint called `example` (the Endpoint suffix is removed) with the single `hello` method. While [`serverpod start`](./server-fundamentals/running-your-server) is running, the client-side code is generated automatically when you save. Outside a start session, run `serverpod generate` (or `serverpod generate --watch`) from your project's root folder or one of its package folders.
 
 ## Call an endpoint from your app
 

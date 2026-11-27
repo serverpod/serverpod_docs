@@ -6,4 +6,4 @@ The `serverpod start` command runs your project in development mode. It generate
 serverpod start
 ```
 
-Run it from anywhere inside your project folder.
+Run it from your project's root folder or one of its package folders.
