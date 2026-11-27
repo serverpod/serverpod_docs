@@ -23,6 +23,8 @@ Both `serverpod cloud password` and `serverpod cloud variable` follow the same s
 - **`-p, --project`**: required only when the project isn't linked and no project context is set
 - **`set` is create-or-update**: running it again with the same name overwrites the value. The name stays in the tier it was created in
 
+A new or changed value takes effect the next time your server starts. To apply it without deploying code, [restart your server](/cloud/concepts/deployments#restart-your-server).
+
 ## Manage passwords
 
 Passwords are the default tier for sensitive values the server reads through the Serverpod API. They are encrypted at rest, never shown after they're set, and accessed in code by the name you gave them. Each password is stored under a `SERVERPOD_PASSWORD_` prefix that the CLI adds on `set` and that `getPassword()` strips on read, so the name in your code stays clean. Common cases include database passwords, JWT signing secrets, third-party API keys, and email service credentials.

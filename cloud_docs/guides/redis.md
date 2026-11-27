@@ -61,15 +61,15 @@ serverpod cloud variable set SERVERPOD_REDIS_USER "default"
 
 :::
 
-## Redeploy
+## Restart your server
 
-Environment variables and passwords are applied when your server deploys. Redeploy so the new Redis config is used:
+Passwords and variables take effect when your server starts. Restart your server so it uses the new Redis config:
 
 ```bash
-serverpod cloud deploy
+serverpod cloud deploy --redeploy
 ```
 
-After a successful deploy, your server will use Upstash for Redis-backed caching and PubSub.
+If you haven't deployed the project yet, run `serverpod cloud deploy` instead. Once your server is running, it uses Upstash for Redis-backed caching and PubSub.
 
 ## Related
 

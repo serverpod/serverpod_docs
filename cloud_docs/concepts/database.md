@@ -83,7 +83,7 @@ The `serverpod cloud db wipe` command deletes all tables, all data, and all appl
 serverpod cloud db wipe
 ```
 
-After a wipe, your server will error on its next request because the schema is gone. Redeploy with `serverpod cloud deploy` to reapply migrations and bring the database back into a working state.
+After a wipe, requests that use the database fail, because its tables are gone. Your server applies migrations when it starts, so [restart your server](/cloud/concepts/deployments#restart-your-server) to recreate the tables.
 
 Use this when you want to start clean during development. **Do not wipe a production database.**
 
