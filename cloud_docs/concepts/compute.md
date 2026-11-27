@@ -50,6 +50,8 @@ To see your project's current compute, open its **Settings** in the [Serverpod C
 
 From the terminal, run `serverpod cloud project show` in your project's directory. The `Compute` row shows the podlet size, its memory, and the range, such as `0-1 podlets`.
 
+To see how much CPU and memory your podlets actually use, open [Metrics](/cloud/concepts/metrics).
+
 ## Change the podlet size and autoscaling range
 
 In the [Serverpod Cloud console](https://console.serverpod.dev), open your project's **Settings** and select **Edit plan**. Set **Podlet size** and **Autoscaling range** in the **Compute** section, then select **Save**. The Cloud CLI can't change compute.
