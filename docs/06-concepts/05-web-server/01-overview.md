@@ -141,13 +141,15 @@ class UserRoute extends Route {
 
     return Response.ok(
       body: Body.fromString(
-        jsonEncode(users.map((u) => u.toJson()).toList()),
+        jsonEncode(users.map((u) => u.toJsonForProtocol()).toList()),
         mimeType: MimeType.json,
       ),
     );
   }
 }
 ```
+
+The route uses `toJsonForProtocol()` to exclude fields with `scope=serverOnly` from the response. See [toJson / fromJson](../data-and-the-database/models#tojson--fromjson).
 
 ## Going to production
 

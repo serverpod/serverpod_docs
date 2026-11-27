@@ -76,7 +76,7 @@ The `dynamic` type is already nullable. `dynamic?` and `List<dynamic?>` are reje
 
 Three encodings are involved when a value moves between the app, the server, and the database:
 
-1. **Protocol JSON** (client and server): `toJson()` / `fromJson()`.
+1. **Protocol JSON** (client and server): `toJson()` / `fromJson()` and on the server `toJsonForProtocol()`, which leaves out server-only fields.
    - `int`, `bool`, `double`, and `String` pass through as native JSON.
    - Every other type converts, as listed in the overview tables.
 2. **Postgres literals** used when writing SQL: UUIDs are quoted, `ByteData` is `\x` hex, vectors are `'[1,2,3]'`, geography is EWKT, and collections are JSON text.
